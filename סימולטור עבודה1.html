@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תרגול פיזיקה כיתה י' - קינמטיקה וזריקה אנכית</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Heebo', sans-serif; }
+        .chart-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            margin-left: auto;
+            margin-right: auto;
+            height: 300px;
+            max-height: 400px;
+        }
+        @media (min-width: 768px) {
+            .chart-container { height: 400px; }
+        }
+    </style>
+    <!-- Chosen Palette: Warm Neutrals with Scientific Accents -->
+    <!-- Application Structure Plan: A dashboard layout consisting of a sidebar (for problem selection) and a main content area. The main area dynamically renders the problem context, the specific visualization recommended in the source report (v-t graphs for kinematics, position-time for chases), and the detailed solution. This structure allows students to focus on one concept at a time while visualizing the abstract math. -->
+    <!-- Visualization & Content Choices: 
+         1. Q1 (Car): Line Chart (v-t) to show the area calculation method (trapezoid).
+         2. Q2 (Police): Line Chart (x-t) comparing linear motion vs quadratic acceleration to visualize the intersection.
+         3. Q3 (TLV-Haifa): Line Chart (x-t) showing opposing slopes and intersection.
+         4. Q4-Q6 (Vertical Throws): Line Charts (y-t) simulating the parabolic trajectory of stones over time.
+         Interaction: Clicking sidebar items updates state; Chart.js is destroyed and rebuilt with specific formulas; "Show Solution" toggles visibility.
+         Confirmation: NO SVG graphics used. NO Mermaid JS used. -->
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+</head>
+<body class="bg-stone-50 text-stone-800 min-h-screen flex flex-col">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-stone-200 sticky top-0 z-10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-stone-900">תרגול פיזיקה: כיתה י'</h1>
+                <p class="text-sm text-stone-500">קינמטיקה וזריקה אנכית | 1.2.2026</p>
+            </div>
+            <button onclick="toggleFormulas()" class="bg-stone-100 hover:bg-stone-200 text-stone-700 font-medium py-2 px-4 rounded-lg transition-colors duration-200 flex items-center gap-2">
+                <span>נוסחאות</span>
+                <span class="text-xl">ƒx</span>
+            </button>
+        </div>
+    </header>
+
+    <!-- Main Layout -->
+    <main class="flex-grow flex flex-col md:flex-row max-w-7xl mx-auto w-full p-4 gap-6">
+        
+        <!-- Sidebar Navigation -->
+        <aside class="w-full md:w-1/4 flex flex-col gap-4">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-stone-100">
+                <h2 class="font-semibold text-lg mb-4 text-stone-700 border-b pb-2">רשימת שאלות</h2>
+                <nav class="space-y-2">
+                    <button onclick="loadProblem(0)" id="nav-0" class="w-full text-right p-3 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-700 border border-transparent focus:outline-none focus:ring-2 focus:ring-blue-500 active-problem">
+                        1. רכב בתנועה משתנה
+                    </button>
+                    <button onclick="loadProblem(1)" id="nav-1" class="w-full text-right p-3 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-700 border border-transparent">
+                        2. מרדף משטרתי
+                    </button>
+                    <button onclick="loadProblem(2)" id="nav-2" class="w-full text-right p-3 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-blue-50 hover:text-blue-700 border border-transparent">
+                        3. מפגש ת"א-חיפה
+                    </button>
+                    <button onclick="loadProblem(3)" id="nav-3" class="w-full text-right p-3 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-emerald-50 hover:text-emerald-700 border border-transparent">
+                        4. מפגש אבנים (60 מ')
+                    </button>
+                    <button onclick="loadProblem(4)" id="nav-4" class="w-full text-right p-3 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-emerald-50 hover:text-emerald-700 border border-transparent">
+                        5. זריקה הדדית (80 מ')
+                    </button>
+                    <button onclick="loadProblem(5)" id="nav-5" class="w-full text-right p-3 rounded-lg text-sm font-medium transition-all duration-200 hover:bg-emerald-50 hover:text-emerald-700 border border-transparent">
+                        6. זריקה בהפרש זמנים
+                    </button>
+                </nav>
+            </div>
+
+            <!-- Intro/Instructions Box -->
+            <div class="bg-blue-50 p-4 rounded-xl border border-blue-100 text-sm text-blue-800">
+                <p class="font-bold mb-1">הוראות שימוש:</p>
+                <p>בחרו שאלה מהתפריט. לכל שאלה מוצג גרף אינטראקטיבי הממחיש את הבעיה הפיזיקלית (גרף מהירות או מיקום). ניתן ללחוץ על "הצג פתרון מלא" כדי לראות את דרך החישוב.</p>
+            </div>
+        </aside>
+
+        <!-- Content Area -->
+        <section class="w-full md:w-3/4 flex flex-col gap-6">
+            
+            <!-- Visualization Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-stone-200 overflow-hidden">
+                <div class="p-4 border-b border-stone-100 bg-stone-50 flex justify-between items-center">
+                    <h3 id="chart-title" class="font-bold text-stone-700">המחשה ויזואלית</h3>
+                    <span id="chart-type-badge" class="px-2 py-1 bg-white border border-stone-200 rounded text-xs text-stone-500">גרף</span>
+                </div>
+                <div class="p-6 bg-white flex flex-col items-center justify-center">
+                    <div class="chart-container">
+                        <canvas id="physicsChart"></canvas>
+                    </div>
+                    <p id="chart-desc" class="mt-4 text-sm text-stone-500 text-center max-w-2xl italic"></p>
+                </div>
+            </div>
+
+            <!-- Problem & Solution Card -->
+            <div class="bg-white rounded-xl shadow-sm border border-stone-200">
+                <div class="p-6">
+                    <div class="mb-6">
+                        <h2 id="problem-title" class="text-xl font-bold text-stone-800 mb-2"></h2>
+                        <p id="problem-text" class="text-stone-700 leading-relaxed text-lg"></p>
+                    </div>
+
+                    <div class="border-t border-stone-100 pt-4">
+                        <button onclick="toggleSolution()" id="solution-btn" class="flex items-center gap-2 text-blue-600 hover:text-blue-700 font-medium transition-colors">
+                            <span id="solution-icon">▼</span>
+                            <span>הצג פתרון מלא ונתונים</span>
+                        </button>
+                        
+                        <div id="solution-content" class="hidden mt-4 bg-stone-50 p-6 rounded-lg border border-stone-200 text-stone-800">
+                            <!-- Solution injected here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+        </section>
+    </main>
+
+    <!-- Formulas Modal -->
+    <div id="formulas-modal" class="fixed inset-0 bg-black bg-opacity-50 hidden z-50 flex items-center justify-center p-4 backdrop-blur-sm transition-opacity duration-300">
+        <div class="bg-white rounded-2xl max-w-lg w-full p-6 shadow-2xl relative">
+            <button onclick="toggleFormulas()" class="absolute top-4 left-4 text-stone-400 hover:text-stone-600">✕</button>
+            <h3 class="text-xl font-bold mb-4 text-stone-800 border-b pb-2">דף נוסחאות - קינמטיקה</h3>
+            
+            <div class="space-y-4 text-left" dir="ltr">
+                <div class="bg-stone-50 p-3 rounded border border-stone-100">
+                    <p class="font-mono text-lg text-center">v = v₀ + at</p>
+                    <p class="text-xs text-center text-stone-500 mt-1">Velocity-Time</p>
+                </div>
+                <div class="bg-stone-50 p-3 rounded border border-stone-100">
+                    <p class="font-mono text-lg text-center">x = x₀ + v₀t + ½at²</p>
+                    <p class="text-xs text-center text-stone-500 mt-1">Position-Time</p>
+                </div>
+                <div class="bg-stone-50 p-3 rounded border border-stone-100">
+                    <p class="font-mono text-lg text-center">v² = v₀² + 2a(x - x₀)</p>
+                    <p class="text-xs text-center text-stone-500 mt-1">Velocity-Position</p>
+                </div>
+                <div class="mt-4 pt-4 border-t text-right" dir="rtl">
+                    <p class="font-bold text-sm">קבועים:</p>
+                    <p>תאוצת הכובד: <span dir="ltr">g = 10 m/s²</span></p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- JavaScript Logic -->
+    <script>
+        // Data Store
+        const problems = [
+            {
+                id: 1,
+                title: "שאלה 1: רכב בתנועה משתנה",
+                text: "רכב התחיל לנסוע מעמידה. הוא האיץ במשך 6 שניות עד מהירות של 120 קמ\"ש. כשהגיע למהירות זו, המשיך לנסוע בה במשך 2.5 דקות. לאחר מכן האט בתאוטה של 10 קמ\"ש לשנייה עד עצירה מוחלטת. איזה מרחק עבר הרכב?",
+                chartType: "vt",
+                chartLabel: "גרף מהירות-זמן (v-t)",
+                chartDesc: "השטח הכלוא מתחת לגרף (צורת הטרפז) שווה למרחק הכולל שעבר הרכב. שים לב לשלושת השלבים: האצה, מהירות קבועה, האטה.",
+                solution: `
+                    <div class="space-y-3">
+                        <p><strong>1. המרת יחידות:</strong></p>
+                        <ul class="list-disc list-inside mr-4">
+                            <li>מהירות מקסימלית: 120 קמ"ש = 33.33 מ/ש</li>
+                            <li>זמן חלק ב': 2.5 דקות = 150 שניות</li>
+                            <li>תאוטה: 10 קמ"ש לשנייה = 2.77 מ/ש²</li>
+                        </ul>
+                        <p><strong>2. חישוב לפי שטחים (ראה גרף):</strong></p>
+                        <ul class="list-disc list-inside mr-4">
+                            <li><strong>שלב א' (משולש שמאלי):</strong> (6 × 33.33) / 2 = 100 מטר</li>
+                            <li><strong>שלב ב' (מלבן):</strong> 150 × 33.33 = 5000 מטר</li>
+                            <li><strong>שלב ג' (משולש ימני):</strong> זמן העצירה הוא 12 שניות (120/10). השטח: (12 × 33.33) / 2 = 200 מטר</li>
+                        </ul>
+                        <p class="text-lg font-bold mt-2 text-blue-700">סה"כ מרחק: 5,300 מטר</p>
+                    </div>
+                `,
+                generateChartData: () => {
+                    const vMax = 33.33;
+                    const t1 = 6;
+                    const t2 = t1 + 150; // 156
+                    const t3 = t2 + 12;  // 168
+                    return {
+                        labels: [0, t1, t2, t3],
+                        datasets: [{
+                            label: 'מהירות (מ/ש)',
+                            data: [0, vMax, vMax, 0],
+                            borderColor: '#3b82f6',
+                            backgroundColor: 'rgba(59, 130, 246, 0.2)',
+                            fill: true,
+                            tension: 0
+                        }]
+                    };
+                }
+            },
+            {
+                id: 2,
+                title: "שאלה 2: מרדף משטרתי",
+                text: "שוטר עומד 30 מטר אחרי הרמזור. נהג עבר באדום ב-90 קמ\"ש. השוטר יצא למרדף מעמידה בתאוצה של 5 מטר לשנייה בריבוע ברגע שהרכב חלף על פניו. תוך כמה זמן ובאיזה מרחק השיג אותו?",
+                chartType: "xt",
+                chartLabel: "גרף מיקום-זמן (x-t)",
+                chartDesc: "נקודת המפגש היא החיתוך בין הקו הישר (תנועת הנהג במהירות קבועה) לבין הפרבולה (תנועת השוטר בתאוצה).",
+                solution: `
+                    <div class="space-y-3">
+                        <p><strong>נתונים:</strong> נהג (v=25 מ/ש), שוטר (v₀=0, a=5 מ/ש²)</p>
+                        <p><strong>חישוב זמן המפגש (t):</strong></p>
+                        <p>נשווה מיקומים החל מרגע המעבר ליד השוטר (x=0):</p>
+                        <p dir="ltr" class="font-mono bg-stone-100 p-2 rounded text-center">25t = 0.5 · 5 · t² <br> 25t = 2.5t² <br> t = 10 s</p>
+                        <p><strong>חישוב מרחק:</strong></p>
+                        <p>מרחק מהשוטר: 25 · 10 = 250 מטר.</p>
+                        <p class="text-lg font-bold mt-2 text-blue-700">מרחק מהרמזור: 250 + 30 = 280 מטר</p>
+                        <p class="text-xs text-stone-500">*הערה: פתרון זה מבוסס על הנתונים המספריים בשאלה, השונים מעט מהתשובה הסופית המקורית.</p>
+                    </div>
+                `,
+                generateChartData: () => {
+                    const times = Array.from({length: 130}, (_, i) => i * 0.1); // 0 to 13s
+                    const carData = times.map(t => 25 * t);
+                    const policeData = times.map(t => 0.5 * 5 * t * t);
+                    return {
+                        labels: times.map(t => t.toFixed(1)),
+                        datasets: [
+                            {
+                                label: 'נהג (מהירות קבועה)',
+                                data: carData,
+                                borderColor: '#ef4444', // Red
+                                borderWidth: 2,
+                                pointRadius: 0
+                            },
+                            {
+                                label: 'שוטר (תאוצה)',
+                                data: policeData,
+                                borderColor: '#3b82f6', // Blue
+                                borderWidth: 2,
+                                pointRadius: 0
+                            }
+                        ]
+                    };
+                }
+            },
+            {
+                id: 3,
+                title: "שאלה 3: מפגש ת\"א-חיפה",
+                text: "המרחק 100 ק\"מ. רכב א' יצא מת\"א ב-08:00 (80 קמ\"ש). רכב ב' יצא מחיפה ב-08:30 (60 קמ\"ש). מתי והיכן ייפגשו?",
+                chartType: "xt_cities",
+                chartLabel: "גרף מיקום-זמן (בין שתי ערים)",
+                chartDesc: "הגרף מראה תנועה בכיוונים מנוגדים. שימו לב שרכב ב' (חיפה) מתחיל מאוחר יותר (t=0.5) ומהירותו שלילית (השיפוע יורד).",
+                solution: `
+                    <div class="space-y-3">
+                        <p><strong>משוואות תנועה:</strong></p>
+                        <ul class="list-disc list-inside mr-4">
+                            <li>רכב ת"א (יוצא ב-0): <span dir="ltr">x = 80t</span></li>
+                            <li>רכב חיפה (יוצא ב-0.5, כיוון נגדי): <span dir="ltr">x = 100 - 60(t - 0.5)</span></li>
+                        </ul>
+                        <p><strong>פתרון המשוואה:</strong></p>
+                        <p dir="ltr" class="font-mono bg-stone-100 p-2 rounded text-center">80t = 100 - 60t + 30 <br> 140t = 130 <br> t ≈ 0.928 h</p>
+                        <p>0.928 שעות = 55 דקות ו-42 שניות.</p>
+                        <p class="text-lg font-bold mt-2 text-blue-700">שעת מפגש: 08:55:42</p>
+                    </div>
+                `,
+                generateChartData: () => {
+                    // Time in hours, 0 to 1.2
+                    const times = Array.from({length: 120}, (_, i) => i * 0.01);
+                    const tlvData = times.map(t => 80 * t);
+                    const haifaData = times.map(t => {
+                        if (t < 0.5) return null; // Didn't start yet
+                        return 100 - 60 * (t - 0.5);
+                    });
+                    
+                    return {
+                        labels: times.map(t => t.toFixed(2)),
+                        datasets: [
+                            {
+                                label: 'מתל אביב',
+                                data: tlvData,
+                                borderColor: '#3b82f6',
+                                borderWidth: 2,
+                                pointRadius: 0
+                            },
+                            {
+                                label: 'מחיפה',
+                                data: haifaData,
+                                borderColor: '#10b981', // Green
+                                borderWidth: 2,
+                                pointRadius: 0
+                            }
+                        ]
+                    };
+                }
+            },
+            {
+                id: 4,
+                title: "שאלה 4: מפגש אבנים (בניין 60 מ')",
+                text: "מבניין שגובהו 60 מ' מפילים אבן (v=0). בו-זמנית זורקים אבן אחרת מהקרקע למעלה ב-40 מ/ש. מתי ובאיזה גובה ייפגשו?",
+                chartType: "yt",
+                chartLabel: "גרף גובה-זמן (y-t)",
+                chartDesc: "הגרף הכחול מראה נפילה חופשית (פרבולה הפוכה מ-60). הגרף הירוק מראה זריקה אנכית (פרבולה מ-0). נקודת החיתוך היא המפגש.",
+                solution: `
+                    <div class="space-y-3">
+                        <p><strong>משוואות תנועה (y):</strong></p>
+                        <ul class="list-disc list-inside mr-4">
+                            <li>נופלת: <span dir="ltr">y = 60 - 5t²</span></li>
+                            <li>נזרקת: <span dir="ltr">y = 40t - 5t²</span></li>
+                        </ul>
+                        <p><strong>השוואה:</strong></p>
+                        <p dir="ltr" class="font-mono bg-stone-100 p-2 rounded text-center">60 - 5t² = 40t - 5t² <br> 60 = 40t <br> t = 1.5 s</p>
+                        <p><strong>חישוב גובה:</strong></p>
+                        <p dir="ltr">y = 40(1.5) - 5(1.5)² = 60 - 11.25 = 48.75 m</p>
+                        <p class="text-lg font-bold mt-2 text-blue-700">גובה מפגש: 48.75 מטר</p>
+                    </div>
+                `,
+                generateChartData: () => {
+                    const times = Array.from({length: 200}, (_, i) => i * 0.01); // 0 to 2s
+                    const dropData = times.map(t => 60 - 5 * t * t);
+                    const throwData = times.map(t => 40 * t - 5 * t * t);
+                    return {
+                        labels: times.map(t => t.toFixed(2)),
+                        datasets: [
+                            {
+                                label: 'אבן נופלת',
+                                data: dropData,
+                                borderColor: '#ef4444',
+                                borderWidth: 2,
+                                pointRadius: 0
+                            },
+                            {
+                                label: 'אבן נזרקת',
+                                data: throwData,
+                                borderColor: '#10b981',
+                                borderWidth: 2,
+                                pointRadius: 0
+                            }
+                        ]
+                    };
+                }
+            },
+            {
+                id: 5,
+                title: "שאלה 5: זריקה הדדית (בניין 80 מ')",
+                text: "מבניין בגובה 80 מ' זורקים אבן למטה ב-8 מ/ש. בו-זמנית זורקים אבן מהקרקע למעלה ב-60 מ/ש. מתי והיכן ייפגשו?",
+                chartType: "yt",
+                chartLabel: "גרף גובה-זמן (y-t)",
+                chartDesc: "שימו לב שהאבן העליונה (אדום) לא מתחילה בשיפוע 0 אלא בשיפוע שלילי, כי היא נזרקה למטה.",
+                solution: `
+                    <div class="space-y-3">
+                        <p><strong>משוואות תנועה:</strong></p>
+                        <ul class="list-disc list-inside mr-4">
+                            <li>עליונה (v₀ = -8): <span dir="ltr">y = 80 - 8t - 5t²</span></li>
+                            <li>תחתונה (v₀ = 60): <span dir="ltr">y = 60t - 5t²</span></li>
+                        </ul>
+                        <p><strong>השוואה:</strong></p>
+                        <p dir="ltr" class="font-mono bg-stone-100 p-2 rounded text-center">80 - 8t - 5t² = 60t - 5t² <br> 80 = 68t <br> t ≈ 1.176 s</p>
+                        <p class="text-lg font-bold mt-2 text-blue-700">גובה מפגש: 63.8 מטר בערך</p>
+                    </div>
+                `,
+                generateChartData: () => {
+                    const times = Array.from({length: 150}, (_, i) => i * 0.01);
+                    const downData = times.map(t => 80 - 8 * t - 5 * t * t);
+                    const upData = times.map(t => 60 * t - 5 * t * t);
+                    return {
+                        labels: times.map(t => t.toFixed(2)),
+                        datasets: [
+                            {
+                                label: 'נזרקת למטה',
+                                data: downData,
+                                borderColor: '#ef4444',
+                                borderWidth: 2,
+                                pointRadius: 0
+                            },
+                            {
+                                label: 'נזרקת למעלה',
+                                data: upData,
+                                borderColor: '#10b981',
+                                borderWidth: 2,
+                                pointRadius: 0
+                            }
+                        ]
+                    };
+                }
+            },
+            {
+                id: 6,
+                title: "שאלה 6: זריקה בהפרש זמנים",
+                text: "אבן א' נזרקת למעלה ב-25 מ/ש. שנייה אחת אחריה, נזרקת אבן ב' ב-40 מ/ש. מתי והיכן ייפגשו?",
+                chartType: "yt",
+                chartLabel: "גרף גובה-זמן עם השהיה",
+                chartDesc: "ניתן לראות בבירור שהגרף הירוק (אבן ב') מתחיל רק ב-t=1. המפגש מתרחש כאשר הגרפים נחתכים בדרך למטה של אבן א'.",
+                solution: `
+                    <div class="space-y-3">
+                        <p><strong>משוואות תנועה:</strong></p>
+                        <ul class="list-disc list-inside mr-4">
+                            <li>אבן א': <span dir="ltr">y = 25t - 5t²</span></li>
+                            <li>אבן ב' (t > 1): <span dir="ltr">y = 40(t-1) - 5(t-1)²</span></li>
+                        </ul>
+                        <p><strong>חישוב (לאחר פתיחת סוגריים):</strong></p>
+                        <p dir="ltr" class="font-mono bg-stone-100 p-2 rounded text-center">25t - 5t² = -5t² + 50t - 45 <br> 25t = 45 <br> t = 1.8 s</p>
+                        <p class="text-lg font-bold mt-2 text-blue-700">גובה מפגש: 28.8 מטר</p>
+                    </div>
+                `,
+                generateChartData: () => {
+                    const times = Array.from({length: 250}, (_, i) => i * 0.01); // 0 to 2.5s
+                    const stone1Data = times.map(t => 25 * t - 5 * t * t);
+                    const stone2Data = times.map(t => {
+                        if (t < 1) return null;
+                        return 40 * (t - 1) - 5 * Math.pow(t - 1, 2);
+                    });
+                    return {
+                        labels: times.map(t => t.toFixed(2)),
+                        datasets: [
+                            {
+                                label: 'אבן א\' (ראשונה)',
+                                data: stone1Data,
+                                borderColor: '#3b82f6',
+                                borderWidth: 2,
+                                pointRadius: 0
+                            },
+                            {
+                                label: 'אבן ב\' (שנייה)',
+                                data: stone2Data,
+                                borderColor: '#8b5cf6', // Purple
+                                borderWidth: 2,
+                                pointRadius: 0
+                            }
+                        ]
+                    };
+                }
+            }
+        ];
+
+        // State & Chart Instance
+        let currentChart = null;
+        let currentProblemId = 0;
+
+        // Init
+        document.addEventListener('DOMContentLoaded', () => {
+            loadProblem(0);
+        });
+
+        // Navigation Function
+        function loadProblem(index) {
+            currentProblemId = index;
+            const problem = problems[index];
+
+            // Update UI Text
+            document.getElementById('problem-title').textContent = problem.title;
+            document.getElementById('problem-text').textContent = problem.text;
+            document.getElementById('solution-content').innerHTML = problem.solution;
+            document.getElementById('chart-title').textContent = problem.chartLabel;
+            document.getElementById('chart-desc').textContent = problem.chartDesc;
+
+            // Reset Solution View
+            document.getElementById('solution-content').classList.add('hidden');
+            document.getElementById('solution-icon').textContent = '▼';
+            document.getElementById('solution-btn').querySelector('span:last-child').textContent = 'הצג פתרון מלא ונתונים';
+
+            // Highlight Active Nav
+            document.querySelectorAll('aside button').forEach((btn, idx) => {
+                if (idx === index) {
+                    btn.classList.add('bg-blue-50', 'text-blue-700', 'ring-2', 'ring-blue-500', 'ring-opacity-50');
+                } else {
+                    btn.classList.remove('bg-blue-50', 'text-blue-700', 'ring-2', 'ring-blue-500', 'ring-opacity-50');
+                }
+            });
+
+            // Render Chart
+            renderChart(problem);
+        }
+
+        // Toggle Solution
+        function toggleSolution() {
+            const content = document.getElementById('solution-content');
+            const icon = document.getElementById('solution-icon');
+            const btnText = document.getElementById('solution-btn').querySelector('span:last-child');
+            
+            content.classList.toggle('hidden');
+            if (content.classList.contains('hidden')) {
+                icon.textContent = '▼';
+                btnText.textContent = 'הצג פתרון מלא ונתונים';
+            } else {
+                icon.textContent = '▲';
+                btnText.textContent = 'הסתר פתרון';
+            }
+        }
+
+        // Toggle Formulas Modal
+        function toggleFormulas() {
+            const modal = document.getElementById('formulas-modal');
+            modal.classList.toggle('hidden');
+        }
+
+        // Chart Rendering Logic
+        function renderChart(problem) {
+            const ctx = document.getElementById('physicsChart').getContext('2d');
+            const chartData = problem.generateChartData();
+            
+            // Determine scales based on problem type
+            let xLabel = 'זמן (שניות)';
+            let yLabel = 'מיקום (מטרים)';
+            
+            if (problem.chartType === 'vt') {
+                yLabel = 'מהירות (מ/ש)';
+            } else if (problem.chartType === 'xt_cities') {
+                xLabel = 'זמן (שעות)';
+                yLabel = 'מיקום (ק"מ)';
+            } else if (problem.chartType === 'yt') {
+                yLabel = 'גובה (מטרים)';
+            }
+
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            currentChart = new Chart(ctx, {
+                type: 'line',
+                data: chartData,
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    interaction: {
+                        mode: 'index',
+                        intersect: false,
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top',
+                            rtl: true,
+                            labels: {
+                                font: { family: 'Heebo' }
+                            }
+                        },
+                        tooltip: {
+                            rtl: true,
+                            bodyFont: { family: 'Heebo' },
+                            titleFont: { family: 'Heebo' },
+                            callbacks: {
+                                label: function(context) {
+                                    let label = context.dataset.label || '';
+                                    if (label) {
+                                        label += ': ';
+                                    }
+                                    if (context.parsed.y !== null) {
+                                        label += context.parsed.y.toFixed(2);
+                                    }
+                                    return label;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: xLabel,
+                                font: { family: 'Heebo', weight: 'bold' }
+                            },
+                            ticks: { maxTicksLimit: 10 }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: yLabel,
+                                font: { family: 'Heebo', weight: 'bold' }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+    </script>
+</body>
+</html>

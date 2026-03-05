@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון שאלה 3 - כוח מגנטי ובורר מהירויות</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax Configuration - Must be before loading MathJax -->
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    };
+    </script>
+    <!-- MathJax for high-quality LaTeX rendering -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap');
+        body {
+            font-family: 'Assistant', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            padding: 20px;
+        }
+        .card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+            max-width: 900px;
+            margin: 0 auto;
+        }
+        .section-title {
+            border-bottom: 2px solid #3b82f6;
+            padding-bottom: 0.5rem;
+            margin-top: 2rem;
+            margin-bottom: 1rem;
+            color: #1d4ed8;
+            font-weight: bold;
+        }
+        .question-box {
+            background-color: #e0f2fe; /* blue-100 */
+            border: 1px solid #7dd3fc;
+            padding: 1.5rem;
+            border-radius: 0.5rem;
+            margin-bottom: 2rem;
+            color: #0c4a6e;
+        }
+        .sub-question {
+            font-weight: bold;
+            color: #0f172a;
+            margin-bottom: 0.5rem;
+            display: block;
+        }
+        .calc-box {
+            background-color: #f8fafc; /* gray-50 */
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+            border: 1px solid #e2e8f0;
+        }
+        .diagram-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+            background: white;
+            padding: 10px;
+            border-radius: 8px;
+            border: 1px solid #bfdbfe;
+        }
+        .print-only { display: none; }
+        @media print {
+            .no-print { display: none; }
+            .print-only { display: block; }
+            body { background: white; padding: 0; }
+            .card { box-shadow: none; max-width: 100%; border: none; padding: 0; margin: 0; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="card">
+    <div class="flex justify-between items-center no-print mb-6">
+        <h1 class="text-3xl font-bold">פתרון שאלה 3: תנועת מטען בשדה מגנטי</h1>
+        <button onclick="printToPDF()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded shadow transition duration-200">
+            הדפס ל-PDF
+        </button>
+    </div>
+
+    <!-- ניסוח השאלה המלא -->
+    <div class="question-box">
+        <h2 class="font-bold text-xl mb-3 underline">שאלה 3</h2>
+        <p class="mb-2">
+            פרוטון נע במהירות שגודלה $v=6 \cdot 10^5 \, \frac{m}{s}$ וכיוונה ימינה. הפרוטון נכנס לאזור בו שורר שדה מגנטי אחיד שגודלו $B=0.05 \, T$ וכיוונו לתוך הדף (ראה תרשים).
+        </p>
+        
+        <!-- איור SVG -->
+        <div class="diagram-container">
+            <svg width="300" height="180" viewBox="0 0 300 180" xmlns="http://www.w3.org/2000/svg">
+                <!-- רקע השדה המגנטי -->
+                <rect x="50" y="10" width="240" height="160" fill="#f0f9ff" stroke="#3b82f6" stroke-width="1" stroke-dasharray="5,5" rx="5" />
+                
+                <!-- סימני X לשדה מגנטי -->
+                <g stroke="#94a3b8" stroke-width="2" stroke-linecap="round">
+                    <!-- שורה 1 -->
+                    <path d="M70 30 l10 10 M80 30 l-10 10" /> <path d="M110 30 l10 10 M120 30 l-10 10" /> <path d="M150 30 l10 10 M160 30 l-10 10" /> <path d="M190 30 l10 10 M200 30 l-10 10" /> <path d="M230 30 l10 10 M240 30 l-10 10" />
+                    <!-- שורה 2 -->
+                    <path d="M70 70 l10 10 M80 70 l-10 10" /> <path d="M110 70 l10 10 M120 70 l-10 10" /> <path d="M150 70 l10 10 M160 70 l-10 10" /> <path d="M190 70 l10 10 M200 70 l-10 10" /> <path d="M230 70 l10 10 M240 70 l-10 10" />
+                    <!-- שורה 3 -->
+                    <path d="M70 110 l10 10 M80 110 l-10 10" /> <path d="M110 110 l10 10 M120 110 l-10 10" /> <path d="M150 110 l10 10 M160 110 l-10 10" /> <path d="M190 110 l10 10 M200 110 l-10 10" /> <path d="M230 110 l10 10 M240 110 l-10 10" />
+                     <!-- שורה 4 -->
+                     <path d="M70 150 l10 10 M80 150 l-10 10" /> <path d="M110 150 l10 10 M120 150 l-10 10" /> <path d="M150 150 l10 10 M160 150 l-10 10" /> <path d="M190 150 l10 10 M200 150 l-10 10" /> <path d="M230 150 l10 10 M240 150 l-10 10" />
+                </g>
+                
+                <!-- תווית שדה מגנטי -->
+                <text x="260" y="30" font-family="sans-serif" font-size="14" fill="#64748b" font-weight="bold">B</text>
+                <circle cx="275" cy="25" r="8" stroke="#64748b" fill="none" stroke-width="1.5"/>
+                <path d="M272 22 l6 6 M278 22 l-6 6" stroke="#64748b" stroke-width="1.5"/>
+
+                <!-- פרוטון -->
+                <circle cx="30" cy="90" r="12" fill="#ef4444" stroke="#b91c1c" stroke-width="2" />
+                <text x="30" y="95" text-anchor="middle" font-family="sans-serif" font-size="16" fill="white" font-weight="bold">+</text>
+                <text x="30" y="70" text-anchor="middle" font-family="sans-serif" font-size="14" fill="#b91c1c" font-weight="bold">p</text>
+                
+                <!-- וקטור מהירות -->
+                <line x1="45" y1="90" x2="90" y2="90" stroke="#ef4444" stroke-width="3" marker-end="url(#arrowhead)" />
+                <text x="65" y="80" text-anchor="middle" font-family="sans-serif" font-size="16" fill="#ef4444" font-weight="bold">v</text>
+                
+                <!-- הגדרת ראש חץ -->
+                <defs>
+                    <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                        <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444" />
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+
+        <p class="mb-4">
+            <strong>נתון:</strong> מטען הפרוטון $q_p=1.6 \cdot 10^{-19} C$, מסת הפרוטון $m_p=1.67 \cdot 10^{-27} kg$.
+        </p>
+        <p class="mb-1"><strong>א.</strong> חשב את גודלו ואת כיוונו של הכוח המגנטי הפועל על הפרוטון ברגע כניסתו לשדה.</p>
+        <p class="mb-1"><strong>ב.</strong> איזה שדה חשמלי (גודל וכיוון) יש להפעיל באזור זה על מנת שהפרוטון ימשיך בתנועתו בקו ישר?</p>
+        <p class="mb-1"><strong>ג.</strong> כיצד ישתנו תשובותיך לסעיפים א' ו-ב' אם במקום פרוטון ינוע באותה מהירות:</p>
+        <ul class="list-decimal list-inside mr-4">
+            <li>חלקיק אלפא ($\alpha$) (גרעין של אטום הליום) שמטענו $+2e$ ומסתו $4m_p$.</li>
+            <li>אלקטרון ($e^-$).</li>
+        </ul>
+    </div>
+
+    <!-- סעיף א -->
+    <section>
+        <h2 class="section-title text-xl">פתרון סעיף א'</h2>
+        <span class="sub-question">חישוב הכוח המגנטי:</span>
+        
+        <p class="mb-4">
+            הכוח המגנטי הפועל על מטען נע נתון על ידי נוסחת לורנץ:
+            $$F_B = q v B \sin(\alpha)$$
+            הזווית $\alpha$ היא הזווית בין וקטור המהירות לוקטור השדה המגנטי. במקרה זה הזווית היא $90^\circ$ (המהירות במישור הדף והשדה מאונך לו).
+        </p>
+        <div class="calc-box">
+            <p><strong>חישוב גודל הכוח:</strong></p>
+            $$F_B = (1.6 \times 10^{-19}) \cdot (6 \times 10^5) \cdot (0.05) \cdot \sin(90^\circ)$$
+            $$F_B = 4.8 \times 10^{-15} \, \text{N}$$
+        </div>
+        <p>
+            <strong>כיוון הכוח:</strong> נקבע לפי <strong>כלל יד ימין</strong> למטען חיובי:
+            <br>
+            האגודל מצביע בכיוון המהירות (ימינה), האצבעות בכיוון השדה המגנטי (פנימה לתוך הדף $\otimes$), ולכן כף היד דוחפת <strong>כלפי מעלה</strong>.
+        </p>
+    </section>
+
+    <!-- סעיף ב -->
+    <section>
+        <h2 class="section-title text-xl">פתרון סעיף ב'</h2>
+        <span class="sub-question">בורר מהירויות (איזון כוחות):</span>
+
+        <p class="mb-2">כדי שהפרוטון ימשיך בקו ישר (ללא סטייה), שקול הכוחות עליו חייב להיות אפס ($\sum \vec{F} = 0$).</p>
+        <p class="mb-4">כלומר, הכוח החשמלי $F_E$ חייב להיות שווה בגודלו לכוח המגנטי $F_B$ ומנוגד לו בכיוונו.</p>
+        
+        <div class="calc-box">
+            <p><strong>חישוב עוצמת השדה החשמלי:</strong></p>
+            $$F_E = F_B \implies q E = q v B$$
+            $$E = v \cdot B$$
+            $$E = (6 \times 10^5) \cdot (0.05) = 30,000 \, \text{N/C}$$
+        </div>
+        <p>
+            <strong>כיוון השדה החשמלי:</strong>
+            <br>
+            1. הכוח המגנטי פועל <strong>כלפי מעלה</strong>.
+            <br>
+            2. לכן, הכוח החשמלי המאזן חייב לפעול <strong>כלפי מטה</strong>.
+            <br>
+            3. מכיוון שהפרוטון הוא מטען <strong>חיובי</strong>, כיוון השדה החשמלי הוא ככיוון הכוח הפועל עליו ($F_E = qE$).
+            <br>
+            <strong>מסקנה:</strong> כיוון השדה החשמלי הוא <strong>כלפי מטה</strong>.
+        </p>
+    </section>
+
+    <!-- סעיף ג -->
+    <section>
+        <h2 class="section-title text-xl">פתרון סעיף ג'</h2>
+        <span class="sub-question">שינוי סוג החלקיק:</span>
+        
+        <div class="mb-6 mt-4">
+            <h3 class="font-bold text-lg text-blue-800">1. עבור חלקיק אלפא $\alpha$ ($q=+2e$, $m=4m_p$):</h3>
+            <ul class="list-disc list-inside space-y-2 mt-2">
+                <li><span class="font-semibold">סעיף א' (כוח מגנטי):</span> המטען כפול ($2e$), ולכן הכוח המגנטי יגדל פי 2 ($F_B \propto q$). הכיוון נשאר <strong>כלפי מעלה</strong> (עדיין מטען חיובי).</li>
+                <li><span class="font-semibold">סעיף ב' (שדה חשמלי):</span> התנאי למעבר בקו ישר הוא $E = vB$. משוואה זו אינה תלויה במסה או במטען החלקיק (כל עוד המטען אינו אפס). לכן, <strong>אין צורך לשנות את השדה החשמלי</strong> (לא בגודל ולא בכיוון).</li>
+            </ul>
+        </div>
+
+        <div>
+            <h3 class="font-bold text-lg text-blue-800">2. עבור אלקטרון $e^-$ ($q=-e$, $m=m_e$):</h3>
+            <ul class="list-disc list-inside space-y-2 mt-2">
+                <li><span class="font-semibold">סעיף א' (כוח מגנטי):</span> גודל המטען זהה ($e$), ולכן גודל הכוח המגנטי נשאר זהה. הכיוון מתהפך ל<strong>כלפי מטה</strong> (מטען שלילי - משתמשים ביד שמאל או הופכים את תוצאת יד ימין).</li>
+                <li><span class="font-semibold">סעיף ב' (שדה חשמלי):</span>
+                    <ul class="list-none mr-6 mt-1 text-sm text-gray-700 space-y-1">
+                        <li>- הכוח המגנטי פועל כעת <strong>למטה</strong>.</li>
+                        <li>- לכן, הכוח החשמלי המאזן חייב לפעול <strong>למעלה</strong>.</li>
+                        <li>- עבור מטען שלילי (אלקטרון), הכוח החשמלי מנוגד לכיוון השדה ($F_E = qE$). כדי לקבל כוח למעלה, השדה חייב להיות <strong>למטה</strong>.</li>
+                    </ul>
+                    <span class="block mt-2 font-bold">מסקנה: אין צורך לשנות את השדה החשמלי (נשאר 30,000 N/C כלפי מטה).</span>
+                    <em>הערה פדגוגית:</em> בורר מהירויות "בוחר" חלקיקים לפי מהירותם בלבד, ללא תלות במטענם (חיובי/שלילי) או במסתם.
+                </li>
+            </ul>
+        </div>
+    </section>
+</div>
+
+<script>
+    function printToPDF() {
+        // Create a new temporary window for printing
+        const printWindow = window.open('', '_blank');
+        printWindow.document.write('<html><head><title>הדפסת פתרון</title>');
+        // Copy styles
+        printWindow.document.write('<link href="https://cdn.tailwindcss.com" rel="stylesheet">');
+        printWindow.document.write('<script>window.MathJax = { tex: { inlineMath: [["$", "$"], ["\\\\(", "\\\\)"]] } };<\/script>');
+        printWindow.document.write('<style>body { direction: rtl; font-family: sans-serif; padding: 40px; } .no-print { display: none; } .section-title { border-bottom: 2px solid #3b82f6; margin: 20px 0 10px 0; color: #1d4ed8; font-weight: bold; } .question-box { background-color: #e0f2fe; border: 1px solid #7dd3fc; padding: 15px; margin-bottom: 20px; } .sub-question { font-weight: bold; margin-bottom: 5px; display: block; } .calc-box { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 10px; margin-bottom: 10px; } .diagram-container { display: flex; justify-content: center; margin: 20px 0; border: 1px solid #ddd; padding: 10px; border-radius: 8px; }</style>');
+        // Add MathJax to the print window
+        printWindow.document.write('<script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>');
+        printWindow.document.write('</head><body>');
+        printWindow.document.write(document.querySelector('.card').innerHTML);
+        printWindow.document.write('</body></html>');
+        printWindow.document.close();
+
+        // Wait for MathJax to finish rendering in the new window then print
+        setTimeout(() => {
+            printWindow.focus();
+            printWindow.print();
+            printWindow.close();
+        }, 1500);
+    }
+</script>
+
+</body>
+</html>

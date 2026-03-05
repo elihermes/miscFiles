@@ -1,0 +1,471 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סימולטור מעגלים: שאלה 3 (מתוקן)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Rubik', sans-serif; background-color: #0f172a; color: #e2e8f0; }
+        
+        /* Wire Styling */
+        .wire { background-color: #64748b; position: absolute; }
+        .wire-h { height: 4px; top: 50%; transform: translateY(-50%); }
+        .wire-v { width: 4px; left: 50%; transform: translateX(-50%); }
+        
+        /* Component Base */
+        .component { 
+            position: relative; 
+            z-index: 10; 
+            background: #1e293b; 
+            border: 2px solid #94a3b8; 
+            border-radius: 6px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.5);
+            transition: all 0.2s;
+        }
+
+        /* Current Animation (Arrows) */
+        .current-path {
+            position: absolute;
+            top: 50%;
+            left: 0;
+            right: 0;
+            height: 12px;
+            overflow: hidden;
+            pointer-events: none;
+            z-index: 5;
+            transform: translateY(-50%);
+        }
+        .current-arrow {
+            width: 0; 
+            height: 0; 
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-left: 8px solid #38bdf8; /* Light Blue Arrow */
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
+            opacity: 0;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+    <!-- Header & Scenario Controls -->
+    <header class="bg-slate-900 border-b border-slate-700 p-4 shrink-0">
+        <div class="max-w-7xl mx-auto flex flex-col md:flex-row justify-between items-center gap-4">
+            <div>
+                <h1 class="text-2xl font-bold text-white flex items-center gap-2">
+                    <span class="w-3 h-3 rounded-full bg-teal-500 animate-pulse"></span>
+                    מעבדה וירטואלית: חקירת מעגל מסועף
+                </h1>
+                <p class="text-slate-400 text-xs">סימולציה מלאה לשאלה 3 - כולל שליטה במקורות המתח</p>
+            </div>
+            
+            <div class="flex gap-3 bg-slate-800 p-2 rounded-lg border border-slate-700">
+                <label class="flex items-center gap-2 cursor-pointer px-3 py-1 rounded hover:bg-slate-700 transition">
+                    <input type="checkbox" id="chk-battery" class="accent-purple-500 w-4 h-4" onchange="updateSim()">
+                    <span class="text-sm font-medium">הוסף סוללה באמצע (סעיף ה')</span>
+                </label>
+                <div class="w-px bg-slate-600 mx-1"></div>
+                <label class="flex items-center gap-2 cursor-pointer px-3 py-1 rounded hover:bg-slate-700 transition">
+                    <input type="checkbox" id="chk-voltmeter" class="accent-teal-500 w-4 h-4" onchange="updateSim()">
+                    <span class="text-sm font-medium">וולטמטר במקום אמפרמטר (סעיף ו')</span>
+                </label>
+            </div>
+        </div>
+    </header>
+
+    <div class="flex-grow flex flex-col md:flex-row overflow-hidden">
+        
+        <!-- Left Panel: Interactive Inputs -->
+        <aside class="w-full md:w-80 bg-slate-800 border-l border-slate-700 p-6 flex flex-col gap-6 overflow-y-auto shrink-0 z-20 shadow-xl">
+            <h2 class="text-lg font-bold text-teal-400 border-b border-slate-700 pb-2">בקרת מקורות מתח</h2>
+            
+            <!-- E1 Control -->
+            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600">
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm font-bold text-teal-200">מקור עליון (E1)</span>
+                    <span id="disp-e1" class="text-sm font-mono text-white bg-slate-600 px-2 rounded">6.0V</span>
+                </div>
+                <input type="range" id="inp-e1" min="0" max="24" step="0.5" value="6" class="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-teal-400" oninput="updateSim()">
+                <div class="flex justify-between text-xs text-slate-400 mt-1">
+                    <span>0V</span>
+                    <span>24V</span>
+                </div>
+            </div>
+
+            <!-- E_mid Control (Conditional) -->
+            <div id="ctrl-emid" class="bg-purple-900/20 p-4 rounded-lg border border-purple-500/30 transition-all duration-300 opacity-50 grayscale pointer-events-none">
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm font-bold text-purple-200">מקור אמצעי (חדש)</span>
+                    <span id="disp-emid" class="text-sm font-mono text-white bg-slate-600 px-2 rounded">15.0V</span>
+                </div>
+                <input type="range" id="inp-emid" min="0" max="24" step="0.5" value="15" class="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-purple-400" oninput="updateSim()">
+                <div class="text-xs text-purple-300/50 mt-2 text-center">פעיל רק בסימון "הוסף סוללה"</div>
+            </div>
+
+            <!-- E3 Control -->
+            <div class="bg-slate-700/50 p-4 rounded-lg border border-slate-600">
+                <div class="flex justify-between mb-2">
+                    <span class="text-sm font-bold text-red-200">מקור תחתון (E3)</span>
+                    <span id="disp-e3" class="text-sm font-mono text-white bg-slate-600 px-2 rounded">18.0V</span>
+                </div>
+                <input type="range" id="inp-e3" min="0" max="30" step="0.5" value="18" class="w-full h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer accent-red-400" oninput="updateSim()">
+                <div class="flex justify-between text-xs text-slate-400 mt-1">
+                    <span>0V</span>
+                    <span>30V</span>
+                </div>
+            </div>
+
+            <!-- Results Summary -->
+            <div class="mt-auto bg-slate-900 p-4 rounded-lg border border-slate-700">
+                <h3 class="text-sm font-bold text-slate-400 mb-3 uppercase tracking-wider">תוצאות מדידה</h3>
+                
+                <div class="flex justify-between items-end mb-2">
+                    <span class="text-sm text-slate-300">מתח צמתים (Vmn)</span>
+                    <span id="res-vmn" class="text-2xl font-bold text-teal-400 font-mono">12.0V</span>
+                </div>
+                
+                <div class="h-px bg-slate-700 my-2"></div>
+                
+                <div class="flex justify-between items-end">
+                    <span class="text-sm text-slate-300" id="lbl-meter-res">זרם במכשיר</span>
+                    <span id="res-meter" class="text-2xl font-bold text-yellow-400 font-mono">2.0A</span>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Canvas: Circuit Visualization -->
+        <main class="flex-grow relative bg-slate-900 overflow-auto flex items-center justify-center p-10 select-none">
+            
+            <!-- CIRCUIT CONTAINER -->
+            <div class="relative w-[800px] h-[600px] bg-slate-800/50 rounded-xl border border-slate-700 shadow-2xl">
+                
+                <!-- LABELS M & N (Updated Position) -->
+                <!-- Centered above the vertical rails -->
+                <div class="absolute left-7 top-0 -translate-y-1/2 text-white font-bold text-2xl bg-slate-700 w-10 h-10 rounded-full flex items-center justify-center border-2 border-slate-500 shadow-lg z-20">M</div>
+                <div class="absolute right-7 top-0 -translate-y-1/2 text-white font-bold text-2xl bg-slate-700 w-10 h-10 rounded-full flex items-center justify-center border-2 border-slate-500 shadow-lg z-20">N</div>
+
+                <!-- --- BUS BARS (Vertical Rails) --- -->
+                <div class="absolute top-10 bottom-10 left-10 w-2 bg-slate-500 rounded-full shadow-inner"></div> <!-- M Rail -->
+                <div class="absolute top-10 bottom-10 right-10 w-2 bg-slate-500 rounded-full shadow-inner"></div> <!-- N Rail -->
+
+
+                <!-- ====== TOP BRANCH (Row 1) ====== -->
+                <div class="absolute top-[15%] left-10 right-10 h-2 bg-slate-600 wire-h">
+                    <div class="current-path" id="anim-top"></div>
+                </div>
+                
+                <!-- R_1a (2 Ohm) -->
+                <div class="absolute top-[15%] left-[20%] -translate-x-1/2 -translate-y-1/2 component w-16 h-12">
+                    <div class="text-[10px] text-slate-400">R=2Ω</div>
+                    <div class="w-10 h-4 bg-slate-700 border border-slate-500 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-white/5 -skew-x-12"></div>
+                    </div>
+                </div>
+
+                <!-- Source E1 (Fixed Polarity: Long on Left, Short on Right) -->
+                <!-- Added dir="ltr" to fix visual flipping in RTL layout -->
+                <div class="absolute top-[15%] left-[50%] -translate-x-1/2 -translate-y-1/2 component w-24 h-16 border-teal-500/30 bg-teal-900/10" dir="ltr">
+                    <span class="text-[10px] text-teal-300 absolute -top-4 font-bold" id="lbl-e1">6V</span>
+                    <div class="flex items-center gap-1">
+                        <div class="flex flex-col items-center">
+                            <span class="text-[8px] text-teal-500 font-bold mb-0.5">+</span>
+                            <div class="h-10 w-1.5 bg-teal-400 rounded shadow-[0_0_8px_rgba(45,212,191,0.6)]"></div> <!-- Long (Left) -->
+                        </div>
+                        <div class="w-2"></div> <!-- Gap -->
+                        <div class="flex flex-col items-center">
+                            <span class="text-[8px] text-teal-700 font-bold mb-0.5">-</span>
+                            <div class="h-5 w-1.5 bg-teal-600 rounded"></div> <!-- Short (Right) -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- R_1b (4 Ohm) -->
+                <div class="absolute top-[15%] left-[80%] -translate-x-1/2 -translate-y-1/2 component w-16 h-12">
+                    <div class="text-[10px] text-slate-400">R=4Ω</div>
+                    <div class="w-10 h-4 bg-slate-700 border border-slate-500 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-white/5 -skew-x-12"></div>
+                    </div>
+                </div>
+
+
+                <!-- ====== MIDDLE BRANCH (Row 2) ====== -->
+                <!-- Reordered: R2 -> Meter -> Emid -->
+                <div class="absolute top-[50%] left-10 right-10 h-2 bg-slate-600 wire-h" id="wire-mid">
+                    <div class="current-path" id="anim-mid"></div>
+                </div>
+
+                <!-- R_2 (6 Ohm) - Left 25% -->
+                <div class="absolute top-[50%] left-[25%] -translate-x-1/2 -translate-y-1/2 component w-16 h-12">
+                    <div class="text-[10px] text-slate-400">R=6Ω</div>
+                    <div class="w-10 h-4 bg-slate-700 border border-slate-500 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-white/5 -skew-x-12"></div>
+                    </div>
+                </div>
+
+                <!-- Meter - Moved to Center (50%) -->
+                <div id="comp-meter" class="absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 component w-16 h-16 rounded-full border-4 border-yellow-500 bg-slate-800 text-yellow-400 text-2xl font-bold z-20 shadow-[0_0_15px_rgba(234,179,8,0.3)]">
+                    A
+                </div>
+
+                <!-- Optional Source E_mid - Moved to Right (75%) -->
+                <div id="comp-emid" class="absolute top-[50%] left-[75%] -translate-x-1/2 -translate-y-1/2 component w-24 h-16 border-purple-500/30 bg-purple-900/10 transition-all duration-300 opacity-0 scale-75" dir="ltr">
+                    <span class="text-[10px] text-purple-300 absolute -top-4 font-bold" id="lbl-emid">15V</span>
+                    <div class="flex items-center gap-1">
+                        <div class="flex flex-col items-center">
+                            <span class="text-[8px] text-purple-500 font-bold mb-0.5">+</span>
+                            <div class="h-10 w-1.5 bg-purple-400 rounded shadow-[0_0_8px_rgba(168,85,247,0.6)]"></div> <!-- Long (Left) -->
+                        </div>
+                        <div class="w-2"></div>
+                        <div class="flex flex-col items-center">
+                            <span class="text-[8px] text-purple-700 font-bold mb-0.5">-</span>
+                            <div class="h-5 w-1.5 bg-purple-600 rounded"></div> <!-- Short (Right) -->
+                        </div>
+                    </div>
+                </div>
+
+
+                <!-- ====== BOTTOM BRANCH (Row 3) ====== -->
+                <div class="absolute top-[85%] left-10 right-10 h-2 bg-slate-600 wire-h">
+                    <div class="current-path" id="anim-bot"></div>
+                </div>
+
+                <!-- R_3a (1 Ohm) -->
+                <div class="absolute top-[85%] left-[20%] -translate-x-1/2 -translate-y-1/2 component w-16 h-12">
+                    <div class="text-[10px] text-slate-400">R=1Ω</div>
+                    <div class="w-10 h-4 bg-slate-700 border border-slate-500 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-white/5 -skew-x-12"></div>
+                    </div>
+                </div>
+
+                <!-- Source E3 (Fixed Polarity: Long on Left) -->
+                <div class="absolute top-[85%] left-[50%] -translate-x-1/2 -translate-y-1/2 component w-24 h-16 border-red-500/30 bg-red-900/10" dir="ltr">
+                    <span class="text-[10px] text-red-300 absolute -top-4 font-bold" id="lbl-e3">18V</span>
+                    <div class="flex items-center gap-1">
+                        <div class="flex flex-col items-center">
+                            <span class="text-[8px] text-red-500 font-bold mb-0.5">+</span>
+                            <div class="h-10 w-1.5 bg-red-400 rounded shadow-[0_0_8px_rgba(248,113,113,0.6)]"></div> <!-- Long (Left) -->
+                        </div>
+                        <div class="w-2"></div>
+                        <div class="flex flex-col items-center">
+                            <span class="text-[8px] text-red-700 font-bold mb-0.5">-</span>
+                            <div class="h-5 w-1.5 bg-red-600 rounded"></div> <!-- Short (Right) -->
+                        </div>
+                    </div>
+                </div>
+
+                <!-- R_3b (1 Ohm) -->
+                <div class="absolute top-[85%] left-[80%] -translate-x-1/2 -translate-y-1/2 component w-16 h-12">
+                    <div class="text-[10px] text-slate-400">R=1Ω</div>
+                    <div class="w-10 h-4 bg-slate-700 border border-slate-500 relative overflow-hidden">
+                        <div class="absolute inset-0 bg-white/5 -skew-x-12"></div>
+                    </div>
+                </div>
+
+                <!-- Dynamic Labels (Currents) -->
+                <div class="absolute top-[8%] left-[35%] -translate-x-1/2 text-xs font-mono text-teal-200 bg-slate-900/80 px-1 rounded border border-teal-900/50" id="val-i1">I = --</div>
+                <div class="absolute top-[43%] left-[35%] -translate-x-1/2 text-xs font-mono text-yellow-200 bg-slate-900/80 px-1 rounded border border-yellow-900/50" id="val-i2">I = --</div>
+                <div class="absolute top-[92%] left-[35%] -translate-x-1/2 text-xs font-mono text-red-200 bg-slate-900/80 px-1 rounded border border-red-900/50" id="val-i3">I = --</div>
+
+            </div>
+        </main>
+    </div>
+
+    <!-- Animation Logic Script -->
+    <script>
+        // --- Constants & State ---
+        const R1_total = 2 + 4; // 6 Ohm
+        const R2 = 6;           // 6 Ohm
+        const R3_total = 1 + 1; // 2 Ohm
+
+        // --- Main Simulation Loop ---
+        function updateSim() {
+            // 1. Get Inputs
+            const E1 = parseFloat(document.getElementById('inp-e1').value);
+            const E3 = parseFloat(document.getElementById('inp-e3').value);
+            const Emid_val = parseFloat(document.getElementById('inp-emid').value);
+            
+            const hasBattery = document.getElementById('chk-battery').checked;
+            const useVoltmeter = document.getElementById('chk-voltmeter').checked;
+
+            const Emid = hasBattery ? Emid_val : 0;
+
+            // 2. Update UI Controls (Labels)
+            document.getElementById('disp-e1').textContent = E1.toFixed(1) + 'V';
+            document.getElementById('lbl-e1').textContent = E1.toFixed(1) + 'V';
+            
+            document.getElementById('disp-e3').textContent = E3.toFixed(1) + 'V';
+            document.getElementById('lbl-e3').textContent = E3.toFixed(1) + 'V';
+
+            document.getElementById('disp-emid').textContent = Emid_val.toFixed(1) + 'V';
+            document.getElementById('lbl-emid').textContent = Emid_val.toFixed(1) + 'V';
+
+            // Toggle Control State
+            const ctrlEmid = document.getElementById('ctrl-emid');
+            const compEmid = document.getElementById('comp-emid');
+            if (hasBattery) {
+                ctrlEmid.classList.remove('opacity-50', 'grayscale', 'pointer-events-none');
+                compEmid.classList.remove('opacity-0', 'scale-75');
+                compEmid.classList.add('opacity-100', 'scale-100');
+            } else {
+                ctrlEmid.classList.add('opacity-50', 'grayscale', 'pointer-events-none');
+                compEmid.classList.remove('opacity-100', 'scale-100');
+                compEmid.classList.add('opacity-0', 'scale-75');
+            }
+
+            // Meter Visuals
+            const compMeter = document.getElementById('comp-meter');
+            const wireMid = document.getElementById('wire-mid');
+            if (useVoltmeter) {
+                compMeter.textContent = 'V';
+                compMeter.className = "absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 component w-16 h-16 rounded-full border-4 border-teal-500 bg-slate-800 text-teal-400 text-2xl font-bold z-20 shadow-[0_0_15px_rgba(45,212,191,0.3)]";
+                document.getElementById('lbl-meter-res').textContent = "קריאת וולטמטר";
+                document.getElementById('res-meter').classList.remove('text-yellow-400');
+                document.getElementById('res-meter').classList.add('text-teal-400');
+                wireMid.style.opacity = "0.3";
+            } else {
+                compMeter.textContent = 'A';
+                compMeter.className = "absolute top-[50%] left-[50%] -translate-x-1/2 -translate-y-1/2 component w-16 h-16 rounded-full border-4 border-yellow-500 bg-slate-800 text-yellow-400 text-2xl font-bold z-20 shadow-[0_0_15px_rgba(234,179,8,0.3)]";
+                document.getElementById('lbl-meter-res').textContent = "זרם במכשיר";
+                document.getElementById('res-meter').classList.remove('text-teal-400');
+                document.getElementById('res-meter').classList.add('text-yellow-400');
+                wireMid.style.opacity = "1";
+            }
+
+
+            // 3. Physics Solver (Milman's Theorem)
+            // G (Conductance) = 1/R
+            const G1 = 1 / R1_total;
+            const G3 = 1 / R3_total;
+            const G2 = useVoltmeter ? 0 : 1 / R2;
+
+            // Milman Voltage Vmn
+            // All Sources (E1, E3, Emid) have Positive Terminal on LEFT (facing M).
+            // Therefore, they all contribute positively to the potential at M relative to N in the Milman summation?
+            // Formula: V_MN = (Sigma E*G) / (Sigma G)
+            // This formula assumes E represents the potential rise towards M.
+            // Since (+) is on Left (M side), E is positive.
+            const I_src1 = E1 * G1;
+            const I_src3 = E3 * G3;
+            const I_src2 = Emid * G2;
+
+            const sum_G = G1 + G2 + G3;
+            const sum_I_src = I_src1 + I_src2 + I_src3;
+
+            let Vmn = 0;
+            if (sum_G > 0) {
+                Vmn = sum_I_src / sum_G;
+            } else {
+                Vmn = 0;
+            }
+
+            // 4. Calculate Branch Currents
+            // I = (Vmn - E) / R ?
+            // Let's check direction.
+            // Equation: V_M - V_N = V_branch.
+            // Path M -> N: Drop E (since + is Left), Drop I*R.
+            // Vmn - E - I*R = 0  =>  I = (Vmn - E) / R.
+            // If Result > 0, current flows M -> N (Left to Right).
+            // If Result < 0, current flows N -> M (Right to Left).
+            
+            let I1 = (Vmn - E1) / R1_total;
+            let I3 = (Vmn - E3) / R3_total;
+            let I2 = 0;
+            let meterReading = 0;
+
+            if (useVoltmeter) {
+                // Meter Reading (Gap Voltage)
+                // V_gap = V_M - (Drop on R2 + Drop on Emid) relative to N.
+                // Since I=0, Drop on R2 = 0.
+                // Path M -> Gap -> Battery -> N
+                // V_M - V_Gap_Reading - E = V_N  => V_Gap_Reading = V_MN - E.
+                meterReading = Vmn - Emid;
+            } else {
+                I2 = (Vmn - Emid) / R2;
+                meterReading = I2;
+            }
+
+            // 5. Update Results & Animations
+            document.getElementById('res-vmn').textContent = Vmn.toFixed(2) + 'V';
+            
+            if (useVoltmeter) {
+                document.getElementById('res-meter').textContent = meterReading.toFixed(2) + 'V';
+            } else {
+                document.getElementById('res-meter').textContent = Math.abs(meterReading).toFixed(2) + 'A';
+            }
+
+            // Update Labels on Schematic
+            document.getElementById('val-i1').textContent = Math.abs(I1).toFixed(2) + 'A ' + (I1 > 0 ? '→' : '←');
+            document.getElementById('val-i2').textContent = useVoltmeter ? 'I=0A' : Math.abs(I2).toFixed(2) + 'A ' + (I2 > 0 ? '→' : '←');
+            document.getElementById('val-i3').textContent = Math.abs(I3).toFixed(2) + 'A ' + (I3 > 0 ? '→' : '←');
+
+            // Animate Current (Arrows)
+            // Logic Change: Current flows High -> Low.
+            // My formula I = (Vmn - E) / R yields positive for M->N flow.
+            // M is Left, N is Right.
+            // So if I > 0, flow is Left->Right (Rightwards).
+            // Previous 'electron' logic: I>0 -> flow Left.
+            // New 'current' logic: I>0 -> flow Right.
+            animateCurrent('anim-top', I1);
+            animateCurrent('anim-mid', I2);
+            animateCurrent('anim-bot', I3);
+        }
+
+        function animateCurrent(elementId, current) {
+            const container = document.getElementById(elementId);
+            container.innerHTML = '';
+            
+            if (Math.abs(current) < 0.01) return;
+
+            // Direction Logic:
+            // If I > 0 (Left to Right), direction is 'right'.
+            // If I < 0 (Right to Left), direction is 'left'.
+            const direction = current > 0 ? 'right' : 'left';
+            const speed = Math.max(0.5, 3 / Math.abs(current)); 
+
+            for(let i=0; i<6; i++) {
+                const el = document.createElement('div');
+                el.className = 'current-arrow';
+                // Adjust arrow rotation based on direction
+                if (direction === 'left') {
+                    el.style.transform = 'translateY(-50%) rotate(180deg)';
+                    el.style.borderLeftColor = '#fbbf24'; // Amber for reverse? Or keep uniform color. Let's keep Blue.
+                    el.style.borderLeftColor = '#38bdf8'; 
+                } else {
+                    el.style.transform = 'translateY(-50%) rotate(0deg)';
+                }
+                
+                el.style.left = (i * 20) + '%';
+                el.style.opacity = '1';
+                
+                // Animation Keyframes
+                // Flow Right: 0% -> 100%
+                // Flow Left: 100% -> 0%
+                let start = direction === 'right' ? '-20%' : '120%';
+                let end = direction === 'right' ? '120%' : '-20%';
+                
+                // Visual smooth loop
+                el.animate([
+                    { left: (i * 20) + '%' }, 
+                    { left: ((i * 20) + (direction === 'right' ? 20 : -20)) + '%' } 
+                ], {
+                    duration: speed * 500, // Faster cycle for arrows
+                    iterations: Infinity
+                });
+                
+                container.appendChild(el);
+            }
+        }
+
+        // Initialize
+        updateSim();
+    </script>
+</body>
+</html>

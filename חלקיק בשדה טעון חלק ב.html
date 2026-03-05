@@ -1,0 +1,427 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דף עבודה: כוח לורנץ</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap');
+        
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        .axis-label {
+            font-weight: bold;
+            font-size: 14px;
+            font-family: sans-serif;
+        }
+        
+        select {
+            appearance: none;
+            background-image: url("data:image/svg+xml;charset=UTF-8,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='currentColor' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3e%3cpolyline points='6 9 12 15 18 9'%3e%3c/polyline%3e%3c/svg%3e");
+            background-repeat: no-repeat;
+            background-position: left 0.5rem center;
+            background-size: 1em;
+        }
+
+        /* Focus animation for required fields */
+        @keyframes shake {
+            0%, 100% { transform: translateX(0); }
+            10%, 30%, 50%, 70%, 90% { transform: translateX(-4px); }
+            20%, 40%, 60%, 80% { transform: translateX(4px); }
+        }
+        .shake {
+            animation: shake 0.4s cubic-bezier(.36,.07,.19,.97) both;
+        }
+
+        @media print {
+            .no-print { display: none !important; }
+            body { background-color: white; font-size: 12px; }
+            .shadow-lg { box-shadow: none !important; }
+            .border { border: 1px solid #ddd !important; }
+            
+            /* Compact layout for print */
+            #worksheet-content { max-width: 100% !important; margin: 0 !important; }
+            .space-y-8 > :not([hidden]) ~ :not([hidden]) { margin-top: 1rem !important; }
+            
+            h1 { font-size: 1.5rem !important; margin-bottom: 0.5rem !important; }
+            h3 { font-size: 1.1rem !important; }
+            
+            /* Resize SVGs for print */
+            svg { width: 100px; height: 100px; }
+            .pt-8 { padding-top: 1rem !important; }
+
+            /* Input container styling for print */
+            .input-container { 
+                background-color: white !important; 
+                border: none !important; 
+                padding: 0 !important; 
+                margin-bottom: 1rem !important; 
+            }
+            input { 
+                border: none !important; 
+                border-bottom: 1px solid #000 !important; 
+                width: auto !important; 
+                background: transparent !important; 
+                font-size: 12px;
+            }
+            .input-title, #error-msg { display: none !important; }
+            
+            /* Ensure exercises don't break across pages */
+            section { page-break-inside: avoid; padding: 1rem !important; margin-bottom: 1rem !important; }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 text-slate-800">
+
+    <div class="max-w-4xl mx-auto space-y-8" id="worksheet-content">
+        
+        <header class="mb-8 border-b pb-6 text-center">
+            <h1 class="text-3xl font-bold text-slate-900 mb-6">דף עבודה: כוח לורנץ ומגנטיות</h1>
+            
+            <!-- Student Details Section -->
+            <div class="input-container max-w-2xl mx-auto bg-blue-50 border-2 border-blue-200 rounded-xl p-6 shadow-sm mb-6 transition-colors duration-300">
+                <h2 class="input-title text-lg font-bold text-blue-800 mb-4 flex items-center justify-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                    </svg>
+                    פרטי תלמיד/ה (חובה למלא)
+                </h2>
+                
+                <div class="flex flex-col sm:flex-row gap-6 justify-center items-center">
+                    <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                        <label for="student-name" class="font-bold text-slate-700 whitespace-nowrap text-lg">שם מלא:</label>
+                        <input type="text" id="student-name" class="w-full sm:w-64 border-2 border-slate-300 rounded-lg px-3 py-2 text-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white" placeholder="יש להקליד שם כאן...">
+                    </div>
+                    
+                    <div class="flex flex-col sm:flex-row items-center gap-2 w-full sm:w-auto">
+                        <label for="student-class" class="font-bold text-slate-700 whitespace-nowrap text-lg">כיתה:</label>
+                        <input type="text" id="student-class" class="w-full sm:w-32 border-2 border-slate-300 rounded-lg px-3 py-2 text-lg focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all bg-white" placeholder="...">
+                    </div>
+                </div>
+                <p id="error-msg" class="text-red-600 font-bold mt-3 hidden text-sm">⚠️ יש למלא את השדות המסומנים לפני ההדפסה</p>
+            </div>
+
+            <p class="text-slate-600">השלימו את כיווני השדה, המהירות או הכוח בטבלאות למטה.</p>
+        </header>
+
+        <!-- Exercise 1 (formerly 2) -->
+        <section class="bg-white rounded-xl shadow-lg p-6 border border-slate-200 print:shadow-none print:border-gray-300">
+            <div class="flex flex-col md:flex-row gap-8 items-start">
+                
+                <!-- Diagram Ex 1 -->
+                <div class="w-full md:w-1/3 flex justify-center items-center pt-8">
+                    <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+                            </marker>
+                        </defs>
+                        
+                        <!-- Y Axis -->
+                        <line x1="100" y1="100" x2="180" y2="100" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+                        <text x="185" y="95" class="axis-label">y</text>
+                        
+                        <!-- Z Axis -->
+                        <line x1="100" y1="100" x2="100" y2="20" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+                        <text x="90" y="15" class="axis-label">z</text>
+                        
+                        <!-- X Axis (Diagonal) -->
+                        <line x1="100" y1="100" x2="40" y2="160" stroke="#333" stroke-width="2" marker-end="url(#arrowhead)" />
+                        <text x="30" y="175" class="axis-label">x</text>
+
+                    </svg>
+                </div>
+
+                <!-- Content Ex 1 -->
+                <div class="w-full md:w-2/3">
+                    <h3 class="text-xl font-bold mb-2">תרגיל 1</h3>
+                    <p class="mb-4 text-sm text-slate-600">
+                        בטבלה מתוארים כיוון מהירותו של <strong>פרוטון</strong> וכיוון הכוח המגנטי הפועל עליו. יש להוסיף את כיוונו של ווקטור השדה המגנטי.
+                    </p>
+
+                    <table class="w-full text-center border-collapse mb-6">
+                        <thead>
+                            <tr class="bg-slate-100 border-b-2 border-slate-300 print:bg-gray-100">
+                                <th class="p-2 border-l border-slate-200">כיוון השדה המגנטי B</th>
+                                <th class="p-2 border-l border-slate-200">כיוון המהירות v</th>
+                                <th class="p-2">כיוון הכוח המגנטי F</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-ex2">
+                            <!-- Rows generated by JS -->
+                        </tbody>
+                    </table>
+
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 print:bg-white print:border-gray-300">
+                        <p class="font-medium text-sm mb-2">כיצד היו משתנות התשובות אם במקום פרוטון היה נע אלקטרון?</p>
+                        <select id="q2-conceptual" class="w-full p-2 border border-slate-300 rounded bg-white text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="">בחר תשובה...</option>
+                            <option value="same">התשובות היו נשארות זהות</option>
+                            <option value="opposite">כל הכיוונים היו מתהפכים (מנוגדים)</option>
+                            <option value="perpendicular">הכיוונים היו מאונכים</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Exercise 2 (formerly 3) -->
+        <section class="bg-white rounded-xl shadow-lg p-6 border border-slate-200 print:shadow-none print:border-gray-300">
+            <div class="flex flex-col md:flex-row gap-8 items-start">
+                
+                <!-- Diagram Ex 2 -->
+                <div class="w-full md:w-1/3 flex justify-center items-center pt-8">
+                     <svg width="200" height="200" viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+                        <defs>
+                            <marker id="arrowhead2" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="#333" />
+                            </marker>
+                        </defs>
+                        
+                        <!-- Y Axis -->
+                        <line x1="100" y1="100" x2="180" y2="100" stroke="#333" stroke-width="2" marker-end="url(#arrowhead2)" />
+                        <text x="185" y="95" class="axis-label">y</text>
+                        
+                        <!-- Z Axis -->
+                        <line x1="100" y1="100" x2="100" y2="20" stroke="#333" stroke-width="2" marker-end="url(#arrowhead2)" />
+                        <text x="90" y="15" class="axis-label">z</text>
+                        
+                        <!-- X Axis (Diagonal) -->
+                        <line x1="100" y1="100" x2="40" y2="160" stroke="#333" stroke-width="2" marker-end="url(#arrowhead2)" />
+                        <text x="30" y="175" class="axis-label">x</text>
+
+                    </svg>
+                </div>
+
+                <!-- Content Ex 2 -->
+                <div class="w-full md:w-2/3">
+                    <h3 class="text-xl font-bold mb-2">תרגיל 2</h3>
+                    <p class="mb-4 text-sm text-slate-600">
+                        בטבלה מתוארים כיוון השדה המגנטי וכיוון הכוח המגנטי הפועל על <strong>אלקטרון</strong> הנע בשדה זה. יש להוסיף את כיוונו של ווקטור המהירות של האלקטרון.
+                    </p>
+
+                    <table class="w-full text-center border-collapse mb-6">
+                        <thead>
+                            <tr class="bg-slate-100 border-b-2 border-slate-300 print:bg-gray-100">
+                                <th class="p-2 border-l border-slate-200">כיוון השדה המגנטי B</th>
+                                <th class="p-2 border-l border-slate-200">כיוון המהירות v</th>
+                                <th class="p-2">כיוון הכוח המגנטי F</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table-ex3">
+                            <!-- Rows generated by JS -->
+                        </tbody>
+                    </table>
+
+                    <div class="bg-blue-50 p-4 rounded-lg border border-blue-100 print:bg-white print:border-gray-300">
+                        <p class="font-medium text-sm mb-2">כיצד היו משתנות התשובות אם במקום אלקטרון היה נע פרוטון?</p>
+                        <select id="q3-conceptual" class="w-full p-2 border border-slate-300 rounded bg-white text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="">בחר תשובה...</option>
+                            <option value="same">התשובות היו נשארות זהות</option>
+                            <option value="opposite">כל הכיוונים היו מתהפכים (מנוגדים)</option>
+                            <option value="perpendicular">הכיוונים היו מאונכים</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </div>
+
+    <!-- Action Buttons -->
+    <div class="fixed bottom-6 left-6 flex gap-4 no-print">
+        <button onclick="printPDF()" class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-6 rounded-full shadow-lg transition flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+            שמירה כ-PDF / הדפסה
+        </button>
+    </div>
+
+    <script>
+        const options = [
+            {val: "", text: "-"},
+            {val: "+x", text: "+x"},
+            {val: "-x", text: "-x"},
+            {val: "+y", text: "+y"},
+            {val: "-y", text: "-y"},
+            {val: "+z", text: "+z"},
+            {val: "-z", text: "-z"}
+        ];
+
+        // Exercise 2 Data (Proton)
+        const ex2Rows = [
+            { v: "+x", f: "+y" },
+            { v: "+z", f: "+y" },
+            { v: "-y", f: "+x" },
+            { v: "-x", f: "-y" }
+        ];
+
+        // Exercise 3 Data (Electron)
+        const ex3Rows = [
+            { b: "+x", f: "+y" },
+            { b: "+z", f: "+y" },
+            { b: "-y", f: "+x" },
+            { b: "-x", f: "-y" }
+        ];
+
+        function createSelect(id) {
+            let html = `<select id="${id}" class="w-24 p-1 border border-slate-300 rounded text-center ltr bg-white cursor-pointer focus:ring-2 focus:ring-blue-500">`;
+            options.forEach(opt => {
+                html += `<option value="${opt.val}">${opt.text}</option>`;
+            });
+            html += `</select>`;
+            return html;
+        }
+
+        function renderTables() {
+            // Render Ex 2
+            const t2 = document.getElementById('table-ex2');
+            let html2 = '';
+            ex2Rows.forEach((row, i) => {
+                html2 += `<tr class="border-b border-slate-100 hover:bg-slate-50 transition print:bg-white">`;
+                html2 += `<td class="p-3 border-l border-slate-200">${createSelect(`ex2-row${i}`)}</td>`;
+                html2 += `<td class="p-3 border-l border-slate-200" dir="ltr">${row.v}</td>`;
+                html2 += `<td class="p-3" dir="ltr">${row.f}</td>`;
+                html2 += `</tr>`;
+            });
+            t2.innerHTML = html2;
+
+            // Render Ex 3
+            const t3 = document.getElementById('table-ex3');
+            let html3 = '';
+            ex3Rows.forEach((row, i) => {
+                html3 += `<tr class="border-b border-slate-100 hover:bg-slate-50 transition print:bg-white">`;
+                html3 += `<td class="p-3 border-l border-slate-200" dir="ltr">${row.b}</td>`;
+                html3 += `<td class="p-3 border-l border-slate-200">${createSelect(`ex3-row${i}`)}</td>`;
+                html3 += `<td class="p-3" dir="ltr">${row.f}</td>`;
+                html3 += `</tr>`;
+            });
+            t3.innerHTML = html3;
+        }
+
+        function printPDF() {
+            // Check mandatory fields
+            const nameField = document.getElementById('student-name');
+            const classField = document.getElementById('student-class');
+            const errorMsg = document.getElementById('error-msg');
+            
+            let isValid = true;
+            
+            // Reset styles
+            nameField.classList.remove('border-red-500', 'bg-red-50');
+            classField.classList.remove('border-red-500', 'bg-red-50');
+            errorMsg.classList.add('hidden');
+
+            if (!nameField.value.trim()) {
+                nameField.classList.add('border-red-500', 'bg-red-50', 'shake');
+                isValid = false;
+                setTimeout(() => nameField.classList.remove('shake'), 500);
+            }
+
+            if (!classField.value.trim()) {
+                classField.classList.add('border-red-500', 'bg-red-50', 'shake');
+                isValid = false;
+                setTimeout(() => classField.classList.remove('shake'), 500);
+            }
+
+            if (!isValid) {
+                errorMsg.classList.remove('hidden');
+                return; 
+            }
+
+            const width = 900;
+            const height = 700;
+            const left = (window.screen.width / 2) - (width / 2);
+            const top = (window.screen.height / 2) - (height / 2);
+            
+            const printWindow = window.open('', '_blank', `width=${width},height=${height},top=${top},left=${left}`);
+            
+            if (!printWindow) {
+                alert('נא לאפשר חלונות קופצים (Pop-ups) כדי לבצע הדפסה.');
+                return;
+            }
+
+            const content = document.getElementById('worksheet-content').outerHTML;
+            
+            // Styles injected directly into the popup for PERFECT A4 FIT
+            printWindow.document.write(`
+                <!DOCTYPE html>
+                <html lang="he" dir="rtl">
+                <head>
+                    <title>הדפסה - דף עבודה</title>
+                    <script src="https://cdn.tailwindcss.com"><\/script>
+                    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;700&display=swap" rel="stylesheet">
+                    <style>
+                        body { font-family: 'Heebo', sans-serif; padding: 20px; }
+                        select { appearance: none; border: 1px solid #ccc; padding: 5px; min-width: 60px; text-align: center; }
+                        
+                        @media print {
+                            @page { size: A4 portrait; margin: 1cm; }
+                            body { margin: 0; padding: 0; transform: scale(0.95); transform-origin: top center; width: 100%; }
+                            
+                            /* Compact Spacing for A4 */
+                            h1 { font-size: 1.6rem; margin-bottom: 0.5rem; }
+                            h3 { font-size: 1.2rem; margin-bottom: 0.2rem; }
+                            p { font-size: 0.9rem; margin-bottom: 0.5rem; }
+                            
+                            /* Container adjustments */
+                            section { 
+                                padding: 0.8rem !important; 
+                                margin-bottom: 0.8rem !important; 
+                                border: 1px solid #ccc !important; 
+                                border-radius: 8px !important;
+                                page-break-inside: avoid; 
+                            }
+                            
+                            /* SVG Resizing */
+                            svg { width: 110px; height: 110px; }
+                            .pt-8 { padding-top: 0 !important; }
+                            
+                            /* Flex gap reduction */
+                            .gap-8 { gap: 1rem !important; }
+                            
+                            /* Inputs */
+                            .input-container { margin-bottom: 1rem; border: none !important; padding: 0 !important; background: transparent !important; }
+                            input { border: none; border-bottom: 1px solid #000; background: transparent; }
+                            .input-title, #error-msg { display: none; }
+                            
+                            /* Hide non-print elements */
+                            .no-print { display: none; }
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${content}
+                    <script>
+                        const parentSelects = window.opener.document.querySelectorAll('select');
+                        const mySelects = document.querySelectorAll('select');
+                        for(let i=0; i<parentSelects.length; i++) {
+                            mySelects[i].value = parentSelects[i].value;
+                        }
+
+                        const parentInputs = window.opener.document.querySelectorAll('input');
+                        const myInputs = document.querySelectorAll('input');
+                        for(let i=0; i<parentInputs.length; i++) {
+                            myInputs[i].value = parentInputs[i].value;
+                            myInputs[i].setAttribute('readonly', true);
+                        }
+
+                        setTimeout(() => {
+                            window.print();
+                            window.onafterprint = function() { window.close(); };
+                             setTimeout(() => window.close(), 2000); 
+                        }, 800);
+                    <\/script>
+                </body>
+                </html>
+            `);
+            printWindow.document.close();
+        }
+
+        renderTables();
+    </script>
+</body>
+</html>

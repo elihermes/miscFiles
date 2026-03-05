@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בוחן בקינמטיקה – כיתה י'</title>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+        .math-block {
+            direction: ltr;
+            text-align: left;
+            margin: 1rem 0;
+            padding: 1rem;
+            background: #f8fafc;
+            border-radius: 0.5rem;
+            border-left: 4px solid #3b82f6;
+            overflow-x: auto;
+        }
+        .question-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        .section-title {
+            color: #2563eb;
+            font-weight: bold;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #e5e7eb;
+            padding-bottom: 0.5rem;
+        }
+        .chart-container {
+            position: relative;
+            height: 450px; /* הגדלת גובה הקונטיינר לגרפים */
+            width: 100%;
+            margin: 2rem 0;
+        }
+        .data-box {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-5xl mx-auto">
+
+    <header class="text-center mb-10">
+        <h1 class="text-4xl font-extrabold text-blue-800 mb-2">פתרון בוחן בקינמטיקה</h1>
+        <p class="text-xl text-gray-600">פתרון מלא, שלבי עבודה וגרפים (תאוצת הכובד $g = 10 \text{ m/s}^2$)</p>
+    </header>
+
+    <!-- שאלה 1 -->
+    <div class="question-card">
+        <h2 class="section-title">שאלה 1: תנועת הטיל</h2>
+        
+        <div class="data-box">
+            <h3 class="font-bold mb-2">נתונים:</h3>
+            <ul class="list-disc list-inside">
+                <li>מהירות התחלתית: $v_0 = 0 \text{ m/s}$</li>
+                <li>תאוצת המנוע (שלב א'): $a_1 = 30 \text{ m/s}^2$ (כלפי מעלה)</li>
+                <li>זמן פעולת המנוע: $t_1 = 10 \text{ s}$</li>
+                <li>לאחר 10 שניות, המנוע כבה (תאוצת הכובד: $a_2 = -10 \text{ m/s}^2$)</li>
+            </ul>
+        </div>
+
+        <div class="space-y-6">
+            <div>
+                <h3 class="font-bold text-lg">א. הגדרת "נפילה חופשית" והאם הטיל היה בה:</h3>
+                <p><strong>נפילה חופשית</strong> היא מצב שבו גוף נע תחת השפעת כוח הכובד בלבד, ללא התערבות של כוחות אחרים. <br>
+                <strong>לגבי הטיל:</strong> כן, הטיל היה בנפילה חופשית מהרגע שהמנוע כבה ($t = 10 \text{ s}$) ועד רגע הפגיעה בקרקע.</p>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-lg">ב. תיאור תנועת הטיל:</h3>
+                <ul class="list-decimal list-inside space-y-2">
+                    <li><strong>0 עד 10 שניות:</strong> תנועה שוות תאוצה כלפי מעלה.</li>
+                    <li><strong>10 שניות עד שיא הגובה:</strong> תנועה שוות תאוצה (תאוצה שלילית). הטיל עולה ומהירותו קטנה.</li>
+                    <li><strong>משיא הגובה ועד הקרקע:</strong> תנועה שוות תאוצה כלפי מטה (מהירות גדלה בערכה המוחלט).</li>
+                </ul>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-lg">ג. גובה התקלה ומהירות הטיל:</h3>
+                <div class="math-block">
+                    $v_{10} = 0 + 30 \cdot 10 = 300 \text{ m/s}$<br><br>
+                    $y_{10} = 0 + 0 + \frac{1}{2} \cdot 30 \cdot 10^2 = 1500 \text{ m}$
+                </div>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-lg">ד. הגובה המרבי:</h3>
+                <div class="math-block">
+                    $v^2 = v_0^2 + 2a(y - y_0) \implies 0^2 = 300^2 + 2(-10)(y_{max} - 1500)$ <br>
+                    $20(y_{max} - 1500) = 90000 \implies y_{max} = 6000 \text{ m}$
+                </div>
+            </div>
+
+            <div>
+                <h3 class="font-bold text-lg">ה. זמן כולל עד פגיעה בקרקע:</h3>
+                <div class="math-block">
+                    $0 = 1500 + 300t - 5t^2 \implies t^2 - 60t - 300 = 0$ <br>
+                    $t \approx 64.64 \text{ s}$ (ממרגע התקלה). סה"כ: $74.64 \text{ s}$.
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div class="chart-container"><canvas id="q1VelocityChart"></canvas></div>
+                <div class="chart-container"><canvas id="q1PositionChart"></canvas></div>
+            </div>
+        </div>
+    </div>
+
+    <!-- שאלה 2 -->
+    <div class="question-card">
+        <h2 class="section-title">שאלה 2: תנועת המעלית</h2>
+        <div class="space-y-6">
+            <div>
+                <h3 class="font-bold text-lg">א. תיאור תנועת המעלית:</h3>
+                <p>0-8 שניות: עליה (מהירות חיובית). 8-14 שניות: ירידה (מהירות שלילית).</p>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg">ב. חישוב תאוצות:</h3>
+                <div class="math-block">
+                    $a_A = 1, \quad a_B = 0, \quad a_C = -1.5, \quad a_D = 0, \quad a_E = 0.75 \text{ [m/s}^2]$
+                </div>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg">ג-ד. גבהים:</h3>
+                <p>גובה מקסימלי (ב-$t=8$): 16.5 מטר. גובה סופי: 9.75 מטר.</p>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg">ה. מהירות ממוצעת:</h3>
+                <div class="math-block">$\bar{v} = \frac{9.75}{14} \approx 0.7 \text{ m/s}$</div>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg">ו. קריעת כבל:</h3>
+                <div class="math-block">$0 = 9.75 - 5t^2 \implies t \approx 1.4 \text{ s}$</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- שאלה 3 -->
+    <div class="question-card">
+        <h2 class="section-title">שאלה 3: שני כדורים</h2>
+        <div class="space-y-6">
+            <div>
+                <h3 class="font-bold text-lg">1. משוואות מקום:</h3>
+                <div class="math-block">
+                    $y_A(t) = 60 + 25t - 5t^2$ <br>
+                    $y_B(t) = -150 + 70t - 5t^2$ (עבור $t \ge 3$)
+                </div>
+            </div>
+            <div class="chart-container" style="height: 300px;"><canvas id="q3VelocityChart"></canvas></div>
+            <div>
+                <h3 class="font-bold text-lg">3-4. מפגש:</h3>
+                <div class="math-block">
+                    $y_A = y_B \implies 210 = 45t \implies t = 4.67 \text{ s}$ <br>
+                    $y_{match} = 67.78 \text{ m}$
+                </div>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg">5. מהירויות במפגש:</h3>
+                <div class="math-block">
+                    $v_A(t) = 25 - 10t \implies v_A(4.67) = -21.67 \text{ m/s}$ <br>
+                    $v_B(t) = 40 - 10(t-3) = 70 - 10t \implies v_B(4.67) = 23.33 \text{ m/s}$
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- שאלה 4 -->
+    <div class="question-card">
+        <h2 class="section-title">שאלה 4: רכב ואוטובוס</h2>
+        <div class="space-y-6">
+            <div>
+                <h3 class="font-bold text-lg">1. משוואות מקום:</h3>
+                <div class="math-block">
+                    $x_B(t) = 100 + 25t$ <br>
+                    $x_C(t \le 5) = 20t + t^2$ <br>
+                    $x_C(t > 5) = 125 + 30(t - 5)$
+                </div>
+            </div>
+            <div class="chart-container" style="height: 300px;"><canvas id="q4VelocityChart"></canvas></div>
+            <div>
+                <h3 class="font-bold text-lg">3. זמן השגת האוטובוס:</h3>
+                <p>נבדוק תחילה את מיקומי הרכבים בתום שלב ההאצה של הרכב ($t=5 \text{ s}$):</p>
+                <div class="math-block">
+                    <strong>בזמן $t=5$ שניות:</strong><br>
+                    מיקום האוטובוס: $x_B(5) = 100 + 25 \cdot 5 = 225 \text{ m}$ <br>
+                    מיקום הרכב: $x_C(5) = 20 \cdot 5 + 5^2 = 125 \text{ m}$ <br>
+                    <strong>מסקנה:</strong> מאחר ו-$x_C(5) < x_B(5)$, הרכב טרם השיג את האוטובוס ב-5 השניות הראשונות. המפגש יתרחש בשלב המהירות הקבועה של הרכב.
+                </div>
+                <p>כעת נשווה את המיקומים עבור $t > 5$:</p>
+                <div class="math-block">
+                    $x_C(t) = x_B(t) \implies 125 + 30(t - 5) = 100 + 25t$ <br>
+                    $125 + 30t - 150 = 100 + 25t \implies 5t = 125 \implies t = 25 \text{ s}$
+                </div>
+                <p>הרכב ישיג את האוטובוס לאחר <strong>25 שניות</strong>.</p>
+            </div>
+            <div>
+                <h3 class="font-bold text-lg">4. מרחק סופי:</h3>
+                <div class="math-block">$x_C(25) = 125 + 30(20) = 725 \text{ m}$</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        Chart.defaults.font.family = "'Segoe UI', sans-serif";
+        // Q1 Charts - Updated scaling and height
+        const ctx1V = document.getElementById('q1VelocityChart').getContext('2d');
+        new Chart(ctx1V, { 
+            type: 'line', 
+            data: { 
+                datasets: [{ 
+                    label: 'מהירות (m/s)', 
+                    data: [{x: 0, y: 0}, {x: 10, y: 300}, {x: 40, y: 0}, {x: 74.64, y: -346.4}], 
+                    borderColor: '#2563eb', 
+                    showLine: true,
+                    pointRadius: 5
+                }] 
+            }, 
+            options: { 
+                maintainAspectRatio: false,
+                scales: { 
+                    x: { type: 'linear', title: { display: true, text: 'זמן (s)' }, grid: { color: '#e5e7eb' } },
+                    y: { 
+                        min: -400, 
+                        max: 400, 
+                        title: { display: true, text: 'מהירות (m/s)' },
+                        grid: { 
+                            lineWidth: (context) => (context.tick.value === 0 ? 3 : 1),
+                            color: (context) => (context.tick.value === 0 ? '#000' : '#e5e7eb')
+                        }
+                    }
+                } 
+            } 
+        });
+        
+        let q1PosData = [];
+        for(let t=0; t<=75; t+=2) { // Increased resolution
+            if(t <= 10) q1PosData.push({x: t, y: 15 * t * t});
+            else q1PosData.push({x: t, y: 1500 + 300*(t-10) - 5*(t-10)**2});
+        }
+        const ctx1P = document.getElementById('q1PositionChart').getContext('2d');
+        new Chart(ctx1P, { 
+            type: 'line', 
+            data: { 
+                datasets: [{ 
+                    label: 'מקום (m)', 
+                    data: q1PosData, 
+                    borderColor: '#10b981',
+                    pointRadius: 0,
+                    borderWidth: 3
+                }] 
+            }, 
+            options: { 
+                maintainAspectRatio: false,
+                scales: { 
+                    x: { type: 'linear', title: { display: true, text: 'זמן (s)' } },
+                    y: { 
+                        min: 0, 
+                        max: 6500, 
+                        title: { display: true, text: 'גובה (m)' } 
+                    }
+                } 
+            } 
+        });
+
+        // Q3 Chart
+        const ctx3V = document.getElementById('q3VelocityChart').getContext('2d');
+        new Chart(ctx3V, { type: 'line', data: { datasets: [{ label: 'כדור A', data: [{x:0, y:25}, {x:5, y:-25}], borderColor: '#3b82f6' }, { label: 'כדור B', data: [{x:3, y:40}, {x:8, y:-10}], borderColor: '#f59e0b' }] }, options: { maintainAspectRatio: false, scales: { x: { type: 'linear' } } } });
+
+        // Q4 Chart
+        const ctx4V = document.getElementById('q4VelocityChart').getContext('2d');
+        new Chart(ctx4V, { type: 'line', data: { datasets: [{ label: 'אוטובוס', data: [{x:0, y:25}, {x:30, y:25}], borderColor: '#8b5cf6', borderDash: [5,5] }, { label: 'רכב', data: [{x:0, y:20}, {x:5, y:30}, {x:30, y:30}], borderColor: '#ef4444' }] }, options: { maintainAspectRatio: false, scales: { x: { type: 'linear' } } } });
+    </script>
+</body>
+</html>

@@ -1,0 +1,453 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דף עבודה - כוח לורנץ (פיזיקאלי)</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for professional LaTeX rendering -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap');
+        
+        body {
+            font-family: 'Assistant', sans-serif;
+            background-color: #f8fafc;
+        }
+
+        /* Print Logic */
+        @media print {
+            .no-print { display: none !important; }
+            .print-only { display: block !important; }
+            body { background: white; -webkit-print-color-adjust: exact; }
+            .card { break-inside: avoid; border: 1px solid #ccc; box-shadow: none; margin-bottom: 1rem; }
+            /* We handle visibility manually in the generation function now to ensure values are captured */
+            #printable-content { padding: 0; }
+        }
+
+        mjx-container { font-size: 110% !important; }
+        .dir-ltr { direction: ltr; text-align: left; }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Control Bar -->
+    <div id="control-bar" class="bg-white border-b border-slate-200 sticky top-0 z-50 shadow-sm no-print">
+        <div class="max-w-6xl mx-auto px-4 py-3 flex flex-col md:flex-row items-center justify-between gap-4">
+            
+            <div class="flex items-center gap-3">
+                <span class="font-bold text-slate-700">בחר חלקיק:</span>
+                <div class="flex bg-slate-100 rounded-lg p-1">
+                    <button onclick="setParticle('a')" id="btn-particle-a" class="px-4 py-1.5 rounded-md text-sm font-bold transition-colors bg-blue-600 text-white shadow">
+                        חלקיק a (+4μC)
+                    </button>
+                    <button onclick="setParticle('b')" id="btn-particle-b" class="px-4 py-1.5 rounded-md text-sm font-bold transition-colors text-slate-600 hover:bg-slate-200">
+                        חלקיק b (-4μC)
+                    </button>
+                </div>
+            </div>
+
+            <button onclick="handlePrint()" class="flex items-center gap-2 bg-blue-600 text-white hover:bg-blue-700 px-4 py-2 rounded-lg transition font-medium shadow-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2-2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                <span>הדפס / שמור כ-PDF</span>
+            </button>
+        </div>
+    </div>
+
+    <!-- Main Content -->
+    <div id="printable-content" class="max-w-6xl mx-auto p-4 md:p-8 transition-all duration-300">
+        
+        <!-- Student Info Inputs (Required) -->
+        <div id="student-inputs-container" class="bg-blue-50 border border-blue-200 p-4 rounded-xl mb-6 flex flex-col md:flex-row gap-4 items-center shadow-sm no-print">
+            <div class="flex-1 w-full">
+                <label class="block text-sm font-bold text-blue-800 mb-1">שם מלא (חובה):</label>
+                <input type="text" id="student-name" placeholder="הכנס את שמך המלא" class="w-full border border-blue-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
+            <div class="flex-1 w-full">
+                <label class="block text-sm font-bold text-blue-800 mb-1">כיתה (חובה):</label>
+                <input type="text" id="student-class" placeholder="לדוגמה: יא-2" class="w-full border border-blue-300 rounded px-3 py-2 text-sm focus:ring-2 focus:ring-blue-500 outline-none">
+            </div>
+        </div>
+
+        <!-- Header -->
+        <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8 text-center print-header card">
+            <h1 class="text-2xl font-bold text-slate-800 mb-3">תרגיל: הכוח המגנטי (כוח לורנץ)</h1>
+            <div class="text-slate-600 max-w-3xl mx-auto leading-relaxed text-lg">
+                <p>
+                    נתונים: שדה מגנטי \( B = 0.5 T \), מהירות החלקיקים \( v = 2 \times 10^6 m/s \).
+                </p>
+                <p class="mt-2">
+                    חלקיק \( a \) (חיובי): \( q = 4 \mu C \) &nbsp;|&nbsp; 
+                    חלקיק \( b \) (שלילי): \( q = -4 \mu C \).
+                </p>
+                <p class="mt-2 text-sm italic">
+                    במקרים עם זווית, \( \alpha = 30^\circ \).
+                </p>
+                <p class="font-bold text-blue-700 block mt-4 border-t pt-3 border-slate-100">
+                    המשימה: חשב את הגודל וקבע את הכיוון של הכוח המגנטי עבור כל מקרה.
+                </p>
+            </div>
+        </div>
+
+        <!-- Grid Container -->
+        <div id="cards-container" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Cards injected by JS -->
+        </div>
+        
+        <div class="mt-8 text-center text-slate-400 text-sm hidden print-only">
+            נוצר עבור פיזיקאלי - לימוד פיזיקה בצורה אינטראקטיבית
+        </div>
+    </div>
+
+    <!-- Hidden Iframe for printing -->
+    <iframe id="print-frame" style="position:absolute; width:0; height:0; border:0; visibility:hidden;"></iframe>
+
+    <script>
+        const CONSTANTS = { q: 4e-6, v: 2e6, B: 0.5 };
+        let currentParticle = 'a';
+        let userAnswers = {}; 
+
+        const cases = [
+            { id: 1, label: 'מקרה א', desc: 'v למעלה, B ימינה', visual: { type: 'horizontal-field', vAngle: 90 }, angleBetween: 90, baseDir: 'in' },
+            { id: 2, label: 'מקרה ב', desc: 'v שמאלה (מנוגד ל-B)', visual: { type: 'horizontal-field', vAngle: 180 }, angleBetween: 180, baseDir: 'none' },
+            { id: 3, label: 'מקרה ג', desc: 'B למעלה, v ב-30° לאופק', visual: { type: 'vertical-field-angle' }, angleBetween: 120, baseDir: 'out' },
+            { id: 4, label: 'מקרה ד', desc: 'v ימינה, B בזווית 30°', visual: { type: 'diagonal-field-horizontal-v' }, angleBetween: 30, baseDir: 'in' },
+            { id: 5, label: 'מקרה ה', desc: 'שדה פנימה, v בזווית 30°', visual: { type: 'field-in-angle' }, angleBetween: 90, baseDir: 'diagonal-up' },
+            { id: 6, label: 'מקרה ו', desc: 'B ימינה, v פנימה', visual: { type: 'horizontal-field-v-in' }, angleBetween: 90, baseDir: 'down' },
+            { id: 7, label: 'מקרה ז', desc: 'שדה החוצה, v בזווית 30°', visual: { type: 'field-out-angle' }, angleBetween: 90, baseDir: 'diagonal-down' },
+            { id: 8, label: 'מקרה ח', desc: 'B שמאלה-למעלה, v החוצה', visual: { type: 'diagonal-field-out-particle' }, angleBetween: 90, baseDir: 'diagonal-down' },
+        ];
+
+        const dirLabels = {
+            'right': 'ימינה (+x)', 'left': 'שמאלה (-x)', 'up': 'למעלה (+y)', 'down': 'למטה (-y)',
+            'out': 'החוצה (אלינו)', 'in': 'פנימה (לדף)', 'none': 'אפס (אין כוח)',
+            'diagonal-up': 'במישור (ניצב ל-v/B)', 'diagonal-down': 'במישור (ניצב ל-v/B)'
+        };
+
+        function setParticle(p) {
+            currentParticle = p;
+            document.getElementById('btn-particle-a').className = p === 'a' ? "px-4 py-1.5 rounded-md text-sm font-bold bg-blue-600 text-white shadow" : "px-4 py-1.5 rounded-md text-sm font-bold text-slate-600 hover:bg-slate-200";
+            document.getElementById('btn-particle-b').className = p === 'b' ? "px-4 py-1.5 rounded-md text-sm font-bold bg-red-600 text-white shadow" : "px-4 py-1.5 rounded-md text-sm font-bold text-slate-600 hover:bg-slate-200";
+            renderCards();
+        }
+
+        function renderCards() {
+            const container = document.getElementById('cards-container');
+            container.innerHTML = '';
+
+            cases.forEach(c => {
+                const card = document.createElement('div');
+                card.className = "card bg-white rounded-xl border border-slate-200 overflow-hidden shadow-sm flex flex-col";
+                const ans = userAnswers[c.id] || {};
+                
+                card.innerHTML = `
+                    <div class="h-44 bg-white border-b border-slate-100 relative flex items-center justify-center">
+                        <span class="absolute top-2 right-2 bg-slate-50 px-2 py-1 text-[10px] font-bold border rounded text-slate-400 z-10">${c.label}</span>
+                        ${generateSVG(c.visual, currentParticle)}
+                    </div>
+                    <div class="p-4 flex-1 flex flex-col gap-3">
+                        <div class="text-xs text-slate-500 font-medium text-center">${c.desc}</div>
+                        <div class="input-area flex flex-col gap-3">
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-500 mb-1 block">גודל הכוח (N):</label>
+                                <input type="number" step="any" oninput="updateAnswer(${c.id}, 'mag', this.value)" 
+                                   class="w-full border border-slate-300 rounded px-2 py-1.5 text-sm dir-ltr focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none" value="${ans.mag || ''}">
+                            </div>
+                            <div>
+                                <label class="text-[11px] font-bold text-slate-500 mb-1 block">כיוון הכוח:</label>
+                                <select onchange="updateAnswer(${c.id}, 'dir', this.value)" class="w-full border border-slate-300 rounded px-2 py-1.5 text-sm bg-white focus:border-blue-500 focus:ring-1 focus:ring-blue-500 outline-none">
+                                    <option value="">בחר כיוון...</option>
+                                    ${Object.entries(dirLabels).map(([val, lbl]) => `<option value="${val}" ${ans.dir === val ? 'selected' : ''}>${lbl}</option>`).join('')}
+                                </select>
+                            </div>
+                        </div>
+                    </div>
+                `;
+                container.appendChild(card);
+            });
+            if (window.MathJax) MathJax.typesetPromise();
+        }
+
+        function updateAnswer(id, field, value) {
+            if (!userAnswers[id]) userAnswers[id] = {};
+            userAnswers[id][field] = value;
+        }
+
+        function handlePrint() {
+            const name = document.getElementById('student-name').value.trim();
+            const cls = document.getElementById('student-class').value.trim();
+
+            if (!name || !cls) {
+                alert('נא למלא שם מלא וכיתה לפני ההדפסה.');
+                return;
+            }
+
+            // Create specific HTML for printing based on current answers
+            let printCardsHtml = '';
+            
+            cases.forEach(c => {
+                const ans = userAnswers[c.id] || {};
+                const magVal = ans.mag ? `<span style="font-weight:bold; color:#1e40af;">${ans.mag}</span>` : `<span style="color:#cbd5e1;">________________</span>`;
+                const dirVal = ans.dir && dirLabels[ans.dir] ? `<span style="font-weight:bold; color:#1e40af;">${dirLabels[ans.dir]}</span>` : `<span style="color:#cbd5e1;">________________</span>`;
+
+                printCardsHtml += `
+                    <div class="card">
+                        <div style="height: 150px; background-color: #f8fafc; border-bottom: 1px solid #e2e8f0; display: flex; align-items: center; justify-content: center; position: relative;">
+                            <span style="position: absolute; top: 5px; right: 5px; font-size: 10px; font-weight: bold; border: 1px solid #cbd5e1; padding: 2px 5px; border-radius: 4px; color: #64748b;">${c.label}</span>
+                            ${generateSVG(c.visual, currentParticle)}
+                        </div>
+                        <div style="padding: 10px;">
+                            <div style="font-size: 12px; color: #64748b; text-align: center; margin-bottom: 10px;">${c.desc}</div>
+                            <div style="font-size: 14px; margin-bottom: 5px;">
+                                <span style="font-weight: bold;">גודל (N):</span> ${magVal}
+                            </div>
+                            <div style="font-size: 14px;">
+                                <span style="font-weight: bold;">כיוון:</span> ${dirVal}
+                            </div>
+                        </div>
+                    </div>
+                `;
+            });
+
+            const headerHtml = `
+                <div class="print-student-header">
+                    שם התלמיד/ה: <span style="color:#1e40af; margin-left:20px;">${name}</span>
+                    כיתה: <span style="color:#1e40af;">${cls}</span>
+                </div>
+                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-200 mb-8 text-center print-header card" style="text-align: center; margin-bottom: 20px; border: 1px solid #e2e8f0; padding: 15px; border-radius: 8px;">
+                    <h1 style="font-size: 20px; font-weight: bold; margin-bottom: 10px;">תרגיל: הכוח המגנטי (כוח לורנץ)</h1>
+                    <div style="color: #475569; line-height: 1.5;">
+                        <p>
+                            נתונים: שדה מגנטי \\( B = 0.5 T \\), מהירות החלקיקים \\( v = 2 \\times 10^6 m/s \\).
+                        </p>
+                        <p style="margin-top: 5px;">
+                            חלקיק \\( a \\) (חיובי): \\( q = 4 \\mu C \\) | 
+                            חלקיק \\( b \\) (שלילי): \\( q = -4 \\mu C \\).
+                        </p>
+                        <p style="margin-top: 5px; font-size: 12px; font-style: italic;">
+                            במקרים עם זווית, \\( \\alpha = 30^\\circ \\).
+                        </p>
+                    </div>
+                </div>
+            `;
+
+            const printContent = `
+                <!DOCTYPE html>
+                <html lang="he" dir="rtl">
+                <head>
+                    <meta charset="UTF-8">
+                    <title>דף עבודה - כוח לורנץ - ${name}</title>
+                    <script src="https://cdn.tailwindcss.com"><\/script>
+                    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"><\/script>
+                    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>
+                    <style>
+                        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&display=swap');
+                        body { 
+                            font-family: 'Assistant', sans-serif; 
+                            background-color: white; 
+                            padding: 20px;
+                        }
+                        .card { 
+                            border: 1px solid #ccc; 
+                            border-radius: 8px;
+                            margin-bottom: 0; 
+                            break-inside: avoid; 
+                            page-break-inside: avoid;
+                            display: flex;
+                            flex-direction: column;
+                            background: white;
+                        }
+                        #cards-container {
+                            display: grid;
+                            grid-template-columns: repeat(2, 1fr); 
+                            gap: 20px;
+                        }
+                        svg { display: block; margin: 0 auto; }
+                        .print-student-header {
+                            text-align: center;
+                            margin-bottom: 20px;
+                            padding-bottom: 10px;
+                            border-bottom: 2px solid #eee;
+                            font-size: 18px;
+                            font-weight: bold;
+                        }
+                    </style>
+                </head>
+                <body>
+                    ${headerHtml}
+                    <div id="cards-container">
+                        ${printCardsHtml}
+                    </div>
+                    <script>
+                        window.onload = function() {
+                            setTimeout(function() {
+                                window.print();
+                            }, 1500);
+                        }
+                    <\/script>
+                </body>
+                </html>
+            `;
+
+            const iframe = document.getElementById('print-frame');
+            iframe.contentWindow.document.open();
+            iframe.contentWindow.document.write(printContent);
+            iframe.contentWindow.document.close();
+        }
+
+        function generateSVG(visual, particle) {
+            const color = particle === 'a' ? '#2563EB' : '#DC2626';
+            const bColor = '#334155'; // Darker/Neutral like the image
+            
+            const defs = `
+                <defs>
+                    <marker id="arrow-v-${particle}" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                        <path d="M0,0 L8,4 L0,8 Z" fill="${color}"/>
+                    </marker>
+                    <marker id="arrow-B" markerWidth="6" markerHeight="6" refX="5" refY="3" orient="auto">
+                        <path d="M0,0 L6,3 L0,6 Z" fill="${bColor}"/>
+                    </marker>
+                </defs>`;
+            
+            let elements = '';
+            const centerX = 80;
+            const centerY = 100;
+
+            if (visual.type === 'horizontal-field') {
+                for (let i = -2; i <= 2; i++) {
+                    const y = centerY - 15 + i * 25; 
+                    elements += `<line x1="20" y1="${y}" x2="140" y2="${y}" stroke="${bColor}" stroke-width="0.8" marker-end="url(#arrow-B)"/>`;
+                }
+                elements += `<text x="145" y="${centerY + 5}" fill="${bColor}" font-weight="bold" font-size="16">B</text>`;
+                elements += `<circle cx="${centerX}" cy="${centerY}" r="12" fill="#cbd5e1" stroke="#475569" stroke-width="1"/>`;
+                
+                const vRad = (visual.vAngle * Math.PI) / 180;
+                const vx2 = centerX + 50 * Math.cos(vRad);
+                const vy2 = centerY - 50 * Math.sin(vRad);
+                elements += `<line x1="${centerX}" y1="${centerY}" x2="${vx2}" y2="${vy2}" stroke="${color}" stroke-width="2.5" marker-end="url(#arrow-v-${particle})"/>`;
+                elements += `<text x="${vx2 + Math.cos(vRad)*10}" y="${vy2 - Math.sin(vRad)*10}" fill="${color}" font-weight="bold" font-size="18" text-anchor="middle">v</text>`;
+            }
+            else if (visual.type === 'vertical-field-angle') {
+                for (let i = -2; i <= 2; i++) {
+                    const x = centerX + i * 25; 
+                    elements += `<line x1="${x}" y1="140" x2="${x}" y2="30" stroke="${bColor}" stroke-width="0.8" marker-end="url(#arrow-B)"/>`;
+                }
+                elements += `<text x="${centerX}" y="20" fill="${bColor}" font-weight="bold" font-size="16" text-anchor="middle">B</text>`;
+                elements += `<line x1="20" y1="${centerY}" x2="140" y2="${centerY}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
+                elements += `<circle cx="${centerX}" cy="${centerY}" r="12" fill="#cbd5e1" stroke="#475569" stroke-width="1"/>`;
+                
+                const vRad = (-30 * Math.PI) / 180;
+                const vx2 = centerX + 50 * Math.cos(vRad);
+                const vy2 = centerY - 50 * Math.sin(vRad);
+                elements += `<line x1="${centerX}" y1="${centerY}" x2="${vx2}" y2="${vy2}" stroke="${color}" stroke-width="2.5" marker-end="url(#arrow-v-${particle})"/>`;
+                elements += `<text x="${vx2 + 5}" y="${vy2 + 15}" fill="${color}" font-weight="bold" font-size="18">v</text>`;
+                elements += `<path d="M ${centerX + 25} ${centerY} A 25 25 0 0 1 ${centerX + 25 * Math.cos(vRad)} ${centerY - 25 * Math.sin(vRad)}" fill="none" stroke="#64748b" stroke-width="1.5" />`;
+                elements += `<text x="${centerX + 30}" y="${centerY - 8}" fill="#64748b" font-size="14" font-family="serif">α</text>`;
+            }
+            else if (visual.type === 'diagonal-field-horizontal-v') {
+                const angleB = 30 * (Math.PI / 180); 
+                for (let i = -2; i <= 2; i++) {
+                    const cx_line = centerX + i * 29; 
+                    const len = 60;
+                    const x1 = cx_line - len * Math.cos(angleB);
+                    const y1 = centerY - len * Math.sin(angleB);
+                    const x2 = cx_line + len * Math.cos(angleB);
+                    const y2 = centerY + len * Math.sin(angleB);
+                    elements += `<line x1="${x1-10}" y1="${y1}" x2="${x2-10}" y2="${y2}" stroke="${bColor}" stroke-width="0.8" marker-end="url(#arrow-B)"/>`;
+                }
+                elements += `<text x="135" y="145" fill="${bColor}" font-weight="bold" font-size="16">B</text>`;
+                const pX = centerX - 30;
+                elements += `<circle cx="${pX}" cy="${centerY}" r="12" fill="#cbd5e1" stroke="#475569" stroke-width="1"/>`;
+                elements += `<line x1="${pX}" y1="${centerY}" x2="${pX + 60}" y2="${centerY}" stroke="${color}" stroke-width="2.5" marker-end="url(#arrow-v-${particle})"/>`;
+                elements += `<text x="${pX + 30}" y="${centerY - 10}" fill="${color}" font-weight="bold" font-size="18" text-anchor="middle">v</text>`;
+                elements += `<line x1="${pX}" y1="${centerY}" x2="${pX + 80}" y2="${centerY}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
+                elements += `<path d="M ${pX + 30} ${centerY} A 30 30 0 0 1 ${pX + 30 * Math.cos(angleB)} ${centerY + 30 * Math.sin(angleB)}" fill="none" stroke="#64748b" stroke-width="1.5" />`;
+                elements += `<text x="${pX + 45}" y="${centerY + 18}" fill="#64748b" font-size="14" font-family="serif">α</text>`;
+            }
+            else if (visual.type === 'field-in-angle') {
+                for(let i=1; i<5; i++) for(let j=1; j<5; j++) 
+                    elements += `<text x="${i*32}" y="${j*32}" fill="${bColor}" opacity="0.3" font-size="16" text-anchor="middle" font-family="sans-serif">✕</text>`;
+                elements += `<text x="20" y="30" fill="${bColor}" font-weight="bold" font-size="20">B</text>`;
+                const pX = 50;
+                const pY = 110;
+                elements += `<line x1="20" y1="${pY}" x2="140" y2="${pY}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
+                elements += `<circle cx="${pX}" cy="${pY}" r="12" fill="#cbd5e1" stroke="#475569" stroke-width="1"/>`;
+                const vAngle = 30; 
+                const vRad = (vAngle * Math.PI) / 180;
+                const vLen = 60;
+                const vx2 = pX + vLen * Math.cos(vRad);
+                const vy2 = pY - vLen * Math.sin(vRad);
+                elements += `<line x1="${pX}" y1="${pY}" x2="${vx2}" y2="${vy2}" stroke="${color}" stroke-width="3" marker-end="url(#arrow-v-${particle})"/>`;
+                elements += `<text x="${vx2 + 5}" y="${vy2}" fill="${color}" font-weight="bold" font-size="18">v</text>`;
+                elements += `<path d="M ${pX + 30} ${pY} A 30 30 0 0 0 ${pX + 30 * Math.cos(-vRad)} ${pY + 30 * Math.sin(-vRad)}" fill="none" stroke="#64748b" stroke-width="1.5" />`;
+                elements += `<text x="${pX + 40}" y="${pY - 10}" fill="#64748b" font-size="14" font-family="serif">α</text>`;
+            }
+            else if (visual.type === 'horizontal-field-v-in') {
+                for (let i = -2; i <= 2; i++) {
+                    const y = centerY - 15 + i * 25; 
+                    elements += `<line x1="20" y1="${y}" x2="140" y2="${y}" stroke="${bColor}" stroke-width="0.8" marker-end="url(#arrow-B)"/>`;
+                }
+                elements += `<text x="145" y="${centerY + 5}" fill="${bColor}" font-weight="bold" font-size="16">B</text>`;
+                elements += `<circle cx="${centerX}" cy="${centerY}" r="14" fill="#cbd5e1" stroke="#475569" stroke-width="1"/>`;
+                const r = 8;
+                elements += `<line x1="${centerX-r}" y1="${centerY-r}" x2="${centerX+r}" y2="${centerY+r}" stroke="${color}" stroke-width="3" />`;
+                elements += `<line x1="${centerX+r}" y1="${centerY-r}" x2="${centerX-r}" y2="${centerY+r}" stroke="${color}" stroke-width="3" />`;
+                elements += `<text x="${centerX + 18}" y="${centerY - 18}" fill="${color}" font-weight="bold" font-size="18">v</text>`;
+            }
+            else if (visual.type === 'field-out-angle') {
+                for(let i=1; i<5; i++) for(let j=1; j<5; j++) 
+                    elements += `<text x="${i*32}" y="${j*32}" fill="${bColor}" opacity="0.3" font-size="20" text-anchor="middle" font-family="sans-serif">⦿</text>`;
+                elements += `<text x="145" y="30" fill="${bColor}" font-weight="bold" font-size="20">B</text>`;
+                const pX = 50;
+                const pY = 90;
+                elements += `<line x1="20" y1="${pY}" x2="140" y2="${pY}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
+                elements += `<circle cx="${pX}" cy="${pY}" r="12" fill="#cbd5e1" stroke="#475569" stroke-width="1"/>`;
+                const vAngle = 30; 
+                const vRad = (vAngle * Math.PI) / 180;
+                const vLen = 60;
+                const vx2 = pX + vLen * Math.cos(vRad);
+                const vy2 = pY + vLen * Math.sin(vRad);
+                elements += `<line x1="${pX}" y1="${pY}" x2="${vx2}" y2="${vy2}" stroke="${color}" stroke-width="3" marker-end="url(#arrow-v-${particle})"/>`;
+                elements += `<text x="${vx2 + 5}" y="${vy2 + 15}" fill="${color}" font-weight="bold" font-size="18">v</text>`;
+                elements += `<path d="M ${pX + 30} ${pY} A 30 30 0 0 1 ${pX + 30 * Math.cos(vRad)} ${pY + 30 * Math.sin(vRad)}" fill="none" stroke="#64748b" stroke-width="1.5" />`;
+                elements += `<text x="${pX + 40}" y="${pY + 12}" fill="#64748b" font-size="14" font-family="serif">α</text>`;
+            }
+            else if (visual.type === 'diagonal-field-out-particle') {
+                const angleB = 150 * (Math.PI / 180); 
+                for (let i = -2; i <= 2; i++) {
+                    const cx_line = centerX + i * 29; 
+                    const len = 60;
+                    const x_tail = cx_line - len * Math.cos(angleB);
+                    const y_tail = centerY + len * Math.sin(angleB);
+                    const x_head = cx_line + len * Math.cos(angleB);
+                    const y_head = centerY - len * Math.sin(angleB);
+                    elements += `<line x1="${x_tail}" y1="${y_tail}" x2="${x_head}" y2="${y_head}" stroke="${bColor}" stroke-width="0.8" marker-end="url(#arrow-B)"/>`;
+                }
+                elements += `<text x="50" y="30" fill="${bColor}" font-weight="bold" font-size="16">B</text>`;
+                const pX = centerX;
+                const pY = centerY;
+                elements += `<line x1="${pX-60}" y1="${pY+40}" x2="${pX+20}" y2="${pY+40}" stroke="#94a3b8" stroke-width="1" stroke-dasharray="4,4"/>`;
+                elements += `<circle cx="${pX}" cy="${pY}" r="14" fill="white" stroke="${color}" stroke-width="2"/>`;
+                elements += `<circle cx="${pX}" cy="${pY}" r="4" fill="${color}"/>`;
+                elements += `<text x="${pX + 18}" y="${pY + 18}" fill="${color}" font-weight="bold" font-size="18">v</text>`;
+                const arcCX = pX - 25;
+                const arcCY = pY + 40; 
+                elements += `<line x1="${arcCX + 30}" y1="${arcCY + 17}" x2="${arcCX - 30}" y2="${arcCY - 17}" stroke="${bColor}" stroke-width="1" opacity="0.5"/>`;
+                elements += `<path d="M ${arcCX-25} ${arcCY} A 25 25 0 0 1 ${arcCX - 25 * Math.cos(30*Math.PI/180)} ${arcCY - 25 * Math.sin(30*Math.PI/180)}" fill="none" stroke="#64748b" stroke-width="1.5" />`;
+                elements += `<text x="${arcCX - 15}" y="${arcCY - 8}" fill="#64748b" font-size="14" font-family="serif">α</text>`;
+            }
+            
+            return `<svg width="160" height="160" viewBox="0 0 160 160">${defs}${elements}</svg>`;
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderCards();
+        });
+    </script>
+</body>
+</html>

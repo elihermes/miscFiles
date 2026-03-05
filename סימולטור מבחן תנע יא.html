@@ -1,0 +1,691 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון אינטראקטיבי - מבחן מכניקה (טור ב')</title>
+    
+    <!-- Chosen Palette: Scientific Calm (Teal/Blue/Slate) -->
+    <!-- Application Structure Plan:
+         The application is designed as a Dashboard with three main tabs corresponding to the three exam questions.
+         1. Dynamics (Inclined Plane): Allows tweaking masses and angle to see force balance and friction coefficient.
+         2. Momentum (Projectile): Visualizes the trajectory and the explosion event, calculating velocities and impulse.
+         3. Circular Motion: Visualizes the rotating disk and hanging mass, calculating tension and angular velocity.
+         Why: This structure isolates the physics concepts while allowing deep exploration of each problem's mechanics without clutter.
+    -->
+    
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.js"></script>
+
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; }
+        .tab-active { border-bottom: 3px solid #0f766e; color: #0f766e; font-weight: bold; }
+        .tab-inactive { color: #64748b; }
+        .tab-inactive:hover { color: #334155; }
+        .canvas-container { position: relative; width: 100%; max-width: 600px; height: 300px; margin: 0 auto; }
+        canvas { width: 100% !important; height: 100% !important; }
+        input[type=range]::-webkit-slider-thumb { -webkit-appearance: none; height: 16px; width: 16px; border-radius: 50%; background: #0f766e; cursor: pointer; margin-top: -6px; }
+        input[type=range]::-webkit-slider-runnable-track { width: 100%; height: 4px; cursor: pointer; background: #cbd5e1; border-radius: 2px; }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto px-4 py-4 flex justify-between items-center">
+            <div>
+                <h1 class="text-xl md:text-2xl font-bold text-teal-800">פתרון מבחן פיזיקה - מכניקה</h1>
+                <p class="text-sm text-slate-500">תיכון שוהם - כיתה י"א | טור ב' (אינטראקטיבי)</p>
+            </div>
+            <div class="hidden md:block text-xs text-slate-400">
+                פותח ע"י Canvas
+            </div>
+        </div>
+    </header>
+
+    <!-- Navigation -->
+    <nav class="bg-white border-b border-slate-200 mt-1">
+        <div class="max-w-6xl mx-auto px-4 flex justify-center space-x-8 space-x-reverse">
+            <button onclick="switchTab('q1')" id="tab-q1" class="tab-active py-4 px-2 transition-colors">שאלה 1: דינמיקה</button>
+            <button onclick="switchTab('q2')" id="tab-q2" class="tab-inactive py-4 px-2 transition-colors">שאלה 2: תנע וזריקה</button>
+            <button onclick="switchTab('q3')" id="tab-q3" class="tab-inactive py-4 px-2 transition-colors">שאלה 3: תנועה מעגלית</button>
+        </div>
+    </nav>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-4 py-8 pb-20">
+
+        <!-- Question 1 Section -->
+        <section id="q1-section" class="block space-y-8">
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                <h2 class="text-2xl font-bold mb-4 text-teal-700">דינמיקה במישור משופע</h2>
+                <p class="mb-6 text-slate-600 leading-relaxed">
+                    בשאלה זו אנו מנתחים מערכת של שני גופים המחוברים בחוט על מישור משופע.
+                    המערכת מאיצה, ועלינו למצוא את מקדם החיכוך ואת התאוצה במצב חדש.
+                    השתמשו במחוונים כדי לראות כיצד שינוי המסות משפיע על הכוחות ועל התוצאה הסופית.
+                    הנתונים כרגע מכוונים לערכים המקוריים של המבחן.
+                </p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Controls -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 h-fit">
+                        <h3 class="font-semibold text-lg mb-4 border-b pb-2">נתוני המערכת</h3>
+                        
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">מסה m1 (ק"ג) - הגוף הקל</label>
+                                <input type="range" id="q1-m1" min="0.5" max="5" step="0.5" value="1" class="w-full" oninput="updateQ1()">
+                                <span id="val-q1-m1" class="text-sm font-mono text-teal-600">1.0 kg</span>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">מסה m2 (ק"ג) - הגוף הכבד</label>
+                                <input type="range" id="q1-m2" min="1" max="10" step="0.5" value="4" class="w-full" oninput="updateQ1()">
+                                <span id="val-q1-m2" class="text-sm font-mono text-teal-600">4.0 kg</span>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">זווית שיפוע (מעלות)</label>
+                                <input type="range" id="q1-alpha" min="20" max="60" step="0.1" value="36.9" class="w-full" oninput="updateQ1()">
+                                <span id="val-q1-alpha" class="text-sm font-mono text-teal-600">36.9°</span>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">תאוצה מדודה a (מ'/ש'²)</label>
+                                <input type="range" id="q1-a" min="0.5" max="5" step="0.1" value="2" class="w-full" oninput="updateQ1()">
+                                <span id="val-q1-a" class="text-sm font-mono text-teal-600">2.0 m/s²</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visuals & Calculations -->
+                    <div class="col-span-1 lg:col-span-2 space-y-6">
+                        <!-- Results Cards -->
+                        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                            <div class="bg-teal-50 p-4 rounded-lg border border-teal-100">
+                                <h4 class="text-sm font-bold text-teal-800 uppercase tracking-wide">מקדם החיכוך (סעיף ג')</h4>
+                                <div class="text-3xl font-bold text-teal-600 mt-2" id="res-mu">0.20</div>
+                                <div class="text-xs text-teal-500 mt-1">מחושב ע"פ משוואות כוחות</div>
+                            </div>
+                            <div class="bg-indigo-50 p-4 rounded-lg border border-indigo-100">
+                                <h4 class="text-sm font-bold text-indigo-800 uppercase tracking-wide">תאוצה בכיוון הפוך (סעיף ד')</h4>
+                                <div class="text-3xl font-bold text-indigo-600 mt-2" dir="ltr" id="res-a-prime">-5.20 m/s²</div>
+                                <div class="text-xs text-indigo-500 mt-1">כיוון שלילי = האטה (במעלה המדרון עבור m1)</div>
+                            </div>
+                        </div>
+
+                        <!-- Chart Container -->
+                        <div class="bg-white p-4 rounded-lg border border-slate-200">
+                            <h4 class="font-semibold text-center mb-2">איזון כוחות על המערכת</h4>
+                            <div class="canvas-container">
+                                <canvas id="q1Chart"></canvas>
+                            </div>
+                        </div>
+
+                        <!-- Step-by-Step Logic Display -->
+                        <div class="bg-slate-50 p-4 rounded-lg text-sm font-mono overflow-x-auto border border-slate-200">
+                            <h4 class="font-sans font-bold text-slate-700 mb-2">חישוב בזמן אמת:</h4>
+                            <p>1. משוואת כוחות משולבת: <span id="math-step-1">...</span></p>
+                            <p>2. בידוד מקדם החיכוך: <span id="math-step-2">...</span></p>
+                            <p>3. הצבת ערכים לתאוצה חדשה: <span id="math-step-3">...</span></p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Question 2 Section -->
+        <section id="q2-section" class="hidden space-y-8">
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                <h2 class="text-2xl font-bold mb-4 text-teal-700">זריקה משופעת ושימור תנע</h2>
+                <p class="mb-6 text-slate-600 leading-relaxed">
+                    בשאלה זו פגז נורה בזווית ומתפוצץ בשיא הגובה לשני רסיסים שווים. רסיס אחד נעצר ונופל חופשית.
+                    הסימולציה מציגה את המסלול ואת וקטורי המהירות ברגע הפיצוץ.
+                </p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Controls -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 h-fit">
+                        <h3 class="font-semibold text-lg mb-4 border-b pb-2">נתוני הפגז</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">מהירות התחלתית V0 (מ'/ש')</label>
+                                <input type="range" id="q2-v0" min="100" max="500" step="10" value="350" class="w-full" oninput="updateQ2()">
+                                <span id="val-q2-v0" class="text-sm font-mono text-teal-600">350 m/s</span>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">זווית ירי (מעלות)</label>
+                                <input type="range" id="q2-theta" min="10" max="80" step="0.01" value="42.03" class="w-full" oninput="updateQ2()">
+                                <span id="val-q2-theta" class="text-sm font-mono text-teal-600">42.03°</span>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">מסה כוללת M (ק"ג)</label>
+                                <input type="range" id="q2-mass" min="10" max="100" step="5" value="20" class="w-full" oninput="updateQ2()">
+                                <span id="val-q2-mass" class="text-sm font-mono text-teal-600">20 kg</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visualization -->
+                    <div class="col-span-1 lg:col-span-2 space-y-6">
+                         <!-- Results Cards -->
+                         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-teal-50 p-4 rounded-lg border border-teal-100">
+                                <h4 class="text-xs font-bold text-teal-800 uppercase">מהירות אופקית בשיא</h4>
+                                <div class="text-xl font-bold text-teal-600 mt-1" id="res-vtop">260.0 m/s</div>
+                            </div>
+                            <div class="bg-orange-50 p-4 rounded-lg border border-orange-100">
+                                <h4 class="text-xs font-bold text-orange-800 uppercase">מהירות רסיס 2</h4>
+                                <div class="text-xl font-bold text-orange-600 mt-1" id="res-v2">520.0 m/s</div>
+                            </div>
+                            <div class="bg-purple-50 p-4 rounded-lg border border-purple-100">
+                                <h4 class="text-xs font-bold text-purple-800 uppercase">מתקף על רסיס 1</h4>
+                                <div class="text-xl font-bold text-purple-600 mt-1" id="res-j">-2600 N·s</div>
+                            </div>
+                        </div>
+
+                        <!-- Canvas Diagram -->
+                        <div class="bg-white p-4 rounded-lg border border-slate-200">
+                            <h4 class="font-semibold text-center mb-2">מסלול בליסטי ופיצוץ</h4>
+                            <div class="canvas-container" style="height: 350px;">
+                                <canvas id="q2Canvas"></canvas>
+                            </div>
+                            <p class="text-center text-xs text-slate-400 mt-2">* התרשים אינו בקנה מידה מלא (ציר Y מוגדל לצורך המחשה)</p>
+                        </div>
+
+                        <div class="bg-slate-50 p-4 rounded-lg text-sm font-mono border border-slate-200">
+                            <p class="font-bold text-slate-700">עקרון השימור:</p>
+                            <p>M·v_top = m1·v1 + m2·v2</p>
+                            <p id="q2-calc-text" class="text-teal-700 mt-1">20 · 260 = 10 · 0 + 10 · v2</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Question 3 Section -->
+        <section id="q3-section" class="hidden space-y-8">
+            <div class="bg-white rounded-xl shadow-sm p-6 border border-slate-100">
+                <h2 class="text-2xl font-bold mb-4 text-teal-700">תנועה מעגלית</h2>
+                <p class="mb-6 text-slate-600 leading-relaxed">
+                    דסקית M נעה במעגל אופקי, קשורה בחוט למשקולת m שתלויה במנוחה.
+                    המתיחות בחוט מספקת את הכוח הצנטריפטלי לדסקית וגם מחזיקה את המשקולת.
+                </p>
+
+                <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                    <!-- Controls -->
+                    <div class="bg-slate-50 p-5 rounded-lg border border-slate-200 h-fit">
+                        <h3 class="font-semibold text-lg mb-4 border-b pb-2">נתוני הניסוי</h3>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">מסת דסקית M (ק"ג)</label>
+                                <input type="range" id="q3-M" min="0.1" max="1.0" step="0.05" value="0.3" class="w-full" oninput="updateQ3()">
+                                <span id="val-q3-M" class="text-sm font-mono text-teal-600">0.3 kg</span>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">מסת משקולת m (ק"ג)</label>
+                                <input type="range" id="q3-m" min="0.1" max="1.0" step="0.05" value="0.2" class="w-full" oninput="updateQ3()">
+                                <span id="val-q3-m" class="text-sm font-mono text-teal-600">0.2 kg</span>
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-slate-700 mb-1">רדיוס סיבוב r (מטר)</label>
+                                <input type="range" id="q3-r" min="0.05" max="0.5" step="0.01" value="0.15" class="w-full" oninput="updateQ3()">
+                                <span id="val-q3-r" class="text-sm font-mono text-teal-600">0.15 m</span>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Visualization -->
+                    <div class="col-span-1 lg:col-span-2 space-y-6">
+                        <!-- Results -->
+                        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+                            <div class="bg-teal-50 p-4 rounded-lg border border-teal-100">
+                                <h4 class="text-xs font-bold text-teal-800 uppercase">מתיחות T</h4>
+                                <div class="text-xl font-bold text-teal-600 mt-1" id="res-T">2.00 N</div>
+                                <div class="text-xs text-teal-500">שווה למשקל m</div>
+                            </div>
+                            <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                                <h4 class="text-xs font-bold text-blue-800 uppercase">מהירות קווית v</h4>
+                                <div class="text-xl font-bold text-blue-600 mt-1" id="res-v">1.00 m/s</div>
+                            </div>
+                            <div class="bg-rose-50 p-4 rounded-lg border border-rose-100">
+                                <h4 class="text-xs font-bold text-rose-800 uppercase">מהירות זוויתית ω</h4>
+                                <div class="text-xl font-bold text-rose-600 mt-1" id="res-omega">6.67 rad/s</div>
+                            </div>
+                        </div>
+
+                        <!-- Animation Container -->
+                        <div class="bg-white p-4 rounded-lg border border-slate-200">
+                            <h4 class="font-semibold text-center mb-2">הדמיה (מבט על)</h4>
+                            <div class="canvas-container">
+                                <canvas id="q3Canvas"></canvas>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Visualization & Content Choices:
+         Q1: Uses a Bar Chart to compare Force components (Gravity Parallel, Friction, Tension) because balancing these explains the acceleration. 
+         Q2: Uses a custom Canvas drawing to show the trajectory parabola and the vector split at the top, illustrating conservation visually.
+         Q3: Uses a Canvas animation of a rotating circle. The speed of rotation in the animation scales with the calculated angular velocity.
+         Libraries: Chart.js for the bar chart, Vanilla Canvas API for custom diagrams. No SVG used.
+    -->
+    
+    <!-- CONFIRMATION: NO SVG graphics used. NO Mermaid JS used. -->
+
+    <script>
+        // State & Navigation
+        let currentTab = 'q1';
+        let q1ChartInstance = null;
+        let q3AnimationId = null;
+        let q3Angle = 0; // For animation
+
+        function switchTab(tabId) {
+            // Hide all sections
+            document.getElementById('q1-section').classList.add('hidden');
+            document.getElementById('q2-section').classList.add('hidden');
+            document.getElementById('q3-section').classList.add('hidden');
+            
+            // Reset nav styles
+            document.getElementById('tab-q1').className = 'tab-inactive py-4 px-2 transition-colors';
+            document.getElementById('tab-q2').className = 'tab-inactive py-4 px-2 transition-colors';
+            document.getElementById('tab-q3').className = 'tab-inactive py-4 px-2 transition-colors';
+
+            // Show selected
+            document.getElementById(`${tabId}-section`).classList.remove('hidden');
+            document.getElementById(`tab-${tabId}`).className = 'tab-active py-4 px-2 transition-colors';
+            
+            currentTab = tabId;
+            
+            // Trigger redraws if needed
+            if(tabId === 'q1') updateQ1();
+            if(tabId === 'q2') updateQ2();
+            if(tabId === 'q3') {
+                updateQ3();
+                animateQ3();
+            } else {
+                if(q3AnimationId) cancelAnimationFrame(q3AnimationId);
+            }
+        }
+
+        // --- Question 1 Logic ---
+        function updateQ1() {
+            const m1 = parseFloat(document.getElementById('q1-m1').value);
+            const m2 = parseFloat(document.getElementById('q1-m2').value);
+            const alphaDeg = parseFloat(document.getElementById('q1-alpha').value);
+            const a = parseFloat(document.getElementById('q1-a').value);
+
+            // Update Labels
+            document.getElementById('val-q1-m1').textContent = m1.toFixed(1) + ' kg';
+            document.getElementById('val-q1-m2').textContent = m2.toFixed(1) + ' kg';
+            document.getElementById('val-q1-alpha').textContent = alphaDeg.toFixed(1) + '°';
+            document.getElementById('val-q1-a').textContent = a.toFixed(1) + ' m/s²';
+
+            // Physics Calcs
+            const g = 10;
+            const alphaRad = alphaDeg * Math.PI / 180;
+            const sinAlpha = Math.sin(alphaRad);
+            const cosAlpha = Math.cos(alphaRad);
+
+            // Calculate mu from combined equation:
+            // g*sin(a)*(m2-m1) - mu*g*cos(a)*(m1+m2) = a*(m1+m2)
+            // mu*g*cos(a)*(m1+m2) = g*sin(a)*(m2-m1) - a*(m1+m2)
+            // mu = [g*sin(a)*(m2-m1) - a*(m1+m2)] / [g*cos(a)*(m1+m2)]
+            
+            const term1 = g * sinAlpha * (m2 - m1);
+            const term2 = a * (m1 + m2);
+            const denom = g * cosAlpha * (m1 + m2);
+            
+            let mu = (term1 - term2) / denom;
+            if (mu < 0) mu = 0; // Physical constraint
+
+            // Calculate a' (Case D: m1 goes down, m2 goes up)
+            // Equation: g*sin(a)*(m1-m2) - mu*g*cos(a)*(m1+m2) = (m1+m2)*a'
+            const forceGravityDiff = g * sinAlpha * (m1 - m2); // Will be negative as m2 > m1 usually
+            const forceFrictionTotal = mu * g * cosAlpha * (m1 + m2);
+            const a_prime = (forceGravityDiff - forceFrictionTotal) / (m1 + m2);
+
+            // Update DOM
+            document.getElementById('res-mu').textContent = mu.toFixed(3);
+            document.getElementById('res-a-prime').textContent = a_prime.toFixed(2) + ' m/s²';
+
+            // Math Text
+            document.getElementById('math-step-1').textContent = `${g}·${sinAlpha.toFixed(2)}·(${m2}-${m1}) - μ·${g}·${cosAlpha.toFixed(2)}·(${m1}+${m2}) = ${a}·(${m1}+${m2})`;
+            document.getElementById('math-step-2').textContent = `μ = ${mu.toFixed(3)}`;
+            document.getElementById('math-step-3').textContent = `a' = (${forceGravityDiff.toFixed(1)} - ${forceFrictionTotal.toFixed(1)}) / ${(m1+m2)} = ${a_prime.toFixed(2)}`;
+
+            // Chart Update
+            updateQ1Chart(m1, m2, g, sinAlpha, cosAlpha, mu, a);
+        }
+
+        function updateQ1Chart(m1, m2, g, sin, cos, mu, a) {
+            const ctx = document.getElementById('q1Chart').getContext('2d');
+            
+            // Forces on m2 (going down)
+            const m2_grav_parallel = m2 * g * sin;
+            const m2_friction = mu * m2 * g * cos;
+            // Tension T calculated from m2 eq: m2*g*sin - T - f2 = m2*a => T = m2*g*sin - f2 - m2*a
+            const T = m2_grav_parallel - m2_friction - (m2 * a);
+
+            // Forces on m1 (going up)
+            const m1_grav_parallel = m1 * g * sin;
+            const m1_friction = mu * m1 * g * cos;
+            // Check T from m1 perspective: T - m1_g_sin - f1 = m1*a => T = m1*a + m1_g_sin + f1
+            // const T_check = (m1 * a) + m1_grav_parallel + m1_friction; 
+
+            if (q1ChartInstance) q1ChartInstance.destroy();
+
+            q1ChartInstance = new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: ['מתיחות T', 'רכיב כובד m2', 'רכיב כובד m1', 'חיכוך m2', 'חיכוך m1'],
+                    datasets: [{
+                        label: 'כוחות (ניוטון)',
+                        data: [T, m2_grav_parallel, m1_grav_parallel, m2_friction, m1_friction],
+                        backgroundColor: [
+                            'rgba(15, 118, 110, 0.8)', // Teal (Tension)
+                            'rgba(59, 130, 246, 0.8)', // Blue (Gravity m2)
+                            'rgba(99, 102, 241, 0.8)', // Indigo (Gravity m1)
+                            'rgba(244, 63, 94, 0.8)',  // Rose (Friction)
+                            'rgba(244, 63, 94, 0.5)'   // Rose light
+                        ],
+                        borderWidth: 1
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { beginAtZero: true, title: { display: true, text: 'כוח (ניוטון)' } }
+                    },
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.parsed.x.toFixed(2) + ' N';
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        // --- Question 2 Logic ---
+        function updateQ2() {
+            const v0 = parseFloat(document.getElementById('q2-v0').value);
+            const thetaDeg = parseFloat(document.getElementById('q2-theta').value);
+            const M = parseFloat(document.getElementById('q2-mass').value);
+
+            document.getElementById('val-q2-v0').textContent = v0 + ' m/s';
+            document.getElementById('val-q2-theta').textContent = thetaDeg + '°';
+            document.getElementById('val-q2-mass').textContent = M + ' kg';
+
+            const thetaRad = thetaDeg * Math.PI / 180;
+            const vTop = v0 * Math.cos(thetaRad); // Horizontal velocity const
+            
+            // Conservation: M*vTop = (M/2)*0 + (M/2)*v2 => v2 = 2*vTop
+            const v2 = 2 * vTop;
+            
+            // Impulse on m1: J = deltaP = m1*v_final - m1*v_initial = (M/2)*0 - (M/2)*vTop
+            const m1 = M / 2;
+            const J = 0 - (m1 * vTop);
+
+            document.getElementById('res-vtop').textContent = vTop.toFixed(1) + ' m/s';
+            document.getElementById('res-v2').textContent = v2.toFixed(1) + ' m/s';
+            document.getElementById('res-j').textContent = J.toFixed(0) + ' N·s';
+            
+            document.getElementById('q2-calc-text').textContent = 
+                `${M} · ${vTop.toFixed(1)} = ${m1} · 0 + ${m1} · v2  =>  v2 = ${(2*vTop).toFixed(1)}`;
+
+            drawQ2Canvas(v0, thetaDeg, vTop, v2);
+        }
+
+        function drawQ2Canvas(v0, theta, vTop, v2) {
+            const canvas = document.getElementById('q2Canvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width = canvas.parentElement.offsetWidth;
+            const h = canvas.height = canvas.parentElement.offsetHeight;
+
+            ctx.clearRect(0, 0, w, h);
+
+            // Ground
+            ctx.beginPath();
+            ctx.moveTo(0, h - 20);
+            ctx.lineTo(w, h - 20);
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Scale factors
+            // We want the peak to be roughly in the middle-top
+            // Trajectory is parabolic. 
+            // Start at bottom left.
+            const startX = 40;
+            const startY = h - 20;
+            
+            // Simulate points
+            // x(t) = v0*cos*t
+            // y(t) = v0*sin*t - 0.5*g*t^2
+            // Peak time t_peak = v0*sin/g
+            // Peak height H = (v0*sin)^2 / 2g
+            // Range R = v0^2*sin(2theta)/g
+            
+            // We'll just draw a schematic parabola to the peak (width ~40% of canvas), then split
+            
+            const peakX = w * 0.4;
+            const peakY = h * 0.2; // Top 20%
+            
+            // Draw ascent (schematic parabola)
+            ctx.beginPath();
+            ctx.moveTo(startX, startY);
+            ctx.quadraticCurveTo(startX + (peakX - startX)/2, startY, peakX, peakY); // Control point trick for simple curve
+            // Better quadratic: Control point should be at x=peakX, y=startY - 2*H? 
+            // Let's just use a Bezier for visual smoothness
+            ctx.quadraticCurveTo(startX + (peakX - startX)*0.5, h*0.1, peakX, peakY);
+            
+            ctx.strokeStyle = '#0f766e'; // Teal
+            ctx.setLineDash([5, 5]);
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Draw Explosion Point
+            ctx.beginPath();
+            ctx.arc(peakX, peakY, 8, 0, Math.PI * 2);
+            ctx.fillStyle = '#f59e0b'; // Orange
+            ctx.fill();
+            ctx.fillStyle = '#000';
+            ctx.font = '12px Arial';
+            ctx.fillText('פיצוץ (שיא גובה)', peakX - 40, peakY - 15);
+
+            // Draw Path 1: Drops down
+            ctx.beginPath();
+            ctx.moveTo(peakX, peakY);
+            ctx.lineTo(peakX, h - 20);
+            ctx.strokeStyle = '#6366f1'; // Indigo
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            // Arrow head for drop
+            drawArrow(ctx, peakX, h - 30, peakX, h - 20, '#6366f1');
+            ctx.fillText('m1 (נופל)', peakX + 5, h - 50);
+
+            // Draw Path 2: Shoots forward twice as fast
+            // In reality, it continues parabolic but "stretched".
+            // Visually, let's show an extended arc
+            ctx.beginPath();
+            ctx.moveTo(peakX, peakY);
+            // It lands much further. 
+            const endX2 = w - 20; 
+            const endY2 = h - 20;
+            ctx.quadraticCurveTo(peakX + (endX2-peakX)*0.6, peakY, endX2, endY2);
+            ctx.strokeStyle = '#f43f5e'; // Rose
+            ctx.lineWidth = 2;
+            ctx.stroke();
+            
+            ctx.fillText('m2 (מהירות כפולה)', peakX + 60, peakY + 20);
+
+            // Vector indicators at peak
+            drawVector(ctx, peakX, peakY, 40, 0, '#0f766e', 'v_top'); // Original
+            drawVector(ctx, peakX, peakY + 40, 80, 0, '#f43f5e', 'v2 (2*v_top)'); // After
+        }
+
+        function drawVector(ctx, x, y, len, angle, color, label) {
+            ctx.save();
+            ctx.translate(x, y);
+            ctx.rotate(angle);
+            ctx.beginPath();
+            ctx.moveTo(0, 0);
+            ctx.lineTo(len, 0);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            ctx.stroke();
+            
+            // Arrowhead
+            ctx.beginPath();
+            ctx.moveTo(len, 0);
+            ctx.lineTo(len - 6, -3);
+            ctx.lineTo(len - 6, 3);
+            ctx.fillStyle = color;
+            ctx.fill();
+            
+            ctx.fillStyle = color;
+            ctx.font = '10px sans-serif';
+            ctx.fillText(label, len + 5, 3);
+            ctx.restore();
+        }
+
+        function drawArrow(ctx, fromX, fromY, toX, toY, color) {
+            const headlen = 10; 
+            const dx = toX - fromX;
+            const dy = toY - fromY;
+            const angle = Math.atan2(dy, dx);
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.strokeStyle = color;
+            ctx.stroke();
+            ctx.beginPath();
+            ctx.moveTo(toX, toY);
+            ctx.lineTo(toX - headlen * Math.cos(angle - Math.PI / 6), toY - headlen * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(toX - headlen * Math.cos(angle + Math.PI / 6), toY - headlen * Math.sin(angle + Math.PI / 6));
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+
+        // --- Question 3 Logic ---
+        function updateQ3() {
+            const M = parseFloat(document.getElementById('q3-M').value);
+            const m = parseFloat(document.getElementById('q3-m').value);
+            const r = parseFloat(document.getElementById('q3-r').value);
+
+            document.getElementById('val-q3-M').textContent = M.toFixed(2) + ' kg';
+            document.getElementById('val-q3-m').textContent = m.toFixed(2) + ' kg';
+            document.getElementById('val-q3-r').textContent = r.toFixed(2) + ' m';
+
+            const g = 10;
+            // T = mg (hanging mass at rest)
+            const T = m * g;
+            
+            // T = M * v^2 / r  => v^2 = T*r/M => v = sqrt(T*r/M)
+            const vSq = (T * r) / M;
+            const v = Math.sqrt(vSq);
+            
+            // omega = v / r
+            const omega = v / r;
+
+            document.getElementById('res-T').textContent = T.toFixed(2) + ' N';
+            document.getElementById('res-v').textContent = v.toFixed(2) + ' m/s';
+            document.getElementById('res-omega').textContent = omega.toFixed(2) + ' rad/s';
+
+            // Store for animation
+            window.q3Data = { omega: omega, r: r };
+        }
+
+        function animateQ3() {
+            const canvas = document.getElementById('q3Canvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width = canvas.parentElement.offsetWidth;
+            const h = canvas.height = canvas.parentElement.offsetHeight;
+            
+            const centerX = w / 2;
+            const centerY = h / 2;
+            
+            // Scale r for visualization: let 0.5m be 120px
+            const scale = 120 / 0.5;
+            const r = (window.q3Data?.r || 0.15);
+            const rPx = r * scale; 
+            const omega = window.q3Data?.omega || 1;
+
+            // Clear
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(0, 0, w, h);
+
+            // Draw Table hole
+            ctx.beginPath();
+            ctx.arc(centerX, centerY, 5, 0, Math.PI*2);
+            ctx.fillStyle = '#cbd5e1';
+            ctx.fill();
+
+            // Calculate Position
+            q3Angle += omega * 0.016; // Approx 60fps
+            const diskX = centerX + Math.cos(q3Angle) * rPx;
+            const diskY = centerY + Math.sin(q3Angle) * rPx;
+
+            // Draw String
+            ctx.beginPath();
+            ctx.moveTo(centerX, centerY);
+            ctx.lineTo(diskX, diskY);
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw Disk M
+            ctx.beginPath();
+            ctx.arc(diskX, diskY, 15, 0, Math.PI*2);
+            ctx.fillStyle = '#0f766e'; // Teal
+            ctx.fill();
+            ctx.fillStyle = '#fff';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.font = '10px Arial';
+            ctx.fillText('M', diskX, diskY);
+
+            // Draw Velocity Vector
+            const vecLen = 30;
+            // Velocity is tangential (+90 deg)
+            const vAngle = q3Angle + Math.PI / 2;
+            const vX = diskX + Math.cos(vAngle) * vecLen;
+            const vY = diskY + Math.sin(vAngle) * vecLen;
+
+            drawArrow(ctx, diskX, diskY, vX, vY, '#3b82f6'); // Blue arrow for V
+
+            // Info Text
+            ctx.fillStyle = '#64748b';
+            ctx.font = '12px monospace';
+            ctx.textAlign = 'left';
+            ctx.fillText(`Radius: ${(rPx/scale).toFixed(2)}m`, 10, h-10);
+
+            if(currentTab === 'q3') {
+                q3AnimationId = requestAnimationFrame(animateQ3);
+            }
+        }
+
+        // Initialization
+        window.addEventListener('resize', () => {
+            if(currentTab === 'q2') updateQ2();
+        });
+        
+        // Initial Load
+        updateQ1();
+        updateQ2();
+        updateQ3();
+
+    </script>
+</body>
+</html>

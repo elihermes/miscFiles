@@ -1,0 +1,534 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סימולציה: תנועת מטען בשדות E ו-B</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    
+    <!-- MathJax Configuration -->
+    <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']]
+      }
+    };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap');
+        body { font-family: 'Assistant', sans-serif; background-color: #f1f5f9; }
+        canvas { background-color: #ffffff; border-radius: 8px; box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1); cursor: crosshair; }
+        .control-group { margin-bottom: 1rem; background: white; padding: 1rem; border-radius: 8px; border: 1px solid #e2e8f0; }
+        .slider { -webkit-appearance: none; width: 100%; height: 6px; border-radius: 5px; background: #cbd5e1; outline: none; }
+        .slider::-webkit-slider-thumb { -webkit-appearance: none; appearance: none; width: 18px; height: 18px; border-radius: 50%; background: #3b82f6; cursor: pointer; transition: background .15s ease-in-out; }
+        .slider::-webkit-slider-thumb:hover { background: #2563eb; }
+        /* Number Input Styling */
+        input[type="number"]::-webkit-inner-spin-button, 
+        input[type="number"]::-webkit-outer-spin-button { 
+            -webkit-appearance: none; 
+            margin: 0; 
+        }
+        input[type="number"] { -moz-appearance: textfield; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-7xl mx-auto grid grid-cols-1 lg:grid-cols-3 gap-6">
+        
+        <!-- Controls Panel -->
+        <div class="lg:col-span-1 space-y-4">
+            <h1 class="text-2xl font-bold text-blue-800 mb-4">מעבדה: בורר מהירויות</h1>
+            
+            <!-- Custom Particle Setup -->
+            <div class="control-group">
+                <h3 class="font-bold mb-3 text-gray-700">1. הגדרת חלקיק:</h3>
+                
+                <!-- Mass Control -->
+                <div class="mb-4">
+                    <label class="block text-sm text-gray-600 mb-1">מסה ($m$):</label>
+                    <div class="flex items-center gap-2">
+                        <input type="number" id="input_mass_val" value="1" min="0.0001" step="0.0001" class="w-24 p-1 border rounded text-center font-mono focus:border-blue-500 outline-none" oninput="updateParticle()">
+                        
+                        <div class="flex bg-gray-100 p-1 rounded border">
+                            <label class="cursor-pointer px-3 py-1 rounded transition-all" id="lbl_mp">
+                                <input type="radio" name="mass_unit" value="mp" checked class="hidden" onchange="updateMassUnit()">
+                                <span class="font-bold text-sm">$m_p$</span>
+                            </label>
+                            <label class="cursor-pointer px-3 py-1 rounded transition-all" id="lbl_me">
+                                <input type="radio" name="mass_unit" value="me" class="hidden" onchange="updateMassUnit()">
+                                <span class="font-bold text-sm">$m_e$</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Charge Control -->
+                <div>
+                    <label class="block text-sm text-gray-600 mb-1">מטען ($q$):</label>
+                    <div class="flex items-center gap-2">
+                        <input type="number" id="input_charge" value="1" step="0.1" class="w-24 p-1 border rounded text-center font-mono focus:border-blue-500 outline-none" oninput="updateParticle()">
+                        <span class="font-bold text-gray-600">$e$</span>
+                        <span class="text-xs text-gray-400 mr-2">(חיובי/שלילי)</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Initial Velocity -->
+            <div class="control-group">
+                <h3 class="font-bold mb-2 text-gray-700">2. מהירות התחלתית ($v$):</h3>
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-gray-500">0</span>
+                    <div class="flex items-center gap-1">
+                        <input type="number" id="num_v" value="6.0" step="0.00001" class="w-24 font-mono text-blue-600 font-bold text-center border-b border-blue-300 focus:border-blue-600 outline-none bg-transparent" oninput="syncInput('v', 'text')">
+                        <span class="text-sm text-gray-600">$\cdot 10^5$ m/s</span>
+                    </div>
+                    <span class="text-xs text-gray-500">10</span>
+                </div>
+                <input type="range" id="slider_v" min="0" max="10" step="0.01" value="6.0" class="slider" oninput="syncInput('v', 'slider')">
+            </div>
+
+            <!-- Magnetic Field -->
+            <div class="control-group">
+                <h3 class="font-bold mb-2 text-gray-700">3. שדה מגנטי ($B$):</h3>
+                <div class="flex gap-2 mb-3">
+                    <button id="btn_b_in" onclick="setBDirection(1)" class="flex-1 py-1 px-2 text-sm border rounded bg-blue-100 border-blue-500 font-bold">פנימה $\otimes$</button>
+                    <button id="btn_b_out" onclick="setBDirection(-1)" class="flex-1 py-1 px-2 text-sm border rounded hover:bg-gray-50">החוצה $\odot$</button>
+                    <button id="btn_b_off" onclick="setBDirection(0)" class="flex-1 py-1 px-2 text-sm border rounded hover:bg-gray-50">כבוי</button>
+                </div>
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-gray-500">0</span>
+                    <div class="flex items-center gap-1">
+                        <input type="number" id="num_b" value="0.05" step="0.00001" class="w-24 font-mono text-blue-600 font-bold text-center border-b border-blue-300 focus:border-blue-600 outline-none bg-transparent" oninput="syncInput('b', 'text')">
+                        <span class="text-sm text-gray-600">T</span>
+                    </div>
+                    <span class="text-xs text-gray-500">0.1</span>
+                </div>
+                <input type="range" id="slider_b" min="0" max="0.1" step="0.001" value="0.05" class="slider" oninput="syncInput('b', 'slider')">
+            </div>
+
+            <!-- Electric Field -->
+            <div class="control-group">
+                <h3 class="font-bold mb-2 text-gray-700">4. שדה חשמלי ($E$):</h3>
+                <div class="flex gap-2 mb-3">
+                    <button id="btn_e_down" onclick="setEDirection(1)" class="flex-1 py-1 px-2 text-sm border rounded bg-blue-100 border-blue-500 font-bold">למטה $\downarrow$</button>
+                    <button id="btn_e_up" onclick="setEDirection(-1)" class="flex-1 py-1 px-2 text-sm border rounded hover:bg-gray-50">למעלה $\uparrow$</button>
+                    <button id="btn_e_off" onclick="setEDirection(0)" class="flex-1 py-1 px-2 text-sm border rounded hover:bg-gray-50">כבוי</button>
+                </div>
+                <div class="flex items-center justify-between mb-2">
+                    <span class="text-xs text-gray-500">0</span>
+                    <div class="flex items-center gap-1">
+                        <input type="number" id="num_e" value="0" step="0.00001" class="w-28 font-mono text-blue-600 font-bold text-center border-b border-blue-300 focus:border-blue-600 outline-none bg-transparent" oninput="syncInput('e', 'text')">
+                        <span class="text-sm text-gray-600">N/C</span>
+                    </div>
+                    <span class="text-xs text-gray-500">60k</span>
+                </div>
+                <input type="range" id="slider_e" min="0" max="60000" step="100" value="0" class="slider" oninput="syncInput('e', 'slider')">
+                <div class="mt-2 text-xs text-gray-500 text-center">
+                    (כוון ל-30,000 כדי לאזן את השדה המגנטי ברירת המחדל)
+                </div>
+            </div>
+
+            <!-- Action Buttons -->
+            <div class="flex gap-3">
+                <button onclick="resetSimulation()" class="flex-1 bg-gray-600 hover:bg-gray-700 text-white font-bold py-3 px-4 rounded shadow">
+                    איפוס
+                </button>
+                <button onclick="togglePause()" id="btn_pause" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded shadow">
+                    הפעל/השהה
+                </button>
+            </div>
+        </div>
+
+        <!-- Simulation Canvas -->
+        <div class="lg:col-span-2 relative">
+            <div class="absolute top-2 left-2 bg-white/80 p-2 rounded text-xs md:text-sm font-mono border border-gray-200 z-10 pointer-events-none">
+                <div>כוח מגנטי ($F_B$): <span id="disp_fb" class="font-bold">0</span></div>
+                <div>כוח חשמלי ($F_E$): <span id="disp_fe" class="font-bold">0</span></div>
+                <div>שקול כוחות ($\Sigma F_y$): <span id="disp_fnet" class="font-bold">0</span></div>
+            </div>
+            <canvas id="simCanvas" width="800" height="600" class="w-full h-auto border border-gray-300"></canvas>
+            
+            <div class="mt-2 text-sm text-gray-600 bg-white p-3 rounded border border-gray-200">
+                <strong>הסבר:</strong> הסימולציה מציגה מבט צד (מישור XY). השדה המגנטי מאונך למסך.
+                <ul class="list-disc list-inside mt-1">
+                    <li>החלקיק מתחיל בתנועה אופקית ימינה ונכנס לאזור השדות (קו מקווקו).</li>
+                    <li>השתמשו בכפתורי הכיוון כדי לקבוע את כיווני השדות.</li>
+                    <li>הזינו ערכים מדויקים בשדות הטקסט או השתמשו בסליידרים.</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+<script>
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    // Physics constants (Scaled for simulation visuals)
+    let SimParams = {
+        vScale: 1.5,      // Visual speed multiplier
+        bScale: 0.8,      // Magnetic force multiplier
+        eScale: 0.000012, 
+        timeStep: 1.0,    // Base time step
+        subSteps: 100,    // HIGH PRECISION: calculations per frame
+        fieldX: 150,      // X coordinate where fields start
+        
+        // Internal Simulation Masses (Relative scale)
+        MASS_PROTON: 1.0073,
+        MASS_ELECTRON: 0.0548 
+    };
+
+    let particle = {
+        x: 50,
+        y: 300,
+        vx: 6,
+        vy: 0,
+        q: 1,  
+        m: 1,  
+        color: '#ef4444', 
+        trail: []
+    };
+
+    let fields = {
+        v: 6.0,      // x10^5 m/s
+        B: 0.05,     // Tesla
+        B_dir: 1,    // 1 (In), -1 (Out), 0 (Off)
+        E: 0,        // N/C
+        E_dir: 1     // 1 (Down), -1 (Up), 0 (Off)
+    };
+
+    let isPaused = false;
+    let animationId;
+
+    // --- Setup & Init ---
+    function init() {
+        updateMassUnit(); // Set initial styling for radio buttons
+        resetSimulation();
+        loop();
+    }
+
+    function resetSimulation() {
+        particle.x = 20; 
+        particle.y = canvas.height / 2;
+        // Reset velocity to current field settings immediately
+        particle.vx = fields.v * SimParams.vScale;
+        particle.vy = 0; 
+        particle.trail = [];
+        
+        updateParticle(); 
+    }
+
+    function updateMassUnit() {
+        const unit = document.querySelector('input[name="mass_unit"]:checked').value;
+        const lblMp = document.getElementById('lbl_mp');
+        const lblMe = document.getElementById('lbl_me');
+        
+        if (unit === 'mp') {
+            lblMp.classList.add('bg-white', 'text-blue-600', 'shadow-sm', 'border-blue-200');
+            lblMp.classList.remove('text-gray-500');
+            lblMe.classList.remove('bg-white', 'text-blue-600', 'shadow-sm', 'border-blue-200');
+            lblMe.classList.add('text-gray-500');
+        } else {
+            lblMe.classList.add('bg-white', 'text-blue-600', 'shadow-sm', 'border-blue-200');
+            lblMe.classList.remove('text-gray-500');
+            lblMp.classList.remove('bg-white', 'text-blue-600', 'shadow-sm', 'border-blue-200');
+            lblMp.classList.add('text-gray-500');
+        }
+        updateParticle();
+    }
+
+    function updateParticle() {
+        // 1. Get User Inputs
+        const massVal = parseFloat(document.getElementById('input_mass_val').value) || 1;
+        const massUnit = document.querySelector('input[name="mass_unit"]:checked').value;
+        const chargeVal = parseFloat(document.getElementById('input_charge').value) || 0;
+
+        // 2. Set Mass based on unit
+        let baseMass = (massUnit === 'mp') ? SimParams.MASS_PROTON : SimParams.MASS_ELECTRON;
+        particle.m = massVal * baseMass;
+
+        // 3. Set Charge
+        particle.q = chargeVal;
+
+        // 4. Set Color based on Charge
+        if (particle.q > 0) {
+            particle.color = '#ef4444'; // Red for Positive
+        } else if (particle.q < 0) {
+            particle.color = '#3b82f6'; // Blue for Negative
+        } else {
+            particle.color = '#4b5563'; // Gray for Neutral
+        }
+
+        // If particle hasn't entered field yet, ensure velocity matches the input immediately
+        if (particle.x < SimParams.fieldX) {
+             particle.vx = fields.v * SimParams.vScale;
+        }
+    }
+
+    // Unified handler for syncing Text Inputs <-> Sliders
+    function syncInput(param, source) {
+        const textInput = document.getElementById(`num_${param}`);
+        const sliderInput = document.getElementById(`slider_${param}`);
+        
+        let val = 0;
+
+        if (source === 'slider') {
+            val = parseFloat(sliderInput.value);
+            textInput.value = val; // Display value
+        } else {
+            // Text input source
+            val = parseFloat(textInput.value);
+            // Update slider if within range, otherwise slider stays at limit (doesn't affect physics)
+            if (!isNaN(val)) {
+                sliderInput.value = val;
+            }
+        }
+        
+        // Update Physics Model
+        if (param === 'v') fields.v = isNaN(val) ? 0 : val;
+        if (param === 'b') fields.B = isNaN(val) ? 0 : val;
+        if (param === 'e') fields.E = isNaN(val) ? 0 : val;
+
+        // If particle hasn't started, update initial velocity visually
+        if (param === 'v' && particle.x < SimParams.fieldX) {
+            particle.vx = fields.v * SimParams.vScale;
+        }
+    }
+
+    // --- Update Logic (High Precision) ---
+    function update() {
+        if (isPaused) return;
+
+        let dt = SimParams.timeStep / SimParams.subSteps;
+        
+        for (let step = 0; step < SimParams.subSteps; step++) {
+            
+            let Fb_x = 0;
+            let Fb_y = 0;
+            let Fe_y = 0;
+
+            if (particle.x >= SimParams.fieldX) {
+                // Electric Force
+                let Fe_mag = Math.abs(particle.q) * fields.E * SimParams.eScale;
+                Fe_y = Fe_mag * fields.E_dir * Math.sign(particle.q); 
+
+                // Magnetic Force (Lorentz)
+                let B_signed = fields.B * fields.B_dir * SimParams.bScale; 
+                Fb_x = particle.q * particle.vy * B_signed; 
+                Fb_y = -particle.q * particle.vx * B_signed;
+            }
+
+            // Newton's 2nd Law
+            let ax = Fb_x / particle.m;
+            let ay = (Fe_y + Fb_y) / particle.m;
+
+            // Euler-Cromer Integration
+            particle.vx += ax * dt;
+            particle.vy += ay * dt;
+            particle.x += particle.vx * dt;
+            particle.y += particle.vy * dt;
+        }
+
+        // Trail Logic
+        if (particle.x > 0 && particle.x < canvas.width && particle.y > 0 && particle.y < canvas.height) {
+            if (particle.trail.length === 0 || 
+                Math.hypot(particle.trail[particle.trail.length-1].x - particle.x, particle.trail[particle.trail.length-1].y - particle.y) > 5) {
+                particle.trail.push({x: particle.x, y: particle.y});
+            }
+        }
+
+        updateForceDisplay();
+    }
+
+    function updateForceDisplay() {
+        if (particle.x < SimParams.fieldX) {
+             document.getElementById('disp_fb').innerHTML = "0";
+             document.getElementById('disp_fe').innerHTML = "0";
+             document.getElementById('disp_fnet').innerHTML = "0";
+             return;
+        }
+
+        let B_signed = fields.B * fields.B_dir * SimParams.bScale; 
+        let Fe_mag = Math.abs(particle.q) * fields.E * SimParams.eScale;
+        let Fe_y = Fe_mag * fields.E_dir * Math.sign(particle.q); 
+        
+        // Approximate FB based on vx for display component
+        let Fb_y_component = -particle.q * particle.vx * B_signed;
+
+        let disp_Fb = Math.abs(Fb_y_component).toFixed(5); 
+        let disp_Fe = Math.abs(Fe_y).toFixed(5);
+        let disp_Fnet = (Fe_y + Fb_y_component).toFixed(5);
+
+        let fbArrow = Math.abs(Fb_y_component) < 0.00001 ? '' : (Fb_y_component < 0 ? '↑' : '↓');
+        let feArrow = Math.abs(Fe_y) < 0.00001 ? '' : (Fe_y < 0 ? '↑' : '↓');
+        let fnetArrow = Math.abs(Number(disp_Fnet)) < 0.00001 ? '' : (Number(disp_Fnet) < 0 ? '↑' : '↓');
+
+        document.getElementById('disp_fb').innerHTML = `${disp_Fb} ${fbArrow}`;
+        document.getElementById('disp_fe').innerHTML = `${disp_Fe} ${feArrow}`;
+        document.getElementById('disp_fnet').innerHTML = `${Math.abs(Number(disp_Fnet)).toFixed(5)} ${fnetArrow}`;
+    }
+
+    // --- Drawing ---
+    function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        const fieldX = SimParams.fieldX;
+
+        ctx.beginPath();
+        ctx.strokeStyle = "#94a3b8";
+        ctx.setLineDash([5, 5]);
+        ctx.moveTo(fieldX, 0);
+        ctx.lineTo(fieldX, canvas.height);
+        ctx.stroke();
+        ctx.setLineDash([]);
+
+        if (fields.B_dir !== 0) {
+            ctx.fillStyle = fields.B_dir === 1 ? '#e0f2fe' : '#f0fdf4'; 
+            ctx.fillRect(fieldX, 0, canvas.width - fieldX, canvas.height);
+            
+            ctx.font = "16px Arial";
+            ctx.fillStyle = "#94a3b8"; 
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+            
+            const symbol = fields.B_dir === 1 ? "×" : "•";
+            const spacing = 40;
+            for (let x = fieldX + 20; x < canvas.width; x += spacing) {
+                for (let y = 20; y < canvas.height; y += spacing) {
+                    ctx.fillText(symbol, x, y);
+                }
+            }
+            ctx.font = "bold 20px sans-serif";
+            ctx.fillStyle = "#1e40af";
+            ctx.fillText(`B (${fields.B_dir === 1 ? "פנימה" : "החוצה"})`, canvas.width - 60, 40);
+        }
+
+        if (fields.E_dir !== 0) {
+            ctx.strokeStyle = "rgba(234, 179, 8, 0.4)"; 
+            ctx.lineWidth = 2;
+            const arrowSpacing = 80;
+            
+            ctx.fillStyle = "#cbd5e1";
+            ctx.fillRect(fieldX, 0, canvas.width - fieldX, 10); 
+            ctx.fillRect(fieldX, canvas.height - 10, canvas.width - fieldX, 10); 
+
+            for (let x = fieldX + 40; x < canvas.width; x += arrowSpacing) {
+                drawArrow(ctx, x, fields.E_dir === 1 ? 20 : canvas.height - 20, x, fields.E_dir === 1 ? canvas.height - 20 : 20, "rgba(234, 179, 8, 0.4)");
+            }
+            
+            ctx.font = "20px Arial";
+            ctx.fillStyle = "#64748b";
+            let topSign = fields.E_dir === 1 ? "+" : "-";
+            let botSign = fields.E_dir === 1 ? "-" : "+";
+            for (let x = fieldX + 40; x < canvas.width; x += arrowSpacing) {
+                ctx.fillText(topSign, x, 25);
+                ctx.fillText(botSign, x, canvas.height - 15);
+            }
+        }
+
+        if (particle.trail.length > 1) {
+            ctx.beginPath();
+            ctx.strokeStyle = particle.color;
+            ctx.lineWidth = 2;
+            ctx.setLineDash([5, 5]); 
+            ctx.moveTo(particle.trail[0].x, particle.trail[0].y);
+            for (let i = 1; i < particle.trail.length; i++) {
+                ctx.lineTo(particle.trail[i].x, particle.trail[i].y);
+            }
+            ctx.stroke();
+            ctx.setLineDash([]);
+        }
+
+        ctx.beginPath();
+        ctx.arc(particle.x, particle.y, 12, 0, Math.PI * 2);
+        ctx.fillStyle = particle.color;
+        ctx.fill();
+        ctx.strokeStyle = "white";
+        ctx.lineWidth = 2;
+        ctx.stroke();
+        
+        ctx.fillStyle = "white";
+        ctx.font = "bold 14px Arial";
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+        // Simple visualization of charge magnitude
+        let sign = particle.q > 0 ? "+" : (particle.q < 0 ? "-" : "0");
+        if (Math.abs(particle.q) >= 2) sign = particle.q > 0 ? "++" : "--";
+        if (particle.q == 0) sign = "0";
+        ctx.fillText(sign, particle.x, particle.y);
+
+        let vMag = Math.sqrt(particle.vx**2 + particle.vy**2);
+        if (vMag > 0.1) {
+             let scale = 5;
+             drawArrow(ctx, particle.x, particle.y, particle.x + particle.vx * scale, particle.y + particle.vy * scale, "#333");
+             ctx.font = "12px Arial";
+             ctx.fillStyle = "#333";
+             ctx.fillText("v", particle.x + particle.vx * scale + 10, particle.y + particle.vy * scale);
+        }
+    }
+
+    function drawArrow(context, fromx, fromy, tox, toy, color) {
+        const headlen = 10; 
+        const dx = tox - fromx;
+        const dy = toy - fromy;
+        const angle = Math.atan2(dy, dx);
+        context.strokeStyle = color;
+        context.lineWidth = 2;
+        context.beginPath();
+        context.moveTo(fromx, fromy);
+        context.lineTo(tox, toy);
+        context.lineTo(tox - headlen * Math.cos(angle - Math.PI / 6), toy - headlen * Math.sin(angle - Math.PI / 6));
+        context.moveTo(tox, toy);
+        context.lineTo(tox - headlen * Math.cos(angle + Math.PI / 6), toy - headlen * Math.sin(angle + Math.PI / 6));
+        context.stroke();
+    }
+
+    function loop() {
+        if (!isPaused) {
+            update();
+        }
+        draw();
+        animationId = requestAnimationFrame(loop);
+    }
+
+    function togglePause() {
+        isPaused = !isPaused;
+        document.getElementById('btn_pause').innerText = isPaused ? "המשך" : "השהה";
+        document.getElementById('btn_pause').classList.toggle('bg-blue-600');
+        document.getElementById('btn_pause').classList.toggle('bg-orange-500');
+    }
+
+    function setBDirection(dir) {
+        fields.B_dir = dir;
+        updateButtons('btn_b', dir, ['bg-blue-100', 'border-blue-500', 'font-bold']);
+        resetSimulation();
+    }
+
+    function setEDirection(dir) {
+        fields.E_dir = dir;
+        updateButtons('btn_e', dir, ['bg-blue-100', 'border-blue-500', 'font-bold']);
+        resetSimulation();
+    }
+
+    function updateButtons(prefix, val, activeClasses) {
+        let map = { 1: prefix === 'btn_b' ? 'in' : 'down', '-1': prefix === 'btn_b' ? 'out' : 'up', 0: 'off' };
+        
+        document.getElementById(`${prefix}_in`)?.classList.remove(...activeClasses);
+        document.getElementById(`${prefix}_out`)?.classList.remove(...activeClasses);
+        document.getElementById(`${prefix}_down`)?.classList.remove(...activeClasses);
+        document.getElementById(`${prefix}_up`)?.classList.remove(...activeClasses);
+        document.getElementById(`${prefix}_off`)?.classList.remove(...activeClasses);
+
+        let currentId = `${prefix}_${map[val]}`;
+        document.getElementById(currentId).classList.add(...activeClasses);
+    }
+
+    // Slider range sync (slider only changes text if within reasonable updates) is handled by unified syncInput
+    document.getElementById('slider_v').addEventListener('change', resetSimulation);
+    
+    init();
+
+</script>
+</body>
+</html>

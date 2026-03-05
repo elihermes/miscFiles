@@ -1,0 +1,331 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון שאלה 3 - מכניקה (מטוטלת קונית)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f3f4f6;
+        }
+        .section-card {
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+        }
+        canvas {
+            max-height: 400px;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <div class="max-w-4xl mx-auto p-4 md:p-8">
+        
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-700 mb-2">פתרון שאלה 3: מטוטלת קונית</h1>
+            <p class="text-gray-600 text-lg">ניתוח ניסוי, בניית גרף וחישוב אורך החוט</p>
+        </header>
+
+        <!-- Part A: Free Body Diagram & Equation -->
+        <div class="section-card">
+            <h2 class="text-2xl font-semibold text-blue-600 mb-4 border-b pb-2">סעיף א': תרשים כוחות ופיתוח ביטוי</h2>
+            
+            <div class="grid md:grid-cols-2 gap-8 items-center">
+                <!-- Diagram -->
+                <div class="flex justify-center bg-gray-50 p-4 rounded-lg border border-gray-200">
+                    <svg width="300" height="350" viewBox="0 0 300 350">
+                        <!-- Definitions -->
+                        <defs>
+                            <marker id="arrowhead" markerWidth="10" markerHeight="7" refX="0" refY="3.5" orient="auto">
+                                <polygon points="0 0, 10 3.5, 0 7" fill="currentColor"/>
+                            </marker>
+                        </defs>
+
+                        <!-- Base (Plate) -->
+                        <path d="M 50 280 L 250 280 L 220 310 L 20 310 Z" fill="#e5e7eb" stroke="#374151" stroke-width="2"/>
+                        
+                        <!-- Motor/Base Cylinder -->
+                        <ellipse cx="125" cy="280" rx="25" ry="10" fill="#9ca3af" stroke="#374151" stroke-width="2"/>
+                        <path d="M 100 280 L 100 295 C 100 305 150 305 150 295 L 150 280" fill="#6b7280" stroke="#374151" stroke-width="2"/>
+
+                        <!-- Vertical Rod (Axis) -->
+                        <line x1="125" y1="280" x2="125" y2="30" stroke="black" stroke-width="3"/>
+                        
+                        <!-- Trajectory (Dashed Circle) -->
+                        <ellipse cx="125" cy="180" rx="65" ry="15" fill="none" stroke="#6b7280" stroke-width="1.5" stroke-dasharray="5,5"/>
+
+                        <!-- String -->
+                        <line x1="125" y1="30" x2="60" y2="180" stroke="black" stroke-width="2"/>
+                        <text x="85" y="100" font-size="16">L</text>
+
+                        <!-- Angle Alpha -->
+                        <!-- Arc from rod to string -->
+                        <path d="M 125 80 Q 115 85 106 74" fill="none" stroke="black" stroke-width="1.5"/>
+                        <text x="110" y="95" font-size="16">α</text>
+
+                        <!-- Mass -->
+                        <circle cx="60" cy="180" r="10" fill="black"/>
+                        <text x="35" y="185" font-size="16" font-weight="bold">m</text>
+
+                        <!-- Forces -->
+                        <!-- Tension (T) - Along the string towards pivot -->
+                        <line x1="60" y1="180" x2="82" y2="128" stroke="red" stroke-width="3" marker-end="url(#arrowhead)"/>
+                        <text x="90" y="130" fill="red" font-weight="bold" font-size="16">T</text>
+                        
+                        <!-- Gravity (mg) - Downwards -->
+                        <line x1="60" y1="180" x2="60" y2="250" stroke="blue" stroke-width="3" marker-end="url(#arrowhead)"/>
+                        <text x="65" y="250" fill="blue" font-weight="bold" font-size="16">mg</text>
+
+                    </svg>
+                </div>
+
+                <!-- Math Derivation -->
+                <div class="space-y-3 text-lg">
+                    <p><strong>משוואות הכוחות:</strong></p>
+                    <p>ציר Y (אנכי): \( T \cos \alpha = mg \)</p>
+                    <p>ציר X (רדיאלי - כוח צנטריפטלי): \( T \sin \alpha = m \omega^2 R \)</p>
+                    
+                    <p class="mt-4"><strong>קשרים גיאומטריים:</strong></p>
+                    <p>רדיוס הסיבוב: \( R = L \sin \alpha \)</p>
+                    <p>מהירות זוויתית: \( \omega = 2\pi f \)</p>
+
+                    <p class="mt-4"><strong>פיתוח:</strong></p>
+                    <p>נחלק את המשוואות ונקבל: \( \tan \alpha = \frac{\omega^2 R}{g} \)</p>
+                    <p>נציב את \( R \) ו- \( \omega \):</p>
+                    <p>\( \frac{\sin \alpha}{\cos \alpha} = \frac{(2\pi f)^2 L \sin \alpha}{g} \)</p>
+                    <div class="bg-blue-50 p-3 rounded border-r-4 border-blue-500 mt-2">
+                        <p>הביטוי הסופי:</p>
+                        <p class="font-bold text-xl">\( \cos \alpha = \frac{g}{4\pi^2 L} \cdot \frac{1}{f^2} \)</p>
+                    </div>
+                    <p class="text-sm text-gray-500 mt-2">זהו קשר ליניארי מהצורה \( y = ax \) כאשר \( y=\cos\alpha \) ו-\( x=1/f^2 \).</p>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part B: Table & Graph -->
+        <div class="section-card">
+            <h2 class="text-2xl font-semibold text-blue-600 mb-4 border-b pb-2">סעיף ב': טבלת נתונים וגרף</h2>
+            
+            <div class="overflow-x-auto mb-8">
+                <table class="min-w-full bg-white border border-gray-300 text-center">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="py-2 px-4 border">מדידה</th>
+                            <th class="py-2 px-4 border" dir="ltr">f (Hz)</th>
+                            <th class="py-2 px-4 border" dir="ltr">α (°)</th>
+                            <th class="py-2 px-4 border bg-yellow-50" dir="ltr">1/f² (s²)</th>
+                            <th class="py-2 px-4 border bg-yellow-50" dir="ltr">cos α</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                        <!-- Javascript will populate this -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="relative h-96 w-full">
+                <canvas id="experimentChart"></canvas>
+            </div>
+            <p class="text-center text-sm text-gray-500 mt-2">ציר X: זמן מחזור בריבוע הפוך (1/f²), ציר Y: קוסינוס הזווית</p>
+        </div>
+
+        <!-- Part C: Calculation -->
+        <div class="section-card">
+            <h2 class="text-2xl font-semibold text-blue-600 mb-4 border-b pb-2">סעיף ג': חישוב שיפוע ואורך החוט</h2>
+            
+            <div class="grid md:grid-cols-2 gap-6">
+                <div>
+                    <h3 class="font-bold text-lg mb-2">1. חישוב השיפוע (Slope)</h3>
+                    <p>משוואת קו המגמה הליניארי שהתקבלה מהגרף היא:</p>
+                    <p id="trendlineEquation" class="font-mono text-xl text-indigo-700 my-2">y = mx</p>
+                    <p>לכן השיפוע הוא:</p>
+                    <p id="slopeValue" class="text-2xl font-bold">m = ...</p>
+                </div>
+                <div>
+                    <h3 class="font-bold text-lg mb-2">2. חילוץ אורך החוט (L)</h3>
+                    <p>על פי הפיתוח בסעיף א', השיפוע שווה ל:</p>
+                    <p>\( \text{Slope} = \frac{g}{4\pi^2 L} \)</p>
+                    <p>נבודד את L:</p>
+                    <p>\( L = \frac{g}{4\pi^2 \cdot \text{Slope}} \)</p>
+                    <div class="bg-green-50 p-4 rounded mt-2 border border-green-200">
+                        <p>בהצבת \( g = 10 \) והשיפוע המחושב:</p>
+                        <p id="finalLength" class="text-3xl font-bold text-green-700 mt-2">L = ?</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Part D: Conclusion -->
+        <div class="section-card">
+            <h2 class="text-2xl font-semibold text-blue-600 mb-4 border-b pb-2">סעיף ד': תדירות מינימלית</h2>
+            <p class="mb-2">התדירות המינימלית לקיום תנועה מעגלית (כאשר הכדור מתחיל להתנתק מהאנך) מתקבלת כאשר הזווית שואפת ל-0.</p>
+            <p>במצב זה \( \alpha = 0 \) ולכן \( \cos \alpha = 1 \).</p>
+            
+            <div class="bg-gray-100 p-4 rounded mt-4">
+                <p>על פי הגרף (או המשוואה הליניארית), נבדוק מהו ערך \( 1/f^2 \) כאשר \( y = 1 \):</p>
+                <p class="font-mono mt-2" dir="ltr">1 = Slope * (1/f²)</p>
+                <p class="font-mono" dir="ltr">1/f² = 1 / Slope</p>
+                <p class="font-mono" dir="ltr">f² = Slope</p>
+                <p class="font-bold text-lg mt-2 text-purple-700" id="minFreqResult">f_min = ... Hz</p>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+    (function() {
+        // Data from the problem
+        const rawData = [
+            { id: 6, f: 1, alpha: 80 },
+            { id: 5, f: 0.7, alpha: 70 },
+            { id: 4, f: 0.6, alpha: 63 },
+            { id: 3, f: 0.5, alpha: 45 },
+            { id: 2, f: 0.45, alpha: 32 },
+            { id: 1, f: 0.42, alpha: 18 }
+        ];
+
+        // Process Data
+        const processedData = rawData.map(d => {
+            const x = 1 / Math.pow(d.f, 2);
+            const y = Math.cos(d.alpha * (Math.PI / 180)); // Convert deg to rad
+            return {
+                ...d,
+                x: x,
+                y: y
+            };
+        });
+
+        // Populate Table
+        const tableBody = document.getElementById('dataTableBody');
+        // Clear existing content to prevent duplicates on re-run
+        if (tableBody) tableBody.innerHTML = '';
+        
+        processedData.forEach(d => {
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td class="py-2 border">${d.id}</td>
+                <td class="py-2 border text-center" dir="ltr">${d.f}</td>
+                <td class="py-2 border text-center" dir="ltr">${d.alpha}</td>
+                <td class="py-2 border text-center font-bold text-blue-800" dir="ltr">${d.x.toFixed(2)}</td>
+                <td class="py-2 border text-center font-bold text-blue-800" dir="ltr">${d.y.toFixed(2)}</td>
+            `;
+            if (tableBody) tableBody.appendChild(row);
+        });
+
+        // Calculate Linear Regression (forcing intercept to 0 ideally, but let's do standard best fit first then check physics)
+        // Physics says y = m*x (intercept 0).
+        // Let's use simple least squares for y = mx
+        let sumXY = 0;
+        let sumXX = 0;
+        processedData.forEach(p => {
+            sumXY += p.x * p.y;
+            sumXX += p.x * p.x;
+        });
+        const slope = sumXY / sumXX;
+        
+        // Draw Chart
+        const canvas = document.getElementById('experimentChart');
+        // Destroy existing chart if it exists to prevent overlap
+        if (window.myExperimentChart) {
+            window.myExperimentChart.destroy();
+        }
+
+        if (canvas) {
+            const ctx = canvas.getContext('2d');
+            
+            // Generate trendline points
+            const maxX = Math.max(...processedData.map(d => d.x));
+            const trendlineData = [
+                {x: 0, y: 0},
+                {x: maxX * 1.1, y: slope * (maxX * 1.1)}
+            ];
+
+            window.myExperimentChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'נקודות הניסוי',
+                        data: processedData.map(d => ({x: d.x, y: d.y})),
+                        backgroundColor: 'rgba(59, 130, 246, 1)',
+                        pointRadius: 6
+                    }, {
+                        label: 'קו מגמה (ליניארי)',
+                        data: trendlineData,
+                        type: 'line',
+                        borderColor: 'rgba(239, 68, 68, 0.8)',
+                        borderWidth: 2,
+                        pointRadius: 0,
+                        borderDash: [5, 5]
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: '1/f² [s²]',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            min: 0
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'cos(α)',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            min: 0,
+                            max: 1.1
+                        }
+                    }
+                }
+            });
+        }
+
+        // Update Calculation DOM
+        const eqEl = document.getElementById('trendlineEquation');
+        if(eqEl) eqEl.textContent = `y = ${slope.toFixed(4)}x`;
+        
+        const slopeEl = document.getElementById('slopeValue');
+        if(slopeEl) slopeEl.textContent = `m ≈ ${slope.toFixed(3)} [1/s²]`;
+
+        // Calculate L
+        const g = 10;
+        const piSq = Math.pow(Math.PI, 2);
+        // Slope = g / (4 * pi^2 * L)  => L = g / (4 * pi^2 * Slope)
+        // Using var or let here instead of const to be safe, though IIFE handles it.
+        const L = g / (4 * piSq * slope);
+
+        const finalLenEl = document.getElementById('finalLength');
+        if(finalLenEl) finalLenEl.textContent = `L ≈ ${L.toFixed(3)} מטרים`;
+
+        // Calculate Min Frequency
+        const fMin = Math.sqrt(slope);
+        const minFreqEl = document.getElementById('minFreqResult');
+        if(minFreqEl) {
+            minFreqEl.innerHTML = `
+                \\( f_{min} = \\sqrt{${slope.toFixed(3)}} \\approx ${fMin.toFixed(2)} \\text{ Hz} \\)
+            `;
+        }
+        
+        // Re-render MathJax
+        if (window.MathJax) {
+            MathJax.typesetPromise();
+        }
+    })();
+    </script>
+</body>
+</html>

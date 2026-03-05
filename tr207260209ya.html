@@ -1,0 +1,323 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון שאלה 46 - חיבור קפיצים</title>
+    <!-- טעינת MathJax לתצוגת נוסחאות תקינה -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --bg-color: #f9f9f9;
+            --box-bg: #ffffff;
+            --highlight-bg: #eaf6ff;
+            --spring-color-1: #3498db;
+            --spring-color-2: #8e44ad;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            background-color: var(--bg-color);
+            color: #333;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: var(--box-bg);
+            padding: 40px;
+            border-radius: 8px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            border-top: 5px solid var(--primary-color);
+        }
+
+        h1 {
+            color: var(--secondary-color);
+            font-size: 2rem;
+            margin-bottom: 0.5em;
+        }
+
+        h2, h3 {
+            color: var(--secondary-color);
+        }
+
+        .question-box {
+            background-color: var(--highlight-bg);
+            padding: 20px;
+            border-radius: 8px;
+            border-right: 4px solid var(--primary-color);
+            margin-bottom: 25px;
+        }
+
+        .diagram-container {
+            text-align: center;
+            margin: 20px auto;
+            padding: 10px;
+            background-color: #fff;
+            border-radius: 8px;
+            border: 1px solid #eee;
+        }
+
+        /* כפתורים */
+        .btn-container {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn {
+            background-color: var(--primary-color);
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+
+        .btn:hover {
+            background-color: #2980b9;
+            transform: translateY(-1px);
+            box-shadow: 0 4px 8px rgba(0,0,0,0.15);
+        }
+
+        .btn-print {
+            background-color: #7f8c8d;
+        }
+
+        .btn-print:hover {
+            background-color: #636e72;
+        }
+
+        /* אזור הפתרון - מוצג תמיד */
+        .solution-step {
+            display: block; 
+            margin-top: 30px;
+            border-top: 2px dashed #eee;
+            padding-top: 20px;
+        }
+
+        .highlight {
+            font-weight: bold;
+            color: var(--secondary-color);
+            background-color: #fff3cd;
+            padding: 4px 8px;
+            border-radius: 4px;
+            border: 1px solid #ffeeba;
+        }
+
+        .step-title {
+            background-color: #eee;
+            display: inline-block;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-size: 0.9em;
+            font-weight: bold;
+            color: #555;
+            margin-top: 15px;
+        }
+
+        /* הגדרת סגנון לקפיצים ב-SVG */
+        .spring-path {
+            fill: none;
+            stroke-width: 3;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+        }
+
+        /* התאמה להדפסה */
+        @media print {
+            body { background-color: white; }
+            .container { 
+                box-shadow: none; 
+                border: none; 
+                width: 100%; 
+                max-width: 100%; 
+                padding: 0;
+            }
+            .btn-container { display: none !important; }
+            .solution-step { display: block !important; }
+            .question-box { background-color: #fff; border: 1px solid #ccc; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container" id="printable-area">
+    
+    <h1>שאלה 46: חיבור קפיצים (טורי ומקבילי)</h1>
+    
+    <div class="question-box">
+        <p>לרשותו של תלמיד שני קפיצים השווים באורכם (איור א), אך קבועי הכוח שלהם \( k_1 \) ו-\( k_2 \) שונים.</p>
+        
+        <div class="diagram-container">
+            <svg width="400" height="80" viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg">
+                <!-- קפיץ 1 -->
+                <path d="M50,40 l10,0 l5,-15 l10,30 l10,-30 l10,30 l10,-30 l10,30 l10,-30 l10,30 l10,-30 l5,15 l10,0" 
+                      class="spring-path" stroke="#3498db" />
+                <text x="100" y="15" text-anchor="middle" fill="#333" font-weight="bold">k₁</text>
+                
+                <!-- קפיץ 2 (צפוף יותר לצורך ההמחשה) -->
+                <path d="M250,40 l10,0 l3,-15 l6,30 l6,-30 l6,30 l6,-30 l6,30 l6,-30 l6,30 l6,-30 l6,30 l6,-30 l6,30 l6,-30 l6,30 l6,-30 l3,15 l10,0" 
+                      class="spring-path" stroke="#8e44ad" />
+                <text x="310" y="15" text-anchor="middle" fill="#333" font-weight="bold">k₂</text>
+            </svg>
+            <p style="font-size:0.9em; color:#666;">איור א'</p>
+        </div>
+
+        <p><strong>א.</strong> התלמיד בנה את המתקן המתואר באיור ב', בו שני הקפיצים מחוברים במקביל זה לזה. כאשר מותחים את המתקן - שני הקפיצים מתארכים באותה מידה.</p>
+        
+        <div class="diagram-container">
+            <svg width="300" height="150" viewBox="0 0 300 150" xmlns="http://www.w3.org/2000/svg">
+                <!-- מוט שמאלי B -->
+                <rect x="50" y="20" width="15" height="110" fill="#f1c40f" stroke="#333" rx="5" />
+                <text x="35" y="80" font-weight="bold">B</text>
+                <!-- מוט ימני A -->
+                <rect x="235" y="20" width="15" height="110" fill="#f1c40f" stroke="#333" rx="5" />
+                <text x="265" y="80" font-weight="bold">A</text>
+
+                <!-- קפיץ עליון k1 -->
+                <path d="M65,45 l20,0 l10,-10 l10,20 l10,-20 l10,20 l10,-20 l10,20 l10,-20 l10,20 l10,-20 l10,20 l10,-20 l20,0 l15,0" 
+                      class="spring-path" stroke="#3498db" fill="none"/>
+                <text x="150" y="30" text-anchor="middle" font-weight="bold">k₁</text>
+
+                <!-- קפיץ תחתון k2 -->
+                <path d="M65,105 l20,0 l6,-10 l12,20 l12,-20 l12,20 l12,-20 l12,20 l12,-20 l12,20 l12,-20 l12,20 l12,-20 l6,10 l20,0" 
+                      class="spring-path" stroke="#8e44ad" fill="none"/>
+                <text x="150" y="145" text-anchor="middle" font-weight="bold">k₂</text>
+            </svg>
+            <p style="font-size:0.9em; color:#666;">איור ב' - חיבור במקביל</p>
+        </div>
+
+        <p>הראו כי מתקן זה מתנהג כקפיץ יחיד שקבוע הכוח שלו, \( k \), מקיים:</p>
+        <p>$$ k = k_1 + k_2 $$</p>
+
+        <p><strong>ב.</strong> התלמיד חיבר את הקפיצים זה לזה בטור, כמתואר באיור ג'.</p>
+        
+        <div class="diagram-container">
+            <svg width="400" height="80" viewBox="0 0 400 80" xmlns="http://www.w3.org/2000/svg">
+                <circle cx="40" cy="40" r="5" fill="#27ae60" />
+                <text x="25" y="45" font-weight="bold">B</text>
+                
+                <!-- קפיץ k1 -->
+                <path d="M40,40 l20,0 l10,-15 l10,30 l10,-30 l10,30 l10,-30 l10,30 l10,-30 l10,15 l20,0" 
+                      class="spring-path" stroke="#3498db" />
+                <text x="100" y="20" text-anchor="middle" font-weight="bold">k₁</text>
+
+                <!-- חיבור אמצעי -->
+                <line x1="160" y1="40" x2="190" y2="40" stroke="#333" stroke-width="2" />
+                <line x1="190" y1="30" x2="190" y2="50" stroke="#333" stroke-width="2" /> <!-- מחבר קטן -->
+
+                <!-- קפיץ k2 -->
+                <path d="M190,40 l20,0 l5,-15 l10,30 l10,-30 l10,30 l10,-30 l10,30 l10,-30 l10,30 l10,-30 l5,15 l20,0" 
+                      class="spring-path" stroke="#8e44ad" />
+                <text x="260" y="20" text-anchor="middle" font-weight="bold">k₂</text>
+
+                <circle cx="360" cy="40" r="5" fill="#27ae60" />
+                <text x="375" y="45" font-weight="bold">A</text>
+            </svg>
+            <p style="font-size:0.9em; color:#666;">איור ג' - חיבור בטור</p>
+        </div>
+
+        <p>הראו כי מתקן זה, בו הקפיצים מחוברים בטור, מתנהג כקפיץ יחיד שקבוע הכוח שלו, \( k \), מקיים:</p>
+        <p>$$ \frac{1}{k} = \frac{1}{k_1} + \frac{1}{k_2} $$</p>
+    </div>
+
+    <!-- כפתור הדפסה -->
+    <div class="btn-container">
+        <button class="btn btn-print" onclick="printContent()">🖨️ הדפס ל-PDF</button>
+    </div>
+
+    <div id="solution" class="solution-step">
+        <h2>פתרון והוכחה</h2>
+        
+        <div class="step-title">חלק א': חיבור במקביל</div>
+        <p>בחיבור מקבילי, שני הקפיצים מחוברים לאותם גופים (מוטות A ו-B) בשני קצותיהם. לכן, כאשר אנו מפעילים כוח חיצוני \( F \) ומותחים את המערכת למרחק \( \Delta x \):</p>
+        <ul>
+            <li>שני הקפיצים מתארכים באותו שיעור בדיוק: \( \Delta x_1 = \Delta x_2 = \Delta x \).</li>
+            <li>הכוח הכולל \( F \) מתחלק בין שני הקפיצים, כך שכל קפיץ מפעיל חלק מהכוח: \( F = F_1 + F_2 \).</li>
+        </ul>
+        
+        <p>לפי חוק הוק (\( F = k \Delta x \)):</p>
+        <p>הכוח בקפיץ הראשון: \( F_1 = k_1 \Delta x \)</p>
+        <p>הכוח בקפיץ השני: \( F_2 = k_2 \Delta x \)</p>
+        
+        <p>הכוח הכולל במערכת הוא סכום הכוחות:</p>
+        <p>$$ F_{total} = k_1 \Delta x + k_2 \Delta x $$</p>
+        <p>$$ F_{total} = (k_1 + k_2) \Delta x $$</p>
+        
+        <p>אנו מחפשים קפיץ שקול יחיד בעל קבוע \( k \) שיתנהג באותו אופן (\( F_{total} = k \Delta x \)). בהשוואת הביטויים נקבל:</p>
+        <p class="highlight">$$ k = k_1 + k_2 $$</p>
+        <p><strong>מסקנה:</strong> בחיבור מקבילי, קבוע הכוח השקול הוא סכום הקבועים (המערכת הופכת ל"קשה" יותר למתיחה).</p>
+
+        <div class="step-title">חלק ב': חיבור בטור</div>
+        <p>בחיבור טורי, הקפיצים מחוברים זה להמשכו של זה. כאשר אנו מפעילים כוח חיצוני \( F \) בקצות המערכת:</p>
+        <ul>
+            <li>אותו כוח מתיחה \( F \) פועל לאורך כל השרשרת, ולכן פועל על כל קפיץ בנפרד: \( F_1 = F_2 = F \).</li>
+            <li>ההתארכות הכוללת של המערכת \( \Delta x_{total} \) היא סכום ההתארכויות של כל קפיץ בנפרד: \( \Delta x_{total} = \Delta x_1 + \Delta x_2 \).</li>
+        </ul>
+
+        <p>לפי חוק הוק, נבודד את ההתארכות (\( \Delta x = \frac{F}{k} \)):</p>
+        <p>התארכות קפיץ ראשון: \( \Delta x_1 = \frac{F}{k_1} \)</p>
+        <p>התארכות קפיץ שני: \( \Delta x_2 = \frac{F}{k_2} \)</p>
+        
+        <p>ההתארכות הכוללת היא:</p>
+        <p>$$ \Delta x_{total} = \frac{F}{k_1} + \frac{F}{k_2} $$</p>
+        <p>$$ \Delta x_{total} = F \left( \frac{1}{k_1} + \frac{1}{k_2} \right) $$</p>
+
+        <p>עבור קפיץ שקול יחיד בעל קבוע \( k \), מתקיים \( \Delta x_{total} = \frac{F}{k} \). נשווה בין הביטויים:</p>
+        <p>$$ \frac{F}{k} = F \left( \frac{1}{k_1} + \frac{1}{k_2} \right) $$</p>
+        <p>נצמצם ב-\( F \) (שהוא שונה מאפס) ונקבל:</p>
+        <p class="highlight">$$ \frac{1}{k} = \frac{1}{k_1} + \frac{1}{k_2} $$</p>
+        <p><strong>מסקנה:</strong> בחיבור טורי, ההופכי של קבוע הכוח השקול שווה לסכום ההופכיים של הקבועים (המערכת הופכת ל"רכה" יותר וקלה למתיחה).</p>
+
+    </div>
+</div>
+
+<script>
+    function printContent() {
+        const printWindow = window.open('', '_blank', 'height=600,width=800');
+        
+        printWindow.document.write('<!DOCTYPE html><html lang="he" dir="rtl"><head><title>הדפסת פתרון - שאלה 46</title>');
+        
+        const styles = document.getElementsByTagName('style');
+        for (let i = 0; i < styles.length; i++) {
+            printWindow.document.write(styles[i].outerHTML);
+        }
+        
+        printWindow.document.write('<script src="https://polyfill.io/v3/polyfill.min.js?features=es6"><\/script>');
+        printWindow.document.write('<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>');
+
+        printWindow.document.write('</head><body>');
+        
+        const content = document.getElementById('printable-area').cloneNode(true);
+        const btns = content.querySelector('.btn-container');
+        if(btns) btns.remove();
+
+        printWindow.document.write(content.outerHTML);
+        printWindow.document.write('</body></html>');
+        
+        printWindow.document.close(); 
+        printWindow.focus(); 
+
+        setTimeout(function() {
+            printWindow.print();
+        }, 1500);
+    }
+</script>
+
+</body>
+</html>

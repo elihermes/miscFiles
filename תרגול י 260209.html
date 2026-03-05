@@ -1,0 +1,933 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פיזיקאלי - מעבדת קינמטיקה אינטראקטיבית</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f3f4f6; }
+        canvas { background-color: #ffffff; border-radius: 8px; }
+        /* Compact inputs */
+        .input-group label { font-size: 0.8rem; font-weight: 600; color: #374151; display: block; margin-bottom: 2px;}
+        .input-group input { width: 100%; padding: 0.3rem; border: 1px solid #d1d5db; border-radius: 0.25rem; font-size: 0.9rem; }
+        /* Scrollbar styling for sidebar */
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        
+        .warp-badge { animation: pulse 2s infinite; }
+        @keyframes pulse { 0% { opacity: 0.6; } 50% { opacity: 1; } 100% { opacity: 0.6; } }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden text-gray-800">
+
+    <!-- Header (Compact) -->
+    <header class="bg-blue-600 text-white p-2 px-4 shadow-md flex justify-between items-center shrink-0 h-14">
+        <div class="flex items-center gap-4">
+            <h1 class="text-xl font-bold">פיזיקאלי - מעבדה</h1>
+            <span class="text-xs opacity-80 border-r pr-2 border-blue-400">קינמטיקה 8.2.2026</span>
+        </div>
+        <select id="questionSelect" class="text-gray-800 text-sm p-1 pr-2 rounded shadow border-none outline-none font-bold w-64">
+            <option value="0">1: זריקה אנכית</option>
+            <option value="1">2: נפילה חופשית</option>
+            <option value="2">3: זריקה מבניין</option>
+            <option value="3">4: מפגש כדורים</option>
+            <option value="4">5: חקירת נפילה</option>
+            <option value="5">6: רוכב האופניים</option>
+            <option value="6">7: מרדף משטרתי</option>
+            <option value="7">8: שתי אבנים</option>
+            <option value="8">9: זריקה בהפרש</option>
+            <option value="9">10: מפגש רכבים</option>
+        </select>
+    </header>
+
+    <!-- Main Layout -->
+    <div class="flex flex-1 overflow-hidden">
+        
+        <!-- Sidebar: Controls & Solution (Compact width) -->
+        <aside class="w-72 bg-white shadow-lg flex flex-col border-l border-gray-200 z-10 shrink-0">
+            <!-- Controls Top -->
+            <div class="p-3 border-b bg-gray-50 overflow-y-auto max-h-[50vh]">
+                <h2 class="text-sm font-bold mb-2 text-blue-700 uppercase tracking-wide">נתונים לשינוי</h2>
+                <div id="inputsContainer" class="space-y-2">
+                    <!-- Inputs injected here -->
+                </div>
+                <div class="mt-4 flex gap-2">
+                    <button id="btnStart" onclick="startSimulation()" class="bg-blue-600 hover:bg-blue-700 text-white text-sm px-2 py-1.5 rounded shadow transition flex-1 font-bold">▶ הרצה</button>
+                    <button id="btnPause" onclick="togglePause()" class="bg-yellow-500 hover:bg-yellow-600 disabled:bg-gray-300 disabled:cursor-not-allowed text-white text-sm px-2 py-1.5 rounded shadow transition flex-1 font-bold" disabled>⏸ השהה</button>
+                    <button onclick="resetSimulation()" class="bg-gray-500 hover:bg-gray-600 text-white text-sm px-2 py-1.5 rounded shadow transition flex-1">↺ איפוס</button>
+                </div>
+            </div>
+            
+            <!-- Solution Bottom -->
+            <div class="p-3 flex-1 overflow-y-auto bg-white">
+                <h2 class="text-sm font-bold mb-1 text-blue-700 border-b pb-1">פתרון מחושב</h2>
+                <div id="solutionOutput" class="text-xs text-gray-700 whitespace-pre-line font-mono leading-tight pt-2">
+                    <!-- Solution text injected here -->
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Visual Area -->
+        <main class="flex-1 flex flex-col p-2 gap-2 overflow-hidden bg-gray-100">
+            
+            <!-- Simulation Canvas (Flex Grow to take available space) -->
+            <div class="flex-1 bg-white rounded border border-gray-300 relative overflow-hidden flex flex-col">
+                <div class="absolute top-2 right-2 z-10 bg-white/90 px-2 py-1 rounded text-xs font-bold text-gray-500 shadow-sm pointer-events-none">
+                    הדמיה ויזואלית
+                </div>
+                <div id="timeWarpBadge" class="hidden absolute top-2 left-2 z-10 bg-purple-600 text-white px-2 py-1 rounded text-xs font-bold shadow-sm warp-badge pointer-events-none">
+                    ⚡ מהירות כפולה (x120)
+                </div>
+                <canvas id="simCanvas" class="w-full h-full block"></canvas>
+                <!-- Time Stats Overlay -->
+                <div class="absolute bottom-2 left-2 bg-black/70 text-white px-2 py-1 rounded text-xs font-mono tabular-nums" id="simStats">
+                    t: 0.00s
+                </div>
+            </div>
+
+            <!-- Graphs Container (Fixed compact height) -->
+            <div class="h-44 shrink-0 flex gap-2">
+                <div class="flex-1 bg-white p-1 rounded border border-gray-300 relative flex flex-col">
+                    <h3 class="text-gray-500 font-bold text-[10px] absolute top-1 right-2 bg-white px-1">מיקום-זמן (y-t)</h3>
+                    <div class="flex-1 relative w-full h-full pt-3">
+                         <canvas id="chartPos"></canvas>
+                    </div>
+                </div>
+                <div class="flex-1 bg-white p-1 rounded border border-gray-300 relative flex flex-col">
+                    <h3 class="text-gray-500 font-bold text-[10px] absolute top-1 right-2 bg-white px-1">מהירות-זמן (v-t)</h3>
+                    <div class="flex-1 relative w-full h-full pt-3">
+                        <canvas id="chartVel"></canvas>
+                    </div>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+<script>
+/**
+ * Physics Engine & Logic Controller
+ */
+
+const g = 10;
+let animationFrame;
+let isAnimating = false;
+let isPaused = false;
+let simTime = 0;
+let lastTimestamp = null;
+let currentQIndex = 0;
+let charts = { pos: null, vel: null };
+
+// ---- Helper: Multi-stage State Calculator ----
+function calculateMultiStageState(totalTime, stages) {
+    let tRem = totalTime;
+    let currentX = 0;
+    let currentV = 0;
+    
+    for (let i = 0; i < stages.length; i++) {
+        const stage = stages[i];
+        if (tRem <= stage.dur) {
+            let dt = Math.max(0, tRem);
+            let x = currentX + currentV * dt + 0.5 * stage.a * dt * dt;
+            let v = currentV + stage.a * dt;
+            return { x, v, stageIndex: i };
+        } else {
+            let dt = stage.dur;
+            currentX += currentV * dt + 0.5 * stage.a * dt * dt;
+            currentV += stage.a * dt;
+            tRem -= dt;
+        }
+    }
+    return { x: currentX, v: currentV, stageIndex: stages.length };
+}
+
+// ---- Question Definitions ----
+const questions = [
+    {   // Q1
+        id: 0,
+        title: "שאלה 1: זריקה אנכית מעלה",
+        inputs: [
+            { id: 'v0', label: 'מהירות התחלתית (m/s)', val: 65 },
+            { id: 'target_v', label: 'מהירות יעד (m/s)', val: 25 },
+            { id: 'acc', label: 'תאוצה (m/s²)', val: -10 }
+        ],
+        solve: (p) => {
+            const t = (p.target_v - p.v0) / p.acc;
+            const y = 0 + p.v0 * t + 0.5 * p.acc * t * t;
+            return `משוואת מהירות: v = ${p.v0} + (${p.acc})t
+            זמן להגעה למהירות ${p.target_v}: 
+            ${p.target_v} = ${p.v0} ${p.acc < 0 ? '-' : '+'} ${Math.abs(p.acc)}t
+            t = ${t.toFixed(2)} s
+            
+            משוואת מיקום: y = ${p.v0}t + 0.5(${p.acc})t²
+            מיקום בזמן t=${t.toFixed(2)}:
+            y = ${y.toFixed(2)} m`;
+        },
+        bodies: (p) => [{ type: 'ball', y0: 0, v0: p.v0, a: p.acc, color: '#2563eb', label: 'כדור' }],
+        maxTime: 14,
+        scaleY: 250
+    },
+    {   // Q2
+        id: 1,
+        title: "שאלה 2: נפילה חופשית",
+        inputs: [
+            { id: 'h', label: 'גובה התחלתי (m)', val: 80 },
+            { id: 'v0', label: 'מהירות התחלתית (m/s)', val: 0 }
+        ],
+        solve: (p) => {
+            const t_ground = Math.sqrt((2 * p.h) / g);
+            const t_half = t_ground / 2;
+            const dist_fallen = 0.5 * g * t_half * t_half;
+            const h_half = p.h - dist_fallen;
+
+            return `משוואת מיקום (ציר מטה חיובי): y = 5t²
+            זמן פגיעה בקרקע (${p.h} מטר):
+            t = √(${p.h} / 5) = ${t_ground.toFixed(2)} s
+            
+            מחצית הזמן: t = ${(t_ground/2).toFixed(2)} s
+            מרחק נפילה: y = 5(${t_half.toFixed(2)})² = ${dist_fallen.toFixed(2)} m
+            גובה מהקרקע: ${p.h} - ${dist_fallen.toFixed(2)} = ${h_half.toFixed(2)} m`;
+        },
+        bodies: (p) => [{ type: 'ball', y0: p.h, v0: -p.v0, a: -10, color: '#dc2626', label: 'כדור' }],
+        maxTime: 5,
+        scaleY: 100
+    },
+    {   // Q3
+        id: 2,
+        title: "שאלה 3: זריקה מבניין",
+        inputs: [
+            { id: 'h', label: 'גובה הבניין (m)', val: 80 },
+            { id: 'v0', label: 'מהירות התחלתית (m/s)', val: 55 }
+        ],
+        solve: (p) => {
+            const t_peak = p.v0 / g;
+            const delta_y_peak = p.v0 * t_peak - 0.5 * g * t_peak * t_peak;
+            const total_peak_h = p.h + delta_y_peak;
+            
+            const a = -5, b = p.v0, c = p.h;
+            const disc = Math.sqrt(b*b - 4*a*c);
+            const t_ground = (-b - disc) / (2*a);
+
+            return `זמן לשיא הגובה (v=0):
+            0 = ${p.v0} - 10t => t = ${t_peak.toFixed(2)} s
+            
+            גובה מעל הבניין בשיא:
+            Δy = ${p.v0}(${t_peak.toFixed(2)}) - 5(${t_peak.toFixed(2)})² = ${delta_y_peak.toFixed(2)} m
+            גובה שיא מהקרקע: ${total_peak_h.toFixed(2)} m
+            
+            זמן נפילה לקרקע (פתרון משוואה ריבועית):
+            0 = ${p.h} + ${p.v0}t - 5t²
+            t = ${t_ground.toFixed(2)} s`;
+        },
+        bodies: (p) => [{ type: 'ball', y0: p.h, v0: p.v0, a: -10, color: '#2563eb', label: 'כדור' }],
+        maxTime: 14,
+        scaleY: 300
+    },
+    {   // Q4
+        id: 3,
+        title: "שאלה 4: מפגש כדורים",
+        inputs: [
+            { id: 'h', label: 'גובה כדור B (m)', val: 65 },
+            { id: 'v0a', label: 'מהירות כדור A (m/s)', val: 35 }
+        ],
+        solve: (p) => {
+            const t_meet = p.h / p.v0a;
+            const y_meet = p.h - 5 * t_meet * t_meet;
+            
+            return `משוואת כדור A (עולה): y = ${p.v0a}t - 5t²
+            משוואת כדור B (נופל): y = ${p.h} - 5t²
+            
+            השוואת מיקומים:
+            ${p.v0a}t = ${p.h}
+            t = ${t_meet.toFixed(2)} s
+            
+            גובה המפגש:
+            y = ${p.h} - 5(${t_meet.toFixed(2)})² = ${y_meet.toFixed(2)} m
+            
+            (הסימולציה תמשיך עד ששני הכדורים יפגעו בקרקע)`;
+        },
+        bodies: (p) => [
+            { type: 'ball', y0: 0, v0: p.v0a, a: -10, color: '#2563eb', label: 'A' },
+            { type: 'ball', y0: p.h, v0: 0, a: -10, color: '#dc2626', label: 'B' }
+        ],
+        // DYNAMIC MAX TIME AND SCALE FOR Q4
+        maxTime: (p) => {
+            // Ball A (Up then Down): 0 = v0t - 5t^2 => t = v0/5
+            const tA = p.v0a / 5;
+            // Ball B (Down): 0 = h - 5t^2 => t = sqrt(h/5)
+            const tB = Math.sqrt(p.h / 5);
+            return Math.max(tA, tB) + 2; // +2s buffer
+        },
+        scaleY: (p) => {
+            // Max height for Ball A: v^2/20
+            const hA_max = (p.v0a * p.v0a) / 20;
+            return Math.max(p.h, hA_max) * 1.1;
+        }
+    },
+    {   // Q5
+        id: 4,
+        title: "שאלה 5: חקירת נפילה",
+        inputs: [
+            { id: 'y0', label: 'גובה התחלתי (m)', val: 100 },
+            { id: 't1', label: 'זמן בדיקה 1 (s)', val: 1 },
+            { id: 't2', label: 'זמן בדיקה 2 (s)', val: 2.5 }
+        ],
+        solve: (p) => {
+            const v1 = -10 * p.t1;
+            const v2 = -10 * p.t2;
+            const pos1 = p.y0 - 5 * p.t1 * p.t1;
+            const pos2 = p.y0 - 5 * p.t2 * p.t2;
+            const dist = Math.abs(pos2 - pos1);
+            
+            return `ציר y חיובי מעלה (a = -10).
+            מהירות ב-t=${p.t1}: v = -10(${p.t1}) = ${v1} m/s
+            מהירות ב-t=${p.t2}: v = -10(${p.t2}) = ${v2} m/s
+            
+            מיקום ב-t=${p.t1}: y = ${p.y0} - 5(${p.t1})² = ${pos1.toFixed(2)} m
+            מיקום ב-t=${p.t2}: y = ${p.y0} - 5(${p.t2})² = ${pos2.toFixed(2)} m
+            
+            מרחק שעבר ביניהם: |${pos2.toFixed(2)} - ${pos1.toFixed(2)}| = ${dist.toFixed(2)} m
+            
+            (הסימולציה תמשיך עד שהגוף יפגע בקרקע)`;
+        },
+        bodies: (p) => [{ type: 'ball', y0: p.y0, v0: 0, a: -10, color: '#16a34a', label: 'גוף' }],
+        // DYNAMIC MAX TIME AND SCALE FOR Q5
+        maxTime: (p) => {
+            // Time to hit ground: 0 = y0 - 5t^2 => t = sqrt(y0/5)
+            return Math.sqrt(p.y0 / 5) + 1; // +1s buffer
+        },
+        scaleY: (p) => p.y0 * 1.1 // Max height + 10%
+    },
+    {   // Q6
+        id: 5,
+        title: "שאלה 6: רוכב האופניים",
+        inputs: [
+            { id: 'a1', label: 'תאוצה שלב א (m/s²)', val: 2 },
+            { id: 'v_max1', label: 'מהירות סוף א (m/s)', val: 10 },
+            { id: 't_const', label: 'זמן מהירות קבועה (min)', val: 24 },
+            { id: 'v_max2', label: 'מהירות סוף האצה ב (m/s)', val: 12 },
+            { id: 't_acc2', label: 'זמן האצה ב (s)', val: 2 }, 
+            { id: 't_stop', label: 'זמן עצירה (s)', val: 30 }
+        ],
+        solve: (p) => {
+            // Stage 1
+            const t1 = p.v_max1 / p.a1;
+            const x1 = 0.5 * p.a1 * t1 * t1;
+            
+            // Stage 2
+            const t2 = p.t_const * 60;
+            const x2 = p.v_max1 * t2;
+            
+            // Stage 3
+            const delta_v = p.v_max2 - p.v_max1;
+            const a2 = delta_v / p.t_acc2; 
+            const x3 = p.v_max1 * p.t_acc2 + 0.5 * a2 * p.t_acc2 * p.t_acc2;
+            
+            // Stage 4
+            const x4 = (p.v_max2 / 2) * p.t_stop; // avg velocity
+            
+            const total = x1 + x2 + x3 + x4;
+            
+            return `שלב א (האצה ל-${p.v_max1}): t=${t1.toFixed(1)}s, x=${x1.toFixed(1)}m
+            שלב ב (קבוע ${p.t_const} דק'): x=${x2.toFixed(1)}m
+            שלב ג (האצה ל-${p.v_max2}): x=${x3.toFixed(1)}m (a=${a2.toFixed(1)})
+            שלב ד (עצירה ב-${p.t_stop}s): x=${x4.toFixed(1)}m
+            
+            סה"כ מרחק: ${total.toFixed(1)} m`;
+        },
+        bodies: (p) => [
+            { type: 'multistage', 
+              stages: [
+                  { dur: p.v_max1/p.a1, a: p.a1 }, // Accel
+                  { dur: p.t_const*60, a: 0 },     // Constant
+                  { dur: p.t_acc2, a: (p.v_max2 - p.v_max1)/p.t_acc2 }, // Accel 2
+                  { dur: p.t_stop, a: -(p.v_max2)/p.t_stop } // Decel
+              ],
+              color: '#d97706', label: 'רוכב'
+            }
+        ],
+        maxTime: 1600, 
+        scaleY: 15000,
+        isHorizontal: true
+    },
+    {   // Q7
+        id: 6,
+        title: "שאלה 7: מרדף משטרתי",
+        inputs: [
+            { id: 'v_car_kmh', label: 'מהירות רכב (km/h)', val: 120 },
+            { id: 'delay', label: 'עיכוב שוטר (s)', val: 3 },
+            { id: 'a_police', label: 'תאוצת שוטר (m/s²)', val: 2 }
+        ],
+        solve: (p) => {
+            const v_car = p.v_car_kmh / 3.6;
+            const a = 0.5 * p.a_police;
+            const b = -v_car;
+            const c = -v_car * p.delay;
+            
+            const disc = Math.sqrt(b*b - 4*a*c);
+            const t_police = (-b + disc) / (2*a);
+            const x_catch = 0.5 * p.a_police * t_police * t_police;
+
+            return `מהירות רכב: ${v_car.toFixed(2)} m/s
+            משוואת שוטר: x = 0.5(${p.a_police})t² = ${a}t²
+            משוואת רכב (ביחס לזמן שוטר): x = ${v_car.toFixed(2)}(t + ${p.delay})
+            
+            פתרון משוואה ריבועית:
+            t (שוטר) = ${t_police.toFixed(2)} s
+            זמן כולל מרגע המעבר: ${(t_police + p.delay).toFixed(2)} s
+            מרחק תפיסה: ${x_catch.toFixed(2)} m`;
+        },
+        bodies: (p) => [
+            { type: 'car', x0: 0, v0: p.v_car_kmh/3.6, a: 0, color: '#ef4444', label: 'רכב' },
+            { type: 'car', x0: 0, v0: 0, a: p.a_police, color: '#3b82f6', label: 'משטרה', startAt: p.delay } 
+        ],
+        maxTime: 40,
+        scaleY: 1400,
+        isHorizontal: true
+    },
+    {   // Q8
+        id: 7,
+        title: "שאלה 8: שתי אבנים (מנוגדות)",
+        inputs: [
+            { id: 'h', label: 'גובה בניין (m)', val: 120 },
+            { id: 'v0_down', label: 'מהירות אבן יורדת (m/s)', val: 8 },
+            { id: 'v0_up', label: 'מהירות אבן עולה (m/s)', val: 60 }
+        ],
+        solve: (p) => {
+            const t = p.h / (p.v0_up + p.v0_down);
+            const y = p.v0_up * t - 5 * t * t;
+            
+            return `משוואת יורדת: y = ${p.h} - ${p.v0_down}t - 5t²
+            משוואת עולה: y = ${p.v0_up}t - 5t²
+            
+            השוואה (האיברים הריבועיים מצטמצמים):
+            ${p.h} = (${p.v0_up} + ${p.v0_down})t
+            t = ${t.toFixed(2)} s
+            
+            גובה מפגש: ${y.toFixed(2)} m`;
+        },
+        bodies: (p) => [
+            { type: 'ball', y0: p.h, v0: -p.v0_down, a: -10, color: '#dc2626', label: 'יורדת' },
+            { type: 'ball', y0: 0, v0: p.v0_up, a: -10, color: '#2563eb', label: 'עולה' }
+        ],
+        // DYNAMIC MAX TIME AND SCALE FOR Q8
+        maxTime: (p) => {
+            // Stone 1 (Down): 5t^2 + v_down*t - h = 0
+            const t1 = (-p.v0_down + Math.sqrt(p.v0_down*p.v0_down + 20*p.h)) / 10;
+            // Stone 2 (Up): v_up*t - 5t^2 = 0 => t = v_up / 5
+            const t2 = p.v0_up / 5;
+            return Math.max(t1, t2) + 2;
+        },
+        scaleY: (p) => {
+            // Max height for stone 2
+            const h2_max = (p.v0_up * p.v0_up) / 20;
+            return Math.max(p.h, h2_max) * 1.1;
+        }
+    },
+    {   // Q9
+        id: 8,
+        title: "שאלה 9: זריקה בהפרש זמנים",
+        inputs: [
+            { id: 'v0_1', label: 'מהירות ראשונה (m/s)', val: 40 },
+            { id: 'v0_2', label: 'מהירות שנייה (m/s)', val: 65 },
+            { id: 'delay', label: 'הפרש זמנים (s)', val: 2 }
+        ],
+        solve: (p) => {
+            // CORRECTED FORMULA: v2*d + 5*d^2 in numerator
+            const t = (p.v0_2 * p.delay + 5 * p.delay * p.delay) / (p.v0_2 - p.v0_1 + 10 * p.delay);
+            const y = p.v0_1 * t - 5 * t * t;
+            
+            return `אבן 1: y = ${p.v0_1}t - 5t²
+            אבן 2: y = ${p.v0_2}(t-${p.delay}) - 5(t-${p.delay})²
+            
+            זמן מפגש (פתרון אנליטי): t = ${t.toFixed(2)} s
+            גובה מפגש: ${y.toFixed(2)} m
+            
+            (הסימולציה תמשיך עד ששתי האבנים יפגעו בקרקע)`;
+        },
+        bodies: (p) => [
+            { type: 'ball', y0: 0, v0: p.v0_1, a: -10, color: '#2563eb', label: 'ראשונה' },
+            { type: 'ball', y0: 0, v0: p.v0_2, a: -10, color: '#dc2626', label: 'שנייה', startAt: p.delay }
+        ],
+        maxTime: (p) => {
+            const t1 = p.v0_1 / 5;
+            const t2 = p.delay + (p.v0_2 / 5);
+            return Math.max(t1, t2) + 2;
+        },
+        scaleY: (p) => {
+            const h1 = (p.v0_1 * p.v0_1) / 20;
+            const h2 = (p.v0_2 * p.v0_2) / 20;
+            return Math.max(h1, h2) * 1.1;
+        }
+    },
+    {   // Q10
+        id: 9,
+        title: "שאלה 10: מפגש רכבים",
+        inputs: [
+            { id: 'dist', label: 'מרחק התחלתי (km)', val: 130 },
+            { id: 'v1', label: 'מהירות רכב א (km/h)', val: 70 },
+            { id: 'v2', label: 'מהירות רכב ב (km/h)', val: 60 },
+            { id: 'delay', label: 'איחור רכב ב (hours)', val: 0.75 }
+        ],
+        solve: (p) => {
+            const t = (p.dist + p.v2 * p.delay) / (p.v1 + p.v2);
+            const x_meet_from_A = p.v1 * t;
+            const x_meet_from_B = p.dist - x_meet_from_A;
+            
+            return `עבודה ביחידות km, hours.
+            רכב א: x = ${p.v1}t
+            רכב ב: x = ${p.dist} - ${p.v2}(t - ${p.delay})
+            
+            זמן מפגש: t = (${p.dist} + ${p.v2}*${p.delay}) / (${p.v1} + ${p.v2})
+            t = ${t.toFixed(3)} hours (${Math.floor(t)}h ${Math.round((t%1)*60)}m)
+            
+            מרחק מת"א: ${x_meet_from_A.toFixed(2)} km`;
+        },
+        bodies: (p) => [
+            { type: 'car', x0: 0, v0: p.v1, a: 0, color: '#2563eb', label: 'רכב א' },
+            { type: 'car', x0: p.dist, v0: -p.v2, a: 0, color: '#dc2626', label: 'רכב ב', startAt: p.delay }
+        ],
+        maxTime: (p) => {
+            const t = (p.dist + p.v2 * p.delay) / (p.v1 + p.v2);
+            return t * 1.25;
+        },
+        scaleY: (p) => p.dist * 1.1,
+        isHorizontal: true,
+        units: { dist: 'km', time: 'h' }
+    }
+];
+
+// ---- Setup ----
+
+function init() {
+    const sel = document.getElementById('questionSelect');
+    sel.addEventListener('change', (e) => loadQuestion(parseInt(e.target.value)));
+    loadQuestion(0);
+    initCharts();
+}
+
+function loadQuestion(index) {
+    currentQIndex = index;
+    const q = questions[index];
+    const container = document.getElementById('inputsContainer');
+    container.innerHTML = '';
+    
+    // Create Inputs
+    q.inputs.forEach(inp => {
+        const div = document.createElement('div');
+        div.className = 'input-group';
+        div.innerHTML = `
+            <label>${inp.label}</label>
+            <input type="number" id="inp_${inp.id}" value="${inp.val}" step="0.1" onchange="updateSolution()">
+        `;
+        container.appendChild(div);
+    });
+
+    resetSimulation();
+    updateSolution();
+}
+
+function getParams() {
+    const q = questions[currentQIndex];
+    const params = {};
+    q.inputs.forEach(inp => {
+        params[inp.id] = parseFloat(document.getElementById(`inp_${inp.id}`).value);
+    });
+    return params;
+}
+
+function updateSolution() {
+    const q = questions[currentQIndex];
+    const params = getParams();
+    document.getElementById('solutionOutput').innerText = q.solve(params);
+    drawStaticScene(0); // Preview at t=0
+}
+
+// ---- Simulation ----
+
+function step(timestamp) {
+    if (!lastTimestamp) lastTimestamp = timestamp;
+    const dt = (timestamp - lastTimestamp) / 1000;
+    lastTimestamp = timestamp;
+
+    if (!isAnimating) return; // Completely stopped
+
+    if (isPaused) {
+        // We are paused, so we loop but don't advance physics
+        animationFrame = requestAnimationFrame(step);
+        return; 
+    }
+
+    const q = questions[currentQIndex];
+    const params = getParams();
+
+    // --- Time Warp Logic for Q6 ---
+    let timeScale = 1;
+    const warpBadge = document.getElementById('timeWarpBadge');
+    warpBadge.classList.add('hidden'); // Default hidden
+
+    if (q.id === 5) { // Question 6 ID
+        const stage1Dur = params.v_max1 / params.a1;
+        const stage2Dur = params.t_const * 60;
+        
+        if (simTime > stage1Dur && simTime < (stage1Dur + stage2Dur)) {
+             timeScale = 120; // 1 sec real = 2 min (120s) sim
+             warpBadge.classList.remove('hidden');
+        } else {
+             timeScale = 1.5;
+        }
+    } 
+    else if (q.units && q.units.time === 'h') {
+         timeScale = 0.5; // slow down hours for cars
+    } 
+    else {
+         timeScale = 1.5; // standard speed up
+    }
+
+    simTime += dt * timeScale;
+    
+    const bodiesCurrent = q.bodies(params);
+    
+    drawStaticScene(simTime);
+    updateCharts(simTime, bodiesCurrent);
+    
+    document.getElementById('simStats').innerText = `t: ${simTime.toFixed(2)} ${q.units ? q.units.time : 's'}`;
+
+    // Stop condition
+    let limit;
+    if (typeof q.maxTime === 'function') {
+        limit = q.maxTime(params);
+    } else {
+        limit = q.maxTime;
+    }
+
+    if (q.id === 5) {
+       limit = (params.v_max1/params.a1) + (params.t_const*60) + params.t_acc2 + params.t_stop + 5;
+    }
+
+    if (simTime < limit) {
+        animationFrame = requestAnimationFrame(step);
+    } else {
+        isAnimating = false;
+        document.getElementById('btnStart').disabled = false;
+        document.getElementById('btnPause').disabled = true;
+        document.getElementById('btnPause').innerText = '⏸ השהה';
+        warpBadge.classList.add('hidden');
+    }
+}
+
+function startSimulation() {
+    // If we are already running and not paused, do nothing (or restart?)
+    // User requested "Resume" behavior if paused? No, Start is usually "Restart".
+    // Let's make Start = Restart.
+    
+    isAnimating = true;
+    isPaused = false;
+    simTime = 0;
+    lastTimestamp = null;
+    
+    // Reset UI
+    document.getElementById('btnStart').disabled = true; // Can't start if running (use reset)
+    const btnPause = document.getElementById('btnPause');
+    btnPause.disabled = false;
+    btnPause.innerText = '⏸ השהה';
+    
+    // Clear charts
+    if(charts.pos) {
+        charts.pos.data.datasets = [];
+        charts.vel.data.datasets = [];
+    }
+    
+    // Init datasets
+    const q = questions[currentQIndex];
+    const params = getParams();
+    const bodies = q.bodies(params);
+    bodies.forEach((b, i) => {
+        const color = b.color;
+        charts.pos.data.datasets.push({
+            label: b.label,
+            borderColor: color,
+            data: [],
+            pointRadius: 0,
+            borderWidth: 2
+        });
+        charts.vel.data.datasets.push({
+            label: b.label,
+            borderColor: color,
+            borderDash: [5, 5],
+            data: [],
+            pointRadius: 0,
+            borderWidth: 1.5
+        });
+    });
+
+    cancelAnimationFrame(animationFrame);
+    animationFrame = requestAnimationFrame(step);
+}
+
+function togglePause() {
+    if (!isAnimating && simTime === 0) return; // Haven't started
+    
+    isPaused = !isPaused;
+    const btn = document.getElementById('btnPause');
+    
+    if (isPaused) {
+        btn.innerText = '▶ המשך';
+        btn.classList.remove('bg-yellow-500', 'hover:bg-yellow-600');
+        btn.classList.add('bg-green-600', 'hover:bg-green-700');
+    } else {
+        btn.innerText = '⏸ השהה';
+        btn.classList.remove('bg-green-600', 'hover:bg-green-700');
+        btn.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+        // Reset timestamp to avoid big jump in dt
+        lastTimestamp = null; 
+    }
+}
+
+function resetSimulation() {
+    isAnimating = false;
+    isPaused = false;
+    cancelAnimationFrame(animationFrame);
+    simTime = 0;
+    drawStaticScene(0);
+    
+    document.getElementById('timeWarpBadge').classList.add('hidden');
+    document.getElementById('simStats').innerText = `t: 0.00`;
+    
+    document.getElementById('btnStart').disabled = false;
+    const btnPause = document.getElementById('btnPause');
+    btnPause.disabled = true;
+    btnPause.innerText = '⏸ השהה';
+    btnPause.classList.remove('bg-green-600', 'hover:bg-green-700');
+    btnPause.classList.add('bg-yellow-500', 'hover:bg-yellow-600');
+
+    // Clear charts
+    if(charts.pos) {
+        charts.pos.data.datasets = [];
+        charts.pos.update();
+        charts.vel.data.datasets = [];
+        charts.vel.update();
+    }
+}
+
+// ---- Drawing ----
+
+function drawStaticScene(time) {
+    const canvas = document.getElementById('simCanvas');
+    const ctx = canvas.getContext('2d');
+    
+    const parent = canvas.parentElement;
+    canvas.width = parent.clientWidth;
+    canvas.height = parent.clientHeight;
+
+    const q = questions[currentQIndex];
+    const params = getParams();
+    const bodies = q.bodies(params);
+    
+    // Coordinates System
+    const isHoriz = q.isHorizontal;
+    const padding = 30;
+    const H = canvas.height;
+    const W = canvas.width;
+    
+    // Scale Logic
+    let maxVal;
+    if (typeof q.scaleY === 'function') {
+        maxVal = q.scaleY(params);
+    } else {
+        maxVal = q.scaleY;
+    }
+
+    const toPix = (val) => {
+        if (isHoriz) {
+            return padding + (val / maxVal) * (W - 2*padding);
+        } else {
+            return (H - padding) - (val / maxVal) * (H - 2*padding);
+        }
+    };
+
+    // Clear
+    ctx.clearRect(0, 0, W, H);
+
+    // Draw Axis
+    ctx.beginPath();
+    ctx.strokeStyle = '#9ca3af';
+    ctx.lineWidth = 1.5;
+    if (isHoriz) {
+        // Horizontal road
+        ctx.moveTo(padding, H/2 + 20);
+        ctx.lineTo(W - padding, H/2 + 20);
+        // Ticks
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '9px sans-serif';
+        for(let i=0; i<=10; i++) {
+            let x = padding + (W - 2*padding)*(i/10);
+            ctx.moveTo(x, H/2 + 15);
+            ctx.lineTo(x, H/2 + 25);
+            if(i%2===0) ctx.fillText(Math.round(maxVal*(i/10)), x - 5, H/2 + 35);
+        }
+    } else {
+        // Vertical building/axis
+        ctx.moveTo(40, H - padding);
+        ctx.lineTo(40, padding);
+        // Ticks
+        ctx.fillStyle = '#6b7280';
+        ctx.font = '9px sans-serif';
+        for(let i=0; i<=10; i++) {
+            let y = (H - padding) - (H - 2*padding)*(i/10);
+            ctx.moveTo(35, y);
+            ctx.lineTo(45, y);
+            if(i%2===0) ctx.fillText(Math.round(maxVal*(i/10)), 10, y + 3);
+        }
+        // Ground line
+        ctx.strokeStyle = '#000';
+        ctx.beginPath();
+        ctx.moveTo(20, H - padding);
+        ctx.lineTo(W - 20, H - padding);
+        ctx.stroke();
+    }
+    ctx.stroke();
+
+    // Draw Bodies
+    bodies.forEach((b, idx) => {
+        let currentPos = 0;
+        
+        // Multi-stage Logic
+        if (b.type === 'multistage') {
+            const state = calculateMultiStageState(time, b.stages);
+            currentPos = state.x;
+        } 
+        // Standard Kinematics Logic
+        else {
+            let t = time;
+            if (b.startAt) t -= b.startAt;
+            
+            if (t >= 0) {
+                if (b.type === 'car') {
+                    currentPos = b.x0 + b.v0 * t + 0.5 * b.a * t * t;
+                } else {
+                    currentPos = b.y0 + b.v0 * t + 0.5 * b.a * t * t;
+                    // Clamp to ground for balls (no digging)
+                    if (currentPos < 0) currentPos = 0; 
+                }
+            } else {
+                currentPos = isHoriz ? b.x0 : b.y0;
+            }
+        }
+        
+        // Render
+        ctx.fillStyle = b.color;
+        if (isHoriz) {
+            let cx = toPix(currentPos);
+            // Draw Car shape
+            ctx.fillRect(cx - 8, H/2 - 5 + (idx*20), 16, 8);
+            ctx.font = '10px sans-serif';
+            ctx.fillText(b.label, cx - 10, H/2 - 8 + (idx*20));
+        } else {
+            let cy = toPix(currentPos);
+            // Draw Ball
+            ctx.beginPath();
+            ctx.arc(W/2 + (idx*30), cy, 6, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.font = '10px sans-serif';
+            ctx.fillText(b.label, W/2 + 10 + (idx*30), cy);
+        }
+    });
+}
+
+// ---- Charts ----
+
+function initCharts() {
+    const commonOptions = {
+        responsive: true,
+        maintainAspectRatio: false,
+        animation: false,
+        plugins: { legend: { display: false } },
+        elements: { point: { radius: 0 }, line: { borderWidth: 1.5 } },
+        scales: { 
+            x: { 
+                type: 'linear', 
+                ticks: { font: { size: 9 }, maxTicksLimit: 5 },
+                grid: { display: false }
+            },
+            y: {
+                ticks: { font: { size: 9 }, maxTicksLimit: 5 }
+            }
+        },
+        layout: { padding: 0 }
+    };
+
+    charts.pos = new Chart(document.getElementById('chartPos'), {
+        type: 'line',
+        options: commonOptions
+    });
+    
+    charts.vel = new Chart(document.getElementById('chartVel'), {
+        type: 'line',
+        options: commonOptions
+    });
+}
+
+function updateCharts(time, bodies) {
+    bodies.forEach((b, i) => {
+        let t = time;
+        if (b.startAt) t -= b.startAt;
+        
+        let pos, vel;
+
+        if (t >= 0) {
+            if (b.type === 'multistage') {
+                 const state = calculateMultiStageState(time, b.stages);
+                 pos = state.x;
+                 vel = state.v;
+            } else {
+                if (b.type === 'car') {
+                    pos = b.x0 + b.v0 * t + 0.5 * b.a * t * t;
+                    vel = b.v0 + b.a * t;
+                } else {
+                    pos = b.y0 + b.v0 * t + 0.5 * b.a * t * t;
+                    vel = b.v0 + b.a * t;
+                    // Clamp graph pos to ground if we want realistic ground
+                    if (pos < 0) { pos = 0; vel = 0; }
+                }
+            }
+        } else {
+            // Waiting phase - plot constant starting position
+            if (b.type === 'car') {
+                pos = b.x0;
+                vel = 0;
+            } else {
+                pos = b.y0;
+                vel = 0;
+            }
+        }
+        
+        // Add data point
+        if (charts.pos.data.datasets[i]) {
+            charts.pos.data.datasets[i].data.push({x: time, y: pos});
+        }
+        if (charts.vel.data.datasets[i]) {
+            charts.vel.data.datasets[i].data.push({x: time, y: vel});
+        }
+    });
+    
+    // Throttle chart updates for performance, but ensure smoother updates during warp
+    // If we are warping (time increment is large), we force update
+    const isWarping = document.getElementById('timeWarpBadge').classList.contains('hidden') === false;
+    
+    if (isWarping || time % 0.5 < 0.1) { 
+        charts.pos.update('none');
+        charts.vel.update('none');
+    }
+}
+
+// Start
+window.onload = init;
+
+</script>
+</body>
+</html>

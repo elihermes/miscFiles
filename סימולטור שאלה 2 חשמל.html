@@ -1,0 +1,533 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סימולטור מעגלים: שאלה 2 (מבנה טורי פשוט)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body { font-family: 'Rubik', sans-serif; background-color: #0f172a; color: #e2e8f0; }
+        
+        /* Schematic Wire Styling */
+        .wire { 
+            position: absolute; 
+            background-color: #94a3b8; /* Slate-400 */
+            z-index: 5;
+        }
+        .wire-h { height: 4px; top: 50%; transform: translateY(-50%); }
+        .wire-v { width: 4px; left: 50%; transform: translateX(-50%); }
+        
+        /* Connection Dot */
+        .dot {
+            width: 10px; height: 10px; background-color: #cbd5e1; border-radius: 50%; position: absolute; z-index: 20; transform: translate(-50%, -50%);
+        }
+
+        /* Component Container */
+        .component {
+            position: absolute;
+            /* background-color: #1e293b; */ /* Transparent background for cleaner schematic look */
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 10;
+        }
+
+        /* Box around the real source (Emf + r) */
+        .source-box {
+            position: absolute;
+            top: -20px; bottom: -20px; left: -10px; right: -10px;
+            border: 2px dashed #475569;
+            border-radius: 8px;
+            z-index: 0;
+            pointer-events: none;
+        }
+
+        /* Animation Arrows */
+        .flow-container {
+            position: absolute; inset: 0; pointer-events: none; z-index: 15; overflow: hidden;
+        }
+        .arrow {
+            position: absolute;
+            width: 0; height: 0; 
+            border-top: 5px solid transparent;
+            border-bottom: 5px solid transparent;
+            border-right: 12px solid #fbbf24; /* Amber Arrow */
+            filter: drop-shadow(0 0 2px #f59e0b);
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        /* Range Sliders */
+        input[type=range] {
+            @apply h-2 bg-slate-600 rounded-lg appearance-none cursor-pointer;
+        }
+    </style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden text-slate-200">
+
+    <!-- Header -->
+    <header class="bg-slate-900 border-b border-slate-700 p-4 shrink-0 shadow-md z-30 flex justify-between items-center">
+        <div>
+            <h1 class="text-2xl font-bold text-white flex items-center gap-3">
+                <span class="w-3 h-3 rounded-full bg-teal-500 animate-pulse shadow-[0_0_10px_#14b8a6]"></span>
+                מעבדה וירטואלית: חקירת מקור מתח (שאלה 2)
+            </h1>
+            <p class="text-slate-400 text-xs mt-1">מקור מתח ריאלי (למעלה) מחובר לנגד משתנה (למטה)</p>
+        </div>
+        <div class="bg-slate-800 border border-slate-600 px-4 py-2 rounded text-center min-w-[120px]">
+             <div class="text-[10px] text-slate-400 uppercase tracking-widest">סטטוס התאמה</div>
+             <div id="fit-score" class="font-bold text-lg text-slate-500">...</div>
+        </div>
+    </header>
+
+    <div class="flex-grow flex flex-col lg:flex-row overflow-hidden">
+        
+        <!-- Controls Panel (Left) -->
+        <aside class="w-full lg:w-80 bg-slate-800 border-l border-slate-700 p-6 flex flex-col gap-6 overflow-y-auto shrink-0 z-40 shadow-2xl">
+            
+            <!-- Source Settings -->
+            <div class="space-y-4 bg-slate-700/30 p-4 rounded-xl border border-slate-600 shadow-inner">
+                <h2 class="text-xs font-bold text-teal-400 uppercase tracking-wider mb-2 border-b border-slate-600 pb-1">המקור הריאלי (ε, r)</h2>
+                
+                <!-- EMF -->
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <label class="text-sm font-bold text-slate-200">כא"מ (ε)</label>
+                        <span id="disp-emf" class="text-xs font-mono bg-black/40 px-2 rounded py-0.5 text-teal-300 border border-teal-900">8.0V</span>
+                    </div>
+                    <input type="range" id="inp-emf" min="0" max="20" step="0.5" value="10" class="w-full accent-teal-500" oninput="updateSim()">
+                </div>
+
+                <!-- Internal Resistance -->
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <label class="text-sm font-bold text-slate-200">התנגדות פנימית (r)</label>
+                        <span id="disp-r-in" class="text-xs font-mono bg-black/40 px-2 rounded py-0.5 text-red-300 border border-red-900">1.0Ω</span>
+                    </div>
+                    <input type="range" id="inp-r-in" min="0.1" max="5" step="0.1" value="2" class="w-full accent-red-500" oninput="updateSim()">
+                </div>
+            </div>
+
+            <!-- Load Settings -->
+            <div class="space-y-4 bg-slate-700/30 p-4 rounded-xl border border-slate-600 shadow-inner">
+                <h2 class="text-xs font-bold text-yellow-400 uppercase tracking-wider mb-2 border-b border-slate-600 pb-1">הצרכן (נגד משתנה)</h2>
+                
+                <!-- Variable Resistor -->
+                <div>
+                    <div class="flex justify-between mb-1">
+                        <label class="text-sm font-bold text-slate-200">התנגדות חיצונית (R)</label>
+                        <span id="disp-r-ext" class="text-xs font-mono bg-black/40 px-2 rounded py-0.5 text-yellow-300 border border-yellow-900">1.00Ω</span>
+                    </div>
+                    <input type="range" id="inp-r-ext" min="0" max="10" step="0.1" value="1" class="w-full accent-yellow-500" oninput="updateSim()">
+                    <div class="flex justify-between text-[9px] text-slate-500 font-mono mt-1 px-1">
+                        <span>0Ω</span>
+                        <span>2.5Ω</span>
+                        <span>5Ω</span>
+                        <span>7.5Ω</span>
+                        <span>10Ω</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Results Panel -->
+            <div class="mt-auto bg-slate-900 p-4 rounded-xl border border-slate-600 shadow-lg">
+                <h3 class="text-[10px] uppercase text-slate-500 tracking-widest font-bold mb-3 border-b border-slate-800 pb-1">תוצאות מדידה</h3>
+                <div class="space-y-3">
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-slate-400">מתח הדקים (V)</span>
+                        <span id="val-v" class="font-bold font-mono text-teal-400 text-xl tracking-wide">0.00V</span>
+                    </div>
+                    <div class="flex justify-between items-center">
+                        <span class="text-sm text-slate-400">זרם במעגל (I)</span>
+                        <span id="val-i" class="font-bold font-mono text-blue-400 text-xl tracking-wide">0.00A</span>
+                    </div>
+                    <div class="bg-slate-800/50 p-2 rounded border border-slate-700 mt-2">
+                        <div class="flex justify-between items-center">
+                            <span class="font-bold text-amber-500 text-sm">הספק הנגד (P)</span>
+                            <span id="val-p" class="font-bold font-mono text-amber-400 text-2xl tracking-wide">0.00W</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </aside>
+
+        <!-- Main Content (Right) -->
+        <main class="flex-grow flex flex-col relative bg-slate-950">
+            
+            <!-- SCHEMATIC DIAGRAM AREA (Top Half) -->
+            <div class="h-[50%] min-h-[350px] relative border-b border-slate-700 flex items-center justify-center p-6 bg-slate-900 overflow-hidden select-none">
+                
+                <div class="relative w-[600px] h-[300px]">
+                    
+                    <!-- WIRES (Rectangular Loop) -->
+                    <!-- Top Wire -->
+                    <div class="wire wire-h left-20 right-20 top-[35%]"></div>
+                    <!-- Bottom Wire -->
+                    <div class="wire wire-h left-20 right-20 bottom-[35%]"></div>
+                    <!-- Left Wire -->
+                    <div class="wire wire-v top-[35%] bottom-[35%] left-20"></div>
+                    <!-- Right Wire -->
+                    <div class="wire wire-v top-[35%] bottom-[35%] right-20"></div>
+
+                    <!-- Connection Dots for Main Loop -->
+                    <div class="dot left-20 top-[35%]"></div>
+                    <div class="dot right-20 top-[35%]"></div>
+                    <div class="dot left-20 bottom-[35%]"></div>
+                    <div class="dot right-20 bottom-[35%]"></div>
+
+                    <!-- Voltmeter Wires (Connecting ABOVE the top wire) -->
+                    <!-- Vertical risers from corners -->
+                    <div class="absolute left-20 bottom-[65%] top-[15%] w-0.5 border-l-2 border-dashed border-slate-600"></div>
+                    <div class="absolute right-20 bottom-[65%] top-[15%] w-0.5 border-l-2 border-dashed border-slate-600"></div>
+                    
+                    <!-- Animation Layer -->
+                    <div class="flow-container" id="flow-layer"></div>
+
+                    <!-- --- COMPONENTS --- -->
+
+                    <!-- 1. Source Complex (Top Branch) -->
+                    <!-- We group Emf and internal r on the top wire -->
+                    
+                    <!-- Container for visual dashed box -->
+                    <div class="component left-1/2 top-[35%] -translate-x-1/2 -translate-y-1/2 w-64 h-24">
+                        <div class="source-box"></div> <!-- Dashed box indicating real source -->
+                        <span class="absolute -top-8 text-[10px] text-slate-500 tracking-wider">מקור מתח ריאלי</span>
+                        
+                        <div class="flex items-center gap-8 w-full justify-center h-full">
+                            <!-- Battery Symbol -->
+                            <div class="flex flex-col items-center gap-1" dir="ltr">
+                                <div class="flex items-center gap-1">
+                                    <div class="w-1.5 h-8 bg-teal-400 shadow-[0_0_5px_#2dd4bf]"></div> <!-- + (Long) -->
+                                    <div class="w-2"></div>
+                                    <div class="w-1.5 h-4 bg-teal-600"></div> <!-- - (Short) -->
+                                </div>
+                                <span class="text-xs text-teal-300 font-mono font-bold">ε</span>
+                            </div>
+
+                            <!-- Internal Resistor Symbol -->
+                            <div class="flex flex-col items-center gap-1">
+                                <div class="w-12 h-6 border border-red-500/50 bg-red-900/10 flex items-center justify-center relative">
+                                    <span class="text-xs text-red-300 font-mono">r</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- 2. Variable Resistor (Bottom Branch) -->
+                    <div class="component left-1/2 bottom-[35%] -translate-x-1/2 translate-y-1/2 w-32 h-16">
+                        <span class="absolute -bottom-6 text-xs text-yellow-500 font-mono">R (משתנה)</span>
+                        <div class="relative w-full h-full flex items-center justify-center">
+                            <!-- Resistor Zigzag (CSS/SVG) -->
+                            <svg width="60" height="30" class="stroke-yellow-400 fill-none stroke-2">
+                                <path d="M0,15 L5,5 L15,25 L25,5 L35,25 L45,5 L55,25 L60,15" />
+                            </svg>
+                            <!-- Arrow for Rheostat -->
+                            <div class="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-8 h-0.5 bg-yellow-500 -rotate-45 transform origin-center">
+                                <div class="absolute right-0 top-1/2 -translate-y-1/2 w-0 h-0 border-t-[3px] border-b-[3px] border-l-[6px] border-t-transparent border-b-transparent border-l-yellow-500"></div>
+                            </div>
+                        </div>
+                    </div>
+
+
+                    <!-- 3. Voltmeter (Above the Top Branch) -->
+                    <!-- Placed at top center, connected to the risers -->
+                    
+                    <!-- Horizontal connection wire for Voltmeter -->
+                    <div class="absolute left-20 right-20 top-[15%] h-0.5 border-t-2 border-dashed border-slate-600"></div>
+                    <!-- Dots for Voltmeter connection -->
+                    <div class="dot left-20 top-[15%] bg-slate-500 w-2 h-2"></div>
+                    <div class="dot right-20 top-[15%] bg-slate-500 w-2 h-2"></div>
+
+                    <!-- The Meter Itself -->
+                    <div class="absolute left-1/2 top-[15%] -translate-x-1/2 -translate-y-1/2 w-16 h-16 rounded-full bg-slate-800 border-2 border-slate-400 flex items-center justify-center shadow-lg z-30">
+                        <span class="text-2xl font-bold text-white">V</span>
+                        <div class="absolute -bottom-6 bg-slate-900 px-1 rounded text-xs text-teal-300 font-mono border border-slate-700" id="meter-val-display">0.0V</div>
+                    </div>
+
+                </div>
+            </div>
+
+            <!-- CHART AREA (Bottom Half) -->
+            <div class="h-[50%] bg-slate-900 p-6 flex flex-col relative border-t border-slate-800">
+                <div class="flex justify-between items-center mb-2 px-2">
+                    <h3 class="text-sm font-bold text-slate-300 flex items-center gap-2">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 text-teal-400" viewBox="0 0 20 20" fill="currentColor"><path d="M2 10a8 8 0 018-8v8h8a8 8 0 11-16 0z" /><path d="M12 2.252A8.014 8.014 0 0117.748 8H12V2.252z" /></svg>
+                        גרף הספק כפונקציה של מתח הדקים (P vs V)
+                    </h3>
+                    
+                    <!-- Legend -->
+                    <div class="flex gap-4 text-xs bg-slate-800 p-2 rounded-lg border border-slate-700 shadow-sm">
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-3 h-3 rounded-full bg-blue-500 shadow-[0_0_5px_#3b82f6]"></div>
+                            <span class="text-blue-200 font-medium">מדידות תלמיד</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-6 h-1 bg-red-500 shadow-[0_0_5px_#ef4444]"></div>
+                            <span class="text-red-200 font-medium">המודל התיאורטי שלך</span>
+                        </div>
+                        <div class="flex items-center gap-1.5">
+                            <div class="w-3 h-3 rounded-full bg-amber-400 border-2 border-white shadow-[0_0_8px_#fbbf24]"></div>
+                            <span class="text-amber-200 font-medium">מצב נוכחי</span>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex-grow w-full relative">
+                    <canvas id="mainChart"></canvas>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script>
+        // --- 1. DATA & STATE ---
+        const studentData = [
+            {x: 0, y: 0}, {x: 1, y: 7}, {x: 2, y: 12}, {x: 3, y: 15},
+            {x: 4, y: 16}, {x: 5, y: 15}, {x: 6, y: 12}
+        ];
+
+        // --- 2. CHART CONFIG ---
+        const ctx = document.getElementById('mainChart').getContext('2d');
+        const chart = new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: 'Student Measurements',
+                        data: studentData,
+                        backgroundColor: '#3b82f6', 
+                        pointRadius: 6,
+                        pointHoverRadius: 9,
+                        pointBorderColor: '#fff',
+                        pointBorderWidth: 2,
+                        order: 2
+                    },
+                    {
+                        type: 'line',
+                        label: 'Theoretical Model',
+                        data: [], 
+                        borderColor: '#ef4444', 
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        fill: false,
+                        tension: 0.4,
+                        cubicInterpolationMode: 'monotone',
+                        order: 3
+                    },
+                    {
+                        label: 'Current Point',
+                        data: [], 
+                        backgroundColor: '#fbbf24', 
+                        borderColor: '#fff',
+                        borderWidth: 3,
+                        pointRadius: 12,
+                        pointHoverRadius: 14,
+                        shadowBlur: 15,
+                        shadowColor: '#fbbf24',
+                        order: 1
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                animation: { duration: 0 },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        min: 0,
+                        max: 9,
+                        title: { display: true, text: 'מתח הדקים (V)', color: '#94a3b8', font: {size: 13} },
+                        grid: { color: '#1e293b' },
+                        ticks: { color: '#cbd5e1', font: {family: 'monospace'} }
+                    },
+                    y: {
+                        min: 0,
+                        max: 20,
+                        title: { display: true, text: 'הספק נגד (W)', color: '#94a3b8', font: {size: 13} },
+                        grid: { color: '#1e293b' },
+                        ticks: { color: '#cbd5e1', font: {family: 'monospace'} }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        backgroundColor: 'rgba(15, 23, 42, 0.9)',
+                        titleColor: '#2dd4bf',
+                        bodyColor: '#e2e8f0',
+                        callbacks: {
+                            label: (ctx) => `(${ctx.parsed.x.toFixed(2)}V, ${ctx.parsed.y.toFixed(2)}W)`
+                        }
+                    }
+                }
+            }
+        });
+
+        // --- 3. LOGIC & HELPERS ---
+        function getResistance(sliderVal) {
+            // Linear mapping now (0 to 10)
+            return sliderVal;
+        }
+
+        function updateSim() {
+            // Inputs
+            const emf = parseFloat(document.getElementById('inp-emf').value);
+            const rIn = parseFloat(document.getElementById('inp-r-in').value);
+            const sliderVal = parseFloat(document.getElementById('inp-r-ext').value);
+            
+            const rExt = getResistance(sliderVal);
+
+            // Physics
+            const totalR = rExt + rIn;
+            const I = totalR > 0.0001 ? emf / totalR : 0; 
+            const V = I * rExt;
+            const P = V * I;
+
+            // Updates
+            document.getElementById('disp-emf').textContent = emf.toFixed(1) + 'V';
+            document.getElementById('disp-r-in').textContent = rIn.toFixed(1) + 'Ω';
+            
+            let rText = rExt.toFixed(1) + 'Ω';
+            document.getElementById('disp-r-ext').textContent = rText;
+
+            document.getElementById('val-v').textContent = V.toFixed(2) + 'V';
+            document.getElementById('val-i').textContent = I.toFixed(2) + 'A';
+            document.getElementById('val-p').textContent = P.toFixed(2) + 'W';
+            document.getElementById('meter-val-display').textContent = V.toFixed(2) + 'V';
+
+            // Fit Score
+            const eDiff = Math.abs(emf - 8);
+            const rDiff = Math.abs(rIn - 1);
+            const fitLabel = document.getElementById('fit-score');
+            
+            if (eDiff < 0.2 && rDiff < 0.1) {
+                fitLabel.textContent = "מצוין! מותאם";
+                fitLabel.className = "font-bold text-lg text-teal-400 animate-pulse";
+            } else if (eDiff < 1 && rDiff < 0.5) {
+                fitLabel.textContent = "קרוב מאוד...";
+                fitLabel.className = "font-bold text-lg text-yellow-400";
+            } else {
+                fitLabel.textContent = "לא מותאם";
+                fitLabel.className = "font-bold text-lg text-slate-500";
+            }
+
+            // Animate
+            updateAnimation(I);
+
+            // Graph
+            updateChartData(emf, rIn, V, P);
+        }
+
+        function updateChartData(emf, rIn, V, P) {
+            const curvePoints = [];
+            const maxV = Math.max(emf, 9); 
+            const steps = 40;
+            
+            for(let i=0; i<=steps; i++) {
+                const vVal = (i / steps) * maxV;
+                let pVal = (vVal * (emf - vVal)) / rIn;
+                if (pVal < 0) pVal = 0;
+                curvePoints.push({x: vVal, y: pVal});
+            }
+
+            chart.data.datasets[1].data = curvePoints;
+            chart.data.datasets[2].data = [{x: V, y: P}];
+            chart.update();
+        }
+
+        // --- 4. ANIMATION ---
+        const flowLayer = document.getElementById('flow-layer');
+        let arrows = [];
+        
+        function initArrows() {
+            flowLayer.innerHTML = '';
+            arrows = [];
+            // Top Wire: Left to Right
+            for(let i=0; i<6; i++) createArrow('top', i*18);
+            // Bot Wire: Right to Left
+            for(let i=0; i<6; i++) createArrow('bot', i*18);
+            // Right Wire: Top to Bot
+            for(let i=0; i<3; i++) createArrow('right', i*33);
+            // Left Wire: Bot to Top
+            for(let i=0; i<3; i++) createArrow('left', i*33);
+        }
+
+        function createArrow(side, offsetPercent) {
+            const el = document.createElement('div');
+            el.className = 'arrow';
+            
+            // Container is 600px wide, 300px high.
+            // Wires are at 35% from top/bottom. 35% of 300 = 105px.
+            // Top Y = 105px. Bot Y = 195px.
+            // Wires left/right are at 20px from edge. 20px, 580px.
+            
+            if (side === 'top') {
+                el.style.top = '35%'; 
+                el.style.transform = 'translateY(-50%) rotate(0deg)'; 
+            } else if (side === 'bot') {
+                el.style.bottom = '35%';
+                el.style.transform = 'translateY(50%) rotate(180deg)';
+            } else if (side === 'right') {
+                el.style.right = '20px';
+                el.style.transform = 'translateX(50%) rotate(90deg)';
+            } else if (side === 'left') {
+                el.style.left = '20px';
+                el.style.transform = 'translateX(-50%) rotate(-90deg)';
+            }
+            
+            flowLayer.appendChild(el);
+            arrows.push({ el: el, side: side, pos: offsetPercent });
+        }
+
+        let animFrame;
+        
+        function updateAnimation(current) {
+            const speed = current * 0.4; 
+            
+            if (animFrame) cancelAnimationFrame(animFrame);
+            
+            function loop() {
+                if (speed < 0.01) {
+                    arrows.forEach(a => a.el.style.opacity = 0);
+                    return; 
+                }
+
+                arrows.forEach(a => {
+                    a.el.style.opacity = Math.min(1, current/1); 
+                    a.pos += speed;
+                    if (a.pos > 100) a.pos -= 100;
+
+                    // Logic to constrain arrows to wire length
+                    // Top/Bot: 20px to 580px (approx 3% to 97% of width)
+                    // Left/Right: 35% to 65% of height (approx)
+                    
+                    if (a.side === 'top' || a.side === 'bot') {
+                         const minP = 4; const maxP = 96;
+                         const visualPos = minP + (a.pos/100)*(maxP-minP);
+                         a.el.style.left = visualPos + '%';
+                    } else {
+                         // Vertical wires: 35% to 65%. Range = 30%.
+                         const minP = 35; const maxP = 65;
+                         const visualPos = minP + (a.pos/100)*(maxP-minP);
+                         a.el.style.top = visualPos + '%';
+                    }
+                });
+                
+                animFrame = requestAnimationFrame(loop);
+            }
+            loop();
+        }
+
+        // Start
+        initArrows();
+        updateSim();
+
+    </script>
+</body>
+</html>
