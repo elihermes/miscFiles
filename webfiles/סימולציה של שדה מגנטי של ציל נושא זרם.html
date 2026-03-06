@@ -1,0 +1,483 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שדה מגנטי סביב תיל מוליך</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #f8fafc; /* רקע בהיר */
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        }
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #1e293b;
+        }
+        /* Custom range slider styling */
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            margin-top: -6px;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #cbd5e1;
+            border-radius: 2px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- פאנל שליטה -->
+    <div class="absolute top-4 right-4 glass-panel p-6 rounded-xl shadow-2xl w-80 z-10 flex flex-col gap-5">
+        <div>
+            <h1 class="text-xl font-bold mb-1 text-blue-600">שדה מגנטי של תיל ישר</h1>
+            <p class="text-xs text-slate-500">הדמיה אינטראקטיבית לכלל יד ימין</p>
+        </div>
+
+        <!-- עוצמת הזרם -->
+        <div class="space-y-2">
+            <div class="flex justify-between items-center">
+                <label for="current-slider" class="text-sm font-medium">עוצמת הזרם (I)</label>
+                <span id="current-value" class="text-sm font-bold text-blue-600">5</span>
+            </div>
+            <input type="range" id="current-slider" min="0" max="10" value="5" class="w-full">
+            <p class="text-[10px] text-slate-400">משפיע על צפיפות קווי השדה המגנטי (B)</p>
+        </div>
+
+        <!-- כיוון הזרם -->
+        <div class="space-y-2">
+            <label class="text-sm font-medium">כיוון הזרם</label>
+            <button id="direction-btn" class="w-full py-2 bg-blue-600 hover:bg-blue-500 text-white transition-colors rounded-lg font-bold flex items-center justify-center gap-2">
+                <span>למעלה</span>
+                <span id="dir-icon" class="text-xl">⬆️</span>
+            </button>
+        </div>
+
+        <!-- מידע למשתמש -->
+        <div class="bg-slate-100/50 p-3 rounded-lg border border-slate-200 mt-2">
+            <p class="text-xs text-slate-600 leading-relaxed">
+                <strong class="text-slate-800">איך משתמשים?</strong><br>
+                • 🖱️ <b>גרירה:</b> סובב את המערכת ב-360°<br>
+                • ⚙️ <b>גלילה:</b> התקרב/התרחק<br>
+                • 🤚 <b>כלל יד ימין:</b> האגודל בכיוון הזרם (החיצים הכתומים), האצבעות מתעגלות בכיוון השדה המגנטי (החיצים הכחולים).<br>
+                • 👁️ <b>מבט מקצה התיל:</b> תראה נקודה (•) לזרם שיוצא אליך, וצלב (X) לזרם שנכנס.<br>
+                • 🎯 <b>מבט על חיצי השדה:</b> השפיץ השחור מראה קדימה, ו-X שחור מאחור.
+            </p>
+        </div>
+    </div>
+
+    <!-- Container for Three.js -->
+    <div id="canvas-container"></div>
+
+    <!-- Three.js Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // משתני מצב
+        let currentMagnitude = 5;
+        let currentDirection = 1; // 1 למעלה, -1 למטה
+        
+        // מערכים לשמירת אובייקטים מתעדכנים
+        let bFieldArrows = [];
+        let bFieldRings = [];
+        let currentArrows = [];
+
+        // הגדרות בסיסיות של Three.js
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0xf8fafc, 0.015); // ערפל בהיר שמשתלב עם הרקע
+
+        // מצלמה
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        camera.position.set(25, 15, 25);
+
+        // רענדערער
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setClearColor(0xf8fafc, 1); // שטעלן העלער הינטערגרונט קאָליר
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // פקדים לסיבוב 360 (OrbitControls)
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true; // תנועה חלקה
+        controls.dampingFactor = 0.05;
+        controls.maxDistance = 60;
+        controls.minDistance = 5;
+
+        // תאורה
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
+        scene.add(ambientLight);
+        
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(10, 20, 10);
+        scene.add(dirLight);
+
+        // --- בניית המודל ---
+
+        // 1. התיל (Wire)
+        const wireGeometry = new THREE.CylinderGeometry(0.8, 0.8, 40, 32);
+        const wireMaterial = new THREE.MeshStandardMaterial({ 
+            color: 0x9ca3af, 
+            metalness: 0.8, 
+            roughness: 0.2 
+        });
+        const wire = new THREE.Mesh(wireGeometry, wireMaterial);
+        scene.add(wire);
+
+        // --- הוספת סימוני קצוות התיל (נקודה / X) ---
+        function createCurrentTexture(type) {
+            const size = 256;
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            // רקע תואם לצבע התיל
+            ctx.fillStyle = '#9ca3af';
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
+            ctx.fill();
+
+            // עיגול פנימי בהיר להבלטה
+            ctx.fillStyle = '#f3f4f6';
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2 * 0.85, 0, Math.PI * 2);
+            ctx.fill();
+
+            // הסימון עצמו (שחור)
+            ctx.fillStyle = '#111827';
+            ctx.strokeStyle = '#111827';
+            ctx.lineWidth = 28;
+            ctx.lineCap = 'round';
+
+            if (type === 'dot') {
+                ctx.beginPath();
+                ctx.arc(size/2, size/2, 40, 0, Math.PI * 2);
+                ctx.fill();
+            } else if (type === 'x') {
+                const padding = 70;
+                ctx.beginPath();
+                ctx.moveTo(padding, padding);
+                ctx.lineTo(size - padding, size - padding);
+                ctx.moveTo(size - padding, padding);
+                ctx.lineTo(padding, size - padding);
+                ctx.stroke();
+            }
+
+            return new THREE.CanvasTexture(canvas);
+        }
+
+        const texDot = createCurrentTexture('dot');
+        const texX = createCurrentTexture('x');
+
+        // --- הוספת טקסטורה לזנב חץ השדה המגנטי ---
+        function createArrowTailTexture() {
+            const size = 128;
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+
+            ctx.fillStyle = '#3b82f6'; // כחול תואם
+            ctx.beginPath();
+            ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.strokeStyle = '#111827'; // X שחור
+            ctx.lineWidth = 16;
+            ctx.lineCap = 'round';
+            const padding = 30;
+            ctx.beginPath();
+            ctx.moveTo(padding, padding);
+            ctx.lineTo(size - padding, size - padding);
+            ctx.moveTo(size - padding, padding);
+            ctx.lineTo(padding, size - padding);
+            ctx.stroke();
+
+            return new THREE.CanvasTexture(canvas);
+        }
+        const arrowTailTex = createArrowTailTexture();
+
+        const capGeo = new THREE.CircleGeometry(0.81, 32); // קצת יותר גדול למנוע ריצוד
+        const topCapMat = new THREE.MeshBasicMaterial({ map: texDot });
+        const bottomCapMat = new THREE.MeshBasicMaterial({ map: texX });
+
+        const topCap = new THREE.Mesh(capGeo, topCapMat);
+        topCap.position.y = 20.02; // קצת מעל קצה התיל
+        topCap.rotation.x = -Math.PI / 2;
+        scene.add(topCap);
+
+        const bottomCap = new THREE.Mesh(capGeo, bottomCapMat);
+        bottomCap.position.y = -20.02; // קצת מתחת לקצה התיל
+        bottomCap.rotation.x = Math.PI / 2;
+        scene.add(bottomCap);
+
+        function updateCaps() {
+            if (currentMagnitude === 0) {
+                topCap.visible = false;
+                bottomCap.visible = false;
+            } else {
+                topCap.visible = true;
+                bottomCap.visible = true;
+                if (currentDirection === 1) { // זרם למעלה
+                    topCap.material.map = texDot; // זרם יוצא
+                    bottomCap.material.map = texX; // זרם נכנס
+                } else { // זרם למטה
+                    topCap.material.map = texX;
+                    bottomCap.material.map = texDot;
+                }
+                topCap.material.needsUpdate = true;
+                bottomCap.material.needsUpdate = true;
+            }
+        }
+
+        // 2. רשת עזר (Grid) כדי להמחיש את המישור שסביב התיל
+        const gridHelper = new THREE.GridHelper(40, 40, 0x94a3b8, 0xe2e8f0);
+        gridHelper.position.y = 0;
+        scene.add(gridHelper);
+
+        // פונקציה ליצירת חיצי הזרם (על התיל)
+        function createCurrentArrows() {
+            // ננקה חיצים קודמים
+            currentArrows.forEach(arrow => scene.remove(arrow));
+            currentArrows = [];
+
+            if (currentMagnitude === 0) return;
+
+            const arrowGeo = new THREE.ConeGeometry(1.2, 3, 16);
+            // סובב כדי שיצביע לאורך ציר ה-Y
+            const arrowMat = new THREE.MeshBasicMaterial({ color: 0xf97316 }); // כתום
+
+            for (let i = -15; i <= 15; i += 7) {
+                const arrow = new THREE.Mesh(arrowGeo, arrowMat);
+                arrow.position.y = i;
+                if (currentDirection === -1) {
+                    arrow.rotation.x = Math.PI; // הפוך למטה
+                }
+                scene.add(arrow);
+                currentArrows.push({ mesh: arrow, baseY: i });
+            }
+        }
+
+        // פונקציה ליצירת קווי השדה המגנטי
+        function updateMagneticField() {
+            // ניקוי שדה קודם
+            bFieldRings.forEach(ring => scene.remove(ring));
+            bFieldArrows.forEach(arrow => scene.remove(arrow.mesh));
+            bFieldRings = [];
+            bFieldArrows = [];
+
+            if (currentMagnitude === 0) return;
+
+            // מספר הטבעות תלוי בעוצמת הזרם (1 עד 5 טבעות)
+            const numRings = Math.ceil(currentMagnitude / 2);
+            
+            // יצירת שדה ב-3 מישורים (גבהים) שונים לאורך התיל
+            const planes = [-12, 0, 12];
+
+            // פונקציה פנימית ליצירת חץ שדה מגנטי מורכב (תלת ממדי וברור יותר)
+            function createComplexArrow() {
+                const group = new THREE.Group();
+                
+                // 1. גוף החץ (גליל)
+                const bodyGeo = new THREE.CylinderGeometry(0.3, 0.3, 1.2, 16);
+                bodyGeo.rotateX(Math.PI / 2); // שכיבה לאורך ציר ה-Z
+                const bodyMat = new THREE.MeshBasicMaterial({ color: 0x3b82f6 });
+                const body = new THREE.Mesh(bodyGeo, bodyMat);
+                group.add(body);
+
+                // 2. שפיץ החץ (חרוט שחור)
+                const tipGeo = new THREE.ConeGeometry(0.5, 0.8, 16);
+                tipGeo.rotateX(Math.PI / 2);
+                const tipMat = new THREE.MeshBasicMaterial({ color: 0x111827 });
+                const tip = new THREE.Mesh(tipGeo, tipMat);
+                tip.position.z = 1.0; 
+                group.add(tip);
+
+                // 3. זנב החץ (עיגול עם X)
+                const tailGeo = new THREE.CircleGeometry(0.3, 16);
+                const tailMat = new THREE.MeshBasicMaterial({ map: arrowTailTex });
+                const tail = new THREE.Mesh(tailGeo, tailMat);
+                tail.position.z = -0.61;
+                tail.rotation.y = Math.PI; // מפנה את ה-X אחורה
+                group.add(tail);
+
+                return group;
+            }
+
+            planes.forEach(planeY => {
+                for (let i = 1; i <= numRings; i++) {
+                    const radius = i * 4; // מרחקים: 4, 8, 12...
+
+                    // יצירת טבעת (קו שדה)
+                    const ringGeo = new THREE.TorusGeometry(radius, 0.05, 8, 64);
+                    ringGeo.rotateX(Math.PI / 2); // שכב על משטח ה-XZ
+                    
+                    // ככל שמתרחקים השדה חלש יותר, אז נוריד שקיפות
+                    const opacity = Math.max(0.15, 0.8 - (i * 0.15));
+                    const ringMat = new THREE.MeshBasicMaterial({ 
+                        color: 0x3b82f6, 
+                        transparent: true, 
+                        opacity: opacity 
+                    });
+                    
+                    const ring = new THREE.Mesh(ringGeo, ringMat);
+                    ring.position.y = planeY; // מיקום המישור (למעלה/אמצע/למטה)
+                    scene.add(ring);
+                    bFieldRings.push(ring);
+
+                    // הוספת 4 חיצים על כל טבעת
+                    for (let j = 0; j < 4; j++) {
+                        const arrow = createComplexArrow();
+                        const initialAngle = (j * Math.PI / 2);
+                        
+                        // הגדרת מיקום ראשוני
+                        arrow.position.set(radius * Math.cos(initialAngle), planeY, -radius * Math.sin(initialAngle));
+                        scene.add(arrow);
+                        
+                        // נשמור את החץ עם הזווית ההתחלתית, הרדיוס והגובה שלו
+                        bFieldArrows.push({
+                            mesh: arrow,
+                            radius: radius,
+                            angle: initialAngle,
+                            planeY: planeY
+                        });
+                    }
+                }
+            });
+        }
+
+        // אתחול ראשוני
+        createCurrentArrows();
+        updateMagneticField();
+        updateCaps();
+
+        // --- אינטראקציית ממשק משתמש ---
+
+        const slider = document.getElementById('current-slider');
+        const currentValDisplay = document.getElementById('current-value');
+        const dirBtn = document.getElementById('direction-btn');
+        const dirIcon = document.getElementById('dir-icon');
+        const dirText = dirBtn.querySelector('span');
+
+        slider.addEventListener('input', (e) => {
+            currentMagnitude = parseInt(e.target.value);
+            currentValDisplay.innerText = currentMagnitude;
+            updateMagneticField();
+            createCurrentArrows();
+            updateCaps();
+        });
+
+        dirBtn.addEventListener('click', () => {
+            currentDirection *= -1; // החלף כיוון
+            
+            if (currentDirection === 1) {
+                dirText.innerText = 'למעלה';
+                dirIcon.innerText = '⬆️';
+                dirBtn.classList.replace('bg-red-600', 'bg-blue-600');
+                dirBtn.classList.replace('hover:bg-red-500', 'hover:bg-blue-500');
+            } else {
+                dirText.innerText = 'למטה';
+                dirIcon.innerText = '⬇️';
+                dirBtn.classList.replace('bg-blue-600', 'bg-red-600');
+                dirBtn.classList.replace('hover:bg-blue-500', 'hover:bg-red-500');
+            }
+            createCurrentArrows();
+            updateCaps();
+        });
+
+        // עדכון גודל חלון
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        // --- לולאת אנימציה (Animation Loop) ---
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            
+            const delta = clock.getDelta();
+            const time = clock.getElapsedTime();
+
+            // אנימציית חיצי הזרם (עולים או יורדים)
+            if (currentMagnitude > 0) {
+                const speed = currentMagnitude * 2 * currentDirection;
+                currentArrows.forEach(arrowObj => {
+                    arrowObj.mesh.position.y += speed * delta;
+                    
+                    // חזרה במעגל כדי ליצור זרימה אינסופית
+                    if (currentDirection === 1 && arrowObj.mesh.position.y > 20) {
+                        arrowObj.mesh.position.y = -20;
+                    } else if (currentDirection === -1 && arrowObj.mesh.position.y < -20) {
+                        arrowObj.mesh.position.y = 20;
+                    }
+                });
+
+                // אנימציית חיצי השדה המגנטי (מסתובבים סביב התיל)
+                // מהירות הסיבוב מושפעת מעוצמת הזרם
+                const bSpeed = currentMagnitude * 0.2; 
+                
+                bFieldArrows.forEach(arrowObj => {
+                    // עדכון הזווית.
+                    // לפי כלל יד ימין, אם הזרם למעלה (+y), השדה מסתובב נגד כיוון השעון במבט מלמעלה.
+                    // במערכת הצירים: x=cos(t), z=-sin(t) מייצר תנועה נגד כיוון השעון ככל ש-t גדל.
+                    arrowObj.angle += bSpeed * currentDirection * delta;
+
+                    const r = arrowObj.radius;
+                    const py = arrowObj.planeY; // שימוש בגובה המישור של החץ
+                    
+                    // מיקום נוכחי
+                    const x = r * Math.cos(arrowObj.angle);
+                    const z = -r * Math.sin(arrowObj.angle);
+                    arrowObj.mesh.position.set(x, py, z);
+
+                    // נקודה עתידית צמודה (כדי שהחץ יסתכל אליה)
+                    const nextAngle = arrowObj.angle + 0.1 * currentDirection;
+                    const nextX = r * Math.cos(nextAngle);
+                    const nextZ = -r * Math.sin(nextAngle);
+                    
+                    arrowObj.mesh.lookAt(nextX, py, nextZ);
+                });
+            }
+
+            controls.update(); // דרוש בגלל damping
+            renderer.render(scene, camera);
+        }
+
+        // התחלת האנימציה מיד עם טעינת החלון
+        window.onload = function() {
+            animate();
+        };
+
+    </script>
+</body>
+</html>
