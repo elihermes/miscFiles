@@ -25,9 +25,6 @@
             cursor: pointer; 
             height: 1.5rem; /* Larger touch area */
         }
-        
-        /* MathJax text forcing direction */
-        .dir-ltr { direction: ltr; display: inline-block; }
     </style>
 </head>
 <body class="flex flex-col md:flex-row min-h-screen md:h-screen md:overflow-hidden">
@@ -67,7 +64,7 @@
             <div class="mb-3">
                 <label class="block text-sm md:text-xs font-medium text-gray-700 mb-1 flex justify-between">
                     <span>מסת כדור ($m$):</span>
-                    <span id="mValueDisplay" class="font-bold text-purple-600 dir-ltr">0.20 kg</span> 
+                    <span id="mValueDisplay" class="font-bold text-purple-600" dir="ltr">0.20 kg</span> 
                 </label>
                 <input type="range" id="mSlider" min="0.05" max="0.5" step="0.01" value="0.2" oninput="updateSettings()" class="accent-purple-600">
             </div>
@@ -76,7 +73,7 @@
             <div class="mb-3">
                 <label class="block text-sm md:text-xs font-medium text-gray-700 mb-1 flex justify-between">
                     <span>קבוע קפיץ ($k$):</span>
-                    <span id="kValueDisplay" class="font-bold text-blue-600 dir-ltr">100 N/m</span>
+                    <span id="kValueDisplay" class="font-bold text-blue-600" dir="ltr">100 N/m</span>
                 </label>
                 <input type="range" id="kSlider" min="50" max="200" step="5" value="100" oninput="updateSettings()" class="accent-blue-600">
             </div>
@@ -89,7 +86,7 @@
             <div class="mb-4">
                 <label class="block text-sm md:text-xs font-medium text-gray-700 mb-1 flex justify-between">
                     <span>כיווץ הקפיץ ($\Delta x$):</span>
-                    <span id="xValueDisplay" class="font-bold text-green-600 dir-ltr">0.15 m</span>
+                    <span id="xValueDisplay" class="font-bold text-green-600" dir="ltr">0.15 m</span>
                 </label>
                 <input type="range" id="xSlider" min="0.05" max="0.40" step="0.01" value="0.15" oninput="updateSettings()" class="accent-green-600">
             </div>
@@ -112,12 +109,12 @@
                 <button onclick="clearTable()" class="text-sm md:text-xs text-red-500 hover:text-red-700 bg-red-50 px-2 py-1 rounded">נקה נתונים</button>
             </div>
             <div class="overflow-y-auto border border-gray-200 rounded flex-1 bg-white shadow-inner">
-                <table class="w-full text-sm md:text-xs text-center">
+                <table class="w-full text-sm md:text-xs">
                     <thead class="bg-gray-100 text-gray-600 sticky top-0 shadow-sm">
                         <tr>
-                            <th class="p-2 border-b">#</th>
-                            <th class="p-2 border-b">$\Delta x$ (m)</th>
-                            <th class="p-2 border-b">$H$ (m)</th>
+                            <th class="p-2 border-b text-center">#</th>
+                            <th class="p-2 border-b text-center">$\Delta x$ (m)</th>
+                            <th class="p-2 border-b text-center">$H$ (m)</th>
                         </tr>
                     </thead>
                     <tbody id="resultsTable" class="bg-white">
@@ -381,9 +378,9 @@
             const row = document.createElement('tr');
             row.className = "hover:bg-blue-50 transition border-b border-gray-100";
             row.innerHTML = `
-                <td class="p-2 font-bold text-gray-500">${state.experimentCount}</td>
-                <td class="p-2 dir-ltr text-gray-800">${dx.toFixed(2)}</td>
-                <td class="p-2 font-bold text-blue-600 dir-ltr">${h.toFixed(3)}</td>
+                <td class="p-2 text-center font-bold text-gray-500">${state.experimentCount}</td>
+                <td class="p-2 text-center text-gray-800" dir="ltr">${dx.toFixed(2)}</td>
+                <td class="p-2 text-center font-bold text-blue-600" dir="ltr">${h.toFixed(3)}</td>
             `;
             tbody.insertBefore(row, tbody.firstChild);
 
