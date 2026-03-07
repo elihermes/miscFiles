@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>שדה מגנטי של כריכה מעגלית (גלוונומטר)</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- KaTeX for Math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
     <style>
         body {
             margin: 0;
@@ -88,12 +94,20 @@
 
         <!-- מידע למשתמש -->
         <div class="bg-slate-100/50 p-3 rounded-lg border border-slate-200 mt-2">
-            <p class="text-xs text-slate-600 leading-relaxed">
+            <p class="text-xs text-slate-600 leading-relaxed mb-3">
                 <strong class="text-slate-800">כלל יד ימין לכריכה:</strong><br>
                 • 🤚 עטוף את הכריכה עם <b>האצבעות</b> בכיוון הזרם (כתום).<br>
                 • 🎯 <b>האגודל</b> יצביע לכיוון השדה המגנטי <b>במרכז</b> הכריכה.<br>
                 • שים לב לאלומת הקווים הישרים והצפופים במרכז, ולפיזור שלהם מחוץ לכריכה.
             </p>
+
+            <!-- נוסחת השדה המגנטי -->
+            <div class="bg-white p-2 rounded border border-slate-200 text-center shadow-sm">
+                <span class="text-[11px] font-bold text-slate-700">במרכז סליל דק (N כריכות):</span>
+                <div dir="ltr" class="text-[15px] mt-1 text-blue-800 font-semibold">
+                    $$B = \frac{\mu_0 N I}{2R}$$
+                </div>
+            </div>
         </div>
     </div>
 
@@ -480,6 +494,14 @@
         }
 
         window.onload = function() {
+            if (window.renderMathInElement) {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ]
+                });
+            }
             animate();
         };
 
