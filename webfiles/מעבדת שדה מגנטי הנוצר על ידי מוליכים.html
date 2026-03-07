@@ -2,7 +2,7 @@
 <html lang="he" dir="rtl">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>מעבדת שדות מגנטיים</title>
     <script src="https://cdn.tailwindcss.com"></script>
     
@@ -17,6 +17,7 @@
             overflow: hidden;
             background-color: #f8fafc;
             font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            touch-action: none; /* מניעת גלילת דף מיותרת בנייד */
         }
         #canvas-container {
             width: 100vw;
@@ -71,100 +72,121 @@
         .tab-btn:not(.active):hover {
             background-color: #e2e8f0;
         }
+        
+        /* גלילה מותאמת לתוכן הפאנל */
+        #panel-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        #panel-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #panel-content::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
+        }
     </style>
 </head>
 <body>
 
-    <!-- פאנל שליטה ראשי -->
-    <div class="absolute top-4 right-4 glass-panel p-5 rounded-xl shadow-2xl w-[340px] z-10 flex flex-col gap-4 max-h-[95vh] overflow-y-auto">
+    <!-- פאנל שליטה ראשי - מעודכן למובייל -->
+    <div class="absolute top-2 right-2 left-2 sm:left-auto sm:top-4 sm:right-4 glass-panel p-4 sm:p-5 rounded-xl shadow-2xl sm:w-[340px] z-10 flex flex-col transition-all duration-300 max-h-[85vh] sm:max-h-[95vh]">
         
-        <!-- כותרת ובחירת מצב -->
-        <div class="text-center mb-1">
-            <h1 class="text-xl font-bold text-blue-800 mb-3">מעבדת שדות מגנטיים</h1>
+        <!-- כותרת מותאמת עם כפתור מזעור (מוצג רק בנייד) -->
+        <div class="flex justify-between items-center mb-3 sm:mb-1 border-b border-slate-200 sm:border-none pb-2 sm:pb-0" id="panel-header">
+            <h1 class="text-lg sm:text-xl font-bold text-blue-800">מעבדת מגנטיות</h1>
+            <button id="toggle-panel-btn" class="sm:hidden bg-blue-100 text-blue-800 hover:bg-blue-200 px-3 py-1 rounded-lg text-sm font-bold transition-colors shadow-sm cursor-pointer">
+                הסתר ▼
+            </button>
+        </div>
+
+        <!-- תוכן הפאנל (ניתן להסתרה בנייד) -->
+        <div id="panel-content" class="flex flex-col gap-3 sm:gap-4 overflow-y-auto" style="display: flex;">
+            
+            <!-- בחירת מצב -->
             <div class="flex bg-slate-100 p-1 rounded-lg gap-1">
                 <button onclick="setMode('wire')" id="tab-wire" class="tab-btn flex-1 py-1.5 text-sm rounded-md active">תיל ישר</button>
                 <button onclick="setMode('coil')" id="tab-coil" class="tab-btn flex-1 py-1.5 text-sm rounded-md">כריכה</button>
                 <button onclick="setMode('solenoid')" id="tab-solenoid" class="tab-btn flex-1 py-1.5 text-sm rounded-md">סילונית</button>
             </div>
-        </div>
 
-        <!-- הגדרות משותפות -->
-        <div class="space-y-2 bg-blue-50/50 p-3 rounded-lg border border-blue-100">
-            <div class="flex justify-between items-center">
-                <label for="current-slider" class="text-sm font-semibold">עוצמת הזרם (I)</label>
-                <span id="current-value" class="text-sm font-bold text-blue-600">5</span>
-            </div>
-            <input type="range" id="current-slider" min="0" max="10" value="5">
-            
-            <div class="pt-2">
-                <button id="direction-btn" class="w-full py-1.5 bg-blue-600 hover:bg-blue-500 text-white transition-colors rounded font-bold flex items-center justify-center gap-2 text-sm">
-                    <span id="dir-text">למעלה</span>
-                    <span id="dir-icon">⬆️</span>
-                </button>
-            </div>
-        </div>
-
-        <!-- 1. אזור תיל ישר -->
-        <div id="ui-wire" class="space-y-3">
-            <div class="bg-slate-100/50 p-3 rounded-lg border border-slate-200">
-                <p class="text-xs text-slate-600 leading-relaxed mb-2">
-                    <strong class="text-slate-800">כלל יד ימין:</strong> האגודל מצביע בכיוון הזרם (כתום), והאצבעות מתעגלות מסביב לתיל ומראות את כיוון קווי השדה המגנטי (כחול).
-                </p>
-                <div class="bg-white p-2 rounded border border-slate-200 text-center shadow-sm">
-                    <span class="text-[11px] font-bold text-slate-700">במרחק r מתיל ישר וארוך:</span>
-                    <div dir="ltr" class="text-[15px] mt-1 text-blue-800 font-semibold">
-                        $$B = \frac{\mu_0 I}{2\pi r}$$
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 2. אזור כריכה מעגלית -->
-        <div id="ui-coil" class="space-y-3 hidden">
-            <div class="space-y-1">
+            <!-- הגדרות משותפות -->
+            <div class="space-y-2 bg-blue-50/50 p-3 rounded-lg border border-blue-100">
                 <div class="flex justify-between items-center">
-                    <label class="text-sm font-medium">מספר כריכות (N)</label>
-                    <span id="coil-turns-val" class="text-sm font-bold text-blue-600">3</span>
+                    <label for="current-slider" class="text-sm font-semibold">עוצמת הזרם (I)</label>
+                    <span id="current-value" class="text-sm font-bold text-blue-600">5</span>
                 </div>
-                <input type="range" id="coil-turns-slider" min="1" max="10" value="3">
+                <input type="range" id="current-slider" min="0" max="10" value="5">
+                
+                <div class="pt-2">
+                    <button id="direction-btn" class="w-full py-1.5 bg-blue-600 hover:bg-blue-500 text-white transition-colors rounded font-bold flex items-center justify-center gap-2 text-sm">
+                        <span id="dir-text">למעלה</span>
+                        <span id="dir-icon">⬆️</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 1. אזור תיל ישר -->
+            <div id="ui-wire" class="space-y-3">
+                <div class="bg-slate-100/50 p-3 rounded-lg border border-slate-200">
+                    <p class="text-xs text-slate-600 leading-relaxed mb-2">
+                        <strong class="text-slate-800">כלל יד ימין:</strong> האגודל מצביע בכיוון הזרם (כתום), והאצבעות מתעגלות מסביב לתיל ומראות את כיוון קווי השדה המגנטי (כחול).
+                    </p>
+                    <div class="bg-white p-2 rounded border border-slate-200 text-center shadow-sm">
+                        <span class="text-[11px] font-bold text-slate-700">במרחק r מתיל ישר וארוך:</span>
+                        <div dir="ltr" class="text-[15px] mt-1 text-blue-800 font-semibold">
+                            $$B = \frac{\mu_0 I}{2\pi r}$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. אזור כריכה מעגלית -->
+            <div id="ui-coil" class="space-y-3 hidden">
+                <div class="space-y-1">
+                    <div class="flex justify-between items-center">
+                        <label class="text-sm font-medium">מספר כריכות (N)</label>
+                        <span id="coil-turns-val" class="text-sm font-bold text-blue-600">3</span>
+                    </div>
+                    <input type="range" id="coil-turns-slider" min="1" max="10" value="3">
+                </div>
+                
+                <div class="bg-slate-100/50 p-3 rounded-lg border border-slate-200">
+                    <p class="text-xs text-slate-600 leading-relaxed mb-2">
+                        <strong class="text-slate-800">כלל יד ימין:</strong> עטוף את הכריכה עם האצבעות בכיוון הזרם. האגודל יצביע לכיוון השדה במרכז.
+                    </p>
+                    <div class="bg-white p-2 rounded border border-slate-200 text-center shadow-sm">
+                        <span class="text-[11px] font-bold text-slate-700">במרכז סליל דק (N כריכות):</span>
+                        <div dir="ltr" class="text-[15px] mt-1 text-blue-800 font-semibold">
+                            $$B = \frac{\mu_0 N I}{2R}$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. אזור סילונית -->
+            <div id="ui-solenoid" class="space-y-3 hidden">
+                <div class="space-y-1">
+                    <div class="flex justify-between items-center">
+                        <label class="text-sm font-medium">צפיפות ליפופים (N/L)</label>
+                        <span id="solenoid-turns-val" class="text-sm font-bold text-blue-600">15</span>
+                    </div>
+                    <input type="range" id="solenoid-turns-slider" min="5" max="30" value="15">
+                </div>
+
+                <div class="bg-slate-100/50 p-3 rounded-lg border border-slate-200">
+                    <p class="text-xs text-slate-600 leading-relaxed mb-2">
+                        <strong class="text-slate-800">שדה סילונית:</strong> בפנים השדה כמעט אחיד וקווי המקביל לציר. בחוץ הוא מתפזר בדומה למגנט מוט.
+                    </p>
+                    <div class="bg-white p-2 rounded border border-slate-200 text-center shadow-sm">
+                        <span class="text-[11px] font-bold text-slate-700">בתוך סילונית אידיאלית:</span>
+                        <div dir="ltr" class="text-[15px] mt-1 text-blue-800 font-semibold">
+                            $$B = \mu_0 \frac{N}{L} I$$
+                        </div>
+                    </div>
+                </div>
             </div>
             
-            <div class="bg-slate-100/50 p-3 rounded-lg border border-slate-200">
-                <p class="text-xs text-slate-600 leading-relaxed mb-2">
-                    <strong class="text-slate-800">כלל יד ימין:</strong> עטוף את הכריכה עם האצבעות בכיוון הזרם. האגודל יצביע לכיוון השדה במרכז.
-                </p>
-                <div class="bg-white p-2 rounded border border-slate-200 text-center shadow-sm">
-                    <span class="text-[11px] font-bold text-slate-700">במרכז סליל דק (N כריכות):</span>
-                    <div dir="ltr" class="text-[15px] mt-1 text-blue-800 font-semibold">
-                        $$B = \frac{\mu_0 N I}{2R}$$
-                    </div>
-                </div>
-            </div>
-        </div>
-
-        <!-- 3. אזור סילונית -->
-        <div id="ui-solenoid" class="space-y-3 hidden">
-            <div class="space-y-1">
-                <div class="flex justify-between items-center">
-                    <label class="text-sm font-medium">צפיפות ליפופים (N/L)</label>
-                    <span id="solenoid-turns-val" class="text-sm font-bold text-blue-600">15</span>
-                </div>
-                <input type="range" id="solenoid-turns-slider" min="5" max="30" value="15">
-            </div>
-
-            <div class="bg-slate-100/50 p-3 rounded-lg border border-slate-200">
-                <p class="text-xs text-slate-600 leading-relaxed mb-2">
-                    <strong class="text-slate-800">שדה סילונית:</strong> בפנים השדה כמעט אחיד וקווי המקביל לציר. בחוץ הוא מתפזר בדומה למגנט מוט.
-                </p>
-                <div class="bg-white p-2 rounded border border-slate-200 text-center shadow-sm">
-                    <span class="text-[11px] font-bold text-slate-700">בתוך סילונית אידיאלית:</span>
-                    <div dir="ltr" class="text-[15px] mt-1 text-blue-800 font-semibold">
-                        $$B = \mu_0 \frac{N}{L} I$$
-                    </div>
-                </div>
-            </div>
-        </div>
-
+        </div> <!-- End of panel-content -->
     </div>
 
     <!-- Container for Three.js -->
@@ -190,6 +212,32 @@
         let animatedArrows = []; 
         let currentArrows = [];
 
+        // --- ניהול תצוגת הפאנל במובייל (הסתרה/הצגה) ---
+        const toggleBtn = document.getElementById('toggle-panel-btn');
+        const panelContent = document.getElementById('panel-content');
+        let isPanelOpen = true;
+
+        function togglePanel() {
+            isPanelOpen = !isPanelOpen;
+            if(isPanelOpen) {
+                panelContent.style.display = 'flex';
+                toggleBtn.innerText = 'הסתר ▼';
+                toggleBtn.classList.replace('bg-blue-600', 'bg-blue-100');
+                toggleBtn.classList.replace('text-white', 'text-blue-800');
+            } else {
+                panelContent.style.display = 'none';
+                toggleBtn.innerText = 'הגדרות ▲';
+                toggleBtn.classList.replace('bg-blue-100', 'bg-blue-600');
+                toggleBtn.classList.replace('text-blue-800', 'text-white');
+            }
+        }
+
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            togglePanel();
+        });
+
+
         // --- הגדרות Three.js בסיסיות ---
         const container = document.getElementById('canvas-container');
         const scene = new THREE.Scene();
@@ -206,6 +254,13 @@
         const controls = new THREE.OrbitControls(camera, renderer.domElement);
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
+
+        // סגירת הפאנל אוטומטית במובייל ברגע שמתחילים לשחק עם המודל
+        controls.addEventListener('start', () => {
+            if (window.innerWidth < 640 && isPanelOpen) {
+                togglePanel();
+            }
+        });
 
         scene.add(new THREE.AmbientLight(0xffffff, 0.6));
         const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
