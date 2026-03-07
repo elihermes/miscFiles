@@ -244,17 +244,64 @@
             );
             const tip = new THREE.Mesh(
                 new THREE.ConeGeometry(0.5, 0.8, 16).rotateX(Math.PI/2), 
-                new THREE.MeshBasicMaterial({ color: 0x111827 })
+                new THREE.MeshBasicMaterial({ color: 0x111827 }) // הבסיס השחור
             );
             tip.position.z = 1.0;
+            
+            // הוספת "נקודה" לבנה בקצה החץ כדי שייראה כמו סמל יציאה מהדף ⊙
+            const dot = new THREE.Mesh(
+                new THREE.SphereGeometry(0.12, 16, 16),
+                new THREE.MeshBasicMaterial({ color: 0xffffff }) // נקודה לבנה בולטת
+            );
+            dot.position.z = 1.4; // מיקום בדיוק בקצה השפיץ של החרוט (1.0 + חצי גובה 0.4)
+
             const tail = new THREE.Mesh(
                 new THREE.CircleGeometry(0.3, 16), 
                 new THREE.MeshBasicMaterial({ map: arrowTailTex })
             );
             tail.position.z = -0.61; tail.rotation.y = Math.PI;
-            group.add(body, tip, tail);
+            
+            group.add(body, tip, dot, tail); // הוספנו את ה-dot לקבוצה
             return group;
         }
+
+        // טקסטורות לכיוון הזרם (X ונקודה)
+        function createDirectionTexture(type) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+
+            ctx.beginPath();
+            ctx.arc(64, 64, 56, 0, 2 * Math.PI);
+            ctx.fillStyle = '#f97316'; // כתום כמו הזרם
+            ctx.fill();
+            ctx.lineWidth = 8;
+            ctx.strokeStyle = '#ffffff';
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 12;
+            ctx.lineCap = 'round';
+
+            if (type === 'in') { // X (נכנס / זנב)
+                ctx.beginPath();
+                ctx.moveTo(40, 40); ctx.lineTo(88, 88);
+                ctx.moveTo(88, 40); ctx.lineTo(40, 88);
+                ctx.stroke();
+            } else { // Dot (יוצא / ראש)
+                ctx.beginPath();
+                ctx.arc(64, 64, 14, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            return new THREE.CanvasTexture(canvas);
+        }
+        
+        const texCurrentIn = createDirectionTexture('in');
+        const texCurrentOut = createDirectionTexture('out');
+        const matCurrentIn = new THREE.SpriteMaterial({ map: texCurrentIn });
+        const matCurrentOut = new THREE.SpriteMaterial({ map: texCurrentOut });
 
         const copperMaterial = new THREE.MeshStandardMaterial({ color: 0xb87333, metalness: 0.7, roughness: 0.3 });
 
@@ -277,6 +324,21 @@
             const wire = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 40, 32), copperMaterial);
             scene.add(wire);
             sceneObjects.push(wire);
+
+            // סמלי X ונקודה בקצוות התיל (מייצגים כניסה ויציאה של הזרם)
+            if (currentMagnitude > 0) {
+                const topSprite = new THREE.Sprite(currentDirection === 1 ? matCurrentOut : matCurrentIn);
+                topSprite.scale.set(3.5, 3.5, 1);
+                topSprite.position.set(0, 21.5, 0);
+                scene.add(topSprite);
+                sceneObjects.push(topSprite);
+
+                const bottomSprite = new THREE.Sprite(currentDirection === 1 ? matCurrentIn : matCurrentOut);
+                bottomSprite.scale.set(3.5, 3.5, 1);
+                bottomSprite.position.set(0, -21.5, 0);
+                scene.add(bottomSprite);
+                sceneObjects.push(bottomSprite);
+            }
 
             // יצירת חיצי הזרם (כתומים)
             if (currentMagnitude > 0) {
