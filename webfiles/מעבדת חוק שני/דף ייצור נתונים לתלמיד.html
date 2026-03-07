@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
-    <title>חוק שני של ניוטון - מחולל נתונים ומצב מורה</title>
+    <title>חוק שני של ניוטון - מחולל נתונים</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js for Teacher Cheat Graphs -->
@@ -134,8 +134,8 @@
         </div>
     </div>
 
-    <!-- Modal מורה: הצגת הגרפים (Cheat Sheet) -->
-    <div id="teacher-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-[60] p-4 fade-in">
+    <!-- Modal ניתוח: הצגת הגרפים המורחבים -->
+    <div id="analysis-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-[60] p-4 fade-in">
         <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl flex flex-col max-h-[95vh] border-t-8 border-purple-600">
             <div class="p-4 border-b flex justify-between items-center bg-purple-50 rounded-t-lg">
                 <h3 class="text-xl font-bold text-purple-900 flex items-center gap-2">
@@ -143,9 +143,9 @@
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
                         <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
                     </svg>
-                    מצב מורה: ניתוח גרפים אוטומטי
+                    ניתוח גרפים אוטומטי
                 </h3>
-                <button onclick="closeTeacherModal()" class="text-gray-500 hover:text-red-500 text-3xl font-bold leading-none px-2">&times;</button>
+                <button onclick="closeAnalysisModal()" class="text-gray-500 hover:text-red-500 text-3xl font-bold leading-none px-2">&times;</button>
             </div>
             
             <div class="p-4 overflow-y-auto flex-grow flex flex-col md:flex-row gap-6 bg-gray-100">
@@ -170,7 +170,7 @@
             </div>
             
             <div class="p-4 border-t bg-gray-50 flex justify-end rounded-b-xl">
-                <button onclick="closeTeacherModal()" class="bg-gray-500 text-white px-6 py-2 rounded shadow hover:bg-gray-600 transition">סגור תצוגת מורה</button>
+                <button onclick="closeAnalysisModal()" class="bg-gray-500 text-white px-6 py-2 rounded shadow hover:bg-gray-600 transition">סגור תצוגה</button>
             </div>
         </div>
     </div>
@@ -235,24 +235,46 @@
             errorMsg.classList.add('hidden');
             nameInput.classList.remove('border-red-500');
 
-            // ייצור גרעין אקראיות
-            const seed = cyrb128(studentName);
-            const prng = mulberry32(seed);
-
-            // שגיאות שיטתיות
-            const g_true = randomRange(prng, 9.75, 9.85); 
-            const f_k = randomRange(prng, 0.02, 0.05); 
-            const m1_base_true = randomRange(prng, 0.258, 0.264); 
+            let g_true, f_k, m1_base_true, checksum;
             const m1_base_declared = 0.261; 
             const noise_sigma = 0.01; 
 
-            // קוד למורה
-            const g_code = Math.round(g_true * 100); 
-            const f_code = Math.round(f_k * 100).toString().padStart(2, '0');
-            const m_code = Math.round(m1_base_true * 1000);
-            const rnd_str = randomString(prng, 3);
-            const checksum = `G${g_code}-F${f_code}-M${m_code}-${rnd_str}`;
+            // דלת אחורית למורה: בדיקה האם הקלט הוא למעשה קוד צ'קסאם תקני
+            const checksumRegex = /^G(\d{3,4})-F(\d{2})-M(\d{3,4})-[A-Z0-9]{3}$/i;
+            const match = studentName.match(checksumRegex);
+
+            if (match) {
+                // המורה הזין קוד - שחזור השגיאות השיטתיות ישירות מהקוד
+                g_true = parseInt(match[1]) / 100;
+                f_k = parseInt(match[2]) / 100;
+                m1_base_true = parseInt(match[3]) / 1000;
+                checksum = studentName.toUpperCase(); // שומרים על הקוד המקורי
+            } else {
+                // תלמיד הזין שם - מייצרים מנוע אקראיות ראשוני מבוסס על השם
+                const nameSeed = cyrb128(studentName);
+                const namePrng = mulberry32(nameSeed);
+                
+                // הגרלת השגיאות השיטתיות
+                g_true = randomRange(namePrng, 9.75, 9.85); 
+                f_k = randomRange(namePrng, 0.02, 0.05); 
+                m1_base_true = randomRange(namePrng, 0.258, 0.264); 
+                
+                // בניית קוד הזיהוי
+                const g_code = Math.round(g_true * 100); 
+                const f_code = Math.round(f_k * 100).toString().padStart(2, '0');
+                const m_code = Math.round(m1_base_true * 1000);
+                const rnd_str = randomString(namePrng, 3);
+                checksum = `G${g_code}-F${f_code}-M${m_code}-${rnd_str}`;
+            }
+
             document.getElementById('checksum-display').innerText = checksum;
+
+            // ***** הלוגיקה החדשה (הפתרון לשאלה שלך): *****
+            // יצירת מנוע אקראיות *חדש* שמבוסס אך ורק על קוד ה-Checksum!
+            // כך, גם כשהתלמיד מזין שם (ומקבל קוד) וגם כשהמורה מזין את הקוד ישירות,
+            // מנוע הרעש יתחיל מאותה נקודת התחלה בדיוק ויפיק את אותן שגיאות אקראיות.
+            const noiseSeed = cyrb128(checksum);
+            const noisePrng = mulberry32(noiseSeed);
 
             // בניית טבלה 1
             const table1Body = document.getElementById('table1-body');
@@ -266,7 +288,9 @@
                 let m1_true = m1_base_true + m1_disks;
 
                 let a_true = (m2 * g_true - f_k) / (m1_true + m2);
-                let a_measured = a_true * (1 + randomNormal(prng, 0, noise_sigma));
+                
+                // שימוש במנוע הרעש החדש (noisePrng) במקום המנוע הקודם
+                let a_measured = a_true * (1 + randomNormal(noisePrng, 0, noise_sigma));
                 a_measured = Math.max(0.001, a_measured).toFixed(3);
 
                 currentData.table1.push([i+1, m1_declared.toFixed(3), m2.toFixed(3), '', a_measured]);
@@ -292,7 +316,9 @@
                 let m1_true = m1_base_true + m1_disks;
 
                 let a_true = (m2 * g_true - f_k) / (m1_true + m2);
-                let a_measured = a_true * (1 + randomNormal(prng, 0, noise_sigma));
+                
+                // שימוש במנוע הרעש החדש (noisePrng)
+                let a_measured = a_true * (1 + randomNormal(noisePrng, 0, noise_sigma));
                 a_measured = Math.max(0.001, a_measured).toFixed(3);
 
                 currentData.table2.push([i+1, m1_declared.toFixed(3), m2.toFixed(3), '', '', a_measured]);
@@ -377,7 +403,7 @@
             });
         }
 
-        function showTeacherModal() {
+        function showAnalysisModal() {
             if(currentData.table1.length === 0) {
                 alert("יש להפיק נתונים עבור התלמיד לפני הצגת הגרפים!");
                 return;
@@ -417,11 +443,11 @@
             chart1Obj = renderTeacherChart('chart1', x1, y1, reg1, 'ΣF (N)', 'a (m/s²)', 'rgba(37, 99, 235, 1)'); // Blue
             chart2Obj = renderTeacherChart('chart2', x2, y2, reg2, '1/ΣM (1/kg)', 'a (m/s²)', 'rgba(5, 150, 105, 1)'); // Green
 
-            document.getElementById('teacher-modal').classList.remove('hidden');
+            document.getElementById('analysis-modal').classList.remove('hidden');
         }
 
-        function closeTeacherModal() {
-            document.getElementById('teacher-modal').classList.add('hidden');
+        function closeAnalysisModal() {
+            document.getElementById('analysis-modal').classList.add('hidden');
         }
 
         // האזנה לקיצור המקשים (Option/Alt + G או Ctrl/Cmd + G)
@@ -431,7 +457,7 @@
             if ((event.altKey || event.ctrlKey || event.metaKey) && (event.code === 'KeyG' || event.key === 'g' || event.key === 'G' || event.key === 'ע')) {
                 // מונע קיצורי דפדפן רגילים כמו "Find Next"
                 event.preventDefault(); 
-                showTeacherModal();
+                showAnalysisModal();
             }
         });
 
@@ -443,7 +469,7 @@
             const studentName = document.getElementById('student-name').value.trim();
             const checksum = document.getElementById('checksum-display').innerText;
 
-            csvContent += `שם התלמיד:,${studentName}\n`;
+            csvContent += `שם/קוד:,${studentName}\n`;
             csvContent += `קוד זיהוי מורה:,${checksum}\n\n`;
             csvContent += "חקירה 1: תלות התאוצה בכוח השקול\nמספר מדידה,מסת קרונית m1 (kg),מסת גוף תלוי m2 (kg),הכוח השקול ΣF (N) לחישוב,תאוצה נמדדת a (m/s^2)\n";
             currentData.table1.forEach(row => { csvContent += row.join(",") + "\n"; });
