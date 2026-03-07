@@ -176,18 +176,16 @@
 
     <script>
         // --- משתני מערכת גלובליים ---
-        let currentMode = 'wire'; // 'wire', 'coil', 'solenoid'
+        let currentMode = 'wire'; 
         let currentMagnitude = 5;
-        let currentDirection = 1; // 1 (Up/CCW), -1 (Down/CW)
+        let currentDirection = 1; 
         
-        // פרמטרים ספציפיים
         let coilTurns = 3;
         let solenoidTurns = 15;
         const COIL_RADIUS = 10;
         const SOLENOID_RADIUS = 6;
         const SOLENOID_LENGTH = 30;
 
-        // מערכים לניהול אובייקטים למחיקה קלה בעת החלפת מצב
         let sceneObjects = [];
         let animatedArrows = []; 
         let currentArrows = [];
@@ -209,7 +207,6 @@
         controls.enableDamping = true;
         controls.dampingFactor = 0.05;
 
-        // תאורה וגריד משותפים
         scene.add(new THREE.AmbientLight(0xffffff, 0.6));
         const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
         dirLight.position.set(10, 30, 20);
@@ -244,16 +241,15 @@
             );
             const tip = new THREE.Mesh(
                 new THREE.ConeGeometry(0.5, 0.8, 16).rotateX(Math.PI/2), 
-                new THREE.MeshBasicMaterial({ color: 0x111827 }) // הבסיס השחור
+                new THREE.MeshBasicMaterial({ color: 0x111827 })
             );
             tip.position.z = 1.0;
             
-            // הוספת "נקודה" לבנה בקצה החץ כדי שייראה כמו סמל יציאה מהדף ⊙
             const dot = new THREE.Mesh(
                 new THREE.SphereGeometry(0.12, 16, 16),
-                new THREE.MeshBasicMaterial({ color: 0xffffff }) // נקודה לבנה בולטת
+                new THREE.MeshBasicMaterial({ color: 0xffffff }) 
             );
-            dot.position.z = 1.4; // מיקום בדיוק בקצה השפיץ של החרוט (1.0 + חצי גובה 0.4)
+            dot.position.z = 1.4;
 
             const tail = new THREE.Mesh(
                 new THREE.CircleGeometry(0.3, 16), 
@@ -261,11 +257,10 @@
             );
             tail.position.z = -0.61; tail.rotation.y = Math.PI;
             
-            group.add(body, tip, dot, tail); // הוספנו את ה-dot לקבוצה
+            group.add(body, tip, dot, tail);
             return group;
         }
 
-        // טקסטורות לכיוון הזרם (X ונקודה)
         function createDirectionTexture(type) {
             const canvas = document.createElement('canvas');
             canvas.width = 128;
@@ -274,7 +269,7 @@
 
             ctx.beginPath();
             ctx.arc(64, 64, 56, 0, 2 * Math.PI);
-            ctx.fillStyle = '#f97316'; // כתום כמו הזרם
+            ctx.fillStyle = '#f97316'; 
             ctx.fill();
             ctx.lineWidth = 8;
             ctx.strokeStyle = '#ffffff';
@@ -285,12 +280,12 @@
             ctx.lineWidth = 12;
             ctx.lineCap = 'round';
 
-            if (type === 'in') { // X (נכנס / זנב)
+            if (type === 'in') {
                 ctx.beginPath();
                 ctx.moveTo(40, 40); ctx.lineTo(88, 88);
                 ctx.moveTo(88, 40); ctx.lineTo(40, 88);
                 ctx.stroke();
-            } else { // Dot (יוצא / ראש)
+            } else {
                 ctx.beginPath();
                 ctx.arc(64, 64, 14, 0, 2 * Math.PI);
                 ctx.fill();
@@ -300,12 +295,12 @@
         
         const texCurrentIn = createDirectionTexture('in');
         const texCurrentOut = createDirectionTexture('out');
-        const matCurrentIn = new THREE.SpriteMaterial({ map: texCurrentIn });
-        const matCurrentOut = new THREE.SpriteMaterial({ map: texCurrentOut });
+        // חומרים לדיסקיות שטוחות (Meshes)
+        const matCurrentInDisk = new THREE.MeshBasicMaterial({ map: texCurrentIn, transparent: true, side: THREE.DoubleSide });
+        const matCurrentOutDisk = new THREE.MeshBasicMaterial({ map: texCurrentOut, transparent: true, side: THREE.DoubleSide });
 
         const copperMaterial = new THREE.MeshStandardMaterial({ color: 0xb87333, metalness: 0.7, roughness: 0.3 });
 
-        // פונקציית ניקוי סצנה
         function clearScene() {
             sceneObjects.forEach(obj => scene.remove(obj));
             sceneObjects = [];
@@ -320,27 +315,27 @@
             camera.position.set(25, 15, 25);
             controls.target.set(0, 0, 0);
 
-            // יצירת התיל
             const wire = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 40, 32), copperMaterial);
             scene.add(wire);
             sceneObjects.push(wire);
 
-            // סמלי X ונקודה בקצוות התיל (מייצגים כניסה ויציאה של הזרם)
+            // סמלי X ונקודה בקצוות התיל - עכשיו כדיסקיות שטוחות על ציר ה-XZ
             if (currentMagnitude > 0) {
-                const topSprite = new THREE.Sprite(currentDirection === 1 ? matCurrentOut : matCurrentIn);
-                topSprite.scale.set(3.5, 3.5, 1);
-                topSprite.position.set(0, 21.5, 0);
-                scene.add(topSprite);
-                sceneObjects.push(topSprite);
+                const diskGeo = new THREE.CircleGeometry(2.5, 32);
+                
+                const topDisk = new THREE.Mesh(diskGeo, currentDirection === 1 ? matCurrentOutDisk : matCurrentInDisk);
+                topDisk.position.set(0, 20.01, 0); 
+                topDisk.rotation.x = Math.PI / 2; // שוכב אופקית על קצה התיל
+                scene.add(topDisk);
+                sceneObjects.push(topDisk);
 
-                const bottomSprite = new THREE.Sprite(currentDirection === 1 ? matCurrentIn : matCurrentOut);
-                bottomSprite.scale.set(3.5, 3.5, 1);
-                bottomSprite.position.set(0, -21.5, 0);
-                scene.add(bottomSprite);
-                sceneObjects.push(bottomSprite);
+                const bottomDisk = new THREE.Mesh(diskGeo, currentDirection === 1 ? matCurrentInDisk : matCurrentOutDisk);
+                bottomDisk.position.set(0, -20.01, 0); 
+                bottomDisk.rotation.x = Math.PI / 2; // שוכב אופקית על קצה התיל
+                scene.add(bottomDisk);
+                sceneObjects.push(bottomDisk);
             }
 
-            // יצירת חיצי הזרם (כתומים)
             if (currentMagnitude > 0) {
                 const arrowMat = new THREE.MeshBasicMaterial({ color: 0xf97316 });
                 for (let i = -15; i <= 15; i += 7) {
@@ -352,7 +347,6 @@
                     currentArrows.push({ mesh: arrow, mode: 'wire' });
                 }
 
-                // יצירת שדה מגנטי (מעגלים סביב Y)
                 const numRings = Math.ceil(currentMagnitude / 2);
                 const planes = [-10, 0, 10];
                 
@@ -389,7 +383,6 @@
 
             const startY = -(coilTurns - 1) * 0.45;
             
-            // בניית טבעות הכריכה
             for (let i = 0; i < coilTurns; i++) {
                 const torus = new THREE.Mesh(new THREE.TorusGeometry(COIL_RADIUS, 0.4, 16, 64).rotateX(Math.PI/2), copperMaterial);
                 torus.position.y = startY + (i * 0.9);
@@ -398,7 +391,6 @@
             }
 
             if (currentMagnitude > 0) {
-                // חיצי זרם במעגל
                 const arrowMat = new THREE.MeshBasicMaterial({ color: 0xf97316 });
                 for (let t = 0; t < coilTurns; t++) {
                     const py = startY + (t * 0.9);
@@ -410,7 +402,6 @@
                     }
                 }
 
-                // יצירת קווי שדה מגנטי (CatmullRom)
                 const effectiveStrength = currentMagnitude * coilTurns;
                 const distances = [];
                 if (effectiveStrength > 0) distances.push(3);
@@ -419,12 +410,10 @@
 
                 const angles = [0, Math.PI/2, Math.PI, 3*Math.PI/2];
 
-                // קו מרכזי ישר
                 const centerPoints = [new THREE.Vector3(0, -25, 0), new THREE.Vector3(0, 25, 0)];
                 const centerCurve = new THREE.LineCurve3(centerPoints[0], centerPoints[1]);
                 addMagneticPath(centerCurve, true);
 
-                // קווים עוטפים
                 distances.forEach(d => {
                     angles.forEach(phi => {
                         const points = [];
@@ -446,10 +435,9 @@
         // מודל 3: סילונית (Solenoid)
         // =========================================================
         function buildSolenoid() {
-            camera.position.set(0, 20, 45); // מבט מהצד כדי לראות את האורך (ציר X)
+            camera.position.set(0, 20, 45); 
             controls.target.set(0, 0, 0);
 
-            // הסילונית תהיה לאורך ציר ה-X
             class HelixCurve extends THREE.Curve {
                 constructor(radius, turns, length) {
                     super();
@@ -473,7 +461,6 @@
             sceneObjects.push(solenoid);
 
             if (currentMagnitude > 0) {
-                // חיצי הזרם לאורך הספירלה
                 const arrowGeo = new THREE.ConeGeometry(0.6, 1.8, 16).rotateX(Math.PI/2);
                 const arrowMat = new THREE.MeshBasicMaterial({ color: 0xf97316 });
                 const numCurrentArrows = Math.floor(solenoidTurns * 2);
@@ -485,8 +472,6 @@
                     currentArrows.push({ mesh: arrow, mode: 'solenoid', t: i/numCurrentArrows, curve: helixCurve });
                 }
 
-                // קווי שדה מגנטי
-                // 1. קווים ישרים בתוך הסילונית (ציר X)
                 const numInnerLines = currentMagnitude > 3 ? 9 : (currentMagnitude > 0 ? 5 : 0);
                 const innerOffsets = numInnerLines === 9 ? [
                     [0,0], [2.5,2.5], [2.5,-2.5], [-2.5,2.5], [-2.5,-2.5],
@@ -499,20 +484,18 @@
                     const pt1 = new THREE.Vector3(-SOLENOID_LENGTH*0.8, off[0], off[1]);
                     const pt2 = new THREE.Vector3(SOLENOID_LENGTH*0.8, off[0], off[1]);
                     const curve = new THREE.LineCurve3(pt1, pt2);
-                    addMagneticPath(curve, true, true); // straight line, inside
+                    addMagneticPath(curve, true, true);
                 });
 
-                // 2. קווים מקיפים (חוזרים מבחוץ)
                 if (currentMagnitude > 2) {
                     const outerAngles = [0, Math.PI/4, Math.PI/2, 3*Math.PI/4, Math.PI, 5*Math.PI/4, 3*Math.PI/2, 7*Math.PI/4];
                     outerAngles.forEach(phi => {
                         const points = [];
                         const segments = 64;
-                        // חצי אליפסה עליונה
                         for (let i = 0; i <= segments; i++) {
-                            const alpha = (i / segments) * Math.PI; // 0 to PI
+                            const alpha = (i / segments) * Math.PI; 
                             const x = Math.cos(alpha) * (SOLENOID_LENGTH*0.6);
-                            const r = SOLENOID_RADIUS + (Math.sin(alpha) * 14); // מתרחק מהמרכז
+                            const r = SOLENOID_RADIUS + (Math.sin(alpha) * 14); 
                             const y = r * Math.cos(phi);
                             const z = r * Math.sin(phi);
                             points.push(new THREE.Vector3(x, y, z));
@@ -521,7 +504,6 @@
                         addMagneticPath(curve, false, false);
                     });
                     
-                    // שכבה חיצונית נוספת לזרמים חזקים
                     if (currentMagnitude > 6) {
                         const farAngles = [0, Math.PI/2, Math.PI, 3*Math.PI/2];
                         farAngles.forEach(phi => {
@@ -542,7 +524,6 @@
             }
         }
 
-        // פונקציית עזר להוספת מסלולי שדה מגנטי (כריכה + סילונית)
         function addMagneticPath(curve, isCenter, isSolenoid = false) {
             const tubeMat = new THREE.MeshBasicMaterial({ 
                 color: 0x3b82f6, transparent: true, opacity: isCenter ? 0.6 : 0.2 
@@ -563,22 +544,18 @@
             }
         }
 
-        // --- בקרת UI והחלפת מצבים ---
         function setMode(mode) {
             currentMode = mode;
             
-            // עדכון כפתורי תפריט
             ['wire', 'coil', 'solenoid'].forEach(m => {
                 const btn = document.getElementById(`tab-${m}`);
                 if (m === mode) {
                     btn.classList.add('active');
-                    btn.classList.remove('bg-f1f5f9', 'text-slate-600');
                 } else {
                     btn.classList.remove('active');
                 }
             });
 
-            // הצגה/הסתרה של ממשקי שליטה
             document.getElementById('ui-wire').style.display = mode === 'wire' ? 'block' : 'none';
             document.getElementById('ui-coil').style.display = mode === 'coil' ? 'block' : 'none';
             document.getElementById('ui-solenoid').style.display = mode === 'solenoid' ? 'block' : 'none';
@@ -616,7 +593,6 @@
             else if (currentMode === 'solenoid') buildSolenoid();
         }
 
-        // מאזינים (Listeners) למחוונים
         document.getElementById('current-slider').addEventListener('input', (e) => {
             currentMagnitude = parseInt(e.target.value);
             document.getElementById('current-value').innerText = currentMagnitude;
@@ -638,9 +614,7 @@
         document.getElementById('direction-btn').addEventListener('click', () => {
             currentDirection *= -1;
             updateDirectionUI();
-            if (currentMode === 'wire') rebuildScene(); 
-            // עבור כריכה וסילונית אין חובה לבנות מחדש, הלולאה תהפוך כיוון, אך נבנה מחדש לשלמות
-            else rebuildScene();
+            rebuildScene();
         });
 
         window.addEventListener('resize', () => {
@@ -649,7 +623,6 @@
             renderer.setSize(window.innerWidth, window.innerHeight);
         });
 
-        // --- לולאת אנימציה ---
         const clock = new THREE.Clock();
 
         function animate() {
@@ -657,7 +630,6 @@
             const delta = clock.getDelta();
 
             if (currentMagnitude > 0) {
-                // הנעת חיצי הזרם
                 currentArrows.forEach(arr => {
                     if (arr.mode === 'wire') {
                         const speed = currentMagnitude * 2 * currentDirection;
@@ -672,7 +644,7 @@
                         arr.mesh.lookAt(COIL_RADIUS * Math.cos(arr.angle + 0.1 * currentDirection), arr.py, COIL_RADIUS * -Math.sin(arr.angle + 0.1 * currentDirection));
                     }
                     else if (arr.mode === 'solenoid') {
-                        const speed = currentMagnitude * 0.003125 * currentDirection; // הונחת שוב פי 4 מ-0.0125
+                        const speed = currentMagnitude * 0.003125 * currentDirection; 
                         arr.t += speed * delta;
                         if(arr.t > 1) arr.t -= 1;
                         if(arr.t < 0) arr.t += 1;
@@ -683,7 +655,6 @@
                     }
                 });
 
-                // הנעת חיצי השדה המגנטי
                 animatedArrows.forEach(arr => {
                     if (arr.mode === 'wire') {
                         const bSpeed = currentMagnitude * 0.2;
@@ -693,12 +664,11 @@
                     } 
                     else if (arr.mode === 'path') {
                         const bSpeed = currentMagnitude * 0.08;
-                        const dirMult = currentDirection; // תוקן: מתאים כעת במדויק לכלל הבורג גם בסילונית
+                        const dirMult = currentDirection; 
                         arr.t += bSpeed * dirMult * delta;
                         if (arr.t > 1.0) arr.t -= 1.0;
                         if (arr.t < 0.0) arr.t += 1.0;
                         const pos = arr.curve.getPoint(arr.t);
-                        // מונע שגיאה במקרה של קו ישר לחלוטין שמגיע לקצה
                         if(pos) {
                             const tan = arr.curve.getTangent(arr.t).normalize();
                             arr.mesh.position.copy(pos);
@@ -712,9 +682,8 @@
             renderer.render(scene, camera);
         }
 
-        // אתחול
         window.onload = function() {
-            setMode('wire'); // מצב התחלתי
+            setMode('wire');
             if (window.renderMathInElement) {
                 renderMathInElement(document.body, {
                     delimiters: [
