@@ -5,6 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>שדה מגנטי סביב תיל מוליך</title>
     <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- KaTeX for Math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
     <style>
         body {
             margin: 0;
@@ -79,7 +85,7 @@
 
         <!-- מידע למשתמש -->
         <div class="bg-slate-100/50 p-3 rounded-lg border border-slate-200 mt-2">
-            <p class="text-xs text-slate-600 leading-relaxed">
+            <p class="text-xs text-slate-600 leading-relaxed mb-3">
                 <strong class="text-slate-800">איך משתמשים?</strong><br>
                 • 🖱️ <b>גרירה:</b> סובב את המערכת ב-360°<br>
                 • ⚙️ <b>גלילה:</b> התקרב/התרחק<br>
@@ -87,6 +93,14 @@
                 • 👁️ <b>מבט מקצה התיל:</b> תראה נקודה (•) לזרם שיוצא אליך, וצלב (X) לזרם שנכנס.<br>
                 • 🎯 <b>מבט על חיצי השדה:</b> השפיץ השחור מראה קדימה, ו-X שחור מאחור.
             </p>
+
+            <!-- נוסחת השדה המגנטי -->
+            <div class="bg-white p-2 rounded border border-slate-200 text-center shadow-sm">
+                <span class="text-[11px] font-bold text-slate-700">במרחק r מתיל ישר וארוך:</span>
+                <div dir="ltr" class="text-[15px] mt-1 text-blue-800 font-semibold">
+                    $$B = \frac{\mu_0 I}{2\pi r}$$
+                </div>
+            </div>
         </div>
     </div>
 
@@ -473,8 +487,16 @@
             renderer.render(scene, camera);
         }
 
-        // התחלת האנימציה מיד עם טעינת החלון
+        // התחלת האנימציה ורינדור הנוסחאות מיד עם טעינת החלון
         window.onload = function() {
+            if (window.renderMathInElement) {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ]
+                });
+            }
             animate();
         };
 
