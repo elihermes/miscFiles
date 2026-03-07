@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>סימולציית קפיץ ואנרגיה | פיזיקאלי</title>
+    <title>סימולציית קפיץ ואנרגיה | מותאם לנייד</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Chart.js for the Graph -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
@@ -13,99 +13,111 @@
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
     <style>
-        body { font-family: 'Rubik', sans-serif; background-color: #f3f4f6; height: 100vh; display: flex; flex-direction: column; }
+        body { 
+            font-family: 'Rubik', sans-serif; 
+            background-color: #f3f4f6; 
+        }
         canvas { cursor: crosshair; }
-        .panel { background-color: white; border-top: 1px solid #e5e7eb; overflow-y: auto; }
         
-        /* Desktop Layout Override */
-        @media (min-width: 768px) {
-            body { flex-direction: row; }
-            .panel { width: 24rem; height: 100vh; border-top: none; border-left: 1px solid #e5e7eb; }
+        /* Sliders styling for better mobile touch */
+        input[type=range] { 
+            width: 100%; 
+            cursor: pointer; 
+            height: 1.5rem; /* Larger touch area */
         }
         
-        .control-group { margin-bottom: 1rem; }
-        input[type=range] { width: 100%; cursor: pointer; }
+        /* MathJax text forcing direction */
+        .dir-ltr { direction: ltr; display: inline-block; }
     </style>
 </head>
-<body class="overflow-hidden">
+<body class="flex flex-col md:flex-row min-h-screen md:h-screen md:overflow-hidden">
 
     <!-- Visualization Column (Simulation + Graph) -->
-    <div class="flex-1 flex flex-col h-full relative">
+    <!-- On mobile: natural height. On desktop: takes remaining width and full height -->
+    <div class="flex-1 flex flex-col w-full h-[80vh] md:h-full relative order-1 md:order-none">
         
-        <!-- Simulation Area (Top/Left) -->
-        <div class="flex-grow relative bg-gray-100 border-b border-gray-300" style="min-height: 50%;">
-            <h1 class="absolute top-2 right-4 text-xl font-bold text-gray-700 pointer-events-none z-10 opacity-70">סימולציית הקפיץ</h1>
-            <canvas id="simCanvas" class="w-full h-full block"></canvas>
-            <div id="msgBox" class="absolute top-12 bg-white/90 p-2 rounded shadow text-sm font-bold text-blue-600 hidden"></div>
+        <!-- Simulation Area (Top) -->
+        <!-- Takes more space naturally, but at least 40vh on mobile -->
+        <div class="flex-1 relative bg-gray-50 border-b border-gray-300 min-h-[40vh] md:min-h-0 flex flex-col">
+            <h1 class="absolute top-2 right-3 md:right-4 text-lg md:text-xl font-bold text-gray-700 pointer-events-none z-10 opacity-70 bg-white/50 px-2 rounded">
+                סימולציית הקפיץ
+            </h1>
+            <div class="flex-1 relative w-full h-full">
+                <canvas id="simCanvas" class="w-full h-full block absolute inset-0"></canvas>
+            </div>
         </div>
 
-        <!-- Graph Area (Bottom/Left) -->
-        <div class="h-1/3 bg-white p-2 relative flex flex-col">
-            <h3 class="text-xs text-gray-500 font-bold mb-1 mr-2">גרף לינאריזציה: $H$ כתלות ב-$(\Delta x)^2$</h3>
-            <div class="flex-1 relative w-full h-full">
+        <!-- Graph Area (Bottom) -->
+        <div class="h-[35vh] md:h-1/3 bg-white p-2 md:p-3 relative flex flex-col border-b md:border-b-0 border-gray-300">
+            <h3 class="text-xs md:text-sm text-gray-600 font-bold mb-1 mr-1">גרף לינאריזציה: $H$ כתלות ב-$(\Delta x)^2$</h3>
+            <div class="flex-1 relative w-full h-full min-h-[100px]">
                 <canvas id="graphCanvas"></canvas>
             </div>
         </div>
     </div>
 
     <!-- Controls & Data Panel (Sidebar/Bottom) -->
-    <div class="panel p-4 shadow-xl z-20 flex flex-col flex-shrink-0 md:flex-shrink">
+    <!-- On mobile: appears below graph. On desktop: fixed width sidebar on the left side (RTL) -->
+    <div class="w-full md:w-80 lg:w-96 bg-white border-t md:border-t-0 md:border-r border-gray-200 p-4 flex flex-col shadow-xl z-20 order-2 md:order-none md:overflow-y-auto">
         
-        <div class="mb-4 border-b pb-2">
-            <h2 class="text-lg font-bold text-gray-800 mb-2">לוח בקרה</h2>
+        <div class="mb-4 border-b pb-4">
+            <h2 class="text-xl md:text-lg font-bold text-gray-800 mb-4 md:mb-2">לוח בקרה</h2>
             
             <!-- Mass Control -->
-            <div class="control-group">
-                <label class="block text-xs font-medium text-gray-700 mb-1 flex justify-between">
+            <div class="mb-3">
+                <label class="block text-sm md:text-xs font-medium text-gray-700 mb-1 flex justify-between">
                     <span>מסת כדור ($m$):</span>
-                    <span id="mValueDisplay" class="font-bold text-purple-600">0.20 kg</span> 
+                    <span id="mValueDisplay" class="font-bold text-purple-600 dir-ltr">0.20 kg</span> 
                 </label>
-                <input type="range" id="mSlider" min="0.05" max="0.5" step="0.01" value="0.2" oninput="updateSettings()">
+                <input type="range" id="mSlider" min="0.05" max="0.5" step="0.01" value="0.2" oninput="updateSettings()" class="accent-purple-600">
             </div>
 
             <!-- Spring Constant Control -->
-            <div class="control-group">
-                <label class="block text-xs font-medium text-gray-700 mb-1 flex justify-between">
+            <div class="mb-3">
+                <label class="block text-sm md:text-xs font-medium text-gray-700 mb-1 flex justify-between">
                     <span>קבוע קפיץ ($k$):</span>
-                    <span id="kValueDisplay" class="font-bold text-blue-600">100 N/m</span>
+                    <span id="kValueDisplay" class="font-bold text-blue-600 dir-ltr">100 N/m</span>
                 </label>
-                <input type="range" id="kSlider" min="50" max="200" step="5" value="100" oninput="updateSettings()">
+                <input type="range" id="kSlider" min="50" max="200" step="5" value="100" oninput="updateSettings()" class="accent-blue-600">
             </div>
 
-            <p class="text-[10px] text-red-500 mb-2 hidden" id="resetWarning">שינוי פרמטרים מאפס טבלה!</p>
+            <p class="text-[11px] md:text-[10px] text-red-500 font-bold mb-2 hidden bg-red-50 p-1 rounded text-center border border-red-200" id="resetWarning">
+                שינוי פרמטרים מאפס את הטבלה!
+            </p>
 
             <!-- Compression Control -->
-            <div class="control-group">
-                <label class="block text-xs font-medium text-gray-700 mb-1 flex justify-between">
-                    <span>כיווץ ($\Delta x$):</span>
-                    <span id="xValueDisplay" class="font-bold text-green-600">0.15 m</span>
+            <div class="mb-4">
+                <label class="block text-sm md:text-xs font-medium text-gray-700 mb-1 flex justify-between">
+                    <span>כיווץ הקפיץ ($\Delta x$):</span>
+                    <span id="xValueDisplay" class="font-bold text-green-600 dir-ltr">0.15 m</span>
                 </label>
-                <input type="range" id="xSlider" min="0.05" max="0.40" step="0.01" value="0.15" oninput="updateSettings()">
+                <input type="range" id="xSlider" min="0.05" max="0.40" step="0.01" value="0.15" oninput="updateSettings()" class="accent-green-600">
             </div>
 
             <div class="flex gap-2 mt-2">
-                <button onclick="launchBall()" id="launchBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded text-sm transition shadow">
-                    שגר!
+                <button onclick="launchBall()" id="launchBtn" class="flex-1 bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 md:py-2 px-4 rounded text-base md:text-sm transition shadow">
+                    שגר כדור!
                 </button>
-                <button onclick="resetSim()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-2 px-4 rounded text-sm">
+                <button onclick="resetSim()" class="bg-gray-200 hover:bg-gray-300 text-gray-800 font-bold py-3 md:py-2 px-4 rounded text-base md:text-sm transition">
                     איפוס
                 </button>
             </div>
         </div>
 
         <!-- Data Table -->
-        <div class="flex-1 overflow-hidden flex flex-col min-h-[150px]">
-            <div class="flex justify-between items-center mb-1">
-                <h3 class="font-bold text-gray-700 text-sm">טבלת מדידות</h3>
-                <button onclick="clearTable()" class="text-xs text-red-500 hover:text-red-700 underline">נקה</button>
+        <!-- Fixed minimum height for mobile to scroll inside, takes remaining space on desktop -->
+        <div class="flex flex-col min-h-[250px] md:min-h-[150px] md:flex-1">
+            <div class="flex justify-between items-center mb-2 md:mb-1">
+                <h3 class="font-bold text-gray-700 text-sm md:text-xs">טבלת מדידות</h3>
+                <button onclick="clearTable()" class="text-sm md:text-xs text-red-500 hover:text-red-700 bg-red-50 px-2 py-1 rounded">נקה נתונים</button>
             </div>
-            <div class="overflow-y-auto border rounded border-gray-200 flex-1 bg-white">
-                <table class="w-full text-xs text-center">
-                    <thead class="bg-gray-50 text-gray-600 sticky top-0">
+            <div class="overflow-y-auto border border-gray-200 rounded flex-1 bg-white shadow-inner">
+                <table class="w-full text-sm md:text-xs text-center">
+                    <thead class="bg-gray-100 text-gray-600 sticky top-0 shadow-sm">
                         <tr>
-                            <th class="p-1 border-b">#</th>
-                            <th class="p-1 border-b">$\Delta x$ (m)</th>
-                            <th class="p-1 border-b">$H$ (m)</th>
+                            <th class="p-2 border-b">#</th>
+                            <th class="p-2 border-b">$\Delta x$ (m)</th>
+                            <th class="p-2 border-b">$H$ (m)</th>
                         </tr>
                     </thead>
                     <tbody id="resultsTable" class="bg-white">
@@ -151,15 +163,15 @@
                         type: 'scatter',
                         label: 'תוצאות הניסוי',
                         data: [],
-                        backgroundColor: 'rgba(37, 99, 235, 1)', // Tailwind Blue-600
+                        backgroundColor: 'rgba(37, 99, 235, 1)',
                         borderColor: 'rgba(37, 99, 235, 1)',
-                        pointRadius: 5,
-                        pointHoverRadius: 7
+                        pointRadius: 6,
+                        pointHoverRadius: 8
                     }, {
                         type: 'line',
                         label: 'קו מגמה',
                         data: [],
-                        borderColor: 'rgba(239, 68, 68, 0.8)', // Tailwind Red-500
+                        borderColor: 'rgba(239, 68, 68, 0.8)',
                         borderWidth: 2,
                         borderDash: [5, 5],
                         pointRadius: 0,
@@ -174,7 +186,7 @@
                         x: {
                             type: 'linear',
                             position: 'bottom',
-                            title: { display: true, text: 'ריבוע הכיווץ (דלתא x בריבוע) [m^2]' },
+                            title: { display: true, text: 'ריבוע הכיווץ (דלתא x בריבוע)' },
                             min: 0
                         },
                         y: {
@@ -183,7 +195,14 @@
                         }
                     },
                     plugins: {
-                        legend: { display: true, labels: { boxWidth: 10, usePointStyle: true } }
+                        legend: { 
+                            display: true, 
+                            labels: { boxWidth: 10, usePointStyle: true, font: { family: 'Rubik' } } 
+                        },
+                        tooltip: {
+                            bodyFont: { family: 'Rubik' },
+                            titleFont: { family: 'Rubik' }
+                        }
                     }
                 }
             });
@@ -192,14 +211,11 @@
         // --- Trendline Calculation ---
         function updateTrendline() {
             const dataPoints = resultChart.data.datasets[0].data;
-            
-            // Only draw trendline if more than 2 points exist
             if (dataPoints.length <= 2) {
                 resultChart.data.datasets[1].data = [];
                 return;
             }
 
-            // Simple Linear Regression (Least Squares)
             let n = dataPoints.length;
             let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
 
@@ -215,10 +231,8 @@
             const slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
             const intercept = (sumY - slope * sumX) / n;
 
-            // Generate start and end points for the line
-            // Start from X=0 (physically logical) or min X in dataset
             const minX = 0; 
-            const maxX = dataPoints[dataPoints.length - 1].x; // Assumes sorted data
+            const maxX = dataPoints[dataPoints.length - 1].x; 
 
             resultChart.data.datasets[1].data = [
                 { x: minX, y: intercept + slope * minX },
@@ -229,14 +243,18 @@
         // --- Core Functions ---
 
         function resize() {
-            // Sim Canvas
-            canvas.width = canvas.parentElement.clientWidth;
-            canvas.height = canvas.parentElement.clientHeight;
+            // Re-calc canvas dimensions to match its CSS responsive size
+            const rect = canvas.parentElement.getBoundingClientRect();
+            canvas.width = rect.width;
+            canvas.height = rect.height;
             
-            // Adjust scale based on screen height for better visibility on mobile
-            if (canvas.height < 400) {
-                state.pixelsPerMeter = 200; 
-                state.springRestLengthPixels = 100;
+            // Smart Zoom: Adjust scale based on screen height for better visibility on mobile
+            if (canvas.height < 350) {
+                state.pixelsPerMeter = 180; 
+                state.springRestLengthPixels = 90;
+            } else if (canvas.height < 500) {
+                state.pixelsPerMeter = 240; 
+                state.springRestLengthPixels = 120;
             } else {
                 state.pixelsPerMeter = 300;
                 state.springRestLengthPixels = 150;
@@ -274,7 +292,7 @@
             const warning = document.getElementById('resetWarning');
             if (warning) {
                 warning.style.display = experimentParamsChanged ? 'block' : 'none';
-                if(experimentParamsChanged) setTimeout(() => { warning.style.display = 'none'; }, 2000);
+                if(experimentParamsChanged) setTimeout(() => { warning.style.display = 'none'; }, 2500);
             }
 
             state.dx = newDx;
@@ -298,9 +316,8 @@
         function clearTable() {
             document.getElementById('resultsTable').innerHTML = '';
             state.experimentCount = 0;
-            // Clear Chart
             resultChart.data.datasets[0].data = [];
-            resultChart.data.datasets[1].data = []; // Clear trendline
+            resultChart.data.datasets[1].data = []; 
             resultChart.update();
         }
 
@@ -360,69 +377,66 @@
         function addResult(dx, h) {
             state.experimentCount++;
             
-            // 1. Add to Table
             const tbody = document.getElementById('resultsTable');
             const row = document.createElement('tr');
-            row.className = "hover:bg-blue-50 transition";
+            row.className = "hover:bg-blue-50 transition border-b border-gray-100";
             row.innerHTML = `
-                <td class="p-1 border-b font-bold text-gray-500">${state.experimentCount}</td>
-                <td class="p-1 border-b dir-ltr">${dx.toFixed(2)}</td>
-                <td class="p-1 border-b font-bold text-blue-700 dir-ltr">${h.toFixed(3)}</td>
+                <td class="p-2 font-bold text-gray-500">${state.experimentCount}</td>
+                <td class="p-2 dir-ltr text-gray-800">${dx.toFixed(2)}</td>
+                <td class="p-2 font-bold text-blue-600 dir-ltr">${h.toFixed(3)}</td>
             `;
             tbody.insertBefore(row, tbody.firstChild);
 
-            // 2. Add to Graph (Linearized: X = dx^2, Y = h)
             const dxSquared = dx * dx;
             resultChart.data.datasets[0].data.push({ x: dxSquared, y: h });
-            
-            // Sort data so line/points make sense if user does experiments out of order
             resultChart.data.datasets[0].data.sort((a, b) => a.x - b.x);
             
-            // 3. Update Trendline
             updateTrendline();
-            
             resultChart.update();
         }
 
         // --- Drawing Logic ---
 
         function draw() {
+            if (!ctx) return;
             ctx.clearRect(0, 0, canvas.width, canvas.height);
             
-            const centerX = canvas.width / 2;
+            // Adjust X center dynamically - shift slightly left on narrow screens to make room for ruler
+            const centerX = canvas.width > 400 ? canvas.width / 2 : canvas.width / 2 + 20; 
             const groundY = state.groundY;
             const releaseLevelY = groundY - state.springRestLengthPixels; 
             
-            drawRuler(centerX - 80, releaseLevelY);
+            const rulerOffset = canvas.width > 400 ? 80 : 60;
+            drawRuler(centerX - rulerOffset, releaseLevelY);
 
             // Reference Lines
             ctx.beginPath();
             ctx.strokeStyle = "#ccc";
             ctx.setLineDash([5, 5]);
-            ctx.moveTo(centerX - 100, releaseLevelY);
-            ctx.lineTo(centerX + 100, releaseLevelY);
+            ctx.moveTo(centerX - 80, releaseLevelY);
+            ctx.lineTo(centerX + 80, releaseLevelY);
             ctx.stroke();
             ctx.setLineDash([]);
             ctx.fillStyle = "#999";
             ctx.font = "12px Rubik";
-            ctx.fillText("0", centerX + 110, releaseLevelY + 4);
+            ctx.fillText("0", centerX + 85, releaseLevelY + 4);
 
             const compressionY = releaseLevelY + (state.dx * state.pixelsPerMeter);
             ctx.beginPath();
             ctx.strokeStyle = "#10b981"; 
             ctx.setLineDash([2, 2]);
-            ctx.moveTo(centerX - 100, compressionY);
-            ctx.lineTo(centerX + 100, compressionY);
+            ctx.moveTo(centerX - 80, compressionY);
+            ctx.lineTo(centerX + 80, compressionY);
             ctx.stroke();
             ctx.setLineDash([]);
             
             if (!state.isAnimating && Math.abs(state.ballY - (-state.dx * state.pixelsPerMeter)) < 1) {
                 ctx.fillStyle = "#059669";
-                ctx.fillText("התחלה", centerX + 110, compressionY + 4);
+                ctx.fillText("התחלה", centerX + 85, compressionY + 4);
             }
 
             const ballVisualY = releaseLevelY - state.ballY;
-            const ballRadius = 15; // Slightly smaller for mobile
+            const ballRadius = canvas.width > 400 ? 15 : 12; // Responsive ball size
             
             // Draw Spring
             let springVisualTop;
@@ -431,12 +445,12 @@
             } else {
                 springVisualTop = ballVisualY + ballRadius; 
             }
-            drawSpring(centerX, groundY, springVisualTop, 20);
+            drawSpring(centerX, groundY, springVisualTop, 18);
 
             // Draw Ball
             ctx.beginPath();
             ctx.arc(centerX, ballVisualY, ballRadius, 0, Math.PI * 2);
-            const grad = ctx.createRadialGradient(centerX - 5, ballVisualY - 5, 2, centerX, ballVisualY, ballRadius);
+            const grad = ctx.createRadialGradient(centerX - ballRadius/3, ballVisualY - ballRadius/3, 2, centerX, ballVisualY, ballRadius);
             grad.addColorStop(0, "#60a5fa");
             grad.addColorStop(1, "#2563eb");
             ctx.fillStyle = grad;
@@ -452,19 +466,19 @@
                 ctx.beginPath();
                 ctx.strokeStyle = "rgba(255, 0, 0, 0.6)";
                 ctx.lineWidth = 2;
-                ctx.moveTo(centerX - 60, peakVisualY);
-                ctx.lineTo(centerX + 60, peakVisualY);
+                ctx.moveTo(centerX - 50, peakVisualY);
+                ctx.lineTo(centerX + 50, peakVisualY);
                 ctx.stroke();
                 
-                ctx.fillStyle = "rgba(220, 0, 0, 0.8)";
-                ctx.font = "bold 12px Rubik";
-                ctx.fillText(`${state.maxHeightReached.toFixed(3)}m`, centerX + 70, peakVisualY + 5);
+                ctx.fillStyle = "rgba(220, 0, 0, 0.9)";
+                ctx.font = "bold 13px Rubik";
+                ctx.fillText(`${state.maxHeightReached.toFixed(3)}m`, centerX + 55, peakVisualY + 4);
             }
         }
 
         function drawSpring(x, bottomY, topY, width) {
             ctx.beginPath();
-            ctx.strokeStyle = "#333";
+            ctx.strokeStyle = "#4b5563";
             ctx.lineWidth = 3;
             ctx.lineJoin = "round";
             
@@ -485,42 +499,47 @@
             ctx.beginPath();
             ctx.moveTo(x - 20, bottomY);
             ctx.lineTo(x + 20, bottomY);
-            ctx.lineWidth = 4;
-            ctx.strokeStyle = "#000";
+            ctx.lineWidth = 5;
+            ctx.strokeStyle = "#1f2937";
             ctx.stroke();
         }
 
         function drawRuler(x, zeroY) {
-            ctx.fillStyle = "#666";
-            ctx.strokeStyle = "#666";
+            ctx.fillStyle = "#6b7280";
+            ctx.strokeStyle = "#6b7280";
             ctx.lineWidth = 1;
-            ctx.font = "10px sans-serif";
+            ctx.font = "11px sans-serif";
             
             ctx.beginPath();
-            ctx.moveTo(x, zeroY + 600); // Extended range
-            ctx.lineTo(x, zeroY - 600);
+            ctx.moveTo(x, zeroY + 600);
+            ctx.lineTo(x, zeroY - 1200); // Allow high jumps
             ctx.stroke();
             
-            for (let m = -1.0; m <= 2.0; m += 0.1) {
+            for (let m = -1.0; m <= 4.0; m += 0.1) {
                 const val = Math.round(m * 10) / 10;
                 const y = zeroY - (val * state.pixelsPerMeter);
                 if (y > state.groundY) continue;
-                if (y < 0) continue; // Optimization
+                if (y < -50) continue; // Out of view optimization
                 
-                const tickLen = (Math.abs(val % 0.5) < 0.01) ? 12 : 6; 
+                const isHalfOrWhole = Math.abs(val % 0.5) < 0.01;
+                const tickLen = isHalfOrWhole ? 12 : 6; 
                 
                 ctx.beginPath();
                 ctx.moveTo(x - tickLen, y);
                 ctx.lineTo(x, y);
                 ctx.stroke();
                 
-                if (Math.abs(val % 0.5) < 0.01) {
-                    ctx.fillText(val.toFixed(1), x - 30, y + 3);
+                if (isHalfOrWhole) {
+                    ctx.fillText(val.toFixed(1), x - 32, y + 4);
                 }
             }
         }
 
-        window.onload = init;
+        // Initialize when DOM is ready
+        window.addEventListener('DOMContentLoaded', () => {
+            // Add a small delay for proper CSS container sizing
+            setTimeout(init, 100);
+        });
     </script>
 </body>
 </html>
