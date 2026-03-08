@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מוסבר: בגרות בפיזיקה 2010 שאלה 1 - מכניקה</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- MathJax for rendering LaTeX formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+
+        /* Strict Design Rules Implementations */
+        .formula-badge {
+            background-color: #eff6ff; 
+            color: #1e40af; 
+            border: 1px solid #bfdbfe; 
+            border-radius: 9999px;
+            padding: 0.25rem 0.75rem;
+            display: inline-block;
+            font-weight: 600;
+            margin: 0.25rem 0;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: #f0fdf4; 
+            border-right: 6px solid #22c55e; 
+            padding: 1.25rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+            color: #166534; 
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .teacher-highlight h4 {
+            color: #15803d;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .math-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding-bottom: 0.5rem;
+            direction: ltr;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            text-align: center;
+        }
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 0.75rem;
+        }
+        th {
+            background-color: #e2e8f0;
+            font-weight: 600;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .step-label {
+            font-weight: 700;
+            color: #0f172a;
+            background: #e2e8f0;
+            padding: 0.2rem 0.6rem;
+            border-radius: 0.25rem;
+            display: inline-block;
+            margin-bottom: 0.5rem;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-5xl mx-auto">
+
+    <header class="text-center mb-10">
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">פתרון מוסבר בפיזיקה</h1>
+        <h2 class="text-xl text-slate-600">מכניקה - בגרות 2010, שאלה 1 (החוק השני של ניוטון)</h2>
+        <p class="mt-4 text-slate-500">פתרון מלא המותאם לתלמידי 5 יח"ל, שלב אחר שלב.</p>
+    </header>
+
+    <!-- Section A1 -->
+    <div class="section-card" id="section-a1">
+        <h3 class="text-2xl font-bold text-blue-700 mb-4 border-b-2 border-blue-100 pb-2">סעיף א' (1): השלמת טבלת הנתונים</h3>
+        
+        <div class="mb-4">
+            <span class="step-label">מה נתון:</span>
+            <ul class="list-disc list-inside mt-2 space-y-1">
+                <li>טבלת מדידות המקשרת בין מספר המשקולות בתלייה (בסל) לבין תאוצת המערכת.</li>
+                <li>מסת הסל הריק: $m_0 = 100 \text{ gr}$</li>
+                <li>מסת כל משקולת: $m_1 = 300 \text{ gr}$</li>
+            </ul>
+        </div>
+
+        <div class="mb-4">
+            <span class="step-label">מה מחפשים:</span>
+            <p class="mt-2">לבנות טבלה חדשה הכוללת את:</p>
+            <ol class="list-decimal list-inside ml-4 space-y-1">
+                <li>מספר המדידה.</li>
+                <li>מסת הסל עם המשקולות שבו ($m$) ביחידות ק"ג.</li>
+                <li>כוח הכובד הפועל על הסל עם המשקולות ($F_g$) ביחידות ניוטון.</li>
+                <li>תאוצת המערכת ($a$) ביחידות m/s².</li>
+            </ol>
+        </div>
+
+        <div class="teacher-highlight">
+            <h4>💡 שלב 0 - המרת יחידות (MKS)</h4>
+            <p>לפי הכללים שלנו, תמיד נעבוד במערכת יחידות סטנדרטית (מטר, קילוגרם, שנייה). נתון לנו משקל בגרמים, לכן נמיר לקילוגרמים (נחלק ב-1000):</p>
+            <div class="math-scroll text-center mt-2">
+                $$ m_0 = \frac{100}{1000} = 0.1 \text{ kg} $$
+                $$ m_1 = \frac{300}{1000} = 0.3 \text{ kg} $$
+            </div>
+            <p class="mt-2">כמו כן, נזכור שתאוצת הכובד היא תמיד חיובית בחישובים שלנו:</p>
+            <div class="text-center mt-1">
+                <span class="formula-badge">$g = 10 \text{ m/s}^2$</span>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <span class="step-label">נוסחאות מהדף:</span>
+            <p class="mt-2">כדי לחשב את כוח הכובד, נשתמש בנוסחה מדינמיקה המופיעה בדף הנוסחאות:</p>
+            <div class="text-center">
+                <span class="formula-badge">$F = mg$</span>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <span class="step-label">הצבה ופתרון:</span>
+            <p class="mt-2">נחשב עבור כל מדידה את המסה הכוללת התלויה $m$ (מסת הסל + מספר המשקולות בסל כפול מסת משקולת בודדת), ולאחר מכן נכפיל ב- $g=10$ כדי למצוא את $F_g$.</p>
+            <p class="text-sm text-slate-500 mb-2">לדוגמה עבור מדידה 2 (משקולת אחת בסל): $m = 0.1 + 1 \cdot 0.3 = 0.4 \text{ kg}$, ולכן $F_g = 0.4 \cdot 10 = 4 \text{ N}$.</p>
+            
+            <div class="overflow-x-auto mt-4">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>מספר המדידה</th>
+                            <th>מסת הסל עם המשקולות <br>$m \text{ (kg)}$</th>
+                            <th>כוח הכובד על הסל <br>$F_g \text{ (N)}$</th>
+                            <th>תאוצה <br>$a \text{ (m/s}^2\text{)}$</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr><td>1</td><td>0.1</td><td>1.0</td><td>0.43</td></tr>
+                        <tr class="bg-slate-50"><td>2</td><td>0.4</td><td>4.0</td><td>1.66</td></tr>
+                        <tr><td>3</td><td>0.7</td><td>7.0</td><td>2.91</td></tr>
+                        <tr class="bg-slate-50"><td>4</td><td>1.0</td><td>10.0</td><td>4.16</td></tr>
+                        <tr><td>5</td><td>1.3</td><td>13.0</td><td>5.40</td></tr>
+                        <tr class="bg-slate-50"><td>6</td><td>1.6</td><td>16.0</td><td>6.67</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section A2 -->
+    <div class="section-card" id="section-a2">
+        <h3 class="text-2xl font-bold text-blue-700 mb-4 border-b-2 border-blue-100 pb-2">סעיף א' (2): סרטוט גרף</h3>
+        
+        <div class="mb-4">
+            <span class="step-label">מה נתון:</span>
+            <p class="mt-2">הטבלה שהכנו בסעיף הקודם.</p>
+        </div>
+
+        <div class="mb-4">
+            <span class="step-label">מה מחפשים:</span>
+            <p class="mt-2">לסרטט גרף של התאוצה $a$ כפונקציה של כוח הכובד $F_g$.<br>
+            המשמעות: ציר ה-Y יהיה $a$, וציר ה-X יהיה $F_g$.</p>
+        </div>
+
+        <div class="w-full max-w-2xl mx-auto h-[400px] mt-6">
+            <canvas id="accelGraph"></canvas>
+        </div>
+    </div>
+
+    <!-- Section B -->
+    <div class="section-card" id="section-b">
+        <h3 class="text-2xl font-bold text-blue-700 mb-4 border-b-2 border-blue-100 pb-2">סעיף ב': תרשים כוחות חופשי (FBD)</h3>
+        
+        <div class="mb-4">
+            <span class="step-label">מה נתון:</span>
+            <p class="mt-2">מערכת המורכבת משני גופים הקשורים בחוט חסר מסה העובר דרך גלגלת חסרת חיכוך.</p>
+            <ul class="list-disc list-inside space-y-1">
+                <li>נסמן ב- $M_1$ את המסה הכוללת של העגלה + המשקולות שעליה ברגע נתון.</li>
+                <li>נסמן ב- $M_2$ את המסה הכוללת של הסל + המשקולות שבתוכו ברגע נתון.</li>
+            </ul>
+        </div>
+
+        <div class="mb-4">
+            <span class="step-label">מה מחפשים:</span>
+            <p class="mt-2">1. לסרטט תרשים כוחות הפועלים על כל גוף בנפרד.<br>2. לציין מי מפעיל כל כוח.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-6">
+            <!-- FBD Cart -->
+            <div class="flex flex-col items-center bg-slate-50 p-4 rounded-lg border border-slate-200">
+                <h4 class="font-bold text-lg mb-2">תרשים כוחות לעגלה (מסה $M_1$)</h4>
+                <svg width="200" height="200" viewBox="0 0 200 200" class="mb-4">
+                    <defs>
+                        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#1e293b" />
+                        </marker>
+                        <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb" />
+                        </marker>
+                    </defs>
+                    <!-- Axes -->
+                    <line x1="100" y1="180" x2="100" y2="20" stroke="#cbd5e1" stroke-dasharray="4" />
+                    <line x1="20" y1="100" x2="180" y2="100" stroke="#cbd5e1" stroke-dasharray="4" />
+                    <!-- Body -->
+                    <rect x="70" y="80" width="60" height="40" fill="#94a3b8" rx="4" />
+                    <circle cx="85" cy="120" r="8" fill="#475569" />
+                    <circle cx="115" cy="120" r="8" fill="#475569" />
+                    <!-- Forces -->
+                    <!-- Normal -->
+                    <line x1="100" y1="80" x2="100" y2="30" stroke="#1e293b" stroke-width="2" marker-end="url(#arrow)" />
+                    <text x="110" y="40" font-family="Rubik" font-weight="bold" font-size="16">N</text>
+                    <!-- Gravity -->
+                    <line x1="100" y1="120" x2="100" y2="170" stroke="#1e293b" stroke-width="2" marker-end="url(#arrow)" />
+                    <text x="110" y="165" font-family="Rubik" font-weight="bold" font-size="16">M_1 g</text>
+                    <!-- Tension -->
+                    <line x1="130" y1="100" x2="180" y2="100" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow-blue)" />
+                    <text x="160" y="90" fill="#2563eb" font-family="Rubik" font-weight="bold" font-size="16">T</text>
+                    <!-- Direction of motion -->
+                    <path d="M 130 180 L 170 180" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow)" />
+                    <text x="145" y="170" fill="#ef4444" font-family="Rubik" font-size="14">a</text>
+                </svg>
+                <div class="text-sm w-full text-right">
+                    <ul class="list-disc list-inside">
+                        <li><b>$M_1 g$:</b> כוח הכובד (מופעל ע"י כדור הארץ).</li>
+                        <li><b>$N$:</b> כוח נורמלי (מופעל ע"י המסילה).</li>
+                        <li><b class="text-blue-600">$T$:</b> כוח מתיחות (מופעל ע"י החוט).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <!-- FBD Basket -->
+            <div class="flex flex-col items-center bg-slate-50 p-4 rounded-lg border border-slate-200">
+                <h4 class="font-bold text-lg mb-2">תרשים כוחות לסל (מסה $M_2$)</h4>
+                <svg width="200" height="200" viewBox="0 0 200 200" class="mb-4">
+                    <!-- Axes -->
+                    <line x1="100" y1="180" x2="100" y2="20" stroke="#cbd5e1" stroke-dasharray="4" />
+                    <!-- Body -->
+                    <path d="M 80 100 Q 100 130 120 100 Z" fill="#94a3b8" />
+                    <line x1="100" y1="80" x2="80" y2="100" stroke="#475569" stroke-width="2" />
+                    <line x1="100" y1="80" x2="120" y2="100" stroke="#475569" stroke-width="2" />
+                    <!-- Forces -->
+                    <!-- Tension -->
+                    <line x1="100" y1="80" x2="100" y2="30" stroke="#2563eb" stroke-width="2" marker-end="url(#arrow-blue)" />
+                    <text x="110" y="40" fill="#2563eb" font-family="Rubik" font-weight="bold" font-size="16">T</text>
+                    <!-- Gravity -->
+                    <line x1="100" y1="115" x2="100" y2="170" stroke="#1e293b" stroke-width="2" marker-end="url(#arrow)" />
+                    <text x="110" y="165" font-family="Rubik" font-weight="bold" font-size="16">M_2 g = F_g</text>
+                    <!-- Direction of motion -->
+                    <path d="M 140 100 L 140 140" stroke="#ef4444" stroke-width="2" marker-end="url(#arrow)" />
+                    <text x="150" y="125" fill="#ef4444" font-family="Rubik" font-size="14">a</text>
+                </svg>
+                <div class="text-sm w-full text-right">
+                    <ul class="list-disc list-inside">
+                        <li><b>$F_g$ (או $M_2 g$):</b> כוח הכובד (מופעל ע"י כדור הארץ).</li>
+                        <li><b class="text-blue-600">$T$:</b> כוח מתיחות (מופעל ע"י החוט).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+        
+        <div class="teacher-highlight mt-6">
+            <h4>💡 קביעת צירים ותאוצה</h4>
+            <p>בבעיות מערכת מחוברת, מומלץ לקבוע את כיוון הציר החיובי <strong>לפי כיוון התנועה הצפוי</strong>. 
+            עבור העגלה, נבחר ציר $x$ חיובי ימינה. עבור הסל התלוי, נבחר ציר $y$ חיובי כלפי מטה. 
+            כך, לשני הגופים יש אותה תאוצה חיובית $a$ (גודל המהירות שלהם גדל באותו קצב, כי הם קשורים בחוט מתוח).</p>
+        </div>
+    </div>
+
+    <!-- Section C -->
+    <div class="section-card" id="section-c">
+        <h3 class="text-2xl font-bold text-blue-700 mb-4 border-b-2 border-blue-100 pb-2">סעיף ג': פיתוח ביטוי לתאוצה</h3>
+        
+        <div class="mb-4">
+            <span class="step-label">מה נתון:</span>
+            <p class="mt-2">תרשימי הכוחות מסעיף ב'. כמו כן, נתון שבמהלך הניסוי, המסה הכוללת של המערכת לא משתנה (רק מעבירים משקולות ממקום למקום).</p>
+        </div>
+
+        <div class="mb-4">
+            <span class="step-label">מה מחפשים:</span>
+            <p class="mt-2">1. לפתח ביטוי מתמטי המציג את התאוצה $a$ כפונקציה של כוח הכובד הפועל על הסל $F_g$.<br>
+            2. לקבוע האם זוהי פונקציה ליניארית ולהסביר.</p>
+        </div>
+
+        <div class="mb-4">
+            <span class="step-label">נוסחאות מהדף:</span>
+            <p class="mt-2">נשתמש בחוק השני של ניוטון עבור כל גוף בנפרד:</p>
+            <div class="text-center">
+                <span class="formula-badge">$\Sigma\vec{F} = m\vec{a}$</span>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <span class="step-label">הצבה ופתרון: חשוב! מפתחים בהדרגה</span>
+            <p class="mt-2">לא נקפוץ ישר למשוואת "מערכת". נרשום משוואה לכל גוף על פי מערכת הצירים שבחרנו.</p>
+            
+            <p class="font-bold mt-4">עבור העגלה (ציר תנועה אופקי ימינה):</p>
+            <div class="math-scroll text-center">
+                $$ \Sigma F_x = M_1 \cdot a $$
+                $$ T = M_1 \cdot a \quad \text{--- (Equation 1)} $$
+            </div>
+
+            <p class="font-bold mt-4">עבור הסל (ציר תנועה אנכי מטה):</p>
+            <div class="math-scroll text-center">
+                $$ \Sigma F_y = M_2 \cdot a $$
+                $$ F_g - T = M_2 \cdot a \quad \text{--- (Equation 2)} $$
+            </div>
+
+            <p class="mt-4">כעת, נחבר את שתי המשוואות כדי להיפטר מהכוח הפנימי (המתיחות $T$):</p>
+            <div class="math-scroll text-center">
+                $$ F_g - T + T = M_1 \cdot a + M_2 \cdot a $$
+                $$ F_g = (M_1 + M_2) \cdot a $$
+            </div>
+            
+            <p class="mt-2">נשים לב שסכום המסות $(M_1 + M_2)$ הוא בעצם המסה הכוללת של כל המערכת. נתון שהמסה הכוללת אינה משתנה במהלך הניסוי, והיא תמיד מורכבת מ: העגלה הריקה (נסמנה ב-$M$), הסל הריק ($m_0$), ו-6 משקולות (שכל אחת מסתה $m_1$). לכן המסה הכוללת תמיד שווה ל:</p>
+            <div class="math-scroll text-center">
+                $$ M_{total} = M_1 + M_2 = M + m_0 + 6m_1 $$
+            </div>
+
+            <p class="mt-2">נציב זאת במשוואה ונבודד את התאוצה $a$:</p>
+            <div class="math-scroll text-center bg-blue-50 p-4 rounded-lg inline-block w-full">
+                $$ a = \frac{1}{M + m_0 + 6m_1} \cdot F_g $$
+            </div>
+        </div>
+
+        <div class="mt-6">
+            <span class="step-label">חלק (2) - האם הפונקציה ליניארית?</span>
+            <p class="mt-2"><b>כן.</b> הפונקציה שקיבלנו היא מהצורה $y = k \cdot x$.</p>
+            <ul class="list-disc list-inside mt-2 ml-4">
+                <li>המשתנה התלוי ($y$) הוא התאוצה $a$.</li>
+                <li>המשתנה הבלתי תלוי ($x$) הוא הכוח $F_g$.</li>
+                <li>השיפוע (הקבוע $k$) הוא $\frac{1}{M + m_0 + 6m_1}$.</li>
+            </ul>
+            <p class="mt-2">מכיוון שהמסה הכוללת במערכת ($M + m_0 + 6m_1$) נשמרת קבועה לאורך כל הניסוי, השיפוע הוא מספר קבוע, והגרף שנוצר הוא קו ישר העובר בראשית הצירים.</p>
+        </div>
+    </div>
+
+    <!-- Section D -->
+    <div class="section-card" id="section-d">
+        <h3 class="text-2xl font-bold text-blue-700 mb-4 border-b-2 border-blue-100 pb-2">סעיף ד': מציאת מסת העגלה מהגרף</h3>
+        
+        <div class="mb-4">
+            <span class="step-label">מה נתון:</span>
+            <ul class="list-disc list-inside mt-2 space-y-1">
+                <li>הגרף שיצרנו בסעיף א'.</li>
+                <li>הביטוי הליניארי שפיתחנו בסעיף ג': $a = \frac{1}{M + m_0 + 6m_1} \cdot F_g$</li>
+                <li>נתוני המסות: מסת הסל $m_0 = 0.1 \text{ kg}$, ו-6 משקולות שסכום מסתן $6 \cdot m_1 = 6 \cdot 0.3 = 1.8 \text{ kg}$.</li>
+            </ul>
+        </div>
+
+        <div class="mb-4">
+            <span class="step-label">מה מחפשים:</span>
+            <p class="mt-2">למצוא את מסת העגלה הריקה $M$.</p>
+        </div>
+
+        <div class="mb-4">
+            <span class="step-label">הצבה ופתרון:</span>
+            
+            <div class="teacher-highlight mb-4 mt-4">
+                <h4>💡 טיפ מורה: חישוב שיפוע מגרף ניסוי</h4>
+                <p>כלל ברזל בפיזיקה: כאשר מחשבים שיפוע מגרף, <strong>בוחרים שתי נקודות מתוך קו המגמה שסרטטתם</strong>, ולעולם לא מתוך טבלת הנתונים! תפקידו של קו המגמה (Best fit line) הוא למצע ולהחליק את שגיאות המדידה של הניסוי. לכן, קחו שתי נקודות שרחוקות זו מזו, שקל לקרוא מהרשת של הגרף, ונמצאות בדיוק על הקו. <br><br>
+                <em>הערה: בשאלה הספציפית הזו, נתוני הטבלה אידיאליים ולכן הנקודה הראשונה והאחרונה יושבות במקרה בדיוק על קו המגמה, מה שמאפשר לנו להשתמש בערכים שלהן.</em></p>
+            </div>
+
+            <p class="mt-2">נחשב את שיפוע קו המגמה בעזרת שתי נקודות רחוקות שעליו, למשל $(1.0, 0.43)$ ו- $(16.0, 6.67)$:</p>
+            <div class="math-scroll text-center">
+                $$ \text{Slope} = \frac{\Delta a}{\Delta F_g} = \frac{6.67 - 0.43}{16.0 - 1.0} $$
+                $$ \text{Slope} = \frac{6.24}{15.0} = 0.416 \text{ [kg}^{-1}\text{]} $$
+            </div>
+
+            <div class="teacher-highlight">
+                <h4>💡 קשר בין מתמטיקה לפיזיקה</h4>
+                <p>ראינו בסעיף הקודם שהשיפוע שווה ל- $\frac{1}{M + m_0 + 6m_1}$, כלומר ל- 1 חלקי המסה הכוללת של המערכת!</p>
+            </div>
+
+            <p class="mt-2">נשווה את השיפוע לביטוי המייצג אותו כדי למצוא את המסה הכוללת ($M_{total}$):</p>
+            <div class="math-scroll text-center">
+                $$ \frac{1}{M_{total}} = 0.416 $$
+                $$ M_{total} = \frac{1}{0.416} \approx 2.4 \text{ kg} $$
+            </div>
+
+            <p class="mt-4">נציב את הנתונים הידועים בביטוי של המסה הכוללת כדי לחלץ את $M$ (מסת העגלה):</p>
+            <div class="math-scroll text-center">
+                $$ M + m_0 + 6 \cdot m_1 = 2.4 $$
+                $$ M + 0.1 + 6(0.3) = 2.4 $$
+                $$ M + 0.1 + 1.8 = 2.4 $$
+                $$ M + 1.9 = 2.4 $$
+            </div>
+            
+            <p class="mt-4 font-bold text-lg text-center bg-green-100 p-3 rounded-lg w-fit mx-auto border border-green-300">
+                $$ M = 2.4 - 1.9 = 0.5 \text{ kg} $$
+            </p>
+            <p class="text-center mt-2">מסת העגלה הריקה היא 0.5 ק"ג.</p>
+        </div>
+    </div>
+
+    <!-- Logic for rendering the chart -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('accelGraph').getContext('2d');
+            
+            // Data points from the table
+            const dataPoints = [
+                {x: 1.0, y: 0.43},
+                {x: 4.0, y: 1.66},
+                {x: 7.0, y: 2.91},
+                {x: 10.0, y: 4.16},
+                {x: 13.0, y: 5.40},
+                {x: 16.0, y: 6.67}
+            ];
+
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'מדידות ניסוי',
+                        data: dataPoints,
+                        backgroundColor: '#2563eb', // tailwind blue-600
+                        borderColor: '#2563eb',
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        showLine: true, // Connect the dots to show linearity
+                        fill: false,
+                        tension: 0 // Straight lines
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: {
+                            display: true,
+                            text: 'תאוצת המערכת כפונקציה של כוח הכובד הפועל על הסל',
+                            font: { size: 16, family: 'Rubik' }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `(Fg: ${context.parsed.x} N, a: ${context.parsed.y} m/s²)`;
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            title: {
+                                display: true,
+                                text: 'כוח הכובד על הסל Fg [N]',
+                                font: { size: 14, weight: 'bold', family: 'Rubik' }
+                            },
+                            min: 0,
+                            max: 18,
+                            grid: {
+                                color: function(context) {
+                                    if (context.tick.value === 0) return '#1e293b'; // Strong zero line
+                                    return '#e2e8f0';
+                                },
+                                lineWidth: function(context) {
+                                    if (context.tick.value === 0) return 2;
+                                    return 1;
+                                }
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'תאוצה a [m/s²]',
+                                font: { size: 14, weight: 'bold', family: 'Rubik' }
+                            },
+                            min: 0,
+                            max: 8,
+                            grid: {
+                                color: function(context) {
+                                    if (context.tick.value === 0) return '#1e293b'; // Strong zero line
+                                    return '#e2e8f0';
+                                },
+                                lineWidth: function(context) {
+                                    if (context.tick.value === 0) return 2;
+                                    return 1;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
