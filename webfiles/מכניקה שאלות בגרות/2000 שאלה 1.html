@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2000, שאלה 1</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <!-- MathJax for rendering equations -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1.5rem;
+            background-color: white;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            border-radius: 0.75rem;
+            margin-top: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        h1, h2, h3 {
+            color: #0f172a;
+        }
+
+        /* Formula Badge Styling (Strict Rule) */
+        .formula-badge {
+            background-color: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 9999px;
+            display: inline-block;
+            padding: 0.25rem 1rem;
+            margin: 0.5rem 0;
+            font-weight: 700;
+            direction: ltr; /* Keep math left-to-right */
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        /* Teacher Highlight Styling */
+        .teacher-highlight {
+            background-color: #f0fdf4;
+            border-right: 4px solid #22c55e;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem 0 0 0.5rem;
+            color: #166534;
+        }
+
+        .teacher-highlight::before {
+            content: "💡 הערת מורה:";
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #15803d;
+        }
+
+        /* Section Styling */
+        .section-card {
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            background-color: #ffffff;
+        }
+
+        .section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 2px solid #e2e8f0;
+        }
+
+        .section-title {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #2563eb;
+        }
+
+        /* Sub-headers within sections */
+        .sub-heading {
+            font-weight: 700;
+            color: #475569;
+            margin-top: 1rem;
+            margin-bottom: 0.25rem;
+        }
+
+        /* Scrollable equations for mobile */
+        .math-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.5rem 0;
+            margin: 0.5rem 0;
+        }
+
+        /* SVG Container */
+        .svg-container {
+            display: flex;
+            justify-content: center;
+            margin: 2rem 0;
+            background-color: #f1f5f9;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl font-bold mb-2">פתרון בגרות בפיזיקה - מכניקה</h1>
+        <h2 class="text-xl text-slate-500">שנת 2000, שאלה 1 (קינמטיקה)</h2>
+        <p class="mt-4 text-lg">שלום תלמידים יקרים! הגעתם לפתרון מודרך, מפורט ומוסבר צעד-אחר-צעד. מומלץ לקרוא את ההערות המפוזרות בפתרון כדי להבין לעומק את הפיזיקה שמאחורי המשוואות.</p>
+    </header>
+
+    <!-- שלב 0: הגדרת המערכת והמרת יחידות -->
+    <div class="section-card bg-slate-50 border-slate-200">
+        <div class="section-header">
+            <span class="section-title">שלב 0: הגדרת מערכת הצירים ונתוני הפתיחה</span>
+        </div>
+        
+        <p>לפני שניגש למספרים, בואו נסדר את הנתונים הראשוניים של <strong>כדור א'</strong> (את כדור ב' נכיר בהמשך, כשנצטרך אותו). בשאלות קינמטיקה, הבחירה החשובה ביותר שלנו היא <strong>מערכת הצירים</strong>.</p>
+        
+        <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+            <li><strong>ראשית הצירים ($y=0$):</strong> מוגדרת בקרקע.</li>
+            <li><strong>הכיוון החיובי:</strong> מוגדר כלפי מעלה.</li>
+            <li><strong>מיקום התחלתי (כדור א'):</strong> הכדור נזרק מהקרקע, לכן $y_{0A} = 0 \text{ m}$.</li>
+            <li><strong>מהירות התחלתית (כדור א'):</strong> הכדור נזרק כלפי מעלה (לכיוון החיובי), לכן $v_{0A} = +40 \text{ m/s}$.</li>
+            <li><strong>תאוצת הכובד:</strong> גודל תאוצת הנפילה החופשית הוא תמיד $g = 10 \text{ m/s}^2$ כלפי מטה (לכיוון מרכז כדור הארץ).</li>
+        </ul>
+
+        <div class="teacher-highlight">
+            מכיוון שהגדרנו את הכיוון החיובי של ציר ה-$y$ כלפי <strong>מעלה</strong>, ואילו כוח הכבידה (ומכאן גם התאוצה) פועל כלפי <strong>מטה</strong>, התאוצה של הגופים במערכת שלנו תהיה שלילית. כלומר, במשוואות שלנו נציב $a = -g = -10 \text{ m/s}^2$. 
+            <br>
+            בנוסף, שימו לב שהיחידות כבר נתונות במערכת התקנית (MKS) - מטרים ושניות, ולכן אין צורך בהמרת יחידות בשאלה זו!
+        </div>
+
+        <div class="svg-container">
+            <!-- SVG Illustration / FBD -->
+            <svg viewBox="0 0 400 350" class="w-full max-w-[260px] sm:max-w-[320px] h-auto mx-auto" xmlns="http://www.w3.org/2000/svg">
+                <!-- Grid/Background helper -->
+                <rect width="400" height="350" fill="#f1f5f9" />
+                
+                <!-- Y Axis -->
+                <line x1="50" y1="320" x2="50" y2="30" stroke="#334155" stroke-width="2" marker-end="url(#arrow)" />
+                <text x="30" y="40" font-family="sans-serif" font-size="16" fill="#334155" font-weight="bold" text-anchor="middle">y</text>
+                
+                <!-- Ground (y=0) -->
+                <line x1="40" y1="320" x2="360" y2="320" stroke="#64748b" stroke-width="3" stroke-dasharray="10,5" />
+                <text x="25" y="325" font-family="sans-serif" font-size="14" fill="#334155" text-anchor="middle">0</text>
+                
+                <!-- Building -->
+                <rect x="150" y="70" width="100" height="250" fill="#cbd5e1" stroke="#94a6b8" stroke-width="2" />
+                <text x="200" y="195" font-family="sans-serif" font-size="16" fill="#475569" font-weight="bold" text-anchor="middle">בניין</text>
+                
+                <!-- Ball A -->
+                <circle cx="270" cy="310" r="10" fill="#ef4444" />
+                <text x="315" y="315" font-family="sans-serif" font-size="14" fill="#ef4444" font-weight="bold" text-anchor="middle">כדור א'</text>
+                <!-- Velocity A -->
+                <line x1="270" y1="295" x2="270" y2="245" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)" />
+                <text x="315" y="270" font-family="sans-serif" font-size="14" fill="#ef4444" text-anchor="middle" style="direction: ltr;">v₀ = 40 m/s</text>
+                
+                <!-- Ball B (Preview, slightly faded or distinct) -->
+                <circle cx="120" cy="70" r="10" fill="#3b82f6" />
+                <text x="85" y="75" font-family="sans-serif" font-size="14" fill="#3b82f6" font-weight="bold" text-anchor="middle">כדור ב'</text>
+                <!-- Velocity B -->
+                <line x1="120" y1="85" x2="120" y2="135" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrow-blue)" />
+                <text x="85" y="115" font-family="sans-serif" font-size="14" fill="#3b82f6" text-anchor="middle" style="direction: ltr;">v₀ = 20 m/s</text>
+
+                <!-- Gravity / Acceleration Indicator -->
+                <line x1="350" y1="150" x2="350" y2="200" stroke="#16a34a" stroke-width="2" marker-end="url(#arrow-green)" />
+                <text x="375" y="180" font-family="sans-serif" font-size="14" fill="#16a34a" text-anchor="middle" style="direction: ltr;">a = -g</text>
+
+                <!-- Definitions for markers -->
+                <defs>
+                    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155" />
+                    </marker>
+                    <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                    </marker>
+                    <marker id="arrow-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6" />
+                    </marker>
+                    <marker id="arrow-green" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </div>
+
+    <!-- סעיף א -->
+    <div class="section-card">
+        <div class="section-header">
+            <span class="section-title">סעיף א': הגובה המרבי של כדור א'</span>
+        </div>
+        
+        <div class="sub-heading">מה נתון לנו?</div>
+        <p>עבור כדור א': $y_0 = 0 \text{ m}$, $v_0 = 40 \text{ m/s}$, $a = -10 \text{ m/s}^2$.</p>
+
+        <div class="sub-heading">מה מחפשים?</div>
+        <p>את הגובה המרבי (נסמן כ-$y_{max}$). התנאי הפיזיקלי להגעת גוף נזרק לגובהו המרבי הוא שמהירותו הרגעית מתאפסת. לכן, בנקודת שיא הגובה: $v = 0 \text{ m/s}$.</p>
+
+        <div class="sub-heading">נוסחאות מדף הנוסחאות:</div>
+        <p>מכיוון שאין לנו נתון על הזמן, נבחר להשתמש בנוסחה המקשרת בין מהירות, תאוצה ומיקום, כפי שהיא מופיעה בדף הנוסחאות (אותה נתאים לציר ה-$y$):</p>
+        <div class="text-center">
+            <div class="formula-badge">
+                v² = v₀² + 2a(x - x₀)
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            מדוע המהירות מתאפסת? כדור א' נזרק כלפי מעלה עם מהירות חיובית. התאוצה שלו פועלת כלפי מטה (שלילית). לכן, <strong>גודל המהירות הולך וקטן</strong> ככל שהוא עולה, עד לרגע שבו המהירות שווה לאפס. מיד לאחר מכן הכדור מתחיל ליפול ומהירותו הופכת לשלילית, וגודלה הולך וגדל.
+        </div>
+
+        <div class="sub-heading">הצבה ופתרון:</div>
+        <p>נתאים את הנוסחה לציר ה-$y$ ונציב את הנתונים שלנו:</p>
+        <div class="math-scroll">
+            $$ v^2 = v_0^2 + 2a(y - y_0) $$
+            $$ 0^2 = 40^2 + 2 \cdot (-10) \cdot (y_{max} - 0) $$
+            $$ 0 = 1600 - 20y_{max} $$
+            $$ 20y_{max} = 1600 $$
+            $$ y_{max} = \frac{1600}{20} = 80 \text{ m} $$
+        </div>
+        <p class="font-bold text-blue-700">תשובה סופית לסעיף א': הגובה המרבי אליו מגיע כדור א' הוא 80 מטרים מעל הקרקע.</p>
+    </div>
+
+    <!-- סעיף ב -->
+    <div class="section-card">
+        <div class="section-header">
+            <span class="section-title">סעיף ב': זמן הפגיעה בקרקע של כדור א'</span>
+        </div>
+        
+        <div class="sub-heading">מה נתון לנו?</div>
+        <p>הנתונים ההתחלתיים נותרו זהים: $y_0 = 0 \text{ m}$, $v_0 = 40 \text{ m/s}$, $a = -10 \text{ m/s}^2$. פגיעה בקרקע משמעותה שהכדור חזר לנקודת ההתחלה שלו, כלומר מיקומו הסופי הוא $y = 0 \text{ m}$.</p>
+
+        <div class="sub-heading">מה מחפשים?</div>
+        <p>אנו מחפשים את הזמן $t$ בו הכדור מגיע למיקום $y=0$.</p>
+
+        <div class="sub-heading">נוסחאות מדף הנוסחאות:</div>
+        <p>נשתמש בנוסחת המיקום כפונקציה של הזמן בתנועה שוות-תאוצה:</p>
+        <div class="text-center">
+            <div class="formula-badge">
+                x = x₀ + v₀t + ½at²
+            </div>
+        </div>
+
+        <div class="sub-heading">הצבה ופתרון:</div>
+        <p>שוב, נתאים את הנוסחה לציר ה-$y$ ונציב את הנתונים:</p>
+        <div class="math-scroll">
+            $$ y(t) = y_0 + v_0t + \frac{1}{2}at^2 $$
+            $$ 0 = 0 + 40t + \frac{1}{2}(-10)t^2 $$
+            $$ 0 = 40t - 5t^2 $$
+        </div>
+        <p>זוהי משוואה ריבועית. נוציא גורם משותף $5t$ כדי לפתור אותה בקלות:</p>
+        <div class="math-scroll">
+            $$ 5t(8 - t) = 0 $$
+        </div>
+        <p>הפתרונות האפשריים למשוואה הם:</p>
+        <ul class="list-disc list-inside mt-2 mb-2">
+            <li>$t = 0 \text{ s}$ - זהו רגע הזריקה, בו הכדור אכן נמצא על הקרקע.</li>
+            <li>$t = 8 \text{ s}$ - זהו הרגע בו הכדור חוזר ופוגע בקרקע.</li>
+        </ul>
+
+        <div class="teacher-highlight">
+            המתמטיקה חכמה! היא נתנה לנו שני פתרונות כי הכדור אכן נמצא ב-$y=0$ פעמיים. כמובן שהתשובה שאנחנו מחפשים היא הפעם השנייה. שימו לב שהתנועה סימטרית - זמן העלייה עד לגובה המרבי הוא $4\text{ s}$ (ניתן לראות מ-$v=v_0+at$), וזמן הירידה הוא גם $4\text{ s}$, סך הכל $8\text{ s}$.
+        </div>
+
+        <p class="font-bold text-blue-700">תשובה סופית לסעיף ב': כדור א' יפגע בקרקע כעבור 8 שניות מרגע זריקתו.</p>
+    </div>
+
+    <!-- סעיף ג -->
+    <div class="section-card">
+        <div class="section-header">
+            <span class="section-title">סעיף ג': זמן הפגישה בין הכדורים</span>
+        </div>
+        
+        <p>כעת נכנס לתמונה <strong>כדור ב'</strong>. בואו נאסוף את הנתונים שלו מתוך השאלה.</p>
+
+        <div class="sub-heading">מה נתון לנו?</div>
+        <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+            <li>גובה הבניין הוא $300\text{ m}$. כדור ב' נזרק מהגג, לכן מיקומו ההתחלתי הוא $y_{0B} = 300 \text{ m}$.</li>
+            <li>כדור ב' נזרק <strong>כלפי מטה</strong>. מכיוון שהגדרנו את הכיוון למעלה כחיובי, המהירות ההתחלתית שלו שלילית: $v_{0B} = -20 \text{ m/s}$.</li>
+            <li>גם על כדור ב' פועל אך ורק כוח הכבידה לאחר שנזרק, ולכן תאוצתו זהה: $a = -10 \text{ m/s}^2$.</li>
+            <li>כדור א' נשאר עם נתוניו הקודמים. שני הכדורים נזרקו באותו רגע ($t=0$).</li>
+        </ul>
+
+        <div class="sub-heading">מה מחפשים?</div>
+        <p>אנו מחפשים את הזמן $t$ בו שני הכדורים יהיו באותו גובה. מבחינה מתמטית, זה אומר שנדרוש: $y_A(t) = y_B(t)$.</p>
+
+        <div class="sub-heading">נוסחאות מדף הנוסחאות:</div>
+        <p>נשתמש שוב בנוסחת המיקום לזמן עבור כל כדור בנפרד:</p>
+        <div class="text-center">
+            <div class="formula-badge">
+                x = x₀ + v₀t + ½at²
+            </div>
+        </div>
+
+        <div class="sub-heading">הצבה ופתרון (פיתוח הדרגתי):</div>
+        <p>ראשית, נבנה את פונקציית המקום-זמן עבור כדור א':</p>
+        <div class="math-scroll">
+            $$ y_A(t) = 0 + 40t - \frac{1}{2}(10)t^2 $$
+            $$ y_A(t) = 40t - 5t^2 $$
+        </div>
+        <p>שנית, נבנה את פונקציית המקום-זמן עבור כדור ב':</p>
+        <div class="math-scroll">
+            $$ y_B(t) = 300 + (-20)t - \frac{1}{2}(10)t^2 $$
+            $$ y_B(t) = 300 - 20t - 5t^2 $$
+        </div>
+        
+        <p>כעת, נשווה בין שתי המשוואות כדי למצוא את נקודת המפגש:</p>
+        <div class="math-scroll">
+            $$ y_A(t) = y_B(t) $$
+            $$ 40t - 5t^2 = 300 - 20t - 5t^2 $$
+        </div>
+        
+        <div class="teacher-highlight">
+            שימו לב לקסם המתמטי - לשני הכדורים יש את אותו איבר התאוצה ($-5t^2$). לכן, כאשר אנו משווים את המשוואות, האיבר הזה מצטמצם בשני האגפים. למעשה, במערכת ייחוס של אחד הכדורים, השני נע במהירות קבועה אליו!
+        </div>
+
+        <p>נצמצם את $-5t^2$ משני האגפים ונעביר אגפים:</p>
+        <div class="math-scroll">
+            $$ 40t = 300 - 20t $$
+            $$ 60t = 300 $$
+            $$ t = \frac{300}{60} = 5 \text{ s} $$
+        </div>
+        
+        <p class="font-bold text-blue-700">תשובה סופית לסעיף ג': שני הכדורים יפגשו כעבור 5 שניות מרגע זריקתם.</p>
+        <p class="text-sm text-slate-500 mt-1">*(כהערת אגב, אם נציב $t=5$ באחת המשוואות נגלה שהם נפגשים בגובה $y = 75 \text{ m}$, כלומר לפני שכדור א' הגיע לשיא גובהו!).*</p>
+    </div>
+
+    <!-- סעיף ד -->
+    <div class="section-card">
+        <div class="section-header">
+            <span class="section-title">סעיף ד': גרף המרחק בין הכדורים כפונקציה של הזמן</span>
+        </div>
+        
+        <div class="sub-heading">הסבר והכנה לשרטוט:</div>
+        <p>המרחק בין שני הכדורים (נסמן כ-$D$) בכל רגע נתון $t$ (לפני המפגש, כאשר כדור ב' עדיין מעל כדור א') מוגדר כהפרש בין הגבהים שלהם:</p>
+        <div class="math-scroll">
+            $$ D(t) = y_B(t) - y_A(t) $$
+        </div>
+        <p>בסעיף הקודם פיתחנו את משוואות התנועה של שניהם. נציב אותן לתוך משוואת המרחק:</p>
+        <div class="math-scroll">
+            $$ D(t) = (300 - 20t - 5t^2) - (40t - 5t^2) $$
+            $$ D(t) = 300 - 20t - 5t^2 - 40t + 5t^2 $$
+            $$ D(t) = 300 - 60t $$
+        </div>
+        
+        <div class="teacher-highlight">
+            מה קיבלנו? פונקציה ליניארית (קו ישר) מהצורה $y = mx + n$! <br>
+            המרחק ההתחלתי הוא $n = 300\text{ m}$ (גובה הבניין).<br>
+            קצב שינוי המרחק (השיפוע $m$) הוא $-60 \text{ m/s}$. זהו בדיוק סכום הגדלים של המהירויות ההתחלתיות (המהירות היחסית ביניהם). בגלל שהם חווים את אותה התאוצה, התאוצה לא משפיעה על המרחק היחסי ביניהם, והם "מתקרבים" זה לזה בקצב קבוע.
+        </div>
+
+        <p>נדרשנו לשרטט את הגרף מתחילת התנועה ($t=0$) ועד רגע המפגש ($t=5 \text{ s}$).</p>
+        <ul class="list-disc list-inside mt-2 mb-4">
+            <li>בזמן $t=0$: המרחק הוא $D(0) = 300 \text{ m}$.</li>
+            <li>בזמן $t=5$: המרחק הוא $D(5) = 300 - 60 \cdot 5 = 0 \text{ m}$ (הם נפגשים).</li>
+        </ul>
+
+        <div class="sub-heading mt-6 mb-4">הגרף (מרחק במטרים כפונקציה של הזמן בשניות):</div>
+        
+        <!-- Canvas for Chart.js -->
+        <div class="w-full max-w-2xl mx-auto bg-white p-4 border rounded-lg shadow-sm">
+            <canvas id="distanceGraph" width="400" height="250"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<!-- Chart.js Configuration Script -->
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const ctx = document.getElementById('distanceGraph').getContext('2d');
+        
+        // Data points for the line
+        const dataPoints = [
+            { x: 0, y: 300 },
+            { x: 5, y: 0 }
+        ];
+
+        new Chart(ctx, {
+            type: 'scatter', // Scatter is best for numerical x and y axes in Physics
+            data: {
+                datasets: [{
+                    label: 'המרחק בין הכדורים D(t)',
+                    data: dataPoints,
+                    showLine: true, // Connect the dots
+                    borderColor: '#2563eb', // Tailwind blue-600
+                    backgroundColor: '#1e40af',
+                    borderWidth: 3,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'top',
+                        labels: {
+                            font: {
+                                family: 'Heebo',
+                                size: 14,
+                                weight: 'bold'
+                            }
+                        }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return 'זמן: ' + context.parsed.x + 's, מרחק: ' + context.parsed.y + 'm';
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        min: 0,
+                        max: 6, // Go slightly past 5 to make the point clear
+                        title: {
+                            display: true,
+                            text: 'זמן t (שניות)',
+                            font: {
+                                family: 'Heebo',
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        grid: {
+                            color: function(context) {
+                                // Emphasize zero line if needed, though x axis is at bottom here
+                                return context.tick.value === 0 ? '#1e293b' : '#e2e8f0';
+                            },
+                            lineWidth: function(context) {
+                                return context.tick.value === 0 ? 2 : 1;
+                            }
+                        }
+                    },
+                    y: {
+                        min: -50, // Show a bit below 0 to emphasize the meeting point on the axis
+                        max: 350,
+                        title: {
+                            display: true,
+                            text: 'מרחק D (מטרים)',
+                            font: {
+                                family: 'Heebo',
+                                size: 16,
+                                weight: 'bold'
+                            }
+                        },
+                        border: {
+                            dash: [5, 5]
+                        },
+                        grid: {
+                            color: function(context) {
+                                // Emphasize zero line (y=0)
+                                return context.tick.value === 0 ? '#000000' : '#e2e8f0';
+                            },
+                            lineWidth: function(context) {
+                                return context.tick.value === 0 ? 2 : 1;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
