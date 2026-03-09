@@ -1,0 +1,734 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מודרך בפיזיקה - מכניקה 2008, שאלה 1</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for rendering equations -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        /* Custom Styles to follow prompt requirements */
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        .formula-badge {
+            display: inline-block;
+            background-color: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 9999px;
+            padding: 0.25rem 1rem;
+            margin: 0.5rem 0;
+            font-weight: 600;
+            font-size: 1.1rem;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: #f0fdf4;
+            border-right: 4px solid #22c55e;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.375rem 0 0 0.375rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .teacher-highlight strong {
+            color: #166534;
+            display: block;
+            margin-bottom: 0.5rem;
+            font-size: 1.1em;
+        }
+
+        .section-container {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            transition: transform 0.2s;
+        }
+
+        .section-container:hover {
+            transform: translateY(-2px);
+        }
+
+        .section-header {
+            color: #0f172a;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .data-label {
+            font-weight: 600;
+            color: #475569;
+            width: 120px;
+            display: inline-block;
+        }
+
+        .step-block {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            overflow-x: auto;
+        }
+
+        /* SVG Container */
+        .svg-container {
+            width: 100%;
+            max-width: 800px;
+            margin: 0 auto;
+            display: block;
+            background: white;
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: inset 0 0 10px rgba(0,0,0,0.05);
+        }
+
+        /* Chart Container */
+        .chart-container {
+            position: relative;
+            height: 40vh;
+            width: 100%;
+            max-width: 800px;
+            margin: 2rem auto;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-5xl mx-auto">
+
+    <!-- Header Page -->
+    <header class="text-center mb-10">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-blue-900 mb-2">פתרון בגרות בפיזיקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מכניקה 2008, שאלה 1 - קינמטיקה של תנועה בקו ישר</h2>
+        <p class="mt-4 text-slate-500">מוגש כפתרון מודרך, מוסבר צעד-אחר-צעד, מותאם לדף הנוסחאות המעודכן.</p>
+    </header>
+
+    <!-- Visual setup (SVG) -->
+    <section class="section-container border-t-4 border-blue-500">
+        <h3 class="section-header text-blue-800">המחשה ויזואלית של המערכת ב- \( t=0 \)</h3>
+        <p class="mb-4">לפני שנתחיל לפתור, נצייר תרשים ברור של המצב ההתחלתי. אנו קובעים את ציר המקום (\(x\)) כך שראשיתו ברמזור וכיוונו החיובי ימינה.</p>
+        
+        <div class="svg-container overflow-x-auto">
+            <svg viewBox="-50 -50 500 150" width="100%" height="100%">
+                <!-- X Axis -->
+                <line x1="0" y1="50" x2="450" y2="50" stroke="#94a3b8" stroke-width="4" />
+                <polygon points="450,45 460,50 450,55" fill="#94a3b8" />
+                <text x="455" y="35" font-family="Arial" font-size="16" fill="#475569">+x (m)</text>
+
+                <!-- Origin (x=0) Mark -->
+                <line x1="50" y1="40" x2="50" y2="60" stroke="#475569" stroke-width="2" />
+                <text x="50" y="80" font-family="Arial" font-size="14" fill="#475569" text-anchor="middle">x=0</text>
+                
+                <!-- Traffic Light -->
+                <rect x="42" y="-30" width="16" height="40" fill="#334155" rx="3" />
+                <circle cx="50" cy="-20" r="4" fill="#ef4444" />
+                <circle cx="50" cy="-8" r="4" fill="#f59e0b" />
+                <circle cx="50" cy="4" r="4" fill="#10b981" />
+                <line x1="50" y1="10" x2="50" y2="50" stroke="#334155" stroke-width="4" />
+
+                <!-- Car (x=0) -->
+                <rect x="40" y="20" width="40" height="20" fill="#3b82f6" rx="4" />
+                <circle cx="50" cy="40" r="5" fill="#1e293b" />
+                <circle cx="70" cy="40" r="5" fill="#1e293b" />
+                <text x="60" y="15" font-family="Arial" font-size="12" fill="#3b82f6" text-anchor="middle">מכונית</text>
+                <!-- Car Velocity Vector -->
+                <line x1="85" y1="30" x2="120" y2="30" stroke="#ef4444" stroke-width="2" />
+                <polygon points="120,27 125,30 120,33" fill="#ef4444" />
+                <text x="105" y="20" font-family="Arial" font-size="12" fill="#ef4444" text-anchor="middle">v(car)</text>
+
+                <!-- x=30 Mark -->
+                <line x1="250" y1="40" x2="250" y2="60" stroke="#475569" stroke-width="2" />
+                <text x="250" y="80" font-family="Arial" font-size="14" fill="#475569" text-anchor="middle">x=30m</text>
+
+                <!-- Motorcycle (x=30) -->
+                <rect x="235" y="25" width="30" height="15" fill="#f59e0b" rx="3" />
+                <circle cx="240" cy="40" r="6" fill="#1e293b" />
+                <circle cx="260" cy="40" r="6" fill="#1e293b" />
+                <text x="250" y="15" font-family="Arial" font-size="12" fill="#d97706" text-anchor="middle">אופנוע משטרה</text>
+                <!-- Moto Velocity Vector (v=0 at t=0, so just text) -->
+                <text x="250" y="0" font-family="Arial" font-size="12" fill="#ef4444" text-anchor="middle">v(moto)=0</text>
+            </svg>
+        </div>
+        
+        <div class="teacher-highlight">
+            <strong>הערת מורה: חשיבות המערכת בציר זמן ומקום</strong>
+            תמיד נתחיל מלקבוע איפה הראשית (\(x=0\)) ומתי מתחילים למדוד זמן (\(t=0\)). 
+            כאן, כשהשעון מראה אפס, המכונית נמצאת ב-\(x=0\) ונוסעת ימינה, ואילו השוטר נמצא קדימה יותר, ב-\(x=30m\), ועוד לא התחיל לנסוע.
+        </div>
+    </section>
+
+    <!-- Dynamic Chart Section -->
+    <section class="section-container">
+        <h3 class="section-header">ניתוח גרף המהירות-זמן הנתון בשאלה</h3>
+        <p class="mb-4">הגרף הנתון מציג את תלות המהירות בזמן עבור שני כלי הרכב. בנינו אותו מחדש כדי שנוכל לחקור אותו:</p>
+        <div class="chart-container">
+            <canvas id="velocityChart"></canvas>
+        </div>
+    </section>
+
+    <!-- Section A -->
+    <section class="section-container" id="sectionA">
+        <h3 class="section-header">סעיף א': תאוצת האופנוע</h3>
+        
+        <div class="mb-4">
+            <span class="data-label">מה נתון:</span>
+            לפי הגרף עבור האופנוע (הקו שעולה מראשית הצירים), בזמן \( t_0 = 0 \), המהירות ההתחלתית היא \( v_0 = 0 \). בזמן \( t = 15s \), המהירות היא \( v = 30 \frac{m}{s} \).
+        </div>
+        
+        <div class="mb-4">
+            <span class="data-label">מה מחפשים:</span>
+            להראות שתאוצת האופנוע היא \( 2 \frac{m}{s^2} \) ולהסביר את המשמעות הפיזיקלית.
+        </div>
+
+        <div class="mb-4">
+            <span class="data-label">נוסחאות מהדף:</span>
+            <div class="text-center">
+                <span class="formula-badge">\( v = v_0 + at \)</span>
+            </div>
+            <p class="text-sm text-slate-500 mt-1">אנו מחפשים את התאוצה \(a\), ולכן נבודד אותה מהנוסחה של מהירות כפונקציה של הזמן בתנועה שוות תאוצה.</p>
+        </div>
+
+        <div class="step-block">
+            <h4 class="font-bold mb-2">הצבה ופתרון:</h4>
+            <p>נבודד את התאוצה מתוך המשוואה:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ v - v_0 = at \implies a = \frac{v - v_0}{t} \]
+            </div>
+            <p>נציב את הנתונים המספריים מתוך הגרף של האופנוע:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ a = \frac{30 - 0}{15 - 0} = \frac{30}{15} = 2 \left[ \frac{m}{s^2} \right] \]
+            </div>
+            <p class="mt-4 font-bold text-green-700">המשמעות הפיזיקלית:</p>
+            <p>משמעות התוצאה היא שבכל שנייה שעוברת, מהירות האופנוע גדלה ב-\( 2 \frac{m}{s} \) בכיוון החיובי של ציר ה-\(x\).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה: שיפוע הגרף</strong>
+            הקשר שמצאנו, \( a = \frac{\Delta v}{\Delta t} \), זהה למעשה לחישוב <strong>שיפוע</strong> של קו ישר במערכת צירים של מהירות-זמן. שיפוע הגרף הזה מייצג פיזיקלית את התאוצה.
+        </div>
+    </section>
+
+    <!-- Section B -->
+    <section class="section-container" id="sectionB">
+        <h3 class="section-header">סעיף ב': תאוצת המכונית בין \(t=5s\) ל- \(t=15s\)</h3>
+        
+        <div class="mb-4">
+            <span class="data-label">מה נתון:</span>
+            מבט מדוקדק בגרף המכונית מראה שבין \(t=0\) ל-\(t=5s\) המהירות קבועה (קו אופקי). אנו נדרשים לנתח מ-\(t=5s\).
+            לכן, הזמן ההתחלתי לקטע זה הוא \( t_0 = 5s \) והמהירות בו היא \( v_0 = 25 \frac{m}{s} \). 
+            בסוף הקטע, בזמן \( t = 15s \), המהירות יורדת לאפס \( v = 0 \). 
+            מכאן שפרק הזמן הוא \( \Delta t = 15 - 5 = 10s \).
+        </div>
+        
+        <div class="mb-4">
+            <span class="data-label">מה מחפשים:</span>
+            לחשב את תאוצת המכונית בפרק זמן זה ולהסביר את משמעותה.
+        </div>
+
+        <div class="mb-4">
+            <span class="data-label">נוסחאות מהדף:</span>
+            <div class="text-center">
+                <span class="formula-badge">\( v = v_0 + at \)</span>
+            </div>
+        </div>
+
+        <div class="step-block">
+            <h4 class="font-bold mb-2">הצבה ופתרון:</h4>
+            <p>שוב נשתמש בביטוי לתאוצה (או שיפוע הגרף בקטע המבוקש):</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ a = \frac{v - v_0}{\Delta t} \]
+            </div>
+            <p>נציב את הנתונים:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ a = \frac{0 - 25}{10} = \frac{-25}{10} = -2.5 \left[ \frac{m}{s^2} \right] \]
+            </div>
+            <p class="mt-4 font-bold text-green-700">המשמעות הפיזיקלית:</p>
+            <p>התאוצה של המכונית היא \( -2.5 \frac{m}{s^2} \). מכיוון שמהירות המכונית חיובית (נוסעת קדימה) והתאוצה שלילית, המשמעות היא ש<strong>גודל המהירות קטן</strong> ב-\( 2.5 \frac{m}{s} \) בכל שנייה.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה: מושג התאוצה לעומת "תאוטה"</strong>
+            שימו לב היטב! אנו מקפידים לא להשתמש במילה "תאוטה" או "האטה". המונח המדויק בפיזיקה הוא תמיד <strong>תאוצה</strong>. 
+            כאשר סימן התאוצה הפוך לסימן המהירות, אנו נאמר ש"גודל המהירות קטן". זוהי טרמינולוגיה מקצועית שחשוב להתרגל אליה וליישם בבחינת הבגרות.
+        </div>
+    </section>
+
+    <!-- Section C -->
+    <section class="section-container" id="sectionC">
+        <h3 class="section-header">סעיף ג': מיקום כלי הרכב בזמן \(t=15s\)</h3>
+        
+        <div class="mb-4">
+            <span class="data-label">מה נתון:</span>
+            עבור האופנוע: מתוך תיאור השאלה, מיקומו ההתחלתי הוא \( x_0 = 30m \). התאוצה שלו (מסעיף א') היא \( a = 2 \frac{m}{s^2} \), והוא מתחיל ממהירות אפס. <br>
+            עבור המכונית: מיקומה ההתחלתי \( x_0 = 0 \). התנועה מורכבת משני חלקים: 5 שניות של מהירות קבועה (\(25 \frac{m}{s}\)), ולאחר מכן 10 שניות של תאוצה (\( a = -2.5 \frac{m}{s^2} \)) ממהירות 25 לאפס.
+        </div>
+        
+        <div class="mb-4">
+            <span class="data-label">מה מחפשים:</span>
+            איזה כלי רכב מקדים (כלומר, מיקומו ה-\(x\) גדול יותר) ברגע \( t=15s \).
+        </div>
+
+        <div class="mb-4">
+            <span class="data-label">נוסחאות מהדף:</span>
+            <div class="text-center">
+                <span class="formula-badge">\( x = x_0 + v_0 t + \frac{1}{2} at^2 \)</span>
+            </div>
+        </div>
+
+        <div class="step-block">
+            <h4 class="font-bold mb-2">הצבה ופתרון עבור האופנוע:</h4>
+            <p>נציב את נתוני האופנוע בנוסחת המקום-זמן:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ x_{moto} = 30 + 0 \cdot 15 + \frac{1}{2} \cdot 2 \cdot (15)^2 \]
+                \[ x_{moto} = 30 + 1 \cdot 225 = 30 + 225 = 255 [m] \]
+            </div>
+            
+            <h4 class="font-bold mb-2 mt-6">הצבה ופתרון עבור המכונית:</h4>
+            <p>נחשב את ההעתק בשני שלבים, בהתאם לאופי התנועה, בעזרת חישוב שטח מתחת לגרף, שזהה להצבה בנוסחאות. לשם הדיוק נציב בנוסחאות:</p>
+            <p><strong>שלב 1 (0 עד 5 שניות, מהירות קבועה \(a=0\)):</strong></p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ x_1 = 0 + 25 \cdot 5 + 0 = 125 [m] \]
+            </div>
+            <p>בזמן \(t=5s\), המכונית נמצאת במיקום \(x = 125m\). זה יהיה ה-\(x_0\) לשלב הבא.</p>
+            <p><strong>שלב 2 (5 עד 15 שניות, משך הזמן הוא \(10s\)):</strong></p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ x_2 = 125 + 25 \cdot 10 + \frac{1}{2} \cdot (-2.5) \cdot (10)^2 \]
+                \[ x_2 = 125 + 250 - 1.25 \cdot 100 = 375 - 125 = 250 [m] \]
+            </div>
+            <p>לחלופין, ניתן לחשב את השטח מתחת לגרף (מלבן + משולש): השטח שווה ל-250 מטר, וכיוון שהתחילה בראשית, מיקומה הוא 250 מטר.</p>
+            
+            <p class="mt-4 font-bold text-green-700">מסקנה:</p>
+            <p>מיקום האופנוע (255m) גדול ממיקום המכונית (250m), לכן <strong>האופנוע מקדים</strong> את המכונית ברגע זה.</p>
+        </div>
+        <div class="teacher-highlight">
+            <strong>הערת מורה: שטח מתחת לגרף \(v-t\)</strong>
+            תמיד כדאי לזכור ששטח הכלוא בין גרף מהירות-זמן לציר הזמן שווה להעתק הגוף (\(\Delta x\)). חישוב שטח של מלבן ומשולש הוא לעתים קרובות מהיר ובטוח יותר מהצבה של מספר שלבים בנוסחה הקינמטית, והוא נחשב להסבר פיזיקלי קביל ומצוין בבגרות!
+        </div>
+    </section>
+
+    <!-- Section D -->
+    <section class="section-container" id="sectionD">
+        <h3 class="section-header">סעיף ד': כמה פעמים חלפו כלי הרכב זה על פני זה? (הדרך האלגברית)</h3>
+        
+        <div class="mb-4">
+            <span class="data-label">מה נתון:</span>
+            כדי למצוא "מפגש", עלינו לחפש את הרגעים שבהם המיקום של המכונית שווה למיקום האופנוע. כלומר: \( x_{moto}(t) = x_{car}(t) \).
+        </div>
+        
+        <div class="mb-4">
+            <span class="data-label">האתגר:</span>
+            תנועת האופנוע נשארת קבועה כל הזמן, אבל תנועת המכונית <strong>משתנה ב-\(t=5s\)</strong>. לכן אין למכונית נוסחה אחת ויחידה! נצטרך לפצל את הבדיקה שלנו לשני שלבים: לפני 5 שניות, ואחרי 5 שניות.
+        </div>
+
+        <div class="step-block">
+            <h4 class="font-bold text-lg mb-3 text-blue-800">חלק 1: האם היה מפגש ב-5 השניות הראשונות? (\( 0 \le t \le 5 \))</h4>
+            <p class="mb-2">בפרק הזמן הזה, המכונית נוסעת במהירות קבועה.</p>
+            <ul class="list-disc list-inside space-y-1 mb-4 text-slate-700">
+                <li>משוואת האופנוע: \( x_{moto} = 30 + \frac{1}{2} \cdot 2 \cdot t^2 = 30 + t^2 \)</li>
+                <li>משוואת המכונית: \( x_{car} = 0 + 25t = 25t \)</li>
+            </ul>
+            
+            <p class="font-semibold">נשווה בין המשוואות:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ 30 + t^2 = 25t \]
+                \[ t^2 - 25t + 30 = 0 \]
+            </div>
+            
+            <p class="mt-2 text-sm text-slate-600">נפתור בעזרת נוסחת השורשים (נוסחת מבק):</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ t_{1,2} = \frac{25 \pm \sqrt{(-25)^2 - 4 \cdot 1 \cdot 30}}{2} = \frac{25 \pm \sqrt{625 - 120}}{2} = \frac{25 \pm \sqrt{505}}{2} \]
+            </div>
+            <p class="text-sm text-slate-600 mt-1 mb-2">נחשב את השורש: \(\sqrt{505} \approx 22.47\).</p>
+            
+            <div class="flex flex-col md:flex-row gap-4 justify-center mt-4">
+                <div class="bg-green-50 p-3 rounded border border-green-200 text-center flex-1">
+                    <p dir="ltr">\( t_1 = \frac{25 - 22.47}{2} \approx 1.26 [s] \)</p>
+                    <p class="text-green-700 font-bold text-sm mt-1">תשובה חוקית! (הזמן נמצא בין 0 ל-5)</p>
+                </div>
+                <div class="bg-red-50 p-3 rounded border border-red-200 text-center flex-1">
+                    <p dir="ltr">\( t_2 = \frac{25 + 22.47}{2} \approx 23.7 [s] \)</p>
+                    <p class="text-red-600 font-bold text-sm mt-1">נפסל! (גדול מ-5 שניות)</p>
+                </div>
+            </div>
+            <p class="mt-2 font-bold text-blue-800">\(\leftarrow\) מסקנה ביניים: ב-5 השניות הראשונות התרחש מפגש אחד בדיוק (ב-\(t=1.26s\)).</p>
+        </div>
+
+        <div class="step-block mt-6">
+            <h4 class="font-bold text-lg mb-3 text-blue-800">חלק 2: האם היה מפגש ב-10 השניות האחרונות? (\( 5 < t \le 15 \))</h4>
+            <p class="mb-2">בחלק זה המכונית מאיצה בתאוצה שלילית (מאיטה).</p>
+            <ul class="list-disc list-inside space-y-1 mb-4 text-slate-700">
+                <li>משוואת האופנוע נשארת אותו דבר: \( x_{moto} = 30 + t^2 \)</li>
+                <li>משוואת המכונית עכשיו מתחילה מ-\(t_0=5s\), ממיקום \(125m\), ממהירות \(25m/s\), ובתאוצה \(-2.5m/s^2\). לכן הזמן שחלף הוא \((t-5)\):
+                    <div class="text-center mt-2" dir="ltr">
+                        \( x_{car} = 125 + 25(t-5) - 1.25(t-5)^2 \)
+                    </div>
+                </li>
+            </ul>
+            
+            <div class="bg-yellow-50 p-3 rounded mb-4 text-sm border border-yellow-200">
+                <strong>טיפ אלגברי:</strong> נפתח סוגריים בזהירות כדי לא לטעות בסימנים:
+                <div dir="ltr" class="text-center mt-1">
+                    \( (t-5)^2 = t^2 - 10t + 25 \) <br>
+                    \( x_{car} = 125 + 25t - 125 - 1.25(t^2 - 10t + 25) \) <br>
+                    \( x_{car} = 25t - 1.25t^2 + 12.5t - 31.25 \) <br>
+                    \( x_{car} = -1.25t^2 + 37.5t - 31.25 \)
+                </div>
+            </div>
+
+            <p class="font-semibold">כעת נשווה שוב בין משוואת האופנוע למשוואת המכונית החדשה:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ 30 + t^2 = -1.25t^2 + 37.5t - 31.25 \]
+            </div>
+            <p class="text-sm text-slate-600 mt-1 mb-2 text-center">נעביר הכל לאגף שמאל כדי לסדר משוואה ריבועית:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ 2.25t^2 - 37.5t + 61.25 = 0 \]
+            </div>
+            
+            <p class="mt-2 text-sm text-slate-600">שוב נציב בנוסחת השורשים:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ t_{1,2} = \frac{37.5 \pm \sqrt{(-37.5)^2 - 4 \cdot 2.25 \cdot 61.25}}{2 \cdot 2.25} = \frac{37.5 \pm \sqrt{1406.25 - 551.25}}{4.5} = \frac{37.5 \pm \sqrt{855}}{4.5} \]
+            </div>
+            <p class="text-sm text-slate-600 mt-1 mb-2">נחשב את השורש: \(\sqrt{855} \approx 29.24\).</p>
+            
+            <div class="flex flex-col md:flex-row gap-4 justify-center mt-4">
+                <div class="bg-red-50 p-3 rounded border border-red-200 text-center flex-1">
+                    <p dir="ltr">\( t_3 = \frac{37.5 - 29.24}{4.5} \approx 1.83 [s] \)</p>
+                    <p class="text-red-600 font-bold text-sm mt-1">נפסל! (קטן מ-5 שניות. הנוסחה הזו תקפה רק מזמן 5 והלאה)</p>
+                </div>
+                <div class="bg-green-50 p-3 rounded border border-green-200 text-center flex-1">
+                    <p dir="ltr">\( t_4 = \frac{37.5 + 29.24}{4.5} \approx 14.83 [s] \)</p>
+                    <p class="text-green-700 font-bold text-sm mt-1">תשובה חוקית! (נמצא בטווח בין 5 ל-15)</p>
+                </div>
+            </div>
+            <p class="mt-2 font-bold text-blue-800">\(\leftarrow\) מסקנה ביניים: ב-10 השניות האחרונות התרחש מפגש אחד נוסף (ב-\(t=14.83s\)).</p>
+        </div>
+
+        <div class="mt-6 border-t pt-4">
+            <p class="font-bold text-green-700 text-xl">מסקנה סופית:</p>
+            <p class="text-lg">התגלו שתי תשובות חוקיות בשני פרקי הזמן (\(t=1.26s\) ו- \(t=14.83s\)). לכן כלי הרכב חלפו זה על פני זה בדיוק <strong>שתי פעמים</strong>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה: הדרך המתמטית והמלכודות שבה</strong>
+            דרך זו היא הבטוחה ביותר מבחינה אנליטית, אך דורשת ריכוז. המלכודת העיקרית של תלמידים היא שהם מקבלים 4 תשובות מ-2 המשוואות הריבועיות, ולא יודעים מה לעשות איתן. הכלל ברור: <strong>פוסלים כל זמן שלא שייך לפרק הזמן של המשוואה שיצרה אותו.</strong>
+            כדי לאמת זאת, הסתכלו בגרף למטה - שימו לב לנקודות החיתוך, בדיוק בזמנים שחישבנו!
+        </div>
+
+        <!-- השארנו את הגרף כי הוא המחשה מצוינת אחרי ההוכחה המתמטית -->
+        <div class="chart-container mt-6" style="height: 45vh;">
+            <canvas id="positionChart"></canvas>
+        </div>
+    </section>
+
+    <!-- Section E -->
+    <section class="section-container" id="sectionE">
+        <h3 class="section-header">סעיף ה': השוואת מהירויות ממוצעות</h3>
+        
+        <div class="mb-4">
+            <span class="data-label">מה נתון:</span>
+            ההעתקים הכוללים של כל רכב מ-\(t=0\) עד \(t=15s\):<br>
+            העתק המכונית: \( \Delta x_{car} = x(15) - x(0) = 250 - 0 = 250m \)<br>
+            העתק האופנוע: \( \Delta x_{moto} = x(15) - x(0) = 255 - 30 = 225m \)
+        </div>
+        
+        <div class="mb-4">
+            <span class="data-label">מה מחפשים:</span>
+            האם המהירות הממוצעת של האופנוע גדולה, קטנה או שווה לזו של המכונית בפרק זמן זה?
+        </div>
+
+        <div class="mb-4">
+            <span class="data-label">נוסחאות מהדף:</span>
+            <div class="text-center">
+                <span class="formula-badge">\( \bar{v} = \frac{\Delta x}{\Delta t} \)</span>
+            </div>
+        </div>
+
+        <div class="step-block">
+            <h4 class="font-bold mb-2">הצבה ופתרון:</h4>
+            <p>נחשב את המהירות הממוצעת לכל כלי רכב על ידי הצבה בנוסחה. פרק הזמן הכולל הוא זהה לשניהם (\( \Delta t = 15s \)).</p>
+            
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ \bar{v}_{car} = \frac{250}{15} \approx 16.67 \left[ \frac{m}{s} \right] \]
+                \[ \bar{v}_{moto} = \frac{225}{15} = 15 \left[ \frac{m}{s} \right] \]
+            </div>
+            
+            <p class="mt-4 font-bold text-green-700">מסקנה:</p>
+            <p>המהירות הממוצעת של האופנוע (15) <strong>קטנה</strong> מזו של המכונית. <br>
+            <span class="text-sm font-normal">(ניתן היה לענות גם מבלי לחשב ממש: כיוון שפרק הזמן זהה, הרכב שעבר העתק גדול יותר - המכונית שעברה 250מ לעומת 225מ - יש לו בהכרח מהירות ממוצעת גדולה יותר).</span></p>
+        </div>
+    </section>
+
+    <!-- Section F -->
+    <section class="section-container" id="sectionF">
+        <h3 class="section-header">סעיף ו': מתי המהירויות שוות?</h3>
+        
+        <div class="mb-4">
+            <span class="data-label">מה נתון:</span>
+            במבט על הגרף אנו רואים שהקווים נחתכים (כלומר המהירויות שוות) מתישהו בין \(t=5\) ל-\(t=15\).
+            לצורך כך נשתמש בפונקציות המהירות-זמן של כל רכב בקטע הרלוונטי.
+        </div>
+        
+        <div class="mb-4">
+            <span class="data-label">מה מחפשים:</span>
+            למצוא את הזמן \(t\) בו מתקיים השוויון \( v_{moto}(t) = v_{car}(t) \).
+        </div>
+
+        <div class="mb-4">
+            <span class="data-label">נוסחאות מהדף:</span>
+            <div class="text-center">
+                <span class="formula-badge">\( v = v_0 + at \)</span>
+            </div>
+        </div>
+
+        <div class="step-block">
+            <h4 class="font-bold mb-2">הצבה ופתרון:</h4>
+            <p>נבנה משוואות מהירות עבור \( t > 5 \).</p>
+            <p>עבור האופנוע, המשוואה תקפה לכל אורך הדרך (\(t_0=0\)):</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ v_{moto} = 0 + 2t = 2t \]
+            </div>
+            <p>עבור המכונית בקטע הירידה, נמדוד מהירות החל מ-\(t=5\) שבו המהירות הייתה 25, ולכן הזמן שחלף מאז הוא \((t-5)\):</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ v_{car} = 25 - 2.5(t - 5) \]
+                \[ v_{car} = 25 - 2.5t + 12.5 = 37.5 - 2.5t \]
+            </div>
+            <p>נשווה את שתי המשוואות כדי למצוא את רגע החיתוך:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ 2t = 37.5 - 2.5t \]
+                \[ 4.5t = 37.5 \]
+                \[ t = \frac{37.5}{4.5} = \frac{75}{9} = \frac{25}{3} \approx 8.33 [s] \]
+            </div>
+            
+            <p class="mt-4 font-bold text-green-700">מסקנה:</p>
+            <p>מהירות האופנוע שווה לזו של המכונית ברגע \( t = 8.33 \) שניות.</p>
+        </div>
+    </section>
+
+    <!-- Chart.js Script for the dynamic graph -->
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const ctx = document.getElementById('velocityChart').getContext('2d');
+            
+            // Custom plugin to draw horizontal line at y=0 if not exactly at border
+            const zeroLinePlugin = {
+                id: 'zeroLine',
+                beforeDraw: (chart) => {
+                    const { ctx, chartArea: { left, right }, scales: { y } } = chart;
+                    const yZero = y.getPixelForValue(0);
+                    
+                    ctx.save();
+                    ctx.beginPath();
+                    ctx.moveTo(left, yZero);
+                    ctx.lineTo(right, yZero);
+                    ctx.lineWidth = 2;
+                    ctx.strokeStyle = '#94a3b8'; // slate-400
+                    ctx.stroke();
+                    ctx.restore();
+                }
+            };
+
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'מכונית',
+                            data: [
+                                {x: 0, y: 25},
+                                {x: 5, y: 25},
+                                {x: 15, y: 0}
+                            ],
+                            showLine: true,
+                            borderColor: '#3b82f6', // blue-500
+                            backgroundColor: '#3b82f6',
+                            borderWidth: 2,
+                            pointRadius: 4,
+                            fill: false,
+                            tension: 0 // straight lines
+                        },
+                        {
+                            label: 'אופנוע',
+                            data: [
+                                {x: 0, y: 0},
+                                {x: 15, y: 30}
+                            ],
+                            showLine: true,
+                            borderColor: '#f59e0b', // amber-500
+                            backgroundColor: '#f59e0b',
+                            borderWidth: 2,
+                            pointRadius: 4,
+                            fill: false,
+                            tension: 0 // straight lines
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            min: 0,
+                            max: 16,
+                            title: {
+                                display: true,
+                                text: 't(s) - זמן',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            ticks: {
+                                stepSize: 5
+                            },
+                            grid: {
+                                color: '#f1f5f9'
+                            }
+                        },
+                        y: {
+                            min: -5,
+                            max: 35,
+                            title: {
+                                display: true,
+                                text: 'v(m/s) - מהירות',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            ticks: {
+                                stepSize: 5
+                            },
+                            grid: {
+                                color: '#f1f5f9'
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: {
+                                font: { family: 'Arial', size: 14 }
+                            }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': (' + context.parsed.x + 's, ' + context.parsed.y + 'm/s)';
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [zeroLinePlugin]
+            });
+
+            // Generate Data for Position Chart
+            const posMotoData = [];
+            const posCarData = [];
+            
+            for (let t = 0; t <= 15; t += 0.5) {
+                // אופנוע: x = 30 + (1/2)*2*t^2 = 30 + t^2
+                posMotoData.push({ x: t, y: 30 + Math.pow(t, 2) });
+                
+                // מכונית:
+                if (t <= 5) {
+                    // x = 25t
+                    posCarData.push({ x: t, y: 25 * t });
+                } else {
+                    // מתחיל מ-125 מטר ב t=5, מהירות התחלתית 25, תאוצה -2.5
+                    posCarData.push({ x: t, y: 125 + 25 * (t - 5) - 1.25 * Math.pow(t - 5, 2) });
+                }
+            }
+
+            const ctxPos = document.getElementById('positionChart').getContext('2d');
+            new Chart(ctxPos, {
+                type: 'scatter',
+                data: {
+                    datasets: [
+                        {
+                            label: 'מכונית',
+                            data: posCarData,
+                            showLine: true,
+                            borderColor: '#3b82f6', // blue-500
+                            backgroundColor: '#3b82f6',
+                            borderWidth: 2,
+                            pointRadius: 0, // hide points for a clean continuous line
+                            pointHitRadius: 10,
+                            fill: false,
+                            tension: 0
+                        },
+                        {
+                            label: 'אופנוע',
+                            data: posMotoData,
+                            showLine: true,
+                            borderColor: '#f59e0b', // amber-500
+                            backgroundColor: '#f59e0b',
+                            borderWidth: 2,
+                            pointRadius: 0,
+                            pointHitRadius: 10,
+                            fill: false,
+                            tension: 0
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            min: 0,
+                            max: 16,
+                            title: {
+                                display: true,
+                                text: 't(s) - זמן',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            ticks: { stepSize: 5 },
+                            grid: { color: '#f1f5f9' }
+                        },
+                        y: {
+                            min: 0,
+                            max: 300,
+                            title: {
+                                display: true,
+                                text: 'x(m) - מקום',
+                                font: { size: 14, weight: 'bold' }
+                            },
+                            ticks: { stepSize: 50 },
+                            grid: { color: '#f1f5f9' }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { font: { family: 'Arial', size: 14 } }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return context.dataset.label + ': (' + context.parsed.x.toFixed(1) + 's, ' + Math.round(context.parsed.y) + 'm)';
+                                }
+                            }
+                        }
+                    }
+                },
+                plugins: [zeroLinePlugin]
+            });
+        });
+    </script>
+</body>
+</html>
