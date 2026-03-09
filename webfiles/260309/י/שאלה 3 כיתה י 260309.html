@@ -1,0 +1,502 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מודרך בפיזיקה - קינמטיקה של רוכב אופניים</title>
+    <!-- Tailwind CSS for robust, mobile-first styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+            line-height: 1.6;
+        }
+
+        /* חוק ברזל: עיצוב מסגרת נוסחאות */
+        .formula-badge {
+            background-color: #eff6ff;
+            color: #1e40af;
+            border: 2px solid #bfdbfe;
+            border-radius: 9999px;
+            padding: 0.35rem 1rem;
+            font-weight: 700;
+            display: inline-block;
+            margin: 0.5rem;
+            font-family: 'Times New Roman', Times, serif; /* למראה מתמטי */
+            box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+        }
+
+        /* חוק ברזל: הערת מורה */
+        .teacher-highlight {
+            background-color: #f0fdf4;
+            border-right: 4px solid #22c55e;
+            color: #166534;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .math-en {
+            direction: ltr;
+            display: inline-block;
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+        }
+
+        /* פתרון בעיית גלילה במובייל למשוואות ארוכות */
+        .equation-container {
+            overflow-x: auto;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+            direction: ltr;
+            text-align: left;
+        }
+
+        .phase-card {
+            background: white;
+            border-radius: 1rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            border: 1px solid #e2e8f0;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-5xl mx-auto">
+
+    <header class="text-center mb-10">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-800 mb-4">פתרון מודרך מקיף - תנועת רוכב אופניים</h1>
+        <p class="text-lg text-gray-600">הכנה מעמיקה ומפורטת ברמת 5 יח"ל, שלב אחר שלב</p>
+    </header>
+
+    <div class="teacher-highlight">
+        <h3 class="font-bold text-lg mb-2">💡 דגשים פדגוגיים לפני שמתחילים:</h3>
+        <ul class="list-disc list-inside space-y-2">
+            <li><strong>חלוקה לשלבים:</strong> תנועת הרוכב משתנה לאורך הדרך. נחלק את הפתרון לפרקי זמן שונים (שלבים), כאשר עבור כל שלב נחשב את הנתונים בנפרד.</li>
+            <li><strong>שימוש במושג התאוצה:</strong> בפיזיקה תקנית איננו משתמשים במילה "תאוטה". כאשר גודל המהירות קטן, נאמר פשוט ש<strong>כיוון התאוצה מנוגד לכיוון המהירות</strong> (תאוצה שלילית אם המהירות חיובית).</li>
+            <li><strong>יחידות מידה (MKS):</strong> תמיד נעבוד במטרים (m), שניות (s), וקילוגרמים (kg). נבצע המרות יחידות בכל שלב כפי הנדרש לפני ההצבה בנוסחאות.</li>
+        </ul>
+    </div>
+
+    <!-- חוק ברזל: המחשה ויזואלית -->
+    <section class="mb-10">
+        <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-4">תרשים התנועה</h2>
+        <p class="mb-4">התרשים הבא מציג את 4 השלבים של תנועת הרוכב. החצים הכחולים מייצגים את המהירות (<span class="math-en">v</span>) והאדומים את התאוצה (<span class="math-en">a</span>).</p>
+        <div class="overflow-x-auto w-full bg-white p-4 rounded-xl shadow-sm border border-gray-200">
+            <svg viewBox="0 0 1000 250" class="w-full min-w-[800px]" preserveAspectRatio="xMidYMid meet">
+                <!-- הגדרות חצים -->
+                <defs>
+                    <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6" />
+                    </marker>
+                    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                    </marker>
+                </defs>
+
+                <!-- ציר מקום -->
+                <line x1="50" y1="150" x2="950" y2="150" stroke="#94a3b8" stroke-width="4" marker-end="url(#arrow-blue)"/>
+                <text x="960" y="155" font-family="Arial" font-size="16" fill="#64748b">+x</text>
+
+                <!-- שלב 1 -->
+                <circle cx="100" cy="150" r="6" fill="#1e293b"/>
+                <text x="80" y="180" font-family="sans-serif" font-size="14" font-weight="bold">t=0</text>
+                <text x="80" y="200" font-family="sans-serif" font-size="14">v=0</text>
+                <text x="150" y="120" font-family="sans-serif" font-size="14" fill="#3b82f6" font-weight="bold">v מתגבר</text>
+                <line x1="120" y1="130" x2="180" y2="130" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrow-blue)"/>
+                <text x="150" y="90" font-family="sans-serif" font-size="14" fill="#ef4444" font-weight="bold">a = 0.1</text>
+                <line x1="120" y1="100" x2="180" y2="100" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/>
+                <path d="M 100 210 Q 200 240 300 210" fill="none" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+                <text x="180" y="235" font-family="sans-serif" font-size="12" fill="#64748b">שלב 1 (מאיץ)</text>
+
+                <!-- שלב 2 -->
+                <circle cx="300" cy="150" r="6" fill="#1e293b"/>
+                <text x="280" y="180" font-family="sans-serif" font-size="14" font-weight="bold">t=90s</text>
+                <text x="280" y="200" font-family="sans-serif" font-size="14">v=9 m/s</text>
+                <text x="380" y="120" font-family="sans-serif" font-size="14" fill="#3b82f6" font-weight="bold">v קבוע</text>
+                <line x1="330" y1="130" x2="430" y2="130" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrow-blue)"/>
+                <text x="380" y="90" font-family="sans-serif" font-size="14" fill="#64748b" font-weight="bold">a = 0</text>
+                <path d="M 300 210 Q 400 240 500 210" fill="none" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+                <text x="370" y="235" font-family="sans-serif" font-size="12" fill="#64748b">שלב 2 (מהירות קבועה)</text>
+
+                <!-- שלב 3 -->
+                <circle cx="500" cy="150" r="6" fill="#1e293b"/>
+                <text x="480" y="180" font-family="sans-serif" font-size="14" font-weight="bold">t=390s</text>
+                <text x="480" y="200" font-family="sans-serif" font-size="14">v=9 m/s</text>
+                <text x="580" y="120" font-family="sans-serif" font-size="14" fill="#3b82f6" font-weight="bold">v קטן</text>
+                <line x1="530" y1="130" x2="630" y2="130" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrow-blue)"/>
+                <text x="580" y="90" font-family="sans-serif" font-size="14" fill="#ef4444" font-weight="bold">a = -0.05</text>
+                <line x1="630" y1="100" x2="530" y2="100" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/>
+                <path d="M 500 210 Q 600 240 700 210" fill="none" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+                <text x="560" y="235" font-family="sans-serif" font-size="12" fill="#64748b">שלב 3 (a מנוגד ל-v)</text>
+
+                <!-- שלב 4 -->
+                <circle cx="700" cy="150" r="6" fill="#1e293b"/>
+                <text x="680" y="180" font-family="sans-serif" font-size="14" font-weight="bold">t=420s</text>
+                <text x="680" y="200" font-family="sans-serif" font-size="14">v=7.5 m/s</text>
+                <text x="800" y="120" font-family="sans-serif" font-size="14" fill="#3b82f6" font-weight="bold">v קבוע</text>
+                <line x1="750" y1="130" x2="850" y2="130" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrow-blue)"/>
+                <text x="800" y="90" font-family="sans-serif" font-size="14" fill="#64748b" font-weight="bold">a = 0</text>
+                <path d="M 700 210 Q 800 240 900 210" fill="none" stroke="#cbd5e1" stroke-dasharray="5,5"/>
+                <text x="750" y="235" font-family="sans-serif" font-size="12" fill="#64748b">שלב 4 (עד 20 ק"מ)</text>
+
+                <circle cx="900" cy="150" r="6" fill="#1e293b"/>
+                <text x="880" y="180" font-family="sans-serif" font-size="14" font-weight="bold">סוף תנועה</text>
+            </svg>
+        </div>
+    </section>
+
+    <!-- סעיף א' -->
+    <section>
+        <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-6">סעיף א' - חישוב הזמן הכולל למעבר 20 ק"מ</h2>
+        <p class="mb-4">ננתח את התנועה בשלבים, משלב לשלב, ונעקוב אחר הזמן והמרחק המצטברים.</p>
+
+        <!-- שלב 1 -->
+        <div class="phase-card border-t-4 border-blue-400">
+            <h3 class="text-xl font-bold text-blue-700 mb-3">שלב 1: "בהתחלה מאיץ בתאוצה של 0.1 מטר לשנייה כל שנייה במשך דקה וחצי."</h3>
+            
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-700 mb-2">מה נתון:</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>הגוף מתחיל ממנוחה: <span class="math-en">v<sub>0</sub> = 0</span></li>
+                        <li>תאוצה: <span class="math-en">a<sub>1</sub> = 0.1 m/s<sup>2</sup></span></li>
+                        <li>זמן: <span class="math-en">t<sub>1</sub> = 1.5 min</span>. נמיר לשניות: <span class="math-en">1.5 × 60 = 90 s</span></li>
+                        <li>מיקום התחלתי: נגדיר כ- <span class="math-en">x<sub>0</sub> = 0</span></li>
+                    </ul>
+                </div>
+                <div class="bg-amber-50 p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-700 mb-2">מה מחפשים:</h4>
+                    <p>את המהירות בסוף השלב (<span class="math-en">v<sub>1</sub></span>) ואת המרחק שעבר (<span class="math-en">x<sub>1</sub></span>), כדי שישמשו אותנו כנתוני התחלה לשלב הבא.</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="font-bold text-gray-700 mb-2">נוסחאות מדף הנוסחאות:</h4>
+                <div class="flex flex-wrap items-center">
+                    <span class="formula-badge">v = v<sub>0</sub> + at</span>
+                    <span class="formula-badge">x = x<sub>0</sub> + v<sub>0</sub>t + &frac12;at<sup>2</sup></span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="font-bold text-gray-700 mb-2">הצבה ופתרון:</h4>
+                <div class="equation-container text-lg">
+                    <p>חישוב המהירות בסוף השלב הראשון:</p>
+                    <p class="font-bold text-blue-800 mb-2">v<sub>1</sub> = 0 + 0.1 × 90 = 9 m/s</p>
+                    <p>חישוב המיקום בסוף השלב הראשון:</p>
+                    <p class="font-bold text-blue-800">x<sub>1</sub> = 0 + 0 × 90 + 0.5 × 0.1 × (90)<sup>2</sup> = 0.05 × 8100 = 405 m</p>
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>סיכום ביניים לשלב 1:</strong> לאחר 90 שניות, הרוכב נמצא במרחק של 405 מטרים ונע במהירות של 9 מטרים לשנייה.
+            </div>
+        </div>
+
+        <!-- שלב 2 -->
+        <div class="phase-card border-t-4 border-green-400">
+            <h3 class="text-xl font-bold text-green-700 mb-3">שלב 2: "לאחר מכן נוסע במהירות אליה הגיע במשך 5 דקות."</h3>
+            
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-700 mb-2">מה נתון:</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>מהירות התחלתית לשלב זה: <span class="math-en">v<sub>1</sub> = 9 m/s</span></li>
+                        <li>מכיוון שהמהירות קבועה התאוצה היא אפס: <span class="math-en">a<sub>2</sub> = 0 m/s<sup>2</sup></span></li>
+                        <li>פרק הזמן: <span class="math-en">&#916;t<sub>2</sub> = 5 min</span>. נמיר לשניות: <span class="math-en">5 × 60 = 300 s</span></li>
+                        <li>מיקום התחלתי לשלב זה: <span class="math-en">x<sub>1</sub> = 405 m</span></li>
+                    </ul>
+                </div>
+                <div class="bg-amber-50 p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-700 mb-2">מה מחפשים:</h4>
+                    <p>את המיקום החדש אליו הגיע הרוכב בסוף שלב זה (<span class="math-en">x<sub>2</sub></span>).</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="font-bold text-gray-700 mb-2">נוסחאות מדף הנוסחאות:</h4>
+                <div class="flex flex-wrap items-center">
+                    <span class="formula-badge">x = x<sub>0</sub> + v<sub>0</sub>t + &frac12;at<sup>2</sup></span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="font-bold text-gray-700 mb-2">הצבה ופתרון:</h4>
+                <p>נציב את הזמן של השלב הנוכחי, ואת תנאי ההתחלה של השלב הנוכחי:</p>
+                <div class="equation-container text-lg">
+                    <p class="font-bold text-blue-800">x<sub>2</sub> = 405 + 9 × 300 + &frac12; × 0 × (300)<sup>2</sup></p>
+                    <p class="font-bold text-blue-800">x<sub>2</sub> = 405 + 2700 = 3105 m</p>
+                </div>
+                <p class="mt-2">הזמן הכולל שעבר מתחילת התנועה הוא: <span class="math-en">t = 90 + 300 = 390 s</span>.</p>
+            </div>
+        </div>
+
+        <!-- שלב 3 -->
+        <div class="phase-card border-t-4 border-red-400">
+            <h3 class="text-xl font-bold text-red-700 mb-3">שלב 3: "לאחר מכן... תאוצה של 0.05 מטר לשנייה בריבוע... במשך 30 שניות"</h3>
+            
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-700 mb-2">מה נתון:</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>מהירות התחלתית לשלב זה: <span class="math-en">v<sub>2</sub> = 9 m/s</span></li>
+                        <li><strong>שים לב לתאוצה:</strong> נאמר שגודל המהירות קטן, לכן התאוצה מנוגדת לכיוון המהירות: <span class="math-en">a<sub>3</sub> = -0.05 m/s<sup>2</sup></span></li>
+                        <li>פרק הזמן: <span class="math-en">&#916;t<sub>3</sub> = 30 s</span></li>
+                        <li>מיקום התחלתי לשלב זה: <span class="math-en">x<sub>2</sub> = 3105 m</span></li>
+                    </ul>
+                </div>
+                <div class="bg-amber-50 p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-700 mb-2">מה מחפשים:</h4>
+                    <p>את המהירות בסוף השלב (<span class="math-en">v<sub>3</sub></span>) ואת המיקום בסוף השלב (<span class="math-en">x<sub>3</sub></span>).</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="font-bold text-gray-700 mb-2">נוסחאות מדף הנוסחאות:</h4>
+                <div class="flex flex-wrap items-center">
+                    <span class="formula-badge">v = v<sub>0</sub> + at</span>
+                    <span class="formula-badge">x = x<sub>0</sub> + v<sub>0</sub>t + &frac12;at<sup>2</sup></span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="font-bold text-gray-700 mb-2">הצבה ופתרון:</h4>
+                <div class="equation-container text-lg">
+                    <p>חישוב המהירות החדשה:</p>
+                    <p class="font-bold text-blue-800 mb-2">v<sub>3</sub> = 9 + (-0.05) × 30 = 9 - 1.5 = 7.5 m/s</p>
+                    <p>חישוב המיקום החדש:</p>
+                    <p class="font-bold text-blue-800">x<sub>3</sub> = 3105 + 9 × 30 + 0.5 × (-0.05) × (30)<sup>2</sup></p>
+                    <p class="font-bold text-blue-800">x<sub>3</sub> = 3105 + 270 - 0.025 × 900</p>
+                    <p class="font-bold text-blue-800">x<sub>3</sub> = 3375 - 22.5 = 3352.5 m</p>
+                </div>
+                <p class="mt-2">הזמן הכולל שעבר מתחילת התנועה הוא כעת: <span class="math-en">t = 390 + 30 = 420 s</span>.</p>
+            </div>
+            
+            <div class="teacher-highlight">
+                <strong>דגש הבנה:</strong> למרות שהמהירות יורדת, הרוכב עדיין ממשיך להתקדם קדימה (המהירות חיובית: 7.5m/s), ולכן המיקום שלו ממשיך לגדול. התאוצה השלילית רק משנה את *קצב* ההתקדמות.
+            </div>
+        </div>
+
+        <!-- שלב 4 -->
+        <div class="phase-card border-t-4 border-purple-400">
+            <h3 class="text-xl font-bold text-purple-700 mb-3">שלב 4: "ממשיך לרכב במהירות קבועה... עד שעובר 20 ק"מ"</h3>
+            
+            <div class="grid md:grid-cols-2 gap-4 mb-4">
+                <div class="bg-blue-50 p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-700 mb-2">מה נתון:</h4>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>מהירות קבועה השווה למהירות אליה הגיע: <span class="math-en">v<sub>3</sub> = 7.5 m/s</span></li>
+                        <li>תאוצה: <span class="math-en">a<sub>4</sub> = 0 m/s<sup>2</sup></span></li>
+                        <li>מיקום התחלתי לשלב זה: <span class="math-en">x<sub>3</sub> = 3352.5 m</span></li>
+                        <li>מיקום סופי הנדרש: 20 ק"מ. נמיר למטרים: <span class="math-en">x<sub>final</sub> = 20 × 1000 = 20,000 m</span></li>
+                    </ul>
+                </div>
+                <div class="bg-amber-50 p-4 rounded-lg">
+                    <h4 class="font-bold text-gray-700 mb-2">מה מחפשים:</h4>
+                    <p>את פרק הזמן האחרון הנדרש (<span class="math-en">&#916;t<sub>4</sub></span>) ומתוכו את <strong>הזמן הכולל</strong> מתחילת התנועה.</p>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="font-bold text-gray-700 mb-2">נוסחאות מדף הנוסחאות:</h4>
+                <div class="flex flex-wrap items-center">
+                    <span class="formula-badge">x = x<sub>0</sub> + v<sub>0</sub>t + &frac12;at<sup>2</sup></span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h4 class="font-bold text-gray-700 mb-2">הצבה ופתרון:</h4>
+                <div class="equation-container text-lg">
+                    <p>נחשב את המרחק שנותר לרוכב לעבור:</p>
+                    <p class="font-bold text-blue-800 mb-2">&#916;x<sub>4</sub> = x<sub>final</sub> - x<sub>3</sub> = 20000 - 3352.5 = 16,647.5 m</p>
+                    <p>נציב במשוואת המיקום (כאשר a=0 ומרחק התחלתי הוא 0 עבור השלב הספציפי הזה):</p>
+                    <p class="font-bold text-blue-800">16647.5 = 0 + 7.5 × &#916;t<sub>4</sub> + 0</p>
+                    <p class="font-bold text-blue-800">&#916;t<sub>4</sub> = 16647.5 / 7.5 = 2219.67 s</p>
+                </div>
+                <p class="mt-4 text-xl font-bold bg-yellow-100 p-3 rounded text-center">
+                    הזמן הכולל מתחילת התנועה:<br>
+                    <span class="math-en text-blue-700">t<sub>total</sub> = 420 + 2219.67 = 2639.67 s</span>
+                </p>
+                <p class="text-center text-sm text-gray-500">(הם כ- 44 דקות)</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- סעיף ב' -->
+    <section class="mb-10">
+        <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-6">סעיף ב' - כתיבת משוואת התנועה</h2>
+        
+        <div class="teacher-highlight">
+            <h3 class="font-bold text-lg mb-2">מהי משוואת תנועה כאשר התנועה מורכבת משלבים?</h3>
+            <p>משוואת התנועה היא למעשה הפונקציה המתארת את המיקום (<span class="math-en">x</span>) כפונקציה של הזמן הכולל שעבר (<span class="math-en">t</span>). מכיוון שהתאוצה משתנה בין השלבים, לא נוכל לכתוב נוסחה אחת בלבד, אלא נכתוב <strong>פונקציה מפוצלת</strong> (Piecewise function) המגדירה משוואה שונה לכל פרק זמן.</p>
+            <p class="mt-2">נשתמש בנוסחה המוכללת לדף הנוסחאות, המאפשרת התחלת זמן לא מאפס: 
+                <span class="formula-badge text-sm">x(t) = x<sub>0</sub> + v<sub>0</sub>(t - t<sub>0</sub>) + &frac12;a(t - t<sub>0</sub>)<sup>2</sup></span>
+            </p>
+        </div>
+
+        <div class="bg-white p-6 rounded-xl shadow border border-gray-200 overflow-x-auto flex flex-col items-center">
+            <h3 class="text-lg font-bold mb-4 self-start">סיכום הנתונים למשוואה:</h3>
+            
+            <!-- התיקון: הטבלה צרה, ממורכזת, וכל התאים שלה מיושרים למרכז -->
+            <table class="w-full md:w-auto mx-auto text-center border-collapse whitespace-nowrap">
+                <thead>
+                    <tr class="bg-gray-100 border-b-2 border-gray-300">
+                        <th class="px-5 py-3 text-center">שלב</th>
+                        <th class="px-5 py-3 text-center">תחום הזמן (שניות)</th>
+                        <th class="px-5 py-3 text-center"><span class="math-en">x<sub>0</sub></span> (מטרים)</th>
+                        <th class="px-5 py-3 text-center"><span class="math-en">v<sub>0</sub></span> (m/s)</th>
+                        <th class="px-5 py-3 text-center"><span class="math-en">a</span> (m/s<sup>2</sup>)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr class="border-b hover:bg-gray-50 transition-colors">
+                        <td class="px-5 py-3 font-bold text-blue-600">1</td>
+                        <td class="px-5 py-3" dir="ltr"><span class="math-en">0 &le; t &lt; 90</span></td>
+                        <td class="px-5 py-3"><span class="math-en">0</span></td>
+                        <td class="px-5 py-3"><span class="math-en">0</span></td>
+                        <td class="px-5 py-3"><span class="math-en">0.1</span></td>
+                    </tr>
+                    <tr class="border-b hover:bg-gray-50 transition-colors">
+                        <td class="px-5 py-3 font-bold text-green-600">2</td>
+                        <td class="px-5 py-3" dir="ltr"><span class="math-en">90 &le; t &lt; 390</span></td>
+                        <td class="px-5 py-3"><span class="math-en">405</span></td>
+                        <td class="px-5 py-3"><span class="math-en">9</span></td>
+                        <td class="px-5 py-3"><span class="math-en">0</span></td>
+                    </tr>
+                    <tr class="border-b hover:bg-gray-50 transition-colors">
+                        <td class="px-5 py-3 font-bold text-red-600">3</td>
+                        <td class="px-5 py-3" dir="ltr"><span class="math-en">390 &le; t &lt; 420</span></td>
+                        <td class="px-5 py-3"><span class="math-en">3105</span></td>
+                        <td class="px-5 py-3"><span class="math-en">9</span></td>
+                        <td class="px-5 py-3"><span class="math-en">-0.05</span></td>
+                    </tr>
+                    <tr class="hover:bg-gray-50 transition-colors">
+                        <td class="px-5 py-3 font-bold text-purple-600">4</td>
+                        <td class="px-5 py-3" dir="ltr"><span class="math-en">420 &le; t &le; 2639.67</span></td>
+                        <td class="px-5 py-3"><span class="math-en">3352.5</span></td>
+                        <td class="px-5 py-3"><span class="math-en">7.5</span></td>
+                        <td class="px-5 py-3"><span class="math-en">0</span></td>
+                    </tr>
+                </tbody>
+            </table>
+
+            <div class="mt-10 math-en text-xl self-center" dir="ltr">
+                <div class="flex items-center justify-center">
+                    <div class="mr-4">x(t) =</div>
+                    <div class="border-l-4 border-gray-800 pl-4 py-2 space-y-4 text-left">
+                        <div>0.05t<sup>2</sup> <span class="text-sm text-gray-500 ml-8 font-sans">(0 &le; t &lt; 90)</span></div>
+                        <div>405 + 9(t - 90) <span class="text-sm text-gray-500 ml-8 font-sans">(90 &le; t &lt; 390)</span></div>
+                        <div>3105 + 9(t - 390) - 0.025(t - 390)<sup>2</sup> <span class="text-sm text-gray-500 ml-8 font-sans">(390 &le; t &lt; 420)</span></div>
+                        <div>3352.5 + 7.5(t - 420) <span class="text-sm text-gray-500 ml-8 font-sans">(t &ge; 420)</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- גרף מהירות זמן -->
+    <section class="mb-10">
+        <h2 class="text-2xl font-bold text-gray-800 border-b-2 border-blue-500 pb-2 mb-6">המחשה גרפית: מהירות כפונקציה של הזמן</h2>
+        <div class="teacher-highlight">
+            <p>למרות שלא נתבקשנו לצייר גרף, שרטוט גרף מהירות-זמן עוזר מאוד להבין את הבעיה. השיפוע בגרף הוא ה<strong>תאוצה</strong> (בחלקים האופקיים התאוצה היא אפס), והשטח הכלוא מתחת לגרף הוא ה<strong>העתק</strong> (במקרה שלנו, 20,000 מטר).</p>
+        </div>
+        <div class="w-full h-[400px] bg-white p-4 rounded-xl shadow border border-gray-200">
+            <canvas id="vtGraph"></canvas>
+        </div>
+    </section>
+
+    <footer class="text-center text-gray-500 text-sm mt-10 pb-10 border-t pt-4">
+        הופק עבור תלמידי פיזיקה 5 יח"ל - בהצלחה בלימודים ובבחינות!
+    </footer>
+
+    <!-- סקריפט ליצירת הגרף בעזרת Chart.js -->
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            const ctx = document.getElementById('vtGraph').getContext('2d');
+            
+            // נקודות המהירות והזמן לפי חישובי השלבים
+            const dataPoints = [
+                {x: 0, y: 0},
+                {x: 90, y: 9},
+                {x: 390, y: 9},
+                {x: 420, y: 7.5},
+                {x: 2639.67, y: 7.5}
+            ];
+
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'מהירות (m/s)',
+                        data: dataPoints,
+                        borderColor: '#2563eb', // כחול עמוק
+                        backgroundColor: 'rgba(37, 99, 235, 0.2)',
+                        pointBackgroundColor: '#1e3a8a',
+                        pointRadius: 5,
+                        pointHoverRadius: 8,
+                        showLine: true, // חוק ברזל: חיבור הקווים
+                        borderWidth: 3,
+                        tension: 0, // קווים ישרים (לינארי)
+                        fill: true // מילוי השטח שמתחת - ממחיש את המרחק
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `זמן: ${context.parsed.x} s | מהירות: ${context.parsed.y} m/s`;
+                                }
+                            }
+                        },
+                        legend: {
+                            labels: {
+                                font: {
+                                    family: "'Rubik', sans-serif",
+                                    size: 14
+                                }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'זמן t (שניות)',
+                                font: { size: 16, weight: 'bold', family: "'Rubik', sans-serif" }
+                            },
+                            grid: {
+                                color: '#e2e8f0'
+                            }
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'מהירות v (m/s)',
+                                font: { size: 16, weight: 'bold', family: "'Rubik', sans-serif" }
+                            },
+                            min: 0, // חוק ברזל: קריאות (הציר יתחיל מאפס ללא חריגות)
+                            max: 10,
+                            grid: {
+                                color: '#e2e8f0'
+                            }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
