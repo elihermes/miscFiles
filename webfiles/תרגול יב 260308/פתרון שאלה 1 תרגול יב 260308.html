@@ -1,0 +1,416 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון שאלה במגנטיות - תילים מקבילים</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        /* עיצוב ייעודי לנוסחאות מהדף */
+        .formula-badge {
+            background-color: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 9999px;
+            padding: 0.25rem 1rem;
+            display: inline-block;
+            margin: 0.25rem;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        /* הערת מורה - עיצוב */
+        .teacher-highlight {
+            background-color: #f0fdf4;
+            border-right: 4px solid #22c55e;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+
+        .section-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* רספונסיביות למשוואות */
+        .math-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.5rem 0;
+            direction: ltr;
+        }
+    </style>
+</head>
+<body class="antialiased p-4 md:p-8 max-w-5xl mx-auto">
+
+    <!-- כותרת ראשית -->
+    <header class="text-center mb-10">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון שאלה במגנטיות: חקר שדה של שני תילים</h1>
+        <p class="text-gray-600">רמת 5 יח"ל | מלווה בהסברים, תרשימים וחילוץ אלגברי</p>
+    </header>
+
+    <!-- הצגת המערכת המקורית -->
+    <section class="section-card border-t-4 border-blue-500">
+        <h2 class="text-2xl font-bold mb-4 text-blue-800">הכרת המערכת הפיזיקלית</h2>
+        <div class="flex flex-col md:flex-row gap-8 items-center">
+            <div class="flex-1 text-lg leading-relaxed">
+                <p class="mb-3">
+                    לפנינו שני תילים ארוכים מאוד, מקבילים זה לזה, המונחים על שולחן (מבט על). נקודה A נמצאת ביניהם. אנו מודדים את השדה המגנטי בנקודה זו שנוצר כתוצאה מהזרמים בתילים.
+                </p>
+                <div class="bg-blue-50 p-4 rounded-lg border border-blue-100">
+                    <p class="font-bold text-blue-900 mb-2">קריאה קפדנית של הנתונים:</p>
+                    <p>השדה <span class="dir-ltr">$B_A$</span> הנתון בשאלה הוא <strong>בנוסף</strong> לשדה כדור הארץ. כלומר, זהו השדה השקול הנוצר אך ורק מתרומתם של התילים החשמליים.</p>
+                </div>
+            </div>
+            
+            <!-- תרשים המערכת המרכזי -->
+            <div class="flex-1 w-full max-w-sm flex justify-center bg-gray-50 p-4 rounded-xl border border-gray-200">
+                <svg viewBox="0 0 300 300" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
+                    <!-- תיל 2 -->
+                    <rect x="80" y="40" width="8" height="220" fill="#94a3b8" rx="4"/>
+                    <text x="75" y="280" font-size="16" font-weight="bold" fill="#334155" text-anchor="middle">תיל 2</text>
+                    
+                    <!-- תיל 1 -->
+                    <rect x="200" y="40" width="8" height="220" fill="#cbd5e1" stroke="#64748b" stroke-width="2" rx="4"/>
+                    <text x="205" y="280" font-size="16" font-weight="bold" fill="#334155" text-anchor="middle">תיל 1</text>
+                    
+                    <!-- זרם בתיל 1 -->
+                    <line x1="204" y1="90" x2="204" y2="40" stroke="#000" stroke-width="3" marker-end="url(#arrow)"/>
+                    <text x="220" y="60" font-size="18" font-weight="bold">$I_1$</text>
+
+                    <!-- קווי מידה (מרחקים) -->
+                    <line x1="84" y1="150" x2="204" y2="150" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,5"/>
+                    <rect x="108" y="134" width="32" height="14" fill="#f9fafb" />
+                    <text x="124" y="146" font-size="13" font-weight="500" fill="#475569" text-anchor="middle" dir="ltr">12 cm</text>
+                    <rect x="168" y="134" width="32" height="14" fill="#f9fafb" />
+                    <text x="184" y="146" font-size="13" font-weight="500" fill="#475569" text-anchor="middle" dir="ltr">6 cm</text>
+
+                    <!-- סימון שדה B1 יוצא מהדף - מופרד היטב -->
+                    <circle cx="140" cy="115" r="8" fill="#eff6ff" stroke="#2563eb" stroke-width="2"/>
+                    <circle cx="140" cy="115" r="2.5" fill="#2563eb"/>
+                    <text x="164" y="121" font-size="16" font-weight="bold" fill="#2563eb" text-anchor="middle" dir="ltr">B₁</text>
+
+                    <!-- נקודה A -->
+                    <circle cx="164" cy="150" r="4" fill="#000"/>
+                    <text x="154" y="172" font-size="18" font-weight="bold">A</text>
+                    
+                    <defs>
+                        <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#000" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+    </section>
+
+    <!-- סעיף א' -->
+    <section class="section-card">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">א'</span>
+            מסקנה לגבי קיום הזרם בתיל 2
+        </h3>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">מה נתון:</h4>
+            <ul class="list-disc list-inside space-y-1 text-gray-700">
+                <li>הזרם בתיל 1: <span class="dir-ltr inline-block">$I_1 = 12 \text{ A}$</span> וכיוונו "למעלה" בתרשים.</li>
+                <li>המרחק בין תיל 1 לנקודה A: <span class="dir-ltr inline-block">$r_1 = 6 \text{ cm} = 0.06 \text{ m}$</span> <span class="text-sm text-gray-500">(המרנו ל-MKS)</span>.</li>
+                <li>השדה המגנטי הכולל בנקודה A (מהתילים בלבד): <span class="dir-ltr inline-block">$B_A = 50 \mu\text{T} = 50 \cdot 10^{-6} \text{ T}$</span>, וכיוונו <strong>יוצא</strong> ממישור הדף (נסמן ב-$\odot$).</li>
+                <li>פרמיאביליות הריק (מדף הנוסחאות): <span class="dir-ltr inline-block">$\mu_0 = 4\pi \cdot 10^{-7} \frac{\text{T}\cdot\text{m}}{\text{A}}$</span>.</li>
+            </ul>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">מה מחפשים:</h4>
+            <p class="text-gray-700">להסביר מדוע נתונים אלו מוכיחים שזורם זרם בתיל 2.</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">נוסחאות מהדף:</h4>
+            <div class="mt-2">
+                <div class="formula-badge">$B = \mu_0 \frac{I}{2\pi r}$</div>
+            </div>
+            <p class="text-sm text-gray-600 mt-1">נוסחה זו מתארת גודל שדה מגנטי סביב תיל ישר וארוך.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <p><strong>הערת מורה (עיקרון הסופרפוזיציה):</strong> השדה המגנטי בנקודה A הוא סכום וקטורי של השדות שכל תיל מייצר. כדי לדעת אם תיל 2 משפיע, נחשב קודם איזה שדה מייצר תיל 1 לבדו בנקודה זו. אם התוצאה שונה מ-$B_A$ הנתון, הרי שתיל 2 חייב "להשלים" את הפער.</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">הצבה ופתרון:</h4>
+            <p class="mb-2">נחשב את עצמת השדה המגנטי שיוצר תיל 1 בנקודה A, שנסמנו $B_1$:</p>
+            <div class="math-scroll mb-4 text-lg">
+                $$ B_1 = 4\pi \cdot 10^{-7} \cdot \frac{12}{2\pi \cdot 0.06} $$
+            </div>
+            <p class="mb-2">נצמצם את ה-$2\pi$ ונקבל:</p>
+            <div class="math-scroll mb-4 text-lg text-blue-800 font-semibold">
+                $$ B_1 = 2 \cdot 10^{-7} \cdot \frac{12}{0.06} = 2 \cdot 10^{-7} \cdot 200 = 400 \cdot 10^{-7} \text{ T} = 40 \cdot 10^{-6} \text{ T} = 40 \mu\text{T} $$
+            </div>
+            
+            <p class="mb-2 font-bold mt-4">קביעת כיוון $B_1$:</p>
+            <p class="mb-4 text-gray-800">על פי <strong>כלל יד ימין</strong> (כלל האגודל): נכוון את אגודל יד ימין כלפי מעלה עם הזרם $I_1$. נראה שהאצבעות שלנו "יוצאות" מהדף משמאל לתיל 1 (איפה שנמצאת נקודה A). לכן, כיוון השדה $B_1$ הוא <strong>החוצה מהדף ($\odot$)</strong>.</p>
+            
+            <p class="mb-2 bg-yellow-50 p-3 rounded-lg border-r-4 border-yellow-400">
+                <strong>מסקנה:</strong> קיבלנו כי תיל 1 תורם שדה של $40 \mu\text{T}$ החוצה מהדף. אולם, הנתון אומר שהשדה השקול הוא $50 \mu\text{T}$ החוצה. קיים פער של $10 \mu\text{T}$. כיוון שאין עוד מקורות שדה מלבד התילים (שדה כדור הארץ נוטרל מראש בדיון), הפער חייב להגיע מתיל 2. <strong>מכאן שחייב לזרום בו זרם.</strong>
+            </p>
+        </div>
+    </section>
+
+    <!-- סעיף ב' -->
+    <section class="section-card">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">ב'</span>
+            מציאת הזרם בתיל 2 וכיוונו
+        </h3>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">מה נתון:</h4>
+            <ul class="list-disc list-inside space-y-1 text-gray-700">
+                <li>המרחק הכולל בין התילים: <span class="dir-ltr inline-block">$d = 18 \text{ cm} = 0.18 \text{ m}$</span>.</li>
+                <li>מכאן, המרחק מתיל 2 לנקודה A הוא: <span class="dir-ltr inline-block">$r_2 = d - r_1 = 18 - 6 = 12 \text{ cm} = 0.12 \text{ m}$</span>.</li>
+                <li>מהסעיף הקודם, תרומת השדה של תיל 2 חייבת להיות: <span class="dir-ltr inline-block">$B_2 = 10 \mu\text{T} = 10 \cdot 10^{-6} \text{ T}$</span>, וכיוונה <strong>החוצה מהדף ($\odot$)</strong> כדי להשלים מ-40 ל-50.</li>
+            </ul>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">מה מחפשים:</h4>
+            <p class="text-gray-700">את גודלו ($I_2$) וכיוונו של הזרם בתיל 2.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <p><strong>הערת מורה (חילוץ הנעלם):</strong> כאשר אנו מחפשים נעלם (כמו הזרם במקרה זה), מומלץ שלא להציב מספרים מיד בנוסחה. נרשום את הנוסחה כפי שהיא מופיעה בדף הנוסחאות, נבצע מניפולציה אלגברית לחילוץ הנעלם, ורק לאחר שהגענו לביטוי הסופי - נציב את הנתונים המומרים. המלצה זו נכונה לעבודה עם כל נוסחה בפיזיקה, ולא רק לנוסחת השדה המגנטי.</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">הצבה ופתרון (גודל הזרם):</h4>
+            <p class="mb-2">נרשום את הנוסחה עבור השדה שיוצר תיל 2 בנקודה A ונחלץ את $I_2$:</p>
+            <div class="math-scroll mb-4 text-lg">
+                $$ B_2 = \mu_0 \frac{I_2}{2\pi r_2} $$
+            </div>
+            <p class="mb-2">נכפול ב-$2\pi r_2$ ונחלק ב-$\mu_0$:</p>
+            <div class="math-scroll mb-4 text-lg text-blue-800 font-semibold">
+                $$ I_2 = \frac{B_2 \cdot 2\pi r_2}{\mu_0} $$
+            </div>
+            <p class="mb-2">כעת נציב את כל הנתונים (ביחידות MKS):</p>
+            <div class="math-scroll mb-4 text-lg">
+                $$ I_2 = \frac{10 \cdot 10^{-6} \cdot 2\pi \cdot 0.12}{4\pi \cdot 10^{-7}} $$
+            </div>
+            <p class="mb-2">נצמצם את ה-$\pi$ ואת החזקות:</p>
+            <div class="math-scroll mb-4 text-lg">
+                $$ I_2 = \frac{10 \cdot 10^{-6} \cdot 2 \cdot 0.12}{4 \cdot 10^{-7}} = \frac{1.2 \cdot 10^{-6}}{2 \cdot 10^{-7}} = \frac{12 \cdot 10^{-7}}{2 \cdot 10^{-7}} = 6 \text{ A} $$
+            </div>
+            <p class="mb-4 font-medium text-gray-800">עצמת הזרם בתיל 2 היא <span class="dir-ltr">$6 \text{ A}$</span>.</p>
+
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">קביעת כיוון הזרם:</h4>
+            <p class="mb-2">נקודה A נמצאת <strong>מימין</strong> לתיל 2. אנו זקוקים לכך שהשדה בנקודה זו יהיה <strong>החוצה</strong> מהדף.</p>
+            <p class="mb-2">נפעיל את כלל יד ימין על תיל 2:</p>
+            <ul class="list-disc list-inside space-y-1 text-gray-700 mb-4">
+                <li>אם הזרם יהיה למעלה: האצבעות שלנו מימין לתיל "ייכנסו" לדף ($\otimes$) - לא מתאים!</li>
+                <li>אם הזרם יהיה <strong>למטה</strong>: האגודל מצביע למטה, והאצבעות שמתעקלות מימין לתיל "יוצאות" מהדף ($\odot$) - זה מתאים!</li>
+            </ul>
+            <p class="font-bold text-blue-800 text-lg">לכן, כיוון הזרם בתיל 2 הוא כלפי מטה.</p>
+        </div>
+    </section>
+
+    <!-- סעיף ג' -->
+    <section class="section-card">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">ג'</span>
+            האם קיימת נקודת שיווי משקל מגנטי בין התילים?
+        </h3>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">מה מחפשים:</h4>
+            <p class="text-gray-700">האם יש נקודה בין התילים בה השדה המגנטי השקול ($B_{net}$) שווה לאפס.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <p><strong>הערת מורה (ניתוח וקטורי):</strong> שדה מגנטי הוא וקטור. כדי שסכום של שני וקטורים יהיה אפס, עליהם להיות באותו גודל אך <strong>בכיוונים מנוגדים לחלוטין</strong>. ננתח את כיווני השדות שכל תיל יוצר במרחב שביניהם.</p>
+        </div>
+
+        <div class="mb-4">
+            <p class="mb-2">כפי שראינו בשלבים הקודמים:</p>
+            <ul class="list-disc list-inside space-y-2 text-gray-700 mb-4">
+                <li>הזרם בתיל 1 הוא <strong>למעלה</strong>. לכן, בכל נקודה משמאל לו (כלומר, בין התילים), הוא יוצר שדה מגנטי <strong>החוצה</strong> מהדף ($\odot$).</li>
+                <li>הזרם בתיל 2 הוא <strong>למטה</strong>. לכן, בכל נקודה מימין לו (שזה גם, האזור שבין התילים), הוא יוצר שדה מגנטי <strong>החוצה</strong> מהדף ($\odot$).</li>
+            </ul>
+            
+            <!-- המחשה ויזואלית לשדות -->
+            <div class="w-full max-w-sm mx-auto mb-4 p-4">
+                <svg viewBox="0 0 300 150" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
+                    <rect x="0" y="0" width="300" height="150" fill="#f8fafc" rx="8"/>
+                    <rect x="50" y="10" width="10" height="130" fill="#94a3b8" rx="2"/>
+                    <rect x="240" y="10" width="10" height="130" fill="#cbd5e1" rx="2"/>
+                    
+                    <text x="55" y="15" font-size="12" font-weight="bold" fill="#b91c1c" text-anchor="middle">↓</text>
+                    <text x="245" y="15" font-size="12" font-weight="bold" fill="#b91c1c" text-anchor="middle">↑</text>
+                    
+                    <text x="55" y="140" font-size="12">תיל 2</text>
+                    <text x="245" y="140" font-size="12">תיל 1</text>
+
+                    <!-- סימון השדות -->
+                    <circle cx="150" cy="50" r="15" fill="#eff6ff" stroke="#3b82f6"/>
+                    <circle cx="150" cy="50" r="3" fill="#3b82f6"/>
+                    <text x="180" y="55" font-size="14" font-weight="bold" fill="#3b82f6">B₁ (החוצה)</text>
+                    
+                    <circle cx="150" cy="90" r="15" fill="#fef2f2" stroke="#ef4444"/>
+                    <circle cx="150" cy="90" r="3" fill="#ef4444"/>
+                    <text x="180" y="95" font-size="14" font-weight="bold" fill="#ef4444">B₂ (החוצה)</text>
+                </svg>
+            </div>
+
+            <p class="font-bold text-gray-800 bg-blue-50 p-3 rounded-lg border-r-4 border-blue-400">
+                מסקנה: מכיוון שבאזור שבין התילים שני השדות המגנטיים מצביעים לאותו כיוון (החוצה מהדף), הם לעולם לא יוכלו לבטל זה את זה. לכן, <strong>לא קיימת</strong> נקודה בין התילים בה השדה המגנטי שווה לאפס.
+            </p>
+        </div>
+    </section>
+
+    <!-- סעיף ד' -->
+    <section class="section-card">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">ד'</span>
+            כוח מגנטי בין התילים
+        </h3>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">מה נתון:</h4>
+            <ul class="list-disc list-inside space-y-1 text-gray-700">
+                <li>אורך קטע התיל שמעניין אותנו: <span class="dir-ltr inline-block">$l = 20 \text{ cm} = 0.2 \text{ m}$</span>.</li>
+                <li>המרחק בין התילים: <span class="dir-ltr inline-block">$d = 0.18 \text{ m}$</span>.</li>
+                <li>הזרמים: <span class="dir-ltr inline-block">$I_1 = 12 \text{ A}$</span>, <span class="dir-ltr inline-block">$I_2 = 6 \text{ A}$</span>.</li>
+            </ul>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">מה מחפשים:</h4>
+            <p class="text-gray-700">את גודל הכוח המגנטי שתיל 1 מפעיל על תיל 2 בחלק זה, ואת כיוונו.</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">נוסחאות מהדף:</h4>
+            <div class="mt-2">
+                <div class="formula-badge">$\frac{F}{l} = \frac{\mu_0}{2\pi}\frac{I_1 I_2}{d}$</div>
+            </div>
+            <p class="text-sm text-gray-600 mt-1">זוהי הנוסחה לכוח ליחידת אורך בין שני תילים ארוכים מקבילים.</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">הצבה ופתרון (גודל הכוח):</h4>
+            <p class="mb-2">ראשית, נחלץ את הכוח הכולל $F$ על ידי הכפלת שני האגפים באורך $l$:</p>
+            <div class="math-scroll mb-4 text-lg text-blue-800 font-semibold">
+                $$ F = \frac{\mu_0 \cdot I_1 \cdot I_2 \cdot l}{2\pi \cdot d} $$
+            </div>
+            <p class="mb-2">נציב את הנתונים:</p>
+            <div class="math-scroll mb-4 text-lg">
+                $$ F = \frac{4\pi \cdot 10^{-7} \cdot 12 \cdot 6 \cdot 0.2}{2\pi \cdot 0.18} $$
+            </div>
+            <p class="mb-2">נצמצם את ה-$2\pi$ ונסדר את המספרים:</p>
+            <div class="math-scroll mb-4 text-lg">
+                $$ F = \frac{2 \cdot 10^{-7} \cdot 14.4}{0.18} = \frac{28.8 \cdot 10^{-7}}{0.18} = 160 \cdot 10^{-7} \text{ N} = 1.6 \cdot 10^{-5} \text{ N} $$
+            </div>
+            <p class="mb-4 font-medium text-gray-800">גודל הכוח הוא <span class="dir-ltr">$1.6 \cdot 10^{-5} \text{ N}$</span>.</p>
+
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">קביעת כיוון הכוח:</h4>
+            <p class="mb-2">נזכור כלל פשוט ויסודי במגנטיות של תילים:</p>
+            <ul class="list-disc list-inside space-y-1 text-gray-700 mb-4">
+                <li>זרמים באותו כיוון - מושכים זה את זה.</li>
+                <li><strong>זרמים בכיוונים מנוגדים - דוחים זה את זה.</strong></li>
+            </ul>
+            <p class="font-bold text-blue-800 text-lg">מכיוון שבמערכת שלנו הזרמים מנוגדים (תיל 1 למעלה, תיל 2 למטה), התילים דוחים זה את זה. לכן, הכוח שתיל 1 מפעיל על תיל 2 ידחוף את תיל 2 <strong>שמאלה</strong> (הרחק מתיל 1).</p>
+        </div>
+    </section>
+
+    <!-- סעיף ה' -->
+    <section class="section-card">
+        <h3 class="text-xl font-bold mb-4 flex items-center gap-2">
+            <span class="bg-blue-600 text-white w-8 h-8 rounded-full flex items-center justify-center shrink-0">ה'</span>
+            השוואת כוחות בין התילים
+        </h3>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-gray-800 border-b-2 border-blue-200 inline-block mb-2">מה מחפשים:</h4>
+            <p class="text-gray-700">לקבוע האם הכוח המגנטי שתיל 2 מפעיל על חלק מתיל 1 (באורך 20 ס"מ) גדול, קטן או שווה לכוח שחישבנו בסעיף ד', ולהסביר.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <p><strong>הערת מורה (דקות פדגוגית):</strong> תלמידים נוטים לעיתים לצטט את "החוק השלישי של ניוטון" באופן אוטומטי. אולם במקרה זה חשוב לדייק: אנו לא עוסקים בשני גופים נקודתיים פשוטים, אלא בתילים ארוכים מאוד, כשאנו בוחנים כוח על <em>מקטע</em> מוגדר מתוכם. הדרך הבטוחה והנכונה ביותר להראות את השוויון היא דרך הסימטריה של משוואת הכוח המגנטי, שמדגימה כיצד עקרון הפעולה והתגובה מתקיים עבור מקטעים זהים באורכם.</p>
+        </div>
+
+        <div class="mb-4">
+            <p class="mb-2">כדי להשוות, נבנה את הביטוי עבור הכוח שתיל 2 מפעיל על מקטע באורך $l$ בתיל 1 ($F_{2 \to 1}$), ונשווה אותו לכוח שחישבנו בסעיף ד' ($F_{1 \to 2}$).</p>
+            
+            <p class="mb-2">הכוח שתיל 1 מפעיל על תיל 2 (מסעיף ד'):</p>
+            <div class="math-scroll mb-4 text-lg">
+                $$ F_{1 \to 2} = B_1 \cdot I_2 \cdot l = \left( \frac{\mu_0 I_1}{2\pi d} \right) \cdot I_2 \cdot l = \frac{\mu_0 \cdot I_1 \cdot I_2 \cdot l}{2\pi d} $$
+            </div>
+            
+            <p class="mb-2">כעת, נכתוב את הביטוי לכוח שתיל 2 מפעיל על מקטע <strong>באותו אורך $l$</strong> של תיל 1:</p>
+            <div class="math-scroll mb-4 text-lg">
+                $$ F_{2 \to 1} = B_2 \cdot I_1 \cdot l = \left( \frac{\mu_0 I_2}{2\pi d} \right) \cdot I_1 \cdot l = \frac{\mu_0 \cdot I_2 \cdot I_1 \cdot l}{2\pi d} $$
+            </div>
+
+            <p class="mb-4">מכיוון שכפל הוא פעולה חילופית ($I_1 \cdot I_2 = I_2 \cdot I_1$), אנו מקבלים בדיוק את אותו ביטוי מתמטי. המשמעות היא שכל עוד אנו בוחנים מקטעים בעלי <strong>אותו אורך</strong> ($l=20\text{ cm}$), הכוחות שווים בגודלם.</p>
+
+            <p class="font-bold text-gray-800 bg-green-50 p-4 rounded-lg border-r-4 border-green-500 text-lg">
+                תשובה סופית: גודל הכוח שתיל 2 מפעיל על מקטע של 20 ס"מ בתיל 1 <strong>שווה</strong> בגודלו לכוח שתיל 1 מפעיל על מקטע של 20 ס"מ בתיל 2. (הכוחות מנוגדים בכיוונם, בהתאמה לחוק השלישי של ניוטון).
+            </p>
+        </div>
+
+        <!-- תרשים FBD מסכם לסעיפים ד-ה -->
+        <div class="w-full max-w-md mx-auto mt-6 bg-white p-4 border rounded-xl shadow-sm">
+            <h4 class="text-center font-bold text-gray-700 mb-2">תרשים כוחות הדדיים (מבט על)</h4>
+            <svg viewBox="0 0 400 200" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
+                <!-- תיל 2 -->
+                <rect x="100" y="20" width="10" height="160" fill="#94a3b8" rx="2"/>
+                <text x="105" y="195" font-size="14" font-weight="bold" text-anchor="middle">תיל 2 ($I_2 \downarrow$)</text>
+                
+                <!-- תיל 1 -->
+                <rect x="300" y="20" width="10" height="160" fill="#cbd5e1" rx="2"/>
+                <text x="305" y="195" font-size="14" font-weight="bold" text-anchor="middle">תיל 1 ($I_1 \uparrow$)</text>
+                
+                <!-- כוח על תיל 2 -->
+                <line x1="90" y1="100" x2="30" y2="100" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-force)"/>
+                <text x="60" y="90" font-size="16" font-weight="bold" fill="#ef4444" text-anchor="middle">F₁₂</text>
+
+                <!-- כוח על תיל 1 -->
+                <line x1="320" y1="100" x2="380" y2="100" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-force)"/>
+                <text x="350" y="90" font-size="16" font-weight="bold" fill="#ef4444" text-anchor="middle">F₂₁</text>
+
+                <defs>
+                    <marker id="arrow-force" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                    </marker>
+                </defs>
+            </svg>
+            <p class="text-center text-sm text-gray-500 mt-2">הכוחות שווים בגודלם (1.6E-5 N) ומנוגדים בכיוונם.</p>
+        </div>
+    </section>
+
+</body>
+</html>
