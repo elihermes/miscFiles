@@ -27,24 +27,7 @@
         <p>גלריית סרטונים</p>
     </footer>
     <script>
-        // כאן תכניס את המידע שלך
-        const videosData = [
-            {
-                "title": "סרטון הדגמה 1",
-                "description": "תיאור הסרטון הראשון",
-                "keywords": "פיזיקה, חשמל",
-                "link": "https://youtu.be/7SzMIg7gTRY",
-                "category": "אלקטרוסטטיקה"
-            },
-            {
-                "title": "סרטון הדגמה 2",
-                "description": "תיאור הסרטון השני",
-                "keywords": "פיזיקה, מגנטיות",
-                "link": "https://youtu.be/SczZ6ifR9oM",
-                "category": "מגנטיות"
-            }
-            // ...הוסף עוד סרטונים כאן...
-        ];
+        // אין יותר מערך דמיוני, נטען רק מה-json
 
         function getYouTubeID(url) {
             const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
@@ -96,10 +79,27 @@
         }
 
         window.addEventListener('DOMContentLoaded', () => {
-            fetch('videos.json')
-                .then(response => response.json())
-                .then(data => renderVideos(data))
-                .catch(() => renderVideos([]));
+                fetch('videos.json')
+                    .then(response => {
+                        if (!response.ok) {
+                            console.error('שגיאה בטעינת videos.json:', response.status);
+                            renderVideos([]);
+                            return;
+                        }
+                        return response.json();
+                    })
+                    .then(data => {
+                        if (!Array.isArray(data)) {
+                            console.error('videos.json לא מכיל מערך תקין:', data);
+                            renderVideos([]);
+                            return;
+                        }
+                        renderVideos(data);
+                    })
+                    .catch(err => {
+                        console.error('שגיאת fetch/פענוח videos.json:', err);
+                        renderVideos([]);
+                    });
         });
     </script>
 </body>
