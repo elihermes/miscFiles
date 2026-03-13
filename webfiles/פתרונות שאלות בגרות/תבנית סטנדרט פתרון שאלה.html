@@ -50,6 +50,7 @@
             max-width: 980px;
             margin: 0 auto;
             padding: 1rem;
+            padding-bottom: 7rem;
         }
 
         .section-card {
@@ -101,8 +102,14 @@
 
         .chart-wrapper {
             position: relative;
-            height: 320px;
+            min-height: 360px;
             width: 100%;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
         }
 
         /* Unified MathJax mobile handling */
@@ -132,6 +139,18 @@
             .math-block mjx-container[display="true"],
             .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
                 font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
             }
         }
 
@@ -197,6 +216,7 @@
 
             .page-shell {
                 padding: 1.5rem;
+                padding-bottom: 7rem;
             }
         }
     </style>
@@ -357,6 +377,8 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
         // Optional chart template. Remove block if graph is not needed.
         const chartCanvas = document.getElementById('mainChart');
         if (chartCanvas && window.Chart) {
+            const isMobile = window.matchMedia('(max-width: 640px)').matches;
+
             new Chart(chartCanvas.getContext('2d'), {
                 type: 'line',
                 data: {
@@ -374,8 +396,25 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
                 options: {
                     responsive: true,
                     maintainAspectRatio: false,
+                    layout: {
+                        padding: {
+                            top: isMobile ? 6 : 10,
+                            left: isMobile ? 4 : 8,
+                            right: isMobile ? 4 : 8,
+                            bottom: isMobile ? 2 : 6
+                        }
+                    },
                     plugins: {
-                        legend: { display: true }
+                        legend: {
+                            display: true,
+                            position: isMobile ? 'bottom' : 'top',
+                            labels: {
+                                font: { size: isMobile ? 11 : 13 },
+                                boxWidth: isMobile ? 14 : 24,
+                                boxHeight: isMobile ? 8 : 12,
+                                padding: isMobile ? 8 : 12
+                            }
+                        }
                     }
                 }
             });
