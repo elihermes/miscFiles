@@ -1,0 +1,269 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מודרך - שאלה במעגלי זרם ישר</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            }
+        };
+    </script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/3.2.2/es5/tex-mml-chtml.min.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        .step-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -2px rgba(0, 0, 0, 0.1);
+            margin-bottom: 2rem;
+            padding: 2rem;
+            border-top: 5px solid #3b82f6;
+            transition: transform 0.2s ease-in-out;
+        }
+        .step-card:hover {
+            transform: translateY(-2px);
+        }
+        .math-block {
+            background: #f1f5f9;
+            padding: 1.25rem;
+            border-radius: 0.75rem;
+            overflow-x: auto;
+            margin: 1.25rem 0;
+            font-size: 1.15rem;
+            border: 1px solid #e2e8f0;
+        }
+        .formula-badge {
+            display: inline-block;
+            background: #dbeafe;
+            color: #1e40af;
+            padding: 0.35rem 1rem;
+            border-radius: 9999px;
+            font-weight: 700;
+            font-family: monospace;
+            border: 1px solid #bfdbfe;
+            direction: ltr;
+            font-size: 1.1rem;
+        }
+        .section-title {
+            color: #334155;
+            font-weight: 700;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.25rem;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-4xl mx-auto">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-center text-slate-800 mb-8 tracking-tight">
+            פתרון בגרות חשמל 1997 שאלה 2
+        </h1>
+
+        <!-- התמונה המקורית של השאלה -->
+        <div class="mb-10 flex justify-center bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
+            <img src="image_c81afd.jpg" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" 
+                 onerror="this.onerror=null; this.src='IMG_0509.jpeg'; this.alt='תמונת השאלה'; if(this.naturalWidth === 0) { this.style.display='none'; this.nextElementSibling.style.display='block'; }">
+            
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-8 rounded-lg border border-blue-200 text-center w-full">
+               <span class="block font-bold text-lg mb-2">[תמונת השאלה המקורית]</span>
+               <span class="text-sm">התמונה שהעלית מוצגת כאן. (אם אינך רואה אותה, זה משום שהדפדפן חוסם הצגת קבצים מקומיים בתצוגה מקדימה, אך היא קיימת בקוד).</span>
+            </div>
+        </div>
+
+        <!-- שלב 0 -->
+        <div class="step-card border-t-slate-500">
+            <h2 class="text-2xl font-bold text-slate-700 mb-4 flex items-center gap-2">
+                <span class="bg-slate-100 text-slate-600 px-3 py-1 rounded-md text-lg">שלב 0</span> 
+                הנחות יסוד, חילוץ נתונים ובדיקת יחידות
+            </h2>
+            <p class="mb-3">לפני שניגש לפתרון, נרכז את הנתונים מהשרטוט, נגדיר ביטויים, ונוודא שהיחידות תקניות (MKS):</p>
+            
+            <h4 class="section-title">מה נתון לנו?</h4>
+            <ul class="list-disc list-inside space-y-2 text-slate-700 ml-4 mb-4">
+                <li><strong>התנגדויות:</strong> נתונות באוהם (תקני). יש לנו שני נגדים של $5\Omega$, שני נגדים של $3\Omega$, ונגד אמצעי של $4\Omega$.</li>
+                <li><strong>הזרם בנגד האמצעי:</strong> $I_3 = 1A$ (תקני), כיוונו מוגדר כלפי מעלה בשרטוט.</li>
+                <li><strong>מקור המתח:</strong> למקור יש התנגדות פנימית זניחה, ולכן $r = 0\Omega$.</li>
+                <li><strong>סימטריה במעגל (חשוב!):</strong> כפי שניתן לראות מהשרטוט (ומסימטריית מעגל הגשר), הזרם הזורם בנגד $5\Omega$ השמאלי העליון שווה לזרם בנגד $5\Omega$ הימני התחתון. <strong>נקרא לזרם זה $I_1$</strong>.<br>
+                בנוסף, הזרם הזורם בנגד $3\Omega$ השמאלי התחתון שווה לזרם בנגד $3\Omega$ הימני העליון. <strong>נקרא לזרם זה $I_2$</strong>.</li>
+            </ul>
+            <div class="bg-green-50 border-r-4 border-green-500 p-4 rounded-l-lg text-green-800 text-sm mt-4">
+                <strong>מסקנה:</strong> כל הנתונים ביחידות תקניות. הגדרנו את $I_1$ ו-$I_2$ באופן ברור בהתאם לנתוני השאלה.
+            </div>
+        </div>
+
+        <!-- סעיף א -->
+        <div class="step-card border-t-blue-500">
+            <h2 class="text-2xl font-bold text-blue-700 mb-4 flex items-center gap-2">
+                <span class="bg-blue-100 text-blue-700 px-3 py-1 rounded-md text-lg">סעיף א'</span> 
+                חישוב הזרמים $I_1$ ו- $I_2$
+            </h2>
+            
+            <h4 class="section-title">מה נתון:</h4>
+            <p class="mb-2">זרם אמצעי $I_3 = 1A$. זרמים בנגדי $5\Omega$ שווים ל-$I_1$. זרמים בנגדי $3\Omega$ שווים ל-$I_2$.</p>
+
+            <h4 class="section-title">מה מחפשים:</h4>
+            <p class="mb-4">את ערכם המדויק של הזרמים $I_1$ ו- $I_2$ באמפרים.</p>
+
+            <h4 class="section-title">נוסחאות בשימוש (מדף הנוסחאות):</h4>
+            <div class="flex flex-col gap-3 mb-6 mt-2">
+                <div class="flex items-center gap-4">
+                    <span class="formula-badge">$\Sigma I = 0$</span>
+                    <span class="text-slate-600 font-medium">(חוק הצמתים של קירכהוף)</span>
+                </div>
+                <div class="flex items-center gap-4">
+                    <span class="formula-badge">$\Sigma \varepsilon = \Sigma IR$</span>
+                    <span class="text-slate-600 font-medium">(חוק העניבות/לולאות של קירכהוף)</span>
+                </div>
+            </div>
+
+            <h4 class="section-title">הסבר, הצבה ופתרון:</h4>
+            <p><strong>משוואה 1 (חוק הצמתים):</strong> נסתכל על הצומת התחתון המרכזי (אליו מחוברים נגד $3\Omega$ משמאל, $5\Omega$ מימין ו-$4\Omega$ מלמעלה).<br>
+            הזרם $I_2$ נכנס לצומת. הזרמים $I_1$ ו-$I_3$ יוצאים מהצומת.</p>
+            <div class="math-block">
+                $$ I_{in} = I_{out} $$
+                $$ I_2 = I_1 + I_3 $$
+                $$ I_2 = I_1 + 1 $$
+            </div>
+
+            <p><strong>משוואה 2 (חוק הלולאות):</strong> נבחר את הלולאה השמאלית ונצעד עם כיוון השעון, החל מנקודה M. נעבור בנגדים $5\Omega, 4\Omega, 3\Omega$:</p>
+            <div class="math-block">
+                $$ -I_1 \cdot 5 + I_3 \cdot 4 + I_2 \cdot 3 = 0 $$
+                $$ -5I_1 + 4(1) + 3I_2 = 0 $$
+            </div>
+
+            <p><strong>פתרון המערכת:</strong> נציב את משוואה 1 ($I_2 = I_1 + 1$) לתוך משוואה 2:</p>
+            <div class="math-block">
+                $$ -5I_1 + 4 + 3(I_1 + 1) = 0 $$
+                $$ -5I_1 + 4 + 3I_1 + 3 = 0 $$
+                $$ -2I_1 + 7 = 0 $$
+                $$ 2I_1 = 7 \implies I_1 = 3.5\text{ A} $$
+            </div>
+            <p>נציב חזרה כדי למצוא את $I_2$:</p>
+            <div class="math-block">
+                $$ I_2 = 3.5 + 1 = 4.5\text{ A} $$
+            </div>
+            <div class="mt-4 p-4 bg-blue-50 rounded-lg text-blue-900 font-bold border-r-4 border-blue-500">
+                תשובה סופית לסעיף א': $I_1 = 3.5A$ , $I_2 = 4.5A$.
+            </div>
+        </div>
+
+        <!-- סעיף ב -->
+        <div class="step-card border-t-indigo-500">
+            <h2 class="text-2xl font-bold text-indigo-700 mb-4 flex items-center gap-2">
+                <span class="bg-indigo-100 text-indigo-700 px-3 py-1 rounded-md text-lg">סעיף ב'</span> 
+                חישוב הכא"מ $\varepsilon$
+            </h2>
+            
+            <h4 class="section-title">מה נתון:</h4>
+            <p class="mb-2">מצאנו ש-$I_1 = 3.5A$ ו-$I_2 = 4.5A$. התנגדות פנימית של המקור $r=0$.</p>
+
+            <h4 class="section-title">מה מחפשים:</h4>
+            <p class="mb-4">את הכוח האלקטרו-מניע (כא"מ) של המקור, המסומן ב-$\varepsilon$.</p>
+
+            <h4 class="section-title">נוסחאות בשימוש (מדף הנוסחאות):</h4>
+            <div class="flex items-center gap-4 mb-6 mt-2">
+                <span class="formula-badge">$V_{ab} = \varepsilon - Ir$</span>
+                <span class="text-slate-600 font-medium">(מתח הדקים של מקור)</span>
+            </div>
+
+            <h4 class="section-title">הסבר, הצבה ופתרון:</h4>
+            <p>מכיוון שההתנגדות הפנימית היא אפס ($r=0$), מתח ההדקים של המקור שווה בדיוק לכא"מ ($V_{MN} = \varepsilon$).<br>
+            כדי למצוא את המתח בין M ל-N, נסכום את מפל המתחים לאורך כל מסלול שנבחר. נבחר במסלול העליון (דרך הנגדים $5\Omega$ ו- $3\Omega$):</p>
+            <div class="math-block">
+                $$ \varepsilon = V_{MN} = I_1 \cdot 5\Omega + I_2 \cdot 3\Omega $$
+            </div>
+            <p>נציב את הזרמים שמצאנו:</p>
+            <div class="math-block">
+                $$ \varepsilon = 3.5 \cdot 5 + 4.5 \cdot 3 $$
+                $$ \varepsilon = 17.5 + 13.5 = 31\text{ V} $$
+            </div>
+            <div class="mt-4 p-4 bg-indigo-50 rounded-lg text-indigo-900 font-bold border-r-4 border-indigo-500">
+                תשובה סופית לסעיף ב': כא"מ המקור הוא $\varepsilon = 31V$.
+            </div>
+        </div>
+
+        <!-- סעיף ג -->
+        <div class="step-card border-t-purple-500">
+            <h2 class="text-2xl font-bold text-purple-700 mb-4 flex items-center gap-2">
+                <span class="bg-purple-100 text-purple-700 px-3 py-1 rounded-md text-lg">סעיף ג'</span> 
+                חישוב ההתנגדות השקולה
+            </h2>
+            
+            <h4 class="section-title">מה נתון:</h4>
+            <p class="mb-2">המתח הכולל על המעגל $V_{MN} = 31V$. זרמי הענפים $I_1 = 3.5A, I_2 = 4.5A$.</p>
+
+            <h4 class="section-title">מה מחפשים:</h4>
+            <p class="mb-4">את ההתנגדות השקולה הכוללת של המעגל ($R_{eq}$) בין הנקודות M ו-N.</p>
+
+            <h4 class="section-title">נוסחאות בשימוש (מדף הנוסחאות):</h4>
+            <div class="flex items-center gap-4 mb-6 mt-2">
+                <span class="formula-badge">$V = RI$</span>
+                <span class="text-slate-600 font-medium">(חוק אוהם)</span>
+            </div>
+
+            <h4 class="section-title">הסבר, הצבה ופתרון:</h4>
+            <p>ראשית, נחשב את הזרם הכולל היוצא מהמקור ומתפצל בנקודה M. לפי חוק הצמתים:</p>
+            <div class="math-block">
+                $$ I_{total} = I_1 + I_2 $$
+                $$ I_{total} = 3.5 + 4.5 = 8\text{ A} $$
+            </div>
+            <p>כעת, נתייחס לכל המעגל כנגד שקול אחד $R_{eq}$, ונציב בחוק אוהם כדי למצוא אותו:</p>
+            <div class="math-block">
+                $$ R_{eq} = \frac{V_{MN}}{I_{total}} $$
+                $$ R_{eq} = \frac{31}{8} = 3.875\Omega $$
+            </div>
+            <div class="mt-4 p-4 bg-purple-50 rounded-lg text-purple-900 font-bold border-r-4 border-purple-500">
+                תשובה סופית לסעיף ג': ההתנגדות השקולה של המעגל היא $R_{MN} = 3.875\Omega$.
+            </div>
+        </div>
+
+        <!-- סעיף ד -->
+        <div class="step-card border-t-teal-500">
+            <h2 class="text-2xl font-bold text-teal-700 mb-4 flex items-center gap-2">
+                <span class="bg-teal-100 text-teal-700 px-3 py-1 rounded-md text-lg">סעיף ד'</span> 
+                האם הספק המקור יגדל או יקטן?
+            </h2>
+            
+            <h4 class="section-title">מה נתון:</h4>
+            <p class="mb-2">מחברים נגד חדש בין הנקודות K ו-L. התנגדות פנימית של המקור היא עדיין $r=0$.</p>
+
+            <h4 class="section-title">מה מחפשים:</h4>
+            <p class="mb-4">לקבוע האם הספק המקור ($P$) יגדל או יקטן, ולנמק.</p>
+
+            <h4 class="section-title">נוסחאות בשימוש (מדף הנוסחאות):</h4>
+            <div class="flex items-center gap-4 mb-6 mt-2">
+                <span class="formula-badge">$P = V_{ab}I$</span>
+                <span class="text-slate-600 font-medium">(הספק חשמלי של מקור)</span>
+            </div>
+
+            <h4 class="section-title">הסבר, הצבה ופתרון:</h4>
+            <p class="mb-2">הנקודות K ו-L מחוברות ישירות להדקים (במקביל לגשר עצמו). לכן, הוספת הנגד ביניהן מהווה <strong>חיבור במקביל</strong>.</p>
+            <p class="mb-2">מכיוון שלמקור יש התנגדות פנימית זניחה ($r=0$), <strong>מתח ההדקים שלו נשאר קבוע ושווה לכא"מ ($V_{ab} = \varepsilon = 31V$)</strong> ללא קשר למה שמחובר אליו.</p>
+            <p class="mb-2">כאשר מחברים נגד נוסף במקביל, ההתנגדות השקולה הכוללת של המעגל קטנה. הזרם הכולל שמספק המקור שווה לזרם המקורי של הגשר ($8A$) <strong>ועוד</strong> הזרם החדש שיזרום בנגד שנוסף. לכן, הזרם הכולל ($I$) <strong>גדל</strong>.</p>
+            <p>נביט בנוסחת ההספק:</p>
+            <div class="math-block">
+                $$ P = V_{ab} \cdot I_{total} $$
+            </div>
+            <p>המתח $V_{ab}$ קבוע, והזרם $I_{total}$ גדל, ולכן המכפלה שלהם (ההספק) בהכרח תגדל.</p>
+            
+            <div class="mt-4 p-4 bg-teal-50 rounded-lg text-teal-900 font-bold border-r-4 border-teal-500">
+                תשובה סופית לסעיף ד': ההספק שמספק המקור <strong>יגדל</strong>.
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
