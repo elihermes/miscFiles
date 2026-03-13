@@ -172,7 +172,7 @@
         .graph-container canvas {
             display: block;
             width: 100% !important;
-            height: 300px !important;
+            height: 320px !important;
         }
 
         /* Unified MathJax mobile handling */
@@ -263,12 +263,12 @@
             }
 
             .graph-container {
-                min-height: 420px;
+                min-height: 340px;
                 padding: 12px;
             }
 
             .graph-container canvas {
-                height: 360px !important;
+                height: 280px !important;
             }
         }
 
@@ -618,6 +618,7 @@
         }
 
         const ctx = document.getElementById('kinematicsChart').getContext('2d');
+        const isMobile = window.matchMedia('(max-width: 640px)').matches;
 
         // Chart.js Rules Strictness: scatter, showLine: true, linear scale, zero lines
         new Chart(ctx, {
@@ -647,22 +648,38 @@
                         data: [{ x: 2.25, y: 25.3125 }],
                         backgroundColor: '#16a34a',
                         borderColor: '#15803d',
-                        pointRadius: 6,
+                        pointRadius: isMobile ? 4 : 6,
                         pointStyle: 'circle'
                     }
                 ]
             },
             options: {
                 responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        top: isMobile ? 6 : 10,
+                        left: isMobile ? 4 : 8,
+                        right: isMobile ? 4 : 8,
+                        bottom: isMobile ? 2 : 6
+                    }
+                },
                 plugins: {
                     title: {
                         display: true,
                         text: 'גרף מקום-זמן: y(t)',
-                        font: { size: 16, family: 'Arial' }
+                        font: { size: isMobile ? 13 : 16, family: 'Arial' },
+                        padding: { bottom: isMobile ? 6 : 10 }
                     },
                     legend: {
-                        position: 'top',
-                        labels: { font: { family: 'Arial' } }
+                        position: isMobile ? 'bottom' : 'top',
+                        labels: {
+                            font: { family: 'Arial', size: isMobile ? 11 : 13 },
+                            boxWidth: isMobile ? 14 : 24,
+                            boxHeight: isMobile ? 8 : 12,
+                            padding: isMobile ? 8 : 12,
+                            usePointStyle: false
+                        }
                     }
                 },
                 scales: {
@@ -672,10 +689,15 @@
                         title: {
                             display: true,
                             text: 'זמן (שניות)',
-                            font: { size: 14, weight: 'bold' }
+                            font: { size: isMobile ? 12 : 14, weight: 'bold' }
                         },
                         min: 0,
                         max: 3,
+                        ticks: {
+                            font: { size: isMobile ? 11 : 12 },
+                            maxRotation: 0,
+                            autoSkip: true
+                        },
                         grid: {
                             color: (context) => context.tick.value === 0 ? '#000000' : '#e5e7eb',
                             lineWidth: (context) => context.tick.value === 0 ? 2 : 1
@@ -683,13 +705,16 @@
                     },
                     y: {
                         title: {
-                            display: true,
+                            display: !isMobile,
                             text: 'מקום y (מטרים)',
                             font: { size: 14, weight: 'bold' }
                         },
                         reverse: true,
                         min: 0,
                         max: 45,
+                        ticks: {
+                            font: { size: isMobile ? 11 : 12 }
+                        },
                         grid: {
                             color: (context) => context.tick.value === 0 ? '#000000' : '#e5e7eb',
                             lineWidth: (context) => context.tick.value === 0 ? 2 : 1
