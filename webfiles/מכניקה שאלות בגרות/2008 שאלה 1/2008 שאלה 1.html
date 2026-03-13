@@ -110,6 +110,66 @@
             max-width: 800px;
             margin: 2rem auto;
         }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid #93c5fd;
+            border-radius: 9999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: #dbeafe;
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            z-index: 100;
+            background: rgba(15, 23, 42, 0.72);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: #fff;
+            border-radius: 0.8rem;
+            width: min(1000px, 95vw);
+            max-height: 92vh;
+            overflow: auto;
+            padding: 1rem;
+            box-shadow: 0 20px 45px rgba(2, 6, 23, 0.35);
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+        }
     </style>
 </head>
 <body class="p-4 md:p-8 max-w-5xl mx-auto">
@@ -120,6 +180,17 @@
         <h2 class="text-xl md:text-2xl text-slate-600">מכניקה 2008, שאלה 1 - קינמטיקה של תנועה בקו ישר</h2>
         <p class="mt-4 text-slate-500">מוגש כפתרון מודרך, מוסבר צעד-אחר-צעד, מותאם לדף הנוסחאות המעודכן.</p>
     </header>
+
+    <section class="section-container border-t-4 border-slate-300">
+        <h3 class="section-header text-slate-700">נוסח השאלה</h3>
+        <img
+            src="question-image.png"
+            alt="נוסח השאלה המקורית"
+            class="w-full rounded-lg border border-slate-200 shadow-sm"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div class="hidden text-center text-sm text-slate-500 mt-3">לא נמצאה תמונת שאלה (`question-image.png`).</div>
+    </section>
 
     <!-- Visual setup (SVG) -->
     <section class="section-container border-t-4 border-blue-500">
@@ -522,9 +593,60 @@
         </div>
     </section>
 
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="flex items-center justify-between mb-3">
+                <h3 id="questionModalTitle" class="text-lg font-bold text-slate-800">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+            <img
+                src="question-image.png"
+                alt="נוסח השאלה המקורית"
+                class="w-full rounded-lg border border-slate-200"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            />
+            <div class="hidden text-center text-sm text-slate-500 mt-3">לא נמצאה תמונת שאלה (`question-image.png`).</div>
+        </div>
+    </div>
+
     <!-- Chart.js Script for the dynamic graph -->
     <script>
         document.addEventListener('DOMContentLoaded', function() {
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            const openQuestionModal = () => {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            };
+
+            const closeQuestionModal = () => {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            };
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+            questionModal.addEventListener('click', (event) => {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+            document.addEventListener('keydown', (event) => {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+
             const ctx = document.getElementById('velocityChart').getContext('2d');
             
             // Custom plugin to draw horizontal line at y=0 if not exactly at border
