@@ -1,0 +1,530 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון פיזיקה - מכניקה 1997</title>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjax/2.7.7/MathJax.js?config=TeX-MML-AM_CHTML"></script>
+    <style>
+        :root {
+            --primary-blue: #1e40af;
+            --light-blue: #eff6ff;
+            --teacher-green: #ecfdf5;
+            --teacher-border: #10b981;
+            --text-main: #1f2937;
+        }
+
+        body {
+            font-family: 'Segoe UI', system-ui, -apple-system, sans-serif;
+            background-color: #f8fafc;
+            color: var(--text-main);
+            margin: 0;
+            padding: 10px;
+            display: flex;
+            justify-content: center;
+        }
+
+        .container {
+            background-color: white;
+            max-width: 800px;
+            width: 100%;
+            padding: 20px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            color: var(--primary-blue);
+            text-align: center;
+            border-bottom: 4px solid var(--primary-blue);
+            padding-bottom: 10px;
+            font-size: 1.5rem;
+        }
+
+        .section-box {
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 15px;
+            margin-bottom: 25px;
+            background-color: #fff;
+        }
+
+        .section-title {
+            font-weight: bold;
+            color: var(--primary-blue);
+            font-size: 1.2rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .formula-badge {
+            background-color: var(--light-blue);
+            color: var(--primary-blue);
+            border: 1px solid #bfdbfe;
+            padding: 8px 16px;
+            border-radius: 9999px;
+            display: inline-block;
+            margin: 10px 0;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        .teacher-highlight {
+            background-color: var(--teacher-green);
+            border-right: 4px solid var(--teacher-border);
+            padding: 12px;
+            border-radius: 4px;
+            margin: 15px 0;
+            font-size: 0.95rem;
+        }
+
+        .data-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .data-list li {
+            margin-bottom: 5px;
+            padding-right: 15px;
+            position: relative;
+        }
+
+        .data-list li::before {
+            content: "•";
+            position: absolute;
+            right: 0;
+            color: var(--primary-blue);
+        }
+
+        .math-scroll {
+            overflow-x: auto;
+            white-space: nowrap;
+            padding: 10px 0;
+        }
+
+        .diagram-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 20px;
+            margin: 20px 0;
+        }
+        
+        .svg-wrapper {
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+            padding: 10px;
+            text-align: center;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.02);
+        }
+
+        .svg-title {
+            font-size: 0.9rem;
+            color: #64748b;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+
+        @media (min-width: 600px) {
+            .diagram-container {
+                flex-direction: row;
+                justify-content: center;
+                gap: 40px;
+            }
+        }
+
+        .chart-box {
+            position: relative;
+            height: 300px;
+            width: 100%;
+            margin: 20px 0;
+        }
+
+        canvas {
+            max-width: 100%;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid #93c5fd;
+            border-radius: 9999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+            cursor: pointer;
+        }
+
+        .floating-question-btn:hover {
+            background: #dbeafe;
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>פתרון שאלון מכניקה - 1997 - שאלה 1</h1>
+
+    <!-- תמונת השאלה המקורית -->
+    <div style="margin-bottom: 25px; display: flex; justify-content: center; background: #fff; padding: 16px; border-radius: 16px; border: 1px solid #e2e8f0;">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" style="width: 100%; max-width: 100%; height: auto; border-radius: 8px;"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+
+        <div style="display: none; background: #eff6ff; color: #1e40af; padding: 20px; border-radius: 10px; border: 1px solid #bfdbfe; text-align: center; width: 100%;">
+            <span style="display: block; font-weight: bold; margin-bottom: 8px;">[תמונת השאלה המקורית]</span>
+            <span style="font-size: 0.9rem;">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה של קובץ ה-HTML.</span>
+        </div>
+    </div>
+
+    <!-- שלב מקדים - פיתוח כוחות -->
+    <div class="section-box">
+        <div class="section-title">שלב מקדים: ניתוח כוחות ותאוצה</div>
+        
+        <p><strong>מה נתון:</strong></p>
+        <ul class="data-list">
+            <li>מסת הגוף: \( m = 0.4 \text{ kg} \)</li>
+            <li>זווית המדרון: \( \alpha = 30^\circ \)</li>
+            <li>כוח חיצוני: \( F = 3.6 \text{ N} \) (במעלה המדרון)</li>
+            <li>מהירות התחלתית: \( v_0 = 12 \text{ m/s} \) (במורד המדרון)</li>
+            <li>ציר \( +x \): נבחר במורד המדרון (כיוון התנועה ההתחלתי).</li>
+        </ul>
+
+        <div class="diagram-container">
+            <!-- סכימת המערכת -->
+            <div class="svg-wrapper">
+                <div class="svg-title">תרשים המערכת</div>
+                <svg width="250" height="180" viewBox="0 0 250 180">
+                    <defs>
+                        <marker id="arrow-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                            <path d="M0,0 L0,8 L8,4 z" fill="#10b981" />
+                        </marker>
+                        <marker id="arrow-red" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                            <path d="M0,0 L0,8 L8,4 z" fill="#ef4444" />
+                        </marker>
+                        <marker id="arrow-black" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                            <path d="M0,0 L0,8 L8,4 z" fill="black" />
+                        </marker>
+                    </defs>
+
+                    <!-- המדרון -->
+                    <path d="M 30 150 L 220 150 L 220 40 Z" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+                    <path d="M 65 150 A 35 35 0 0 0 60 130" fill="none" stroke="#64748b"/>
+                    <text x="75" y="145" font-size="12" fill="#475569">30°</text>
+
+                    <!-- קבוצה מסובבת לציור הגוף על המדרון -->
+                    <g transform="rotate(-30 125 95)">
+                        <!-- גוף -->
+                        <rect x="105" y="75" width="40" height="20" fill="#3b82f6" rx="2" />
+                        
+                        <!-- כוח F -->
+                        <line x1="145" y1="85" x2="195" y2="85" stroke="#10b981" stroke-width="2" marker-end="url(#arrow-green)"/>
+                        <text x="175" y="75" font-size="14" fill="#10b981" font-weight="bold">F</text>
+                        
+                        <!-- מהירות v0 -->
+                        <line x1="105" y1="85" x2="55" y2="85" stroke="black" stroke-width="2" marker-end="url(#arrow-black)"/>
+                        <text x="65" y="75" font-size="14" fill="black" font-weight="bold">v₀</text>
+
+                        <!-- ציר +x -->
+                        <line x1="125" y1="110" x2="60" y2="110" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="4" marker-end="url(#arrow-red)"/>
+                        <text x="60" y="125" font-size="12" fill="#ef4444" font-weight="bold">+x</text>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- FBD -->
+            <div class="svg-wrapper">
+                <div class="svg-title">תרשים כוחות (FBD)</div>
+                <svg width="200" height="180" viewBox="0 0 200 180">
+                    <defs>
+                        <marker id="fbd-arrow-green" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                            <path d="M0,0 L0,8 L8,4 z" fill="#10b981" />
+                        </marker>
+                        <marker id="fbd-arrow-black" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                            <path d="M0,0 L0,8 L8,4 z" fill="black" />
+                        </marker>
+                    </defs>
+
+                    <!-- צירי עזר (מערכת צירים נטויה) -->
+                    <line x1="31" y1="140" x2="169" y2="60" stroke="#cbd5e1" stroke-dasharray="4"/> <!-- ציר x -->
+                    <text x="25" y="155" fill="#ef4444" font-size="12" font-weight="bold">+x</text>
+                    <line x1="60" y1="31" x2="140" y2="169" stroke="#cbd5e1" stroke-dasharray="4"/> <!-- ציר y -->
+                    
+                    <!-- נקודת המרכז (הגוף) -->
+                    <circle cx="100" cy="100" r="4" fill="black"/>
+
+                    <!-- כוח כובד mg -->
+                    <line x1="100" y1="100" x2="100" y2="170" stroke="black" stroke-width="2" marker-end="url(#fbd-arrow-black)"/>
+                    <text x="105" y="165" font-size="14" font-weight="bold">mg</text>
+
+                    <!-- נורמל N (בניצב למדרון) -->
+                    <line x1="100" y1="100" x2="65" y2="40" stroke="black" stroke-width="2" marker-end="url(#fbd-arrow-black)"/>
+                    <text x="50" y="45" font-size="14" font-weight="bold">N</text>
+
+                    <!-- כוח חיצוני F (במעלה המדרון) -->
+                    <line x1="100" y1="100" x2="152" y2="70" stroke="#10b981" stroke-width="2" marker-end="url(#fbd-arrow-green)"/>
+                    <text x="155" y="65" font-size="14" fill="#10b981" font-weight="bold">F</text>
+                </svg>
+            </div>
+        </div>
+
+        <p><strong>מה מחפשים:</strong> תאוצת הגוף \( a \).</p>
+        
+        <p><strong>נוסחאות מהדף:</strong></p>
+        <div class="formula-badge">\( \Sigma F = ma \)</div>
+
+        <p><strong>הצבה ופתרון:</strong></p>
+        <div class="math-scroll">
+            נפרק את כוח הכובד לאורך ציר התנועה (ציר x): \( w_x = mg \sin\alpha \).<br>
+            לפי החוק השני של ניוטון עבור הגוף בציר x:
+            \[ \Sigma F_x = mg \sin\alpha - F = ma \]
+            \[ 0.4 \cdot 10 \cdot \sin(30^\circ) - 3.6 = 0.4 \cdot a \]
+            \[ 0.4 \cdot 10 \cdot 0.5 - 3.6 = 0.4 \cdot a \]
+            \[ 2 - 3.6 = 0.4 \cdot a \]
+            \[ -1.6 = 0.4 \cdot a \implies a = -4 \text{ m/s}^2 \]
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong> שימו לב שבחרנו את הכיוון החיובי במורד המדרון (+x מראה שמאלה ולמטה בשרטוט). מכיוון שהתאוצה יצאה שלילית (\( a = -4 \text{ m/s}^2 \)) והמהירות חיובית (\( v_0 = 12 \text{ m/s} \)), הן בכוונים מנוגדים. המשמעות היא ש<strong>גודל המהירות קטן</strong> (הגוף מאט את קצב התקדמותו).
+        </div>
+    </div>
+
+    <!-- סעיף א -->
+    <div class="section-box">
+        <div class="section-title">סעיף א': מהירות הגוף ב-t=5s</div>
+        <p><strong>מה נתון:</strong> \( v_0 = 12 \text{ m/s} \), \( a = -4 \text{ m/s}^2 \), \( t = 5 \text{ s} \).</p>
+        <p><strong>מה מחפשים:</strong> מהירות סופית \( v \).</p>
+        <p><strong>נוסחאות מהדף:</strong></p>
+        <div class="formula-badge">\( v = v_0 + at \)</div>
+        <p><strong>הצבה ופתרון:</strong></p>
+        <div class="math-scroll">
+            \[ v = 12 + (-4) \cdot 5 \]
+            \[ v = 12 - 20 = -8 \text{ m/s} \]
+        </div>
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong> המהירות יצאה שלילית. זה אומר שברגע זה הגוף כבר שינה את כיוון תנועתו והוא נע <strong>במעלה המדרון</strong> במהירות שגודלה \( 8 \text{ m/s} \).
+        </div>
+    </div>
+
+    <!-- סעיף ב -->
+    <div class="section-box">
+        <div class="section-title">סעיף ב': גרף מהירות-זמן</div>
+        <p><strong>מה נתון:</strong> מהירות התחלתית \( 12 \text{ m/s} \), מהירות ב-\( 5 \text{ s} \) היא \( -8 \text{ m/s} \).</p>
+        <p><strong>מה מחפשים:</strong> תיאור גרפי של המהירות.</p>
+        
+        <div class="chart-box">
+            <canvas id="velocityChart"></canvas>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ למבחן:</strong> כדי למצוא מתי הגוף נעצר רגעית, נציב \( v=0 \) בנוסחה: \( 0 = 12 - 4t \implies t = 3 \text{ s} \). זוהי נקודת החיתוך של הגרף עם ציר הזמן.
+        </div>
+    </div>
+
+    <!-- סעיף ג -->
+    <div class="section-box">
+        <div class="section-title">סעיף ג': מיקום הגוף ב-t=5s</div>
+        <p><strong>מה נתון:</strong> \( x_0 = 0 \), \( v_0 = 12 \text{ m/s} \), \( t = 5 \text{ s} \), \( a = -4 \text{ m/s}^2 \).</p>
+        <p><strong>מה מחפשים:</strong> מיקום \( x \).</p>
+        <p><strong>נוסחאות מהדף:</strong></p>
+        <div class="formula-badge">\( x = x_0 + v_0t + \frac{1}{2}at^2 \)</div>
+        <p><strong>הצבה ופתרון:</strong></p>
+        <div class="math-scroll">
+            \[ x = 0 + 12 \cdot 5 + \frac{1}{2} \cdot (-4) \cdot 5^2 \]
+            \[ x = 60 - 2 \cdot 25 \]
+            \[ x = 60 - 50 = 10 \text{ m} \]
+        </div>
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong> הגוף נמצא 10 מטרים מנקודת המוצא במורד המדרון. זכרו שהעתק הוא המרחק מנקודת המוצא – הגוף התקדם רחוק יותר עד t=3s ואז חזר חלק מהדרך אחורה.
+        </div>
+    </div>
+
+    <!-- סעיף ד -->
+    <div class="section-box">
+        <div class="section-title">סעיף ד': תנועה לאחר הפסקת הכוח F</div>
+        <p><strong>מה נתון:</strong> ברגע \( t=5 \text{ s} \), הכוח החיצוני \( F \) מתבטל.</p>
+        <p><strong>מה מחפשים:</strong> תיאור המשך התנועה.</p>
+        
+        <div class="math-scroll">
+            הכוח היחיד שפועל כעת בציר התנועה הוא רכיב הכובד:
+            \[ \Sigma F = mg \sin\alpha = 0.4 \cdot 10 \cdot 0.5 = 2 \text{ N} \]
+            התאוצה החדשה של הגוף (\( a_{new} \)):
+            \[ a_{new} = \frac{\Sigma F}{m} = \frac{2}{0.4} = 5 \text{ m/s}^2 \]
+        </div>
+        
+        <div class="teacher-highlight">
+            <strong>תיאור התנועה:</strong> 
+            בזמן הפסקת הכוח, מהירות הגוף היא שלילית (הוא נע למעלה) והתאוצה החדשה היא חיובית (פועלת למטה).
+            <ol style="margin-top: 10px;">
+                <li><strong>גודל המהירות יקטן</strong> עד שהגוף ייעצר שוב רגעית בנקודה הגבוהה ביותר במסלולו.</li>
+                <li>לאחר העצירה, הגוף ישנה כיוון, יתחיל להאיץ במורד המדרון ו<strong>גודל מהירותו יגדל</strong> בתאוצה קבועה של \( 5 \text{ m/s}^2 \).</li>
+            </ol>
+        </div>
+    </div>
+
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span style="font-weight: 600; font-size: 0.9rem;">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 12px;">
+            <h3 id="questionModalTitle" style="font-size: 1.1rem; font-weight: 700; color: #1e293b; margin: 0;">השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" style="padding: 6px 12px; border-radius: 8px; border: 1px solid #cbd5e1; background: #f1f5f9; color: #334155; cursor: pointer;">סגור (Esc)</button>
+        </div>
+
+        <div style="display: flex; justify-content: center; background: #f8fafc; padding: 12px; border-radius: 12px; border: 1px solid #e2e8f0;">
+            <img src="question-image.png" alt="תמונת השאלה המקורית" style="max-width: 100%; height: auto; border-radius: 10px;"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+
+            <div style="display: none; background: #eff6ff; color: #1e40af; padding: 20px; border-radius: 10px; border: 1px solid #bfdbfe; text-align: center; width: 100%;">
+                <span style="display: block; font-weight: bold; font-size: 1.1rem; margin-bottom: 8px;">[תמונת השאלה המקורית]</span>
+                <span style="font-size: 0.9rem;">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה של קובץ ה-HTML.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+
+        const ctx = document.getElementById('velocityChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [{
+                    label: 'מהירות מול זמן',
+                    data: [{x: 0, y: 12}, {x: 3, y: 0}, {x: 5, y: -8}],
+                    showLine: true,
+                    borderColor: '#1e40af',
+                    backgroundColor: '#1e40af',
+                    borderWidth: 3,
+                    pointRadius: 6,
+                    pointHoverRadius: 8
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                scales: {
+                    x: {
+                        title: { display: true, text: 'זמן t (שניות)', font: {size: 14, weight: 'bold'} },
+                        min: 0,
+                        max: 6,
+                        grid: { color: '#f1f5f9' }
+                    },
+                    y: {
+                        title: { display: true, text: 'מהירות v (מ/ש)', font: {size: 14, weight: 'bold'} },
+                        grid: {
+                            color: function(context) {
+                                if (context.tick.value === 0) return '#475569';
+                                return '#f1f5f9';
+                            },
+                            lineWidth: function(context) {
+                                if (context.tick.value === 0) return 2;
+                                return 1;
+                            }
+                        }
+                    }
+                },
+                plugins: {
+                    legend: { display: false },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `(${context.parsed.x}s , ${context.parsed.y}m/s)`;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
