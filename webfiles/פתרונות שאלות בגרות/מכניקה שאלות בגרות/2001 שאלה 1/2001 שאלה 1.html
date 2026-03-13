@@ -1,0 +1,525 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון פדגוגי מוסבר - פיזיקה 5 יח"ל</title>
+    
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                renderActions: { addMenu: [] }
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary-blue: #1e40af;
+            --light-blue: #eff6ff;
+            --border-blue: #bfdbfe;
+            --teacher-green-bg: #f0fdf4;
+            --teacher-green-border: #22c55e;
+            --text-main: #1f2937;
+            --bg-page: #f9fafb;
+            --box-bg: #ffffff;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.7;
+            margin: 0;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: var(--box-bg);
+            padding: 25px;
+            border-radius: 12px;
+            box-shadow: 0 10px 15px -3px rgba(0,0,0,0.1);
+        }
+
+        h1 {
+            color: var(--primary-blue);
+            text-align: center;
+            border-bottom: 3px solid var(--border-blue);
+            padding-bottom: 15px;
+            margin-bottom: 30px;
+        }
+
+        h2 {
+            color: #b91c1c;
+            border-bottom: 2px solid #fca5a5;
+            padding-bottom: 8px;
+            margin-top: 40px;
+        }
+
+        /* סגנונות למבנה הפדגוגי */
+        .step-block {
+            margin-bottom: 15px;
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: var(--primary-blue);
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        /* חוק ברזל: עיצוב נוסחאות מדף הנוסחאות */
+        .formula-badge {
+            background-color: var(--light-blue);
+            color: var(--primary-blue);
+            border: 2px solid var(--border-blue);
+            border-radius: 9999px;
+            padding: 6px 20px;
+            display: inline-block;
+            font-weight: bold;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 10px 0;
+            direction: ltr;
+        }
+
+        /* חוק ברזל: הערת מורה */
+        .teacher-highlight {
+            background-color: var(--teacher-green-bg);
+            border-right: 5px solid var(--teacher-green-border);
+            padding: 15px 20px;
+            margin: 20px 0;
+            border-radius: 4px;
+            position: relative;
+        }
+        
+        .teacher-highlight::before {
+            content: "💡 הערת מורה:";
+            display: block;
+            font-weight: bold;
+            color: #166534;
+            margin-bottom: 8px;
+        }
+
+        /* רספונסיביות למשוואות ארוכות */
+        .math-scroll {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 10px 0;
+            margin: 10px 0;
+        }
+
+        .math-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+        .math-scroll::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        /* עיצוב גרפיקה ו-SVG */
+        .visual-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 8px;
+        }
+
+        .svg-wrapper {
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .graph-container {
+            width: 100%;
+            max-width: 700px;
+            margin: 30px auto;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #e2e8f0;
+        }
+
+        @media (max-width: 600px) {
+            .container {
+                padding: 15px;
+            }
+            .formula-badge {
+                font-size: 0.9em;
+                padding: 5px 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>פתרון מלא ומודרך: בגרות במכניקה 2001, שאלה 1</h1>
+
+    <!-- שלב 0 - הקדמה ויזואלית ופיתוח תאוצה -->
+    <div class="visual-container">
+        <div class="svg-wrapper">
+            <!-- SVG: תרשים מערכת ו-FBD -->
+            <svg width="450" height="350" viewBox="0 0 450 350" xmlns="http://www.w3.org/2000/svg">
+                <!-- ציר מקום -->
+                <line x1="380" y1="30" x2="380" y2="320" stroke="#475569" stroke-width="2" />
+                <polygon points="375,320 385,320 380,330" fill="#475569" />
+                <text x="390" y="40" font-family="Arial" font-size="14" fill="#475569">y=0 (ראשית)</text>
+                <text x="390" y="325" font-family="Arial" font-size="14" fill="#475569">+y (מטרים)</text>
+                
+                <!-- בניין -->
+                <rect x="50" y="30" width="120" height="300" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+                <line x1="10" y1="330" x2="200" y2="330" stroke="#1f2937" stroke-width="3"/>
+                <text x="110" y="180" font-family="Arial" font-size="18" fill="#64748b" text-anchor="middle" transform="rotate(-90 110,180)">בניין</text>
+                
+                <!-- תרשים כוחות FBD -->
+                <rect x="220" y="30" width="130" height="150" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" rx="8"/>
+                <text x="285" y="50" font-family="Arial" font-size="14" font-weight="bold" fill="#1e40af" text-anchor="middle">תרשים כוחות (FBD)</text>
+                
+                <circle cx="285" cy="90" r="12" fill="#3b82f6"/>
+                <!-- כוח הכובד -->
+                <line x1="285" y1="102" x2="285" y2="150" stroke="#dc2626" stroke-width="3"/>
+                <polygon points="280,145 290,145 285,155" fill="#dc2626"/>
+                <text x="300" y="135" font-family="Arial" font-size="16" font-weight="bold" fill="#dc2626">W = mg</text>
+                <!-- וקטור תאוצה -->
+                <line x1="230" y1="90" x2="230" y2="130" stroke="#059669" stroke-width="2" stroke-dasharray="4"/>
+                <polygon points="225,125 235,125 230,135" fill="#059669"/>
+                <text x="205" y="115" font-family="Arial" font-size="16" font-weight="bold" fill="#059669">a</text>
+            </svg>
+        </div>
+    </div>
+
+    <div class="teacher-highlight">
+        <div class="math-scroll">
+            <p><strong>פיתוח התאוצה מתוך תרשים הכוחות (FBD):</strong><br>
+            על פי החוק השני של ניוטון בדף הנוסחאות $\Sigma F = ma$.<br>
+            הכוח היחיד שפועל על הגופים (באוויר, בהזנחת התנגדות האוויר) הוא כוח הכובד $W=mg$.<br>
+            נבחר ציר $y$ חיובי <strong>כלפי מטה</strong>. לכן משוואת הכוחות היא:<br>
+            $$ \Sigma F_y = m \cdot a_y \implies mg = m \cdot a_y \implies a_y = g $$
+            תאוצת הכובד היא תמיד $g = 10 \text{ m/s}^2$ (גודל חיובי). מכיוון שכיוון התאוצה הוא כלפי מטה (לכיוון כדור הארץ) וציר ה-$y$ שבחרנו הוא גם כלפי מטה, התאוצה של שני הכדורים תהיה <strong>$a = +10 \text{ m/s}^2$</strong>. גודל מהירותם גדל ככל שהם נופלים.
+            </p>
+        </div>
+    </div>
+
+    <!-- סעיף א(1) -->
+    <section>
+        <h2>סעיף א'(1): מיקום כדור א' כפונקציה של הזמן</h2>
+        
+        <div class="step-block">
+            <span class="step-title">מה נתון:</span>
+            <span>
+                כדור א' משוחרר ממנוחה בזמן $t=0$ מראש הבניין. <br>
+                <strong>שלב המרת יחידות (MKS):</strong> אין צורך בהמרה כי הנתונים באים ביחידות תקניות. <br>
+                ראשית הצירים בראש הבניין: $x_0 = 0 \text{ m}$. <br>
+                משוחרר ממנוחה: $v_0 = 0 \text{ m/s}$. <br>
+                תאוצה: $a = 10 \text{ m/s}^2$.
+            </span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">מה מחפשים:</span>
+            <span>פונקציית מקום-זמן של כדור א', כלומר ביטוי המקשר בין המיקום $y_A$ לזמן $t$.</span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">נוסחאות מהדף:</span><br>
+            <div class="formula-badge">
+                x = x₀ + v₀t + ½at²
+            </div>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">הצבה ופתרון:</span>
+            <div class="math-scroll">
+                נציב את הנתונים בנוסחה (נשתמש באות $y$ במקום $x$ כדי לציין ציר אנכי):
+                $$ y_A(t) = 0 + 0 \cdot t + \frac{1}{2} \cdot 10 \cdot t^2 $$
+                $$ y_A(t) = 5t^2 \quad \text{[m]} $$
+            </div>
+        </div>
+    </section>
+
+    <!-- סעיף א(2) -->
+    <section>
+        <h2>סעיף א'(2): מיקום כדור ב' כפונקציה של הזמן</h2>
+        
+        <div class="step-block">
+            <span class="step-title">מה נתון (חשיפה מדורגת):</span>
+            <span>
+                כעת נתון שכדור ב' נזרק כלפי מטה מראש הבניין, שנייה אחת לאחר כדור א', במהירות התחלתית של $14 \text{ m/s}$.<br>
+                זמן התחלתי ביחס לשעון המערכת: $t_0 = 1 \text{ s}$. <br>
+                מהירות התחלתית: $v_0 = 14 \text{ m/s}$ (חיובית, כי כיוונה כלפי מטה ככיוון הציר). <br>
+                מיקום התחלתי: $x_0 = 0 \text{ m}$. <br>
+                תאוצה זהה: $a = 10 \text{ m/s}^2$. (היחידות כולן ב-MKS).
+            </span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">מה מחפשים:</span>
+            <span>פונקציית מקום-זמן של כדור ב', $y_B(t)$, עבור זמנים $t \ge 1 \text{ s}$.</span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">נוסחאות מהדף:</span><br>
+            <div class="formula-badge">
+                x = x₀ + v₀t + ½at²
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <p>
+                בדף הנוסחאות, המשתנה $t$ מייצג למעשה את פרק הזמן שעבר מתחילת התנועה ($\Delta t$). מכיוון שכדור ב' מתחיל לנוע רק בשנייה $t=1$, זמן התנועה שלו קצר בשנייה אחת מזמן המערכת. לכן, אנו נציב בנוסחה במקום $t$ את הביטוי $(t-1)$.
+            </p>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">הצבה ופתרון:</span>
+            <div class="math-scroll">
+                $$ y_B(t) = 0 + 14 \cdot (t - 1) + \frac{1}{2} \cdot 10 \cdot (t - 1)^2 $$
+                נפתח סוגריים:
+                $$ y_B(t) = 14t - 14 + 5(t^2 - 2t + 1) $$
+                $$ y_B(t) = 14t - 14 + 5t^2 - 10t + 5 $$
+                ונקבל את הפונקציה הסופית (תקפה עבור $t \ge 1$):
+                $$ y_B(t) = 5t^2 + 4t - 9 \quad \text{[m]} $$
+            </div>
+        </div>
+    </section>
+
+    <!-- סעיף א(3) -->
+    <section>
+        <h2>סעיף א'(3): רגע הפגישה של הכדורים</h2>
+        
+        <div class="step-block">
+            <span class="step-title">מה נתון:</span>
+            <span>הפונקציות שמצאנו: $y_A(t) = 5t^2$ ו- $y_B(t) = 5t^2 + 4t - 9$.</span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">מה מחפשים:</span>
+            <span>את רגע הזמן $t$ שבו שני הכדורים נמצאים באותו מיקום (גובה).</span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">נוסחאות מהדף:</span><br>
+            <span>אין נוסחה ספציפית למפגש. העיקרון הפיזיקלי קובע שמפגש מתרחש כאשר:</span><br>
+            <div class="formula-badge" style="background-color: #fef08a; color: #854d0e; border-color: #fde047;">
+                y_A(t) = y_B(t)
+            </div>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">הצבה ופתרון:</span>
+            <div class="math-scroll">
+                נשווה את שתי הפונקציות:
+                $$ 5t^2 = 5t^2 + 4t - 9 $$
+                נחסר $5t^2$ משני אגפי המשוואה:
+                $$ 0 = 4t - 9 $$
+                $$ 4t = 9 \implies t = \frac{9}{4} = 2.25 \text{ s} $$
+                הכדורים ייפגשו כעבור 2.25 שניות מרגע שחרור כדור א'.
+            </div>
+        </div>
+    </section>
+
+    <!-- סעיף ב(1) -->
+    <section>
+        <h2>סעיף ב'(1): מהירות כדור א' ברגע זריקת כדור ב'</h2>
+        
+        <div class="step-block">
+            <span class="step-title">מה נתון:</span>
+            <span>עבור כדור א': $v_0 = 0 \text{ m/s}$, $a = 10 \text{ m/s}^2$. הזמן המבוקש הוא הרגע שבו נזרק כדור ב', כלומר $t = 1 \text{ s}$.</span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">מה מחפשים:</span>
+            <span>את מהירות כדור א' ברגע זה, $v_A(1)$.</span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">נוסחאות מהדף:</span><br>
+            <div class="formula-badge">
+                v = v₀ + at
+            </div>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">הצבה ופתרון:</span>
+            <div class="math-scroll">
+                $$ v_A(t=1) = 0 + 10 \cdot 1 = 10 \text{ m/s} $$
+                כלומר, לאחר שנייה אחת, גודל מהירותו של כדור א' הוא 10 מטר לשנייה וכיוונו מטה.
+            </div>
+        </div>
+    </section>
+
+    <!-- סעיף ב(2) -->
+    <section>
+        <h2>סעיף ב'(2): מה היה קורה אם כדור ב' היה נזרק במהירות של 10 מ"ש?</h2>
+        
+        <div class="step-block">
+            <span class="step-title">מה נתון (חשיפה מדורגת):</span>
+            <span>מהירות הזריקה של כדור ב' שונתה ל- $v_{0B} = 10 \text{ m/s}$ (במקום 14). הוא עדיין נזרק ברגע $t=1 \text{ s}$.</span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">מה מחפשים:</span>
+            <span>קביעה האם הכדורים ייפגשו במצב זה, והסבר פיזיקלי.</span>
+        </div>
+
+        <div class="teacher-highlight">
+            <p>
+                <strong>ניתוח פיזיקלי קונספטואלי:</strong> <br>
+                בסעיף הקודם חישבנו שברגע $t=1 \text{ s}$, לכדור א' יש כבר מהירות של $10 \text{ m/s}$ כלפי מטה. <br>
+                אם ברגע זה בדיוק, כדור ב' מתחיל את תנועתו גם הוא במהירות של $10 \text{ m/s}$ כלפי מטה, הרי שבאותו רגע בדיוק <strong>שני הכדורים נעים באותה המהירות</strong>. <br>
+                בנוסף, מרגע זה ואילך, לשני הכדורים יש אותה תאוצה בדיוק ($a = 10 \text{ m/s}^2$). מכיוון שיש להם אותה מהירות התחלתית (ביחס לרגע $t=1$) ואותה תאוצה, קצב השינוי של המיקום שלהם זהה לחלוטין. מכיוון שכדור א' כבר נמצא נמוך יותר מכדור ב' ברגע זה, הפער המרחבי ביניהם יישמר קבוע לאורך כל הנפילה, והם <strong>לא ייפגשו לעולם</strong>.
+            </p>
+        </div>
+        
+        <div class="step-block">
+            <span class="step-title">הוכחה מתמטית (כהשלמה):</span>
+            <div class="math-scroll">
+                נבנה פונקציית מיקום חדשה לכדור ב':
+                $$ y_{B,new}(t) = 0 + 10(t-1) + \frac{1}{2} \cdot 10 \cdot (t-1)^2 = 10t - 10 + 5(t^2 - 2t + 1) = 5t^2 - 5 $$
+                ננסה למצוא נקודת מפגש:
+                $$ y_A(t) = y_{B,new}(t) \implies 5t^2 = 5t^2 - 5 \implies 0 = -5 $$
+                קיבלנו פסוק שקר! אין פתרון למשוואה, מה שמוכיח מתמטית שהם לעולם לא ייפגשו.
+            </div>
+        </div>
+    </section>
+
+    <!-- תצוגה גרפית מורחבת (Chart.js) -->
+    <section>
+        <h2>המחשה גרפית של המפגש (המצב המקורי מסעיף א')</h2>
+        <p>כדי להמחיש את הפתרון, נשרטט את גרף המקום-זמן של שני הכדורים. נקודת החיתוך מייצגת את רגע המפגש.</p>
+        <div class="graph-container">
+            <canvas id="kinematicsChart"></canvas>
+        </div>
+    </section>
+
+</div>
+
+<script>
+    // יצירת מערכי נתונים לגרף לפי הפונקציות שמצאנו
+    const dataA = [];
+    const dataB = [];
+    
+    // חישוב נתונים בטווח זמנים 0 עד 3 שניות
+    for(let t = 0; t <= 3; t += 0.1) {
+        // כדור א': y = 5t^2
+        dataA.push({ x: t, y: 5 * Math.pow(t, 2) });
+        
+        // כדור ב': y = 5t^2 + 4t - 9 (רק עבור t >= 1)
+        if(t >= 1) {
+            dataB.push({ x: t, y: 5 * Math.pow(t, 2) + 4 * t - 9 });
+        }
+    }
+
+    const ctx = document.getElementById('kinematicsChart').getContext('2d');
+    
+    // Chart.js Rules Strictness: scatter, showLine: true, linear scale, zero lines
+    new Chart(ctx, {
+        type: 'scatter',
+        data: {
+            datasets: [
+                {
+                    label: "כדור א' (ממנוחה)",
+                    data: dataA,
+                    borderColor: '#3b82f6', // כחול
+                    backgroundColor: '#3b82f6',
+                    showLine: true,
+                    borderWidth: 2,
+                    pointRadius: 0
+                },
+                {
+                    label: "כדור ב' (נזרק ב-14 מ'\\ש')",
+                    data: dataB,
+                    borderColor: '#dc2626', // אדום
+                    backgroundColor: '#dc2626',
+                    showLine: true,
+                    borderWidth: 2,
+                    pointRadius: 0
+                },
+                // הוספת נקודת המפגש להבלטה
+                {
+                    label: 'נקודת מפגש (2.25s, 25.3m)',
+                    data: [{ x: 2.25, y: 25.3125 }],
+                    backgroundColor: '#16a34a', // ירוק
+                    borderColor: '#15803d',
+                    pointRadius: 6,
+                    pointStyle: 'circle'
+                }
+            ]
+        },
+        options: {
+            responsive: true,
+            plugins: {
+                title: {
+                    display: true,
+                    text: 'גרף מקום-זמן: y(t)',
+                    font: { size: 16, family: 'Arial' }
+                },
+                legend: {
+                    position: 'top',
+                    labels: { font: { family: 'Arial' } }
+                }
+            },
+            scales: {
+                x: {
+                    type: 'linear',
+                    position: 'bottom',
+                    title: {
+                        display: true,
+                        text: 'זמן (שניות)',
+                        font: { size: 14, weight: 'bold' }
+                    },
+                    min: 0,
+                    max: 3,
+                    grid: {
+                        color: (context) => context.tick.value === 0 ? '#000000' : '#e5e7eb',
+                        lineWidth: (context) => context.tick.value === 0 ? 2 : 1
+                    }
+                },
+                y: {
+                    title: {
+                        display: true,
+                        text: 'מקום y (מטרים)',
+                        font: { size: 14, weight: 'bold' }
+                    },
+                    // הפיכת הציר מכיוון שציר ה-y מוגדר חיובי כלפי מטה
+                    reverse: true,
+                    min: 0,
+                    max: 45,
+                    grid: {
+                        color: (context) => context.tick.value === 0 ? '#000000' : '#e5e7eb',
+                        lineWidth: (context) => context.tick.value === 0 ? 2 : 1
+                    }
+                }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
