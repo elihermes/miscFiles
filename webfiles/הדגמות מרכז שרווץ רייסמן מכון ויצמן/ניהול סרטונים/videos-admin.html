@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מנהל videos.json - הדגמות חשמל</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: "Rubik", "Segoe UI", Arial, sans-serif; background: #f8fafc; }
+        .card { background: #fff; border: 1px solid #e2e8f0; border-radius: 0.75rem; }
+        .btn { border-radius: 0.65rem; padding: 0.5rem 0.9rem; font-weight: 600; border: 1px solid transparent; }
+        .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+        .btn-primary { background: #1d4ed8; color: #fff; }
+        .btn-primary:hover { background: #1e40af; }
+        .btn-muted { background: #f8fafc; border-color: #cbd5e1; color: #0f172a; }
+        .btn-muted:hover { background: #eef2ff; }
+        .btn-danger { background: #fee2e2; border-color: #fca5a5; color: #991b1b; }
+        .btn-danger:hover { background: #fecaca; }
+        .row-selected { background: #dbeafe; }
+        .pill { display: inline-block; border-radius: 9999px; padding: 0.1rem 0.6rem; font-size: 0.75rem; font-weight: 600; }
+        .pill-pl { background: #ede9fe; color: #5b21b6; }
+        .pill-no { background: #f1f5f9; color: #475569; }
+        .table-wrap { max-height: 55vh; overflow: auto; }
+        .sticky-head th { position: sticky; top: 0; background: #f8fafc; z-index: 1; }
+        .input, .textarea, .select {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.55rem;
+            padding: 0.45rem 0.6rem;
+            background: #fff;
+        }
+        .textarea { min-height: 84px; }
+        .toolbar { position: sticky; top: 0; z-index: 10; backdrop-filter: blur(6px); background: rgba(248, 250, 252, 0.9); }
+        .thumb-img { width: 84px; height: 48px; object-fit: cover; border: 1px solid #cbd5e1; border-radius: 0.45rem; background: #f8fafc; }
+    </style>
+</head>
+<body class="p-4 md:p-6">
+    <div class="max-w-[1700px] mx-auto space-y-4">
+        <header class="card p-4 md:p-5">
+            <div class="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+                <div>
+                    <h1 class="text-2xl md:text-3xl font-bold text-slate-900">ממשק ניהול ל-<code>videos.json</code></h1>
+                    <p class="text-slate-600 mt-1">עריכה דרך הדפדפן: סרטונים, פלייליסטים, בדיקות תקינות וייצוא קובץ מעודכן.</p>
+                </div>
+                <div class="flex flex-wrap gap-2">
+                    <button id="loadServerBtn" class="btn btn-muted" type="button">טעינה מ-<code>videos.json</code></button>
+                    <label class="btn btn-muted cursor-pointer">
+                        ייבוא קובץ
+                        <input id="importFileInput" type="file" accept="application/json" class="hidden">
+                    </label>
+                    <button id="saveDraftBtn" class="btn btn-muted" type="button">שמור טיוטה בדפדפן</button>
+                    <button id="loadDraftBtn" class="btn btn-muted" type="button">טען טיוטה</button>
+                    <button id="exportBtn" class="btn btn-primary" type="button">ייצוא JSON</button>
+                </div>
+            </div>
+            <div class="mt-3 text-sm text-slate-600" id="statusText">לא נטען עדיין נתונים.</div>
+        </header>
+
+        <section class="toolbar card p-3">
+            <div class="flex flex-wrap items-center gap-2">
+                <input id="searchInput" class="input max-w-md" placeholder="חיפוש לפי כותרת, תיאור, קטגוריה, מילות מפתח או לינק...">
+                <button id="validateBtn" class="btn btn-muted" type="button">בדיקת תקינות</button>
+                <button id="normalizeBtn" class="btn btn-muted" type="button">נרמול פלייליסטים</button>
+                <div class="text-sm text-slate-700" id="quickStats"></div>
+            </div>
+        </section>
+
+        <section class="grid grid-cols-1 xl:grid-cols-12 gap-4">
+            <div class="xl:col-span-7 card p-3">
+                <div class="flex items-center justify-between mb-2">
+                    <h2 class="text-xl font-bold text-slate-800">סרטונים</h2>
+                    <div class="flex gap-2">
+                        <button id="newVideoBtn" class="btn btn-muted" type="button">סרטון חדש</button>
+                        <button id="duplicateVideoBtn" class="btn btn-muted" type="button">שכפל</button>
+                        <button id="deleteVideoBtn" class="btn btn-danger" type="button">מחק</button>
+                    </div>
+                </div>
+                <div class="table-wrap border border-slate-200 rounded-lg">
+                    <table class="w-full text-sm border-collapse">
+                        <thead class="sticky-head">
+                            <tr class="text-right text-slate-700">
+                                <th class="p-2 border-b border-slate-200">#</th>
+                                <th class="p-2 border-b border-slate-200">Thumbnail</th>
+                                <th class="p-2 border-b border-slate-200">כותרת</th>
+                                <th class="p-2 border-b border-slate-200">קטגוריה</th>
+                                <th class="p-2 border-b border-slate-200">קישור</th>
+                                <th class="p-2 border-b border-slate-200">פלייליסט</th>
+                            </tr>
+                        </thead>
+                        <tbody id="videosTbody"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="xl:col-span-5 card p-4 space-y-3">
+                <h2 class="text-xl font-bold text-slate-800">עריכת סרטון</h2>
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                    <div class="md:col-span-2">
+                        <label class="text-sm font-semibold text-slate-700">כותרת</label>
+                        <input id="videoTitle" class="input">
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-sm font-semibold text-slate-700">תיאור</label>
+                        <textarea id="videoDescription" class="textarea"></textarea>
+                    </div>
+                    <div>
+                        <label class="text-sm font-semibold text-slate-700">קטגוריה</label>
+                        <input id="videoCategory" class="input">
+                    </div>
+                    <div>
+                        <label class="text-sm font-semibold text-slate-700">לינק</label>
+                        <input id="videoLink" class="input" dir="ltr">
+                        <div class="mt-2 flex items-center gap-2">
+                            <img id="videoThumbPreview" class="thumb-img" alt="thumbnail preview">
+                            <a id="videoLinkPreview" href="#" target="_blank" rel="noopener noreferrer" class="text-xs text-blue-700 hover:underline" dir="ltr">פתיחה בקישור</a>
+                        </div>
+                    </div>
+                    <div class="md:col-span-2">
+                        <label class="text-sm font-semibold text-slate-700">מילות מפתח (מופרד בפסיק)</label>
+                        <input id="videoKeywords" class="input">
+                    </div>
+                </div>
+
+                <div class="border border-slate-200 rounded-lg p-3 bg-slate-50">
+                    <label class="flex items-center gap-2 text-sm font-semibold text-slate-800">
+                        <input id="videoIsPlaylistPart" type="checkbox">
+                        חלק מפלייליסט
+                    </label>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-3 mt-2">
+                        <div>
+                            <label class="text-sm text-slate-700">playlistId</label>
+                            <input id="videoPlaylistId" class="input" dir="ltr">
+                        </div>
+                        <div>
+                            <label class="text-sm text-slate-700">playlistTitle</label>
+                            <input id="videoPlaylistTitle" class="input">
+                        </div>
+                        <div>
+                            <label class="text-sm text-slate-700">playlistPart</label>
+                            <input id="videoPlaylistPart" class="input" type="number" min="1">
+                        </div>
+                        <div>
+                            <label class="text-sm text-slate-700">playlistTotal</label>
+                            <input id="videoPlaylistTotal" class="input" type="number" min="1">
+                        </div>
+                    </div>
+                </div>
+
+                <div class="flex gap-2">
+                    <button id="saveVideoBtn" class="btn btn-primary" type="button">שמור סרטון</button>
+                    <button id="resetVideoFormBtn" class="btn btn-muted" type="button">נקה טופס</button>
+                </div>
+            </div>
+        </section>
+
+        <section class="card p-4 space-y-3">
+            <div class="flex flex-col md:flex-row md:items-center md:justify-between gap-2">
+                <h2 class="text-xl font-bold text-slate-800">ניהול פלייליסטים</h2>
+                <div class="flex gap-2">
+                    <button id="newPlaylistBtn" class="btn btn-muted" type="button">פלייליסט חדש</button>
+                    <button id="deletePlaylistBtn" class="btn btn-danger" type="button">מחק פלייליסט</button>
+                    <button id="savePlaylistBtn" class="btn btn-primary" type="button">שמור פלייליסט</button>
+                </div>
+            </div>
+
+            <div class="grid grid-cols-1 lg:grid-cols-4 gap-3">
+                <div>
+                    <label class="text-sm font-semibold text-slate-700">פלייליסט קיים</label>
+                    <select id="playlistSelect" class="select"></select>
+                </div>
+                <div>
+                    <label class="text-sm font-semibold text-slate-700">playlistId</label>
+                    <input id="playlistIdInput" class="input" dir="ltr">
+                </div>
+                <div class="lg:col-span-2">
+                    <label class="text-sm font-semibold text-slate-700">playlistTitle</label>
+                    <input id="playlistTitleInput" class="input">
+                </div>
+            </div>
+
+            <div class="text-sm text-slate-600">בחר סרטונים לפלייליסט וקבע סדר. בעת שמירה, הסדר יעודכן אוטומטית ל-1..N.</div>
+            <div class="text-sm text-slate-500">יצירה/מחיקה של פלייליסט לא מוחקת סרטונים, אלא רק מוסיפה/מסירה שיוך פלייליסט מהסרטונים.</div>
+            <div class="table-wrap border border-slate-200 rounded-lg">
+                <table class="w-full text-sm border-collapse">
+                    <thead class="sticky-head">
+                        <tr>
+                            <th class="p-2 border-b border-slate-200">בחר</th>
+                            <th class="p-2 border-b border-slate-200">סדר</th>
+                            <th class="p-2 border-b border-slate-200">Thumbnail</th>
+                            <th class="p-2 border-b border-slate-200">כותרת</th>
+                            <th class="p-2 border-b border-slate-200">קטגוריה</th>
+                            <th class="p-2 border-b border-slate-200">קישור</th>
+                            <th class="p-2 border-b border-slate-200">פלייליסט נוכחי</th>
+                        </tr>
+                    </thead>
+                    <tbody id="playlistVideosTbody"></tbody>
+                </table>
+            </div>
+        </section>
+
+        <section class="card p-4">
+            <h2 class="text-xl font-bold text-slate-800 mb-2">תוצאות בדיקה</h2>
+            <div id="validationOutput" class="text-sm whitespace-pre-wrap text-slate-700">עדיין לא בוצעה בדיקת תקינות.</div>
+        </section>
+    </div>
+
+    <script>
+        const STORAGE_KEY = "videos-admin-draft-v1";
+        const FALLBACK_THUMBNAIL = "https://via.placeholder.com/320x180?text=No+Thumbnail";
+        const fields = {};
+        const thumbnailCache = new Map();
+
+        let videos = [];
+        let selectedIndex = -1;
+        let filteredIndexes = [];
+        let currentPlaylistBaseId = "";
+
+        function $(id) { return document.getElementById(id); }
+
+        function wireFields() {
+            [
+                "statusText", "searchInput", "videosTbody", "quickStats", "validationOutput",
+                "videoTitle", "videoDescription", "videoCategory", "videoLink", "videoKeywords",
+                "videoThumbPreview", "videoLinkPreview",
+                "videoIsPlaylistPart", "videoPlaylistId", "videoPlaylistTitle", "videoPlaylistPart", "videoPlaylistTotal",
+                "playlistSelect", "playlistIdInput", "playlistTitleInput", "playlistVideosTbody"
+            ].forEach(id => fields[id] = $(id));
+        }
+
+        function getYouTubeID(url) {
+            const regExp = /^.*(youtu.be\/|v\/|u\/\w\/|embed\/|watch\?v=|&v=)([^#&?]*).*/;
+            const match = (url || "").match(regExp);
+            return (match && match[2].length === 11) ? match[2] : null;
+        }
+
+        function isYouTubePlaylistUrl(url) {
+            try {
+                const parsed = new URL(url);
+                const host = parsed.hostname.toLowerCase();
+                const isYoutube = host.includes("youtube.com") || host.includes("youtu.be");
+                return isYoutube && parsed.searchParams.has("list") && !getYouTubeID(url);
+            } catch {
+                return false;
+            }
+        }
+
+        async function resolveThumbnailByLink(link) {
+            const safeLink = (link || "").trim();
+            if (!safeLink) return FALLBACK_THUMBNAIL;
+            if (thumbnailCache.has(safeLink)) return thumbnailCache.get(safeLink);
+
+            const ytId = getYouTubeID(safeLink);
+            if (ytId) {
+                const thumb = `https://img.youtube.com/vi/${ytId}/mqdefault.jpg`;
+                thumbnailCache.set(safeLink, thumb);
+                return thumb;
+            }
+
+            if (isYouTubePlaylistUrl(safeLink)) {
+                try {
+                    const endpoint = `https://www.youtube.com/oembed?url=${encodeURIComponent(safeLink)}&format=json`;
+                    const response = await fetch(endpoint);
+                    if (response.ok) {
+                        const data = await response.json();
+                        const thumb = data?.thumbnail_url || FALLBACK_THUMBNAIL;
+                        thumbnailCache.set(safeLink, thumb);
+                        return thumb;
+                    }
+                } catch {
+                    // Ignore and fallback.
+                }
+            }
+
+            thumbnailCache.set(safeLink, FALLBACK_THUMBNAIL);
+            return FALLBACK_THUMBNAIL;
+        }
+
+        async function setThumbnailForElement(imgEl, link) {
+            if (!imgEl) return;
+            imgEl.src = FALLBACK_THUMBNAIL;
+            const thumb = await resolveThumbnailByLink(link);
+            imgEl.src = thumb || FALLBACK_THUMBNAIL;
+        }
+
+        function updateVideoFormPreview(link) {
+            const safe = (link || "").trim();
+            fields.videoLinkPreview.href = safe || "#";
+            fields.videoLinkPreview.classList.toggle("pointer-events-none", !safe);
+            fields.videoLinkPreview.classList.toggle("opacity-50", !safe);
+            setThumbnailForElement(fields.videoThumbPreview, safe);
+        }
+
+        function escapeHtml(value) {
+            return (value ?? "").toString()
+                .replaceAll("&", "&amp;")
+                .replaceAll("<", "&lt;")
+                .replaceAll(">", "&gt;")
+                .replaceAll('"', "&quot;")
+                .replaceAll("'", "&#39;");
+        }
+
+        function playlistLabel(video) {
+            if (!video.isPlaylistPart || !video.playlistId) {
+                return "<span class='pill pill-no'>ללא</span>";
+            }
+            const part = Number.isFinite(Number(video.playlistPart)) ? Number(video.playlistPart) : "?";
+            const total = Number.isFinite(Number(video.playlistTotal)) ? Number(video.playlistTotal) : "?";
+            return `<span class='pill pill-pl'>${escapeHtml(video.playlistId)} (${part}/${total})</span>`;
+        }
+
+        function updateStats() {
+            const playlistIds = new Set(videos.filter(v => v.isPlaylistPart && v.playlistId).map(v => v.playlistId));
+            fields.quickStats.textContent = `סרטונים: ${videos.length} | פלייליסטים: ${playlistIds.size}`;
+        }
+
+        function applyFilter() {
+            const q = fields.searchInput.value.trim().toLowerCase();
+            filteredIndexes = videos
+                .map((video, idx) => ({ video, idx }))
+                .filter(({ video }) => {
+                    if (!q) return true;
+                    const hay = [video.title, video.description, video.keywords, video.category, video.link, video.playlistId, video.playlistTitle]
+                        .join(" ")
+                        .toLowerCase();
+                    return hay.includes(q);
+                })
+                .map(x => x.idx);
+        }
+
+        function renderVideosTable() {
+            applyFilter();
+            fields.videosTbody.innerHTML = "";
+            filteredIndexes.forEach((idx, shownIndex) => {
+                const video = videos[idx];
+                const tr = document.createElement("tr");
+                tr.className = `cursor-pointer border-b border-slate-100 hover:bg-slate-50 ${idx === selectedIndex ? "row-selected" : ""}`;
+                tr.innerHTML = `
+                    <td class="p-2 text-slate-500">${shownIndex + 1}</td>
+                    <td class="p-2"><img class="thumb-img video-row-thumb" alt="thumbnail"></td>
+                    <td class="p-2 font-medium">${escapeHtml(video.title || "")}</td>
+                    <td class="p-2">${escapeHtml(video.category || "")}</td>
+                    <td class="p-2" dir="ltr"><a href="${escapeHtml(video.link || "#")}" target="_blank" rel="noopener noreferrer" class="text-blue-700 hover:underline">${escapeHtml(video.link || "")}</a></td>
+                    <td class="p-2">${playlistLabel(video)}</td>
+                `;
+                tr.addEventListener("click", () => {
+                    selectedIndex = idx;
+                    fillVideoForm(video);
+                    renderVideosTable();
+                });
+                fields.videosTbody.appendChild(tr);
+
+                const thumbEl = tr.querySelector(".video-row-thumb");
+                setThumbnailForElement(thumbEl, video.link);
+            });
+
+            if (!filteredIndexes.length) {
+                const tr = document.createElement("tr");
+                tr.innerHTML = `<td colspan="6" class="p-4 text-center text-slate-500">אין תוצאות לחיפוש.</td>`;
+                fields.videosTbody.appendChild(tr);
+            }
+            updateStats();
+        }
+
+        function fillVideoForm(video) {
+            fields.videoTitle.value = video.title || "";
+            fields.videoDescription.value = video.description || "";
+            fields.videoCategory.value = video.category || "";
+            fields.videoLink.value = video.link || "";
+            fields.videoKeywords.value = video.keywords || "";
+            fields.videoIsPlaylistPart.checked = !!video.isPlaylistPart;
+            fields.videoPlaylistId.value = video.playlistId || "";
+            fields.videoPlaylistTitle.value = video.playlistTitle || "";
+            fields.videoPlaylistPart.value = video.playlistPart ?? "";
+            fields.videoPlaylistTotal.value = video.playlistTotal ?? "";
+            updateVideoFormPreview(video.link || "");
+        }
+
+        function clearVideoForm() {
+            fillVideoForm({});
+            selectedIndex = -1;
+            renderVideosTable();
+        }
+
+        function collectVideoFromForm() {
+            const isPlaylistPart = !!fields.videoIsPlaylistPart.checked;
+            const video = {
+                title: fields.videoTitle.value.trim(),
+                description: fields.videoDescription.value.trim(),
+                keywords: fields.videoKeywords.value.trim(),
+                link: fields.videoLink.value.trim(),
+                category: fields.videoCategory.value.trim(),
+                isPlaylistPart
+            };
+            if (isPlaylistPart) {
+                video.playlistId = fields.videoPlaylistId.value.trim();
+                video.playlistTitle = fields.videoPlaylistTitle.value.trim();
+                video.playlistPart = Number(fields.videoPlaylistPart.value) || 1;
+                video.playlistTotal = Number(fields.videoPlaylistTotal.value) || 1;
+            }
+            return video;
+        }
+
+        function validateVideoBasic(video) {
+            const errs = [];
+            if (!video.title) errs.push("חובה למלא כותרת.");
+            if (!video.link) errs.push("חובה למלא לינק.");
+            if (!video.category) errs.push("חובה למלא קטגוריה.");
+            if (video.isPlaylistPart) {
+                if (!video.playlistId) errs.push("סרטון בפלייליסט חייב playlistId.");
+                if (!video.playlistTitle) errs.push("סרטון בפלייליסט חייב playlistTitle.");
+            }
+            return errs;
+        }
+
+        function saveVideo() {
+            const video = collectVideoFromForm();
+            const errs = validateVideoBasic(video);
+            if (errs.length) {
+                alert(errs.join("\n"));
+                return;
+            }
+            if (selectedIndex >= 0) {
+                videos[selectedIndex] = video;
+            } else {
+                videos.push(video);
+                selectedIndex = videos.length - 1;
+            }
+            setStatus("נשמר סרטון (בזיכרון הדף). זכרי לבצע ייצוא JSON בסיום.");
+            renderVideosTable();
+            renderPlaylistsUI();
+            saveDraft();
+        }
+
+        function deleteSelectedVideo() {
+            if (selectedIndex < 0) {
+                alert("בחרי קודם סרטון למחיקה.");
+                return;
+            }
+            if (!confirm("למחוק את הסרטון שנבחר?")) return;
+            videos.splice(selectedIndex, 1);
+            selectedIndex = -1;
+            clearVideoForm();
+            renderVideosTable();
+            renderPlaylistsUI();
+            setStatus("הסרטון נמחק.");
+            saveDraft();
+        }
+
+        function duplicateSelectedVideo() {
+            if (selectedIndex < 0) {
+                alert("בחרי קודם סרטון לשכפול.");
+                return;
+            }
+            const clone = JSON.parse(JSON.stringify(videos[selectedIndex]));
+            clone.title = `${clone.title || "סרטון"} (עותק)`;
+            videos.splice(selectedIndex + 1, 0, clone);
+            selectedIndex = selectedIndex + 1;
+            fillVideoForm(clone);
+            renderVideosTable();
+            renderPlaylistsUI();
+            setStatus("הסרטון שוכפל.");
+            saveDraft();
+        }
+
+        function getPlaylistsMap() {
+            const map = new Map();
+            videos.forEach((v, idx) => {
+                if (!v.isPlaylistPart || !v.playlistId) return;
+                if (!map.has(v.playlistId)) {
+                    map.set(v.playlistId, { id: v.playlistId, title: v.playlistTitle || v.playlistId, members: [] });
+                }
+                map.get(v.playlistId).members.push({ idx, part: Number(v.playlistPart) || 99999 });
+            });
+            map.forEach(pl => pl.members.sort((a, b) => a.part - b.part));
+            return map;
+        }
+
+        function renderPlaylistSelect() {
+            const map = getPlaylistsMap();
+            const oldValue = fields.playlistSelect.value;
+            fields.playlistSelect.innerHTML = "<option value=''>-- בחירת פלייליסט --</option>";
+            Array.from(map.values())
+                .sort((a, b) => a.title.localeCompare(b.title, "he"))
+                .forEach(pl => {
+                    const opt = document.createElement("option");
+                    opt.value = pl.id;
+                    opt.textContent = `${pl.title} (${pl.members.length})`;
+                    fields.playlistSelect.appendChild(opt);
+                });
+
+            if (oldValue && map.has(oldValue)) {
+                fields.playlistSelect.value = oldValue;
+            }
+        }
+
+        function renderPlaylistVideosTable(playlistId = "") {
+            fields.playlistVideosTbody.innerHTML = "";
+            const members = new Map();
+            videos.forEach((v, idx) => {
+                if (playlistId && v.playlistId === playlistId && v.isPlaylistPart) {
+                    members.set(idx, Number(v.playlistPart) || 99999);
+                }
+            });
+
+            videos.forEach((v, idx) => {
+                const checked = members.has(idx);
+                const tr = document.createElement("tr");
+                tr.className = "border-b border-slate-100";
+                tr.innerHTML = `
+                    <td class="p-2 text-center"><input type="checkbox" data-video-idx="${idx}" class="pl-check" ${checked ? "checked" : ""}></td>
+                    <td class="p-2 text-center"><input type="number" min="1" data-order-idx="${idx}" class="input pl-order max-w-24 mx-auto" value="${checked ? members.get(idx) : ""}" ${checked ? "" : "disabled"}></td>
+                    <td class="p-2"><img class="thumb-img playlist-row-thumb" alt="thumbnail"></td>
+                    <td class="p-2">${escapeHtml(v.title || "")}</td>
+                    <td class="p-2">${escapeHtml(v.category || "")}</td>
+                    <td class="p-2" dir="ltr"><a href="${escapeHtml(v.link || "#")}" target="_blank" rel="noopener noreferrer" class="text-blue-700 hover:underline">${escapeHtml(v.link || "")}</a></td>
+                    <td class="p-2">${v.playlistId ? escapeHtml(v.playlistId) : "-"}</td>
+                `;
+                fields.playlistVideosTbody.appendChild(tr);
+
+                const thumbEl = tr.querySelector(".playlist-row-thumb");
+                setThumbnailForElement(thumbEl, v.link);
+            });
+
+            fields.playlistVideosTbody.querySelectorAll(".pl-check").forEach(cb => {
+                cb.addEventListener("change", (e) => {
+                    const idx = Number(e.target.getAttribute("data-video-idx"));
+                    const orderInput = fields.playlistVideosTbody.querySelector(`[data-order-idx='${idx}']`);
+                    orderInput.disabled = !e.target.checked;
+                    if (e.target.checked && !orderInput.value) {
+                        const used = Array.from(fields.playlistVideosTbody.querySelectorAll(".pl-order"))
+                            .map(i => Number(i.value) || 0);
+                        orderInput.value = Math.max(0, ...used) + 1;
+                    }
+                    if (!e.target.checked) orderInput.value = "";
+                });
+            });
+        }
+
+        function renderPlaylistsUI() {
+            renderPlaylistSelect();
+            const selectedId = fields.playlistSelect.value;
+            if (selectedId) {
+                const plVideo = videos.find(v => v.isPlaylistPart && v.playlistId === selectedId);
+                fields.playlistIdInput.value = selectedId;
+                fields.playlistTitleInput.value = plVideo?.playlistTitle || selectedId;
+                currentPlaylistBaseId = selectedId;
+                renderPlaylistVideosTable(selectedId);
+            } else {
+                fields.playlistIdInput.value = "";
+                fields.playlistTitleInput.value = "";
+                currentPlaylistBaseId = "";
+                renderPlaylistVideosTable("");
+            }
+        }
+
+        function clearPlaylistFields(video) {
+            video.isPlaylistPart = false;
+            delete video.playlistId;
+            delete video.playlistTitle;
+            delete video.playlistPart;
+            delete video.playlistTotal;
+        }
+
+        function createNewPlaylistDraft() {
+            fields.playlistSelect.value = "";
+            fields.playlistIdInput.value = "";
+            fields.playlistTitleInput.value = "";
+            currentPlaylistBaseId = "";
+            renderPlaylistVideosTable("");
+            setStatus("נפתחה טיוטת פלייליסט חדש. בחרי סרטונים ושמרי פלייליסט.");
+        }
+
+        function savePlaylist() {
+            const newId = fields.playlistIdInput.value.trim();
+            const newTitle = fields.playlistTitleInput.value.trim();
+            if (!newId || !newTitle) {
+                alert("חובה למלא playlistId ו-playlistTitle.");
+                return;
+            }
+
+            const map = getPlaylistsMap();
+            if (newId !== currentPlaylistBaseId && map.has(newId)) {
+                if (!confirm("playlistId כבר קיים. לשלב/לדרוס שיוכים לפלייליסט זה?")) return;
+            }
+
+            const selectedRows = [];
+            fields.playlistVideosTbody.querySelectorAll(".pl-check").forEach(cb => {
+                if (!cb.checked) return;
+                const idx = Number(cb.getAttribute("data-video-idx"));
+                const orderInput = fields.playlistVideosTbody.querySelector(`[data-order-idx='${idx}']`);
+                const order = Number(orderInput.value) || 99999;
+                selectedRows.push({ idx, order, title: videos[idx].title || "" });
+            });
+
+            if (!selectedRows.length) {
+                if (!confirm("לא נבחרו סרטונים. לשמור פלייליסט ריק (כלומר להסיר שיוכים)?")) return;
+            }
+
+            selectedRows.sort((a, b) => a.order - b.order || a.title.localeCompare(b.title, "he"));
+
+            // Clear old membership of the edited playlist id.
+            videos.forEach(v => {
+                if (currentPlaylistBaseId && v.playlistId === currentPlaylistBaseId) {
+                    clearPlaylistFields(v);
+                }
+            });
+
+            // Assign selected videos to the new playlist.
+            const total = selectedRows.length;
+            selectedRows.forEach((row, i) => {
+                const v = videos[row.idx];
+                v.isPlaylistPart = true;
+                v.playlistId = newId;
+                v.playlistTitle = newTitle;
+                v.playlistPart = i + 1;
+                v.playlistTotal = total;
+            });
+
+            // Keep playlistTotal consistent for all members with this id.
+            videos.forEach(v => {
+                if (v.isPlaylistPart && v.playlistId === newId) {
+                    v.playlistTitle = newTitle;
+                    v.playlistTotal = total;
+                }
+            });
+
+            currentPlaylistBaseId = newId;
+            renderVideosTable();
+            renderPlaylistsUI();
+            fields.playlistSelect.value = newId;
+            setStatus(`נשמר פלייליסט '${newTitle}' עם ${total} סרטונים.`);
+            saveDraft();
+        }
+
+        function deletePlaylist() {
+            const targetId = fields.playlistSelect.value || fields.playlistIdInput.value.trim();
+            if (!targetId) {
+                alert("בחרי פלייליסט למחיקה.");
+                return;
+            }
+            if (!confirm(`למחוק פלייליסט '${targetId}' מכל הסרטונים?`)) return;
+
+            videos.forEach(v => {
+                if (v.playlistId === targetId) {
+                    clearPlaylistFields(v);
+                }
+            });
+
+            currentPlaylistBaseId = "";
+            renderVideosTable();
+            renderPlaylistsUI();
+            setStatus(`פלייליסט '${targetId}' נמחק מהשיוכים. לא נמחקו סרטונים.`);
+            saveDraft();
+        }
+
+        function normalizePlaylists() {
+            const grouped = new Map();
+            videos.forEach((v, idx) => {
+                if (!v.isPlaylistPart || !v.playlistId) return;
+                if (!grouped.has(v.playlistId)) grouped.set(v.playlistId, []);
+                grouped.get(v.playlistId).push({ idx, part: Number(v.playlistPart) || 99999, title: v.title || "" });
+            });
+
+            grouped.forEach((rows, id) => {
+                rows.sort((a, b) => a.part - b.part || a.title.localeCompare(b.title, "he"));
+                const total = rows.length;
+                rows.forEach((row, i) => {
+                    const v = videos[row.idx];
+                    v.isPlaylistPart = true;
+                    v.playlistPart = i + 1;
+                    v.playlistTotal = total;
+                    if (!v.playlistTitle) v.playlistTitle = id;
+                });
+            });
+
+            renderVideosTable();
+            renderPlaylistsUI();
+            setStatus("בוצע נרמול playlistPart/playlistTotal לכל הפלייליסטים.");
+            saveDraft();
+        }
+
+        function runValidation() {
+            const issues = [];
+            const seenLinks = new Map();
+
+            videos.forEach((v, i) => {
+                const prefix = `שורה ${i + 1}`;
+                if (!v.title) issues.push(`${prefix}: חסרה כותרת.`);
+                if (!v.link) issues.push(`${prefix}: חסר לינק.`);
+                if (!v.category) issues.push(`${prefix}: חסרה קטגוריה.`);
+
+                if (v.link) {
+                    if (seenLinks.has(v.link)) {
+                        issues.push(`${prefix}: לינק כפול (כמו שורה ${seenLinks.get(v.link) + 1}).`);
+                    } else {
+                        seenLinks.set(v.link, i);
+                    }
+                    if (!/youtu\.be|youtube\.com/.test(v.link)) {
+                        issues.push(`${prefix}: הלינק לא נראה כמו YouTube.`);
+                    }
+                }
+
+                if (v.isPlaylistPart) {
+                    if (!v.playlistId) issues.push(`${prefix}: isPlaylistPart=true אבל חסר playlistId.`);
+                    if (!v.playlistTitle) issues.push(`${prefix}: isPlaylistPart=true אבל חסר playlistTitle.`);
+                    if (!Number.isFinite(Number(v.playlistPart))) issues.push(`${prefix}: playlistPart לא מספר תקין.`);
+                    if (!Number.isFinite(Number(v.playlistTotal))) issues.push(`${prefix}: playlistTotal לא מספר תקין.`);
+                }
+            });
+
+            const byPlaylist = new Map();
+            videos.forEach((v, i) => {
+                if (!v.isPlaylistPart || !v.playlistId) return;
+                if (!byPlaylist.has(v.playlistId)) byPlaylist.set(v.playlistId, []);
+                byPlaylist.get(v.playlistId).push({ i, part: Number(v.playlistPart), total: Number(v.playlistTotal), title: v.playlistTitle || "" });
+            });
+
+            byPlaylist.forEach((rows, id) => {
+                const totals = new Set(rows.map(r => r.total));
+                if (totals.size > 1) {
+                    issues.push(`פלייליסט '${id}': קיימים playlistTotal שונים בין חברים.`);
+                }
+                const titles = new Set(rows.map(r => r.title));
+                if (titles.size > 1) {
+                    issues.push(`פלייליסט '${id}': קיימים playlistTitle שונים בין חברים.`);
+                }
+                const parts = rows.map(r => r.part).sort((a, b) => a - b);
+                for (let j = 0; j < parts.length; j++) {
+                    if (parts[j] !== j + 1) {
+                        issues.push(`פלייליסט '${id}': רצף playlistPart אינו תקין (חסר/כפול).`);
+                        break;
+                    }
+                }
+            });
+
+            if (!issues.length) {
+                fields.validationOutput.textContent = "לא נמצאו בעיות. הנתונים נראים תקינים.";
+            } else {
+                fields.validationOutput.textContent = `נמצאו ${issues.length} בעיות:\n- ${issues.join("\n- ")}`;
+            }
+        }
+
+        function setStatus(text) {
+            fields.statusText.textContent = text;
+        }
+
+        function loadData(arr, sourceLabel) {
+            videos = Array.isArray(arr) ? JSON.parse(JSON.stringify(arr)) : [];
+            selectedIndex = -1;
+            clearVideoForm();
+            renderVideosTable();
+            renderPlaylistsUI();
+            setStatus(`נטענו ${videos.length} סרטונים (${sourceLabel}).`);
+        }
+
+        async function loadFromServer() {
+            try {
+                const res = await fetch("videos.json", { cache: "no-store" });
+                if (!res.ok) throw new Error(`HTTP ${res.status}`);
+                const data = await res.json();
+                if (!Array.isArray(data)) throw new Error("JSON אינו מערך.");
+                loadData(data, "מהשרת/תיקייה");
+            } catch (err) {
+                setStatus(`שגיאה בטעינת videos.json: ${err.message}`);
+                alert("לא הצלחתי לטעון videos.json. אפשר להשתמש ב'ייבוא קובץ'.");
+            }
+        }
+
+        function importFromFile(file) {
+            const reader = new FileReader();
+            reader.onload = () => {
+                try {
+                    const parsed = JSON.parse(reader.result);
+                    if (!Array.isArray(parsed)) {
+                        alert("הקובץ חייב להכיל מערך JSON.");
+                        return;
+                    }
+                    loadData(parsed, `מייבוא קובץ (${file.name})`);
+                } catch (err) {
+                    alert(`JSON לא תקין: ${err.message}`);
+                }
+            };
+            reader.readAsText(file, "utf-8");
+        }
+
+        function exportJson() {
+            const text = JSON.stringify(videos, null, 2);
+            const blob = new Blob([text], { type: "application/json;charset=utf-8" });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement("a");
+            a.href = url;
+            a.download = "videos.json";
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(url);
+            setStatus("יוצא קובץ videos.json מעודכן.");
+        }
+
+        function saveDraft() {
+            localStorage.setItem(STORAGE_KEY, JSON.stringify(videos));
+        }
+
+        function loadDraft() {
+            const raw = localStorage.getItem(STORAGE_KEY);
+            if (!raw) {
+                alert("לא נמצאה טיוטה שמורה בדפדפן.");
+                return;
+            }
+            try {
+                const parsed = JSON.parse(raw);
+                if (!Array.isArray(parsed)) throw new Error("טיוטה לא חוקית");
+                loadData(parsed, "מטיוטת דפדפן");
+            } catch {
+                alert("הטיוטה השמורה אינה תקינה.");
+            }
+        }
+
+        function bindEvents() {
+            $("loadServerBtn").addEventListener("click", loadFromServer);
+            $("importFileInput").addEventListener("change", (e) => {
+                const file = e.target.files?.[0];
+                if (file) importFromFile(file);
+                e.target.value = "";
+            });
+            $("exportBtn").addEventListener("click", exportJson);
+            $("saveDraftBtn").addEventListener("click", () => { saveDraft(); setStatus("הטיוטה נשמרה בדפדפן."); });
+            $("loadDraftBtn").addEventListener("click", loadDraft);
+
+            $("searchInput").addEventListener("input", renderVideosTable);
+            $("videoLink").addEventListener("input", (e) => updateVideoFormPreview(e.target.value));
+            $("newVideoBtn").addEventListener("click", clearVideoForm);
+            $("saveVideoBtn").addEventListener("click", saveVideo);
+            $("resetVideoFormBtn").addEventListener("click", clearVideoForm);
+            $("deleteVideoBtn").addEventListener("click", deleteSelectedVideo);
+            $("duplicateVideoBtn").addEventListener("click", duplicateSelectedVideo);
+
+            $("playlistSelect").addEventListener("change", () => {
+                const selectedId = fields.playlistSelect.value;
+                currentPlaylistBaseId = selectedId;
+                if (selectedId) {
+                    const v = videos.find(x => x.isPlaylistPart && x.playlistId === selectedId);
+                    fields.playlistIdInput.value = selectedId;
+                    fields.playlistTitleInput.value = v?.playlistTitle || selectedId;
+                } else {
+                    fields.playlistIdInput.value = "";
+                    fields.playlistTitleInput.value = "";
+                }
+                renderPlaylistVideosTable(selectedId);
+            });
+            $("newPlaylistBtn").addEventListener("click", createNewPlaylistDraft);
+            $("savePlaylistBtn").addEventListener("click", savePlaylist);
+            $("deletePlaylistBtn").addEventListener("click", deletePlaylist);
+
+            $("validateBtn").addEventListener("click", runValidation);
+            $("normalizeBtn").addEventListener("click", normalizePlaylists);
+        }
+
+        function init() {
+            wireFields();
+            bindEvents();
+            renderVideosTable();
+            renderPlaylistsUI();
+            loadFromServer();
+        }
+
+        document.addEventListener("DOMContentLoaded", init);
+    </script>
+</body>
+</html>
