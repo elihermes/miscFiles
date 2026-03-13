@@ -39,6 +39,12 @@
             --slate-300: #cbd5e1;
         }
 
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
             background-color: var(--bg-page);
@@ -151,7 +157,7 @@
             display: none;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
+            padding: max(0.75rem, env(safe-area-inset-top)) max(0.75rem, env(safe-area-inset-right)) max(0.75rem, env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left));
         }
 
         .question-modal.is-open {
@@ -167,6 +173,7 @@
             box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
             overflow: auto;
             padding: 1rem;
+            box-sizing: border-box;
         }
 
         .version-stamp {
@@ -220,6 +227,17 @@
             .floating-question-btn:hover {
                 transform: translateX(-50%);
             }
+
+            .question-modal {
+                align-items: flex-start;
+            }
+
+            .question-modal-card {
+                width: 100%;
+                max-height: calc(100dvh - max(1.5rem, env(safe-area-inset-top)) - max(1.5rem, env(safe-area-inset-bottom)));
+                border-radius: 0.9rem;
+                padding: 0.75rem;
+            }
         }
 
         @media (min-width: 768px) {
@@ -244,9 +262,9 @@
             <h2 class="text-xl md:text-2xl text-slate-600">בגרות במכניקה 2002, שאלה 1</h2>
             <div class="version-stamp" id="versionStamp" dir="ltr" aria-label="Version stamp">
                 <span class="version-label">ver</span>
-                <span id="versionId">v20260313-2341</span>
+                <span id="versionId">vAUTO</span>
                 <span>|</span>
-                <span id="versionUpdatedAt">2026-03-13 23:41 IST</span>
+                <span id="versionUpdatedAt">auto</span>
             </div>
         </header>
 
@@ -622,8 +640,27 @@
     <script>
         document.addEventListener('DOMContentLoaded', function() {
             const versionStamp = document.getElementById('versionStamp');
+            const versionId = document.getElementById('versionId');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
             if (versionStamp) {
                 versionStamp.title = 'Last file modified: ' + document.lastModified;
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime())) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const y = modified.getFullYear();
+                const m = pad(modified.getMonth() + 1);
+                const d = pad(modified.getDate());
+                const hh = pad(modified.getHours());
+                const mm = pad(modified.getMinutes());
+
+                if (versionId) {
+                    versionId.textContent = `v${y}${m}${d}-${hh}${mm}`;
+                }
+                if (versionUpdatedAt) {
+                    versionUpdatedAt.textContent = `${y}-${m}-${d} ${hh}:${mm}`;
+                }
             }
 
             const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');

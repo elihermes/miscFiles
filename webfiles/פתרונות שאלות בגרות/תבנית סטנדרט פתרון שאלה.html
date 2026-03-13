@@ -39,6 +39,12 @@
             --slate-300: #cbd5e1;
         }
 
+        *,
+        *::before,
+        *::after {
+            box-sizing: border-box;
+        }
+
         body {
             font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
             background-color: var(--bg-page);
@@ -112,7 +118,6 @@
             height: 320px !important;
         }
 
-        /* Unified MathJax mobile handling */
         .math-scroll,
         .math-container,
         .math-block,
@@ -131,27 +136,6 @@
             min-width: max-content;
             max-width: none;
             margin: 0.25rem 0;
-        }
-
-        @media (max-width: 640px) {
-            .math-scroll mjx-container[display="true"],
-            .math-container mjx-container[display="true"],
-            .math-block mjx-container[display="true"],
-            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
-                font-size: 0.9em;
-            }
-
-            .page-shell {
-                padding-bottom: 8.5rem;
-            }
-
-            .chart-wrapper {
-                min-height: 340px;
-            }
-
-            .chart-wrapper canvas {
-                height: 280px !important;
-            }
         }
 
         .floating-question-btn {
@@ -186,7 +170,7 @@
             display: none;
             align-items: center;
             justify-content: center;
-            padding: 1rem;
+            padding: max(0.75rem, env(safe-area-inset-top)) max(0.75rem, env(safe-area-inset-right)) max(0.75rem, env(safe-area-inset-bottom)) max(0.75rem, env(safe-area-inset-left));
         }
 
         .question-modal.is-open {
@@ -202,6 +186,7 @@
             box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
             overflow: auto;
             padding: 1rem;
+            box-sizing: border-box;
         }
 
         .version-stamp {
@@ -228,6 +213,38 @@
 
         body.modal-open {
             overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
+            }
+
+            .question-modal {
+                align-items: flex-start;
+            }
+
+            .question-modal-card {
+                width: 100%;
+                max-height: calc(100dvh - max(1.5rem, env(safe-area-inset-top)) - max(1.5rem, env(safe-area-inset-bottom)));
+                border-radius: 0.9rem;
+                padding: 0.75rem;
+            }
         }
 
         @media (min-width: 768px) {
@@ -270,9 +287,9 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
         <p class="mt-3 text-slate-500">[תיאור קצר של הפתרון: מודרך, צעד-אחר-צעד]</p>
         <div class="version-stamp" id="versionStamp" dir="ltr" aria-label="Version stamp">
             <span class="version-label">ver</span>
-            <span id="versionId">vYYYYMMDD-HHMM</span>
+            <span id="versionId">vAUTO</span>
             <span>|</span>
-            <span id="versionUpdatedAt">YYYY-MM-DD HH:MM</span>
+            <span id="versionUpdatedAt">auto</span>
         </div>
     </header>
 
@@ -374,8 +391,27 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         const versionStamp = document.getElementById('versionStamp');
+        const versionId = document.getElementById('versionId');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
         if (versionStamp) {
             versionStamp.title = 'Last file modified: ' + document.lastModified;
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime())) {
+            const pad = (n) => String(n).padStart(2, '0');
+            const y = modified.getFullYear();
+            const m = pad(modified.getMonth() + 1);
+            const d = pad(modified.getDate());
+            const hh = pad(modified.getHours());
+            const mm = pad(modified.getMinutes());
+
+            if (versionId) {
+                versionId.textContent = `v${y}${m}${d}-${hh}${mm}`;
+            }
+            if (versionUpdatedAt) {
+                versionUpdatedAt.textContent = `${y}-${m}-${d} ${hh}:${mm}`;
+            }
         }
 
         const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
