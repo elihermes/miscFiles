@@ -204,6 +204,31 @@
             padding: 1rem;
         }
 
+        .version-stamp {
+            position: fixed;
+            left: max(0.6rem, env(safe-area-inset-left));
+            top: max(0.6rem, env(safe-area-inset-top));
+            z-index: 70;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
         body.modal-open {
             overflow: hidden;
         }
@@ -222,6 +247,13 @@
     </style>
 </head>
 <body>
+
+<div class="version-stamp" id="versionStamp" dir="ltr" aria-label="Version stamp">
+    <span class="version-label">ver</span>
+    <span id="versionId">vYYYYMMDD-HHMM</span>
+    <span>|</span>
+    <span id="versionUpdatedAt">YYYY-MM-DD HH:MM</span>
+</div>
 
 <!--
 STANDARD NOTES FOR FUTURE REUSE
@@ -345,6 +377,11 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        if (versionStamp) {
+            versionStamp.title = 'Last file modified: ' + document.lastModified;
+        }
+
         const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
         const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
         const questionModal = document.getElementById('questionModal');
