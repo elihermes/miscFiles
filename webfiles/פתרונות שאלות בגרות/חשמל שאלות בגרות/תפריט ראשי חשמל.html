@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תפריט ראשי - פתרונות בחשמל</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+            margin: 0;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 3rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .filter-grid {
+            display: grid;
+            grid-template-columns: 1fr;
+            gap: 0.75rem;
+            max-width: 260px;
+        }
+
+        .solution-item {
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+            background: #fff;
+            display: grid;
+            grid-template-columns: 96px 1fr;
+            gap: 0.9rem;
+            align-items: start;
+        }
+
+        .solution-item:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+            border-color: var(--blue-border);
+        }
+
+        .solution-link {
+            color: var(--blue-700);
+            font-weight: 700;
+            text-decoration: none;
+        }
+
+        .solution-link:hover {
+            text-decoration: underline;
+        }
+
+        .meta-pill {
+            display: inline-block;
+            padding: 0.15rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid var(--slate-300);
+            font-size: 0.78rem;
+            margin-left: 0.3rem;
+            color: #475569;
+            background: #f8fafc;
+        }
+
+        .solution-thumb {
+            width: 96px;
+            height: 96px;
+            border-radius: 0.6rem;
+            object-fit: cover;
+            border: 1px solid var(--slate-300);
+            background: #f8fafc;
+        }
+
+        /* Empty square shown when question-image.png is missing */
+        .thumb-empty {
+            width: 96px;
+            height: 96px;
+            border-radius: 0.6rem;
+            border: 1px dashed var(--slate-300);
+            background: #f8fafc;
+            display: none;
+        }
+
+        .hover-preview {
+            position: fixed;
+            z-index: 200;
+            display: none;
+            pointer-events: none;
+            background: #ffffff;
+            border: 1px solid var(--slate-300);
+            border-radius: 0.75rem;
+            box-shadow: 0 16px 38px rgba(15, 23, 42, 0.22);
+            padding: 0.5rem;
+            max-width: min(68vw, 900px);
+            max-height: min(82vh, 900px);
+        }
+
+        .hover-preview img {
+            display: block;
+            max-width: min(66vw, 860px);
+            max-height: min(78vh, 860px);
+            width: auto;
+            height: auto;
+            border-radius: 0.5rem;
+            border: 1px solid var(--slate-200);
+            background: #f8fafc;
+        }
+
+        .empty-state {
+            background: #f0fdf4;
+            border-right: 4px solid #22c55e;
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            color: #166534;
+        }
+
+        @media (max-width: 900px) {
+            .hover-preview {
+                display: none !important;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page-shell {
+                padding: 0.75rem;
+            }
+
+            .solution-item {
+                grid-template-columns: 1fr;
+            }
+
+            .solution-thumb,
+            .thumb-empty {
+                width: 100%;
+                height: 140px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">תפריט ראשי - פתרונות בגרות בחשמל</h1>
+            <h2 class="text-xl md:text-2xl text-slate-600">גישה מהירה לכל פתרונות החשמל</h2>
+            <p class="mt-3 text-slate-500">סינון לפי שנה ותצוגה מקדימה של תמונת השאלה אם קיימת בתיקייה.</p>
+            <div class="version-stamp" id="versionStamp" dir="ltr" aria-label="Version stamp">
+                <span class="version-label">ver</span>
+                <span id="versionId">vAUTO</span>
+                <span>|</span>
+                <span id="versionUpdatedAt">auto</span>
+            </div>
+        </header>
+
+        <section class="section-card">
+            <h3 class="section-header">סינון</h3>
+            <div class="filter-grid">
+                <label class="block">
+                    <span class="block text-sm font-semibold text-slate-700 mb-1">סינון לפי שנה</span>
+                    <select id="yearSelect" class="w-full rounded-lg border border-slate-300 p-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                        <option value="all">כל השנים</option>
+                    </select>
+                </label>
+            </div>
+            <p id="resultsInfo" class="mt-3 text-sm text-slate-500"></p>
+        </section>
+
+        <section class="section-card">
+            <h3 class="section-header">רשימת פתרונות</h3>
+            <div id="solutionsList" class="space-y-3"></div>
+        </section>
+    </div>
+
+    <div id="hoverPreview" class="hover-preview" aria-hidden="true">
+        <img id="hoverPreviewImg" alt="תצוגה מוגדלת של השאלה">
+    </div>
+
+    <script>
+        const solutions = [
+            { year: 1991, question: "4", title: "1991 שאלה 4", href: "./1991 שאלה 4/1991 שאלה 4.html", tags: ["חשמל", "בגרות"] },
+            { year: 1992, question: "4", title: "1992 שאלה 4", href: "./1992 שאלה 4/1992 שאלה 4.html", tags: ["חשמל", "בגרות"] },
+            { year: 1993, question: "4", title: "1993 שאלה 4", href: "./1993 שאלה 4/1993 שאלה 4.html", tags: ["חשמל", "בגרות"] },
+            { year: 1996, question: "3", title: "1996 שאלה 3", href: "./1996 שאלה 3/1996 שאלה 3.html", tags: ["חשמל", "בגרות"] },
+            { year: 1997, question: "2", title: "1997 שאלה 2", href: "./1997 שאלה 2/1997 שאלה 2.html", tags: ["חשמל", "בגרות"] },
+            { year: 2005, question: "4", title: "2005 שאלה 4", href: "./2005 שאלה 4/2005 שאלה 4.html", tags: ["חשמל", "בגרות"] },
+            { year: 2017, question: "4", title: "2017 שאלה 4", href: "./2017 שאלה 4/2017 שאלה 4.html", tags: ["חשמל", "בגרות"] },
+            { year: 2022, question: "3", title: "2022 שאלה 3", href: "./2022 שאלה 3/2022 שאלה 3.html", tags: ["חשמל", "בגרות"] },
+            { year: 2024, question: "5", title: "2024 שאלה 5", href: "./2024 שאלה 5/2024 שאלה 5.html", tags: ["חשמל", "בגרות"] },
+            { year: 2024, question: "6", title: "2024 שאלה 6", href: "./2024 שאלה 6/2024 שאלה 6.html", tags: ["חשמל", "בגרות"] }
+        ];
+
+        const yearSelect = document.getElementById("yearSelect");
+        const resultsInfo = document.getElementById("resultsInfo");
+        const listEl = document.getElementById("solutionsList");
+        const hoverPreview = document.getElementById("hoverPreview");
+        const hoverPreviewImg = document.getElementById("hoverPreviewImg");
+
+        let previewActive = false;
+
+        function yearOptionsInit() {
+            const years = [...new Set(solutions.map((s) => s.year))].sort((a, b) => a - b);
+            years.forEach((y) => {
+                const opt = document.createElement("option");
+                opt.value = String(y);
+                opt.textContent = String(y);
+                yearSelect.appendChild(opt);
+            });
+        }
+
+        function movePreview(event) {
+            if (!previewActive) {
+                return;
+            }
+
+            const margin = 18;
+            const rect = hoverPreview.getBoundingClientRect();
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+
+            let x = event.clientX + margin;
+            let y = event.clientY + margin;
+
+            if (x + rect.width > vw - 8) {
+                x = event.clientX - rect.width - margin;
+            }
+            if (y + rect.height > vh - 8) {
+                y = event.clientY - rect.height - margin;
+            }
+
+            x = Math.max(8, x);
+            y = Math.max(8, y);
+
+            hoverPreview.style.left = `${x}px`;
+            hoverPreview.style.top = `${y}px`;
+        }
+
+        function hidePreview() {
+            previewActive = false;
+            hoverPreview.style.display = "none";
+        }
+
+        function attachThumbnailPreviewHandlers(scope) {
+            const thumbs = scope.querySelectorAll(".solution-thumb");
+            thumbs.forEach((thumb) => {
+                thumb.addEventListener("mouseenter", (event) => {
+                    // If image failed to load, browser returns currentSrc="".
+                    if (window.matchMedia("(max-width: 900px)").matches || !thumb.currentSrc) {
+                        return;
+                    }
+
+                    hoverPreviewImg.src = thumb.currentSrc;
+                    hoverPreview.style.display = "block";
+                    previewActive = true;
+                    movePreview(event);
+                });
+
+                thumb.addEventListener("mousemove", movePreview);
+                thumb.addEventListener("mouseleave", hidePreview);
+            });
+        }
+
+        function render(items) {
+            listEl.innerHTML = "";
+
+            if (!items.length) {
+                const empty = document.createElement("div");
+                empty.className = "empty-state";
+                empty.textContent = "לא נמצאו פתרונות התואמים את הסינון הנוכחי.";
+                listEl.appendChild(empty);
+            } else {
+                items.forEach((item) => {
+                    const card = document.createElement("article");
+                    card.className = "solution-item";
+
+                    const folderPath = item.href.slice(0, item.href.lastIndexOf("/"));
+                    const thumbPath = `${folderPath}/question-image.png`;
+                    const tags = item.tags.map((t) => `<span class=\"meta-pill\">${t}</span>`).join(" ");
+
+                    card.innerHTML = `
+                        <div>
+                            <img class="solution-thumb" src="${thumbPath}" alt="תמונה מקדימה - ${item.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                            <div class="thumb-empty"></div>
+                        </div>
+                        <div>
+                            <a class="solution-link" href="${item.href}">${item.title}</a>
+                            <div class="mt-2 text-sm text-slate-600">שנה: <strong>${item.year}</strong> | שאלה: <strong>${item.question}</strong></div>
+                            <div class="mt-2">${tags}</div>
+                        </div>
+                    `;
+
+                    listEl.appendChild(card);
+                    attachThumbnailPreviewHandlers(card);
+                });
+            }
+
+            resultsInfo.textContent = `נמצאו ${items.length} פתרונות.`;
+        }
+
+        function runFilter() {
+            const yearVal = yearSelect.value;
+            const filtered = solutions.filter((s) => yearVal === "all" || String(s.year) === yearVal);
+            filtered.sort((a, b) => a.year - b.year || Number(a.question) - Number(b.question));
+            render(filtered);
+        }
+
+        document.addEventListener("DOMContentLoaded", function() {
+            const versionStamp = document.getElementById("versionStamp");
+            const versionId = document.getElementById("versionId");
+            const versionUpdatedAt = document.getElementById("versionUpdatedAt");
+            if (versionStamp) {
+                versionStamp.title = "Last file modified: " + document.lastModified;
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime())) {
+                const pad = (n) => String(n).padStart(2, "0");
+                const y = modified.getFullYear();
+                const m = pad(modified.getMonth() + 1);
+                const d = pad(modified.getDate());
+                const hh = pad(modified.getHours());
+                const mm = pad(modified.getMinutes());
+
+                if (versionId) {
+                    versionId.textContent = `v${y}${m}${d}-${hh}${mm}`;
+                }
+                if (versionUpdatedAt) {
+                    versionUpdatedAt.textContent = `${y}-${m}-${d} ${hh}:${mm}`;
+                }
+            }
+
+            yearOptionsInit();
+            runFilter();
+            yearSelect.addEventListener("change", runFilter);
+        });
+    </script>
+</body>
+</html>
