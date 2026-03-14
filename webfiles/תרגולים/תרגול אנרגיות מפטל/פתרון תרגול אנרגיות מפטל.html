@@ -43,7 +43,7 @@
             margin: 0.25rem;
             font-weight: 600;
             box-shadow: 0 1px 2px rgba(0,0,0,0.05);
-            direction: ltr; /* Formulas should be left-to-right */
+            direction: ltr;
         }
 
         .teacher-highlight {
@@ -70,15 +70,143 @@
             overflow-x: auto;
             overflow-y: hidden;
             padding: 1rem 0;
-            direction: ltr; /* Ensure math block scrolls correctly LTR */
+            direction: ltr;
             text-align: left;
         }
 
         /* Responsive SVG container */
         .svg-container {
             width: 100%;
-            max-width: 500px;
+            max-width: 550px;
             margin: 0 auto;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid #93c5fd;
+            border-radius: 9999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: #dbeafe;
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
         }
     </style>
 </head>
@@ -90,9 +218,28 @@
         <header class="bg-blue-600 text-white p-6 md:p-8 text-center">
             <h1 class="text-2xl md:text-3xl font-bold mb-2">תרגיל באנרגיות אלסטית קינטית ופוטנציאליות</h1>
             <p class="text-blue-100">פתרון מודרך, מפורט ומוסבר צעד-אחר-צעד - רמת 5 יח"ל</p>
+            <div class="version-stamp" id="versionStamp" dir="ltr" aria-label="Version stamp">
+                <span class="version-label">ver</span>
+                <span id="versionId">vAUTO</span>
+                <span>|</span>
+                <span id="versionUpdatedAt">auto</span>
+            </div>
         </header>
 
         <div class="p-6 md:p-8">
+            <section class="mb-10 bg-slate-50 p-6 rounded-xl border border-slate-200 border-t-4 border-slate-300">
+                <h2 class="text-xl font-bold text-slate-800 mb-4 border-b-2 border-blue-500 pb-2 inline-block">נוסח השאלה</h2>
+                <img
+                    src="question-image.png"
+                    alt="תמונת השאלה המקורית"
+                    class="w-full h-auto rounded-lg border border-slate-200"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                />
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+                    <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+                </div>
+            </section>
             
             <!-- Phase 0: Data & MKS -->
             <section class="mb-10 bg-slate-50 p-6 rounded-xl border border-slate-200">
@@ -101,7 +248,7 @@
                 <ul class="list-disc list-inside space-y-2 text-slate-700">
                     <li>מסת הגוף: \( m = 3\text{ kg} \) (תקין).</li>
                     <li>מהירות התחלתית: \( v_0 = 5\text{ m/s} \) (תקין).</li>
-                    <li>מרחק התחלתי לקפיץ: נתון בטקסט במפורש כי המרחק הוא \( d = 2\text{ m} \) (יש עדיפות לטקסט הכתוב על פני התרשים).</li>
+                    <li>מרחק התחלתי לקפיץ: נתון בטקסט במפורש כי המרחק הוא \( d = 2\text{ m} \).</li>
                     <li>קבוע הקפיץ: \( k = 50\text{ N/m} \) (תקין).</li>
                     <li>זווית המישור המשופע: \( \alpha = 37^\circ \).</li>
                     <li>תאוצת הכובד: נשתמש בערך החיובי \( g = 10\text{ m/s}^2 \).</li>
@@ -119,7 +266,7 @@
                 <p>המשטח חלק, כלומר אין כוח חיכוך הפועל על הגוף לאורך התנועה (\(\mu = 0\)). מכאן נובע שעבודת הכוחות הלא משמרים היא אפס (\(W_{\text{nc}} = 0\)).</p>
 
                 <div class="step-title">🎯 מה מחפשים:</div>
-                <p>אנו מחפשים את שיעור כיווץ המקסימום של הקפיץ, אותו נסמן באות \( x \). בנקודת הכיווץ המקסימלי, גוף נעצר רגעית, כלומר גודל מהירותו שווה לאפס (\( v_f = 0 \)).</p>
+                <p>אנו מחפשים את שיעור כיווץ המקסימום של הקפיץ, אותו נסמן באות \( x \). בנקודת הכיווץ המקסימלי, הגוף נעצר רגעית, כלומר גודל מהירותו שווה לאפס (\( v_f = 0 \)).</p>
 
                 <div class="step-title">📐 נוסחאות מהדף:</div>
                 <div class="flex flex-wrap gap-2 mb-4">
@@ -141,7 +288,7 @@
                     $$ \Delta s = d + x = 2 + x $$
                 </div>
                 
-                <p class="mb-2">נחשב את הגובה ההתחלתי \(h_1\) ביחס לנקודת הייחוס (מצב 2), בעזרת טריגונומטריה במתולש ישר זווית:</p>
+                <p class="mb-2">נחשב את הגובה ההתחלתי \(h_1\) ביחס לנקודת הייחוס (מצב 2), בעזרת טריגונומטריה במשולש ישר זווית:</p>
                 <div class="math-container">
                     $$ h_1 = \Delta s \cdot \sin(37^\circ) = (2 + x) \cdot \sin(37^\circ) \approx 0.6 \cdot (2 + x) $$
                 </div>
@@ -188,61 +335,88 @@
                 <div class="step-title">🎯 מה מחפשים:</div>
                 <p>אנו מחפשים שוב את כיווץ המקסימום \( x \), אך כעת המערכת מאבדת אנרגיה מכנית כתוצאה מעבודת כוח החיכוך לאורך כל מסלול התנועה.</p>
 
-                <!-- FBD SVG -->
-                <div class="my-8 bg-white border-2 border-slate-200 rounded-xl p-4 text-center shadow-sm">
-                    <h3 class="font-bold text-slate-700 mb-4">תרשים כוחות חופשי (FBD) - במהלך התכווצות הקפיץ:</h3>
+                <!-- NEW FBD SVG -->
+                <div class="my-8 bg-white border-2 border-slate-200 rounded-xl p-4 text-center shadow-sm overflow-hidden">
+                    <h3 class="font-bold text-slate-700 mb-4">תרשים כוחות חופשי (FBD) - מסודר ומדויק:</h3>
+                    <p class="text-sm text-slate-500 mb-4">התרשים מציג את הכוחות הפועלים על הגוף <strong>בזמן שהוא מכווץ את הקפיץ</strong>.</p>
                     <div class="svg-container">
                         <svg viewBox="0 0 500 400" xmlns="http://www.w3.org/2000/svg">
                             <defs>
-                                <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b" />
+                                </marker>
+                                <marker id="arrow-force-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6" />
+                                </marker>
+                                <marker id="arrow-green" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981" />
+                                </marker>
+                                <marker id="arrow-red" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
                                     <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
                                 </marker>
-                                <marker id="arrow-blue" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6" />
+                                <marker id="arrow-purple" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                    <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6" />
                                 </marker>
                             </defs>
                             
                             <!-- Incline -->
-                            <polygon points="50,350 450,350 50,50" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
+                            <polygon points="50,50 50,350 450,350" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2"/>
                             
-                            <!-- Angle arc and text -->
-                            <path d="M 380 350 A 70 70 0 0 0 350 320" fill="none" stroke="#64748b" stroke-width="2"/>
-                            <text x="390" y="340" font-family="Arial" font-size="16" fill="#475569">α=37°</text>
+                            <!-- Angle arc and text at bottom right -->
+                            <path d="M 380 350 Q 380 320 394 308" fill="none" stroke="#64748b" stroke-width="2"/>
+                            <text x="330" y="340" font-family="sans-serif" font-size="16" fill="#475569" font-weight="bold">α=37°</text>
 
-                            <!-- Axes System -->
-                            <g transform="translate(420, 80) rotate(-37)">
-                                <line x1="0" y1="0" x2="50" y2="0" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4" marker-end="url(#arrow-blue)"/>
-                                <text x="55" y="5" font-family="Arial" font-size="14" fill="#64748b">x</text>
-                                <line x1="0" y1="0" x2="0" y2="-50" stroke="#cbd5e1" stroke-width="1" stroke-dasharray="4" marker-end="url(#arrow-blue)"/>
-                                <text x="-5" y="-55" font-family="Arial" font-size="14" fill="#64748b">y</text>
+                            <!-- Coordinate System Reference (Top Right) -->
+                            <g transform="translate(420, 100) rotate(36.87)">
+                                <line x1="-20" y1="0" x2="40" y2="0" stroke="#64748b" stroke-width="2" marker-end="url(#arrow-blue)"/>
+                                <text x="45" y="5" font-family="sans-serif" font-size="14" fill="#64748b">x</text>
+                                <line x1="0" y1="20" x2="0" y2="-40" stroke="#64748b" stroke-width="2" marker-end="url(#arrow-blue)"/>
+                                <text x="-15" y="-45" font-family="sans-serif" font-size="14" fill="#64748b">y</text>
                             </g>
 
-                            <!-- Block -->
-                            <g transform="translate(200, 237) rotate(-37)">
-                                <rect x="-40" y="-80" width="80" height="80" fill="#d4af37" stroke="#b45309" stroke-width="2"/>
-                                <text x="-10" y="-35" font-family="Arial" font-size="20" font-weight="bold" fill="#78350f">m</text>
+                            <!-- BLOCK AND ROTATED FORCES -->
+                            <!-- Translation places the center of the block directly on the incline calculation -->
+                            <g transform="translate(268, 176) rotate(36.87)">
                                 
-                                <!-- Normal Force N -->
-                                <line x1="0" y1="-80" x2="0" y2="-170" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow)"/>
-                                <text x="10" y="-160" font-family="Arial" font-size="20" fill="#ef4444" font-weight="bold">N</text>
-                                
-                                <!-- Friction Force fk -->
-                                <line x1="-40" y1="-40" x2="-120" y2="-40" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow)"/>
-                                <text x="-110" y="-50" font-family="Arial" font-size="18" fill="#ef4444" font-weight="bold">f_k</text>
+                                <!-- The Block -->
+                                <rect x="-35" y="-35" width="70" height="70" fill="#d4af37" stroke="#b45309" stroke-width="2"/>
+                                <text x="-10" y="8" font-family="sans-serif" font-size="22" font-weight="bold" fill="#78350f">m</text>
 
-                                <!-- Spring Force Fsp -->
-                                <line x1="-40" y1="-60" x2="-140" y2="-60" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow)"/>
-                                <text x="-130" y="-70" font-family="Arial" font-size="18" fill="#ef4444" font-weight="bold">F_sp</text>
+                                <!-- Velocity Vector (floating above the block) -->
+                                <line x1="-20" y1="-50" x2="30" y2="-50" stroke="#ef4444" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow-red)"/>
+                                <text x="38" y="-62" font-family="sans-serif" font-size="16" font-style="italic" fill="#ef4444" font-weight="bold">v</text>
+
+                                <!-- Normal Force N (from center, upwards relative to incline) -->
+                                <line x1="0" y1="0" x2="0" y2="-90" stroke="#10b981" stroke-width="3" marker-end="url(#arrow-green)"/>
+                                <text x="8" y="-104" font-family="sans-serif" font-size="20" fill="#10b981" font-weight="bold">N</text>
+
+                                <!-- Friction fk (acts at the bottom surface y=35, against motion) -->
+                                <line x1="0" y1="35" x2="-80" y2="35" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/>
+                                <text x="-110" y="28" font-family="sans-serif" font-size="18" fill="#ef4444" font-weight="bold">f<tspan dy="5" font-size="14">k</tspan></text>
+
+                                <!-- Spring Force F_sp (acts on the right edge where it touches, against motion) -->
+                                <line x1="35" y1="15" x2="-65" y2="15" stroke="#8b5cf6" stroke-width="3" marker-end="url(#arrow-purple)"/>
+                                <text x="-112" y="-6" font-family="sans-serif" font-size="18" fill="#8b5cf6" font-weight="bold">F<tspan dy="5" font-size="14">sp</tspan></text>
+
+                                <!-- The physical Spring being compressed -->
+                                <path d="M 35 15 L 45 5 L 55 25 L 65 5 L 75 25 L 85 5 L 95 25 L 105 5 L 115 25 L 125 15 L 150 15" fill="none" stroke="#94a3b8" stroke-width="3"/>
+                                <!-- Wall for the spring -->
+                                <line x1="150" y1="35" x2="150" y2="-10" stroke="#334155" stroke-width="5"/>
+                                <text x="88" y="-20" font-family="sans-serif" font-size="16" fill="#64748b" font-weight="bold">k</text>
+
+                                <!-- Gravity Components (Dashed) -->
+                                <line x1="0" y1="0" x2="60" y2="0" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,5"/> <!-- mg*sin(a) -->
+                                <line x1="0" y1="0" x2="0" y2="80" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,5"/> <!-- mg*cos(a) -->
+                                <!-- Connecting box for components -->
+                                <line x1="60" y1="0" x2="60" y2="80" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3"/>
+                                <line x1="0" y1="80" x2="60" y2="80" stroke="#94a3b8" stroke-width="1" stroke-dasharray="3,3"/>
                             </g>
-                            
-                            <!-- Gravity Force mg (straight down) -->
-                            <line x1="248" y1="200" x2="248" y2="340" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow)"/>
-                            <text x="255" y="330" font-family="Arial" font-size="20" fill="#ef4444" font-weight="bold">mg</text>
 
-                            <!-- Gravity components dashed -->
-                            <g transform="translate(248, 200) rotate(-37)">
-                                <line x1="0" y1="0" x2="0" y2="112" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,5"/>
-                                <line x1="0" y1="112" x2="84" y2="112" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,5"/>
+                            <!-- NON-ROTATED FORCES -->
+                            <g transform="translate(268, 176)">
+                                <!-- Gravity Force mg (straight down from center) -->
+                                <line x1="0" y1="0" x2="0" y2="100" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrow-force-blue)"/>
+                                <text x="-22" y="124" font-family="sans-serif" font-size="20" fill="#3b82f6" font-weight="bold">mg</text>
                             </g>
                         </svg>
                     </div>
@@ -298,7 +472,7 @@
                 <div class="teacher-highlight">
                     <strong>💡 הערת מורה:</strong> 
                     שימו לב כיצד כניסת החיכוך למערכת שינתה את התוצאה: ההתכווצות קטנה יותר (\(2\text{ m}\) לעומת \(2.11\text{ m}\)). האנרגיה המכנית ההתחלתית אבדה בחלקה בגלל עבודת החיכוך (שהיא שלילית), ולכן נותרה פחות אנרגיה להמרתה לאנרגיה אלסטית פוטנציאלית בסוף המסלול. <br><br>
-                    <strong>דגש פיזיקלי חשוב:</strong> במהלך התכווצות הקפיץ, פועלים על הגוף שלושה כוחות במקביל למישור: רכיב משקל \(mg\sin\alpha\) (למטה), כוח קפיץ \(F_{sp}\) (למעלה) וכוח חיכוך \(f_k\) (למעלה). שקול הכוחות האלו יוצר תאוצה שכיוונה במעלה המדרון (מנוגד למהירות). בגלל שהתאוצה והמהירות מנוגדות בכיוונן, גודל המהירות של הגוף הולך וקטן עד לעצירה.
+                    <strong>דגש פיזיקלי חשוב:</strong> במהלך התכווצות הקפיץ, פועלים על הגוף שלושה כוחות במקביל למישור: רכיב משקל \(mg\sin\alpha\) (למטה בכיוון המדרון), כוח קפיץ \(F_{sp}\) (למעלה) וכוח חיכוך \(f_k\) (למעלה). שקול הכוחות האלו יוצר תאוצה שכיוונה במעלה המדרון (מנוגד למהירות). בגלל שהתאוצה והמהירות מנוגדות בכיוונן, גודל המהירות של הגוף הולך וקטן עד לעצירה.
                 </div>
             </section>
 
@@ -327,7 +501,7 @@
 
                 <div class="teacher-highlight">
                     <strong>💡 הערת מורה - הסבר נדרש לסעיף:</strong> 
-                    כאשר מבקשים "חשבו והסבירו", לא מספיק רק להציג מספר. ההסבר הפיזיקלי הוא: כאשר שתי משטחים משתפשפים זה בזה (הבלוק והמדרון), המבנה המיקרוסקופי שלהם מתנגש, מה שגורם להגברת תנועת החלקיקים ברמה האטומית - זוהי טמפרטורה וחום. העבודה השלילית של החיכוך באה לידי ביטוי בגריעת אנרגיה מכנית מהמערכת המאקרוסקופית, ועל פי חוק שימור האנרגיה הכללי בטבע, אנרגיה זו מומרת בדיוק לחום. לכן הגודל המוחלט של עבודת החיכוך שווה לכמות החום שנוצרה (\(9.6 \text{ Joules}\)).
+                    כאשר מבקשים "חשבו והסבירו", לא מספיק רק להציג מספר. ההסבר הפיזיקלי הוא: כאשר שני משטחים משתפשפים זה בזה (הבלוק והמדרון), המבנה המיקרוסקופי שלהם מתנגש, מה שגורם להגברת תנועת החלקיקים ברמה האטומית - זוהי טמפרטורה וחום. העבודה השלילית של החיכוך באה לידי ביטוי בגריעת אנרגיה מכנית מהמערכת המאקרוסקופית, ועל פי חוק שימור האנרגיה הכללי בטבע, אנרגיה זו מומרת בדיוק לחום. לכן הגודל המוחלט של עבודת החיכוך שווה לכמות החום שנוצרה (\(9.6 \text{ Joules}\)).
                 </div>
             </section>
         </div>
@@ -336,6 +510,93 @@
             <p>הוכן עבור תלמידי פיזיקה ברמת 5 יח"ל</p>
         </footer>
     </div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img
+                    src="question-image.png"
+                    alt="תמונת השאלה המקורית"
+                    class="max-w-full h-auto rounded-lg"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                >
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionId = document.getElementById('versionId');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'Last file modified: ' + document.lastModified;
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime())) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const y = modified.getFullYear();
+                const m = pad(modified.getMonth() + 1);
+                const d = pad(modified.getDate());
+                const hh = pad(modified.getHours());
+                const mm = pad(modified.getMinutes());
+
+                if (versionId) {
+                    versionId.textContent = `v${y}${m}${d}-${hh}${mm}`;
+                }
+                if (versionUpdatedAt) {
+                    versionUpdatedAt.textContent = `${y}-${m}-${d} ${hh}:${mm}`;
+                }
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
 
 </body>
 </html>
