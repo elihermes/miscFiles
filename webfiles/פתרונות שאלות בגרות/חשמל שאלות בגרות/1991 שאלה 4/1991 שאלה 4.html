@@ -1,0 +1,212 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון שאלה 4 - אלקטרוסטטיקה ומגנטיות</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$$', '$$']],
+                displayMath: [['$$$', '$$$']]
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&display=swap');
+        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; color: #1e293b; line-height: 1.7; }
+        .step-card { background: white; padding: 1.5rem; border-radius: 0.75rem; box-shadow: 0 2px 4px rgba(0,0,0,0.05); border: 1px solid #e2e8f0; margin-bottom: 2rem; }
+        .formula-badge { background: #eff6ff; color: #1e40af; padding: 0.25rem 0.75rem; border-radius: 9999px; font-weight: bold; font-size: 0.9rem; border: 1px solid #bfdbfe; display: inline-block; margin: 2px; }
+        .math-block { text-align: center; padding: 1rem 0; overflow-x: auto; }
+        .teacher-highlight { border-right: 4px solid #10b981; background: #f0fdf4; padding: 1rem; border-radius: 0 0.5rem 0.5rem 0; margin: 1rem 0; }
+        .section-title { color: #1d4ed8; font-weight: 800; border-bottom: 2px solid #bfdbfe; display: inline-block; margin-bottom: 1rem; }
+        .chart-container { position: relative; height: 300px; width: 100%; margin: 1.5rem 0; background: #fff; padding: 10px; border-radius: 0.5rem; border: 1px solid #f1f5f9; }
+    </style>
+</head>
+<body class="p-4 md:p-10 max-w-5xl mx-auto">
+
+    <header class="text-center mb-12">
+        <h1 class="text-4xl font-black text-slate-800">פתרון שאלה 4 - מבחן 1991</h1>
+        <p class="text-xl text-slate-600 mt-2">נושא: תנועת מטענים בשדות משולבים (על פי דף נוסחאות תשפ"ג)</p>
+    </header>
+
+    <!-- שלב 0: נתונים -->
+    <div class="step-card">
+        <h2 class="section-title">שלב 0: ריכוז נתונים והמרת יחידות</h2>
+        <p class="mb-4 font-bold underline">המרה ליחידות תקניות ($$ \text{MKS} $$):</p>
+        <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div class="p-3 border rounded bg-slate-50">
+                <ul class="space-y-2">
+                    <li><strong>מסה:</strong> $$ m = 0.2 \, \text{gr} = 2 \cdot 10^{-4} \, \text{kg} $$</li>
+                    <li><strong>מטען:</strong> $$ q = 10^{-6} \, \text{C} $$</li>
+                    <li><strong>מהירות:</strong> $$ v = 5 \, \text{m/s} $$</li>
+                </ul>
+            </div>
+            <div class="p-3 border rounded bg-slate-50">
+                <ul class="space-y-2">
+                    <li><strong>מרחק בין לוחות:</strong> $$ d = 4 \, \text{cm} = 0.04 \, \text{m} $$</li>
+                    <li><strong>מתח חשמלי:</strong> $$ V = 2000 \, \text{V} $$</li>
+                    <li><strong>כבידה:</strong> מוזנחת לפי השאלה ($$ g = 0 $$)</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <!-- סעיף א -->
+    <div class="step-card">
+        <h2 class="section-title">סעיף א': צורת המסלול ושרטוט</h2>
+        
+        <p><strong>מה נתון:</strong> מטען חיובי הנכנס במהירות אופקית $$ v $$ לשדה חשמלי אחיד הנוצר בין לוחות מקבילים (עליון חיובי, תחתון שלילי).</p>
+        <p><strong>מה מחפשים:</strong> צורת המסלול והסבר פיזיקלי המבוסס על כוחות.</p>
+        <p><strong>נוסחאות מהדף:</strong>
+            <span class="formula-badge">$$ \Sigma\vec{F} = m\vec{a} $$</span> (חוק שני של ניוטון)
+            <span class="formula-badge">$$ \vec{E} = \frac{\vec{F}}{q} $$</span> (הגדרת השדה החשמלי)
+        </p>
+
+        <div class="teacher-highlight">
+            <strong>הסבר פדגוגי:</strong> כיוון שהלוח העליון חיובי והמטען חיובי, יפעל כוח דחייה חשמלי כלפי מטה. 
+            בציר האופקי אין כוחות, לכן המהירות קבועה. בציר האנכי פועל כוח קבוע המקנה תאוצה קבועה. שילוב זה הוא "זריקה אופקית" שיוצרת פרבולה.
+        </div>
+
+        <div class="chart-container">
+            <canvas id="trajectoryChart"></canvas>
+        </div>
+
+        <p class="text-center font-bold text-sm text-slate-500">שרטוט סכמטי של מסלול הפרבולה בין הלוחות</p>
+    </div>
+
+    <!-- סעיף ב -->
+    <div class="step-card">
+        <h2 class="section-title">סעיף ב': כיוון השדה המגנטי</h2>
+        <p><strong>מה נתון:</strong> החלקיק נע כעת בקו ישר (במהירות קבועה).</p>
+        <p><strong>מה מחפשים:</strong> כיוון השדה המגנטי $$ \vec{B} $$ הנדרש כדי לבטל את השפעת השדה החשמלי.</p>
+        <p><strong>נוסחאות מהדף:</strong>
+            <span class="formula-badge">$$ \Sigma\vec{F} = 0 $$</span> (חוק ראשון של ניוטון - התמדה)
+            <span class="formula-badge">כלל יד ימין</span>
+        </p>
+        
+        <p class="mt-4">
+            <strong>ניתוח:</strong>
+            כדי שהחלקיק ינוע בקו ישר, שקול הכוחות חייב להיות אפס. הכוח החשמלי $$ F_e $$ פועל מטה (כיוון השדה). לכן, על הכוח המגנטי $$ F_B $$ לפעול <strong>מעלה</strong>.
+            נשתמש בכלל יד ימין (מטען חיובי):
+            <br>• אגודל: ימינה (כיוון המהירות $$ v $$).
+            <br>• כף יד: פונה מעלה (כיוון הכוח המגנטי הרצוי $$ F_B $$).
+            <br>• האצבעות: מצביעות <strong>לתוך הדף</strong>.
+        </p>
+        <p class="font-bold text-blue-700">תשובה: כיוון השדה המגנטי הוא לתוך הדף ($$ \otimes $$).</p>
+    </div>
+
+    <!-- סעיף ג -->
+    <div class="step-card">
+        <h2 class="section-title">סעיף ג': פיתוח ביטוי וחישוב השדה</h2>
+        <p><strong>מה נתון:</strong> המטען נע בקו ישר במהירות $$ v $$. המערכת בעלת מתח $$ V $$ ומרחק $$ d $$.</p>
+        <p><strong>מה מחפשים:</strong> פיתוח הביטוי ל-$$ B $$ וחישוב ערכו.</p>
+        <p><strong>נוסחאות מהדף:</strong>
+            <span class="formula-badge">$$ F = qvB\sin\alpha $$</span> (כוח מגנטי)
+            <span class="formula-badge">$$ E = \frac{F}{q} $$</span> (כוח חשמלי)
+            <span class="formula-badge">$$ E = -\frac{\Delta V}{\Delta x} $$</span> (קשר שדה ופוטנציאל)
+        </p>
+        
+        <div class="math-block">
+            <strong>1. השוואת כוחות (שיווי משקל):</strong><br>
+            $$ \Sigma F = 0 \implies F_B = F_e $$
+            $$ q \cdot v \cdot B = q \cdot E $$
+            $$ v \cdot B = E $$
+        </div>
+
+        <div class="math-block">
+            <strong>2. מציאת השדה החשמלי מהנוסחה בדף:</strong><br>
+            הנוסחה בדף היא $$ E = -\frac{\Delta V}{\Delta x} $$. במקרה של שדה אחיד ולוחות במרחק $$ d $$:<br>
+            $$ E = \frac{V}{d} $$
+        </div>
+
+        <div class="math-block">
+            <strong>3. הצבה ובידוד $$ B $$:</strong><br>
+            $$ v \cdot B = \frac{V}{d} \implies B = \frac{V}{d \cdot v} $$
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הצבה מספרית:</strong><br>
+            $$ B = \frac{2000}{0.04 \cdot 5} = \frac{2000}{0.2} = 10,000 \, \text{Tesla} $$
+        </div>
+    </div>
+
+    <!-- סעיף ד -->
+    <div class="step-card">
+        <h2 class="section-title">סעיף ד': פגיעה בלוח בתנועה מעגלית</h2>
+        <p><strong>מה נתון:</strong> החלקיק נורה מטה מלוח העליון ($$ L $$). המתח נותק ($$ E=0 $$). פועל רק שדה מגנטי.</p>
+        <p><strong>מה מחפשים:</strong> האם יפגע בלוח התחתון?</p>
+        <p><strong>נוסחאות מהדף:</strong>
+            <span class="formula-badge">$$ a_R = \frac{v^2}{r} $$</span> (תאוצה רדיאלית)
+            <span class="formula-badge">$$ \Sigma F = m \cdot a $$</span> (חוק שני)
+            <span class="formula-badge">$$ F = qvB $$</span> (כוח לורנץ)
+        </p>
+
+        <div class="math-block">
+            <strong>פיתוח נוסחת הרדיוס:</strong><br>
+            $$ \Sigma F = m \cdot a_R \implies q \cdot v \cdot B = \frac{m \cdot v^2}{R} $$
+            $$ R = \frac{m \cdot v}{q \cdot B} $$
+        </div>
+
+        <div class="math-block">
+            <strong>חישוב מספרי:</strong><br>
+            $$ R = \frac{2 \cdot 10^{-4} \cdot 5}{10^{-6} \cdot 10,000} = \frac{10^{-3}}{10^{-2}} = 0.1 \, \text{m} = 10 \, \text{cm} $$
+        </div>
+
+        <p class="mt-4">
+            <strong>מסקנה:</strong>
+            המרחק האנכי בין הלוחות הוא $$ 4 \, \text{cm} $$. רדיוס הסיבוב של החלקיק הוא $$ 10 \, \text{cm} $$.
+            מכיוון שהרדיוס גדול מהמרחק הזמין בין הלוחות ($$ 10 > 4 $$), החלקיק לא יספיק לבצע פנייה מלאה ו<strong>יפגע בלוח התחתון</strong>.
+        </p>
+    </div>
+
+    <script>
+        window.onload = function() {
+            const ctx = document.getElementById('trajectoryChart').getContext('2d');
+            const parabolaPoints = [];
+            // יצירת נקודות עבור y = 4 - 0.1*x^2 להמחשת נפילה אופקית
+            for (let x = 0; x <= 6.3; x += 0.2) {
+                parabolaPoints.push({x: x, y: 4 - (0.1 * x * x)});
+            }
+
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'מסלול החלקיק (סעיף א)',
+                        data: parabolaPoints,
+                        showLine: true,
+                        borderColor: '#dc2626',
+                        backgroundColor: '#dc2626',
+                        borderWidth: 3,
+                        pointRadius: 0,
+                        tension: 0.4
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { 
+                            title: { display: true, text: 'מרחק אופקי' },
+                            grid: { display: false },
+                            min: 0, max: 8
+                        },
+                        y: { 
+                            title: { display: true, text: 'גובה (Y)' },
+                            min: 0, max: 5,
+                            ticks: { stepSize: 1 }
+                        }
+                    },
+                    plugins: {
+                        legend: { display: false }
+                    }
+                }
+            });
+        };
+    </script>
+</body>
+</html>

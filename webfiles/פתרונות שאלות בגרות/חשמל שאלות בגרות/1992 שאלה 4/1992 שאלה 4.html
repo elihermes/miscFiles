@@ -1,0 +1,410 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון פיזיקה - שדה מגנטי וחשמלי משולב (1992 שאלה 4)</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax Configuration -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                renderActions: {
+                    addMenu: []
+                }
+            }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;700&display=swap');
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f8fafc;
+            color: #1e293b;
+        }
+
+        .math-wrapper {
+            overflow-x: auto;
+            max-width: 100%;
+            padding: 0.5rem 0;
+            margin: 0.5rem 0;
+        }
+
+        /* Prevent scrollbars from looking ugly on Windows */
+        .math-wrapper::-webkit-scrollbar {
+            height: 6px;
+        }
+        .math-wrapper::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 3px;
+        }
+
+        .teacher-note {
+            background-color: #fffbeb;
+            border-right: 4px solid #f59e0b;
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.375rem 0 0 0.375rem;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+
+        .teacher-note-icon {
+            color: #d97706;
+            font-size: 1.25rem;
+            margin-left: 0.5rem;
+        }
+        
+        .step-container {
+            background-color: white;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        .step-title {
+            color: #2563eb;
+            font-weight: 700;
+            font-size: 1.25rem;
+            border-bottom: 2px solid #bfdbfe;
+            padding-bottom: 0.5rem;
+            margin-bottom: 1rem;
+        }
+        
+        .sub-header {
+            font-weight: 600;
+            color: #475569;
+            margin-top: 1rem;
+            margin-bottom: 0.25rem;
+        }
+        
+        /* New styles for inline formulas */
+        .formula-badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.25rem 1rem;
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            border-radius: 9999px;
+            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">פתרון מודרך בפיזיקה</h1>
+            <h2 class="text-xl text-slate-600">נושא: אלקטרומגנטיות - תנועת מטען בשדות מוצלבים (מתוך בגרות 1992, שאלה 4)</h2>
+        </header>
+
+        <!-- General Teacher Note -->
+        <div class="teacher-note">
+            <div class="flex items-center mb-2 font-bold text-amber-800">
+                <span class="teacher-note-icon">💡</span>
+                <span>הערת מורה כללית לתלמידים:</span>
+            </div>
+            <p class="text-slate-700 leading-relaxed">
+                שלום לכולם! בשאלה זו אנו פוגשים מתקן קלאסי בפיזיקה המשמש כ"בורר מהירויות" וספקטרומטר מסות. 
+                <br>
+                <strong>שימו לב לכללי הברזל שלנו:</strong>
+                <ul class="list-disc list-inside mt-2 ml-4">
+                    <li>אנו תמיד מניחים עבודה במערכת יחידות בינלאומית תקנית (MKS), למרות שבשאלה זו אנו עובדים בעיקר עם פרמטרים וביטויים אלגבריים.</li>
+                    <li>הקפידו לקרוא היטב את הנתונים מהתרשים: הסימון $\times$ אומר שהשדה המגנטי מכוון <strong>לתוך</strong> מישור הדף.</li>
+                    <li>כאשר חלקיק משנה את גודל מהירותו - נשתמש בביטויים "גודל המהירות קטן/גדל". במקרה שלנו, הכוח המגנטי אנכי למהירות ולכן <strong>אינו משנה את גודל המהירות</strong>, אלא רק את כיוונה!</li>
+                </ul>
+            </p>
+        </div>
+
+        <!-- Section A -->
+        <div class="step-container" id="section-a">
+            <h3 class="step-title">סעיף א': קביעת סימן המטען</h3>
+            
+            <div class="mb-4">
+                <div class="sub-header">מה נתון:</div>
+                <p>אלומת חלקיקים נכנסת מלמטה (מהירות $\vec{v}$ בכיוון מעלה). השדה המגנטי $\vec{B}$ מכוון לתוך הדף ($\otimes$). לאחר המעבר דרך חריץ $O$, החלקיקים נעים במסלול מעגלי ופוגעים בנקודה $K$ שנמצאת <strong>מימין</strong> לחריץ $O$.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="sub-header">מה מחפשים:</div>
+                <p>האם מטען החלקיקים ($q$) הוא חיובי או שלילי? יש לנמק.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="flex flex-wrap items-center gap-3 my-4 text-lg">
+                    <span class="font-bold text-slate-800">נוסחאות מהדף:</span>
+                    <div class="flex items-center gap-2">
+                        <span class="formula-badge">
+                            $F = qvB \sin \alpha$
+                        </span>
+                        <span class="text-sm text-slate-600">(גודל כוח הפועל על מטען בשדה מגנטי)</span>
+                    </div>
+                </div>
+                <p>כאשר $\alpha$ היא הזווית בין וקטור המהירות לווקטור השדה המגנטי. לקביעת כיוון הכוח, נשתמש ב<strong>כלל יד ימין</strong> עבור כוח לורנץ על מטען בתנועה.</p>
+            </div>
+
+            <div class="teacher-note">
+                <div class="flex items-center mb-1 font-bold text-amber-800">
+                    <span class="teacher-note-icon">💡</span>
+                    <span>הערת מורה - ערך מוחלט בדף הנוסחאות:</span>
+                </div>
+                <p class="text-sm">
+                    שימו לב! בדף הנוסחאות מופיע $F = qvB \sin \alpha$ ללא ערך מוחלט על המטען, אך הכותרת היא <strong>"גודל כוח"</strong>. גודל של וקטור הוא תמיד חיובי! לכן, כאשר אנו מחשבים את גודל הכוח בפועל עבור מטען שלילי, אנו מציבים את גודל המטען ללא המינוס (כלומר, מתייחסים ל-$q$ בערך מוחלט).
+                </p>
+            </div>
+
+            <div class="mb-4">
+                <div class="sub-header">הסבר ופתרון:</div>
+                <ol class="list-decimal list-inside space-y-2 text-slate-700">
+                    <li>נשים לב כי כיוון המהירות הוא כלפי מעלה (במישור הדף) והשדה המגנטי הוא לתוך הדף, לכן הזווית ביניהם היא $\alpha = 90^\circ$ ומכאן $\sin(90^\circ)=1$. הכוח פועל בניצב לשניהם.</li>
+                    <li>נזהה את כיוון הכוח המגנטי ($\vec{F}_B$) שפועל על החלקיקים באזור העליון: כיוון שהחלקיקים נכנסים בנקודה $O$ וסוטים ימינה לעבר $K$, מסלולם המעגלי מתעקם ימינה. מכאן שכיוון הכוח הצנטריפטלי (הכוח המגנטי במקרה זה) הוא <strong>ימינה</strong>.</li>
+                    <li>נפעיל את כלל יד ימין על מטען <strong>חיובי</strong> מדומיין:
+                        <ul class="list-disc list-inside pr-6 mt-1 text-sm">
+                            <li>אגודל בכיוון המהירות $\vec{v}$ (למעלה).</li>
+                            <li>אצבעות בכיוון השדה המגנטי $\vec{B}$ (לתוך הדף).</li>
+                            <li>כף היד תפנה לכיוון הכוח על מטען חיובי - שזה יוצא <strong>שמאלה</strong>.</li>
+                        </ul>
+                    </li>
+                    <li>מסקנה: אילו המטען היה חיובי, הכוח היה שמאלה והחלקיק היה פוגע משמאל ל-$O$. בפועל החלקיק פוגע מימין ל-$O$, כלומר הכוח הוא <strong>ימינה</strong> (הפוך מהצפוי למטען חיובי).</li>
+                    <li>לכן, בהכרח <strong>המטען של החלקיקים הוא שלילי ($q < 0$)</strong>.</li>
+                </ol>
+            </div>
+
+            <div class="teacher-note">
+                <div class="flex items-center mb-1 font-bold text-amber-800">
+                    <span class="teacher-note-icon">💡</span>
+                    <span>הערת מורה - הבנה גרפית:</span>
+                </div>
+                <p class="text-sm">
+                    תמיד מומלץ לצייר על גבי הטופס את הוקטורים! ציירו חץ למעלה ליד $O$, ציירו חץ ימינה למרכז המעגל. הניגוד בין תוצאת כלל יד ימין (שמאלה) לבין המציאות המצוירת (ימינה) הוא ההוכחה הניצחת לכך שהמטען שלילי.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section B -->
+        <div class="step-container" id="section-b">
+            <h3 class="step-title">סעיף ב': כיוון השדה החשמלי</h3>
+            
+            <div class="mb-4">
+                <div class="sub-header">מה נתון:</div>
+                <p>באזור שבין הלוחות $M$ ו-$N$ (הבורר), החלקיקים נעים ב<strong>מסלול ישר</strong>. ידוע לנו כעת שהחלקיקים הם בעלי <strong>מטען שלילי</strong>.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="sub-header">מה מחפשים:</div>
+                <p>את כיוון השדה החשמלי ($\vec{E}$) בין הלוחות.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="flex flex-wrap items-center gap-x-6 gap-y-3 my-4 text-lg">
+                    <span class="font-bold text-slate-800">נוסחאות מהדף:</span>
+                    
+                    <div class="flex items-center gap-2">
+                        <span class="formula-badge">
+                            $\Sigma \vec{F} = 0$
+                        </span>
+                        <span class="text-sm text-slate-600">(החוק הראשון של ניוטון)</span>
+                    </div>
+                    
+                    <div class="flex items-center gap-2">
+                        <span class="formula-badge">
+                            $\vec{F} = q\vec{E}$
+                        </span>
+                        <span class="text-sm text-slate-600">(כוח חשמלי)</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="sub-header">הצבה ופתרון:</div>
+                <ol class="list-decimal list-inside space-y-2 text-slate-700">
+                    <li>מכיוון שהחלקיקים נעים בקו ישר (ובמהירות קבועה, שכן הכוחות ניצבים למהירות או מבטלים זה את זה), שקול הכוחות עליהם חייב להיות אפס (החוק הראשון של ניוטון):<br>
+                        <span class="inline-block mt-2 px-4 py-2 bg-gray-100 rounded">$\vec{F}_E + \vec{F}_B = 0 \implies \vec{F}_E = -\vec{F}_B$</span>
+                    </li>
+                    <li>באזור בין הלוחות, וקטור המהירות הוא למעלה, והשדה המגנטי פנימה. עבור המטען השלילי שלנו, הכוח המגנטי פועל <strong>ימינה</strong> (כפי שהוכחנו בסעיף א').</li>
+                    <li>כדי לאפס כוח זה, הכוח החשמלי $\vec{F}_E$ חייב לפעול בכיוון המנוגד, כלומר <strong>שמאלה</strong>.</li>
+                    <li>הקשר בין הכוח החשמלי לשדה החשמלי הוא $\vec{F}_E = q\vec{E}$. מכיוון שהמטען $q$ הוא שלילי, וקטור הכוח $\vec{F}_E$ שווה לווקטור השדה $\vec{E}$ כפול סקלר שלילי. המשמעות היא שכיוון השדה החשמלי <strong>הפוך</strong> לכיוון הכוח החשמלי.</li>
+                    <li>מסקנה סופית: אם הכוח החשמלי הוא שמאלה, השדה החשמלי $\vec{E}$ חייב להיות מכוון <strong>ימינה</strong> (מלוח N ללוח M).</li>
+                </ol>
+            </div>
+
+            <div class="teacher-note">
+                <div class="flex items-center mb-1 font-bold text-amber-800">
+                    <span class="teacher-note-icon">💡</span>
+                    <span>הערת מורה - אל תתבלבלו!</span>
+                </div>
+                <p class="text-sm">
+                    טעות נפוצה מאוד היא לחשוב שהשדה החשמלי תמיד באותו כיוון של הכוח החשמלי. זה נכון <strong>רק</strong> עבור מטענים חיוביים! כאשר עוסקים באלקטרונים או יונים שליליים, השדה והכוח מנוגדים. זכרו: שדה חשמלי מוגדר לפי הכוח שהיה פועל על מטען בוחן <em>חיובי</em>.
+                </p>
+            </div>
+        </div>
+
+        <!-- Section C -->
+        <div class="step-container" id="section-c">
+            <h3 class="step-title">סעיף ג': ביטוי למרחק OK</h3>
+            
+            <div class="mb-4">
+                <div class="sub-header">מה נתון:</div>
+                <p>החלקיק עובר דרך בורר המהירויות (שדות מוצלבים $E$ ו-$B$) בקו ישר, ולאחר מכן נכנס לאזור של שדה מגנטי בלבד ($B$) שם הוא משלים חצי מעגל ופוגע ב-$K$.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="sub-header">מה מחפשים:</div>
+                <p>לבטא את המרחק מקטע $OK$ באמצעות הפרמטרים: $E, B, m, q$.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="flex flex-wrap items-center gap-x-6 gap-y-3 my-4 text-lg">
+                    <span class="font-bold text-slate-800">נוסחאות מהדף:</span>
+                    
+                    <div class="flex items-center gap-2">
+                        <span class="formula-badge">
+                            $\Sigma F = ma$
+                        </span>
+                        <span class="text-sm text-slate-600">(החוק השני של ניוטון)</span>
+                    </div>
+
+                    <div class="flex items-center gap-2">
+                        <span class="formula-badge">
+                            $a_R = \frac{v^2}{R}$
+                        </span>
+                        <span class="text-sm text-slate-600">(תאוצה רדיאלית)</span>
+                    </div>
+                </div>
+                <p>עבור התנועה המעגלית נשלב אותן ונקבל: $\Sigma F_r = m \frac{v^2}{R}$.<br>עבור התנועה בקו ישר (בבורר המהירויות) נשתמש בשוויון הכוחות $|q|vB = |q|E$.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="sub-header">הצבה ופתרון (שלב אחר שלב):</div>
+                <ol class="list-decimal list-inside space-y-4 text-slate-700">
+                    <li><strong>שלב 1: מציאת ביטוי למהירות החלקיק ($v$) בבורר המהירויות.</strong><br>
+                        נשווה את גודל הכוח החשמלי לגודל הכוח המגנטי:
+                        <div class="math-wrapper">
+                            $$ |q|E = |q|vB $$
+                        </div>
+                        נחלק את שני אגפי המשוואה בגודל המטען $|q|$ כדי לצמצם אותו, ונקבל את מהירות החלקיקים המצליחים לעבור בקו ישר:
+                        <div class="math-wrapper">
+                            $$ v = \frac{E}{B} $$
+                        </div>
+                    </li>
+                    <li><strong>שלב 2: פישוט משוואת התנועה המעגלית.</strong><br>
+                        נתחיל מהמשוואה של החוק השני של ניוטון לתנועה מעגלית:
+                        <div class="math-wrapper">
+                            $$ |q|vB = m \frac{v^2}{R} $$
+                        </div>
+                        ראשית, נחלק את שני אגפי המשוואה ב-$v$ (מותר כי המהירות אינה אפס). חלוקה זו תצמצם את ה-$v$ בצד שמאל לחלוטין, ותצמצם את החזקה ($v^2$) בצד ימין כך שיישאר רק $v$ אחד במונה:
+                        <div class="math-wrapper">
+                            $$ |q|B = \frac{m v}{R} $$
+                        </div>
+                    </li>
+                    <li><strong>שלב 3: בידוד רדיוס המסלול ($R$).</strong><br>
+                        כעת אנו רוצים לבודד את הנעלם $R$ שנמצא כרגע במכנה של צד ימין.<br>
+                        נכפול את שני אגפי המשוואה ב-$R$ כדי "להעלות" אותו למונה בצד שמאל:
+                        <div class="math-wrapper">
+                            $$ |q|B \cdot R = m v $$
+                        </div>
+                        כעת, נחלק את שני האגפים בביטוי $|q|B$ כדי להשאיר את $R$ לגמרי לבד בצד שמאל:
+                        <div class="math-wrapper">
+                            $$ R = \frac{m v}{|q|B} $$
+                        </div>
+                    </li>
+                    <li><strong>שלב 4: הצבת המהירות $v$ בנוסחת הרדיוס.</strong><br>
+                        נציב את הביטוי שמצאנו ל-$v$ בשלב 1 ($\frac{E}{B}$) אל תוך הנוסחה שמצאנו בשלב 3:
+                        <div class="math-wrapper">
+                            $$ R = \frac{m \cdot \left(\frac{E}{B}\right)}{|q|B} $$
+                        </div>
+                        לפי חוקי שברים ("כלל האוזן" או כפל במקדם), ה-$B$ שבמכנה של המונה העליון, יורד למכנה הראשי ומכפיל את ה-$B$ שכבר נמצא שם. לכן נקבל במכנה $B \cdot B = B^2$:
+                        <div class="math-wrapper">
+                            $$ R = \frac{mE}{|q|B^2} $$
+                        </div>
+                    </li>
+                    <li><strong>שלב 5: מציאת המרחק המבוקש.</strong><br>
+                        הקטע $OK$ מהווה את ה<strong>קוטר</strong> של המסלול המעגלי. לכן $OK = 2R$. נכפיל את הביטוי של הרדיוס פי 2 ונקבל את התשובה הסופית:
+                        <div class="math-wrapper">
+                            $$ OK = \frac{2mE}{|q|B^2} $$
+                        </div>
+                        <em>(הערה: נהוג להשמיט את סימן הערך המוחלט אם מתייחסים ל-$q$ כגודל המטען במונחים אלגבריים חיוביים, אך פיזיקלית מדויק יותר להשאיר זאת כך או לציין שמשתמשים בגודל המטען).</em>
+                    </li>
+                </ol>
+            </div>
+
+            <div class="teacher-note">
+                <div class="flex items-center mb-1 font-bold text-amber-800">
+                    <span class="teacher-note-icon">💡</span>
+                    <span>הערת מורה - מתודולוגיית פתרון:</span>
+                </div>
+                <p class="text-sm">
+                    שימו לב איך פירקנו את הבעיה לשני אזורים פיזיקליים שונים: בורר המהירויות (למטה) והספקטרומטר (למעלה). "הגשר" בין שני האזורים הוא <strong>גודל המהירות $v$</strong>. חלקיק שעבר את אזור הלוחות "לוקח איתו" את המהירות $v=E/B$ אל אזור המסלול המעגלי. תמיד חפשו את ה"גשר" הזה בשאלות משולבות!
+                </p>
+            </div>
+        </div>
+
+        <!-- Section D -->
+        <div class="step-container" id="section-d">
+            <h3 class="step-title">סעיף ד': הקטנת המרחק OK</h3>
+            
+            <div class="mb-4">
+                <div class="sub-header">מה נתון:</div>
+                <p>רוצים שהחלקיקים יפגעו קרוב יותר ל-$O$ (כלומר, <strong>להקטין</strong> את המרחק $OK$). ההגבלה שלנו: מותר לשנות אך ורק את עוצמות השדות $E$ ו-$B$, ונאמר במפורש שלא משנים את מהירות החלקיקים.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="sub-header">מה מחפשים:</div>
+                <p>מה יש לעשות לעוצמות $E$ ו-$B$ כדי להשיג את המטרה? הסבר.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="sub-header">הסבר מתמטי ופיזיקלי:</div>
+                <p>מכיוון שמהירות החלקיקים ($v$) קבועה ולא ניתנת לשינוי, נוח וברור יותר לנתח את משוואת המרחק <strong>לפני</strong> הצבת הביטוי למהירות. נשתמש בביטוי למרחק (פעמיים הרדיוס) התלוי במהירות $v$:</p>
+                <div class="math-wrapper">
+                    $$OK = 2R = \frac{2mv}{|q|B}$$
+                </div>
+                
+                <ol class="list-decimal list-inside space-y-3 mt-4 text-slate-700">
+                    <li>במשוואה זו, המסה $m$, המטען $q$, והמהירות $v$ הם גדלים קבועים.</li>
+                    <li>לכן, כדי להקטין את המרחק $OK$, עלינו להגדיל את המכנה, כלומר <strong>להגדיל את עוצמת השדה המגנטי $B$</strong>.</li>
+                    <li>אך שימו לב לנקודה הקריטית: כדי שהחלקיקים (שמהירותם $v$ קבועה) ימשיכו לעבור בקו ישר דרך בורר המהירויות מבלי לסטות ולפגוע בלוחות, חייב להתקיים שוויון הכוחות שפיתחנו בסעיף ג':
+                        <div class="math-wrapper">
+                            $$v = \frac{E}{B} \implies E = vB$$
+                        </div>
+                    </li>
+                    <li>מכיוון שהגדלנו את $B$, והמהירות $v$ נשארה קבועה, אנו חייבים <strong>להגדיל גם את השדה החשמלי $E$</strong> בדיוק באותו יחס, כדי לשמור על היחס $E/B$ קבוע ולדאוג שהחלקיקים יעברו בחריץ $O$.</li>
+                </ol>
+                
+                <p class="mt-4 font-bold text-slate-800">מסקנה סופית:</p>
+                <div class="font-medium text-blue-800 bg-blue-50 p-4 rounded border border-blue-100 mt-2">
+                    יש <strong>להגדיל</strong> את עוצמת השדה המגנטי $B$, ויחד איתו <strong>להגדיל</strong> גם את עוצמת השדה החשמלי $E$ בדיוק באותו יחס, כדי לשמור על מהירות החלקיקים העוברים בבורר קבועה.
+                </div>
+            </div>
+
+            <div class="teacher-note">
+                <div class="flex items-center mb-1 font-bold text-amber-800">
+                    <span class="teacher-note-icon">💡</span>
+                    <span>הערת מורה - הבנה מעמיקה של בורר מהירויות:</span>
+                </div>
+                <p class="text-sm">
+                    זוהי הערה קריטית להבנה הפיזיקלית שמבדילה בין "הצבה עיוורת" בנוסחה הסופית ($OK = 2mE/qB^2$) לבין הבנת המערכת. אם היינו מסתכלים רק על הנוסחה הסופית והיינו רק מקטינים את $E$, היינו משנים את היחס $E/B$. המשמעות היא שהחלקיקים מהמקור (בעלי מהירות $v$) כבר לא היו עוברים בקו ישר בבורר, אלא פוגעים בלוחות, ולכן בכלל לא היו מגיעים לאזור המעגלי! הדרך היחידה "לכופף" יותר את המסלול למעלה (להקטין רדיוס) ועדיין לאפשר להם להגיע לשם, היא לחזק את השדה המגנטי $B$, ולהתאים לו את השדה החשמלי $E$ כך ש"שער המהירות" יישאר פתוח לאותה מהירות $v$.
+                </p>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>

@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - חשמל ומגנטיות 1993</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax (תוקן כדי ש-$$ תמיד יהיה שורתי ולא ישבור שורות) -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$$', '$$']],
+                displayMath: [] // מרוקנים את המערך כדי ש-$$ לא ייצור שורות חדשות עם שוליים
+            },
+            startup: {
+                typeset: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        body {
+            font-family: system-ui, -apple-system, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+        /* כיווץ משמעותי של המרווחים בכרטיסיות */
+        .step-card {
+            background: white;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+            border: 1px solid #e2e8f0;
+            margin-bottom: 1rem;
+        }
+        /* עיצוב נוסחה הדוק יותר */
+        .formula-badge {
+            background-color: #eff6ff;
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 9999px;
+            display: inline-block;
+            padding: 0.15rem 0.75rem;
+            font-weight: 600;
+            font-family: 'Courier New', Courier, monospace;
+            direction: ltr;
+            margin: 0.25rem 0;
+            font-size: 1rem;
+        }
+        /* הערות מורה קומפקטיות */
+        .teacher-highlight {
+            background-color: #f0fdf4;
+            border-right: 4px solid #10b981;
+            padding: 0.75rem 1rem;
+            border-radius: 0.5rem 0 0 0.5rem;
+            margin-top: 0.75rem;
+        }
+        .math-block {
+            overflow-x: auto;
+            text-align: center;
+            margin: 0.5rem 0;
+            direction: ltr;
+        }
+        /* הקטנת גובה הגרף למניעת בזבוז מקום */
+        .chart-wrapper {
+            position: relative;
+            height: 280px;
+            width: 100%;
+            margin: 1rem 0;
+        }
+        /* הגנה נוספת לביטול שוליים מיותרים שנוצרים על ידי המשוואות */
+        mjx-container {
+            display: inline-block !important;
+            margin: 0 !important;
+        }
+    </style>
+</head>
+<body class="p-2 md:p-4 text-sm md:text-base">
+
+    <div class="max-w-4xl mx-auto">
+        
+        <header class="text-center mb-4">
+            <h1 class="text-2xl font-bold mb-1">פתרון שאלת בגרות - מאזני זרם</h1>
+            <p class="text-base text-slate-600">מכניקת מאזניים ושדה מגנטי ($$1993$$, שאלה $$4$$)</p>
+        </header>
+
+        <!-- שלב 0 -->
+        <section class="step-card border-t-4 border-t-blue-500">
+            <h2 class="text-xl font-semibold mb-2 text-blue-800">שלב $$0$$: ריכוז נתונים והמרת יחידות ($$MKS$$)</h2>
+            <p class="mb-2">נמיר את כל הנתונים למערכת היחידות התקנית (קילוגרם, מטר, שניות, אמפר):</p>
+            
+            <ul class="list-disc list-inside space-y-1">
+                <li>אורך קטע המסגרת בשדה: <span class="font-bold">$$ l = 2 \text{ [cm]} = 0.02 \text{ [m]} $$</span></li>
+                <li>מסת סיכת מהדק אחת: <span class="font-bold">$$ m_0 = 0.02 \text{ [g]} = 2 \cdot 10^{-5} \text{ [kg]} $$</span></li>
+                <li>תאוצת הכובד: <span class="font-bold">$$ g = 10 \text{ [m/s}^2\text{]} $$</span></li>
+            </ul>
+
+            <div class="teacher-highlight">
+                <p><strong>👨‍🏫 הערת מורה:</strong> עבודה ללא המרת יחידות תוביל לשגיאות. השדה המגנטי (טסלה) מוגדר דרך קילוגרמים, מטרים ואמפרים.</p>
+            </div>
+        </section>
+
+        <!-- סעיף א -->
+        <section class="step-card">
+            <h2 class="text-xl font-semibold mb-2 text-slate-800">סעיף א': כיוון השדה המגנטי</h2>
+            <p class="font-bold inline">מה מחפשים?</p> את כיוון השדה המגנטי בין הקטבים $$X$$ ל-$$y$$.
+
+            <p class="font-bold mt-2">ניתוח המערכת והכוחות:</p>
+            <ol class="list-decimal list-inside space-y-1 mb-2">
+                <li><strong>כיוון הזרם:</strong> הזרם יוצא מההדק החיובי, מגיע ל-$$F$$ וזורם לכיוון $$E$$. לכן, הזרם בקטע הנמצא בשדה זורם <strong>מ-$$F$$ ל-$$E$$</strong> (החוצה מהדף אלינו).</li>
+                <li><strong>כיוון הכוח המגנטי:</strong> כדי לאזן את המסגרת מול משקל הסיכות שפועל בצד השני של ציר הסיבוב, הכוח המגנטי על הקטע ($$FE$$) חייב למשוך אותו <strong>כלפי מטה</strong>.</li>
+            </ol>
+
+            <div class="bg-slate-50 p-2 rounded-lg my-2 text-sm">
+                <p class="font-bold mb-1">כלל יד ימין (כוח לורנץ):</p>
+                <ul class="list-disc list-inside">
+                    <li><strong>אגודל (כיוון הזרם $$I$$):</strong> מ-$$F$$ ל-$$E$$ (החוצה מהדף לכיוון הצופה).</li>
+                    <li><strong>כף היד (כיוון הכוח $$F$$):</strong> כלפי מטה.</li>
+                    <li><strong>אצבעות (כיוון השדה $$B$$):</strong> מצביעות בהכרח שמאלה, כלומר מ-$$y$$ אל $$X$$.</li>
+                </ul>
+            </div>
+
+            <p class="font-bold text-center mt-2 p-1 border-2 border-blue-200 bg-blue-50 rounded">
+                תשובה: כיוון השדה המגנטי הוא מ- $$y$$ ל- $$X$$.
+            </p>
+        </section>
+
+        <!-- סעיף ב -->
+        <section class="step-card">
+            <h2 class="text-xl font-semibold mb-2 text-slate-800">סעיף ב': גרף הכוח המגנטי</h2>
+            
+            <p class="mb-1"><span class="font-bold">מה נתון:</span> המסגרת נמצאת במצב מאוזן (מצב התמדה / שיווי משקל) עבור כל מדידת זרם.</p>
+            <p class="mb-2"><span class="font-bold">מה מחפשים:</span> לחשב את הכוח המגנטי הפועל על המסגרת לכל מדידה, ולשרטט גרף.</p>
+            
+            <p class="font-bold">נוסחאות מהדף:</p>
+            <div class="text-center mb-2 space-x-2 space-x-reverse">
+                <div class="formula-badge">$$ \Sigma F = 0 $$</div>
+                <div class="formula-badge">$$ W = mg $$</div>
+                <div class="formula-badge">$$ F = I l B \sin \alpha $$</div>
+            </div>
+
+            <p class="font-bold">הצבה ופתרון:</p>
+            <p class="mb-1">מכיוון שהמערכת במצב התמדה, על פי החוק הראשון של ניוטון, שקול הכוחות מתאפס. הכוח המגנטי ($$F$$), המוגדר בדף הנוסחאות כ-$$ F = I l B \sin \alpha $$, מושך את המסגרת מטה ושווה בגודלו לכוח הכובד ($$W$$) של הסיכות בצד השני (מתוך הנחה שזרועות המאזניים שוות):</p>
+            
+            <div class="math-block">
+                $$ \Sigma F = F - W = 0 \implies F = W \implies F = mg $$
+            </div>
+
+            <p class="mb-1 mt-2">נחשב את הכוח עבור כל סיכה אחת:</p>
+            <div class="math-block">
+                $$ F_1 = (2 \cdot 10^{-5} \text{ [kg]}) \cdot 10 \text{ [m/s}^2\text{]} = 2 \cdot 10^{-4} \text{ [N]} $$
+            </div>
+
+            <div class="chart-wrapper">
+                <canvas id="physicsChart"></canvas>
+            </div>
+
+            <div class="teacher-highlight">
+                <p><strong>👨‍🏫 הערת מורה (חוקי גרפים):</strong> שרטטנו את הנקודות והוספנו קו מגמה ליניארי שחותך בראשית ($$0,0$$), כי כשאין זרם, הכוח המגנטי אפס.</p>
+            </div>
+        </section>
+
+        <!-- סעיף ג -->
+        <section class="step-card">
+            <h2 class="text-xl font-semibold mb-2 text-slate-800">סעיף ג': חישוב עוצמת השדה המגנטי</h2>
+
+            <p class="font-bold inline">חלק ($$1$$): חישוב שיפוע הגרף</p>
+            
+            <div class="teacher-highlight mt-2 mb-2">
+                <p><strong>👨‍🏫 הערת מורה (חישוב שיפוע):</strong> זכרו את חוק הברזל! כדי לחשב שיפוע, חובה לבחור <strong>שתי נקודות שנמצאות על קו המגמה</strong>, ולא בהכרח מתוך טבלת הנתונים. המטרה של קו המגמה היא למצע את כל המדידות (להחליק שגיאות), לכן אנחנו לא מחפשים נתונים מהטבלה אלא קוראים ערכים מהקו שסרטטנו. בנוסף, בחרו תמיד שתי נקודות שרחוקות מספיק אחת מהשנייה כדי להקטין את שגיאת הקריאה והחישוב.</p>
+            </div>
+
+            <p class="mt-2 mb-1">לצורך החישוב, קראנו מהגרף שתי נקודות רחוקות המונחות על קו המגמה שלנו: הנקודה הראשונה $$ (0.50 , 2 \cdot 10^{-4}) $$ והנקודה השנייה $$ (2.50 , 10 \cdot 10^{-4}) $$. נציב אותן:</p>
+
+            <div class="math-block">
+                $$ \text{slope} = \frac{\Delta F}{\Delta I} = \frac{10 \cdot 10^{-4} - 2 \cdot 10^{-4}}{2.50 - 0.50} = 4 \cdot 10^{-4} \text{ [N/A]} $$
+            </div>
+
+            <p class="font-bold inline mt-2">חלק ($$2$$) ו-($$3$$): חישוב $$B$$</p>
+            
+            <div class="text-center mt-1">
+                <div class="formula-badge">$$ F = I l B \sin \alpha $$</div>
+            </div>
+
+            <p class="mt-1 mb-1">הזווית ישרה ($$ \alpha = 90^\circ $$), ולכן $$ \sin(90^\circ) = 1 $$. משוואת הישר היא $$ F = (B \cdot l) \cdot I $$. לכן השיפוע שווה ל- $$ \text{slope} = B \cdot l $$.</p>
+
+            <div class="math-block">
+                $$ B = \frac{\text{slope}}{l} = \frac{4 \cdot 10^{-4} \text{ [N/A]}}{0.02 \text{ [m]}} = 0.02 \text{ [T]} $$
+            </div>
+
+            <div class="teacher-highlight">
+                <p><strong>👨‍🏫 הערת מורה:</strong> חישוב גודל פיזיקלי דרך שיפוע הגרף מקטין את שגיאת המדידה בהשוואה לחישוב מנקודה בודדת.</p>
+            </div>
+
+            <p class="font-bold text-center mt-2 p-1 border-2 border-blue-200 bg-blue-50 rounded">
+                עוצמת השדה המגנטי היא $$ B = 0.02 \text{ [T]} $$.
+            </p>
+        </section>
+
+    </div>
+
+    <!-- Script להפעלת הגרף -->
+    <script>
+        window.addEventListener('load', function() {
+            const canvas = document.getElementById('physicsChart');
+            if (!canvas) return;
+            const ctx = canvas.getContext('2d');
+            
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'נקודות מדידה',
+                        data: [
+                            {x: 0.500, y: 2},
+                            {x: 0.950, y: 4},
+                            {x: 1.50, y: 6},
+                            {x: 2.05, y: 8},
+                            {x: 2.50, y: 10}
+                        ],
+                        backgroundColor: '#2563eb',
+                        pointRadius: 5
+                    },
+                    {
+                        label: 'קו מגמה',
+                        data: [
+                            {x: 0, y: 0},
+                            {x: 2.5, y: 10}
+                        ],
+                        type: 'line',
+                        borderColor: '#10b981',
+                        borderWidth: 2,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { labels: { boxWidth: 12 } }
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            min: 0,
+                            title: { display: true, text: 'זרם I [A]' }
+                        },
+                        y: {
+                            min: 0,
+                            title: { display: true, text: 'כוח F [10⁻⁴ N]' }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>

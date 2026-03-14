@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - חשמל 2017 שאלון 4</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for rendering LaTeX formulas -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Chart.js (Included per requirements, though not strictly needed for this specific question) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,700;1,400&display=swap');
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f3f4f6;
+            color: #1f2937;
+        }
+
+        /* Mobile responsiveness for math formulas */
+        .math-block {
+            overflow-x: auto;
+            max-width: 100%;
+            padding-bottom: 0.5rem;
+            margin: 1rem 0;
+            direction: ltr; /* Math is strictly LTR */
+            text-align: center;
+        }
+
+        .math-inline {
+            direction: ltr;
+            display: inline-block;
+        }
+
+        .step-container {
+            background-color: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-right: 6px solid #3b82f6; /* Blue edge */
+        }
+
+        .teacher-note {
+            background-color: #fef3c7; /* Amber-50 */
+            border-right: 4px solid #f59e0b; /* Amber-500 */
+            padding: 1rem;
+            margin: 1.5rem 0;
+            border-radius: 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .teacher-note-title {
+            font-weight: 700;
+            color: #b45309; /* Amber-700 */
+            display: flex;
+            align-items: center;
+            margin-bottom: 0.5rem;
+        }
+
+        .teacher-note-title::before {
+            content: "💡";
+            margin-left: 0.5rem;
+        }
+
+        .section-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+            color: #2563eb;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+        
+        /* Ensure charts don't break layout on mobile */
+        .chart-wrapper {
+            position: relative;
+            width: 100%;
+            height: 300px;
+            margin: 2rem 0;
+        }
+        @media (min-width: 768px) {
+            .chart-wrapper {
+                height: 400px;
+            }
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - חשמל 2017</h1>
+            <h2 class="text-xl text-gray-600">שאלה 4: ספקטרומטר מסות (בורר מהירויות ותנועה מעגלית)</h2>
+        </header>
+
+        <!-- General Teacher Note -->
+        <div class="teacher-note bg-blue-50 border-blue-500">
+            <div class="teacher-note-title text-blue-800" style="color: #1e40af;">הנחיות פדגוגיות וכללי ברזל (לפני שמתחילים)</div>
+            <ul class="list-disc list-inside space-y-2 text-sm md:text-base">
+                <li><strong>המרת יחידות (MKS):</strong> לפני כל תחילת חישוב, חובה לוודא שכל הנתונים מומרים ליחידות התקניות: מסה ב-<span class="math-inline">$\text{kg}$</span>, מטען ב-<span class="math-inline">$\text{C}$</span>, שדה חשמלי ב-<span class="math-inline">$\text{V/m}$</span> (או <span class="math-inline">$\text{N/C}$</span>) ושדה מגנטי ב-<span class="math-inline">$\text{T}$</span>. בשאלה זו (סעיף ו') הנתונים כבר ניתנו ביחידות תקניות, אך זהו שלב בדיקה קריטי!</li>
+                <li><strong>מושג התאוצה:</strong> לעולם איננו משתמשים במילה "תאוטה". תאוצה <span class="math-inline">$\vec{a}$</span> היא וקטור. אם כיוון התאוצה מנוגד לכיוון המהירות, נאמר ש<strong>"גודל המהירות קטן"</strong>. במקרה של תנועה מעגלית בשדה מגנטי, התאוצה היא רדיאלית (צנטריפטלית), ולכן גודל המהירות <strong>אינו משתנה</strong>, רק כיוון המהירות משתנה.</li>
+                <li><strong>תאוצת הכובד:</strong> על פי ההנחיות <span class="math-inline">$g = 10 \text{ m/s}^2$</span> (גודל חיובי). בשאלה ספציפית זו נאמר מפורשות: <em>"הזנח את כוח הכובד"</em>, לכן לא נתחשב בו בחישובים.</li>
+            </ul>
+        </div>
+
+        <!-- Section A -->
+        <div class="step-container">
+            <h3 class="text-2xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4">סעיף א': תרשים כוחות בבורר המהירויות</h3>
+            
+            <div class="mb-4">
+                <div class="section-title">מה נתון:</div>
+                <ul class="list-disc list-inside text-gray-700">
+                    <li>יון בעל מטען חיובי <span class="math-inline">$+q$</span> נע ימינה במהירות <span class="math-inline">$\vec{v}$</span>.</li>
+                    <li>שדה מגנטי אחיד <span class="math-inline">$\vec{B}$</span> מכוון לתוך הדף.</li>
+                    <li>היון נע בקו ישר (לא סוטה).</li>
+                    <li>כוח הכובד מוזנח.</li>
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">מה מחפשים:</div>
+                <p class="text-gray-700">לשרטט את הכוחות הפועלים על היון ולציין את שמותיהם.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">תרשים הכוחות המלא (פתרון):</div>
+                
+                <div class="my-6 bg-white border border-gray-200 shadow-sm p-4 rounded-xl flex justify-center overflow-hidden">
+                    <svg width="300" height="260" viewBox="0 0 300 260" aria-label="תרשים כוחות על היון">
+                        <defs>
+                            <!-- Arrowheads -->
+                            <marker id="arrow-blue" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb" />
+                            </marker>
+                            <marker id="arrow-green" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
+                            </marker>
+                            <marker id="arrow-gray" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#4b5563" />
+                            </marker>
+                        </defs>
+                        
+                        <!-- Magnetic Field Background (x marks indicating into the page) -->
+                        <g stroke="#9ca3af" stroke-width="2" opacity="0.4" stroke-linecap="round">
+                            <path d="M 30 30 L 50 50 M 50 30 L 30 50" />
+                            <path d="M 250 30 L 270 50 M 270 30 L 250 50" />
+                            <path d="M 30 210 L 50 230 M 50 210 L 30 230" />
+                            <path d="M 250 210 L 270 230 M 270 210 L 250 230" />
+                        </g>
+                        <text x="60" y="45" fill="#9ca3af" font-size="14" font-family="sans-serif" font-weight="bold">B (לתוך הדף)</text>
+
+                        <!-- The Ion (+q) -->
+                        <circle cx="150" cy="130" r="20" fill="#ef4444" />
+                        <text x="150" y="136" fill="white" font-size="18" text-anchor="middle" font-weight="bold" dir="ltr">+q</text>
+
+                        <!-- F_B (Upward magnetic force) -->
+                        <line x1="150" y1="110" x2="150" y2="30" stroke="#2563eb" stroke-width="4" marker-end="url(#arrow-blue)"/>
+                        <text x="165" y="65" fill="#2563eb" font-size="22" font-family="serif" font-weight="bold" dir="ltr">F<tspan font-size="14" dy="5">B</tspan></text>
+
+                        <!-- F_E (Downward electric force) -->
+                        <line x1="150" y1="150" x2="150" y2="230" stroke="#16a34a" stroke-width="4" marker-end="url(#arrow-green)"/>
+                        <text x="165" y="205" fill="#16a34a" font-size="22" font-family="serif" font-weight="bold" dir="ltr">F<tspan font-size="14" dy="5">E</tspan></text>
+
+                        <!-- Velocity Vector (v) to the right -->
+                        <line x1="180" y1="130" x2="250" y2="130" stroke="#4b5563" stroke-width="2.5" stroke-dasharray="5,5" marker-end="url(#arrow-gray)"/>
+                        <text x="215" y="120" fill="#4b5563" font-size="20" font-family="serif" font-style="italic" font-weight="bold" dir="ltr">v</text>
+                    </svg>
+                </div>
+
+                <div class="section-title">הסבר מילולי לשרטוט:</div>
+                <p class="text-gray-700 leading-relaxed">
+                    על היון פועלים שני כוחות מרכזיים (כוח הכובד מוזנח לפי הנתונים):<br>
+                    <strong>1. הכוח המגנטי (<span class="math-inline" style="color: #2563eb; font-weight: bold;">$\vec{F}_B$</span>):</strong> לפי כלל יד ימין למטען חיובי (אצבעות לכיוון המהירות <span class="math-inline">$\vec{v}$</span> ימינה, כיפוף לכיוון השדה <span class="math-inline">$\vec{B}$</span> פנימה), האגודל מצביע <strong>כלפי מעלה</strong>. (מופיע בחץ הכחול).<br>
+                    <strong>2. הכוח החשמלי (<span class="math-inline" style="color: #16a34a; font-weight: bold;">$\vec{F}_E$</span>):</strong> מכיוון שהיון נע בקו ישר במהירות קבועה, שקול הכוחות עליו חייב להיות אפס (החוק הראשון של ניוטון: <span class="math-inline">$\Sigma\vec{F} = 0$</span>). כדי לאזן את הכוח המגנטי שפועל כלפי מעלה, הכוח החשמלי חייב לפעול בדיוק בכיוון ההפוך - <strong>כלפי מטה</strong>. (מופיע בחץ הירוק).<br><br>
+                    <em>הערה חשובה לשרטוט: שני החצים (הכחול והירוק) שורטטו בדיוק באותו האורך, כדי לסמן שהכוחות שווים בגודלם ומאפסים זה את זה.</em>
+                </p>
+            </div>
+
+            <div class="teacher-note">
+                <div class="teacher-note-title">הערת מורה - החוק הראשון של ניוטון</div>
+                <p>תנועה בקו ישר במערכת שיש בה שדות (ללא אילוצים מכניים) משמעותה ששקול הכוחות שווה לאפס. זהו עקרון הפעולה של "בורר מהירויות" - רק חלקיקים בעלי מהירות ספציפית מאוד יחוו איזון מוחלט בין הכוח המגנטי לכוח החשמלי ויצליחו לעבור בקו ישר.</p>
+            </div>
+        </div>
+
+        <!-- Section B -->
+        <div class="step-container">
+            <h3 class="text-2xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4">סעיף ב': סימן המטען על הלוחות</h3>
+            
+            <div class="mb-4">
+                <div class="section-title">מה נתון:</div>
+                <p class="text-gray-700">מצאנו בסעיף א' שהכוח החשמלי <span class="math-inline">$\vec{F}_E$</span> הפועל על היון החיובי מכוון <strong>כלפי מטה</strong> (לעבר לוח $C_2$).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">מה מחפשים:</div>
+                <p class="text-gray-700">לקבוע מי מהלוחות, $C_1$ (העליון) או $C_2$ (התחתון), טעון במטען חיובי, ולהסביר.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">הסבר ופתרון:</div>
+                <p class="text-gray-700 leading-relaxed">
+                    ידוע כי מטענים שווי סימן דוחים זה את זה, ומטענים שוני סימן נמשכים זה לזה.
+                    היון החולף בין הלוחות הוא <strong>חיובי</strong> (+q). מצאנו שהכוח החשמלי שפועל עליו הוא כלפי מטה.
+                    משמעות הדבר היא שהיון נדחה מהלוח העליון ($C_1$) ונמשך ללוח התחתון ($C_2$). 
+                    לכן, הלוח העליון <strong>$C_1$ חייב להיות טעון במטען חיובי</strong> (כדי לדחות את היון החיובי כלפי מטה).
+                </p>
+            </div>
+
+            <div class="teacher-note">
+                <div class="teacher-note-title">הערת מורה - כיוון שדה חשמלי</div>
+                <p>דרך נוספת להסביר: כוח חשמלי הפועל על מטען חיובי הוא <strong>בכיוון</strong> השדה החשמלי. כיוון שהכוח כלפי מטה, כך גם השדה <span class="math-inline">$\vec{E}$</span>. קווי שדה חשמלי יוצאים ממטען חיובי ונכנסים למטען שלילי. מכאן שהלוח ממנו יוצאים הקווים (העליון $C_1$) הוא החיובי.</p>
+            </div>
+        </div>
+
+        <!-- Section C -->
+        <div class="step-container">
+            <h3 class="text-2xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4">סעיף ג': פיתוח ביטוי לגודל המהירות</h3>
+            
+            <div class="mb-4">
+                <div class="section-title">מה נתון:</div>
+                <p class="text-gray-700">תנועה בקו ישר (שקול כוחות אפס). כוח חשמלי <span class="math-inline">$F_E$</span> וכוח מגנטי <span class="math-inline">$F_B$</span> מנוגדים בכיוונם.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">מה מחפשים:</div>
+                <p class="text-gray-700">לפתח ביטוי פרמטרי (אותיות בלבד) למהירות <span class="math-inline">$v$</span>.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">נוסחאות בשימוש:</div>
+                <div class="math-block">
+                    $$ \Sigma F_y = 0 $$
+                    $$ F_E = qE $$
+                    $$ F_B = qvB\sin(\alpha) $$
+                </div>
+                <p class="text-sm text-gray-500 text-center">(כאשר $\alpha = 90^\circ$ בין המהירות לשדה המגנטי, ולכן $\sin(90^\circ)=1$)</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">הצבה ופתרון (פיתוח):</div>
+                <p class="text-gray-700 mb-2">נשווה את הגדלים של שני הכוחות (מכיוון שהם מאפסים זה את זה):</p>
+                <div class="math-block">
+                    $$ F_E = F_B $$
+                    $$ qE = qvB $$
+                </div>
+                <p class="text-gray-700 mb-2">נחלק את שני אגפי המשוואה במטען $q$ (שאינו אפס):</p>
+                <div class="math-block">
+                    $$ E = vB $$
+                </div>
+                <p class="text-gray-700 mb-2">נבודד את המהירות $v$:</p>
+                <div class="math-block">
+                    $$ v = \frac{E}{B} $$
+                </div>
+            </div>
+
+            <div class="teacher-note">
+                <div class="teacher-note-title">הערת מורה - המטען מצטמצם!</div>
+                <p>שימו לב לתוצאה היפהפייה: המטען <span class="math-inline">$q$</span> הצטמצם מהמשוואה! מה זה אומר פיזיקלית? זה אומר שבורר המהירויות מסנן חלקיקים <strong>אך ורק לפי המהירות שלהם</strong>, ללא קשר לגודל המטען שלהם או למסה שלהם. כל חלקיק (טעון) שיש לו את המהירות המדויקת של <span class="math-inline">$v = E/B$</span> יעבור בקו ישר.</p>
+            </div>
+        </div>
+
+        <!-- Section D -->
+        <div class="step-container">
+            <h3 class="text-2xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4">סעיף ד': החלפה ליון שלילי</h3>
+            
+            <div class="mb-4">
+                <div class="section-title">מה נתון:</div>
+                <p class="text-gray-700">מכניסים יון <strong>שלילי</strong> ($-q$) באותה מהירות <span class="math-inline">$v$</span>. לא משנים את השדה המגנטי.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">מה מחפשים:</div>
+                <p class="text-gray-700">האם נדרש להפוך את כיוון השדה החשמלי כדי שהיון ימשיך לנוע בקו ישר?</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">הסבר ופתרון:</div>
+                <p class="text-gray-700 leading-relaxed">
+                    <strong>לא, אין צורך להפוך את כיוון השדה החשמלי.</strong><br>
+                    נסביר בעזרת כוחות:
+                    עבור יון שלילי הנע ימינה בשדה מגנטי פנימה, לפי כלל יד ימין (או שמאל למטען שלילי), הכוח המגנטי <span class="math-inline">$\vec{F}_B$</span> מתהפך ופועל עתה <strong>כלפי מטה</strong>.
+                    כדי שהיון ינוע בקו ישר, אנו זקוקים לכוח חשמלי <span class="math-inline">$\vec{F}_E$</span> שיתנגד לו, כלומר יפעל <strong>כלפי מעלה</strong>.
+                    השדה החשמלי שקבענו קודם מכוון כלפי מטה. כוח חשמלי הפועל על מטען שלילי הוא <strong>מנוגד</strong> לכיוון השדה. לכן, שדה חשמלי כלפי מטה יפעיל על המטען השלילי כוח חשמלי בדיוק <strong>כלפי מעלה</strong>, כפי שאנו צריכים! 
+                    לכן המערכת כולה נשארת מאוזנת ללא שום שינוי בכיוון השדות.
+                </p>
+            </div>
+
+            <div class="teacher-note">
+                <div class="teacher-note-title">הערת מורה - דרך קצרה ואלגנטית</div>
+                <p>אפשר גם להסתכל על הנוסחה שפיתחנו בסעיף ג': <span class="math-inline">$v = E/B$</span>. שימו לב שהמשוואה הזו אינה מכילה את המטען <span class="math-inline">$q$</span>, ואפילו לא את הסימן שלו! המשמעות היא שהתנאי למעבר בקו ישר בבורר המהירויות זהה גם למטענים חיוביים וגם לשליליים (כל עוד הם נעים באותו כיוון התחלתי).</p>
+            </div>
+        </div>
+
+        <!-- Section E -->
+        <div class="step-container">
+            <h3 class="text-2xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4">סעיף ה': זיהוי מסלולים בספקטרומטר (אזור השדה המגנטי בלבד)</h3>
+            
+            <div class="mb-4">
+                <div class="section-title">מה נתון:</div>
+                <ul class="list-disc list-inside text-gray-700">
+                    <li>3 יונים נכנסים מאזור הבורר (נקודה O) לאזור עם שדה מגנטי בלבד.</li>
+                    <li><strong>לכולם אותה מהירות $v$</strong> (כי עברו באותו בורר מהירויות).</li>
+                    <li>השדה המגנטי <span class="math-inline">$B$</span> באזור זה שווה לשדה בבורר (כלומר, קבוע לכולם).</li>
+                    <li>נתוני היונים (מתוך הטבלה):</li>
+                    <ul class="list-none pl-6 mt-1 text-sm text-gray-600">
+                        <li>יון 1: מטען $q$, מסה $m$</li>
+                        <li>יון 2: מטען $2q$, מסה $m$</li>
+                        <li>יון 3: מטען $q$, מסה $2m$</li>
+                    </ul>
+                    <li>ישנם 3 מסלולים בתרשים: א', ב', ג'. מסלול א' הוא בעל הרדיוס הקטן ביותר, ג' הוא בעל הרדיוס הגדול ביותר.</li>
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">מה מחפשים:</div>
+                <p class="text-gray-700">להתאים כל אחד מהיונים 1, 2, 3 לאחד המסלולים (א', ב', ג') ולפרט את השיקולים.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">נוסחה בשימוש (פיתוח רדיוס):</div>
+                <p class="text-gray-700 mb-2">באזור זה פועל רק כוח מגנטי המהווה כוח צנטריפטלי הגורם לתנועה מעגלית:</p>
+                <div class="math-block">
+                    $$ \Sigma F_r = m a_r $$
+                    $$ qvB = m \frac{v^2}{R} $$
+                    $$ R = \frac{mv}{qB} $$
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">הצבה ופתרון:</div>
+                <p class="text-gray-700 leading-relaxed">
+                    מכיוון שהמהירות <span class="math-inline">$v$</span> והשדה המגנטי <span class="math-inline">$B$</span> זהים עבור כל השלושה, רדיוס המסלול יחסי ישירות למסה ביחס למטען (ליחס <span class="math-inline">$\frac{m}{q}$</span>). נחשב יחס זה עבור כל יון:
+                </p>
+                
+                <ul class="list-none space-y-4 mt-4 text-gray-800 bg-gray-50 p-4 rounded-lg">
+                    <li>
+                        <strong>יון 1:</strong> רדיוס בסיס שאליו נשווה. 
+                        <div class="math-block" style="margin: 0.2rem 0;">$$ R_1 = \frac{m \cdot v}{q \cdot B} $$</div>
+                    </li>
+                    <li>
+                        <strong>יון 2:</strong> מסה $m$, מטען $2q$.
+                        <div class="math-block" style="margin: 0.2rem 0;">$$ R_2 = \frac{m \cdot v}{2q \cdot B} = \frac{1}{2} \left( \frac{mv}{qB} \right) = 0.5 R_1 $$</div>
+                        <span class="text-sm text-blue-700">זהו הרדיוס ה<strong>קטן ביותר</strong> מבין השלושה.</span>
+                    </li>
+                    <li>
+                        <strong>יון 3:</strong> מסה $2m$, מטען $q$.
+                        <div class="math-block" style="margin: 0.2rem 0;">$$ R_3 = \frac{2m \cdot v}{q \cdot B} = 2 \left( \frac{mv}{qB} \right) = 2 R_1 $$</div>
+                        <span class="text-sm text-blue-700">זהו הרדיוס ה<strong>גדול ביותר</strong> מבין השלושה.</span>
+                    </li>
+                </ul>
+
+                <p class="text-gray-700 mt-4 font-bold">מסקנה והתאמה למסלולים בשרטוט:</p>
+                <ul class="list-disc list-inside text-gray-700 font-medium">
+                    <li>מסלול א' (הרדיוס הקטן ביותר) שייך ל<strong>יון 2</strong>.</li>
+                    <li>מסלול ב' (הרדיוס הבינוני) שייך ל<strong>יון 1</strong>.</li>
+                    <li>מסלול ג' (הרדיוס הגדול ביותר) שייך ל<strong>יון 3</strong>.</li>
+                </ul>
+            </div>
+
+            <div class="teacher-note">
+                <div class="teacher-note-title">הערת מורה - תאוצה בתנועה מעגלית</div>
+                <p>חשוב לזכור: בתנועה המעגלית באזור זה, הכוח המגנטי תמיד מאונך למהירות. כוח המאונך למהירות אינו מבצע עבודה, ולכן אינו משנה את האנרגיה הקינטית. המשמעות היא ש<strong>גודל המהירות אינו משתנה</strong> כלל לאורך חצי המעגל (המהירות קבועה בגודלה). התאוצה הקיימת כאן (<span class="math-inline">$a_r = v^2/R$</span>) אחראית אך ורק לשינוי <strong>כיוון</strong> המהירות בכל רגע.</p>
+            </div>
+        </div>
+
+        <!-- Section F -->
+        <div class="step-container">
+            <h3 class="text-2xl font-bold text-gray-800 border-b-2 border-gray-200 pb-2 mb-4">סעיף ו': חישוב המרחק OP</h3>
+            
+            <div class="mb-4">
+                <div class="section-title">מה נתון:</div>
+                <ul class="list-disc list-inside text-gray-700">
+                    <li><span class="math-inline">$E = 6.15 \cdot 10^3 \text{ V/m}$</span></li>
+                    <li><span class="math-inline">$B = 0.1 \text{ T}$</span></li>
+                    <li><span class="math-inline">$m = 1.3 \cdot 10^{-26} \text{ kg}$</span></li>
+                    <li><span class="math-inline">$q = 1.6 \cdot 10^{-19} \text{ C}$</span></li>
+                    <li>המרחק הנדרש הוא OP. לפי השרטוט, נקודה P היא נקודת הפגיעה של <strong>מסלול ג'</strong> (יון מספר 3, כפי שמצאנו בסעיף הקודם).</li>
+                </ul>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">מה מחפשים:</div>
+                <p class="text-gray-700">את המרחק מקו הכניסה O לנקודת הפגיעה P. היות והמסלול הוא חצי מעגל, המרחק OP מהווה את <strong>קוטר המסלול</strong>, כלומר פעמיים הרדיוס (<span class="math-inline">$2 \cdot R_3$</span>).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">נוסחאות בשימוש:</div>
+                <div class="math-block">
+                    $$ v = \frac{E}{B} $$
+                    $$ R_3 = \frac{M_3 v}{Q_3 B} $$
+                    $$ OP = 2 \cdot R_3 $$
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <div class="section-title">הצבה ופתרון:</div>
+                
+                <p class="font-bold text-gray-800 mt-2">שלב 1: בדיקת יחידות (MKS)</p>
+                <p class="text-gray-700 mb-2">השדה ב-V/m, שדה מגנטי ב-Tesla, מסה בקילוגרם ומטען בקולון. כל הנתונים <strong>כבר ביחידות תקניות</strong> (MKS). אפשר להמשיך להצבה.</p>
+
+                <p class="font-bold text-gray-800 mt-4">שלב 2: חישוב מהירות הכניסה $v$</p>
+                <div class="math-block">
+                    $$ v = \frac{6.15 \cdot 10^3}{0.1} = 6.15 \cdot 10^4 \text{ m/s} $$
+                </div>
+
+                <p class="font-bold text-gray-800 mt-4">שלב 3: חילוץ הנתונים הספציפיים עבור יון 3 (מסלול ג')</p>
+                <p class="text-gray-700 mb-2">מתוך הטבלה, ליון 3 יש מסה של <span class="math-inline">$2m$</span> ומטען <span class="math-inline">$q$</span>:</p>
+                <div class="math-block">
+                    $$ M_3 = 2m = 2 \cdot 1.3 \cdot 10^{-26} = 2.6 \cdot 10^{-26} \text{ kg} $$
+                    $$ Q_3 = q = 1.6 \cdot 10^{-19} \text{ C} $$
+                </div>
+
+                <p class="font-bold text-gray-800 mt-4">שלב 4: חישוב רדיוס מסלול ג' ($R_3$)</p>
+                <div class="math-block">
+                    $$ R_3 = \frac{M_3 \cdot v}{Q_3 \cdot B} $$
+                    $$ R_3 = \frac{(2.6 \cdot 10^{-26}) \cdot (6.15 \cdot 10^4)}{(1.6 \cdot 10^{-19}) \cdot 0.1} $$
+                    $$ R_3 = \frac{15.99 \cdot 10^{-22}}{1.6 \cdot 10^{-20}} $$
+                    $$ R_3 = 9.99375 \cdot 10^{-2} \text{ m} $$
+                </div>
+                <p class="text-gray-700 text-center">נראה כי התוצאה קרובה מאוד ל- <span class="math-inline">$0.1 \text{ m}$</span>.</p>
+
+                <p class="font-bold text-gray-800 mt-4">שלב 5: חישוב המרחק המבוקש OP (הקוטר)</p>
+                <div class="math-block">
+                    $$ OP = 2 \cdot R_3 $$
+                    $$ OP = 2 \cdot 9.99375 \cdot 10^{-2} \approx 0.199875 \text{ m} $$
+                </div>
+                
+                <div class="bg-green-100 border-green-500 border-2 rounded p-4 text-center mt-4">
+                    <span class="text-xl font-bold text-green-800">תשובה סופית: המרחק OP הוא כ- $0.2 \text{ m}$ (או $20 \text{ cm}$).</span>
+                </div>
+            </div>
+
+            <div class="teacher-note">
+                <div class="teacher-note-title">הערת מורה - ניתוח גרפי והבנת השאלה</div>
+                <p>אחת הטעויות הנפוצות בסעיפים מסוג זה היא למהר להציב בנוסחה של <span class="math-inline">$R = \frac{mv}{qB}$</span> את הנתונים <span class="math-inline">$m$</span> ו-<span class="math-inline">$q$</span> כמו שהם נתונים בשאלה. 
+                החכמה כאן היא להבין קודם שהנקודה P נמצאת על המסלול הגדול ביותר (מסלול ג'), ולכן עלינו להציב את מסתו ומטענו של <strong>היון המתאים למסלול זה (יון 3)</strong>, שהם <span class="math-inline">$2m$</span> ו-<span class="math-inline">$q$</span>. בנוסף, חובה לזכור שהפגיעה בלוח משלימה חצי מעגל, ולכן המרחק מנקודת הכניסה הוא <strong>קוטר</strong> ולא רדיוס.</p>
+            </div>
+        </div>
+
+    </div>
+</body>
+</html>
