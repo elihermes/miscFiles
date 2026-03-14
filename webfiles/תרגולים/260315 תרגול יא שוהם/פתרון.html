@@ -1,0 +1,371 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון דף עבודה בפיזיקה: חוקי קפלר</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8fafc; color: #1e293b; }
+        .formula-badge {
+            background-color: #eff6ff; color: #1e40af; border: 1px solid #bfdbfe;
+            border-radius: 9999px; padding: 0.25rem 0.75rem; display: inline-block;
+            font-weight: 600; margin: 0.5rem 0; font-family: 'Courier New', Courier, monospace;
+            direction: ltr; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .teacher-highlight {
+            background-color: #f0fdf4; border-right: 4px solid #22c55e;
+            padding: 1.25rem; margin-top: 1.5rem; margin-bottom: 1.5rem; border-radius: 0.5rem 0 0 0.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .math-scroll { overflow-x: auto; overflow-y: hidden; padding: 0.5rem 0; direction: ltr; }
+        .q-container { background-color: white; border-radius: 0.75rem; padding: 1.5rem; margin-bottom: 2rem; box-shadow: 0 4px 6px rgba(0,0,0,0.05); }
+        h1, h2, h3 { color: #0f172a; }
+        .section-title { font-weight: bold; color: #334155; margin-top: 1rem; margin-bottom: 0.25rem; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <header class="max-w-4xl mx-auto mb-8 text-center">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-blue-800 mb-2">פתרון מודרך בפיזיקה: חוקי קפלר וכבידה</h1>
+        <p class="text-lg text-gray-600">פתרון מלא, שלב אחר שלב, המותאם לרמת 5 יח"ל</p>
+    </header>
+
+    <main class="max-w-4xl mx-auto">
+
+        <!-- פיתוח נוסחאות מבוא -->
+        <div class="q-container border-t-4 border-blue-500">
+            <h2 class="text-2xl font-bold mb-4">הקדמה: פיתוח חוקי קפלר מתוך עקרונות הדינמיקה</h2>
+            <p class="mb-4">כדי להבין את החוק השלישי של קפלר, עלינו לזכור שהוא אינו "קסם" – הוא נובע ישירות מהחוק השני של ניוטון ומחוק הכבידה העולמי. נפתח אותו כאן עבור מסלול מעגלי, כדי שנבין את המקור לפני שניגש לשאלות.</p>
+            
+            <div class="math-scroll">
+                <p>עבור גוף שמסתו $m$ המקיף גוף מרכזי שמסתו $M$ ברדיוס $r$, נרשום את חוקי ניוטון לגוף המקיף בנפרד:</p>
+                $$ \Sigma\vec{F} = m\vec{a} $$
+            </div>
+            
+            <p>הכוח היחיד הפועל הוא כוח הכבידה המכוון למרכז, והתאוצה היא תאוצה רדיאלית:</p>
+            <div class="math-scroll">
+                $$ F_g = G\frac{Mm}{r^2} \quad , \quad a_R = \frac{v^2}{r} $$
+            </div>
+            
+            <p>נציב ונצמצם את המסה הפנימית $m$ (שימו לב - כוחות הפעולה והתגובה פועלים על גופים שונים ולכן אינם מבטלים זה את זה. אנו מתבוננים רק על כוכב הלכת!):</p>
+            <div class="math-scroll">
+                $$ G\frac{Mm}{r^2} = m\frac{v^2}{r} \implies v^2 = \frac{GM}{r} $$
+            </div>
+
+            <p>נשתמש בקשר מהקינמטיקה בין מהירות לזמן מחזור $v = \frac{2\pi r}{T}$:</p>
+            <div class="math-scroll">
+                $$ \left(\frac{2\pi r}{T}\right)^2 = \frac{GM}{r} \implies \frac{4\pi^2 r^2}{T^2} = \frac{GM}{r} $$
+            </div>
+
+            <p class="font-bold text-blue-700 mt-4">ולבסוף, נסדר ונקבל את החוק השלישי של קפלר (המופיע בדף הנוסחאות בגרסת יחס):</p>
+            <div class="math-scroll">
+                $$ \frac{r^3}{T^2} = \frac{GM}{4\pi^2} = \text{Constant} $$
+            </div>
+        </div>
+
+        <!-- שאלה 1 -->
+        <div class="q-container">
+            <h2 class="text-xl font-bold mb-2 text-blue-800">שאלה 1</h2>
+            <p class="mb-4 text-gray-700">כוכב לכת א' וכוכב לכת ב' חגים סביב אותה שמש. רדיוס המסלול של כוכב א' גדול פי 9 מרדיוס המסלול של כוכב ב'. פי כמה גדול זמן המחזור של כוכב א' מזמן המחזור של כוכב ב'?</p>
+            
+            <!-- SVG FBD -->
+            <div class="w-full max-w-sm mx-auto my-6">
+                <svg viewBox="0 0 300 200" class="w-full bg-white rounded-lg shadow-sm border border-gray-200">
+                    <ellipse cx="150" cy="100" rx="120" ry="60" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="5,5"/>
+                    <circle cx="150" cy="100" r="15" fill="#facc15" stroke="#ca8a04" stroke-width="2"/>
+                    <text x="150" y="95" text-anchor="middle" font-size="10" fill="#713f12" font-family="sans-serif">Sun</text>
+                    <circle cx="270" cy="100" r="8" fill="#3b82f6" stroke="#1d4ed8" stroke-width="2"/>
+                    <text x="285" y="105" text-anchor="start" font-size="12" fill="#1e3a8a" font-family="sans-serif">Planet A/B</text>
+                    <line x1="262" y1="100" x2="180" y2="100" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow1)"/>
+                    <text x="220" y="90" text-anchor="middle" font-size="14" fill="#dc2626" font-family="sans-serif" font-weight="bold">F_g</text>
+                    <line x1="270" y1="92" x2="270" y2="40" stroke="#22c55e" stroke-width="3" marker-end="url(#arrowGreen1)"/>
+                    <text x="280" y="65" text-anchor="start" font-size="14" fill="#16a34a" font-family="sans-serif" font-weight="bold">v</text>
+                    <defs>
+                        <marker id="arrow1" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" /></marker>
+                        <marker id="arrowGreen1" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse"><path d="M 0 0 L 10 5 L 0 10 z" fill="#22c55e" /></marker>
+                    </defs>
+                </svg>
+                <p class="text-center text-sm text-gray-500 mt-2">תרשים כוחות חופשי (FBD) - כוח הכבידה מהווה את הכוח הצנטריפטלי.</p>
+            </div>
+
+            <div class="section-title">מה נתון:</div>
+            <p>רדיוס כוכב א' גדול פי 9 מרדיוס כוכב ב': $R_A = 9 R_B$.<br>
+            הגופים חגים סביב אותה שמש, ולכן הקבוע $\frac{GM}{4\pi^2}$ זהה עבור שניהם.</p>
+
+            <div class="section-title">מה מחפשים:</div>
+            <p>את יחס זמני המחזור: $\frac{T_A}{T_B}$</p>
+
+            <div class="section-title">נוסחאות מהדף:</div>
+            <div class="formula-badge">$(\frac{R_1}{R_2})^3 = (\frac{T_1}{T_2})^2$</div>
+
+            <div class="section-title">הצבה ופתרון:</div>
+            <div class="math-scroll">
+                $$ \left(\frac{R_A}{R_B}\right)^3 = \left(\frac{T_A}{T_B}\right)^2 $$
+                $$ \left(\frac{9 R_B}{R_B}\right)^3 = \left(\frac{T_A}{T_B}\right)^2 $$
+                $$ 9^3 = \left(\frac{T_A}{T_B}\right)^2 $$
+                $$ 729 = \left(\frac{T_A}{T_B}\right)^2 \implies \frac{T_A}{T_B} = \sqrt{729} = 27 $$
+            </div>
+            <p>תשובה: זמן המחזור של כוכב א' גדול <strong>פי 27</strong> מזמן המחזור של כוכב ב'.</p>
+
+            <div class="teacher-highlight">
+                <strong>הערת מורה:</strong> שימו לב לעוצמה של שימוש ביחסים! לא היינו צריכים לדעת את המסה של השמש או את הרדיוסים המדויקים במטרים (MKS). ברגע שאנו מבצעים יחס, היחידות מצטמצמות. זה כלי קריטי בפיזיקה שחוסך זמן רב ומונע שגיאות חישוב. כמו כן, ניתן לראות שככל שמתרחקים מהשמש, גודל המהירות קטן וזמן ההקפה גדל משמעותית.
+            </div>
+        </div>
+
+        <!-- שאלה 2 -->
+        <div class="q-container">
+            <h2 class="text-xl font-bold mb-2 text-blue-800">שאלה 2</h2>
+            <p class="mb-4 text-gray-700">לפניכם נתונים על ארבעה ירחים שנצפו במערכת שמש רחוקה. איזה ירח אינו שייך למערכת? (נמקו בעזרת חישוב).</p>
+
+            <div class="section-title">מה נתון:</div>
+            <p>נתונים ארבעה צמדי נתונים של זמן מחזור $T$ (ביממים) ורדיוס $R$ (ב-$10^5 \text{ km}$).</p>
+
+            <div class="section-title">מה מחפשים:</div>
+            <p>לאתר את הירח שעבורו החוק השלישי של קפלר אינו מתקיים ביחס לשאר.</p>
+
+            <div class="section-title">נוסחאות מהדף:</div>
+            <p>מהחוק השלישי של קפלר (אותו פיתחנו במבוא), אנו יודעים שעבור גופים החגים סביב <strong>אותה מסה מרכזית</strong>, היחס בין הרדיוס בשלישית לזמן המחזור בריבוע חייב להיות קבוע:</p>
+            <div class="formula-badge">$\frac{R^3}{T^2} = \text{Constant}$</div>
+
+            <div class="section-title">הצבה ופתרון:</div>
+            <p>נחשב את היחס $\frac{R^3}{T^2}$ עבור כל אחד מהירחים. כדי להקל על החישוב, נשתמש ביחידות הנתונות (ימים ו-$10^5$ ק"מ). היחס עצמו יהיה ביחידות שרירותיות, אך הוא <strong>חייב להיות זהה</strong> לכל הירחים באותה מערכת.</p>
+            
+            <div class="math-scroll">
+                $$ \text{Moon 1: } \frac{(2.1)^3}{(1.5)^2} = \frac{9.261}{2.25} \approx 4.116 $$
+                $$ \text{Moon 2: } \frac{(4.2)^3}{(4.2)^2} = 4.200 $$
+                $$ \text{Moon 3: } \frac{(6.7)^3}{(8.5)^2} = \frac{300.763}{72.25} \approx 4.162 $$
+                $$ \text{Moon 4: } \frac{(10.7)^3}{(17.2)^2} = \frac{1225.04}{295.84} \approx 4.140 $$
+            </div>
+            
+            <p>בחינה מעמיקה של הנתונים מראה שירחים 1, 3 ו-4 חולקים קבוע שנע סביב $4.14 \pm 0.02$. לעומת זאת, ירח 2 (בו $T=4.2, R=4.2$) חורג מהמגמה באופן ברור יותר (היחס הוא בדיוק 4.2). עם זאת, הסטייה יחסית קטנה.</p>
+            <p><strong>גישה חלופית (מדויקת יותר ליחסים בין גופים):</strong> ניקח את ירח 1 כנקודת ייחוס ונבדוק מה היה אמור להיות הרדיוס של ירח 2 לו היה במערכת:</p>
+            <div class="math-scroll">
+                $$ R_2 = R_1 \cdot \left(\frac{T_2}{T_1}\right)^{2/3} = 2.1 \cdot \left(\frac{4.2}{1.5}\right)^{2/3} = 2.1 \cdot (2.8)^{2/3} \approx 2.1 \cdot 1.986 \approx 4.17 \times 10^5 \text{ km} $$
+            </div>
+            <p>הנתון מראה $R = 4.2$. למרות שההבדל נראה קטן, מבחינה פיזיקלית במערכת כזו, החריגה הגדולה ביותר שייכת לירח 2 (או שמדובר בטעות מדידה בנתונים, אך לצורך השאלה - ירח 2 מציג את החריגה הבוטה ביותר מהממוצע של השאר).</p>
+
+            <div class="teacher-highlight">
+                <strong>הערת מורה:</strong> תרגיל זה ממחיש כיצד פיזיקאים מאמתים מודלים מול תצפיות. החוק השלישי של קפלר מהווה "טביעת אצבע" למערכת שמש. אם גוף אינו מקיים את היחס המדויק (עד כדי שגיאות מדידה טבעיות), המסקנה היא שהוא כנראה לא חג סביב אותה מסה מרכזית, או שקיימת אינטראקציה כבידתית משמעותית עם גופים נוספים המעוותת את מסלולו.
+            </div>
+        </div>
+
+        <!-- שאלה 3 -->
+        <div class="q-container">
+            <h2 class="text-xl font-bold mb-2 text-blue-800">שאלה 3</h2>
+            <p class="mb-4 text-gray-700">לירח "אירופה" המקיף את צדק זמן מחזור של 3.55 יממות ורדיוס מסלול של $6.71 \times 10^5 \text{ km}$. לירח "גנימד", המקיף גם הוא את צדק, זמן מחזור של 7.16 יממות. מהו רדיוס המסלול של הירח גנימד?</p>
+
+            <div class="section-title">שלב 0: ריכוז נתונים והמרת יחידות (MKS)</div>
+            <p>כדי לעבוד נכון מבחינה מדעית, נציג קודם כל את הנתונים ביחידות תקניות (מטרים ושניות). ניקח את $1 \text{ day} = 24 \text{ hours} = 86400 \text{ seconds}$.</p>
+            <div class="math-scroll">
+                $$ T_E = 3.55 \text{ days} = 3.55 \cdot 86400 = 306,720 \text{ s} $$
+                $$ R_E = 6.71 \cdot 10^5 \text{ km} = 6.71 \cdot 10^5 \cdot 10^3 \text{ m} = 6.71 \cdot 10^8 \text{ m} $$
+                $$ T_G = 7.16 \text{ days} = 7.16 \cdot 86400 = 618,624 \text{ s} $$
+            </div>
+
+            <div class="section-title">מה מחפשים:</div>
+            <p>את רדיוס המסלול של גנימד בשיטת MKS ($R_G$).</p>
+
+            <div class="section-title">נוסחאות מהדף:</div>
+            <div class="formula-badge">$(\frac{R_1}{R_2})^3 = (\frac{T_1}{T_2})^2$</div>
+
+            <div class="section-title">הצבה ופתרון:</div>
+            <div class="math-scroll">
+                $$ \left(\frac{R_G}{6.71 \cdot 10^8}\right)^3 = \left(\frac{618,624}{306,720}\right)^2 $$
+                $$ \left(\frac{R_G}{6.71 \cdot 10^8}\right)^3 = (2.0169)^2 \approx 4.068 $$
+            </div>
+            <p>נוציא שורש שלישי משני האגפים:</p>
+            <div class="math-scroll">
+                $$ \frac{R_G}{6.71 \cdot 10^8} = \sqrt[3]{4.068} \approx 1.596 $$
+                $$ R_G = 1.596 \cdot 6.71 \cdot 10^8 \approx 10.71 \cdot 10^8 \text{ m} $$
+            </div>
+            <p>אם נרצה להחזיר לק"מ: $R_G \approx 10.71 \times 10^5 \text{ km}$.</p>
+
+            <div class="teacher-highlight">
+                <strong>הערת מורה - סודות המקצוע:</strong> בסעיף זה הקפדנו על המרה ל-MKS כי כך נדרש לפי הנהלים המדעיים. <strong>אבל</strong>, שימו לב שוב לתכונת ה"קסם" של המשוואה: מכיוון שיש כאן יחס (חילוק), מקדמי ההמרה (כמו 86400 שניות או $10^3$ מטרים) <em>מצטמצמים לחלוטין</em>! <br>
+                אם היינו מציבים ישר ביממות וק"מ: $R_G = 6.71\cdot 10^5 \cdot (7.16 / 3.55)^{2/3} = 10.71 \cdot 10^5 \text{ km}$. התוצאה זהה! זה קריטי להבנה שמותר להשאיר יחידות מקוריות <strong>רק במשוואות של יחסים טהורים</strong>.
+            </div>
+        </div>
+
+        <!-- שאלות 4 ו-5 -->
+        <div class="q-container">
+            <h2 class="text-xl font-bold mb-2 text-blue-800">שאלה 4 ו-5 (החוק השני של קפלר)</h2>
+            
+            <h3 class="font-bold mt-4">שאלה 4:</h3>
+            <p class="mb-2">כוכב לכת מסוים מכסה שטח של $S$ במהלך 12 יממות. איזה שטח הוא יכסה במהלך 360 יממות? על איזה חוק הסתמכתם?</p>
+            <div class="section-title">תשובה ל-4:</div>
+            <p>נסתמך על <strong>החוק השני של קפלר (חוק השטחים)</strong>. החוק קובע כי הרדיוס-וקטור המחבר את השמש לכוכב הלכת מכסה שטחים שווים בפרקי זמן שווים. כלומר, קצב כיסוי השטח $\frac{\Delta S}{\Delta t}$ הוא קבוע לאורך כל המסלול (למרות שהמסלול אליפטי וגודל המהירות משתנה).</p>
+            <div class="math-scroll">
+                $$ \frac{S_1}{\Delta t_1} = \frac{S_2}{\Delta t_2} \implies \frac{S}{12} = \frac{S_2}{360} $$
+                $$ S_2 = S \cdot \frac{360}{12} = 30S $$
+            </div>
+            
+            <h3 class="font-bold mt-6 border-t pt-4">שאלה 5:</h3>
+            <p class="mb-2">רדיוס הווקטור של כוכב לכת מכסה שטח של $3.14 \times 10^{14} \text{ km}^2$ ביממה אחת. זמן המחזור הוא 200 יממות. מהו השטח הכולל של האליפסה?</p>
+            <div class="section-title">תשובה ל-5:</div>
+            <p>שוב, נשתמש בחוק השני של קפלר. אם השטח המכוסה ביממה אחת הוא קבוע, הרי שהשטח הכולל של המסלול (האליפסה השלמה) הוא השטח שמכוסה במהלך הקפה שלמה אחת - כלומר, במהלך זמן מחזור שלם $T$.</p>
+            <div class="math-scroll">
+                $$ S_{\text{Total}} = \left( \frac{\Delta S}{\Delta t} \right) \cdot T $$
+                $$ S_{\text{Total}} = (3.14 \times 10^{14}) \cdot 200 = 628 \times 10^{14} = 6.28 \times 10^{16} \text{ km}^2 $$
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>הערת מורה:</strong> זכרו שהחוק השני של קפלר נובע מחוק שימור התנע הזוויתי. כאשר כוכב הלכת מתקרב לשמש (בפריהליון), הרדיוס קטן ולכן גודל המהירות <strong>גדל</strong>. כשהוא מתרחק (באפהליון), הרדיוס גדל וגודל המהירות <strong>קטן</strong>. משחק זה בין המהירות לרדיוס הוא ששומר על קצב כיסוי שטח קבוע בדיוק!
+            </div>
+        </div>
+
+        <!-- שאלה 6 ו-7 -->
+        <div class="q-container">
+            <h2 class="text-xl font-bold mb-2 text-blue-800">שאלות 6 ו-7 (שימוש בטבלת נתונים)</h2>
+            <p class="mb-2">בעזרת הנתונים שבדף הנוסחאות נפתור את השאלות הבאות:</p>
+
+            <h3 class="font-bold mt-4">שאלה 6: כמה שנות-ארץ לוקח למאדים להשלים הקפה?</h3>
+            <div class="section-title">מה נתון (מדף הנוסחאות):</div>
+            <p>עבור כדור הארץ (Earth): $T_E = 1.00 \text{ years}$ , $R_E = 149.6 \times 10^9 \text{ m}$.<br>
+            עבור מאדים (Mars): $R_M = 227.9 \times 10^9 \text{ m}$. (אף על פי שבדף נתון גם זמן המחזור ישירות כ-1.881, נדגים כיצד למצוא זאת חישובית).</p>
+            <div class="section-title">הצבה ופתרון (בעזרת יחס מול כדור הארץ):</div>
+            <div class="math-scroll">
+                $$ \left(\frac{T_M}{T_E}\right)^2 = \left(\frac{R_M}{R_E}\right)^3 $$
+                $$ \left(\frac{T_M}{1}\right)^2 = \left(\frac{227.9 \cdot 10^9}{149.6 \cdot 10^9}\right)^3 = (1.523)^3 \approx 3.535 $$
+                $$ T_M = \sqrt{3.535} \approx 1.88 \text{ Earth Years} $$
+            </div>
+
+            <h3 class="font-bold mt-6 border-t pt-4">שאלה 7: פי כמה גדול רדיוס המסלול של צדק משל כדור הארץ?</h3>
+            <div class="section-title">מה נתון (מדף הנוסחאות):</div>
+            <p>עבור כדור הארץ: $R_E = 149.6 \times 10^9 \text{ m}$.<br>
+            עבור צדק (Jupiter): $R_J = 778.3 \times 10^9 \text{ m}$.</p>
+            <div class="section-title">הצבה ופתרון:</div>
+            <p>אנו מתבקשים למצוא את היחס הפשוט $\frac{R_J}{R_E}$:</p>
+            <div class="math-scroll">
+                $$ \frac{R_J}{R_E} = \frac{778.3 \cdot 10^9}{149.6 \cdot 10^9} = \frac{778.3}{149.6} \approx 5.2 $$
+            </div>
+            <p>רדיוס המסלול של צדק גדול פי 5.2 מרדיוס המסלול של כדור הארץ (כלומר מרחקו כ-5.2 יחידות אסטרונומיות - AU).</p>
+        </div>
+
+        <!-- שאלה 8 -->
+        <div class="q-container">
+            <h2 class="text-xl font-bold mb-2 text-blue-800">שאלה 8</h2>
+            <p class="mb-4 text-gray-700">כוכב הלכת נפטון חג סביב השמש במרחק ממוצע של $30.07 \text{ AU}$. כמה שנות-ארץ אורכת שנת-נפטון אחת?</p>
+
+            <div class="section-title">מה נתון:</div>
+            <p>רדיוס נפטון ביחידות AU (יחידות אסטרונומיות המוגדרות כרדיוס כדור הארץ): $R_N = 30.07 \text{ AU}$.<br>
+            נתוני כדור הארץ ביחידות אלו: $R_E = 1 \text{ AU}$, $T_E = 1 \text{ Year}$.</p>
+
+            <div class="section-title">מה מחפשים:</div>
+            <p>את זמן המחזור של נפטון בשנות ארץ ($T_N$).</p>
+
+            <div class="section-title">נוסחאות מהדף:</div>
+            <div class="formula-badge">$(\frac{R_1}{R_2})^3 = (\frac{T_1}{T_2})^2$</div>
+
+            <div class="section-title">הצבה ופתרון:</div>
+            <p>כאשר עובדים עם יחידות של AU ושנות-ארץ, המשוואה של קפלר מקבלת צורה יפהפייה ופשוטה עבור גופים במערכת השמש שלנו:</p>
+            <div class="math-scroll">
+                $$ \left(\frac{T_N}{1}\right)^2 = \left(\frac{30.07}{1}\right)^3 $$
+                $$ T_N^2 = 30.07^3 \approx 27189.9 $$
+                $$ T_N = \sqrt{27189.9} \approx 164.9 \text{ Years} $$
+            </div>
+            <p>שנת נפטון אחת אורכת כמעט 165 שנות-ארץ!</p>
+        </div>
+
+        <!-- שאלה 9 -->
+        <div class="q-container">
+            <h2 class="text-xl font-bold mb-2 text-blue-800">שאלה 9</h2>
+            <p class="mb-4 text-gray-700">לווין תקשורת חג סביב כדור הארץ במסלול מעגלי ומשלים הקפה אחת כל 24 שעות במרחק $R$ ממרכז כדור הארץ. לווין ריגול חג סביב כדור הארץ בזמן מחזור של 3.5 שעות. בטאו את רדיוס המסלול של לווין הריגול באמצעות $R$.</p>
+
+             <!-- SVG FBD -->
+             <div class="w-full max-w-sm mx-auto my-6">
+                <svg viewBox="0 0 300 200" class="w-full bg-white rounded-lg shadow-sm border border-gray-200">
+                    <!-- Outer Orbit (Comms) -->
+                    <circle cx="150" cy="100" r="80" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="5,5"/>
+                    <!-- Inner Orbit (Spy) -->
+                    <circle cx="150" cy="100" r="40" fill="none" stroke="#f87171" stroke-width="2" stroke-dasharray="3,3"/>
+                    
+                    <circle cx="150" cy="100" r="15" fill="#3b82f6" stroke="#1e3a8a" stroke-width="2"/>
+                    <text x="150" y="95" text-anchor="middle" font-size="10" fill="#eff6ff" font-family="sans-serif">Earth</text>
+                    
+                    <!-- Comms Sat -->
+                    <circle cx="230" cy="100" r="6" fill="#64748b"/>
+                    <text x="240" y="105" text-anchor="start" font-size="10" fill="#475569" font-family="sans-serif">Comms (T=24h, R)</text>
+                    
+                    <!-- Spy Sat -->
+                    <circle cx="190" cy="100" r="5" fill="#ef4444"/>
+                    <text x="195" y="90" text-anchor="start" font-size="10" fill="#b91c1c" font-family="sans-serif">Spy (T=3.5h, r=?)</text>
+                    
+                    <line x1="150" y1="100" x2="230" y2="100" stroke="#94a3b8" stroke-width="1"/>
+                </svg>
+            </div>
+
+            <div class="section-title">מה נתון:</div>
+            <p>לווין תקשורת: $T_c = 24 \text{ h}$ , $R_c = R$.<br>
+            לווין ריגול: $T_s = 3.5 \text{ h}$.</p>
+
+            <div class="section-title">מה מחפשים:</div>
+            <p>את רדיוס לווין הריגול $R_s$ במונחי $R$.</p>
+
+            <div class="section-title">נוסחאות מהדף:</div>
+            <div class="formula-badge">$(\frac{R_1}{R_2})^3 = (\frac{T_1}{T_2})^2$</div>
+
+            <div class="section-title">הצבה ופתרון:</div>
+            <div class="math-scroll">
+                $$ \left(\frac{R_s}{R}\right)^3 = \left(\frac{T_s}{T_c}\right)^2 $$
+                $$ \left(\frac{R_s}{R}\right)^3 = \left(\frac{3.5}{24}\right)^2 $$
+                $$ \left(\frac{R_s}{R}\right)^3 = (0.1458)^2 \approx 0.02126 $$
+            </div>
+            <p>נוציא שורש שלישי:</p>
+            <div class="math-scroll">
+                $$ \frac{R_s}{R} = \sqrt[3]{0.02126} \approx 0.277 $$
+                $$ R_s = 0.277 R $$
+            </div>
+            <p>רדיוס המסלול של לווין הריגול הוא כ-27.7% מרדיוס מסלול הלווין הגיאוסטציונרי.</p>
+        </div>
+
+        <!-- שאלה 10 -->
+        <div class="q-container border-b-4 border-blue-500">
+            <h2 class="text-xl font-bold mb-2 text-blue-800">שאלה 10</h2>
+            <p class="mb-4 text-gray-700">תחנת החלל הבינלאומית (ISS) חגה סביב כדור הארץ במרחק ממוצע של כ־ $6.8 \times 10^6 \text{ m}$ ממרכז כדור הארץ. היעזרו בנתוני הירח מתוך דף הנוסחאות כדי לחשב את זמן המחזור של תחנת החלל הבינלאומית.</p>
+
+            <div class="section-title">שלב 0: ריכוז נתונים (MKS)</div>
+            <p>כמו שלמדנו, כאשר מבצעים חישוב כמותי סופי עדיף לעבור ל-MKS. נתוני הירח (מדף הנוסחאות):<br>
+            $R_M = 3.84 \times 10^8 \text{ m}$<br>
+            $T_M = 27.3 \text{ days} = 27.3 \cdot 24 \cdot 3600 = 2,358,720 \text{ s}$<br>
+            נתוני התחנה:<br>
+            $R_{ISS} = 6.8 \times 10^6 \text{ m}$</p>
+
+            <div class="section-title">מה מחפשים:</div>
+            <p>את זמן המחזור של ה-ISS, יסומן $T_{ISS}$.</p>
+
+            <div class="section-title">נוסחאות מהדף:</div>
+            <div class="formula-badge">$(\frac{T_{ISS}}{T_M})^2 = (\frac{R_{ISS}}{R_M})^3$</div>
+
+            <div class="section-title">הצבה ופתרון:</div>
+            <div class="math-scroll">
+                $$ \left(\frac{T_{ISS}}{2,358,720}\right)^2 = \left(\frac{6.8 \cdot 10^6}{3.84 \cdot 10^8}\right)^3 $$
+            </div>
+            <p>נחשב את יחס הרדיוסים: $\frac{6.8 \cdot 10^6}{384 \cdot 10^6} \approx 0.017708$</p>
+            <div class="math-scroll">
+                $$ \left(\frac{T_{ISS}}{2,358,720}\right)^2 = (0.017708)^3 \approx 5.553 \times 10^{-6} $$
+            </div>
+            <p>נוציא שורש ריבועי:</p>
+            <div class="math-scroll">
+                $$ \frac{T_{ISS}}{2,358,720} = \sqrt{5.553 \times 10^{-6}} \approx 0.002356 $$
+                $$ T_{ISS} = 0.002356 \cdot 2,358,720 \approx 5558 \text{ s} $$
+            </div>
+            <p>נמיר את התוצאה חזרה ליחידות נוחות להבנה:</p>
+            <div class="math-scroll">
+                $$ T_{ISS} = \frac{5558}{60} \approx 92.6 \text{ minutes} $$
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>הערת מורה:</strong> התוצאה מדהימה ותואמת לחלוטין את המציאות! תחנת החלל הבינלאומית, הנמצאת במסלול נמוך (LEO), אכן מקיפה את כדור הארץ פעם ב-90 עד 93 דקות. האסטרונאוטים שעל התחנה חווים זריחה ושקיעה כל שעה וחצי בערך. בנוסף, שימו לב שהתאוצה שלהם כלפי כדור הארץ כמעט שווה ל-$g=10\text{ m/s}^2$, אך הם מרגישים "חוסר משקל" מכיוון שהם נמצאים בנפילה חופשית מתמדת לתוך כדור הארץ, יחד עם התחנה עצמה.
+            </div>
+        </div>
+
+    </main>
+
+    <footer class="text-center text-gray-500 text-sm mt-8 mb-4">
+        הופק עבור לימוד מודרך בפיזיקה, 5 יח"ל.
+    </footer>
+
+</body>
+</html>
