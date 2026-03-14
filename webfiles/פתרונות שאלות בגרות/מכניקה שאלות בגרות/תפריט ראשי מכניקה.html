@@ -251,7 +251,7 @@
     </div>
 
     <script>
-        const solutions = [
+        const staticSolutions = [
             { year: 1996, question: "1", title: "1996 שאלה 1", href: "./1996 שאלה 1/1996 שאלה 1.html", tags: ["מכניקה", "בגרות", "קינמטיקה", "y(t)", "v(t)"] },
             { year: 1997, question: "1", title: "1997 שאלה 1", href: "./1997 שאלה 1/1997 שאלה.html", tags: ["מכניקה", "בגרות", "קינמטיקה", "גרפים"] },
             { year: 2000, question: "1", title: "2000 שאלה 1", href: "./2000 שאלה 1/2000 שאלה 1.html", tags: ["מכניקה", "בגרות", "תנועה", "חישוב"] },
@@ -265,6 +265,9 @@
             { year: 2012, question: "2", title: "2012 שאלה 2", href: "./2012 שאלה 2/2012 שאלה 2.html", tags: ["מכניקה", "בגרות", "כוחות", "אנרגיה"] }
         ];
 
+        const folderRelativeToRepo = "webfiles/פתרונות שאלות בגרות/מכניקה שאלות בגרות";
+        const folderNamePattern = /^(\d{4})\s+שאלה\s+(.+)$/;
+
         const yearSelect = document.getElementById("yearSelect");
         const resultsInfo = document.getElementById("resultsInfo");
         const listEl = document.getElementById("solutionsList");
@@ -272,6 +275,200 @@
         const hoverPreviewImg = document.getElementById("hoverPreviewImg");
 
         let previewActive = false;
+        let solutions = [...staticSolutions];
+
+        function parseFromFolderName(folderName) {
+            const match = folderName.match(folderNamePattern);
+            if (!match) {
+                return null;
+            }
+
+            return {
+                year: Number(match[1]),
+                question: match[2],
+                title: folderName
+            };
+        }
+
+        function normalizeHref(baseHref) {
+            if (!baseHref.endsWith("/")) {
+                return `${baseHref}/`;
+            }
+            return baseHref;
+        }
+
+        function compareSolutions(a, b) {
+            if (a.year !== b.year) {
+                return a.year - b.year;
+            }
+            return String(a.question).localeCompare(String(b.question), "he", { numeric: true });
+        }
+
+        function githubRepoContextFromLocation() {
+            const hostMatch = window.location.hostname.match(/^([^.]+)\.github\.io$/);
+            if (!hostMatch) {
+                return null;
+            }
+
+            const pathParts = window.location.pathname.split("/").filter(Boolean);
+            if (!pathParts.length) {
+                return null;
+            }
+
+            return {
+                owner: hostMatch[1],
+                repo: pathParts[0]
+            };
+        }
+
+        async function loadSolutionsFromDirectoryListing() {
+            const response = await fetch("./", { cache: "no-store" });
+            if (!response.ok) {
+                throw new Error("directory-listing-not-available");
+            }
+
+            const html = await response.text();
+            const doc = new DOMParser().parseFromString(html, "text/html");
+            const anchors = Array.from(doc.querySelectorAll("a"));
+
+            const folderEntries = anchors
+                .map((a) => {
+                    const href = a.getAttribute("href") || "";
+                    if (!href || href === "../" || !href.endsWith("/")) {
+                        return null;
+                    }
+
+                    const decodedName = decodeURIComponent(href.replace(/\/$/, ""));
+                    const parsed = parseFromFolderName(decodedName);
+                    if (!parsed) {
+                        return null;
+                    }
+
+                    return {
+                        ...parsed,
+                        folderHref: normalizeHref(href)
+                    };
+                })
+                .filter(Boolean);
+
+            if (!folderEntries.length) {
+                throw new Error("directory-listing-empty");
+            }
+
+            const discovered = [];
+            for (const folder of folderEntries) {
+                const folderResponse = await fetch(folder.folderHref, { cache: "no-store" });
+                if (!folderResponse.ok) {
+                    continue;
+                }
+
+                const folderHtml = await folderResponse.text();
+                const folderDoc = new DOMParser().parseFromString(folderHtml, "text/html");
+                const fileAnchors = Array.from(folderDoc.querySelectorAll("a"));
+
+                const htmlCandidates = fileAnchors
+                    .map((a) => a.getAttribute("href") || "")
+                    .filter((href) => href.toLowerCase().endsWith(".html"));
+
+                if (!htmlCandidates.length) {
+                    continue;
+                }
+
+                const exact = htmlCandidates.find((href) => decodeURIComponent(href) === `${folder.title}.html`);
+                const htmlFile = exact || htmlCandidates[0];
+
+                discovered.push({
+                    year: folder.year,
+                    question: folder.question,
+                    title: folder.title,
+                    href: `${folder.folderHref}${htmlFile}`,
+                    tags: ["מכניקה", "בגרות"]
+                });
+            }
+
+            if (!discovered.length) {
+                throw new Error("no-html-files-found");
+            }
+
+            return discovered;
+        }
+
+        async function loadSolutionsFromGitHubApi() {
+            const ctx = githubRepoContextFromLocation();
+            if (!ctx) {
+                throw new Error("not-github-pages");
+            }
+
+            const encodedPath = folderRelativeToRepo
+                .split("/")
+                .map((segment) => encodeURIComponent(segment))
+                .join("/");
+
+            const baseUrl = `https://api.github.com/repos/${ctx.owner}/${ctx.repo}/contents/${encodedPath}`;
+            const rootResponse = await fetch(baseUrl, { cache: "no-store" });
+            if (!rootResponse.ok) {
+                throw new Error("github-root-load-failed");
+            }
+
+            const rootEntries = await rootResponse.json();
+            const folders = rootEntries
+                .filter((entry) => entry.type === "dir")
+                .map((entry) => {
+                    const parsed = parseFromFolderName(entry.name);
+                    if (!parsed) {
+                        return null;
+                    }
+                    return {
+                        ...parsed,
+                        name: entry.name,
+                        apiUrl: entry.url
+                    };
+                })
+                .filter(Boolean);
+
+            const discovered = [];
+            for (const folder of folders) {
+                const folderResponse = await fetch(folder.apiUrl, { cache: "no-store" });
+                if (!folderResponse.ok) {
+                    continue;
+                }
+
+                const files = await folderResponse.json();
+                const htmlFiles = files.filter((file) => file.type === "file" && file.name.toLowerCase().endsWith(".html"));
+                if (!htmlFiles.length) {
+                    continue;
+                }
+
+                const exact = htmlFiles.find((file) => file.name === `${folder.name}.html`);
+                const htmlFile = exact || htmlFiles[0];
+
+                discovered.push({
+                    year: folder.year,
+                    question: folder.question,
+                    title: folder.name,
+                    href: `./${folder.name}/${htmlFile.name}`,
+                    tags: ["מכניקה", "בגרות"]
+                });
+            }
+
+            if (!discovered.length) {
+                throw new Error("github-no-solutions");
+            }
+
+            return discovered;
+        }
+
+        async function loadSolutionsAuto() {
+            try {
+                return await loadSolutionsFromDirectoryListing();
+            } catch (_directoryErr) {
+                try {
+                    return await loadSolutionsFromGitHubApi();
+                } catch (_githubErr) {
+                    return [...staticSolutions];
+                }
+            }
+        }
 
         function movePreview(event) {
             if (!previewActive) {
@@ -309,11 +506,11 @@
             const thumbs = scope.querySelectorAll(".solution-thumb");
             thumbs.forEach((thumb) => {
                 thumb.addEventListener("mouseenter", (event) => {
-                    if (window.matchMedia("(max-width: 900px)").matches || !thumb.src) {
+                    if (window.matchMedia("(max-width: 900px)").matches || !thumb.currentSrc) {
                         return;
                     }
 
-                    hoverPreviewImg.src = thumb.src;
+                    hoverPreviewImg.src = thumb.currentSrc;
                     hoverPreview.style.display = "block";
                     previewActive = true;
                     movePreview(event);
@@ -325,6 +522,7 @@
         }
 
         function yearOptionsInit() {
+            yearSelect.innerHTML = '<option value="all">כל השנים</option>';
             const years = [...new Set(solutions.map((s) => s.year))].sort((a, b) => a - b);
             years.forEach((y) => {
                 const opt = document.createElement("option");
@@ -349,7 +547,7 @@
 
                     const folderPath = item.href.slice(0, item.href.lastIndexOf("/"));
                     const thumbPath = `${folderPath}/question-image.png`;
-                    const tags = item.tags.map((t) => `<span class=\"meta-pill\">${t}</span>`).join(" ");
+                    const tags = (item.tags || []).map((t) => `<span class="meta-pill">${t}</span>`).join(" ");
 
                     card.innerHTML = `
                         <div>
@@ -379,11 +577,11 @@
                 return yearOk;
             });
 
-            filtered.sort((a, b) => a.year - b.year || Number(a.question) - Number(b.question));
+            filtered.sort(compareSolutions);
             render(filtered);
         }
 
-        document.addEventListener("DOMContentLoaded", function() {
+        document.addEventListener("DOMContentLoaded", async function() {
             const versionStamp = document.getElementById("versionStamp");
             const versionId = document.getElementById("versionId");
             const versionUpdatedAt = document.getElementById("versionUpdatedAt");
@@ -408,9 +606,9 @@
                 }
             }
 
+            solutions = await loadSolutionsAuto();
             yearOptionsInit();
             runFilter();
-
             yearSelect.addEventListener("change", runFilter);
         });
     </script>
