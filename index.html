@@ -242,6 +242,40 @@
             return './?path=' + encodeURIComponent(path);
         }
 
+        function isLocalhost() {
+            return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
+        }
+
+        async function fetchTree() {
+            if (isLocalhost()) {
+                try {
+                    const localResponse = await fetch('./api/local-tree', { cache: 'no-store' });
+                    if (localResponse.ok) {
+                        const localData = await localResponse.json();
+                        return {
+                            tree: Array.isArray(localData.tree) ? localData.tree : [],
+                            source: 'local'
+                        };
+                    }
+                } catch (_err) {
+                    // Fall back to GitHub API below if local endpoint is unavailable.
+                }
+            }
+
+            const ctx = getRepoContext();
+            const treeUrl = `https://api.github.com/repos/${ctx.owner}/${ctx.repo}/git/trees/HEAD?recursive=1`;
+            const response = await fetch(treeUrl, { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error('api-failed');
+            }
+
+            const data = await response.json();
+            return {
+                tree: Array.isArray(data.tree) ? data.tree : [],
+                source: 'github'
+            };
+        }
+
         function makeBreadcrumbs(currentPath) {
             breadcrumbsEl.innerHTML = '';
             const rootLi = document.createElement('li');
@@ -390,21 +424,13 @@
             makeBreadcrumbs(currentPath);
             statusEl.textContent = 'טוען נתונים...';
 
-            const ctx = getRepoContext();
-            const treeUrl = `https://api.github.com/repos/${ctx.owner}/${ctx.repo}/git/trees/HEAD?recursive=1`;
-
             try {
-                const response = await fetch(treeUrl, { cache: 'no-store' });
-                if (!response.ok) {
-                    throw new Error('api-failed');
-                }
-
-                const data = await response.json();
-                const tree = Array.isArray(data.tree) ? data.tree : [];
+                const { tree, source } = await fetchTree();
                 const { dirs, files } = getImmediateChildren(tree, currentPath);
 
                 renderRows(currentPath, dirs, files);
-                statusEl.textContent = `מוצגות ${dirs.length} תיקיות ו-${files.length} קבצים.`;
+                const sourceLabel = source === 'local' ? 'מקומי' : 'GitHub';
+                statusEl.textContent = `מוצגות ${dirs.length} תיקיות ו-${files.length} קבצים. מקור: ${sourceLabel}.`;
             } catch (_err) {
                 listEl.innerHTML = '';
                 statusEl.textContent = 'לא ניתן לטעון כרגע את רשימת הקבצים. נסי שוב בעוד רגע.';

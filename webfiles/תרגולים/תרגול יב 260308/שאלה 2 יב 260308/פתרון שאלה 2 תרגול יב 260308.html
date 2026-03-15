@@ -4,84 +4,280 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>פתרון מלא ומודרך: שאלה 2 בתרגול מגנטיות יב 8/3</title>
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
-        
+
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
         body {
-            font-family: 'Rubik', sans-serif;
-            background-color: #f8fafc;
-            color: #0f172a;
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html { overflow-x: clip; }
+        body { overflow-x: clip; }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
         }
 
         .formula-badge {
-            background-color: #eff6ff;
+            background-color: var(--blue-50);
             color: #1e40af;
             border: 1px solid #bfdbfe;
             border-radius: 9999px;
-            padding: 0.25rem 1rem;
             display: inline-block;
-            font-weight: 600;
-            margin: 0.5rem 0;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
             direction: ltr;
         }
 
         .teacher-highlight {
-            background-color: #f0fdf4;
-            border-right: 4px solid #22c55e;
-            padding: 1rem;
-            margin: 1.5rem 0;
-            border-radius: 0.5rem;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
         }
 
-        .step-container {
-            background: white;
-            border-radius: 1rem;
-            padding: 1.5rem;
-            margin-bottom: 2rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        .step-box {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.6rem;
+            padding: 0.9rem;
+            margin-top: 0.8rem;
         }
 
-        h2 {
-            color: #2563eb;
-            font-weight: 700;
-            border-bottom: 2px solid #e5e7eb;
-            padding-bottom: 0.5rem;
-            margin-bottom: 1.5rem;
+        .chart-wrapper {
+            position: relative;
+            min-height: 360px;
+            width: 100%;
         }
 
-        .math-scroll {
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
             overflow-x: auto;
             overflow-y: hidden;
-            padding: 0.5rem 0;
-            direction: ltr;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
         }
 
         svg {
             max-width: 100%;
             height: auto;
         }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+            .page-shell { padding-bottom: 8.5rem; }
+            .chart-wrapper { min-height: 340px; }
+            .chart-wrapper canvas { height: 280px !important; }
+            .question-modal-header { flex-wrap: wrap; }
+            .question-modal-title { width: 100%; text-align: right; font-size: 1rem; order: 2; }
+            .question-modal-close { order: 1; }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open { display: flex; }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title { min-width: 0; flex: 1; font-weight: 700; color: #1f2937; }
+        .question-modal-close { flex-shrink: 0; }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open { overflow: hidden; }
+
+        @media (min-width: 768px) {
+            .floating-question-btn { right: 1.5rem; bottom: 1.5rem; }
+            .page-shell { padding: 1.5rem; padding-bottom: 7rem; }
+        }
     </style>
 </head>
-<body class="p-4 md:p-8 max-w-4xl mx-auto">
+<body>
 
+<div class="page-shell">
     <header class="text-center mb-8">
-        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-4">פתרון מודרך בפיזיקה - מגנטיות</h1>
-        <p class="text-lg text-slate-600">שאלה 2 בתרגול מגנטיות יב 8/3</p>
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מודרך בפיזיקה - מגנטיות</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">שאלה 2 בתרגול מגנטיות יב 8/3</h2>
+        <p class="mt-3 text-slate-500">פתרון מלא ומודרך: צעד-אחר-צעד עם דגשים פדגוגיים, תרשימי כוחות וגרף</p>
+        <div class="version-stamp" id="versionStamp" dir="ltr" aria-label="Version stamp">
+            <span class="version-label">ver</span>
+            <span id="versionId">vAUTO</span>
+            <span>|</span>
+            <span id="versionUpdatedAt">auto</span>
+        </div>
     </header>
 
-    <!-- הצגת תמונת השאלה -->
-    <div class="mb-8 flex justify-center">
-        <img src="image_1a5069.jpg" alt="תרשים השאלה המקורית" class="rounded-lg shadow-md max-w-full h-auto border border-gray-200">
-    </div>
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <h3 class="section-header text-slate-700">נוסח השאלה</h3>
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">תמונת השאלה המקורית</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
 
     <!-- סעיף א' -->
-    <div class="step-container">
-        <h2>סעיף א': קביעת כיוון הזרם בצלע NP</h2>
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א': קביעת כיוון הזרם בצלע NP</h3>
         
         <div class="mb-4">
             <strong>מה נתון:</strong> תיל ארוך נושא זרם \( I_1 \) שמאלה. תחתיו, במרחק \( a \), סליל ריבועי בעל \( n \) ליפופים וזרם \( I_2 \). נתון כי אם משחררים את הסליל, הוא מתחיל לנוע לכיוון התיל (כלומר, הכוח השקול עליו הוא כוח משיכה כלפי מעלה).
@@ -102,17 +298,19 @@
             <strong>הסבר ופתרון:</strong>
             <ul class="list-disc list-inside space-y-2 text-slate-700">
                 <li>התיל הארוך נושא זרם \( I_1 \) שמאלה. לפי כלל יד ימין (אגודל בכיוון הזרם, אצבעות מקיפות את התיל), השדה המגנטי \( \vec{B} \) שיוצר התיל מתחתיו (באזור הסליל) מכוון <strong>החוצה מהדף</strong> (\( \odot \)).</li>
+                <li><strong>מה לגבי הצלעות האנכיות (MN ו-PQ)?</strong> על שתי הצלעות הללו פועל גם כן כוח מגנטי מהתיל. עם זאת, מכיוון ששתיהן נמצאות באותם מרחקים בדיוק מהתיל הארוך (בכל גובה נתון), והזרם בהן זורם בכיוונים מנוגדים (באחת למעלה ובשנייה למטה), הכוחות עליהן שווים בגודלם ומנוגדים בכיוונם לחלוטין. לכן, הכוח השקול על שתי הצלעות הללו הוא אפס.</li>
+                <li>מכאן נובע שהכוח השקול (והתנועה) נקבעים אך ורק על ידי ההפרש בין הכוחות על הצלעות האופקיות (NP העליונה ו-MQ התחתונה). הצלע העליונה (NP) קרובה יותר לתיל ולכן מרגישה כוח חזק יותר, והיא זו שמכתיבה את כיוון השקול כולו.</li>
                 <li>מכיוון שהסליל נמשך אל התיל, הכוח המגנטי הפועל על צלע NP חייב להיות מכוון <strong>כלפי מעלה</strong> (לכיוון התיל).</li>
                 <li>כעת נפעיל את כלל יד ימין לכוח על תיל נושא זרם: השדה (\( \vec{B} \)) החוצה מהדף, הכוח המבוקש (\( \vec{F} \)) כלפי מעלה. כדי שזה יתקיים, כיוון הזרם (\( I_2 \)) חייב להיות <strong>שמאלה</strong>.</li>
                 <li>מכיוון שהקודקוד P נמצא מימין לקודקוד N, זרם שמאלה משמעותו זרם הזורם <strong>מ-P אל N</strong>.</li>
             </ul>
             <p class="mt-4 font-semibold text-lg">תשובה סופית לסעיף א': כיוון הזרם בצלע NP הוא מ-P ל-N (שמאלה).</p>
         </div>
-    </div>
+    </section>
 
     <!-- סעיף ב' -->
-    <div class="step-container">
-        <h2>סעיף ב': תרשים כוחות מגנטיים על הסליל</h2>
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': תרשים כוחות מגנטיים על הסליל</h3>
         
         <div class="mb-4">
             <strong>מה נתון:</strong> כיוון הזרם בצלע העליונה מצאנו (מ-P ל-N). לכן כיוון הזרם בכל הסליל הוא נגד כיוון השעון.
@@ -144,53 +342,73 @@
             </div>
             <div class="w-full md:w-1/2 flex justify-center bg-white p-4 rounded-lg border border-gray-200">
                 <!-- SVG FBD -->
-                <svg width="250" height="250" viewBox="0 0 300 300" xmlns="http://www.w3.org/2000/svg">
+                <svg width="100%" height="300" viewBox="0 0 400 350" xmlns="http://www.w3.org/2000/svg">
                     <!-- Straight Wire -->
-                    <line x1="20" y1="40" x2="280" y2="40" stroke="#334155" stroke-width="4" />
-                    <line x1="40" y1="40" x2="60" y2="30" stroke="#334155" stroke-width="3" />
-                    <line x1="40" y1="40" x2="60" y2="50" stroke="#334155" stroke-width="3" />
-                    <text x="30" y="25" font-family="Arial" font-size="20" fill="#334155">I₁</text>
-                    <text x="250" y="30" font-family="Arial" font-size="20" fill="#1d4ed8">B ⊙</text>
+                    <line x1="50" y1="50" x2="350" y2="50" stroke="#334155" stroke-width="4" />
+                    <polyline points="100,40 80,50 100,60" fill="none" stroke="#334155" stroke-width="4" />
+                    <text x="60" y="35" font-family="Arial" font-size="20" fill="#334155" font-weight="bold">I₁</text>
+                    
+                    <!-- B Field -->
+                    <circle cx="300" cy="30" r="6" fill="none" stroke="#2563eb" stroke-width="2" />
+                    <circle cx="300" cy="30" r="2" fill="#2563eb" />
+                    <text x="315" y="37" font-family="Arial" font-size="22" fill="#2563eb" font-weight="bold">B</text>
 
+                    <!-- Distances -->
+                    <line x1="120" y1="50" x2="120" y2="120" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,5" />
+                    <polygon points="120,50 117,58 123,58" fill="#94a3b8" />
+                    <polygon points="120,120 117,112 123,112" fill="#94a3b8" />
+                    <text x="100" y="90" font-family="Arial" font-size="18" fill="#475569">a</text>
+
+                    <line x1="280" y1="120" x2="280" y2="240" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,5" />
+                    <polygon points="280,120 277,128 283,128" fill="#94a3b8" />
+                    <polygon points="280,240 277,232 283,232" fill="#94a3b8" />
+                    <text x="290" y="185" font-family="Arial" font-size="18" fill="#475569">a</text>
+                    
                     <!-- Coil Square -->
-                    <rect x="100" y="100" width="100" height="100" fill="none" stroke="#2563eb" stroke-width="3" />
+                    <rect x="140" y="120" width="120" height="120" fill="none" stroke="#2563eb" stroke-width="3" />
                     
                     <!-- Labels -->
-                    <text x="80" y="90" font-family="Arial" font-size="18">N</text>
-                    <text x="205" y="90" font-family="Arial" font-size="18">P</text>
-                    <text x="80" y="220" font-family="Arial" font-size="18">M</text>
-                    <text x="205" y="220" font-family="Arial" font-size="18">Q</text>
+                    <text x="115" y="110" font-family="Arial" font-size="20" font-weight="bold">N</text>
+                    <text x="260" y="110" font-family="Arial" font-size="20" font-weight="bold">P</text>
+                    <text x="115" y="260" font-family="Arial" font-size="20" font-weight="bold">M</text>
+                    <text x="260" y="260" font-family="Arial" font-size="20" font-weight="bold">Q</text>
+
+                    <!-- Current Arrows -->
+                    <line x1="220" y1="135" x2="180" y2="135" stroke="#ef4444" stroke-width="2" />
+                    <polygon points="180,135 188,131 188,139" fill="#ef4444" />
+                    <line x1="180" y1="225" x2="220" y2="225" stroke="#ef4444" stroke-width="2" />
+                    <polygon points="220,225 212,221 212,229" fill="#ef4444" />
+                    <line x1="155" y1="160" x2="155" y2="200" stroke="#ef4444" stroke-width="2" />
+                    <polygon points="155,200 151,192 159,192" fill="#ef4444" />
+                    <line x1="225" y1="200" x2="225" y2="160" stroke="#ef4444" stroke-width="2" />
+                    <polygon points="225,160 221,168 229,168" fill="#ef4444" />
 
                     <!-- Force Vectors -->
-                    <!-- F_NP (Up, long) -->
-                    <line x1="150" y1="100" x2="150" y2="50" stroke="#ef4444" stroke-width="3" />
-                    <polygon points="150,45 145,55 155,55" fill="#ef4444" />
-                    <text x="160" y="70" font-family="Arial" font-size="16" fill="#ef4444">F_NP</text>
+                    <line x1="200" y1="120" x2="200" y2="60" stroke="#ef4444" stroke-width="3" />
+                    <polygon points="200,55 195,65 205,65" fill="#ef4444" />
+                    <text x="210" y="80" font-family="Arial" font-size="18" fill="#ef4444">F_NP</text>
 
-                    <!-- F_MQ (Down, short) -->
-                    <line x1="150" y1="200" x2="150" y2="225" stroke="#ef4444" stroke-width="3" />
-                    <polygon points="150,230 145,220 155,220" fill="#ef4444" />
-                    <text x="160" y="240" font-family="Arial" font-size="16" fill="#ef4444">F_MQ</text>
+                    <line x1="200" y1="240" x2="200" y2="280" stroke="#ef4444" stroke-width="3" />
+                    <polygon points="200,285 195,275 205,275" fill="#ef4444" />
+                    <text x="210" y="275" font-family="Arial" font-size="18" fill="#ef4444">F_MQ</text>
 
-                    <!-- F_MN (Left) -->
-                    <line x1="100" y1="150" x2="60" y2="150" stroke="#ef4444" stroke-width="3" />
-                    <polygon points="55,150 65,145 65,155" fill="#ef4444" />
-                    <text x="10" y="155" font-family="Arial" font-size="16" fill="#ef4444">F_MN</text>
+                    <line x1="140" y1="180" x2="90" y2="180" stroke="#ef4444" stroke-width="3" />
+                    <polygon points="85,180 95,175 95,185" fill="#ef4444" />
+                    <text x="30" y="186" font-family="Arial" font-size="18" fill="#ef4444">F_MN</text>
 
-                    <!-- F_PQ (Right) -->
-                    <line x1="200" y1="150" x2="240" y2="150" stroke="#ef4444" stroke-width="3" />
-                    <polygon points="245,150 235,145 235,155" fill="#ef4444" />
-                    <text x="250" y="155" font-family="Arial" font-size="16" fill="#ef4444">F_PQ</text>
+                    <line x1="260" y1="180" x2="310" y2="180" stroke="#ef4444" stroke-width="3" />
+                    <polygon points="315,180 305,175 305,185" fill="#ef4444" />
+                    <text x="325" y="186" font-family="Arial" font-size="18" fill="#ef4444">F_PQ</text>
                 </svg>
             </div>
         </div>
         <p class="font-semibold text-slate-800">סיכום תרשים חזותי:</p>
         <p class="text-slate-700">הכוחות על הצלעות הצדדיות (\( F_{MN} \) ו-\( F_{PQ} \)) שווים בגודלם ומנוגדים בכיוונם מטעמי סימטריה, ולכן הם מבטלים זה את זה לחלוטין. הכוח כלפי מעלה גדול יותר מהכוח כלפי מטה, ולכן יש כוח שקול שמושך מעלה.</p>
-    </div>
+    </section>
 
     <!-- סעיף ג' -->
-    <div class="step-container">
-        <h2>סעיף ג': ביטוי לגודל הכוח השקול</h2>
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': ביטוי לגודל הכוח השקול</h3>
         
         <div class="mb-4">
             <strong>מה נתון:</strong> אורך צלע \( a \), מספר ליפופים \( n \), זרמים \( I_1, I_2 \), המרחק לצלע העליונה \( a \) והמרחק לצלע התחתונה \( a+a=2a \).
@@ -209,22 +427,28 @@
             דף הנוסחאות נותן לנו את "גודל הכוח ליחידת אורך בין שני תילים ארוכים מקבילים". מכיוון שהתיל הארוך יוצר שדה המאונך לכל אורך צלע הסליל שלנו, נוכל לבודד את הכוח \( F \) על ידי הכפלת המשוואה באורך הצלע \( l=a \) ובמספר הליפופים \( n \). ננתח כל גוף (צלע) בנפרד ואז נחבר אותם למערכת.
         </div>
 
-        <div class="math-scroll text-lg space-y-4">
+        <div class="text-lg space-y-4 text-slate-800">
             <p>1. נבטא את כוח המשיכה על הצלע העליונה NP (מרחק \( d = a \)):</p>
-            $$ F_{NP} = n \cdot a \cdot \frac{\mu_0 I_1 I_2}{2\pi a} = n \frac{\mu_0 I_1 I_2}{2\pi} $$
+            <div class="math-scroll">
+                $$ F_{NP} = n \cdot a \cdot \frac{\mu_0 I_1 I_2}{2\pi a} = n \frac{\mu_0 I_1 I_2}{2\pi} $$
+            </div>
             <p>2. נבטא את כוח הדחייה על הצלע התחתונה MQ (מרחק \( d = 2a \)):</p>
-            $$ F_{MQ} = n \cdot a \cdot \frac{\mu_0 I_1 I_2}{2\pi (2a)} = n \frac{\mu_0 I_1 I_2}{4\pi} $$
+            <div class="math-scroll">
+                $$ F_{MQ} = n \cdot a \cdot \frac{\mu_0 I_1 I_2}{2\pi (2a)} = n \frac{\mu_0 I_1 I_2}{4\pi} $$
+            </div>
             <p>3. נחשב את הכוח השקול על הסליל (זכרו שהכוחות האופקיים מתבטלים):</p>
-            $$ \Sigma F = F_{NP} - F_{MQ} $$
-            $$ \Sigma F = n \frac{\mu_0 I_1 I_2}{2\pi} - n \frac{\mu_0 I_1 I_2}{4\pi} = n \frac{\mu_0 I_1 I_2}{4\pi} $$
+            <div class="math-scroll">
+                $$ \Sigma F = F_{NP} - F_{MQ} $$
+                $$ \Sigma F = n \frac{\mu_0 I_1 I_2}{2\pi} - n \frac{\mu_0 I_1 I_2}{4\pi} = n \frac{\mu_0 I_1 I_2}{4\pi} $$
+            </div>
         </div>
         
         <p class="mt-4 font-semibold text-lg">תשובה סופית: \( \Sigma F = n \frac{\mu_0 I_1 I_2}{4\pi} \) (והכיוון הוא כלפי מעלה).</p>
-    </div>
+    </section>
 
     <!-- סעיף ד' -->
-    <div class="step-container">
-        <h2>סעיף ד': תגובה לשאלתו של אביב (שדה מגנטי של כדור הארץ)</h2>
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': תגובה לשאלתו של אביב (שדה מגנטי של כדור הארץ)</h3>
         
         <div class="mb-4">
             <strong>השאלה של אביב:</strong> איך אפשר לדעת שרק התיל מפעיל את הכוח על הסליל, ולא השדה המגנטי של כדור הארץ?
@@ -248,11 +472,11 @@
                 לכן, השדה של כדור הארץ עשוי לייצר מומנט כוח (שיגרום לסליל לרצות להסתובב), אך הוא לעולם לא ייצור כוח דחיפה או משיכה כולל שירחיק או יקרב את הסליל. תנועת הסליל לכיוון התיל מעידה בהכרח על שדה <strong>שאיננו אחיד</strong>, וזהו השדה שנוצר מהתיל המגנטי עצמו.
             </p>
         </div>
-    </div>
+    </section>
 
     <!-- סעיף ה' -->
-    <div class="step-container">
-        <h2>סעיף ה': חישוב מסת הסליל</h2>
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה': חישוב מסת הסליל</h3>
         
         <div class="mb-4">
             <strong>מה נתון עכשיו:</strong><br>
@@ -274,9 +498,27 @@
         </div>
 
         <div class="teacher-highlight">
-            <strong>הערת מורה: משמעות ה"קריאה" של מאזניים</strong><br>
-            מאזניים (משקל) אינם מודדים מסה באופן ישיר! הם מודדים את הכוח <strong>הנורמלי (\( N \))</strong> שהם מפעילים על הגוף שמעליהם. המאזניים מכוילים להציג מסה לפי ההנחה שהגוף במנוחה ושאין כוחות נוספים, כלומר מציגים את הערך \( m_{read} = \frac{N}{g} \). <br>
-            כמו כן, נזכור שתאוצת הכובד נלקחת תמיד כ- \( g = 10\text{ m/s}^2 \).
+            <strong class="text-xl text-green-800">💡 פינת העמקה: איך באמת עובד משקל? ולמה 6 גרם שווים ל-0.06 ניוטון?</strong><br>
+            <p class="mt-2 text-slate-700">
+                טעות נפוצה היא לחשוב שמשקל (מאזניים) מודד מסה (קילוגרמים או גרמים). האמת היא ש<strong>המשקל יודע למדוד רק כוח!</strong><br>
+                בתוך המשקל יש חיישן לחץ. כשאנחנו מניחים עליו גוף, המשקל דוחף את הגוף חזרה כלפי מעלה בעזרת כוח נורמלי (\( N \)) כדי שלא ייפול. את הכוח הזה המשקל מודד בניוטונים.
+            </p>
+            <p class="mt-2 text-slate-700">
+                <strong>אז למה על המסך אנחנו רואים גרמים?</strong><br>
+                יצרן המשקל "תכנת" אותו לתרגם את הכוח למסה, מתוך הנחה (שנכונה בדרך כלל) שהגוף פשוט מונח עליו ללא כוחות נוספים. היצרן אמר למשקל: "קח את הכוח שאתה מרגיש (N) וחלק אותו בתאוצת הכובד (\( g = 10 \text{ m/s}^2 \))". 
+                <br>לדוגמה: אם המשקל מרגיש כוח של \( 10 \text{ N} \), הוא מחלק ב-10, מבין שמונחת עליו מסה של \( 1 \text{ kg} \), ומציג "1 ק"ג" על המסך.
+            </p>
+            <p class="mt-2 text-slate-700">
+                <strong>איך זה עוזר לנו לפתור את השאלה?</strong><br>
+                בשאלות פיזיקה, קריאת המשקל איננה המסה האמיתית אלא <strong>"המסה המדומה"</strong> שמחושבת מתוך הכוח הנורמלי שהמשקל מפעיל באותו רגע. <br>
+                אם המשקל מראה לנו 6 גרם (שהם \( 0.006 \text{ kg} \)), אנחנו צריכים לעשות את <strong>הפעולה ההפוכה</strong> כדי לגלות איזה כוח באמת מפעיל המשקל כרגע. נכפיל את הקריאה בחזרה ב-\( g \):
+            </p>
+            <div class="math-scroll bg-green-50 p-3 rounded text-center my-3 text-lg font-semibold border border-green-200">
+                $$ N = \text{Reading (in kg)} \cdot g = 0.006\text{ kg} \cdot 10\text{ m/s}^2 = 0.06\text{ N} $$
+            </div>
+            <p class="text-slate-700">
+                כלומר: המספר שעל הצג מלמד אותנו ש<strong>הכוח הנורמלי (N) שהמשקל מפעיל כרגע כלפי מעלה הוא בדיוק \( 0.06 \text{ N} \)</strong>. את הנתון הזה נציב במשוואת הכוחות שלנו!
+            </p>
         </div>
 
         <div class="flex flex-col md:flex-row items-center gap-8 mb-6">
@@ -317,9 +559,9 @@
             <div class="math-scroll">
                 $$ N + F_B - mg = 0 \implies N = mg - F_B $$
             </div>
-            <p class="text-slate-700 my-2">אנו יודעים שקריאת המאזניים היא \( 0.006\text{ kg} \), לכן הכוח הנורמלי שהם מפעילים הוא:</p>
+            <p class="text-slate-700 my-2">כפי שהסברנו לעיל, מהקריאה של המאזניים גילינו שהכוח הנורמלי המופעל הוא בדיוק:</p>
             <div class="math-scroll">
-                $$ N = m_{read} \cdot g = 0.006 \cdot 10 = 0.06\text{ N} $$
+                $$ N = 0.06\text{ N} $$
             </div>
             <p class="text-slate-700 my-2">נציב הכל במשוואה כדי לבודד את מבוקשנו, מסת הסליל \( m \):</p>
             <div class="math-scroll">
@@ -329,11 +571,11 @@
             </div>
             <p class="mt-4 font-semibold text-lg text-green-700">תשובה סופית: מסת הסליל היא 6.08 גרם. השפעת הכוח המגנטי הפחיתה את הקריאה במאזניים ב-0.08 גרם.</p>
         </div>
-    </div>
+    </section>
 
     <!-- סעיף ו' -->
-    <div class="step-container">
-        <h2>סעיף ו': זיהוי הגרף המתאר את קריאת המאזניים</h2>
+    <section class="section-card" id="part-f">
+        <h3 class="section-header">סעיף ו': זיהוי הגרף המתאר את קריאת המאזניים</h3>
         
         <div class="mb-4">
             <strong>מה נתון:</strong> המורה מקרב את התיל עד למרחק של \( 0.5a \). המרחק מהתיל לצלע NP מיוצג על ידי המשתנה \( y \).
@@ -354,10 +596,10 @@
             <p><strong>1. בניית הפונקציה:</strong><br>
             ראינו בסעיף הקודם שקריאת המשקל פרופורציונית לכוח הנורמלי \( N = mg - F_B(y) \).<br>
             נרשום את הביטוי לכוח המגנטי כתלות במרחק \( y \). המרחק לצלע העליונה הוא \( y \), והמרחק לצלע התחתונה הוא תמיד גדול ב-\( a \), כלומר \( y+a \).</p>
-            <div class="math-scroll bg-slate-50 p-2 rounded">
+            <div class="math-scroll bg-slate-50 p-4 rounded text-center">
                 $$ F_B(y) = F_{NP} - F_{MQ} = C \cdot \frac{1}{y} - C \cdot \frac{1}{y+a} $$
-                <span class="text-sm">(כאשר \( C \) הוא קבוע המכיל את הזרמים ומספר הליפופים)</span>
             </div>
+            <p class="text-sm text-center mb-4">(כאשר \( C \) הוא קבוע המכיל את הזרמים ומספר הליפופים)</p>
             
             <p><strong>2. בדיקת המגמה:</strong><br>
             כאשר המרחק \( y \) <strong>קטן</strong> (מקרבים את התיל מ-\( a \) ל-\( 0.5a \)), הכוח המגנטי \( F_B \) <strong>גדל</strong> משמעותית (מכיוון שהוא מושפע מ- \( 1/y \)).<br>
@@ -384,72 +626,152 @@
                 </div>
             </div>
         </div>
+    </section>
+
+</div><!-- end page-shell -->
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">תמונת השאלה המקורית</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
     </div>
+</div>
 
-    <!-- Script for Chart.js -->
-    <script>
-        document.addEventListener('DOMContentLoaded', function() {
-            const ctx = document.getElementById('physicsChart');
-            if(ctx) {
-                // Generate data points for N(y) = mg - C*(1/y - 1/(y+a))
-                const a = 0.2; // 20cm
-                const C = 0.00016; // arbitrary constant to make the curve visible
-                const mg = 0.0608;
-                
-                const dataPoints = [];
-                // x goes from 0.05 (close) to 0.4 (far)
-                for (let y = 0.05; y <= 0.4; y += 0.01) {
-                    let Fb = C * (1/y - 1/(y+a));
-                    let N = mg - Fb;
-                    // Converting N back to grams for the scale reading
-                    let readingGrams = (N / 10) * 1000;
-                    dataPoints.push({x: y, y: readingGrams});
-                }
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        // Version stamp
+        const versionStamp = document.getElementById('versionStamp');
+        const versionId = document.getElementById('versionId');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'Last file modified: ' + document.lastModified;
+        }
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime())) {
+            const pad = (n) => String(n).padStart(2, '0');
+            const y = modified.getFullYear();
+            const m = pad(modified.getMonth() + 1);
+            const d = pad(modified.getDate());
+            const hh = pad(modified.getHours());
+            const mm = pad(modified.getMinutes());
+            if (versionId) {
+                versionId.textContent = `v${y}${m}${d}-${hh}${mm}`;
+            }
+            if (versionUpdatedAt) {
+                versionUpdatedAt.textContent = `${y}-${m}-${d} ${hh}:${mm}`;
+            }
+        }
 
-                new Chart(ctx, {
-                    type: 'scatter',
-                    data: {
-                        datasets: [{
-                            label: 'קריאת המאזניים כפונקציה של המרחק',
-                            data: dataPoints,
-                            borderColor: '#ef4444',
-                            backgroundColor: '#ef4444',
-                            showLine: true,
-                            tension: 0.4,
-                            pointRadius: 0,
-                            borderWidth: 3
-                        }]
-                    },
-                    options: {
-                        responsive: true,
-                        scales: {
-                            x: {
-                                type: 'linear',
-                                position: 'bottom',
-                                title: {
-                                    display: true,
-                                    text: 'מרחק (y) במטרים',
-                                    font: { family: 'Rubik', size: 14 }
-                                },
-                                min: 0
-                            },
-                            y: {
-                                title: {
-                                    display: true,
-                                    text: 'קריאה (גרם)',
-                                    font: { family: 'Rubik', size: 14 }
-                                }
-                            }
-                        },
-                        plugins: {
-                            legend: {
-                                labels: { font: { family: 'Rubik' } }
-                            }
-                        }
-                    }
-                });
+        // Question modal
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
             }
         });
-    </script>
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+
+        // Chart.js
+        const ctx = document.getElementById('physicsChart');
+        if (ctx) {
+            const a = 0.2;
+            const C = 0.00016;
+            const mg = 0.0608;
+            const dataPoints = [];
+            for (let y = 0.05; y <= 0.4; y += 0.01) {
+                let Fb = C * (1/y - 1/(y+a));
+                let N = mg - Fb;
+                let readingGrams = (N / 10) * 1000;
+                dataPoints.push({x: y, y: readingGrams});
+            }
+
+            new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'קריאת המאזניים כפונקציה של המרחק',
+                        data: dataPoints,
+                        borderColor: '#ef4444',
+                        backgroundColor: '#ef4444',
+                        showLine: true,
+                        tension: 0.4,
+                        pointRadius: 0,
+                        borderWidth: 3
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: {
+                                display: true,
+                                text: 'מרחק (y) במטרים',
+                                font: { family: 'Rubik', size: 14 }
+                            },
+                            min: 0
+                        },
+                        y: {
+                            title: {
+                                display: true,
+                                text: 'קריאה (גרם)',
+                                font: { family: 'Rubik', size: 14 }
+                            }
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            labels: { font: { family: 'Rubik' } }
+                        }
+                    }
+                }
+            });
+        }
+    });
+</script>
 </body>
 </html>
