@@ -1,0 +1,707 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - חשמל 1993 שאלון 4</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for rendering formulas -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: 'Heebo', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+        }
+
+        .container-main {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        /* Structural Elements */
+        .section-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-top: 4px solid #3b82f6;
+        }
+
+        .section-title {
+            color: #1e40af;
+            font-size: 1.5rem;
+            font-weight: 700;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        /* Pedagogical Building Blocks */
+        .data-block {
+            background-color: #f1f5f9;
+            border-right: 4px solid #64748b;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .goal-block {
+            background-color: #fffbeb;
+            border-right: 4px solid #fbbf24;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin-bottom: 1.5rem;
+            font-weight: 600;
+        }
+
+        .formula-badge {
+            display: inline-block;
+            background: #eff6ff;
+            border: 2px dashed #93c5fd;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            margin: 1rem 0;
+            font-size: 1.1rem;
+            width: 100%;
+            text-align: center;
+            overflow-x: auto;
+        }
+
+        .solution-step {
+            margin-bottom: 1.5rem;
+        }
+
+        .teacher-highlight {
+            background: #ecfdf5;
+            border: 1px solid #a7f3d0;
+            border-right: 4px solid #10b981;
+            padding: 1.25rem;
+            border-radius: 0.5rem;
+            margin: 1.5rem 0;
+            position: relative;
+        }
+        
+        .teacher-highlight::before {
+            content: "💡 הערת מורה:";
+            display: block;
+            font-weight: 700;
+            color: #047857;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Graphics & Tables */
+        .svg-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 2rem auto;
+            display: block;
+            background: white;
+            border-radius: 0.5rem;
+            border: 1px solid #e2e8f0;
+            padding: 1rem;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+        }
+
+        .responsive-table {
+            overflow-x: auto;
+            margin: 1.5rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            text-align: center;
+        }
+
+        th {
+            background-color: #3b82f6;
+            color: white;
+            padding: 0.75rem;
+        }
+
+        td {
+            padding: 0.75rem;
+            border-bottom: 1px solid #e2e8f0;
+            background-color: white;
+        }
+
+        tr:nth-child(even) td {
+            background-color: #f8fafc;
+        }
+
+        /* Floating Question Image Button */
+        #floating-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: #2563eb;
+            color: white;
+            padding: 1rem;
+            border-radius: 9999px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            cursor: pointer;
+            z-index: 50;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            font-weight: 600;
+            border: none;
+        }
+
+        #floating-btn:hover {
+            background-color: #1d4ed8;
+            transform: scale(1.05);
+        }
+
+        #image-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.75);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        #image-modal.active {
+            display: flex;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 1rem;
+            border-radius: 1rem;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: auto;
+            position: relative;
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 1rem;
+            left: 1rem;
+            background: #ef4444;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            cursor: pointer;
+            font-weight: bold;
+        }
+        
+        /* Typography adjustments for English/Hebrew mix */
+        .math-inline {
+            direction: ltr;
+            display: inline-block;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Floating Action Button for Question Image -->
+    <button id="floating-btn" onclick="toggleModal()">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        הצג שאלת מקור
+    </button>
+
+    <!-- Image Modal -->
+    <div id="image-modal" onclick="if(event.target === this) toggleModal()">
+        <div class="modal-content">
+            <button class="close-modal" onclick="toggleModal()">X</button>
+            <!-- Using the uploaded file name provided by the user -->
+            <img src="question-image.png" alt="שאלת הבגרות" style="max-width: 100%; height: auto; display: block;">
+        </div>
+    </div>
+
+    <main class="container-main">
+        
+        <header class="text-center mb-10">
+            <h1 class="text-4xl font-bold text-slate-800 mb-2">פתרון מודרך בפיזיקה: מאזני זרם</h1>
+            <p class="text-slate-600 text-lg">בגרות חשמל 1993, שאלה 4 (רמת 5 יח"ל)</p>
+        </header>
+
+        <!-- תמונת השאלה (מוצגת באופן קבוע) -->
+        <div class="mb-10 flex justify-center">
+            <div class="bg-white p-4 rounded-xl shadow-sm border border-slate-200 inline-block">
+                <img src="question-image.png" alt="שאלת הבגרות מקורית" class="max-w-full h-auto rounded" style="max-height: 500px;">
+            </div>
+        </div>
+
+        <!-- סעיף א -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-lg">סעיף א'</span>
+                כיוון השדה המגנטי
+            </h2>
+
+            <div class="data-block">
+                <strong>מה נתון:</strong><br>
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li>מסגרת <span class="math-inline">DEFG</span> מאוזנת על ציר בנקודות <span class="math-inline">K, L</span>.</li>
+                    <li>כאשר יש זרם במעגל, הזרם זורם מפין החיוב (פלוס) של הסוללה, דרך הנקודה <span class="math-inline">A</span>, אל הנקודה <span class="math-inline">K</span> ומשם אל הצלע <span class="math-inline">F</span>.</li>
+                    <li>החצים בשרטוט מראים בבירור כי כיוון הזרם בקטע התיל שנמצא בתוך המגנט הוא מנקודה <span class="math-inline">F</span> (האחורית) לנקודה <span class="math-inline">E</span> (הקדמית).</li>
+                    <li>כדי לאזן את המסגרת, מוסיפים סיכות בצד הימני (צד המהדק <span class="math-inline">M</span>).</li>
+                </ul>
+            </div>
+
+            <div class="goal-block">
+                <strong>מה מחפשים:</strong><br>
+                את כיוון השדה המגנטי בין קוטבי המגנט (האם הוא מ-<span class="math-inline">x</span> ל-<span class="math-inline">y</span> או מ-<span class="math-inline">y</span> ל-<span class="math-inline">x</span>).
+            </div>
+
+            <div class="teacher-highlight">
+                שימו לב לאסטרטגיה שלנו: כדי לדעת מה כיוון השדה המגנטי, עלינו קודם כל להבין לאיזה כיוון פועל <strong>הכוח המגנטי</strong>. ברגע שנדע מהו כיוון הזרם ומהו כיוון הכוח, נוכל להשתמש ב"כלל יד ימין" כדי למצוא את כיוון השדה המגנטי.
+            </div>
+
+            <div class="solution-step">
+                <h3 class="font-bold text-lg mb-2 text-slate-700">שלב 1: ניתוח המומנטים (כיוון הכוח המגנטי)</h3>
+                <p>
+                    נקודות התמיכה <span class="math-inline">K</span> ו-<span class="math-inline">L</span> משמשות כציר הסיבוב של המסגרת. 
+                    כאשר מוסיפים סיכות בעלות מסה בצד <strong>הימני</strong> של המסגרת, כוח הכובד שלהן מושך את הצד הימני כלפי מטה (יוצר מומנט כוח בכיוון השעון).
+                </p>
+                <p class="mt-2">
+                    הסיכות נועדו <strong>לאזן</strong> את הכוח המגנטי. אם הסיכות דוחפות את צד ימין למטה, זה אומר שהכוח המגנטי דוחף את צד שמאל למטה! (מומנט נגדי ששומר על המסגרת אופקית).
+                    לכן, מסיקים ש<strong>הכוח המגנטי <span class="math-inline">F</span> פועל כלפי מטה</strong>.
+                </p>
+            </div>
+
+            <!-- FBD Concept Image -->
+            <div class="svg-container">
+                <svg viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Title -->
+                    <text x="250" y="25" font-family="Heebo" font-size="16" font-weight="bold" text-anchor="middle">המחשת שיווי המשקל (תרשים גוף חופשי מקוצר)</text>
+                    
+                    <!-- Frame / Lever -->
+                    <line x1="100" y1="120" x2="400" y2="120" stroke="#334155" stroke-width="6" stroke-linecap="round"/>
+                    
+                    <!-- Pivot -->
+                    <polygon points="250,120 230,160 270,160" fill="#94a3b8"/>
+                    <text x="250" y="180" font-family="Heebo" font-size="14" text-anchor="middle">ציר הסיבוב (K, L)</text>
+
+                    <!-- Pins Force -->
+                    <g transform="translate(380, 120)">
+                        <line x1="0" y1="0" x2="0" y2="60" stroke="#2563eb" stroke-width="3" marker-end="url(#arrow-blue)"/>
+                        <circle cx="0" cy="0" r="5" fill="#2563eb"/>
+                        <text x="15" y="40" font-family="Heebo" font-size="14" fill="#2563eb" dir="ltr">W (Pins)</text>
+                    </g>
+
+                    <!-- Magnetic Force -->
+                    <g transform="translate(120, 120)">
+                        <line x1="0" y1="0" x2="0" y2="60" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)"/>
+                        <circle cx="0" cy="0" r="5" fill="#ef4444"/>
+                        <text x="-15" y="40" font-family="Heebo" font-size="14" fill="#ef4444" text-anchor="end" dir="ltr">F (Magnetic)</text>
+                    </g>
+                    
+                    <text x="120" y="90" font-family="Heebo" font-size="14" text-anchor="middle">צד המגנט</text>
+                    <text x="380" y="90" font-family="Heebo" font-size="14" text-anchor="middle">צד הסיכות</text>
+
+                    <!-- Defs for arrows -->
+                    <defs>
+                        <marker id="arrow-blue" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb" />
+                        </marker>
+                        <marker id="arrow-red" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+
+            <div class="solution-step mt-6">
+                <h3 class="font-bold text-lg mb-2 text-slate-700">שלב 2: קביעת כיוון השדה (כלל יד ימין)</h3>
+                <p>
+                    עתה אנו יודעים:
+                </p>
+                <ul class="list-disc list-inside mb-4">
+                    <li>כיוון הזרם (<span class="math-inline">I</span>): החוצה מהדף (לכיוון הצופה, מ-<span class="math-inline">F</span> ל-<span class="math-inline">E</span>).</li>
+                    <li>כיוון הכוח (<span class="math-inline">F_B</span>): כלפי מטה.</li>
+                </ul>
+                <p>
+                    נפעיל את <strong>כלל יד ימין</strong> (עבור כוח על תיל ישר):<br>
+                    האגודל מייצג את כיוון הזרם (החוצה אלינו).<br>
+                    כף היד (הדחיפה) מייצגת את הכוח (למטה).<br>
+                    ארבע האצבעות המתוחות מצביעות אל כיוון השדה המגנטי (<span class="math-inline">B</span>).<br>
+                    כאשר נמקם את היד בצורה זו, האצבעות יצביעו <strong>שמאלה</strong>.
+                </p>
+                <p class="font-bold text-xl text-center text-blue-700 mt-4 border-2 border-blue-200 bg-blue-50 p-3 rounded-lg">
+                    המסקנה: כיוון השדה המגנטי הוא שמאלה, כלומר מקוטב $y$ לקוטב $x$ ($y \rightarrow x$).
+                </p>
+            </div>
+            
+            <!-- 3D Right Hand Rule SVG -->
+            <div class="svg-container">
+                <svg viewBox="0 0 500 250" xmlns="http://www.w3.org/2000/svg">
+                    <text x="250" y="25" font-family="Heebo" font-size="16" font-weight="bold" text-anchor="middle">המחשה תלת ממדית - כלל יד ימין</text>
+                    
+                    <g transform="translate(250, 130)">
+                        <!-- Z axis (Current - Out) -->
+                        <line x1="0" y1="0" x2="-60" y2="60" stroke="#10b981" stroke-width="4" marker-end="url(#arrow-green)"/>
+                        <circle cx="-60" cy="60" r="12" fill="white" stroke="#10b981" stroke-width="2"/>
+                        <circle cx="-60" cy="60" r="3" fill="#10b981"/>
+                        <text x="-40" y="80" font-family="Heebo" font-size="14" fill="#10b981" font-weight="bold" dir="ltr">I (זרם החוצה)</text>
+
+                        <!-- Y axis (Force - Down) -->
+                        <line x1="0" y1="0" x2="0" y2="70" stroke="#ef4444" stroke-width="4" marker-end="url(#arrow-red)"/>
+                        <text x="10" y="65" font-family="Heebo" font-size="14" fill="#ef4444" font-weight="bold" dir="ltr">F (כוח למטה)</text>
+
+                        <!-- X axis (B field - Left) -->
+                        <line x1="0" y1="0" x2="-100" y2="0" stroke="#8b5cf6" stroke-width="4" marker-end="url(#arrow-purple)"/>
+                        <text x="-90" y="-15" font-family="Heebo" font-size="14" fill="#8b5cf6" font-weight="bold" dir="ltr">B (שדה שמאלה: y->x)</text>
+                        
+                        <!-- Origin -->
+                        <circle cx="0" cy="0" r="4" fill="#333"/>
+                        <text x="15" y="-10" font-family="Heebo" font-size="16">F (נקודה בתיל)</text>
+                    </g>
+                    
+                    <defs>
+                        <marker id="arrow-green" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981" />
+                        </marker>
+                        <marker id="arrow-purple" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </section>
+
+        <!-- סעיף ב -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-lg">סעיף ב'</span>
+                שרטוט גרף של הכוח המגנטי כתלות בזרם
+            </h2>
+
+            <div class="data-block">
+                <strong>מה נתון:</strong><br>
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li>טבלת ערכים של זרם (<span class="math-inline">I</span>) מול מספר הסיכות המאזנות (<span class="math-inline">N</span>).</li>
+                    <li>מסת סיכה אחת: $m_{pin} = 0.02 \text{ g}$</li>
+                </ul>
+            </div>
+
+            <div class="goal-block">
+                <strong>מה מחפשים:</strong><br>
+                ליצור טבלת נתונים חדשה של הכוח המגנטי $F$ (בניוטונים) ולשרטט גרף של $F$ כפונקציה של $I$.
+            </div>
+
+            <div class="formula-badge">
+                $$ F = mg $$
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>המרת יחידות (MKS) קריטית!</strong>
+                <br>
+                לפני שמציבים בנוסחת כוח הכובד, חובה להעביר את מסת הסיכה ל<strong>קילוגרמים</strong>:
+                <br>
+                $m_{pin} = 0.02 \text{ g} = \frac{0.02}{1000} \text{ kg} = 0.00002 \text{ kg} = 2 \cdot 10^{-5} \text{ kg}$
+                <br>
+                נשתמש בתאוצת הכובד: $g = 10 \frac{\text{m}}{\text{s}^2}$.
+                <br>
+                הנחת עבודה בסיסית במאזני זרם (שמוצדקת לפי הניסוח "המאזנות את הכוח המגנטי"): זרועות המאזניים זהות באורכן. לכן, על פי שיווי משקל מומנטים, גודל הכוח המגנטי בצד אחד שווה בדיוק לכוח הכובד של הסיכות בצד השני.
+            </div>
+
+            <div class="solution-step">
+                <h3 class="font-bold text-lg mb-2 text-slate-700">הצבה ופתרון: חישוב הכוח לכל מדידה</h3>
+                <p>הכוח המגנטי שווה למשקל הכולל של הסיכות. אם יש $N$ סיכות, משקלן הכולל הוא:</p>
+                <p class="text-center text-lg my-2 font-mono bg-gray-100 p-2 rounded">
+                    $F_B = N \cdot m_{pin} \cdot g$
+                </p>
+                <p>נציב את הנתונים כדי למצוא את "המכפיל" הקבוע לכל סיכה:</p>
+                <p class="text-center text-lg my-2 font-mono bg-gray-100 p-2 rounded">
+                    $F_B = N \cdot (2 \cdot 10^{-5}) \cdot 10 = N \cdot 2 \cdot 10^{-4} \text{ N}$
+                </p>
+                
+                <p class="mt-4">כעת נבנה את הטבלה החדשה:</p>
+                
+                <div class="responsive-table">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>מספר מדידה</th>
+                                <th>מספר סיכות ($N$)</th>
+                                <th>זרם $I$ (A)</th>
+                                <th>כוח מגנטי $F$ (N) $\cdot 10^{-4}$</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td>1</td>
+                                <td>1</td>
+                                <td>0.500</td>
+                                <td>$1 \cdot 2 = 2$</td>
+                            </tr>
+                            <tr>
+                                <td>2</td>
+                                <td>2</td>
+                                <td>0.950</td>
+                                <td>$2 \cdot 2 = 4$</td>
+                            </tr>
+                            <tr>
+                                <td>3</td>
+                                <td>3</td>
+                                <td>1.500</td>
+                                <td>$3 \cdot 2 = 6$</td>
+                            </tr>
+                            <tr>
+                                <td>4</td>
+                                <td>4</td>
+                                <td>2.050</td>
+                                <td>$4 \cdot 2 = 8$</td>
+                            </tr>
+                            <tr>
+                                <td>5</td>
+                                <td>5</td>
+                                <td>2.500</td>
+                                <td>$5 \cdot 2 = 10$</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <p class="mt-4 text-slate-700">
+                    נשרטט את הגרף. ציר $x$ ייצג את הזרם $I$, וציר $y$ ייצג את הכוח $F$. אנו רואים מגמה ליניארית ברורה העוברת בראשית הצירים (כאשר אין זרם, אין כוח מגנטי).
+                </p>
+
+                <!-- Graph SVG -->
+                <div class="svg-container" style="max-width: 700px;">
+                    <svg viewBox="-50 -20 600 400" xmlns="http://www.w3.org/2000/svg">
+                        <text x="250" y="-5" font-family="Heebo" font-size="18" font-weight="bold" text-anchor="middle">גרף כוח מגנטי כפונקציה של הזרם</text>
+                        
+                        <!-- Axes -->
+                        <line x1="50" y1="320" x2="550" y2="320" stroke="#0f172a" stroke-width="2"/>
+                        <line x1="50" y1="320" x2="50" y2="20" stroke="#0f172a" stroke-width="2"/>
+                        
+                        <!-- Axis Labels -->
+                        <text x="300" y="370" font-family="Heebo" font-size="16" text-anchor="middle">זרם חשמלי I (A)</text>
+                        <text x="-10" y="170" font-family="Heebo" font-size="16" text-anchor="middle" transform="rotate(-90, -10, 170)">כוח מגנטי F (10⁻⁴ N)</text>
+                        
+                        <!-- X Ticks & Grid (0 to 3 A. Let 500px = 3A. So 1A = 166.6px) -->
+                        <g font-family="Arial" font-size="12" fill="#475569" text-anchor="middle">
+                            <text x="50" y="340">0</text>
+                            
+                            <line x1="133.3" y1="320" x2="133.3" y2="20" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                            <text x="133.3" y="340">0.5</text>
+                            
+                            <line x1="216.6" y1="320" x2="216.6" y2="20" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                            <text x="216.6" y="340">1.0</text>
+                            
+                            <line x1="300" y1="320" x2="300" y2="20" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                            <text x="300" y="340">1.5</text>
+                            
+                            <line x1="383.3" y1="320" x2="383.3" y2="20" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                            <text x="383.3" y="340">2.0</text>
+                            
+                            <line x1="466.6" y1="320" x2="466.6" y2="20" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                            <text x="466.6" y="340">2.5</text>
+
+                            <line x1="550" y1="320" x2="550" y2="20" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                            <text x="550" y="340">3.0</text>
+                        </g>
+
+                        <!-- Y Ticks & Grid (0 to 12. Let 300px = 12 unit. So 1 unit = 25px) -->
+                        <g font-family="Arial" font-size="12" fill="#475569" text-anchor="end">
+                            <line x1="50" y1="270" x2="550" y2="270" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                            <text x="40" y="274">2</text>
+
+                            <line x1="50" y1="220" x2="550" y2="220" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                            <text x="40" y="224">4</text>
+
+                            <line x1="50" y1="170" x2="550" y2="170" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                            <text x="40" y="174">6</text>
+
+                            <line x1="50" y1="120" x2="550" y2="120" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                            <text x="40" y="124">8</text>
+
+                            <line x1="50" y1="70" x2="550" y2="70" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                            <text x="40" y="74">10</text>
+                            
+                            <line x1="50" y1="20" x2="550" y2="20" stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4"/>
+                            <text x="40" y="24">12</text>
+                        </g>
+
+                        <!-- Plotting Line of Best Fit (Passes through 0,0 and ~2.5,10) -->
+                        <!-- 0,0 is at 50, 320 -->
+                        <!-- 2.5, 10 is at 466.6, 70 -->
+                        <line x1="50" y1="320" x2="466.6" y2="70" stroke="#ef4444" stroke-width="2" />
+                        
+                        <!-- Data Points -->
+                        <!-- (0.5, 2) -> (133.3, 270) -->
+                        <circle cx="133.3" cy="270" r="5" fill="#1e40af" stroke="white" stroke-width="1"/>
+                        <!-- (0.95, 4) -> (0.95*166.6 + 50 = 208.3, 220) -->
+                        <circle cx="208.3" cy="220" r="5" fill="#1e40af" stroke="white" stroke-width="1"/>
+                        <!-- (1.5, 6) -> (300, 170) -->
+                        <circle cx="300" cy="170" r="5" fill="#1e40af" stroke="white" stroke-width="1"/>
+                        <!-- (2.05, 8) -> (2.05*166.6 + 50 = 391.5, 120) -->
+                        <circle cx="391.5" cy="120" r="5" fill="#1e40af" stroke="white" stroke-width="1"/>
+                        <!-- (2.5, 10) -> (466.6, 70) -->
+                        <circle cx="466.6" cy="70" r="5" fill="#1e40af" stroke="white" stroke-width="1"/>
+
+                    </svg>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- סעיף ג -->
+        <section class="section-card">
+            <h2 class="section-title">
+                <span class="bg-blue-100 text-blue-800 px-3 py-1 rounded-full text-lg">סעיף ג'</span>
+                ניתוח הגרף ומציאת השדה המגנטי
+            </h2>
+
+            <!-- חלק 1 -->
+            <div class="mb-10">
+                <h3 class="text-xl font-bold border-b-2 border-slate-200 pb-2 mb-4 text-blue-900">(1) חישוב שיפוע הגרף</h3>
+                
+                <div class="goal-block">
+                    <strong>מה מחפשים:</strong><br>
+                    לחשב את השיפוע (Slope) של הישר שהעברנו.
+                </div>
+
+                <div class="solution-step">
+                    <p>
+                        נבחר שתי נקודות נוחות על הישר המגמתי. מאחר שהישר חותך בראשית נוכל לבחור את:
+                        <br>נקודה ראשונה: $(I_1, F_1) = (0, 0)$
+                        <br>נקודה שנייה (מהטבלה, שנמצאת על הישר): $(I_2, F_2) = (1.50, 6 \cdot 10^{-4})$ או את הנקודה $(2.50, 10 \cdot 10^{-4})$.
+                    </p>
+                    <p class="mt-2">נחשב את השיפוע <span class="math-inline">m</span>:</p>
+                    <div class="overflow-x-auto text-lg p-2 font-mono" dir="ltr">
+                        $$ m = \frac{\Delta F}{\Delta I} = \frac{10 \cdot 10^{-4} - 0}{2.50 - 0} = \frac{10 \cdot 10^{-4}}{2.50} = 4 \cdot 10^{-4} $$
+                    </div>
+                    <p class="mt-2 font-bold text-slate-800">
+                        השיפוע הוא $4 \cdot 10^{-4}$.
+                    </p>
+                </div>
+            </div>
+
+            <!-- חלק 2 -->
+            <div class="mb-10">
+                <h3 class="text-xl font-bold border-b-2 border-slate-200 pb-2 mb-4 text-blue-900">(2) יחידות השיפוע</h3>
+                
+                <div class="goal-block">
+                    <strong>מה מחפשים:</strong><br>
+                    לקבוע מהן יחידות המידה של השיפוע.
+                </div>
+
+                <div class="solution-step">
+                    <p>
+                        השיפוע מוגדר כיחס שבין ציר ה-<span class="math-inline">y</span> (כוח) לציר ה-<span class="math-inline">x</span> (זרם). 
+                        לכן, יחידות השיפוע מורכבות מחלוקת יחידות הכוח ביחידות הזרם:
+                    </p>
+                    <div class="overflow-x-auto text-lg p-2 font-mono" dir="ltr">
+                        $$ [m] = \frac{[F]}{[I]} = \frac{\text{Newton}}{\text{Ampere}} \text{ or } \frac{\text{N}}{\text{A}} $$
+                    </div>
+                    <p class="mt-2 font-bold text-slate-800">
+                        יחידות השיפוע הן ניוטון לאמפר ($\text{N/A}$).
+                    </p>
+                </div>
+            </div>
+
+            <!-- חלק 3 -->
+            <div>
+                <h3 class="text-xl font-bold border-b-2 border-slate-200 pb-2 mb-4 text-blue-900">(3) חישוב עוצמת השדה המגנטי</h3>
+                
+                <div class="data-block">
+                    <strong>מה נתון:</strong><br>
+                    אורך קטע התיל המגנטי $l = 2 \text{ cm}$.
+                </div>
+
+                <div class="goal-block">
+                    <strong>מה מחפשים:</strong><br>
+                    למצוא את גודל השדה המגנטי $B$ (ביחידות טסלה, $\text{T}$).
+                </div>
+
+                <div class="formula-badge">
+                    $$ F = I \cdot l \cdot B \cdot \sin\alpha $$
+                </div>
+
+                <div class="teacher-highlight">
+                    <strong>המרת יחידות שוב!</strong>
+                    <br>
+                    חובה להעביר את אורך התיל לסנטימטרים למטרים (MKS):
+                    <br>
+                    $l = 2 \text{ cm} = 0.02 \text{ m}$
+                    <br><br>
+                    <strong>לגבי הזווית $\alpha$:</strong>
+                    בכלל יד ימין שעשינו בסעיף א', ראינו שהזרם מאונך לשדה המגנטי. לכן $\alpha = 90^\circ$ ו- $\sin(90^\circ) = 1$.
+                </div>
+
+                <div class="solution-step">
+                    <p>
+                        נתחיל מהנוסחה של כוח מגנטי על תיל, ונפתח אותה כך שתתאים למשוואת הישר שלנו. 
+                        משוואת הישר היא מהצורה $y = m \cdot x$, כאשר שלנו זה $F = \text{slope} \cdot I$.
+                    </p>
+                    
+                    <div class="overflow-x-auto text-lg p-4 font-mono bg-slate-50 rounded" dir="ltr">
+                        $$ F = I \cdot l \cdot B \cdot 1 $$
+                        $$ \frac{F}{I} = l \cdot B $$
+                    </div>
+                    
+                    <p class="mt-4">
+                        מכיוון שראינו קודם ש- $\frac{F}{I}$ זה בדיוק השיפוע שמצאנו, נוכל לרשום:
+                    </p>
+
+                    <div class="overflow-x-auto text-lg p-4 font-mono bg-slate-50 rounded" dir="ltr">
+                        $$ \text{Slope} = l \cdot B $$
+                        $$ B = \frac{\text{Slope}}{l} $$
+                    </div>
+
+                    <p class="mt-4">
+                        כעת, נציב את הערכים שחישבנו: שיפוע = $4 \cdot 10^{-4}$ ואורך = $0.02 \text{ m}$:
+                    </p>
+
+                    <div class="overflow-x-auto text-lg p-4 font-mono bg-slate-50 rounded text-blue-800 font-bold" dir="ltr">
+                        $$ B = \frac{4 \cdot 10^{-4}}{0.02} = \frac{4 \cdot 10^{-4}}{2 \cdot 10^{-2}} = 2 \cdot 10^{-2} \text{ Tesla} $$
+                        $$ B = 0.02 \text{ T} $$
+                    </div>
+
+                    <p class="mt-4 text-center text-xl font-bold text-emerald-600 bg-emerald-50 py-3 rounded border border-emerald-200">
+                        עוצמת השדה המגנטי היא $0.02 \text{ T}$.
+                    </p>
+                </div>
+            </div>
+
+        </section>
+
+    </main>
+
+    <script>
+        function toggleModal() {
+            const modal = document.getElementById('image-modal');
+            modal.classList.toggle('active');
+        }
+    </script>
+</body>
+</html>
