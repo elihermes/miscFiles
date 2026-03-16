@@ -1,0 +1,619 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 1994 שאלה 1</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 9999px;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.6rem;
+            padding: 0.9rem;
+            margin-top: 0.8rem;
+        }
+
+        .graph-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 1.5rem auto;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 8px;
+            padding: 1rem;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.03);
+        }
+
+        .final-answer {
+            background-color: #ecfdf5;
+            border: 1px solid #10b981;
+            color: #065f46;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: bold;
+            text-align: center;
+            font-size: 1.125rem;
+            margin-top: 1.5rem;
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        svg {
+            width: 100%;
+            height: auto;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-shell">
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-3xl sm:text-4xl font-extrabold text-slate-800 mb-4">
+                פתרון בגרות בפיזיקה - מכניקה
+            </h1>
+            <h2 class="text-xl md:text-2xl text-slate-600">1994, שאלה 1 - קינמטיקה ותנועה יחסית</h2>
+            <p class="mt-3 text-slate-500">פתרון מלא ומודרך: שלבי חישוב, גרפים והסבר רעיוני</p>
+            <div class="version-stamp" id="versionStamp" dir="ltr" aria-label="Version stamp">
+                <span class="version-label">ver</span>
+                <span id="versionId">vAUTO</span>
+                <span>|</span>
+                <span id="versionUpdatedAt">auto</span>
+            </div>
+        </header>
+
+        <!-- תמונת השאלה -->
+        <section class="section-card border-t-4 border-slate-300">
+            <h3 class="section-header text-slate-700">נוסח השאלה</h3>
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="w-full h-auto rounded-lg border border-slate-200"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            />
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+                <span class="block font-bold mb-1">תמונת השאלה המקורית</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+            </div>
+        </section>
+
+        <!-- נתוני התחלה -->
+        <section class="section-card">
+            <h3 class="text-lg font-bold mb-3 text-slate-800">ארגון נתוני הבעיה:</h3>
+            <p>אבן נזרקת כלפי מעלה. נגדיר את מערכת הצירים כפי שנדרש בשאלה:</p>
+            <ul class="list-disc list-inside mt-2 space-y-2 pr-4">
+                <li>ראשית הצירים (קרקע): <span dir="ltr" class="inline-block">$y_0 = 0 \text{ m}$</span></li>
+                <li>זמן התחלתי: <span dir="ltr" class="inline-block">$t_0 = 0 \text{ s}$</span></li>
+                <li>מהירות התחלתית (כלפי מעלה = חיובי): <span dir="ltr" class="inline-block">$v_0 = +40 \text{ m/s}$</span></li>
+                <li>תאוצת הכובד (כלפי מטה = שלילי): <span dir="ltr" class="inline-block">$a = -g = -10 \text{ m/s}^2$</span></li>
+            </ul>
+        </section>
+
+        <!-- סעיף א -->
+        <section class="section-card">
+            <h3 class="section-header">
+                <span class="bg-blue-600 text-white px-3 py-1 rounded-lg text-xl">סעיף א'</span>
+                זמן התאפסות מהירות האבן
+            </h3>
+
+            <div class="solution-step">
+                <p>אנו מחפשים את הזמן $t$ שבו מהירות האבן מתאפסת ($v(t) = 0$), מנקודת מבטו של צופה העומד על הקרקע (מערכת המעבדה).</p>
+                <p class="mt-2">נשתמש במשוואת המהירות כפונקציה של הזמן בתנועה שוות תאוצה:</p>
+                
+                <div class="text-center" dir="ltr">
+                    <div class="formula-badge text-xl">
+                        $$ v(t) = v_0 + at $$
+                    </div>
+                </div>
+
+                <p class="mt-4">נציב את הנתונים שלנו ($v_0 = 40, a = -10, v(t) = 0$):</p>
+                
+                <div class="text-center text-lg font-mono bg-slate-50 p-4 rounded-lg my-4" dir="ltr">
+                    $$ 0 = 40 - 10t $$
+                    $$ 10t = 40 $$
+                    $$ t = 4 \text{ s} $$
+                </div>
+
+                <div class="final-answer">
+                    תשובה: מהירות האבן תתאפס לאחר 4 שניות (זהו רגע ההגעה לשיא הגובה).
+                </div>
+            </div>
+        </section>
+
+        <!-- סעיף ב -->
+        <section class="section-card">
+            <h3 class="section-header">
+                <span class="bg-blue-600 text-white px-3 py-1 rounded-lg text-xl">סעיף ב'</span>
+                סרטוט גרפים של תנועת האבן
+            </h3>
+            
+            <p class="mb-4">כדי לדעת מהו משך התנועה שעבורו עלינו לשרטט את הגרפים, נמצא תחילה את <strong>רגע הפגיעה בקרקע</strong>.</p>
+            <p>האבן פוגעת בקרקע כאשר מיקומה מתאפס ($y(t) = 0$). נשתמש במשוואת המיקום:</p>
+            <div class="text-center">
+                <div class="formula-badge" dir="ltr">
+                    $$ y(t) = y_0 + v_0t + \frac{1}{2}at^2 $$
+                </div><br>
+                <span class="inline-block mt-2 text-lg" dir="ltr">
+                    $$ 0 = 0 + 40t - 5t^2 $$
+                </span><br>
+                <div class="inline-block mt-2 text-lg font-bold">
+                    <span dir="ltr">$$ 0 = 5t(8 - t) $$</span>
+                    מכאן: <span dir="ltr" class="inline-block">$t = 0$</span> (רגע הזריקה), או <span dir="ltr" class="inline-block">$t = 8\text{ s}$</span> (רגע הפגיעה בקרקע).
+                </div>
+            </div>
+            <p class="mt-4">כמו כן, נחשב את שיא הגובה (מתרחש ב- $t=4\text{s}$): $y(4) = 40(4) - 5(4)^2 = 160 - 80 = 80 \text{ m}$.</p>
+
+            <div class="mt-8 space-y-12">
+                
+                <!-- Graph 1: Position-Time -->
+                <div>
+                    <h3 class="font-bold text-lg text-slate-700 border-b pb-2 mb-4">1) גרף מיקום-זמן $y(t)$</h3>
+                    <p class="text-slate-600 mb-2">גרף פרבולי קעור כלפי מטה ("פרבולה בוכה") בשל התאוצה השלילית. מתחיל מ-(0,0), מגיע לשיא של 80m ב-t=4s, וחוזר ל-0 ב-t=8s.</p>
+                    <div class="graph-container">
+                        <svg viewBox="0 0 400 250">
+                            <!-- Grid & Axes -->
+                            <line x1="40" y1="210" x2="380" y2="210" stroke="#cbd5e1" stroke-width="2" /> <!-- x axis -->
+                            <line x1="40" y1="20" x2="40" y2="210" stroke="#cbd5e1" stroke-width="2" />  <!-- y axis -->
+                            
+                            <!-- Arrow heads -->
+                            <polygon points="380,206 388,210 380,214" fill="#cbd5e1"/>
+                            <polygon points="36,20 40,12 44,20" fill="#cbd5e1"/>
+
+                            <!-- Labels -->
+                            <text x="380" y="230" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">t (s)</text>
+                            <text x="25" y="15" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">y (m)</text>
+
+                            <!-- Tick marks X -->
+                            <text x="40" y="225" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">0</text>
+                            <circle cx="205" cy="210" r="2" fill="#64748b"/>
+                            <text x="205" y="225" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">4</text>
+                            <circle cx="370" cy="210" r="2" fill="#64748b"/>
+                            <text x="370" y="225" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">8</text>
+
+                            <!-- Tick marks Y -->
+                            <line x1="37" y1="50" x2="43" y2="50" stroke="#64748b" />
+                            <text x="25" y="54" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">80</text>
+
+                            <!-- Curve (Parabola from (0,0) to (4,80) to (8,0))
+                                 x maps 0->40, 4->205, 8->370
+                                 y maps 0->210, 80->50 -->
+                            <path d="M 40 210 Q 205 -110 370 210" fill="none" stroke="#ef4444" stroke-width="3" />
+                            
+                            <!-- Vertex dot -->
+                            <circle cx="205" cy="50" r="4" fill="#ef4444"/>
+                            <line x1="40" y1="50" x2="205" y2="50" stroke="#ef4444" stroke-dasharray="4" stroke-width="1"/>
+                            <line x1="205" y1="210" x2="205" y2="50" stroke="#ef4444" stroke-dasharray="4" stroke-width="1"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Graph 2: Velocity-Time -->
+                <div>
+                    <h3 class="font-bold text-lg text-slate-700 border-b pb-2 mb-4">2) גרף מהירות-זמן $v(t)$</h3>
+                    <p class="text-slate-600 mb-2">גרף לינארי (קו ישר) בעל שיפוע שלילי קבוע, המייצג את תאוצת הכובד. משוואת הישר היא $v(t) = 40 - 10t$.</p>
+                    <div class="graph-container">
+                        <svg viewBox="0 0 400 250">
+                            <!-- Axes -->
+                            <line x1="40" y1="125" x2="380" y2="125" stroke="#cbd5e1" stroke-width="2" /> <!-- x axis (v=0) -->
+                            <line x1="40" y1="20" x2="40" y2="230" stroke="#cbd5e1" stroke-width="2" />  <!-- y axis -->
+                            
+                            <!-- Arrow heads -->
+                            <polygon points="380,121 388,125 380,129" fill="#cbd5e1"/>
+                            <polygon points="36,20 40,12 44,20" fill="#cbd5e1"/>
+
+                            <!-- Labels -->
+                            <text x="380" y="115" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">t (s)</text>
+                            <text x="25" y="15" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">v (m/s)</text>
+
+                            <!-- Tick marks X -->
+                            <circle cx="205" cy="125" r="2" fill="#64748b"/>
+                            <text x="205" y="115" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">4</text>
+                            <circle cx="370" cy="125" r="2" fill="#64748b"/>
+                            <text x="370" y="115" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">8</text>
+
+                            <!-- Tick marks Y -->
+                            <text x="25" y="49" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">40</text>
+                            <text x="25" y="214" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">-40</text>
+
+                            <!-- Line from (0,40) to (8,-40)
+                                 x: 0->40, 4->205, 8->370
+                                 y: 40->45, 0->125, -40->205 -->
+                            <line x1="40" y1="45" x2="370" y2="205" stroke="#3b82f6" stroke-width="3" />
+                            
+                            <!-- Dashed guides -->
+                            <line x1="40" y1="205" x2="370" y2="205" stroke="#94a3b8" stroke-dasharray="4" stroke-width="1"/>
+                            <line x1="370" y1="125" x2="370" y2="205" stroke="#94a3b8" stroke-dasharray="4" stroke-width="1"/>
+                        </svg>
+                    </div>
+                </div>
+
+                <!-- Graph 3: Acceleration-Time -->
+                <div>
+                    <h3 class="font-bold text-lg text-slate-700 border-b pb-2 mb-4">3) גרף תאוצה-זמן $a(t)$</h3>
+                    <p class="text-slate-600 mb-2">לאורך כל התנועה התאוצה קבועה, ושווה בגודלה ובכיוונה לתאוצת הכובד: $a(t) = -10 \text{ m/s}^2$.</p>
+                    <div class="graph-container">
+                        <svg viewBox="0 0 400 150">
+                            <!-- Axes -->
+                            <line x1="40" y1="40" x2="380" y2="40" stroke="#cbd5e1" stroke-width="2" /> <!-- x axis (a=0) -->
+                            <line x1="40" y1="10" x2="40" y2="130" stroke="#cbd5e1" stroke-width="2" />  <!-- y axis -->
+                            
+                            <!-- Arrow heads -->
+                            <polygon points="380,36 388,40 380,44" fill="#cbd5e1"/>
+                            <polygon points="36,10 40,2 44,10" fill="#cbd5e1"/>
+
+                            <!-- Labels -->
+                            <text x="380" y="30" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">t (s)</text>
+                            <text x="20" y="15" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">a (m/s²)</text>
+
+                            <!-- Tick marks X -->
+                            <circle cx="370" cy="40" r="2" fill="#64748b"/>
+                            <text x="370" y="30" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">8</text>
+
+                            <!-- Tick marks Y -->
+                            <text x="20" y="104" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">-10</text>
+
+                            <!-- Line from (0,-10) to (8,-10)
+                                 x: 0->40, 8->370
+                                 y: -10 -> 100 -->
+                            <line x1="40" y1="100" x2="370" y2="100" stroke="#10b981" stroke-width="3" />
+                            
+                            <!-- End bound -->
+                            <line x1="370" y1="40" x2="370" y2="100" stroke="#94a3b8" stroke-dasharray="4" stroke-width="1"/>
+                        </svg>
+                    </div>
+                </div>
+
+            </div>
+        </section>
+
+        <!-- סעיף ג -->
+        <section class="section-card">
+            <h3 class="section-header">
+                <span class="bg-blue-600 text-white px-3 py-1 rounded-lg text-xl">סעיף ג'</span>
+                תנועה יחסית (אדם בכדור פורח)
+            </h3>
+
+            <div class="bg-amber-50 border-r-4 border-amber-500 text-amber-800 p-4 rounded-lg flex items-center gap-3 mt-4">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 shrink-0" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                </svg>
+                <p class="text-lg font-medium">הסעיף עוסק במהירות יחסית - נושא שאינו נמצא בתוכנית הלימודים העדכנית.</p>
+            </div>
+        </section>
+
+    </div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img
+                    src="question-image.png"
+                    alt="תמונת השאלה המקורית"
+                    class="max-w-full h-auto rounded-lg"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                >
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    <span class="block font-bold mb-1">תמונת השאלה המקורית</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionId = document.getElementById('versionId');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'Last file modified: ' + document.lastModified;
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime())) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const y = modified.getFullYear();
+                const m = pad(modified.getMonth() + 1);
+                const d = pad(modified.getDate());
+                const hh = pad(modified.getHours());
+                const mm = pad(modified.getMinutes());
+
+                if (versionId) {
+                    versionId.textContent = `v${y}${m}${d}-${hh}${mm}`;
+                }
+                if (versionUpdatedAt) {
+                    versionUpdatedAt.textContent = `${y}-${m}-${d} ${hh}:${mm}`;
+                }
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
