@@ -84,8 +84,13 @@
         }
 
         /* סגנונות למבנה הפדגוגי */
+        .step-box,
         .step-block {
             margin-bottom: 15px;
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.6rem;
+            padding: 0.9rem;
         }
 
         .step-title {
@@ -290,17 +295,21 @@
     <header class="text-center mb-8">
         <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מלא ומודרך: בגרות במכניקה</h1>
         <p class="text-xl md:text-2xl text-slate-600">שנת 2001, שאלה 1</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+        </div>
     </header>
 
-    <div class="mb-8 flex justify-center bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-        <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg"
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
 
-        <div style="display: none;" class="bg-blue-50 text-blue-800 p-8 rounded-lg border border-blue-200 text-center w-full">
-            <span class="block font-bold text-lg mb-2">[תמונת השאלה המקורית]</span>
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
             <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה של קובץ ה-HTML.</span>
         </div>
-    </div>
+    </section>
 
     <section class="section-card">
     <!-- שלב 0 - הקדמה ויזואלית ופיתוח תאוצה -->
@@ -344,7 +353,7 @@
 
     <!-- סעיף א(1) -->
     <section class="section-card">
-        <h2>סעיף א'(1): מיקום כדור א' כפונקציה של הזמן</h2>
+        <h3 class="section-header">סעיף א'(1): מיקום כדור א' כפונקציה של הזמן</h3>
         
         <div class="step-block">
             <span class="step-title">מה נתון:</span>
@@ -381,7 +390,7 @@
 
     <!-- סעיף א(2) -->
     <section class="section-card">
-        <h2>סעיף א'(2): מיקום כדור ב' כפונקציה של הזמן</h2>
+        <h3 class="section-header">סעיף א'(2): מיקום כדור ב' כפונקציה של הזמן</h3>
         
         <div class="step-block">
             <span class="step-title">מה נתון (חשיפה מדורגת):</span>
@@ -427,7 +436,7 @@
 
     <!-- סעיף א(3) -->
     <section class="section-card">
-        <h2>סעיף א'(3): רגע הפגישה של הכדורים</h2>
+        <h3 class="section-header">סעיף א'(3): רגע הפגישה של הכדורים</h3>
         
         <div class="step-block">
             <span class="step-title">מה נתון:</span>
@@ -462,7 +471,7 @@
 
     <!-- סעיף ב(1) -->
     <section class="section-card">
-        <h2>סעיף ב'(1): מהירות כדור א' ברגע זריקת כדור ב'</h2>
+        <h3 class="section-header">סעיף ב'(1): מהירות כדור א' ברגע זריקת כדור ב'</h3>
         
         <div class="step-block">
             <span class="step-title">מה נתון:</span>
@@ -492,7 +501,7 @@
 
     <!-- סעיף ב(2) -->
     <section class="section-card">
-        <h2>סעיף ב'(2): מה היה קורה אם כדור ב' היה נזרק במהירות של 10 מ"ש?</h2>
+        <h3 class="section-header">סעיף ב'(2): מה היה קורה אם כדור ב' היה נזרק במהירות של 10 מ"ש?</h3>
         
         <div class="step-block">
             <span class="step-title">מה נתון (חשיפה מדורגת):</span>
@@ -526,8 +535,8 @@
     </section>
 
     <!-- תצוגה גרפית מורחבת (Chart.js) -->
-    <section>
-        <h2>המחשה גרפית של המפגש (המצב המקורי מסעיף א')</h2>
+    <section class="section-card" id="part-graph">
+        <h3 class="section-header">המחשה גרפית (אופציונלי)</h3>
         <p>כדי להמחיש את הפתרון, נשרטט את גרף המקום-זמן של שני הכדורים. נקודת החיתוך מייצגת את רגע המפגש.</p>
         <div class="graph-container">
             <canvas id="kinematicsChart"></canvas>
@@ -565,6 +574,17 @@
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה: ' + document.lastModified;
+        }
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+            versionUpdatedAt.textContent = `${pad(modified.getDate())}.${pad(modified.getMonth() + 1)}.${String(modified.getFullYear()).slice(-2)} ${pad(modified.getHours())}:${pad(modified.getMinutes())}:${pad(modified.getSeconds())}`;
+        }
+
         const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
         const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
         const questionModal = document.getElementById('questionModal');
