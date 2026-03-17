@@ -1,0 +1,701 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - 2012 שאלה 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: #dcfce7;
+            border: 2px dashed #22c55e;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 1rem;
+            display: block;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+            font-style: normal;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            direction: ltr;
+        }
+
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            font-weight: bold;
+        }
+
+        td.highlighted-cell {
+            background-color: #dbeafe;
+            font-weight: bold;
+            color: #1e40af;
+        }
+
+        .svg-container,
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+            direction: ltr;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-shell">
+
+    <header class="mb-8 text-center">
+        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-4">פתרון בגרות בפיזיקה - מכניקה 2012, שאלה 1</h1>
+        <p class="text-lg text-slate-600 mb-6">נושא: קינמטיקה של נפילה חופשית וגרפים</p>
+        
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">תמונת השאלה לא נטענה. אנא ודא שהקובץ "question-image.png" נמצא באותה תיקייה.</div>
+    </section>
+
+    <div class="mb-8 p-6 bg-white rounded-lg shadow-sm border border-slate-200">
+        <h2 class="text-xl font-bold mb-4 text-blue-800">הקדמה וקביעת מערכת צירים</h2>
+        <p class="mb-4">
+            לפני שניגש לסעיפים, נסדר את המחשבות. האסטרונאוטיות משחררות גוף בנפילה חופשית על כוכב לכת מסוים. ציר ה-\(y\) הוגדר על ידן כך ש<strong>כיוונו החיובי הוא כלפי מטה</strong>. מכיוון שתאוצת הכובד תמיד פועלת כלפי מטה, והציר החיובי חופף לכיוון זה, תאוצת הגוף \(a\) היא חיובית (\(a = +g\)).
+        </p>
+        <div class="svg-container flex justify-center my-4">
+            <svg width="200" height="250" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg">
+                <!-- Axis -->
+                <line x1="100" y1="20" x2="100" y2="230" stroke="#334155" stroke-width="2" marker-end="url(#arrow)" />
+                <text x="110" y="230" font-family="sans-serif" font-size="14" fill="#334155" font-weight="bold">+y</text>
+                
+                <!-- Ball -->
+                <circle cx="100" cy="80" r="15" fill="#3b82f6" />
+                
+                <!-- Velocity Vector -->
+                <line x1="100" y1="95" x2="100" y2="145" stroke="#22c55e" stroke-width="3" marker-end="url(#v-arrow)" />
+                <text x="115" y="125" font-family="sans-serif" font-size="16" fill="#22c55e" font-weight="bold">v</text>
+
+                <!-- Acceleration Vector -->
+                <line x1="50" y1="80" x2="50" y2="130" stroke="#ef4444" stroke-width="3" marker-end="url(#a-arrow)" />
+                <text x="25" y="110" font-family="sans-serif" font-size="16" fill="#ef4444" font-weight="bold">a</text>
+
+                <defs>
+                    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155" />
+                    </marker>
+                    <marker id="v-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#22c55e" />
+                    </marker>
+                    <marker id="a-arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+    </div>
+
+    <!-- סעיף א -->
+    <div class="section-card">
+        <h3 class="text-2xl font-bold mb-4 text-slate-800">סעיף א'</h3>
+        
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">א. מה נתון:</h4>
+            <p>
+                נתונה לנו טבלת מקום-זמן. אנו מתמקדים בחישוב המהירות ברגע \(t = 0.24\text{ s}\). הנתונים כבר במערכת יחידות MKS (מטרים ושניות). נביט על שתי הנקודות הצמודות לרגע זה כדי לחשב מהירות ממוצעת:<br>
+                בזמן \(t_1 = 0.16\text{ s}\), המקום הוא \(y_1 = 0.430\text{ m}\).<br>
+                בזמן \(t_2 = 0.32\text{ s}\), המקום הוא \(y_2 = 1.400\text{ m}\).
+            </p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ב. מה מחפשים:</h4>
+            <p>חישוב בקירוב של המהירות הרגעית של הגוף בזמן \(t = 0.24\text{ s}\).</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ג. נוסחאות בשימוש (מתוך דף הנוסחאות):</h4>
+            <p>לחישוב מהירות ממוצעת נשתמש בנוסחה מקינמטיקה: <span class="formula-badge">\(\overline{v}=\frac{\Delta x}{\Delta t}\)</span>. במקרה שלנו ציר התנועה הוא \(y\), ולכן נכתוב \(\overline{v} = \frac{\Delta y}{\Delta t}\).</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ד. הצבה ופתרון:</h4>
+            <p>כדי למצוא את המהירות בקירוב בזמן \(t = 0.24\text{ s}\), נחשב את המהירות הממוצעת בפרק הזמן הסימטרי שסביבו, כלומר בין \(0.16\text{ s}\) לבין \(0.32\text{ s}\):</p>
+            <div class="overflow-x-auto">
+                \[ v(0.24) \approx \frac{y(0.32) - y(0.16)}{0.32 - 0.16} = \frac{1.400 - 0.430}{0.16} = \frac{0.970}{0.16} = 6.0625 \text{ m/s} \]
+            </div>
+            <div class="final-answer">
+                תשובה סופית: מהירות הגוף ברגע \(t = 0.24\text{ s}\) היא בקירוב \(6.06\text{ m/s}\).
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> למה אנחנו משתמשים דווקא בנקודות אלו כדי לחשב את המהירות? כשיש לנו רק נתונים בדידים מטבלה, הדרך הטובה ביותר לקרב מהירות רגעית היא לחשב מהירות ממוצעת (\(\frac{\Delta y}{\Delta t}\)) בין שתי הנקודות הקרובות ביותר משני עברי הרגע המבוקש. לשם השוואה: אם היינו מחשבים בין \(0.16\) ל-\(0.24\) היינו מקבלים בקירוב את המהירות באמצע הקטע, כלומר ב-\(0.20\), ואם בין \(0.24\) ל-\(0.32\) היינו מקבלים אותה ב-\(0.28\). לכן הקטע הסובב אותה נותן את הקירוב הטוב ביותר ל-\(0.24\).
+            <br><br>אנו משתמשים בשיטה זו לניתוח נתונים בטבלה בכל מקרה. ההבדל הוא שאם לא ידוע אופי התנועה – זהו רק קירוב (הטוב ביותר האפשרי), אך מכיוון שבנפילה חופשית התאוצה קבועה, החישוב בשיטה זו יוצא <strong>מדויק לחלוטין</strong>!
+        </div>
+    </div>
+
+    <!-- סעיף ב -->
+    <div class="section-card">
+        <h3 class="text-2xl font-bold mb-4 text-slate-800">סעיף ב'</h3>
+        
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">א. מה נתון:</h4>
+            <p>אותה טבלת מקום-זמן מהשאלה. גם כאן הנתונים ב-MKS.</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ב. מה מחפשים:</h4>
+            <p>את המהירויות ברגעים \(t = 0.08, 0.16, 0.32, 0.40\text{ s}\) והשלמתן לטבלה. אין צורך לפרט את החישוב, אך אנו נציג אותו לשם הבנה.</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ג. נוסחאות בשימוש:</h4>
+            <p>שוב, נשתמש בנוסחת המהירות הממוצעת מקינמטיקה: <span class="formula-badge">\(\overline{v}=\frac{\Delta x}{\Delta t}\)</span>.</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ד. הצבה ופתרון:</h4>
+            <p>נחשב באופן זהה לסעיף א' עבור כל רגע אמצעי בין שתי מדידות סמוכות (הפרש הזמנים בכל חישוב הוא \(\Delta t = 2 \cdot 0.08 = 0.16\text{ s}\)):</p>
+            <div class="overflow-x-auto">
+                \[ v(0.08) \approx \frac{y(0.16) - y(0)}{0.16} = \frac{0.430 - 0.016}{0.16} = 2.5875 \text{ m/s} \]
+                \[ v(0.16) \approx \frac{y(0.24) - y(0.08)}{0.16} = \frac{0.810 - 0.150}{0.16} = 4.125 \text{ m/s} \]
+                \[ v(0.32) \approx \frac{y(0.40) - y(0.24)}{0.16} = \frac{2.000 - 0.810}{0.16} = 7.4375 \text{ m/s} \]
+                \[ v(0.40) \approx \frac{y(0.48) - y(0.32)}{0.16} = \frac{2.840 - 1.400}{0.16} = 9.000 \text{ m/s} \]
+            </div>
+            <p class="mt-4 font-bold text-slate-700">הטבלה המעודכנת (עם הקירובים ל-2 ספרות אחרי הנקודה לנוחות):</p>
+            <div class="overflow-x-auto">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>\(t \text{ (s)}\)</th>
+                            <th>\(0\)</th>
+                            <th>\(0.08\)</th>
+                            <th>\(0.16\)</th>
+                            <th>\(0.24\)</th>
+                            <th>\(0.32\)</th>
+                            <th>\(0.40\)</th>
+                            <th>\(0.48\)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td>\(y \text{ (m)}\)</td>
+                            <td>\(0.016\)</td>
+                            <td>\(0.150\)</td>
+                            <td>\(0.430\)</td>
+                            <td>\(0.810\)</td>
+                            <td>\(1.400\)</td>
+                            <td>\(2.000\)</td>
+                            <td>\(2.840\)</td>
+                        </tr>
+                        <tr>
+                            <td>\(v \text{ (m/s)}\)</td>
+                            <td></td>
+                            <td class="highlighted-cell">\(2.59\)</td>
+                            <td class="highlighted-cell">\(4.13\)</td>
+                            <td class="highlighted-cell">\(6.06\)</td>
+                            <td class="highlighted-cell">\(7.44\)</td>
+                            <td class="highlighted-cell">\(9.00\)</td>
+                            <td></td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <div class="final-answer">
+                הערכים חושבו ושובצו בטבלה בהצלחה!
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> שימו לב שאי אפשר לחשב באותה שיטה את המהירות ברגעים בקצוות הטבלה (\(t=0\) ו-\(t=0.48\)), כי חסר לנו נתון "לפני" או "אחרי". בפיזיקה ניסויית תמיד "מאבדים" נקודות קצה בחישוב נגזרת או מהירות!
+        </div>
+    </div>
+
+    <!-- סעיף ג -->
+    <div class="section-card">
+        <h3 class="text-2xl font-bold mb-4 text-slate-800">סעיף ג'</h3>
+        
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">א. מה נתון:</h4>
+            <p>זוגות הערכים \((t, v)\) שחישבנו בסעיפים הקודמים.</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ב. מה מחפשים:</h4>
+            <p>לסרטט דיאגרמת פיזור של המהירות כפונקציה של הזמן ולהוסיף קו מגמה.</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ג. נוסחאות בשימוש:</h4>
+            <p>אין כאן נוסחה ספציפית מדף הנוסחאות, אלא בניית גרף לפי עקרונות תצוגת נתונים בפיזיקה.</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ד. הצבה ופתרון:</h4>
+            <p>נציב את הנקודות במערכת צירים, בה ציר ה-x הוא הזמן (s) וציר ה-y הוא המהירות (m/s), ונעביר דרכן את הקו הישר המייצג אותן בצורה הטובה ביותר (קו מגמה).</p>
+            <div class="svg-container flex justify-center my-6">
+                <svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Background Grid -->
+                    <g stroke="#e2e8f0" stroke-width="1">
+                        <!-- Vertical grid lines -->
+                        <line x1="160" y1="40" x2="160" y2="340" />
+                        <line x1="260" y1="40" x2="260" y2="340" />
+                        <line x1="360" y1="40" x2="360" y2="340" />
+                        <line x1="460" y1="40" x2="460" y2="340" />
+                        <line x1="560" y1="40" x2="560" y2="340" />
+                        <!-- Horizontal grid lines -->
+                        <line x1="60" y1="280" x2="560" y2="280" />
+                        <line x1="60" y1="220" x2="560" y2="220" />
+                        <line x1="60" y1="160" x2="560" y2="160" />
+                        <line x1="60" y1="100" x2="560" y2="100" />
+                        <line x1="60" y1="40" x2="560" y2="40" />
+                    </g>
+
+                    <!-- Axes -->
+                    <line x1="60" y1="340" x2="580" y2="340" stroke="#0f172a" stroke-width="2" marker-end="url(#arrow)" />
+                    <line x1="60" y1="340" x2="60" y2="20" stroke="#0f172a" stroke-width="2" marker-end="url(#arrow)" />
+
+                    <!-- Axes Labels -->
+                    <text x="320" y="380" font-family="sans-serif" font-size="16" fill="#0f172a" font-weight="bold" text-anchor="middle">זמן - t (s)</text>
+                    <text x="20" y="190" font-family="sans-serif" font-size="16" fill="#0f172a" font-weight="bold" text-anchor="middle" transform="rotate(-90 20 190)">מהירות - v (m/s)</text>
+
+                    <!-- X-Axis Ticks & Values -->
+                    <g font-family="sans-serif" font-size="12" fill="#475569" text-anchor="middle">
+                        <text x="60" y="360">0</text>
+                        <text x="160" y="360">0.1</text>
+                        <text x="260" y="360">0.2</text>
+                        <text x="360" y="360">0.3</text>
+                        <text x="460" y="360">0.4</text>
+                        <text x="560" y="360">0.5</text>
+                    </g>
+
+                    <!-- Y-Axis Ticks & Values -->
+                    <g font-family="sans-serif" font-size="12" fill="#475569" text-anchor="end">
+                        <text x="50" y="344">0</text>
+                        <text x="50" y="284">2</text>
+                        <text x="50" y="224">4</text>
+                        <text x="50" y="164">6</text>
+                        <text x="50" y="104">8</text>
+                        <text x="50" y="44">10</text>
+                    </g>
+
+                    <!-- Trendline -->
+                    <!-- Points calculated: (0.08, 2.59) => x=140, y=262.3. (0.4, 9.00) => x=460, y=70 -->
+                    <!-- Line equation in SVG coords: Passes through those two points -->
+                    <line x1="60" y1="310.4" x2="500" y2="46" stroke="#2563eb" stroke-width="2" stroke-dasharray="5,5" />
+                    
+                    <!-- Data Points -->
+                    <circle cx="140" cy="262.3" r="5" fill="#dc2626" />
+                    <circle cx="220" cy="216.1" r="5" fill="#dc2626" />
+                    <circle cx="300" cy="158.2" r="5" fill="#dc2626" />
+                    <circle cx="380" cy="116.8" r="5" fill="#dc2626" />
+                    <circle cx="460" cy="70.0" r="5" fill="#dc2626" />
+
+                    <!-- Legend -->
+                    <rect x="80" y="40" width="140" height="50" fill="#ffffff" stroke="#cbd5e1" rx="4" />
+                    <circle cx="100" cy="55" r="4" fill="#dc2626" />
+                    <text x="115" y="60" font-family="sans-serif" font-size="12" fill="#334155">נקודות מדידה</text>
+                    <line x1="90" y1="75" x2="110" y2="75" stroke="#2563eb" stroke-width="2" stroke-dasharray="3,3" />
+                    <text x="115" y="80" font-family="sans-serif" font-size="12" fill="#334155">קו מגמה</text>
+                </svg>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> קו מגמה (Best Fit Line) לא חייב לחתוך את כל הנקודות! המטרה שלו היא לייצג את "המגמה הממוצעת" תוך התעלמות מאי-דיוקים ושגיאות קטנות בניסוי. לכן אנו מעבירים קו ישר שעובר קרוב ככל האפשר לרוב הנקודות.
+        </div>
+    </div>
+
+    <!-- סעיף ד -->
+    <div class="section-card">
+        <h3 class="text-2xl font-bold mb-4 text-slate-800">סעיף ד'</h3>
+        
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">א. מה נתון:</h4>
+            <p>יש לנו את גרף המהירות-זמן מקודם, וקו המגמה שעובר דרך (או קרוב מאוד) לנקודות התצפית. למשל, ניקח שתי נקודות מרוחקות זו מזו שנמצאות בדיוק על קו המגמה כדי לחשב את השיפוע: הנקודה הראשונה \((0.08\text{ s}, 2.59\text{ m/s})\) והנקודה האחרונה \((0.40\text{ s}, 9.00\text{ m/s})\).</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ב. מה מחפשים:</h4>
+            <p>לחשב את שיפוע קו המגמה ולהסביר איזה גודל פיזיקלי הוא מייצג.</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ג. נוסחאות בשימוש:</h4>
+            <p>נוסחת השיפוע ממתמטיקה \(m = \frac{\Delta y}{\Delta x}\), שבהקשר הפיזיקלי שלנו היא <span class="formula-badge">\(a = \frac{\Delta v}{\Delta t}\)</span> (נגזר מהקשר הקינמטי <span class="formula-badge">\(v=v_0+at\)</span> או <span class="formula-badge">\(a=\frac{dv}{dt}\)</span> בדף הנוסחאות).</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ד. הצבה ופתרון:</h4>
+            <p>נציב את שתי הנקודות שבחרנו מקו המגמה בחישוב השיפוע:</p>
+            <div class="overflow-x-auto">
+                \[ a \approx \frac{9.00 - 2.59}{0.40 - 0.08} = \frac{6.41}{0.32} = 20.03 \text{ m/s}^2 \]
+            </div>
+            <p>ניתן להגיד בקירוב טוב שהשיפוע הוא \(20 \text{ m/s}^2\).</p>
+            <div class="final-answer">
+                שיפוע הגרף הוא כ-\(20\text{ m/s}^2\). <br>
+                <strong>הסבר:</strong> בגרף של מהירות כפונקציה של הזמן, השיפוע מבטא את קצב השתנות המהירות, שהוא לפי הגדרה ה<strong>תאוצה</strong> של הגוף. במקרה שלנו, זוהי תאוצת הנפילה החופשית (תאוצת הכובד, \(g\)) על אותו כוכב לכת מסוים! כלומר, \(g_{\text{planet}} \approx 20\text{ m/s}^2\).
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> איך יודעים מה משמעות השיפוע? תמיד חלקו את יחידות המידה של ציר ה-y באלו של ציר ה-x. כאן: \((\text{m/s}) / \text{s} = \text{m/s}^2\). איזו גודל פיזיקלי נמדד ביחידות אלו? תאוצה!
+        </div>
+    </div>
+
+    <!-- סעיף ה -->
+    <div class="section-card">
+        <h3 class="text-2xl font-bold mb-4 text-slate-800">סעיף ה'</h3>
+        
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">א. מה נתון:</h4>
+            <p>
+                תאוצת הנפילה החופשית בכוכב הלכת היא \(g_{\text{planet}} = 20\text{ m/s}^2\).<br>
+                תאוצת הכובד על פני כדור הארץ מוכרת לנו כ- \(g_E = 10\text{ m/s}^2\) (מקובל לחישובים בבגרות).<br>
+                נתון כי רדיוס הכוכב שווה לרדיוס כדור הארץ, כלומר: \(R_{\text{planet}} = R_E\).
+            </p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ב. מה מחפשים:</h4>
+            <p>את היחס בין מסת כוכב הלכת (\(M_{\text{planet}}\)) למסת כדור הארץ (\(M_E\)), כלומר את השבר \(\frac{M_{\text{planet}}}{M_E}\).</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ג. נוסחאות בשימוש:</h4>
+            <p>נשתמש בחוק הכבידה העולמי: <span class="formula-badge">\(F=G\frac{m_1 m_2}{r^2}\)</span> ובחוק השני של ניוטון: <span class="formula-badge">\(F=mg\)</span>.</p>
+        </div>
+
+        <div class="mb-4">
+            <h4 class="font-bold text-slate-700">ד. הצבה ופתרון:</h4>
+            <p>ראשית, נפתח קשר כללי לתאוצת הכובד \(g\) על פני כוכב לכת. נשווה את כוח הכבידה הפועל על גוף המסה \(m\) על פני הכוכב, למשקלו (על פי הגדרת הדינמיקה):</p>
+            <div class="overflow-x-auto">
+                \[ mg = G\frac{m M}{R^2} \]
+            </div>
+            <p>המסה \(m\) של הגוף מצטמצמת, ונקבל את הנוסחה לתאוצת הכובד:</p>
+            <div class="overflow-x-auto">
+                \[ g = \frac{GM}{R^2} \]
+            </div>
+            <p>כעת, נכתוב את תאוצת הכובד עבור כדור הארץ ועבור כוכב הלכת ונבצע חלוקה בין המשוואות (יחס):</p>
+            <div class="overflow-x-auto">
+                \[ \frac{g_{\text{planet}}}{g_E} = \frac{ \frac{G \cdot M_{\text{planet}}}{R_{\text{planet}}^2} }{ \frac{G \cdot M_E}{R_E^2} } \]
+            </div>
+            <p>נציב את הנתון \(R_{\text{planet}} = R_E\). מכיוון שקבוע הכבידה העולמי \(G\) וכעת גם הרדיוסים שווים, הם מצטמצמים כולם במונה ובמכנה!</p>
+            <div class="overflow-x-auto">
+                \[ \frac{g_{\text{planet}}}{g_E} = \frac{M_{\text{planet}}}{M_E} \]
+            </div>
+            <p>נציב את ערכי תאוצות הכובד שבידינו:</p>
+            <div class="overflow-x-auto">
+                \[ \frac{M_{\text{planet}}}{M_E} = \frac{20}{10} = 2 \]
+            </div>
+            <div class="final-answer">
+                תשובה סופית: מסת כוכב הלכת גדולה פי 2 ממסת כדור הארץ. היחס הוא \(2\).
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> כשיש "שאלות יחס" בבגרות (שאלות ששואלות "פי כמה..."), כמעט תמיד כדאי לכתוב משוואה אחת, משוואה שנייה, ולחלק אותן זו בזו! שיטה זו מצמצמת את כל הקבועים המעיקים (כמו \(G\) או במקרה זה גם \(R\)) ומונעת הצבות ארוכות וסיכון לטעויות חישוב עם הרבה אפסים במחשבון.
+        </div>
+    </div>
+
+    </div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img src="question-image.png" alt="תמונת השאלה בגדול" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">תמונת השאלה לא נטענה. אנא ודא שהקובץ "question-image.png" נמצא באותה תיקייה.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה: ' + document.lastModified;
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const day = pad(modified.getDate());
+                const month = pad(modified.getMonth() + 1);
+                const year = String(modified.getFullYear()).slice(-2);
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
