@@ -1,0 +1,645 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - 2011 שאלה 1</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for Physics Formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-card > h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .step-title {
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: #dcfce7;
+            border: 2px dashed #22c55e;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            text-align: center;
+            margin-top: 1rem;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+            direction: ltr;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-shell">
+
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">פתרון מוסבר: בגרות בפיזיקה 2011, שאלה 1</h1>
+
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            תמונת השאלה אינה זמינה כרגע, אך הפתרון מסתמך עליה במדויק.
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <div class="section-card">
+        <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b pb-2">סעיף א': סוג התנועה</h2>
+        
+        <div class="mb-4">
+            <h3 class="step-title">1. מה נתון:</h3>
+            <p class="text-slate-700">מהשאלה ידוע כי סרט הקצב מסמן נקודה בכל פרק זמן קבוע של \( \Delta t = 0.02\text{ s} \). מתרשים ב' אנו יכולים לראות את המרחק בין כל שתי נקודות עוקבות על גבי הסרגל.</p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">2. מה מחפשים:</h3>
+            <p class="text-slate-700">לקבוע האם תנועת העגלה היא תנועה קצובה (במהירות קבועה) או תנועה שיש לה תאוצה (תנועה מואצת), ולנמק.</p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">3. נוסחאות בשימוש:</h3>
+            <span class="formula-badge">\( \overline{v} = \frac{\Delta x}{\Delta t} \)</span>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">4. הצבה ופתרון:</h3>
+            <p class="text-slate-700 leading-relaxed">
+                נתבונן בתרשים המציג את סרט הנייר. המרווחים הפיזיים (העתקים, \( \Delta x \)) בין הנקודות העוקבות הולכים וגדלים ככל שמתקדמים לאורך סרט הנייר מהנקודה M אל עבר הנקודה N. מכיוון שפרק הזמן \( \Delta t \) בין כל שתי נקודות הוא קבוע ושווה ל-\( 0.02\text{ s} \), הגדלת המרחק מחייבת כי גודל המהירות הממוצעת בכל קטע עוקב הולך וגדל. כאשר גודל המהירות משתנה עם הזמן, הרי שלגוף יש תאוצה.
+            </p>
+            <div class="final-answer">
+                התנועה אינה קצובה, אלא תנועה מואצת (בעלת תאוצה).
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> זכרו שסרט קצב מתפקד כמו מצלמה שלוכדת תמונה בכל מרווח זמן קבוע. אם המרחקים גדלים באותו פרק זמן, סימן שגודל המהירות גדל. אין להשתמש במושג "האטה" בפיזיקה אלא לתאר את המצב כ"גודל המהירות קטן" אם המרחקים היו מתקצרים. במקרה שלנו גודל המהירות גדל ולכן התאוצה כיוונה ככיוון המהירות.
+        </div>
+    </div>
+
+    <!-- סעיף ב -->
+    <div class="section-card">
+        <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b pb-2">סעיף ב': מהירות ממוצעת בקטע MN</h2>
+        
+        <div class="mb-4">
+            <h3 class="step-title">1. מה נתון:</h3>
+            <p class="text-slate-700 leading-relaxed">
+                מתוך קריאה מדוקדקת של סרגל המדידה בתרשים ב' וספירת הנקודות:<br>
+                מיקום התחלתי בנקודה M: \( x_M = 0\text{ cm} \Rightarrow x_M = 0\text{ m} \).<br>
+                מיקום סופי בנקודה N: ספירת השנתות מראה ש-N נמצאת ב-7.7 ס"מ, כלומר \( x_N = 0.077\text{ m} \).<br>
+                פרק הזמן הכולל: לאורך הסרט ישנן 8 נקודות מ-M עד N (כולל). בין 8 נקודות ישנם בדיוק 7 מרווחי זמן (קפיצות). לכן: \( \Delta t_{MN} = 7 \cdot 0.02\text{ s} = 0.14\text{ s} \).
+            </p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">2. מה מחפשים:</h3>
+            <p class="text-slate-700">את גודל המהירות הממוצעת \( \overline{v} \) לאורך כל קטע התנועה מהנקודה M עד לנקודה N.</p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">3. נוסחאות בשימוש:</h3>
+            <span class="formula-badge">\( \overline{v} = \frac{\Delta x}{\Delta t} \)</span>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">4. הצבה ופתרון:</h3>
+            <p class="text-slate-700 mb-2">נציב את הנתונים שהמרנו ליחידות התקניות לתוך נוסחת המהירות הממוצעת:</p>
+            <div class="math-scroll">
+                \[ \overline{v}_{MN} = \frac{x_N - x_M}{\Delta t_{MN}} \]
+                \[ \overline{v}_{MN} = \frac{0.077 - 0}{0.14} \]
+                \[ \overline{v}_{MN} = 0.55\text{ m/s} \]
+            </div>
+            <div class="final-answer">
+                המהירות הממוצעת של העגלה בקטע MN היא \( \overline{v} = 0.55\text{ m/s} \).
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> מלכודת נפוצה היא ספירת נקודות במקום ספירת מרווחים! תמיד עדיף לספור את ה"קפיצות" בין הנקודות. על 8 נקודות מודפסות נקבל 7 מרווחי זמן. בנוסף, חובה להמיר את המרחק מסנטימטרים למטרים מיד בשלב הוצאת הנתונים כדי למנוע טעויות חישוב בהמשך!
+        </div>
+    </div>
+
+    <!-- סעיף ג -->
+    <div class="section-card">
+        <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b pb-2">סעיף ג': מהירות רגעית בנקודה A</h2>
+        
+        <div class="mb-4">
+            <h3 class="step-title">1. מה נתון:</h3>
+            <p class="text-slate-700 leading-relaxed">
+                נקודה A היא הנקודה החמישית (אחרי M). כדי לחשב את המהירות הרגעית בה בדיוק רב, ניקח את הנקודה שלפניה (נקודה 4) ואת הנקודה שאחריה (נקודה 6). <br>
+                מקריאת המיקומים על הסרגל עולה כי:<br>
+                מיקום נקודה 4: \( x_4 = 3.2\text{ cm} \Rightarrow 0.032\text{ m} \).<br>
+                מיקום נקודה 6: \( x_6 = 6.0\text{ cm} \Rightarrow 0.060\text{ m} \).<br>
+                פרק הזמן הכולל בין נקודה 4 לנקודה 6 מכיל שני מרווחים, לכן: \( \Delta t = 2 \cdot 0.02\text{ s} = 0.04\text{ s} \).
+            </p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">2. מה מחפשים:</h3>
+            <p class="text-slate-700">את המהירות הרגעית \( v_A \) ברגע שבו העגלה עברה בנקודה A.</p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">3. נוסחאות בשימוש:</h3>
+            <span class="formula-badge">\( \overline{v} = \frac{\Delta x}{\Delta t} \)</span>
+            <p class="text-sm text-slate-600 mt-1">בתנועה שוות-תאוצה מתקיים הכלל: המהירות הרגעית בדיוק באמצע הזמן שווה למהירות הממוצעת של אותו קטע.</p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">4. הצבה ופתרון:</h3>
+            <p class="text-slate-700 mb-2">כיוון שנקודה A (הנקודה החמישית) מתרחשת בדיוק באמצע פרק הזמן שבין נקודה 4 לנקודה 6, נוכל לחשב את המהירות הממוצעת בקטע זה, והיא תהיה שווה למהירות הרגעית בנקודה A.</p>
+            <div class="math-scroll">
+                \[ v_A = \overline{v}_{4 \rightarrow 6} = \frac{x_6 - x_4}{\Delta t} \]
+                \[ v_A = \frac{0.060 - 0.032}{0.04} \]
+                \[ v_A = \frac{0.028}{0.04} \]
+                \[ v_A = 0.7\text{ m/s} \]
+            </div>
+            <div class="final-answer">
+                המהירות הרגעית של העגלה בנקודה A היא \( v_A = 0.7\text{ m/s} \).
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> זהו כלל חשוב מאוד בתנועה שוות תאוצה: המהירות הרגעית בנקודה מסוימת שווה למהירות הממוצעת בפרק הזמן שהנקודה נמצאת בדיוק באמצע שלו. לכן, כדי לדייק במציאת המהירות בנקודה A, בחרנו את הנקודה שלפניה ואת הנקודה שאחריה (מרווח זמן סימטרי).
+        </div>
+    </div>
+
+    <!-- המחשה ויזואלית לתנועה -->
+    <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 my-6">
+        <h4 class="text-center font-bold text-slate-600 mb-2">תרשים להמחשת המושגים הקינמטיים לאורך סרט הנייר (8 נקודות, 7 מרווחים)</h4>
+        <div class="svg-container flex justify-center my-4 overflow-x-auto">
+            <svg width="700" height="150" viewBox="0 0 700 150" xmlns="http://www.w3.org/2000/svg">
+                <!-- ציר מקום -->
+                <line x1="50" y1="100" x2="650" y2="100" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow)" />
+                <text x="650" y="130" fill="#64748b" font-family="Arial" font-size="14">x (cm)</text>
+
+                <!-- הגדרת חץ לציר -->
+                <defs>
+                    <marker id="arrow" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
+                        <path d="M0,0 L0,6 L9,3 z" fill="#94a3b8" />
+                    </marker>
+                    <!-- חץ לוקטור מהירות ותאוצה -->
+                    <marker id="v-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                        <path d="M0,1 L0,7 L8,4 z" fill="#3b82f6" />
+                    </marker>
+                    <marker id="a-arrow" markerWidth="8" markerHeight="8" refX="7" refY="4" orient="auto">
+                        <path d="M0,1 L0,7 L8,4 z" fill="#ef4444" />
+                    </marker>
+                </defs>
+
+                <!-- נקודות המיקום (מוגדלות ויזואלית להמחשה) -->
+                <!-- M (0) -->
+                <circle cx="100" cy="100" r="4" fill="#1e293b" />
+                <text x="100" y="125" fill="#1e293b" font-weight="bold" text-anchor="middle">M (0)</text>
+                
+                <!-- נקודה 1 -->
+                <circle cx="130" cy="100" r="3" fill="#64748b" />
+                
+                <!-- נקודה 2 -->
+                <circle cx="172" cy="100" r="3" fill="#64748b" />
+                
+                <!-- נקודה 3 -->
+                <circle cx="226" cy="100" r="3" fill="#64748b" />
+                
+                <!-- נקודה 4 -->
+                <circle cx="292" cy="100" r="3" fill="#64748b" />
+                
+                <!-- נקודה A (5) -->
+                <circle cx="370" cy="100" r="4" fill="#1e293b" />
+                <text x="370" y="125" fill="#1e293b" font-weight="bold" text-anchor="middle">A (4.5)</text>
+                
+                <!-- נקודה 6 -->
+                <circle cx="460" cy="100" r="3" fill="#64748b" />
+                
+                <!-- נקודה N (7) -->
+                <circle cx="562" cy="100" r="4" fill="#1e293b" />
+                <text x="562" y="125" fill="#1e293b" font-weight="bold" text-anchor="middle">N (7.7)</text>
+
+                <!-- וקטורי מהירות (הולכים וגדלים) -->
+                <line x1="130" y1="80" x2="160" y2="80" stroke="#3b82f6" stroke-width="2" marker-end="url(#v-arrow)" />
+                <text x="145" y="70" fill="#3b82f6" font-size="12" text-anchor="middle">v₁</text>
+                
+                <line x1="292" y1="80" x2="342" y2="80" stroke="#3b82f6" stroke-width="2" marker-end="url(#v-arrow)" />
+                <text x="317" y="70" fill="#3b82f6" font-size="12" text-anchor="middle">v₄</text>
+                
+                <line x1="370" y1="80" x2="440" y2="80" stroke="#3b82f6" stroke-width="2" marker-end="url(#v-arrow)" />
+                <text x="405" y="70" fill="#3b82f6" font-size="12" text-anchor="middle" font-weight="bold">v_A</text>
+
+                <!-- וקטור תאוצה קבוע -->
+                <line x1="300" y1="35" x2="400" y2="35" stroke="#ef4444" stroke-width="3" marker-end="url(#a-arrow)" />
+                <text x="350" y="25" fill="#ef4444" font-weight="bold" text-anchor="middle">תאוצה קבועה: a &gt; 0</text>
+            </svg>
+        </div>
+        <p class="text-center text-sm text-slate-500">המחשה של 7 המרווחים ההולכים וגדלים, וקטורי המהירות המתארכים, והתאוצה הקבועה בכיוון התנועה.</p>
+    </div>
+
+    <!-- סעיף ד -->
+    <div class="section-card">
+        <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b pb-2">סעיף ד': חישוב תאוצת העגלה</h2>
+        
+        <div class="mb-4">
+            <h3 class="step-title">1. מה נתון:</h3>
+            <p class="text-slate-700 leading-relaxed">
+                נתון שהתאוצה קבועה. כדי לחשב אותה באופן המדויק ביותר, נחשב שתי מהירויות רגעיות בזמנים ידועים.<br>
+                את המהירות בנקודה A (הנקודה החמישית) כבר חישבנו: \( v_A = 0.7\text{ m/s} \).<br>
+                כעת נחשב את המהירות בנקודה 6 (נקרא לה \( v_6 \)) בעזרת הנקודה שלפניה (A, מיקום \( 4.5\text{ cm} \)) והנקודה שאחריה (N, מיקום \( 7.7\text{ cm} \)).<br>
+                פרק הזמן בין A ל-N הוא שני מרווחים: \( \Delta t_{AN} = 0.04\text{ s} \).<br>
+                לאחר שנמצא את שתי המהירויות (\( v_A \) ו-\( v_6 \)), נחשב את התאוצה. פרק הזמן החולף בין נקודה A (החמישית) לנקודה 6 הוא מרווח שעון אחד, כלומר \( \Delta t_{A \rightarrow 6} = 0.02\text{ s} \).
+            </p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">2. מה מחפשים:</h3>
+            <p class="text-slate-700">את גודל תאוצת העגלה \( a \).</p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">3. נוסחאות בשימוש:</h3>
+            <span class="formula-badge">\( a = \frac{dv}{dt} \approx \frac{\Delta v}{\Delta t} \)</span><br>
+            <span class="formula-badge">\( v = \frac{\Delta x}{\Delta t} \)</span>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">4. הצבה ופתרון:</h3>
+            <p class="text-slate-700 mb-2">ראשית, נחשב את המהירות הרגעית בנקודה 6:</p>
+            <div class="math-scroll">
+                \[ v_6 = \frac{x_N - x_A}{\Delta t_{AN}} = \frac{0.077 - 0.045}{0.04} = \frac{0.032}{0.04} = 0.8\text{ m/s} \]
+            </div>
+            <p class="text-slate-700 mb-2 mt-4">כעת, נציב בנוסחת התאוצה, כאשר השינוי בזמן בין המהירויות הוא \( \Delta t = 0.02\text{ s} \):</p>
+            <div class="math-scroll">
+                \[ a = \frac{v_6 - v_A}{\Delta t} = \frac{0.8 - 0.7}{0.02} \]
+                \[ a = \frac{0.1}{0.02} \]
+                \[ a = 5\text{ m/s}^2 \]
+            </div>
+            <div class="final-answer">
+                תאוצת העגלה קבועה ושווה ל- \( a = 5\text{ m/s}^2 \). כיוון התאוצה הוא ככיוון ציר התנועה (חיובי).
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 הערת מורה (ציר ייחוס):</strong> הגדרנו את ציר המקום מהנקודה M ימינה לכיוון N ככיוון חיובי. לכן, המהירויות יצאו חיוביות. מאחר שגודל המהירות גדל, סימן שהתאוצה באותו כיוון של המהירות, ולכן גם סימן התאוצה \( a \) יצא חיובי. אל תשכחו את כלל הברזל: הקביעה האם גודל המהירות גדל או קטן תלויה ביחס שבין סימן המהירות לסימן התאוצה (סימנים זהים = גודל המהירות גדל, סימנים מנוגדים = גודל המהירות קטן).
+        </div>
+    </div>
+
+    <!-- סעיף ה -->
+    <div class="section-card">
+        <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b pb-2">סעיף ה': המרחק בין הנקודה N לנקודה P הבאה אחריה</h2>
+        
+        <div class="mb-4">
+            <h3 class="step-title">1. מה נתון:</h3>
+            <p class="text-slate-700 leading-relaxed">
+                נפתור סעיף זה על ידי הסתכלות על תנועת העגלה מראשית הצירים. <br>
+                נקבע את נקודה M כראשית המקום והזמן: \( x_0 = 0\text{ m} \) , \( t_0 = 0\text{ s} \).<br>
+                <strong>מהירות התחלתית (\( v_0 \)):</strong> העגלה כבר נעה כאשר הודפסה הנקודה M. נמצא את מהירותה בעזרת נקודה A (הנקודה החמישית, \( t_A = 0.1\text{ s} \)):<br>
+                \( v_A = v_0 + at \Rightarrow 0.7 = v_0 + 5 \cdot 0.1 \Rightarrow v_0 = 0.2\text{ m/s} \).<br>
+                תאוצת העגלה: \( a = 5\text{ m/s}^2 \).<br>
+                הזמן עד לנקודה N (7 מרווחים מ-M): \( t_N = 7 \cdot 0.02 = 0.14\text{ s} \).<br>
+                הזמן עד לנקודה P (8 מרווחים מ-M): \( t_P = 8 \cdot 0.02 = 0.16\text{ s} \).
+            </p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">2. מה מחפשים:</h3>
+            <p class="text-slate-700">את המרחק שעברה העגלה בין נקודה N לנקודה P, כלומר את ההפרש במיקומים: \( x_P - x_N \).</p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">3. נוסחאות בשימוש:</h3>
+            <span class="formula-badge">\( x = x_0 + v_0 t + \frac{1}{2} at^2 \)</span>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="step-title">4. הצבה ופתרון:</h3>
+            <p class="text-slate-700 mb-2">ראשית, נציב את הזמן של נקודה P (\( t = 0.16\text{ s} \)) כדי למצוא את מיקומה ביחס ל-M:</p>
+            <div class="math-scroll">
+                \[ x_P = 0 + 0.2 \cdot 0.16 + \frac{1}{2} \cdot 5 \cdot (0.16)^2 \]
+                \[ x_P = 0.032 + 2.5 \cdot 0.0256 \]
+                \[ x_P = 0.032 + 0.064 = 0.096\text{ m} \]
+            </div>
+            <p class="text-slate-700 mb-2 mt-4">את מיקומה של נקודה N אנו כבר יודעים (\( 7.7\text{ cm} = 0.077\text{ m} \)), ולכן נחשב את ההפרש ביניהן:</p>
+            <div class="math-scroll">
+                \[ x_P - x_N = 0.096 - 0.077 = 0.019\text{ m} \]
+            </div>
+            <div class="final-answer">
+                המרחק בין הנקודה N לנקודה P הוא \( 0.019\text{ m} \) (שהם \( 1.9\text{ cm} \)).
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 דרך פתרון נוספת (חישוב ישיר של הקטע N-P):</strong><br>
+            במקום לחשב את המיקום המוחלט של נקודה P מראשית הצירים, אפשר "לאפס את השעון" בנקודה N ולהתייחס אליה כאל תחילת קטע תנועה חדש!<br>
+            ראשית, נחשב מה הייתה המהירות של העגלה ברגע שהגיעה לנקודה N (אחרי 0.14 שניות מתחילת התנועה ב-M):<br>
+            \( v_N = v_0 + a \cdot t_N = 0.2 + 5 \cdot 0.14 = 0.9\text{ m/s} \)<br>
+            כעת, נשתמש בנוסחת ההעתק אך ורק עבור מרווח הזמן הבא (\( \Delta t = 0.02\text{ s} \)), כאשר \( v_N \) משמשת כ"מהירות ההתחלתית" של קטע זה:<br>
+            \( \Delta x = v_N \cdot \Delta t + \frac{1}{2} a (\Delta t)^2 \)<br>
+            \( \Delta x = 0.9 \cdot 0.02 + \frac{1}{2} \cdot 5 \cdot (0.02)^2 = 0.018 + 0.001 = 0.019\text{ m} \)<br>
+            היתרון בשיטה זו הוא שהיא מאפשרת לכם לבדוק את עצמכם במבחן מזווית שונה, ולראות שאותה הפיזיקה עובדת מכל נקודת מבט!
+        </div>
+    </div>
+
+    </div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    תמונת השאלה אינה זמינה כרגע, אך הפתרון מסתמך עליה במדויק.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה: ' + document.lastModified;
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const day = pad(modified.getDate());
+                const month = pad(modified.getMonth() + 1);
+                const year = String(modified.getFullYear()).slice(-2);
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+                versionUpdatedAt.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
