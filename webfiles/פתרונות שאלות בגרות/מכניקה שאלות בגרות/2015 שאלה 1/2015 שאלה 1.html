@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - 2015 שאלה 1</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']]
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+        
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+        
+        .step-title {
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+            font-size: 1.125rem;
+            display: flex;
+            align-items: center;
+            gap: 0.75rem;
+        }
+
+        .step-content {
+            margin-bottom: 1.5rem;
+            padding-right: 1.5rem;
+            border-right: 2px solid #e2e8f0;
+        }
+
+        .formula-badge {
+            display: inline-block;
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            padding: 0.25rem 0.8rem;
+            border-radius: 0.5rem;
+            border: 1px solid #bfdbfe;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            background-color: #dcfce7;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            border: 1px solid #bbf7d0;
+            margin-top: 1rem;
+            font-size: 1.25rem;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+            line-height: 1.6;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+            padding-bottom: 0.5rem;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+        
+        .step-number {
+            background-color: #dbeafe;
+            color: #1e40af;
+            min-width: 2rem;
+            height: 2rem;
+            border-radius: 9999px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            font-size: 1rem;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-shell">
+
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - מכניקה 2015, שאלה 1</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">פיזיקה - מכניקה</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך, צעד-אחר-צעד</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- Question Image -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full md:w-3/4 h-auto rounded-lg border border-slate-200 mx-auto block" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" id="mainQuestionImg" />
+        <div style="display:none;" class="text-center text-red-500 font-bold p-4 bg-red-50 rounded-lg">תמונת השאלה (question-image.png) לא נמצאה בנתיב.</div>
+    </section>
+
+    <!-- Section A -->
+    <div class="section-card">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b-2 border-slate-100 pb-2">סעיף א' - המהירות הממוצעת של משאית B</h2>
+        
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">1</span>נתונים</div>
+            <div class="step-content">
+                <ul>
+                    <li>המרחק הכולל מ-M ל-N: \( \Delta x = 180 \text{ km} \)</li>
+                    <li>זמן הנסיעה הכולל של משאית B: \( \Delta t = 3 \text{ h} \)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">2</span>מה מחפשים?</div>
+            <div class="step-content">
+                מהירות ממוצעת של משאית B בקטע MN (\( \overline{v}_B \)) בקמ"ש ובמטר/שנייה.
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">3</span>נוסחאות בשימוש</div>
+            <div class="step-content">
+                <div class="formula-badge">
+                    <span dir="ltr">\( \overline{v} = \frac{\Delta x}{\Delta t} \)</span>
+                </div>
+                <div>המרת יחידות: \( 1 \text{ m/s} = 3.6 \text{ km/h} \)</div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">4</span>הצבה ופתרון</div>
+            <div class="step-content">
+                נציב:
+                <div class="math-scroll"><span dir="ltr">\[ \overline{v}_B = \frac{180 \text{ km}}{3 \text{ h}} = 60 \frac{\text{km}}{\text{h}} \]</span></div>
+                המרה:
+                <div class="math-scroll"><span dir="ltr">\[ \overline{v}_B = \frac{60}{3.6} \approx 16.67 \frac{\text{m}}{\text{s}} \]</span></div>
+                
+                <!-- Notice how Hebrew text ("וגם") is outside the formula and dir="ltr" is separated -->
+                <div class="final-answer">
+                    <span dir="ltr">\( \overline{v}_B = 60 \frac{\text{km}}{\text{h}} \)</span>
+                    <span class="text-slate-700 font-normal">וגם</span>
+                    <span dir="ltr">\( \overline{v}_B \approx 16.67 \frac{\text{m}}{\text{s}} \)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section B -->
+    <div class="section-card">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b-2 border-slate-100 pb-2">סעיף ב' - השוואת מהירויות ממוצעות</h2>
+        
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">1</span>נתונים ומציאת מרווח הזמן</div>
+            <div class="step-content">
+                <ul>
+                    <li>נתון שמשאית B עברה את כל הדרך (M עד N, 180 ק"מ) ב-3 שעות.</li>
+                    <li>מהתרשים ניתן לספור שמשאית B עברה <strong>6 מרווחי זמן</strong> מ-M ל-N.</li>
+                    <li>נסמן את משך הזמן של כל מרווח באות \(\tau\). נחשב אותו:
+                        <br>
+                        <div class="formula-badge">
+                            <span dir="ltr">\[ \tau = \frac{3 \text{ h}}{6} = 0.5 \text{ h} \]</span>
+                        </div>
+                    </li>
+                    <li>כלומר, כל מרווח זמן בין שני רישומים סמוכים הוא <strong>חצי שעה</strong>.</li>
+                </ul>
+                <div class="svg-container flex justify-center my-4 bg-slate-50 p-4 rounded-lg border border-slate-200">
+                    <svg viewBox="0 0 600 150" class="w-full max-w-lg h-auto" xmlns="http://www.w3.org/2000/svg">
+                        <text x="30" y="30" font-family="Rubik" font-size="16" fill="#1e40af" font-weight="bold">ספירת מרווחי זמן מדויקת</text>
+                        <line x1="100" y1="70" x2="500" y2="70" stroke="#94a3b8" stroke-width="2"/>
+                        <line x1="100" y1="120" x2="500" y2="120" stroke="#94a3b8" stroke-width="2"/>
+                        <text x="80" y="75" font-family="Rubik" font-size="14" fill="#333" font-weight="bold">A</text>
+                        <text x="80" y="125" font-family="Rubik" font-size="14" fill="#333" font-weight="bold">B</text>
+                        <text x="100" y="50" font-family="Rubik" font-size="14" fill="#333" text-anchor="middle">M</text>
+                        <text x="500" y="50" font-family="Rubik" font-size="14" fill="#333" text-anchor="middle">N</text>
+                        
+                        <!-- Dots A -->
+                        <circle cx="100" cy="70" r="4" fill="#2563eb"/>
+                        <circle cx="220" cy="70" r="4" fill="#2563eb"/>
+                        <circle cx="300" cy="70" r="4" fill="#ef4444"/>
+                        <circle cx="380" cy="70" r="4" fill="#2563eb"/>
+                        <circle cx="440" cy="70" r="4" fill="#2563eb"/>
+                        <circle cx="500" cy="70" r="4" fill="#2563eb"/>
+                        
+                        <!-- Dots B -->
+                        <circle cx="100" cy="120" r="4" fill="#16a34a"/>
+                        <circle cx="166.6" cy="120" r="4" fill="#16a34a"/>
+                        <circle cx="233.3" cy="120" r="4" fill="#16a34a"/>
+                        <circle cx="300" cy="120" r="4" fill="#ef4444"/>
+                        <circle cx="366.6" cy="120" r="4" fill="#16a34a"/>
+                        <circle cx="433.3" cy="120" r="4" fill="#16a34a"/>
+                        <circle cx="500" cy="120" r="4" fill="#16a34a"/>
+                        
+                        <text x="550" y="75" font-family="Rubik" font-size="14" fill="#2563eb" font-weight="bold">5 מרווחים</text>
+                        <text x="550" y="125" font-family="Rubik" font-size="14" fill="#16a34a" font-weight="bold">6 מרווחים</text>
+                    </svg>
+                </div>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">2</span>מה מחפשים?</div>
+            <div class="step-content">
+                לקבוע למי מהמשאיות הייתה מהירות ממוצעת גדולה יותר (או האם הן שוות).
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">3</span>עקרונות בשימוש</div>
+            <div class="step-content">
+                נחשב את זמן הנסיעה הכולל של משאית A ונשווה לזמן של משאית B (עבור אותו מרחק). 
+                המשאית שעברה את המרחק ב<strong>פחות זמן</strong>, מהירותה הממוצעת <strong>גדולה יותר</strong>.
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">4</span>הצבה ופתרון</div>
+            <div class="step-content">
+                <ul>
+                    <li><strong>זמן הנסיעה של משאית B:</strong> נתון, 3 שעות.</li>
+                    <li><strong>זמן הנסיעה של משאית A:</strong> משאית A עברה 5 מרווחים. כל מרווח הוא חצי שעה (\(\tau = 0.5 \text{ h}\)), לכן:
+                        <div class="math-scroll"><span dir="ltr">\[ t_A = 5\tau = 5 \times 0.5 \text{ h} = 2.5 \text{ h} \]</span></div>
+                    </li>
+                </ul>
+                מכיוון ש- \( 2.5 \text{ h} < 3 \text{ h} \), משאית A עברה את אותו המרחק בזמן קצר יותר.
+                <div class="final-answer">
+                    <span>המהירות הממוצעת של משאית A</span> <strong>גדולה</strong> <span>מהמהירות הממוצעת של משאית B.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section C -->
+    <div class="section-card">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b-2 border-slate-100 pb-2">סעיף ג' - המהירות הממוצעת של A בחצי הראשון (MP)</h2>
+        
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">1</span>נתונים</div>
+            <div class="step-content">
+                <ul>
+                    <li>המרחק מ-M ל-P הוא חצי הדרך: \( \Delta x_{MP} = \frac{180}{2} = 90 \text{ km} \)</li>
+                    <li>מספר מרווחי הזמן של A בקטע MP: 2 מרווחים.</li>
+                    <li>משך מרווח זמן בודד (מסעיף ב'): \( \tau = 0.5 \text{ h} \)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">2</span>מה מחפשים?</div>
+            <div class="step-content">
+                את המהירות הממוצעת של משאית A בקטע MP (\( \overline{v}_{A(MP)} \)).
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">3</span>נוסחאות בשימוש</div>
+            <div class="step-content">
+                חישוב זמן: זמן = מספר מרווחים \(\times\) \(\tau\)<br>
+                מהירות ממוצעת: \( \overline{v} = \frac{\Delta x}{\Delta t} \)
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">4</span>הצבה ופתרון</div>
+            <div class="step-content">
+                נחשב את הזמן שלקח למשאית A לעבור את קטע MP (שני מרווחים):
+                <div class="math-scroll">
+                    <span dir="ltr">\[ t_{A(MP)} = 2\tau = 2 \times 0.5 \text{ h} = 1 \text{ h} \]</span>
+                </div>
+                נציב בנוסחת המהירות הממוצעת לקטע MP:
+                <div class="math-scroll">
+                    <span dir="ltr">\[ \overline{v}_{A(MP)} = \frac{90 \text{ km}}{1 \text{ h}} = 90 \frac{\text{km}}{\text{h}} \]</span>
+                </div>
+                <div class="final-answer">
+                    <span>המהירות הממוצעת של משאית A בקטע MP היא</span>
+                    <span dir="ltr" class="font-bold text-xl">\( 90 \frac{\text{km}}{\text{h}} \)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section D -->
+    <div class="section-card">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b-2 border-slate-100 pb-2">סעיף ד' - המהירות הממוצעת של A בחצי השני (PN)</h2>
+        
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">1</span>נתונים</div>
+            <div class="step-content">
+                <ul>
+                    <li>המרחק במחצית השנייה PN: \( \Delta x_{PN} = 90 \text{ km} \)</li>
+                    <li>מספר מרווחי הזמן של A בקטע PN: 3 מרווחים.</li>
+                    <li>משך מרווח זמן בודד: \( \tau = 0.5 \text{ h} \)</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">2</span>מה מחפשים?</div>
+            <div class="step-content">
+                את המהירות הממוצעת של משאית A בקטע PN (\( \overline{v}_{A(PN)} \)).
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">3</span>נוסחאות בשימוש</div>
+            <div class="step-content">
+                חישוב זמן: זמן = מספר מרווחים \(\times\) \(\tau\)<br>
+                מהירות ממוצעת: \( \overline{v} = \frac{\Delta x}{\Delta t} \)
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">4</span>הצבה ופתרון</div>
+            <div class="step-content">
+                נחשב את הזמן שלקח למשאית A לעבור את קטע PN (שלושה מרווחים):
+                <div class="math-scroll">
+                    <span dir="ltr">\[ t_{A(PN)} = 3\tau = 3 \times 0.5 \text{ h} = 1.5 \text{ h} \]</span>
+                </div>
+                נציב בנוסחת המהירות הממוצעת לקטע PN:
+                <div class="math-scroll">
+                    <span dir="ltr">\[ \overline{v}_{A(PN)} = \frac{90 \text{ km}}{1.5 \text{ h}} = 60 \frac{\text{km}}{\text{h}} \]</span>
+                </div>
+                <div class="final-answer">
+                    <span>המהירות הממוצעת של משאית A בקטע PN היא</span>
+                    <span dir="ltr" class="font-bold text-xl">\( 60 \frac{\text{km}}{\text{h}} \)</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section E -->
+    <div class="section-card">
+        <h2 class="text-2xl font-bold text-slate-800 mb-6 border-b-2 border-slate-100 pb-2">סעיף ה' - שוויון מהירויות רגעיות</h2>
+        
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">1</span>נתונים (מתוך התרשים וסעיפים קודמים)</div>
+            <div class="step-content">
+                <ul>
+                    <li><strong>משאית B:</strong> נוסעת במהירות <strong>קבועה</strong>. ניתן להסיק זאת מהתרשים מכיוון שהמרחקים בין נקודות הציון שלה שווים. המהירות הקבועה שלה היא 60 קמ"ש (כפי שחושב).</li>
+                    <li><strong>משאית A:</strong> המהירות הממוצעת שלה בקטע PN היא 60 קמ"ש (כפי שחושב בסעיף ד').</li>
+                    <li><strong>משאית A:</strong> אינה נוסעת במהירות קבועה, שכן המרחקים בין נקודות הציון שלה בתרשים הולכים ומשתנים (המרחקים הולכים וקטנים).</li>
+                </ul>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">2</span>מה מחפשים?</div>
+            <div class="step-content">האם קיים רגע שבו המהירות הרגעית של שתיהן שווה?</div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">3</span>עקרון בשימוש</div>
+            <div class="step-content">רציפות המהירות והמשמעות של מהירות ממוצעת: כאשר גוף נע במהירות משתנה, מהירותו הרגעית חייבת לקבל ערכים שמעל ומתחת למהירותו הממוצעת.</div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title"><span class="step-number">4</span>הצבה ופתרון</div>
+            <div class="step-content">
+                <p class="mb-3">בקטע PN, המהירות הממוצעת של משאית A היא 60 קמ"ש, אך מהירותה אינה קבועה. מכאן נובע שבהכרח ישנם רגעים בקטע זה שבהם מהירותה גדולה מ-60 קמ"ש, ורגעים שבהם מהירותה קטנה מ-60 קמ"ש.</p>
+                <p class="mb-3">מכיוון שמהירות היא גודל פיזיקלי רציף (היא לא יכולה "לדלג" מערך לערך בבת אחת), כדי שמשאית A תעבור ממהירות שמעל 60 קמ"ש למהירות שמתחת ל-60 קמ"ש, היא חייבת לעבור ברגע מסוים בדיוק בערך של 60 קמ"ש.</p>
+                <p>היות שמהירותה של משאית B היא תמיד ולכל אורך הדרך 60 קמ"ש, באותו רגע ממש שבו משאית A מגיעה ל-60 קמ"ש, המהירויות של שתי המשאיות ישתוו.</p>
+                
+                <div class="final-answer">
+                    <span>כן, בהכרח קיים רגע שבו המהירות הרגעית של שתי המשאיות שווה.</span>
+                </div>
+
+                <div class="teacher-highlight">
+                    <strong>💡 טיפ מהמורה:</strong>
+                    בכל פעם שאתם רואים תרשים של רשם-זמן (או נקודות המייצגות מיקומים במרווחי זמן קבועים): 
+                    <br>• מרחקים <strong>שווים</strong> = מהירות <strong>קבועה</strong>.
+                    <br>• מרחקים <strong>שונים</strong> = מהירות <strong>משתנה</strong> (תאוצה). 
+                    <br>השאלה הזו בוחנת הבנה עמוקה של המושג "מהירות ממוצעת" בלי לבקש מכם לחשב תאוצות מורכבות!
+                </div>
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img
+                    src="question-image.png"
+                    alt="תמונת השאלה המקורית"
+                    class="max-w-full h-auto rounded-lg"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                >
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה: ' + document.lastModified;
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const day = pad(modified.getDate());
+                const month = pad(modified.getMonth() + 1);
+                const year = String(modified.getFullYear()).slice(-2);
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
