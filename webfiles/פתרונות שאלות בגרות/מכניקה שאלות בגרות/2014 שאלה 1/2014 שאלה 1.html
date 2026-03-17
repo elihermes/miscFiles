@@ -1,0 +1,622 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2014, שאלה 1</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- MathJax -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        h1, h2, h3 {
+            font-family: 'Rubik', sans-serif;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .formula-badge {
+            display: inline-block;
+            background-color: #eff6ff;
+            color: #1e40af;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 1.1rem;
+            border: 1px solid #bfdbfe;
+            margin: 0.25rem 0;
+            direction: ltr;
+            font-weight: 700;
+        }
+
+        .final-answer {
+            background-color: #dcfce7;
+            border: 2px dashed #22c55e;
+            padding: 1rem;
+            margin-top: 1rem;
+            font-weight: 700;
+            font-size: 1.125rem;
+            color: #14532d;
+            border-radius: 0.5rem;
+            text-align: center;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+            border-radius: 0.5rem 0 0 0.5rem;
+            position: relative;
+        }
+
+        .teacher-highlight::before {
+            content: '💡 טיפ מורה:';
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #166534;
+        }
+
+        .step-title {
+            font-weight: 700;
+            color: #1e293b;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-title::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #3b82f6;
+            border-radius: 50%;
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+            direction: ltr;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Main Container -->
+    <div class="page-shell">
+        
+        <!-- Header -->
+        <header class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-4">פתרון מודרך: בגרות בפיזיקה 2014, מכניקה, שאלה 1</h1>
+            
+            <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+                <span class="version-label">עודכן:</span>
+                <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+            </div>
+            
+            <p class="mt-6 text-slate-600 md:text-lg">שאלה זו עוסקת בקינמטיקה ודינמיקה, תוך ניתוח גרף מהירות-זמן של צנחן המושפע מכוח הכובד והתנגדות האוויר.</p>
+        </header>
+
+        <section class="section-card border-t-4 border-slate-300">
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+                שגיאה בטעינת תמונת השאלה (question-image.png). אנא ודא שהקובץ נמצא בתיקייה.
+            </div>
+        </section>
+
+        <!-- Teacher's Setup Note -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-8 text-blue-800">
+            <strong>הנחת עבודה (מערכת צירים):</strong> לאורך כל הפתרון, נגדיר את ציר ה-\( y \) ככיוון מטה (כיוון תנועת הצנחן). לכן, תאוצת הכובד מכוונת כלפי מטה וסימנה חיובי (\( a_g = +g = +10\text{ m/s}^2 \)), ומהירות הצנחן כלפי מטה היא חיובית.
+        </div>
+
+        <!-- Section A -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">סעיף א'</h2>
+            
+            <div class="step-title">מה נתון:</div>
+            <p>אנו מסתכלים על גרף המהירות כתלות בזמן בפרק הזמן \( 0 \le t \le 20\text{ s} \). המהירות נתונה ביחידות MKS תקניות (\( \text{m/s} \)), והזמן בשניות (\( \text{s} \)). אין צורך בהמרת יחידות.</p>
+            
+            <div class="step-title">מה מחפשים:</div>
+            <p>תיאור במילים של תנועת הצנחן: מה קורה לגודל המהירות ומה קורה לגודל התאוצה שלו בפרק זמן זה.</p>
+            
+            <div class="step-title">נוסחאות בשימוש:</div>
+            <p>על פי דף הנוסחאות בקינמטיקה, התאוצה מוגדרת כנגזרת המהירות לפי הזמן (או שיפוע המשיק לגרף מ-ז):</p>
+            <div class="text-center my-2"><span class="formula-badge">\( a = \frac{dv}{dt} \)</span></div>
+
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>נחלק את פרק הזמן לשני חלקים בולטים בגרף:</p>
+            <ul class="list-disc list-inside space-y-2 mt-2">
+                <li><strong>בחלק הראשון (בערך מ- \( t=0 \) עד \( t=13\text{ s} \)):</strong> ערך המהירות \( v \) בגרף הולך וגדל מ-0 ועד 50 מטר לשנייה. לכן, גודל המהירות של הצנחן <strong>גדל</strong>. שיפוע הגרף (המייצג את התאוצה) מתחיל מתלול מאוד והולך ומתמתן. לכן, גודל התאוצה של הצנחן <strong>קטן</strong>.</li>
+                <li><strong>בחלק השני (בערך מ- \( t=13\text{ s} \) עד \( t=20\text{ s} \)):</strong> ערך המהירות נשאר קבוע על \( 50\text{ m/s} \). לכן, גודל המהירות <strong>קבוע</strong>. שיפוע הגרף בקטע זה הוא אפס, ולכן התאוצה <strong>שווה לאפס</strong>.</li>
+            </ul>
+            
+            <div class="final-answer">
+                תשובה סופית: עד לזמן \( t=13\text{ s} \), גודל המהירות גדל בעוד שגודל התאוצה קטן. לאחר מכן, גודל המהירות נשאר קבוע (גודל התאוצה מתאפס).
+            </div>
+            
+            <div class="teacher-highlight">
+                זכרו את כלל הברזל: בגרף מהירות-זמן, הערך שעל ציר ה-y הוא המהירות, ושיפוע הגרף (עד כמה הוא "תלול") הוא התאוצה. אל תבלבלו בין השניים! עצם זה שהגרף "עולה" אומר שהמהירות גדלה, אבל אם הוא נהיה פחות תלול, התאוצה קטנה.
+            </div>
+        </div>
+
+        <!-- Section B -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">סעיף ב'</h2>
+            
+            <div class="step-title">מה נתון:</div>
+            <p>אנו מתבוננים כעת בפרק הזמן \( 20 \le t \le 22\text{ s} \). רואים בגרף ירידה חדה ופתאומית בגודל המהירות, מ- \( 50\text{ m/s} \) לערך של כ- \( 4\text{ m/s} \).</p>
+            
+            <div class="step-title">מה מחפשים:</div>
+            <p>את הסיבה הפיזיקלית/מציאותית לשינוי הפתאומי הזה.</p>
+            
+            <div class="step-title">נוסחאות בשימוש:</div>
+            <p>סעיף זה הוא רעיוני ואינו דורש שימוש בנוסחה מתמטית ספציפית, אלא הבנה של כוחות הפועלים באוויר.</p>
+
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>במציאות, צנחן חופשי נופל במהירות גבוהה עד שהוא פותח את המצנח שלו. פתיחת המצנח מגדילה באופן דרסטי ופתאומי את שטח הפנים של הצנחן החשוף לאוויר. כתוצאה מכך, כוח התנגדות האוויר הפועל כלפי מעלה גדל בצורה משמעותית מאוד ויוצר תאוצה חזקה כלפי מעלה (נגד כיוון התנועה), מה שגורם להקטנה חדה בגודל המהירות.</p>
+            
+            <div class="final-answer">
+                תשובה סופית: הסיבה לשינוי הפתאומי היא פתיחת המצנח ברגע \( t=20\text{ s} \), אשר הגדילה משמעותית את כוח התנגדות האוויר.
+            </div>
+            
+            <div class="teacher-highlight">
+                פיזיקה היא לא רק מתמטיקה! תמיד נסו לקשר את הגרף לסיפור המציאותי. הגרף "מספר" לנו את סיפור הצניחה: נפילה חופשית צוברת תאוצה, הגעה למהירות סופית ראשונה, פתיחת מצנח (הבלימה החזקה), והגעה למהירות סופית שנייה ובטוחה לנחיתה.
+            </div>
+        </div>
+
+        <!-- Section C -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">סעיף ג'</h2>
+            
+            <div class="step-title">מה נתון:</div>
+            <p>על פי הניתוח שלנו מהסעיף הקודם, המצנח נפתח ברגע \( t=20\text{ s} \).</p>
+            
+            <div class="step-title">מה מחפשים:</div>
+            <p>הסבר כיצד ניתן לחשב בעזרת הגרף את המרחק האנכי שעבר הצנחן מ- \( t=0 \) ועד פתיחת המצנח (אין צורך לבצע את החישוב בפועל).</p>
+            
+            <div class="step-title">נוסחאות בשימוש:</div>
+            <p>כלל גיאומטרי יסודי בקינמטיקה עבור גרף מהירות-זמן:</p>
+            <div class="text-center my-2"><span class="formula-badge">\( \Delta x = S_{v-t} \) (העתק שווה לשטח הכלוא)</span></div>
+
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>מכיוון שהמהירות איננה משתנה בקצב קבוע (התאוצה אינה קבועה והגרף איננו קו ישר באזור זה), לא ניתן להשתמש בנוסחאות הקינמטיקה הרגילות כגון \( x = x_0 + v_0 t + \frac{1}{2}at^2 \). בנוסף, השטח הכלוא איננו צורה גיאומטרית פשוטה (כמו משולש או מלבן) שניתן לחשב בעזרת נוסחת שטח מוכרת.</p>
+            <p>במקרים כאלו, אנו מסתמכים על התכונה הגיאומטרית החשובה של גרפי מהירות-זמן: <strong>העתק הגוף (המרחק שעבר) שווה תמיד לשטח הכלוא בין גרף המהירות לבין ציר הזמן.</strong></p>
+            <p>לכן, כדי לחשב את המרחק מתחילת הנפילה ועד פתיחת המצנח (בין \( t=0 \) ל- \( t=20\text{ s} \)), הטכניקה המעשית היא <strong>ספירת ריבועים (משבצות)</strong>: סופרים כמה משבצות כלואות תחת העקומה בגרף, ומכפילים בערך השטח של ריבוע אחד (לפי קנה המידה של הצירים).</p>
+            
+            <div class="final-answer">
+                תשובה סופית: יש לחשב את גודל השטח הכלוא בין עקומת הגרף לבין ציר הזמן בין הרגע \( t=0 \) לרגע \( t=20\text{ s} \). הטכניקה לביצוע החישוב במקרה כזה היא ספירת ריבועים (משבצות) מתחת לגרף.
+            </div>
+            
+            <div class="teacher-highlight">
+                כאשר שואלים אתכם "איך ניתן לחשב מתוך הגרף", התשובה כמעט תמיד תהיה אחת משתיים: חישוב השיפוע (כדי למצוא את התאוצה) או חישוב השטח הכלוא (כדי למצוא את ההעתק/המרחק). לעיתים קרובות נהוג לקרב את השטח תחת עקומה לצורות גיאומטריות מוכרות (כמו משולש או טרפז) כדי להעריך את גודלו. עם זאת, במקרה של הגרף שלנו, מכיוון שהעקומה מורכבת ומשתנה, הטכניקה המדויקת והבטוחה ביותר לציון היא ספירת משבצות.
+            </div>
+        </div>
+
+        <!-- Section D -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">סעיף ד'</h2>
+            
+            <div class="step-title">מה נתון:</div>
+            <p>הגרף סביב הרגע \( t=0 \). בנקודה זו, מהירות הצנחן קרובה לאפס.</p>
+            
+            <div class="step-title">מה מחפשים:</div>
+            <p>להראות מתוך הגרף כי גודל תאוצת הנפילה החופשית (בגובה ממנו קפץ) הוא בקירוב \( 10\text{ m/s}^2 \).</p>
+            
+            <div class="step-title">נוסחאות בשימוש:</div>
+            <p>חישוב תאוצה מתוך גרף מהירות זמן מתבצע על ידי חישוב השיפוע. עבור פרק זמן קצר מאוד (תאוצה רגעית בתחילת התנועה):</p>
+            <div class="text-center my-2"><span class="formula-badge">\( a = \frac{\Delta v}{\Delta t} \)</span></div>
+
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>ממש ברגע הקפיצה (\( t=0 \)), המהירות היא אפס ואין כמעט התנגדות אוויר, כך שהכוח היחיד שפועל הוא כוח הכובד. לכן, התאוצה ברגע זה מייצגת את תאוצת הנפילה החופשית, \( g \).</p>
+            <p>כדי למצוא את התאוצה ההתחלתית, נעביר משיק לגרף בנקודה \( (0,0) \) ונחשב את שיפועו. ניתן לראות כי בחלקו הראשון (בשנייה הראשונה לתנועה), הגרף נראה כמעט כמו קו ישר. ניקח שתי נקודות על חלק ישר זה לצורך חישוב השיפוע:</p>
+            <ul class="list-disc list-inside mb-2">
+                <li>נקודה ראשונה (תחילת התנועה): \( (0, 0) \)</li>
+                <li>נקודה שנייה (קלה וברורה לקריאה מהגרף): \( (1, 10) \)</li>
+            </ul>
+            <div class="math-scroll">
+                \[ a = \frac{v_2 - v_1}{t_2 - t_1} = \frac{10 - 0}{1 - 0} = \frac{10}{1} = 10 \text{ m/s}^2 \]
+            </div>
+            
+            <div class="final-answer">
+                תשובה סופית: שיפוע המשיק לגרף ברגע \( t=0 \) (המייצג את התאוצה ההתחלתית, כאשר התנגדות האוויר זניחה) שווה בקירוב ל- \( 10\text{ m/s}^2 \).
+            </div>
+            
+            <div class="teacher-highlight">
+                מדוע ביקשו להראות זאת דווקא ב- \( t=0 \)? כוח התנגדות האוויר תלוי במהירות הגוף. ברגע הקפיצה המהירות היא אפס, ולכן כוח התנגדות האוויר הוא אפס. זהו הרגע היחיד שבו הצנחן נמצא *באמת* במצב של מודל "נפילה חופשית" (השפעת כוח הכובד בלבד).
+            </div>
+        </div>
+
+        <!-- Section E -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">סעיף ה'</h2>
+            
+            <div class="step-title">מה נתון:</div>
+            <p>על הצנחן פועלים שני כוחות: כוח הכובד (\( mg \)) והתנגדות האוויר (\( f_{\text{air}} \)). פרק הזמן הנדון: \( 0 \le t \le 20\text{ s} \).</p>
+            
+            <div class="step-title">מה מחפשים:</div>
+            <p>לקבוע עבור כל כוח האם גודלו קבוע, גדל או קטן בפרק זמן זה, ולהסביר.</p>
+            
+            <div class="step-title">נוסחאות בשימוש:</div>
+            <p>מתוך דף הנוסחאות:</p>
+            <div class="text-center my-2 space-y-2">
+                <span class="formula-badge">\( F_g = mg \)</span><br>
+                <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+            </div>
+
+            <!-- FBD SVG -->
+            <div class="svg-container flex justify-center my-4">
+                <svg width="200" height="250" viewBox="0 0 200 250" fill="none" xmlns="http://www.w3.org/2000/svg">
+<g clip-path="url(#clip0_1_2)">
+<path d="M192 0H8C3.58172 0 0 3.58172 0 8V242C0 246.418 3.58172 250 8 250H192C196.418 250 200 246.418 200 242V8C200 3.58172 196.418 0 192 0Z" fill="#F8FAFC"/>
+<path d="M160 20V230" stroke="#94A3B8" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M155 223H165L160 233L155 223Z" fill="#94A3B8"/>
+<path d="M133.636 218.205V210.705H134.909V218.205H133.636ZM130.523 215.091V213.818H138.023V215.091H130.523ZM141.638 222.273C141.411 222.273 141.208 222.254 141.03 222.216C140.852 222.182 140.729 222.148 140.661 222.114L141.001 220.932C141.327 221.015 141.615 221.045 141.865 221.023C142.115 221 142.337 220.888 142.53 220.688C142.727 220.491 142.907 220.17 143.07 219.727L143.32 219.045L140.092 210.273H141.547L143.956 217.227H144.047L146.456 210.273H147.911L144.206 220.273C144.039 220.723 143.833 221.097 143.587 221.392C143.34 221.691 143.054 221.913 142.729 222.057C142.407 222.201 142.043 222.273 141.638 222.273Z" fill="#64748B"/>
+<path d="M100 140C108.284 140 115 133.284 115 125C115 116.716 108.284 110 100 110C91.7157 110 85 116.716 85 125C85 133.284 91.7157 140 100 140Z" fill="#3B82F6"/>
+<path d="M100 140V210" stroke="#EF4444" stroke-width="3"/>
+<path d="M95 204H105L100 214L95 204Z" fill="#EF4444"/>
+<path d="M57.3807 189V179.182H58.8381V180.716H58.9659C59.1705 180.192 59.5007 179.785 59.9567 179.495C60.4126 179.201 60.9602 179.054 61.5994 179.054C62.2472 179.054 62.7862 179.201 63.2166 179.495C63.6513 179.785 63.9901 180.192 64.233 180.716H64.3352C64.5866 180.209 64.9638 179.806 65.4666 179.508C65.9695 179.205 66.5724 179.054 67.2756 179.054C68.1534 179.054 68.8714 179.329 69.4297 179.879C69.9879 180.424 70.267 181.274 70.267 182.429V189H68.7585V182.429C68.7585 181.705 68.5604 181.187 68.1641 180.876C67.7678 180.565 67.3011 180.409 66.7642 180.409C66.0739 180.409 65.5391 180.618 65.1598 181.036C64.7805 181.449 64.5909 181.973 64.5909 182.608V189H63.0568V182.276C63.0568 181.717 62.8757 181.268 62.5135 180.927C62.1513 180.582 61.6847 180.409 61.1136 180.409C60.7216 180.409 60.3551 180.513 60.0142 180.722C59.6776 180.931 59.4048 181.221 59.196 181.592C58.9915 181.958 58.8892 182.382 58.8892 182.864V189H57.3807ZM76.9883 192.886C76.2596 192.886 75.6332 192.793 75.109 192.605C74.5849 192.422 74.1481 192.179 73.7987 191.876C73.4535 191.578 73.1786 191.259 72.9741 190.918L74.1758 190.074C74.3121 190.253 74.4847 190.457 74.6935 190.688C74.9023 190.922 75.1879 191.124 75.5501 191.295C75.9165 191.469 76.396 191.557 76.9883 191.557C77.7809 191.557 78.435 191.365 78.9506 190.982C79.4663 190.598 79.7241 189.997 79.7241 189.179V187.185H79.5962C79.4854 187.364 79.3278 187.585 79.1232 187.849C78.9229 188.109 78.6332 188.342 78.2539 188.546C77.8789 188.746 77.3718 188.847 76.7326 188.847C75.94 188.847 75.2283 188.659 74.5977 188.284C73.9712 187.909 73.4748 187.364 73.1083 186.648C72.7461 185.932 72.565 185.062 72.565 184.04C72.565 183.034 72.7418 182.158 73.0955 181.413C73.4492 180.663 73.9414 180.083 74.5721 179.674C75.2028 179.261 75.9315 179.054 76.7582 179.054C77.3974 179.054 77.9045 179.161 78.2795 179.374C78.6587 179.582 78.9485 179.821 79.1488 180.089C79.3533 180.354 79.511 180.571 79.6218 180.741H79.7752V179.182H81.2326V189.281C81.2326 190.125 81.0408 190.811 80.6573 191.339C80.2781 191.872 79.7667 192.262 79.1232 192.509C78.484 192.761 77.7724 192.886 76.9883 192.886ZM76.9371 187.491C77.5423 187.491 78.0536 187.353 78.4712 187.076C78.8888 186.799 79.2063 186.401 79.4237 185.881C79.641 185.361 79.7496 184.739 79.7496 184.014C79.7496 183.307 79.6431 182.683 79.43 182.141C79.217 181.6 78.9016 181.176 78.484 180.869C78.0664 180.562 77.5508 180.409 76.9371 180.409C76.2979 180.409 75.7653 180.571 75.3391 180.895C74.9173 181.219 74.5998 181.653 74.3867 182.199C74.1779 182.744 74.0735 183.349 74.0735 184.014C74.0735 184.696 74.18 185.299 74.3931 185.823C74.6104 186.343 74.93 186.752 75.3519 187.05C75.7781 187.344 76.3065 187.491 76.9371 187.491Z" fill="#EF4444"/>
+<path d="M100 110V60" stroke="#10B981" stroke-width="3"/>
+<path d="M95 65H105L100 55L95 65Z" fill="#10B981"/>
+<path d="M61.7528 82.1818V83.4602H56.4602V82.1818H61.7528ZM58.0455 92V80.8267C58.0455 80.2642 58.1776 79.7955 58.4418 79.4205C58.706 79.0455 59.049 78.7642 59.4709 78.5767C59.8928 78.3892 60.3381 78.2955 60.8068 78.2955C61.1776 78.2955 61.4801 78.3253 61.7145 78.3849C61.9489 78.4446 62.1236 78.5 62.2386 78.5511L61.804 79.8551C61.7273 79.8295 61.6207 79.7976 61.4844 79.7592C61.3523 79.7209 61.1776 79.7017 60.9602 79.7017C60.4616 79.7017 60.1016 79.8274 59.88 80.0788C59.6626 80.3303 59.554 80.6989 59.554 81.1847V92H58.0455ZM70.3789 92V93.4062H62.1971V92H70.3789ZM74.6312 92.2301C74.0091 92.2301 73.4444 92.1129 72.9373 91.8786C72.4302 91.6399 72.0275 91.2969 71.7292 90.8494C71.4309 90.3977 71.2818 89.8523 71.2818 89.2131C71.2818 88.6506 71.3926 88.1946 71.6142 87.8452C71.8358 87.4915 72.1319 87.2145 72.5027 87.0142C72.8734 86.8139 73.2825 86.6648 73.7299 86.5668C74.1816 86.4645 74.6355 86.3835 75.0914 86.3239C75.688 86.2472 76.1717 86.1896 76.5424 86.1513C76.9174 86.1087 77.1902 86.0384 77.3606 85.9403C77.5353 85.8423 77.6227 85.6719 77.6227 85.429V85.3778C77.6227 84.7472 77.4501 84.2571 77.1049 83.9077C76.764 83.5582 76.2463 83.3835 75.5517 83.3835C74.8315 83.3835 74.2669 83.5412 73.8578 83.8565C73.4487 84.1719 73.161 84.5085 72.9949 84.8665L71.563 84.3551C71.8187 83.7585 72.1596 83.294 72.5858 82.9616C73.0162 82.625 73.4849 82.3906 73.992 82.2585C74.5034 82.1222 75.0062 82.054 75.5005 82.054C75.8159 82.054 76.1781 82.0923 76.5872 82.169C77.0005 82.2415 77.399 82.3928 77.7825 82.6229C78.1703 82.853 78.492 83.2003 78.7477 83.6648C79.0034 84.1293 79.1312 84.7514 79.1312 85.5312V92H77.6227V90.6705H77.546C77.4437 90.8835 77.2733 91.1115 77.0346 91.3544C76.796 91.5973 76.4785 91.804 76.0822 91.9744C75.6859 92.1449 75.2022 92.2301 74.6312 92.2301ZM74.8613 90.875C75.4579 90.875 75.9608 90.7578 76.3699 90.5234C76.7832 90.2891 77.0943 89.9865 77.3031 89.6158C77.5162 89.245 77.6227 88.8551 77.6227 88.446V87.0653C77.5588 87.142 77.4181 87.2124 77.2008 87.2763C76.9877 87.3359 76.7406 87.3892 76.4593 87.4361C76.1824 87.4787 75.9118 87.517 75.6476 87.5511C75.3876 87.581 75.1767 87.6065 75.0147 87.6278C74.6227 87.679 74.2562 87.7621 73.9153 87.8771C73.5787 87.9879 73.3059 88.1562 73.0971 88.3821C72.8926 88.6037 72.7903 88.9062 72.7903 89.2898C72.7903 89.8139 72.9842 90.2102 73.372 90.4787C73.764 90.7429 74.2605 90.875 74.8613 90.875ZM81.8846 92V82.1818H83.3931V92H81.8846ZM82.6516 80.5455C82.3576 80.5455 82.104 80.4453 81.891 80.245C81.6822 80.0447 81.5778 79.804 81.5778 79.5227C81.5778 79.2415 81.6822 79.0007 81.891 78.8004C82.104 78.6001 82.3576 78.5 82.6516 78.5C82.9457 78.5 83.1971 78.6001 83.4059 78.8004C83.619 79.0007 83.7255 79.2415 83.7255 79.5227C83.7255 79.804 83.619 80.0447 83.4059 80.245C83.1971 80.4453 82.9457 80.5455 82.6516 80.5455ZM86.1561 92V82.1818H87.6135V83.6648H87.7157C87.8947 83.179 88.2186 82.7848 88.6873 82.4822C89.1561 82.1797 89.6845 82.0284 90.2726 82.0284C90.3833 82.0284 90.5218 82.0305 90.688 82.0348C90.8542 82.0391 90.9799 82.0455 91.0652 82.054V83.5881C91.014 83.5753 90.8968 83.5561 90.7136 83.5305C90.5346 83.5007 90.345 83.4858 90.1447 83.4858C89.6674 83.4858 89.2413 83.5859 88.8663 83.7862C88.4956 83.9822 88.2015 84.255 87.9842 84.6044C87.7711 84.9496 87.6646 85.3437 87.6646 85.7869V92H86.1561Z" fill="#10B981"/>
+</g>
+<defs>
+<clipPath id="clip0_1_2">
+<rect width="200" height="250" fill="white"/>
+</clipPath>
+</defs>
+</svg>
+            </div>
+            <p class="text-center text-sm text-slate-500 mb-4">תרשים כוחות חופשי (FBD) הפועלים על הצנחן</p>
+
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>ננתח כל כוח בנפרד:</p>
+            <ol class="list-decimal list-inside space-y-4">
+                <li><strong>כוח הכובד (\( mg \)):</strong> המסה \( m \) קבועה ותאוצת הכובד \( g \) קבועה בגבהים אלו. לכן, גודל כוח הכובד נשאר <strong>קבוע</strong> לאורך כל התנועה.</li>
+                <li><strong>כוח התנגדות האוויר (\( f_{\text{air}} \)):</strong> כדי לדעת מה קורה לכוח זה, נשתמש בחוק השני של ניוטון. נרשום את משוואת הכוחות לאורך ציר ה-y (שהגדרנו כלפי מטה כחיובי):
+                    <div class="math-scroll">
+                        \[ \Sigma F_y = mg - f_{\text{air}} = ma_y \]
+                    </div>
+                    נחלץ את כוח התנגדות האוויר:
+                    <div class="math-scroll">
+                        \[ f_{\text{air}} = mg - ma_y \]
+                    </div>
+                    אנו יודעים שכוח הכובד (\( mg \)) קבוע. מסעיף א' קבענו שגודל התאוצה \( a_y \) הולך וקטן. אם אנו מחסרים ערך שהולך וקטן (\( ma_y \)) מערך קבוע (\( mg \)), התוצאה חייבת לגדול. לכן, כוח התנגדות האוויר <strong>גדל</strong>.
+                </li>
+            </ol>
+            
+            <div class="final-answer">
+                תשובה סופית: כוח הכובד נשאר קבוע. כוח התנגדות האוויר גדל.
+            </div>
+            
+            <div class="teacher-highlight">
+                שימו לב לדרך הפתרון! לא "ניחשתי" שכוח האוויר גדל כי "זה הגיוני שהמהירות עולה". הוכחתי זאת בצורה חד-משמעית באמצעות החוק השני של ניוטון. תמיד תבססו את ההסבר שלכם על משוואה פיזיקלית.
+            </div>
+        </div>
+
+        <!-- Section F -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">סעיף ו'</h2>
+            
+            <div class="step-title">מה נתון:</div>
+            <p>מסת הצנחן היא \( m = 80\text{ kg} \). היחידה היא כבר קילוגרם (MKS) ולכן אין צורך בהמרה. פרק הזמן הכולל הוא \( 0 \le t \le 55\text{ s} \).</p>
+            
+            <div class="step-title">מה מחפשים:</div>
+            <p>את הגודל המרבי (המקסימלי) ואת הגודל המזערי (המינימלי) של <strong>הכוח השקול</strong> (\( \Sigma F \)) הפועל על הצנחן, ולהסביר את הקביעה.</p>
+            
+            <div class="step-title">נוסחאות בשימוש:</div>
+            <div class="text-center my-2"><span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span></div>
+
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>לפי החוק השני של ניוטון, גודל הכוח השקול פרופורציונלי ישירות לגודל התאוצה. לכן, כדי למצוא את כוח שקול מינימלי/מקסימלי, עלינו לחפש מתי התאוצה בגרף היא מינימלית ומקסימלית.</p>
+            
+            <p><strong>הכוח השקול המזערי:</strong><br>
+            גודל התאוצה הקטן ביותר האפשרי הוא אפס (\( a=0 \)). מתוך הגרף, אנו רואים שהתאוצה שווה לאפס בפרקי הזמן שבהם המהירות קבועה (בין 13-20 שניות, ובין 22-55 שניות). לכן, הכוח השקול המינימלי הוא:
+            </p>
+            <div class="math-scroll">
+                \[ \Sigma F_{\text{min}} = m \cdot 0 = 0 \text{ N} \]
+            </div>
+
+            <p><strong>הכוח השקול המרבי:</strong><br>
+            עלינו לחפש בגרף את האזור בו השיפוע (התאוצה) הוא התלול ביותר. נשווה בין שני אזורים "חשודים":
+            </p>
+            <ol class="list-decimal list-inside space-y-2 mb-2">
+                <li>ברגע הקפיצה (\( t=0 \)): ראינו בסעיף ד' שהתאוצה היא \( a \approx 10\text{ m/s}^2 \).</li>
+                <li>בזמן פתיחת המצנח (בין 20 ל-22 שניות): המהירות יורדת מ- \( 50\text{ m/s} \) לכ- \( 4\text{ m/s} \). נחשב את התאוצה הממוצעת בקטע זה (כל שנתה בציר ה-y היא 2 יחידות, לכן הקו הנמוך הוא 4):
+                    <div class="math-scroll">
+                        \[ a_{\text{open}} = \frac{\Delta v}{\Delta t} = \frac{4 - 50}{22 - 20} = \frac{-46}{2} = -23 \text{ m/s}^2 \]
+                    </div>
+                </li>
+            </ol>
+            <p>גודל התאוצה בפתיחת המצנח הוא \( |a| = 23\text{ m/s}^2 \). מכיוון ש- \( 23 > 10 \), זהו גודל התאוצה המקסימלי בתנועה.</p>
+            <p>נציב ערך זה בחוק השני של ניוטון למציאת הכוח המקסימלי:</p>
+            <div class="math-scroll">
+                \[ \Sigma F_{\text{max}} = m \cdot |a_{\text{max}}| = 80 \cdot 23 = 1840 \text{ N} \]
+            </div>
+            
+            <div class="final-answer">
+                תשובה סופית:<br>
+                הכוח השקול המזערי: \( 0\text{ N} \) (כאשר המהירות קבועה).<br>
+                הכוח השקול המרבי: \( 1840\text{ N} \) (בזמן פתיחת המצנח).
+            </div>
+            
+            <div class="teacher-highlight">
+                חשוב לשים לב! תאוצה היא וקטור. לסימן המינוס (\( -23\text{ m/s}^2 \)) יש משמעות של כיוון בלבד (כלומר, התאוצה פועלת כלפי מעלה, נגד כיוון הנפילה). כששואלים על "הגודל המרבי", אנו מחפשים את הערך המוחלט הגדול ביותר. פתיחת המצנח מפעילה כוח עצום על גוף הצנחן, הרבה יותר חזק מכוח המשיכה עצמו!
+            </div>
+        </div>
+
+    </div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img src="question-image.png" alt="תמונת השאלה - מוגדל" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    שגיאה בטעינת תמונת השאלה (question-image.png). אנא ודא שהקובץ נמצא בתיקייה.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה: ' + document.lastModified;
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const day = pad(modified.getDate());
+                const month = pad(modified.getMonth() + 1);
+                const year = String(modified.getFullYear()).slice(-2);
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+                versionUpdatedAt.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
