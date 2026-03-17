@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>שלושת חוקי קפלר</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;700&family=Heebo:wght@300;500;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        /* הגדרות יסוד ועיצוב כללי */
+        * { box-sizing: border-box; }
+        body {
+            background-color: #0f172a;
+            display: grid;
+            gap: 40px;
+            grid-template-columns: 1fr;
+            margin: 0;
+            min-height: 100vh;
+            place-items: center;
+            padding: 40px 20px;
+            font-family: 'Assistant', sans-serif;
+        }
+
+        .slide-container {
+            width: 100%;
+            max-width: 1280px;
+            min-height: 70vh;
+            background: linear-gradient(135deg, #020617 0%, #0f172a 100%);
+            color: #f8fafc;
+            overflow: hidden;
+            position: relative;
+            display: flex;
+            flex-direction: column;
+            padding: clamp(30px, 5vw, 60px);
+            border-radius: 12px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+        }
+
+        /* רקע דקורטיבי - Abstract Shapes */
+        .slide-container::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            right: -10%;
+            width: 40%;
+            height: 60%;
+            background: radial-gradient(circle, rgba(56, 189, 248, 0.1) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        .slide-container::after {
+            content: '';
+            position: absolute;
+            bottom: -5%;
+            left: -5%;
+            width: 30%;
+            height: 50%;
+            background: radial-gradient(circle, rgba(245, 158, 11, 0.05) 0%, transparent 70%);
+            z-index: 0;
+        }
+
+        /* טיפוגרפיה */
+        h1, h2, h3 { font-family: 'Heebo', sans-serif; margin: 0; position: relative; z-index: 1; }
+        
+        .slide-title {
+            font-size: clamp(32px, 5vw, 52px);
+            font-weight: 800;
+            color: #f1f5f9;
+            margin-bottom: 30px;
+            border-right: 8px solid #38bdf8;
+            padding-right: 20px;
+            text-align: right;
+            width: 100%;
+        }
+
+        .content-area {
+            flex-grow: 1;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            position: relative;
+            z-index: 1;
+        }
+
+        /* פריסת אריחים (Tiled Content) */
+        .tiled-content {
+            display: flex;
+            gap: 25px;
+            width: 100%;
+            align-items: stretch;
+            flex-wrap: wrap; /* תמיכה במסכים קטנים - שבירת שורות */
+        }
+
+        .tile {
+            flex: 1 1 300px; /* גמישות מלאה לאריחים, ירדו שורה כשאין מקום */
+            background: rgba(30, 41, 59, 0.7);
+            border: 1px solid rgba(148, 163, 184, 0.2);
+            border-radius: 20px;
+            padding: clamp(20px, 3vw, 35px);
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        .tile .icon {
+            font-size: clamp(32px, 4vw, 42px);
+            color: #38bdf8;
+            margin-bottom: 15px;
+        }
+
+        .tile h3 {
+            font-size: clamp(22px, 3vw, 28px);
+            color: #fbbf24;
+            margin-bottom: 15px;
+        }
+
+        .tile p {
+            font-size: clamp(16px, 2vw, 19px);
+            line-height: 1.6;
+            color: #cbd5e1;
+            margin: 0;
+        }
+
+        .tile strong { color: #f8fafc; font-weight: 700; }
+
+        /* פורמולות מתמטיות */
+        .formula-container {
+            background: rgba(15, 23, 42, 0.8);
+            border-radius: 10px;
+            padding: 10px;
+            margin-top: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            border: 1px dashed rgba(56, 189, 248, 0.3);
+            overflow-x: auto; /* מניעת גלישה של נוסחאות החוצה */
+        }
+
+        /* עיצוב שקף כותרת */
+        .title-layout {
+            text-align: center;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .title-layout h1 { font-size: clamp(50px, 8vw, 85px); letter-spacing: -2px; color: #f8fafc; }
+        .title-layout h1 span { color: #38bdf8; }
+        .title-layout p { font-size: clamp(18px, 3vw, 24px); color: #94a3b8; margin-top: 20px; }
+
+        /* עיצוב שקף Bleed Image */
+        .bleed-image-layout {
+            display: grid;
+            grid-template-columns: repeat(2, minmax(0, 1fr));
+            padding: 0;
+            align-items: stretch;
+        }
+
+        .bleed-text-side {
+            padding: clamp(30px, 5vw, 80px) clamp(20px, 4vw, 60px);
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            height: 100%;
+        }
+
+        .image-container { height: 100%; min-height: 300px; overflow: hidden; }
+        .image-container img { width: 100%; height: 100%; object-fit: cover; }
+
+        /* התאמות נוספות למסכים קטנים (מובייל וטאבלט קטן) */
+        @media (max-width: 900px) {
+            .bleed-image-layout {
+                grid-template-columns: 1fr;
+            }
+            .image-container {
+                height: 300px;
+            }
+            .slide-container {
+                min-height: auto;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <!-- שקף 1: כותרת המצגת -->
+    <div class="slide-container" id="slide1">
+        <div class="title-layout">
+            <h1>חוקי <span>קפלר</span></h1>
+            <p>הבנת תנועת גרמי השמיים במערכת השמש</p>
+        </div>
+    </div>
+
+    <!-- שקף 2: מבוא היסטורי עם תמונה חתוכה -->
+    <div class="slide-container bleed-image-layout" id="slide2">
+        <div class="bleed-text-side">
+            <h2 class="slide-title">המהפכה של קפלר</h2>
+            <p style="font-size: 22px; line-height: 1.8;">
+                יוהאנס קפלר, מתמטיקאי ואסטרונום גרמני, ניסח בתחילת המאה ה-17 שלושה חוקים ששינו את תפיסת היקום שלנו.
+                <br><br>
+                בניגוד לתפיסה המקובלת באותה עת, קפלר הוכיח כי תנועת כוכבי הלכת אינה מעגלית מושלמת, אלא כפופה לחוקיות מתמטית מדויקת הקשורה לצורת המסלול ולמהירות התנועה.
+            </p>
+        </div>
+        <div class="image-container">
+            <!-- שימוש בתמונה של קפלר והמערכת הסולארית -->
+            <img src="http://googleusercontent.com/image_collection/image_retrieval/6815771597949104379" alt="יוהאנס קפלר">
+        </div>
+    </div>
+
+    <!-- שקף 3: השקף המבוקש - שלושת החוקים בשקף אחד -->
+    <div class="slide-container" id="slide3">
+        <h2 class="slide-title">שלושת חוקי קפלר</h2>
+        <div class="content-area">
+            <div class="tiled-content">
+                <!-- חוק 1 -->
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-draw-polygon"></i></div>
+                    <h3>1. חוק המסלולים</h3>
+                    <p>
+                        מסלולו של כל כוכב לכת הוא <strong>אליפסה</strong>, כאשר השמש נמצאת באחד ממוקדיה.
+                        <br><br>
+                        המשמעות היא שהמרחק בין כוכב הלכת לשמש משתנה ללא הרף לאורך מסלולו.
+                    </p>
+                </div>
+                <!-- חוק 2 -->
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-chart-pie"></i></div>
+                    <h3>2. חוק השטחים</h3>
+                    <p>
+                        הקו המחבר את כוכב הלכת עם השמש מכסה <strong>שטחים שווים בפרקי זמן שווים</strong>.
+                        <br><br>
+                        כתוצאה מכך, המהירות גדלה ב<strong>פריהליון</strong> (הנקודה הקרובה) וקטנה ב<strong>אפהליון</strong> (הנקודה הרחוקה).
+                    </p>
+                </div>
+                <!-- חוק 3 -->
+                <div class="tile">
+                    <div class="icon"><i class="fa-solid fa-infinity"></i></div>
+                    <h3>3. החוק ההרמוני</h3>
+                    <p>
+                        ריבוע זמן ההקפה של כוכב לכת (<math><msup><mi>T</mi><mn>2</mn></msup></math>) פרופורציונלי למרחק הממוצע שלו מהשמש <strong>בחזקת שלוש</strong> (<math><msup><mi>R</mi><mn>3</mn></msup></math>).
+                    </p>
+                    <div class="formula-container">
+                        <math display="math">
+                            <mfrac>
+                                <msup><mi>T</mi><mn>2</mn></msup>
+                                <msup><mi>R</mi><mn>3</mn></msup>
+                            </mfrac>
+                            <mo>=</mo>
+                            <mtext>קבוע</mtext>
+                        </math>
+                    </div>
+                    <p style="margin-top:10px; font-size: 16px;">
+                        <strong>יחס השוואתי:</strong> עבור כל שני גופים המקיפים את אותו כוכב:
+                    </p>
+                    <div class="formula-container" style="background: rgba(251, 191, 36, 0.1);">
+                        <math display="math">
+                            <msup>
+                                <mfenced>
+                                    <mfrac>
+                                        <msub><mi>T</mi><mn>1</mn></msub>
+                                        <msub><mi>T</mi><mn>2</mn></msub>
+                                    </mfrac>
+                                </mfenced>
+                                <mn>2</mn>
+                            </msup>
+                            <mo>=</mo>
+                            <msup>
+                                <mfenced>
+                                    <mfrac>
+                                        <msub><mi>R</mi><mn>1</mn></msub>
+                                        <msub><mi>R</mi><mn>2</mn></msub>
+                                    </mfrac>
+                                </mfenced>
+                                <mn>3</mn>
+                            </msup>
+                        </math>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- שקף 4: שקף סיכום ושאלות -->
+    <div class="slide-container" id="slide4">
+        <div class="title-layout">
+            <h2 style="font-size: 60px; color: #fbbf24; margin-bottom: 30px;">שאלות וסיכום</h2>
+            <p style="max-width: 800px;">
+                חוקי קפלר היוו את הבסיס עליו בנה אייזק ניוטון את חוק המשיכה האוניברסלי. הם מאפשרים לנו עד היום לחשב מסלולי לוויינים, גשושיות וכוכבי לכת במערכות שמש רחוקות.
+            </p>
+            <div style="margin-top: 50px; font-size: 20px; color: #38bdf8;">
+                <i class="fa-solid fa-rocket" style="margin-left: 10px;"></i> תודה על ההקשבה
+            </div>
+        </div>
+    </div>
+
+</body>
+</html>
+```

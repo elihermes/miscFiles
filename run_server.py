@@ -13,6 +13,7 @@ from pathlib import Path
 PORT = 8000
 SCRIPT_DIR = Path(__file__).resolve().parent
 DIRECTORY = SCRIPT_DIR
+QUESTION_TOPICS_PATH = DIRECTORY / "webfiles" / "פתרונות שאלות בגרות" / "מכניקה שאלות בגרות" / "question-topics.json"
 
 os.chdir(DIRECTORY)
 
@@ -59,6 +60,92 @@ class LocalAwareHandler(http.server.SimpleHTTPRequestHandler):
             return
 
         super().do_GET()
+
+    def do_POST(self):
+        parsed = urlparse(self.path)
+        if parsed.path != "/api/save-question-topics":
+            self.send_error(404, "Unknown API endpoint")
+            return
+
+        try:
+            content_length = int(self.headers.get("Content-Length", "0"))
+        except ValueError:
+            self.send_error(400, "Invalid Content-Length")
+            return
+
+        try:
+            raw_body = self.rfile.read(content_length)
+            payload = json.loads(raw_body.decode("utf-8"))
+            normalized = self._normalize_question_topics_payload(payload)
+            QUESTION_TOPICS_PATH.write_text(
+                json.dumps(normalized, ensure_ascii=False, indent=2) + "\n",
+                encoding="utf-8"
+            )
+        except ValueError as exc:
+            body = json.dumps({"ok": False, "error": str(exc)}, ensure_ascii=False).encode("utf-8")
+            self.send_response(400)
+            self.send_header("Content-Type", "application/json; charset=utf-8")
+            self.send_header("Cache-Control", "no-store")
+            self.send_header("Content-Length", str(len(body)))
+            self.end_headers()
+            self.wfile.write(body)
+            return
+
+        body = json.dumps({"ok": True}, ensure_ascii=False).encode("utf-8")
+        self.send_response(200)
+        self.send_header("Content-Type", "application/json; charset=utf-8")
+        self.send_header("Cache-Control", "no-store")
+        self.send_header("Content-Length", str(len(body)))
+        self.end_headers()
+        self.wfile.write(body)
+
+    def _normalize_question_topics_payload(self, payload):
+        if not isinstance(payload, dict):
+            raise ValueError("Payload must be an object")
+
+        topics = payload.get("topics")
+        questions = payload.get("questions")
+        if not isinstance(topics, list) or not all(isinstance(topic, str) for topic in topics):
+            raise ValueError("Field 'topics' must be an array of strings")
+        if not isinstance(questions, list):
+            raise ValueError("Field 'questions' must be an array")
+
+        normalized_questions = []
+        allowed_topics = set(topics)
+        for question in questions:
+            if not isinstance(question, dict):
+                raise ValueError("Each question must be an object")
+
+            question_id = question.get("id")
+            title = question.get("title")
+            path = question.get("path")
+            question_topics = question.get("topics")
+
+            if not isinstance(question_id, str) or not question_id.strip():
+                raise ValueError("Each question must include a non-empty string 'id'")
+            if not isinstance(title, str) or not title.strip():
+                raise ValueError("Each question must include a non-empty string 'title'")
+            if not isinstance(path, str) or not path.strip():
+                raise ValueError("Each question must include a non-empty string 'path'")
+            if not isinstance(question_topics, list) or not all(isinstance(topic, str) for topic in question_topics):
+                raise ValueError("Each question must include 'topics' as an array of strings")
+
+            filtered_topics = []
+            for topic in question_topics:
+                if topic in allowed_topics and topic not in filtered_topics:
+                    filtered_topics.append(topic)
+
+            normalized_questions.append({
+                "id": question_id,
+                "title": title,
+                "path": path,
+                "topics": filtered_topics,
+            })
+
+        return {
+            "topics": topics,
+            "questions": normalized_questions,
+        }
 
 
 Handler = LocalAwareHandler

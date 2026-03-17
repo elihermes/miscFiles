@@ -86,7 +86,79 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 0.75rem;
-            max-width: 260px;
+            max-width: 100%;
+        }
+
+        .filter-stack {
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .topics-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .topic-filter-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+
+        .topic-chip {
+            border: 1px solid var(--slate-300);
+            background: #fff;
+            color: #334155;
+            border-radius: 9999px;
+            padding: 0.42rem 0.8rem;
+            font: inherit;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .topic-chip:hover {
+            border-color: var(--blue-border);
+            transform: translateY(-1px);
+        }
+
+        .topic-chip.is-active {
+            background: var(--blue-700);
+            color: #eff6ff;
+            border-color: var(--blue-700);
+        }
+
+        .topic-chip.is-empty {
+            opacity: 0.55;
+        }
+
+        .topic-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.45rem;
+            height: 1.45rem;
+            padding: 0 0.35rem;
+            margin-inline-start: 0.35rem;
+            border-radius: 9999px;
+            background: #e2e8f0;
+            color: #334155;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .topic-chip.is-active .topic-count {
+            background: rgba(255, 255, 255, 0.18);
+            color: #eff6ff;
+        }
+
+        .filter-note {
+            font-size: 0.88rem;
+            color: #64748b;
         }
 
         .solution-item {
@@ -126,6 +198,12 @@
             margin-left: 0.3rem;
             color: #475569;
             background: #f8fafc;
+        }
+
+        .meta-pill.topic {
+            border-color: #bfdbfe;
+            color: #1d4ed8;
+            background: #eff6ff;
         }
 
         .empty-state {
@@ -229,12 +307,23 @@
         <section class="section-card">
             <h3 class="section-header">סינון</h3>
             <div class="filter-grid">
-                <label class="block">
-                    <span class="block text-sm font-semibold text-slate-700 mb-1">סינון לפי שנה</span>
-                    <select id="yearSelect" class="w-full rounded-lg border border-slate-300 p-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
-                        <option value="all">כל השנים</option>
-                    </select>
-                </label>
+                <div class="filter-stack">
+                    <label class="block max-w-xs">
+                        <span class="block text-sm font-semibold text-slate-700 mb-1">סינון לפי שנה</span>
+                        <select id="yearSelect" class="w-full rounded-lg border border-slate-300 p-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
+                            <option value="all">כל השנים</option>
+                        </select>
+                    </label>
+
+                    <div>
+                        <div class="topics-toolbar mb-2">
+                            <span class="block text-sm font-semibold text-slate-700">סינון לפי נושאים</span>
+                            <button id="clearTopicsBtn" type="button" class="text-sm text-blue-700 hover:underline">נקה תגיות</button>
+                        </div>
+                        <div id="topicsFilter" class="topic-filter-box"></div>
+                        <p class="filter-note mt-2">אפשר לבחור כמה נושאים יחד. יוצגו שאלות שמכילות לפחות אחד מהנושאים שנבחרו.</p>
+                    </div>
+                </div>
             </div>
 
             <p id="resultsInfo" class="mt-3 text-sm text-slate-500"></p>
@@ -244,6 +333,7 @@
             <h3 class="section-header">רשימת פתרונות</h3>
             <div id="solutionsList" class="space-y-3"></div>
         </section>
+
     </div>
 
     <div id="hoverPreview" class="hover-preview" aria-hidden="true">
@@ -251,31 +341,21 @@
     </div>
 
     <script>
-        const staticSolutions = [
-            { year: 1996, question: "1", title: "1996 שאלה 1", href: "./1996 שאלה 1/1996 שאלה 1.html", tags: ["מכניקה", "בגרות", "קינמטיקה", "y(t)", "v(t)"] },
-            { year: 1997, question: "1", title: "1997 שאלה 1", href: "./1997 שאלה 1/1997 שאלה.html", tags: ["מכניקה", "בגרות", "קינמטיקה", "גרפים"] },
-            { year: 2000, question: "1", title: "2000 שאלה 1", href: "./2000 שאלה 1/2000 שאלה 1.html", tags: ["מכניקה", "בגרות", "תנועה", "חישוב"] },
-            { year: 2001, question: "1", title: "2001 שאלה 1", href: "./2001 שאלה 1/2001 שאלה 1.html", tags: ["מכניקה", "בגרות", "תנע", "כוחות"] },
-            { year: 2002, question: "1", title: "2002 שאלה 1", href: "./2002 שאלה 1/2002 שאלה 1.html", tags: ["מכניקה", "בגרות", "קינמטיקה", "גרף מהירות-זמן"] },
-            { year: 2002, question: "3", title: "2002 שאלה 3", href: "./2002 שאלה 3/2002 שאלה 3.html", tags: ["מכניקה", "בגרות", "התנגשות", "שימור תנע", "זריקה אופקית", "d^2"] },
-            { year: 2003, question: "1", title: "2003 שאלה 1", href: "./2003 שאלה 1/2003 שאלה 1.html", tags: ["מכניקה", "בגרות", "זריקה אנכית", "y(t)", "t=0"] },
-            { year: 2008, question: "1", title: "2008 שאלה 1", href: "./2008 שאלה 1/2008 שאלה 1.html", tags: ["מכניקה", "בגרות", "כוחות", "שימור אנרגיה"] },
-            { year: 2009, question: "2", title: "2009 שאלה 2", href: "./2009 שאלה 2/2009 שאלה 2.html", tags: ["מכניקה", "בגרות", "גרפים", "ניתוח נתונים"] },
-            { year: 2010, question: "1", title: "2010 שאלה 1", href: "./2010 שאלה 1/שאלה 2010 שאלה 1.html", tags: ["מכניקה", "בגרות", "קינמטיקה", "יחסית"] },
-            { year: 2012, question: "2", title: "2012 שאלה 2", href: "./2012 שאלה 2/2012 שאלה 2.html", tags: ["מכניקה", "בגרות", "כוחות", "אנרגיה"] }
-        ];
-
-        const folderRelativeToRepo = "webfiles/פתרונות שאלות בגרות/מכניקה שאלות בגרות";
+        const staticSolutions = [];
         const folderNamePattern = /^(\d{4})\s+שאלה\s+(.+)$/;
 
         const yearSelect = document.getElementById("yearSelect");
         const resultsInfo = document.getElementById("resultsInfo");
         const listEl = document.getElementById("solutionsList");
+        const topicsFilterEl = document.getElementById("topicsFilter");
+        const clearTopicsBtn = document.getElementById("clearTopicsBtn");
         const hoverPreview = document.getElementById("hoverPreview");
         const hoverPreviewImg = document.getElementById("hoverPreviewImg");
 
         let previewActive = false;
         let solutions = [...staticSolutions];
+        let topicCatalog = [];
+        const selectedTopics = new Set();
 
         function parseFromFolderName(folderName) {
             const match = folderName.match(folderNamePattern);
@@ -290,13 +370,6 @@
             };
         }
 
-        function normalizeHref(baseHref) {
-            if (!baseHref.endsWith("/")) {
-                return `${baseHref}/`;
-            }
-            return baseHref;
-        }
-
         function compareSolutions(a, b) {
             if (a.year !== b.year) {
                 return a.year - b.year;
@@ -304,170 +377,28 @@
             return String(a.question).localeCompare(String(b.question), "he", { numeric: true });
         }
 
-        function githubRepoContextFromLocation() {
-            const hostMatch = window.location.hostname.match(/^([^.]+)\.github\.io$/);
-            if (!hostMatch) {
-                return null;
-            }
-
-            const pathParts = window.location.pathname.split("/").filter(Boolean);
-            if (!pathParts.length) {
-                return null;
-            }
-
-            return {
-                owner: hostMatch[1],
-                repo: pathParts[0]
-            };
-        }
-
-        async function loadSolutionsFromDirectoryListing() {
-            const response = await fetch("./", { cache: "no-store" });
+        async function loadSolutionsFromTopicsJson() {
+            const response = await fetch("./question-topics.json", { cache: "no-store" });
             if (!response.ok) {
-                throw new Error("directory-listing-not-available");
+                throw new Error("topics-json-load-failed");
             }
 
-            const html = await response.text();
-            const doc = new DOMParser().parseFromString(html, "text/html");
-            const anchors = Array.from(doc.querySelectorAll("a"));
+            const data = await response.json();
+            const questions = Array.isArray(data.questions) ? data.questions : [];
+            topicCatalog = Array.isArray(data.topics) ? data.topics : [];
 
-            const folderEntries = anchors
-                .map((a) => {
-                    const href = a.getAttribute("href") || "";
-                    if (!href || href === "../" || !href.endsWith("/")) {
-                        return null;
-                    }
-
-                    const decodedName = decodeURIComponent(href.replace(/\/$/, ""));
-                    const parsed = parseFromFolderName(decodedName);
-                    if (!parsed) {
-                        return null;
-                    }
-
-                    return {
-                        ...parsed,
-                        folderHref: normalizeHref(href)
-                    };
-                })
-                .filter(Boolean);
-
-            if (!folderEntries.length) {
-                throw new Error("directory-listing-empty");
-            }
-
-            const discovered = [];
-            for (const folder of folderEntries) {
-                const folderResponse = await fetch(folder.folderHref, { cache: "no-store" });
-                if (!folderResponse.ok) {
-                    continue;
-                }
-
-                const folderHtml = await folderResponse.text();
-                const folderDoc = new DOMParser().parseFromString(folderHtml, "text/html");
-                const fileAnchors = Array.from(folderDoc.querySelectorAll("a"));
-
-                const htmlCandidates = fileAnchors
-                    .map((a) => a.getAttribute("href") || "")
-                    .filter((href) => href.toLowerCase().endsWith(".html"));
-
-                if (!htmlCandidates.length) {
-                    continue;
-                }
-
-                const exact = htmlCandidates.find((href) => decodeURIComponent(href) === `${folder.title}.html`);
-                const htmlFile = exact || htmlCandidates[0];
-
-                discovered.push({
-                    year: folder.year,
-                    question: folder.question,
-                    title: folder.title,
-                    href: `${folder.folderHref}${htmlFile}`,
-                    tags: ["מכניקה", "בגרות"]
-                });
-            }
-
-            if (!discovered.length) {
-                throw new Error("no-html-files-found");
-            }
-
-            return discovered;
-        }
-
-        async function loadSolutionsFromGitHubApi() {
-            const ctx = githubRepoContextFromLocation();
-            if (!ctx) {
-                throw new Error("not-github-pages");
-            }
-
-            const encodedPath = folderRelativeToRepo
-                .split("/")
-                .map((segment) => encodeURIComponent(segment))
-                .join("/");
-
-            const baseUrl = `https://api.github.com/repos/${ctx.owner}/${ctx.repo}/contents/${encodedPath}`;
-            const rootResponse = await fetch(baseUrl, { cache: "no-store" });
-            if (!rootResponse.ok) {
-                throw new Error("github-root-load-failed");
-            }
-
-            const rootEntries = await rootResponse.json();
-            const folders = rootEntries
-                .filter((entry) => entry.type === "dir")
-                .map((entry) => {
-                    const parsed = parseFromFolderName(entry.name);
-                    if (!parsed) {
-                        return null;
-                    }
-                    return {
-                        ...parsed,
-                        name: entry.name,
-                        apiUrl: entry.url
-                    };
-                })
-                .filter(Boolean);
-
-            const discovered = [];
-            for (const folder of folders) {
-                const folderResponse = await fetch(folder.apiUrl, { cache: "no-store" });
-                if (!folderResponse.ok) {
-                    continue;
-                }
-
-                const files = await folderResponse.json();
-                const htmlFiles = files.filter((file) => file.type === "file" && file.name.toLowerCase().endsWith(".html"));
-                if (!htmlFiles.length) {
-                    continue;
-                }
-
-                const exact = htmlFiles.find((file) => file.name === `${folder.name}.html`);
-                const htmlFile = exact || htmlFiles[0];
-
-                discovered.push({
-                    year: folder.year,
-                    question: folder.question,
-                    title: folder.name,
-                    href: `./${folder.name}/${htmlFile.name}`,
-                    tags: ["מכניקה", "בגרות"]
-                });
-            }
-
-            if (!discovered.length) {
-                throw new Error("github-no-solutions");
-            }
-
-            return discovered;
-        }
-
-        async function loadSolutionsAuto() {
-            try {
-                return await loadSolutionsFromDirectoryListing();
-            } catch (_directoryErr) {
-                try {
-                    return await loadSolutionsFromGitHubApi();
-                } catch (_githubErr) {
-                    return [...staticSolutions];
-                }
-            }
+            return questions.map((entry) => {
+                const parsed = parseFromFolderName(entry.title) || { year: 0, question: "?", title: entry.title };
+                const topicTags = Array.isArray(entry.topics) ? entry.topics : [];
+                return {
+                    year: parsed.year,
+                    question: parsed.question,
+                    title: entry.title,
+                    href: `./${entry.path}`,
+                    tags: ["מכניקה", "בגרות", ...topicTags],
+                    topicTags
+                };
+            });
         }
 
         function movePreview(event) {
@@ -532,6 +463,50 @@
             });
         }
 
+        function getTopicCountForCurrentYear(topic) {
+            const yearVal = yearSelect.value;
+            return solutions.filter((solution) => {
+                const yearOk = yearVal === "all" || String(solution.year) === yearVal;
+                return yearOk && (solution.topicTags || []).includes(topic);
+            }).length;
+        }
+
+        function renderTopicFilters() {
+            topicsFilterEl.innerHTML = "";
+
+            topicCatalog.forEach((topic) => {
+                const count = getTopicCountForCurrentYear(topic);
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "topic-chip";
+                if (selectedTopics.has(topic)) {
+                    button.classList.add("is-active");
+                }
+                if (count === 0) {
+                    button.classList.add("is-empty");
+                }
+
+                const label = document.createElement("span");
+                label.textContent = topic;
+
+                const countBadge = document.createElement("span");
+                countBadge.className = "topic-count";
+                countBadge.textContent = String(count);
+
+                button.append(label, countBadge);
+                button.addEventListener("click", () => {
+                    if (selectedTopics.has(topic)) {
+                        selectedTopics.delete(topic);
+                    } else {
+                        selectedTopics.add(topic);
+                    }
+                    renderTopicFilters();
+                    runFilter();
+                });
+                topicsFilterEl.appendChild(button);
+            });
+        }
+
         function render(items) {
             listEl.innerHTML = "";
 
@@ -547,7 +522,10 @@
 
                     const folderPath = item.href.slice(0, item.href.lastIndexOf("/"));
                     const thumbPath = `${folderPath}/question-image.png`;
-                    const tags = (item.tags || []).map((t) => `<span class="meta-pill">${t}</span>`).join(" ");
+                    const tagsHtml = (item.tags || []).map((t) => {
+                        const cls = (item.topicTags || []).includes(t) ? "meta-pill topic" : "meta-pill";
+                        return `<span class="${cls}">${t}</span>`;
+                    }).join(" ");
 
                     card.innerHTML = `
                         <div>
@@ -557,7 +535,7 @@
                         <div>
                             <a class="solution-link" href="${item.href}">${item.title}</a>
                             <div class="mt-2 text-sm text-slate-600">שנה: <strong>${item.year}</strong> | שאלה: <strong>${item.question}</strong></div>
-                            <div class="mt-2">${tags}</div>
+                            <div class="mt-2">${tagsHtml}</div>
                         </div>
                     `;
 
@@ -566,19 +544,25 @@
                 });
             }
 
-            resultsInfo.textContent = `נמצאו ${items.length} פתרונות.`;
         }
 
         function runFilter() {
             const yearVal = yearSelect.value;
+            renderTopicFilters();
 
             const filtered = solutions.filter((s) => {
                 const yearOk = yearVal === "all" || String(s.year) === yearVal;
-                return yearOk;
+                const topicOk = selectedTopics.size === 0
+                    || [...selectedTopics].some((topic) => (s.topicTags || []).includes(topic));
+                return yearOk && topicOk;
             });
 
             filtered.sort(compareSolutions);
             render(filtered);
+
+            const yearText = yearVal === "all" ? "כל השנים" : `שנה ${yearVal}`;
+            const topicsText = selectedTopics.size ? ` | נושאים: ${[...selectedTopics].join(", ")}` : "";
+            resultsInfo.textContent = `נמצאו ${filtered.length} פתרונות עבור ${yearText}${topicsText}.`;
         }
 
         document.addEventListener("DOMContentLoaded", async function() {
@@ -606,11 +590,24 @@
                 }
             }
 
-            solutions = await loadSolutionsAuto();
+            try {
+                solutions = await loadSolutionsFromTopicsJson();
+            } catch (_err) {
+                solutions = [...staticSolutions];
+                topicCatalog = [];
+            }
+
             yearOptionsInit();
+            renderTopicFilters();
             runFilter();
             yearSelect.addEventListener("change", runFilter);
+            clearTopicsBtn.addEventListener("click", () => {
+                selectedTopics.clear();
+                renderTopicFilters();
+                runFilter();
+            });
         });
     </script>
 </body>
 </html>
+

@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ניהול נושאים - פתרונות במכניקה</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+            margin: 0;
+        }
+
+        .page-shell {
+            max-width: 1080px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 3rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .editor-grid {
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .editor-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .editor-path {
+            font-size: 0.88rem;
+            color: #64748b;
+            overflow-wrap: anywhere;
+        }
+
+        .editor-topics {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+            gap: 0.65rem;
+        }
+
+        .editor-topic-option {
+            display: flex;
+            align-items: center;
+            gap: 0.55rem;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.7rem 0.85rem;
+            background: #fff;
+        }
+
+        .editor-topic-option input {
+            accent-color: var(--blue-700);
+            width: 1rem;
+            height: 1rem;
+            flex-shrink: 0;
+        }
+
+        .editor-status {
+            min-height: 1.4rem;
+            font-size: 0.9rem;
+        }
+
+        .editor-status.success {
+            color: #166534;
+        }
+
+        .editor-status.error {
+            color: #b91c1c;
+        }
+
+        .editor-status.info {
+            color: #475569;
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">ניהול נושאים לשאלות מכניקה</h1>
+            <h2 class="text-xl md:text-2xl text-slate-600">דף עריכה פנימי</h2>
+            <p class="mt-3 text-slate-500">כאן אפשר לדייק, להוסיף ולהסיר נושאים לכל שאלה, ולשמור חזרה לקובץ JSON.</p>
+        </header>
+
+        <section class="section-card">
+            <h3 class="section-header">עדכון נושאים לשאלות</h3>
+            <div class="editor-grid">
+                <div class="editor-toolbar">
+                    <label class="block min-w-[260px] flex-1">
+                        <span class="block text-sm font-semibold text-slate-700 mb-1">בחירת שאלה לעריכה</span>
+                        <select id="editorQuestionSelect" class="w-full rounded-lg border border-slate-300 p-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-200"></select>
+                    </label>
+                    <div class="flex items-center gap-2 flex-wrap">
+                        <button id="reloadTopicsBtn" type="button" class="rounded-lg border border-slate-300 px-3 py-2 text-sm text-slate-700 hover:bg-slate-50">טען מחדש מהקובץ</button>
+                        <button id="saveTopicsBtn" type="button" class="rounded-lg border border-blue-200 bg-blue-50 px-3 py-2 text-sm font-semibold text-blue-700 hover:bg-blue-100">שמור שינויים</button>
+                    </div>
+                </div>
+                <p id="editorPath" class="editor-path"></p>
+                <div id="editorTopics" class="editor-topics"></div>
+                <p class="text-sm text-slate-500">שמירה עובדת רק כשפותחים את האתר דרך השרת המקומי (`localhost`).</p>
+                <p id="editorStatus" class="editor-status info"></p>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const folderNamePattern = /^(\d{4})\s+שאלה\s+(.+)$/;
+        const editorQuestionSelect = document.getElementById("editorQuestionSelect");
+        const reloadTopicsBtn = document.getElementById("reloadTopicsBtn");
+        const saveTopicsBtn = document.getElementById("saveTopicsBtn");
+        const editorTopicsEl = document.getElementById("editorTopics");
+        const editorStatusEl = document.getElementById("editorStatus");
+        const editorPathEl = document.getElementById("editorPath");
+
+        let topicData = { topics: [], questions: [] };
+        let topicCatalog = [];
+
+        function parseFromFolderName(folderName) {
+            const match = folderName.match(folderNamePattern);
+            if (!match) {
+                return null;
+            }
+
+            return {
+                year: Number(match[1]),
+                question: match[2],
+                title: folderName
+            };
+        }
+
+        function isLocalhost() {
+            return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        }
+
+        function getQuestionSortKey(entry) {
+            const parsed = parseFromFolderName(entry.title || "");
+            return {
+                year: parsed?.year ?? 0,
+                question: parsed?.question ?? entry.id ?? "",
+            };
+        }
+
+        function sortQuestions(entries) {
+            return [...entries].sort((a, b) => {
+                const keyA = getQuestionSortKey(a);
+                const keyB = getQuestionSortKey(b);
+                if (keyA.year !== keyB.year) {
+                    return keyA.year - keyB.year;
+                }
+                return String(keyA.question).localeCompare(String(keyB.question), "he", { numeric: true });
+            });
+        }
+
+        async function loadTopicsJson() {
+            const response = await fetch("./question-topics.json", { cache: "no-store" });
+            if (!response.ok) {
+                throw new Error("topics-json-load-failed");
+            }
+
+            const data = await response.json();
+            topicData = {
+                topics: Array.isArray(data.topics) ? data.topics : [],
+                questions: Array.isArray(data.questions) ? data.questions : []
+            };
+            topicCatalog = topicData.topics;
+        }
+
+        function setEditorStatus(message, type = "info") {
+            editorStatusEl.textContent = message;
+            editorStatusEl.className = `editor-status ${type}`;
+        }
+
+        function getCurrentEditorQuestion() {
+            const id = editorQuestionSelect.value;
+            return (topicData.questions || []).find((question) => question.id === id) || null;
+        }
+
+        function populateEditorQuestionSelect() {
+            editorQuestionSelect.innerHTML = "";
+            const questions = sortQuestions(topicData.questions || []);
+
+            questions.forEach((question) => {
+                const option = document.createElement("option");
+                option.value = question.id;
+                option.textContent = question.title;
+                editorQuestionSelect.appendChild(option);
+            });
+
+            if (questions.length && !questions.some((question) => question.id === editorQuestionSelect.value)) {
+                editorQuestionSelect.value = questions[0].id;
+            }
+        }
+
+        function renderEditorTopics() {
+            editorTopicsEl.innerHTML = "";
+            const question = getCurrentEditorQuestion();
+
+            if (!question) {
+                editorPathEl.textContent = "לא נבחרה שאלה לעריכה.";
+                setEditorStatus("בחר שאלה כדי לערוך לה נושאים.", "info");
+                return;
+            }
+
+            editorPathEl.textContent = `נתיב קובץ: ${question.path}`;
+
+            topicCatalog.forEach((topic) => {
+                const label = document.createElement("label");
+                label.className = "editor-topic-option";
+
+                const checkbox = document.createElement("input");
+                checkbox.type = "checkbox";
+                checkbox.checked = (question.topics || []).includes(topic);
+                checkbox.addEventListener("change", () => {
+                    const currentTopics = new Set(question.topics || []);
+                    if (checkbox.checked) {
+                        currentTopics.add(topic);
+                    } else {
+                        currentTopics.delete(topic);
+                    }
+                    question.topics = topicCatalog.filter((entry) => currentTopics.has(entry));
+                    setEditorStatus(`עודכן מקומית: ${question.title}`, "info");
+                });
+
+                const text = document.createElement("span");
+                text.textContent = topic;
+
+                label.append(checkbox, text);
+                editorTopicsEl.appendChild(label);
+            });
+        }
+
+        async function saveTopicData() {
+            if (!isLocalhost()) {
+                setEditorStatus("שמירה לקובץ זמינה רק דרך localhost. כרגע אפשר לערוך, אבל לא לשמור חזרה ל-JSON.", "error");
+                return;
+            }
+
+            setEditorStatus("שומר שינויים לקובץ...", "info");
+            const response = await fetch("/api/save-question-topics", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json; charset=utf-8"
+                },
+                body: JSON.stringify(topicData)
+            });
+
+            if (!response.ok) {
+                let errorText = "שמירה נכשלה.";
+                try {
+                    const payload = await response.json();
+                    if (payload?.error) {
+                        errorText = payload.error;
+                    }
+                } catch (_err) {
+                    // Keep fallback text.
+                }
+                throw new Error(errorText);
+            }
+
+            setEditorStatus("השינויים נשמרו ל-question-topics.json", "success");
+        }
+
+        document.addEventListener("DOMContentLoaded", async function() {
+            try {
+                await loadTopicsJson();
+                populateEditorQuestionSelect();
+                renderEditorTopics();
+            } catch (_err) {
+                setEditorStatus("טעינת question-topics.json נכשלה.", "error");
+            }
+
+            editorQuestionSelect.addEventListener("change", () => {
+                renderEditorTopics();
+                setEditorStatus("", "info");
+            });
+
+            reloadTopicsBtn.addEventListener("click", async () => {
+                setEditorStatus("טוען מחדש מהקובץ...", "info");
+                await loadTopicsJson();
+                populateEditorQuestionSelect();
+                renderEditorTopics();
+                setEditorStatus("נטען מחדש מהקובץ.", "success");
+            });
+
+            saveTopicsBtn.addEventListener("click", async () => {
+                try {
+                    await saveTopicData();
+                } catch (error) {
+                    setEditorStatus(error.message || "שמירה נכשלה.", "error");
+                }
+            });
+
+            if (isLocalhost()) {
+                setEditorStatus("אפשר לערוך נושאים ולשמור ישירות לקובץ JSON.", "info");
+            } else {
+                setEditorStatus("אפשר לעבור על הנושאים כאן, אבל שמירה לקובץ זמינה רק ב-localhost.", "info");
+            }
+        });
+    </script>
+</body>
+</html>
