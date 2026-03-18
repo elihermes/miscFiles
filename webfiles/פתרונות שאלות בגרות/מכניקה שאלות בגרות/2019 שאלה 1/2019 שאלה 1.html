@@ -1,0 +1,644 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2019 שאלה 1</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax Configuration -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:ital,wght@0,300;0,400;0,500;0,600;0,700;1,400&display=swap');
+
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .step-title {
+            color: #2563eb;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-title::before {
+            content: "";
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #3b82f6;
+            border-radius: 50%;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: #f0fdf4;
+            border-right: 4px solid #22c55e;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0.5rem 0 0 0.5rem;
+            font-weight: 600;
+            color: #166534;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+            font-style: italic;
+            position: relative;
+        }
+
+        .teacher-highlight::before {
+            content: "טיפ מורה:";
+            display: block;
+            font-weight: 700;
+            margin-bottom: 0.25rem;
+            color: #166534;
+            font-style: normal;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .svg-container {
+            width: 100%;
+            overflow-x: auto;
+            display: flex;
+            justify-content: center;
+            margin: 1.5rem 0;
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body class="tex2jax_process">
+
+    <div class="page-shell">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800 text-center mb-2">פתרון בגרות פיזיקה - מכניקה 2019, שאלה 1</h1>
+            <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+                <span class="version-label">עודכן:</span>
+                <span id="versionUpdatedAt" dir="ltr">--.--.-- --:--:--</span>
+            </div>
+            <p class="text-center text-slate-600 mb-6">הכנת פתרון מוסבר לתלמידים - צעד אחר צעד</p>
+        </header>
+
+        <section class="section-card border-t-4 border-slate-300">
+            <img src="question-image.png" alt="תמונת השאלה המקורית" id="mainQuestionImage" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+            </div>
+        </section>
+
+        <section class="section-card">
+            <div class="bg-blue-50 text-blue-800 p-4 rounded-lg text-sm border border-blue-100">
+                <strong>הערת מורה (זיהוי מערכת הצירים מתוך הגרף):</strong> שימו לב כי בשאלה זו, מערכת הצירים כבר מוכתבת לנו מתוך הגרף הנתון. ניתן לראות כי רגע הפגיעה בקרקע (נקודה D) מתרחש בשיעור \( y=0 \), ולכן הקרקע הוגדרה כראשית הצירים. כמו כן, מיד לאחר הזריקה בנקודה A שיעור ה-y הולך וגדל, מה שמעיד על כך שהכיוון החיובי של ציר ה-y נקבע <strong>כלפי מעלה</strong>. מאחר שכוח הכבידה פועל תמיד כלפי מטה (נגד הכיוון החיובי של הציר המוגדר בגרף), תאוצת הכדור לאורך כל מעופו תהיה שווה לתאוצת הכובד עם סימן שלילי, כלומר \( a = -g = -10 \text{ m/s}^2 \).
+            </div>
+        </section>
+
+        <!-- סעיף א -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף א': חישוב מהירות הזריקה ההתחלתית</h3>
+            
+            <div class="mb-4">
+                <div class="step-title">מה נתון:</div>
+                <p>מתוך התבוננות בגרף המיקום-זמן, נוציא את הנתונים (ביחידות MKS). ברגע הזריקה, בנקודה A, הזמן הוא \( t_0 = 0 \text{ s} \) והמיקום ההתחלתי הוא \( y_0 = 40 \text{ m} \). הנקודה B מתארת את שיא הגובה של הכדור. בנקודה זו המשיק לגרף הוא אופקי, ולכן גודל המהירות שם מתאפס: \( v_B = 0 \text{ m/s} \). מהגרף נראה שזמן ההגעה לנקודה B הוא \( t_1 = 1 \text{ s} \). התאוצה, כפי שהסברנו, היא \( a = -10 \text{ m/s}^2 \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">מה מחפשים:</div>
+                <p>את גודל המהירות ההתחלתית שבה נזרק הכדור, שאסמנה ב- \( v_0 \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">נוסחאות בשימוש (מתוך דף הנוסחאות):</div>
+                <p>נשתמש בנוסחת המהירות בתנועה שוות-תאוצה: <span class="formula-badge">\( v = v_0 + at \)</span>.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">הצבה ופתרון:</div>
+                <p>נציב את הנתונים הידועים לנו עבור נקודת שיא הגובה (נקודה B) בתוך משוואת המהירות:</p>
+                <div class="overflow-x-auto text-lg">
+                    \[ 0 = v_0 + (-10) \cdot 1 \]
+                    \[ 0 = v_0 - 10 \]
+                    \[ v_0 = 10 \text{ m/s} \]
+                </div>
+                <div class="final-answer">
+                    תשובה סופית: גודל המהירות ההתחלתית שבה נזרק הכדור הוא \( 10 \text{ m/s} \).
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                שימו לב! יכולנו להגיע לאותה התוצאה בדיוק גם באמצעות נוסחת המקום-זמן \( y = y_0 + v_0 t + \frac{1}{2}at^2 \). אם נציב את נתוני נקודה B בה המיקום מהגרף הוא \( y = 45 \text{ m} \), נקבל: \( 45 = 40 + v_0 \cdot 1 + 0.5 \cdot (-10) \cdot 1^2 \). פתרון המשוואה ייתן שוב \( v_0 = 10 \text{ m/s} \). בפיזיקה, תמיד טוב שיש דרך נוספת לבדוק את עצמנו בבחינה!
+            </div>
+        </div>
+
+        <!-- סעיף ב(1) -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ב' (1): השוואת מהירויות רגעיות</h3>
+            
+            <div class="mb-4">
+                <div class="step-title">מה נתון:</div>
+                <p>מצאנו בסעיף הקודם שהמהירות בנקודה A היא \( v_A = 10 \text{ m/s} \). מתוך הגרף, הזמן בנקודה C הוא \( t_C = 3 \text{ s} \). התאוצה נותרת קבועה לאורך כל המסלול, \( a = -10 \text{ m/s}^2 \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">מה מחפשים:</div>
+                <p>לקבוע האם גודל המהירות בנקודה C קטן, גדול או שווה לגודל המהירות בנקודה A, ולנמק זאת.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">נוסחאות בשימוש (מתוך דף הנוסחאות):</div>
+                <p>נשתמש שוב בנוסחת המהירות בתנועה שוות-תאוצה: <span class="formula-badge">\( v = v_0 + at \)</span>.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">הצבה ופתרון (דרך א' - חישוב):</div>
+                <p>נחשב את המהירות הרגעית של הכדור ברגע שבו הוא נמצא בנקודה C (בזמן \( t = 3 \text{ s} \)):</p>
+                <div class="overflow-x-auto text-lg">
+                    \[ v_C = 10 + (-10) \cdot 3 \]
+                    \[ v_C = 10 - 30 = -20 \text{ m/s} \]
+                </div>
+                <p>מהירות הכדור בנקודה C היא \( -20 \text{ m/s} \). הסימן השלילי מציין שהכדור נע כלפי מטה. מכיוון שנשאלנו על <strong>גודל</strong> המהירות, עלינו להתייחס לערך המוחלט של המהירויות: בנקודה A הגודל הוא \( |10| = 10 \text{ m/s} \) ובנקודה C הגודל הוא \( |-20| = 20 \text{ m/s} \).</p>
+                <p>מכיוון ש- \( 20 > 10 \), אנו למדים כי גודל המהירות גדל.</p>
+                
+                <div class="mt-6 mb-4 bg-indigo-50 border-r-4 border-indigo-500 p-4 rounded-l-lg text-indigo-900 shadow-sm">
+                    <h3 class="font-bold mb-2 flex items-center gap-2 text-lg">
+                        <span>⚡ דרך פתרון חלופית ומהירה (מתוך התבוננות בגרף)</span>
+                    </h3>
+                    <p class="mb-2">השאלה לא דרשה מאיתנו לחשב את הערכים המדויקים! מכיוון שזהו גרף <strong>מקום-זמן</strong>, המהירות הרגעית מיוצגת על ידי <strong>שיפוע המשיק</strong> לגרף בכל נקודה. גודל המהירות נקבע על פי <strong>תלילות</strong> השיפוע (הערך המוחלט שלו).</p>
+                    <p class="mb-2">ניתן לראות בעין כי בנקודה C הגרף יורד בתלילות רבה יותר מאשר העלייה המתונה יחסית בנקודה A. מסקנה מיידית וללא חישוב: גודל המהירות בנקודה C גדול יותר.</p>
+                    <p class="text-sm opacity-90 border-t border-indigo-200 pt-2 mt-2"><strong>הסבר מתמטי למיטיבי לכת:</strong> קודקוד הפרבולה (שם המהירות מתאפסת) נמצא ב- \( t=1 \). נקודה A נמצאת במרחק של שנייה אחת מהקודקוד, ואילו נקודה C נמצאת במרחק של שתי שניות מהקודקוד. בגרף פרבולי של תנועה שוות תאוצה, ככל שמתרחקים בזמן מציר הסימטריה (הקודקוד), שיפוע הגרף (ולכן גודל המהירות) גדל תמיד.</p>
+                </div>
+
+                <div class="final-answer">
+                    תשובה סופית: גודל המהירות הרגעית של הכדור בנקודה C <strong>גדול</strong> מגודל המהירות בנקודה A.
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                חשוב מאד להבחין בין "מהירות" (Velocity) לבין "גודל מהירות" (Speed). מהירות היא וקטור שיש לו כיוון, המבוטא כאן באמצעות סימן (+ למעלה, - למטה). גודל המהירות שואל אך ורק "כמה מהר" הגוף נע, ללא קשר לאיזה כיוון, ולכן אנו מסתכלים על הערך המוחלט!
+            </div>
+        </div>
+
+        <!-- סעיף ב(2) -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ב' (2): השוואת התאוצה בנקודות השונות</h3>
+            
+            <div class="mb-4">
+                <div class="step-title">מה נתון:</div>
+                <p>הכדור נמצא בשלבים שונים של מעופו, בנקודה A (רגע הזריקה) ובנקודה B (שיא הגובה, בו המהירות הרגעית מתאפסת). נאמר בשאלה כי התנגדות האוויר ניתנת להזנחה.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">מה מחפשים:</div>
+                <p>לקבוע ולנמק האם התאוצה של הכדור בנקודה B זהה להתאוצה בנקודה A מבחינת גודל ומבחינת כיוון.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">עיקרון פיזיקלי בשימוש (נפילה חופשית):</div>
+                <p>גוף הנע באוויר כאשר התנגדות האוויר מוזנחת נמצא ב"נפילה חופשית". בתנועה כזו, תאוצת הגוף היא קבועה לכל אורך המסלול ושווה לתאוצת הנפילה החופשית, <span class="formula-badge">\( g \approx 10 \text{ m/s}^2 \)</span> כלפי מטה.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">הסבר ופתרון:</div>
+                <p>מרגע שהכדור עוזב את היד (נקודה A) ועד שהוא פוגע בקרקע, הוא נמצא בתנועה של נפילה חופשית. תאוצת הנפילה החופשית אינה תלויה במהירות הכדור באותו רגע או בכיוון התנועה שלו (בין אם הוא עולה, יורד, או נעצר לרגע בשיא הגובה).</p>
+                <p>לכן, גם בנקודה A וגם בנקודה B (בשיא הגובה), התאוצה היא אותה תאוצה בדיוק, כפי שהיא קבועה לכל אורך התנועה.</p>
+
+                <div class="final-answer">
+                    תשובה סופית: התאוצה בנקודה B <strong>זהה</strong> לחלוטין להתאוצה בנקודה A. בשתי הנקודות גודל התאוצה הוא \( 10 \text{ m/s}^2 \) וכיוונה הוא כלפי מטה אל מרכז כדור הארץ.
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                מלכודת קלאסית! תלמידים רבים חושבים בטעות שבשיא הגובה (נקודה B), מאחר והמהירות מתאפסת - אז גם התאוצה מתאפסת. זו טעות! תאוצה אינה מעידה על קיום מהירות, אלא על <strong>שינוי</strong> במהירות. הכדור מאט בדרכו למעלה, עוצר לרגע, ומיד מאיץ כלפי מטה. אותו קצב שינוי במהירות (התאוצה \( g \) כלפי מטה) קיים ופועל ללא הפסקה לכל אורך התנועה.
+            </div>
+        </div>
+
+        <!-- סעיף ג -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ג': מהירות ממוצעת בכל זמן התנועה</h3>
+            
+            <div class="mb-4">
+                <div class="step-title">מה נתון:</div>
+                <p>נתבונן בפרק הזמן מרגע הזריקה ועד פגיעתו של הכדור בקרקע. רגע הזריקה הוא \( t_i = 0 \text{ s} \) והמיקום בו הוא \( y_i = 40 \text{ m} \). רגע הפגיעה בקרקע מתואר בגרף בנקודה D. הזמן שם הוא \( t_f = 4 \text{ s} \) והמיקום הוא גובה הקרקע, כלומר \( y_f = 0 \text{ m} \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">מה מחפשים:</div>
+                <p>את המהירות הממוצעת (גודל וכיוון) של הכדור במהלך כל מעופו באוויר.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">נוסחאות בשימוש (מתוך דף הנוסחאות):</div>
+                <p>נוסחת המהירות הממוצעת: <span class="formula-badge">\( \overline{v} = \frac{\Delta x}{\Delta t} \)</span>. מכיוון שהתנועה מתרחשת בציר האנכי, נסמן את ההעתק כ- \( \Delta y \), כלומר המשוואה היא \( \overline{v} = \frac{\Delta y}{\Delta t} = \frac{y_f - y_i}{t_f - t_i} \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">הצבה ופתרון:</div>
+                <p>נציב במשוואה את נתוני נקודת ההתחלה ונקודת הסיום:</p>
+                <div class="overflow-x-auto text-lg">
+                    \[ \overline{v} = \frac{0 - 40}{4 - 0} = \frac{-40}{4} = -10 \text{ m/s} \]
+                </div>
+                <p>גודל המהירות הממוצעת שקיבלנו הוא \( 10 \text{ m/s} \) והסימן שלילי, מה שמעיד על כיוון מטה.</p>
+                <div class="final-answer">
+                    תשובה סופית: המהירות הממוצעת של הכדור היא בגודל של \( 10 \text{ m/s} \), וכיוונה הוא <strong>כלפי מטה</strong>.
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                שימו לב! מהירות ממוצעת תלויה רק בנקודת ההתחלה ובנקודת הסיום, וכלל לא אכפת לה מה "קרה באמצע". למרות שהכדור עלה למעלה ולאחר מכן ירד למטה, ההעתק הכולל שלו (השינוי הכולל במיקום) היה \( 40 \text{ m} \) כלפי מטה. לכן כיוון המהירות הממוצעת הוא בהכרח כלפי מטה.
+            </div>
+        </div>
+
+        <!-- סעיף ד -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ד': סרטוט גרף מהירות-זמן</h3>
+            
+            <div class="mb-4">
+                <div class="step-title">מה נתון:</div>
+                <p>הראנו כי התנועה היא תנועה שוות-תאוצה, שבה המהירות ההתחלתית היא \( v_0 = 10 \text{ m/s} \) והתאוצה היא \( a = -10 \text{ m/s}^2 \). הזמן הכולל של התנועה הוא מ- \( t=0 \) ועד \( t=4 \text{ s} \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">מה מחפשים:</div>
+                <p>לסרטט במחברת גרף של מהירות הכדור כפונקציה של הזמן \( v(t) \), ולסמן עליו את הנקודות a, b, c, d המתאימות לנקודות המקוריות.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">נוסחאות בשימוש (מתוך דף הנוסחאות):</div>
+                <p>הנוסחה המקשרת בין מהירות לזמן בתאוצה קבועה: <span class="formula-badge">\( v = v_0 + at \)</span>. כמו כן, נזכור שהתאוצה היא קצב שינוי המהירות: <span class="formula-badge">\( a = \frac{dv}{dt} \)</span>, המייצגת את שיפוע הגרף.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">הצבה ופתרון:</div>
+                <p>משוואת המהירות-זמן שלנו היא פונקציה ליניארית (קו ישר): \( v(t) = 10 - 10t \). נחשב את מהירות הכדור בכל אחת מהנקודות המבוקשות, וניצור עבורן נקודות ציון \( (t, v) \):</p>
+                <ul class="list-disc list-inside mb-4 mr-4 text-slate-700 space-y-2 font-medium">
+                    <li><strong>נקודה a (בזמן \( t=0 \)):</strong> \( v = 10 - 10(0) = 10 \text{ m/s} \). לכן: \( a(0, 10) \)</li>
+                    <li><strong>נקודה b (בזמן \( t=1 \)):</strong> \( v = 10 - 10(1) = 0 \text{ m/s} \). לכן: \( b(1, 0) \)</li>
+                    <li><strong>נקודה c (בזמן \( t=3 \)):</strong> \( v = 10 - 10(3) = -20 \text{ m/s} \). לכן: \( c(3, -20) \)</li>
+                    <li><strong>נקודה d (בזמן \( t=4 \)):</strong> \( v = 10 - 10(4) = -30 \text{ m/s} \). לכן: \( d(4, -30) \)</li>
+                </ul>
+                <p>נסרטט את הגרף. זהו קו ישר היורד בשיפוע קבוע (ששווה לתאוצה, \( -10 \text{ m/s}^2 \)).</p>
+                
+                <div class="svg-container">
+                    <div class="w-full max-w-lg border rounded bg-white shadow-sm p-2">
+                        <img src="image.png" alt="גרף מהירות-זמן עבור סעיף ד" class="w-full h-auto rounded" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                תמיד זכרו את הכלל: בתנועה שוות-תאוצה, גרף המהירות כתלות בזמן חייב להיות קו ישר! שיפוע הקו מייצג את התאוצה. במקרה שלנו השיפוע הוא שלילי וקבוע לאורך כל הדרך, בדיוק כמו התאוצה שלנו.
+            </div>
+        </div>
+
+        <!-- סעיף ה -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ה': השפעת כוח אופקי על התנועה האנכית</h3>
+            
+            <div class="mb-4">
+                <div class="step-title">מה נתון:</div>
+                <p>האדם זורק את הכדור בשנית, בדיוק מאותו מקום ועם אותה מהירות התחלתית כפי שחושבה. עם זאת, בדיוק ברגע בו הכדור עובר בנקודה C, מופעל עליו לפתע כוח אופקי רגעי (המקנה לו מהירות אופקית פתאומית).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">מה מחפשים:</div>
+                <p>לקבוע ולנמק האם גרף פונקציית המיקום האנכי \( y(t) \), שהוצג בתחילת השאלה, ישתנה בעקבות אותו כוח אופקי רגעי.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">נוסחאות בשימוש (מושגי):</div>
+                <p>כאן אנו נשענים על העיקרון של אי-תלות בין הצירים (החוק השני של ניוטון מוחל בנפרד על כל ציר: <span class="formula-badge">\( \Sigma F_y = m \cdot a_y \)</span> ו- <span class="formula-badge">\( \Sigma F_x = m \cdot a_x \)</span>).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title">הצבה ופתרון:</div>
+                <p>כוח רגעי הפועל בכיוון האופקי בלבד מקנה לכדור רכיב מהירות חדש בציר ה-x. מרגע זה ואילך התנועה הופכת לתנועה דו-ממדית (מעין זריקה אופקית / משופעת החל מנקודה C).</p>
+                <p>אולם, עלינו לבחון מה קורה בציר האנכי (ציר ה-y). מאחר והכוח שהופעל היה אופקי לחלוטין, אין לו שום רכיב בציר האנכי. הכוח היחיד שממשיך לפעול על הכדור בציר ה-y נותר כוח הכבידה \( mg \) כלפי מטה. מכאן נובע שתאוצת הכדור בציר ה-y נשארת \( -10 \text{ m/s}^2 \) גם לאחר הפעלת הכוח הרגעי. נוסף על כך, המהירות האנכית של הכדור ברגע הפעלת הכוח אינה משתנה (הכוח הרגעי הוסיף מהירות בציר ה-x בלבד).</p>
+                <p>מאחר והמיקום ההתחלתי, המהירות האנכית ההתחלתית והתאוצה האנכית נותרו זהים לחלוטין לאלה שבזריקה הראשונה - משוואת התנועה בציר ה-y לא משתנה כלל.</p>
+                
+                <div class="final-answer">
+                    תשובה סופית: הגרף המתאר את המיקום האנכי כפונקציה של הזמן \( y(t) \) <strong>לא ישתנה כלל</strong>. התנועה בציר האופקי והתנועה בציר האנכי הן תנועות בלתי תלויות לחלוטין (העיקרון של אי-תלות בין הצירים).
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                זהו אחד העקרונות המרתקים והחשובים בפיזיקה קלאסית! שינוי במהירות האופקית ישפיע רק על המרחק האופקי שהכדור יעבור לפני שיפגע בקרקע. אולם, קצב הנפילה שלו, משך הזמן שייקח לו להגיע לקרקע, ומיקומו האנכי בכל שנייה ושנייה - כולם נקבעים אך ורק על ידי כוח הכבידה המושך מטה, ולכן נשארים ללא כל שינוי.
+            </div>
+        </div>
+
+    </div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה: ' + document.lastModified;
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const day = pad(modified.getDate());
+                const month = pad(modified.getMonth() + 1);
+                const year = String(modified.getFullYear()).slice(-2);
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+                versionUpdatedAt.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
