@@ -206,6 +206,12 @@
             background: #eff6ff;
         }
 
+        .meta-pill.pending {
+            border-color: #fed7aa;
+            color: #9a3412;
+            background: #fff7ed;
+        }
+
         .empty-state {
             background: var(--green-50);
             border-right: 4px solid var(--green-500);
@@ -343,6 +349,12 @@
     <script>
         const staticSolutions = [];
         const folderNamePattern = /^(\d{4})\s+שאלה\s+(.+)$/;
+        const MECHANICS_FOLDER_REPO_PATH = "webfiles/פתרונות שאלות בגרות/מכניקה שאלות בגרות";
+        const DISCOVERY_EXCLUDED_FILES = new Set([
+            "question-topics.json",
+            "תפריט ראשי מכניקה.html",
+            "ניהול נושאי שאלות מכניקה.html"
+        ]);
 
         const yearSelect = document.getElementById("yearSelect");
         const resultsInfo = document.getElementById("resultsInfo");
@@ -356,6 +368,10 @@
         let solutions = [...staticSolutions];
         let topicCatalog = [];
         const selectedTopics = new Set();
+
+        function isLocalhost() {
+            return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        }
 
         function parseFromFolderName(folderName) {
             const match = folderName.match(folderNamePattern);
@@ -377,26 +393,183 @@
             return String(a.question).localeCompare(String(b.question), "he", { numeric: true });
         }
 
+        function normalizeSlashes(path) {
+            return String(path || "").replace(/\\/g, "/").replace(/^\/+/, "");
+        }
+
+        function normalizeRelativeQuestionPath(path) {
+            let normalized = normalizeSlashes(path);
+            if (normalized.startsWith("./")) {
+                normalized = normalized.slice(2);
+            }
+            if (normalized.startsWith(`${MECHANICS_FOLDER_REPO_PATH}/`)) {
+                normalized = normalized.slice(MECHANICS_FOLDER_REPO_PATH.length + 1);
+            }
+            return normalized;
+        }
+
+        function extractTitleFromPath(path) {
+            const normalized = normalizeRelativeQuestionPath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            return parts.length >= 2 ? parts[0] : "";
+        }
+
+        function createIdFromTitle(title, usedIds) {
+            const parsed = parseFromFolderName(title);
+            const base = parsed ? `${parsed.year}-${String(parsed.question).replace(/\s+/g, "-")}` : title.replace(/\s+/g, "-");
+            let candidate = base;
+            let i = 2;
+            while (usedIds.has(candidate)) {
+                candidate = `${base}-${i}`;
+                i += 1;
+            }
+            usedIds.add(candidate);
+            return candidate;
+        }
+
+        function getRepoContextFromLocation() {
+            const hostMatch = window.location.hostname.match(/^([^.]+)\.github\.io$/);
+            if (!hostMatch) {
+                return null;
+            }
+            const pathParts = window.location.pathname.split("/").filter(Boolean);
+            if (!pathParts.length) {
+                return null;
+            }
+            return { owner: hostMatch[1], repo: pathParts[0] };
+        }
+
+        function isQuestionHtmlPath(path) {
+            const normalized = normalizeRelativeQuestionPath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            if (parts.length < 2) {
+                return false;
+            }
+            const fileName = parts[parts.length - 1];
+            if (!fileName.toLowerCase().endsWith(".html")) {
+                return false;
+            }
+            if (DISCOVERY_EXCLUDED_FILES.has(fileName)) {
+                return false;
+            }
+            return folderNamePattern.test(parts[0]);
+        }
+
+        async function discoverQuestionPaths() {
+            const discovered = new Set();
+
+            if (isLocalhost()) {
+                const response = await fetch("/api/local-tree", { cache: "no-store" });
+                if (!response.ok) {
+                    throw new Error("local-tree-unavailable");
+                }
+                const data = await response.json();
+                const tree = Array.isArray(data.tree) ? data.tree : [];
+                tree.forEach((node) => {
+                    if (!node || node.type !== "blob" || typeof node.path !== "string") {
+                        return;
+                    }
+                    if (!node.path.startsWith(`${MECHANICS_FOLDER_REPO_PATH}/`)) {
+                        return;
+                    }
+                    if (!isQuestionHtmlPath(node.path)) {
+                        return;
+                    }
+                    discovered.add(normalizeRelativeQuestionPath(node.path));
+                });
+                return [...discovered];
+            }
+
+            const ctx = getRepoContextFromLocation();
+            if (!ctx) {
+                return [];
+            }
+
+            const encodedPath = MECHANICS_FOLDER_REPO_PATH.split("/").map(encodeURIComponent).join("/");
+            const treeUrl = `https://api.github.com/repos/${ctx.owner}/${ctx.repo}/git/trees/HEAD?recursive=1`;
+            const response = await fetch(treeUrl, { cache: "no-store" });
+            if (!response.ok) {
+                throw new Error("github-tree-unavailable");
+            }
+            const data = await response.json();
+            const tree = Array.isArray(data.tree) ? data.tree : [];
+            tree.forEach((node) => {
+                if (!node || node.type !== "blob" || typeof node.path !== "string") {
+                    return;
+                }
+                if (!node.path.startsWith(`${MECHANICS_FOLDER_REPO_PATH}/`)) {
+                    return;
+                }
+                if (!isQuestionHtmlPath(node.path)) {
+                    return;
+                }
+                discovered.add(normalizeRelativeQuestionPath(node.path));
+            });
+            return [...discovered];
+        }
+
+        function mergeTopicDataWithDiscovered(topicData, discoveredPaths) {
+            const questions = Array.isArray(topicData.questions) ? topicData.questions.map((q) => ({ ...q })) : [];
+            const topics = Array.isArray(topicData.topics) ? topicData.topics : [];
+
+            const byPath = new Map();
+            const usedIds = new Set();
+            questions.forEach((question) => {
+                const normalizedPath = normalizeRelativeQuestionPath(question.path);
+                question.path = normalizedPath;
+                if (!Array.isArray(question.topics)) {
+                    question.topics = [];
+                }
+                byPath.set(normalizedPath, question);
+                if (question.id) {
+                    usedIds.add(question.id);
+                }
+            });
+
+            discoveredPaths.forEach((path) => {
+                const normalizedPath = normalizeRelativeQuestionPath(path);
+                if (byPath.has(normalizedPath)) {
+                    return;
+                }
+                const title = extractTitleFromPath(normalizedPath) || normalizedPath;
+                const id = createIdFromTitle(title, usedIds);
+                const newQuestion = {
+                    id,
+                    title,
+                    path: normalizedPath,
+                    topics: []
+                };
+                questions.push(newQuestion);
+                byPath.set(normalizedPath, newQuestion);
+            });
+
+            return { topics, questions };
+        }
+
         async function loadSolutionsFromTopicsJson() {
             const response = await fetch("./question-topics.json", { cache: "no-store" });
             if (!response.ok) {
                 throw new Error("topics-json-load-failed");
             }
 
-            const data = await response.json();
+            const rawData = await response.json();
+            const discoveredPaths = await discoverQuestionPaths();
+            const data = mergeTopicDataWithDiscovered(rawData, discoveredPaths);
             const questions = Array.isArray(data.questions) ? data.questions : [];
             topicCatalog = Array.isArray(data.topics) ? data.topics : [];
 
             return questions.map((entry) => {
                 const parsed = parseFromFolderName(entry.title) || { year: 0, question: "?", title: entry.title };
                 const topicTags = Array.isArray(entry.topics) ? entry.topics : [];
+                const needsTagging = topicTags.length === 0;
                 return {
                     year: parsed.year,
                     question: parsed.question,
                     title: entry.title,
                     href: `./${entry.path}`,
                     tags: ["מכניקה", "בגרות", ...topicTags],
-                    topicTags
+                    topicTags,
+                    needsTagging
                 };
             });
         }
@@ -526,6 +699,7 @@
                         const cls = (item.topicTags || []).includes(t) ? "meta-pill topic" : "meta-pill";
                         return `<span class="${cls}">${t}</span>`;
                     }).join(" ");
+                    const pendingTag = item.needsTagging ? '<span class="meta-pill pending">נדרש תיוג</span>' : "";
 
                     card.innerHTML = `
                         <div>
@@ -535,7 +709,7 @@
                         <div>
                             <a class="solution-link" href="${item.href}">${item.title}</a>
                             <div class="mt-2 text-sm text-slate-600">שנה: <strong>${item.year}</strong> | שאלה: <strong>${item.question}</strong></div>
-                            <div class="mt-2">${tagsHtml}</div>
+                            <div class="mt-2">${pendingTag} ${tagsHtml}</div>
                         </div>
                     `;
 

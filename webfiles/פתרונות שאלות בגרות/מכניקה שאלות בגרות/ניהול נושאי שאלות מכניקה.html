@@ -151,6 +151,12 @@
 
     <script>
         const folderNamePattern = /^(\d{4})\s+שאלה\s+(.+)$/;
+        const MECHANICS_FOLDER_REPO_PATH = "webfiles/פתרונות שאלות בגרות/מכניקה שאלות בגרות";
+        const DISCOVERY_EXCLUDED_FILES = new Set([
+            "question-topics.json",
+            "תפריט ראשי מכניקה.html",
+            "ניהול נושאי שאלות מכניקה.html"
+        ]);
         const editorQuestionSelect = document.getElementById("editorQuestionSelect");
         const reloadTopicsBtn = document.getElementById("reloadTopicsBtn");
         const saveTopicsBtn = document.getElementById("saveTopicsBtn");
@@ -178,6 +184,155 @@
             return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
         }
 
+        function normalizeSlashes(path) {
+            return String(path || "").replace(/\\/g, "/").replace(/^\/+/, "");
+        }
+
+        function normalizeRelativeQuestionPath(path) {
+            let normalized = normalizeSlashes(path);
+            if (normalized.startsWith("./")) {
+                normalized = normalized.slice(2);
+            }
+            if (normalized.startsWith(`${MECHANICS_FOLDER_REPO_PATH}/`)) {
+                normalized = normalized.slice(MECHANICS_FOLDER_REPO_PATH.length + 1);
+            }
+            return normalized;
+        }
+
+        function extractTitleFromPath(path) {
+            const normalized = normalizeRelativeQuestionPath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            return parts.length >= 2 ? parts[0] : "";
+        }
+
+        function createIdFromTitle(title, usedIds) {
+            const parsed = parseFromFolderName(title);
+            const base = parsed ? `${parsed.year}-${String(parsed.question).replace(/\s+/g, "-")}` : title.replace(/\s+/g, "-");
+            let candidate = base;
+            let i = 2;
+            while (usedIds.has(candidate)) {
+                candidate = `${base}-${i}`;
+                i += 1;
+            }
+            usedIds.add(candidate);
+            return candidate;
+        }
+
+        function getRepoContextFromLocation() {
+            const hostMatch = window.location.hostname.match(/^([^.]+)\.github\.io$/);
+            if (!hostMatch) {
+                return null;
+            }
+            const pathParts = window.location.pathname.split("/").filter(Boolean);
+            if (!pathParts.length) {
+                return null;
+            }
+            return { owner: hostMatch[1], repo: pathParts[0] };
+        }
+
+        function isQuestionHtmlPath(path) {
+            const normalized = normalizeRelativeQuestionPath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            if (parts.length < 2) {
+                return false;
+            }
+            const fileName = parts[parts.length - 1];
+            if (!fileName.toLowerCase().endsWith(".html")) {
+                return false;
+            }
+            if (DISCOVERY_EXCLUDED_FILES.has(fileName)) {
+                return false;
+            }
+            return folderNamePattern.test(parts[0]);
+        }
+
+        async function discoverQuestionPaths() {
+            const discovered = new Set();
+
+            if (isLocalhost()) {
+                const response = await fetch("/api/local-tree", { cache: "no-store" });
+                if (!response.ok) {
+                    throw new Error("local-tree-unavailable");
+                }
+                const data = await response.json();
+                const tree = Array.isArray(data.tree) ? data.tree : [];
+                tree.forEach((node) => {
+                    if (!node || node.type !== "blob" || typeof node.path !== "string") {
+                        return;
+                    }
+                    if (!node.path.startsWith(`${MECHANICS_FOLDER_REPO_PATH}/`)) {
+                        return;
+                    }
+                    if (!isQuestionHtmlPath(node.path)) {
+                        return;
+                    }
+                    discovered.add(normalizeRelativeQuestionPath(node.path));
+                });
+                return [...discovered];
+            }
+
+            const ctx = getRepoContextFromLocation();
+            if (!ctx) {
+                return [];
+            }
+
+            const treeUrl = `https://api.github.com/repos/${ctx.owner}/${ctx.repo}/git/trees/HEAD?recursive=1`;
+            const response = await fetch(treeUrl, { cache: "no-store" });
+            if (!response.ok) {
+                throw new Error("github-tree-unavailable");
+            }
+            const data = await response.json();
+            const tree = Array.isArray(data.tree) ? data.tree : [];
+            tree.forEach((node) => {
+                if (!node || node.type !== "blob" || typeof node.path !== "string") {
+                    return;
+                }
+                if (!node.path.startsWith(`${MECHANICS_FOLDER_REPO_PATH}/`)) {
+                    return;
+                }
+                if (!isQuestionHtmlPath(node.path)) {
+                    return;
+                }
+                discovered.add(normalizeRelativeQuestionPath(node.path));
+            });
+            return [...discovered];
+        }
+
+        function mergeTopicDataWithDiscovered(data, discoveredPaths) {
+            const topics = Array.isArray(data.topics) ? data.topics : [];
+            const questions = Array.isArray(data.questions) ? data.questions.map((q) => ({ ...q })) : [];
+
+            const byPath = new Map();
+            const usedIds = new Set();
+            questions.forEach((question) => {
+                question.path = normalizeRelativeQuestionPath(question.path);
+                if (!Array.isArray(question.topics)) {
+                    question.topics = [];
+                }
+                byPath.set(question.path, question);
+                if (question.id) {
+                    usedIds.add(question.id);
+                }
+            });
+
+            discoveredPaths.forEach((path) => {
+                const normalizedPath = normalizeRelativeQuestionPath(path);
+                if (byPath.has(normalizedPath)) {
+                    return;
+                }
+                const title = extractTitleFromPath(normalizedPath) || normalizedPath;
+                const id = createIdFromTitle(title, usedIds);
+                questions.push({
+                    id,
+                    title,
+                    path: normalizedPath,
+                    topics: []
+                });
+            });
+
+            return { topics, questions };
+        }
+
         function getQuestionSortKey(entry) {
             const parsed = parseFromFolderName(entry.title || "");
             return {
@@ -203,10 +358,13 @@
                 throw new Error("topics-json-load-failed");
             }
 
-            const data = await response.json();
+            const rawData = await response.json();
+            const discoveredPaths = await discoverQuestionPaths();
+            const mergedData = mergeTopicDataWithDiscovered(rawData, discoveredPaths);
+
             topicData = {
-                topics: Array.isArray(data.topics) ? data.topics : [],
-                questions: Array.isArray(data.questions) ? data.questions : []
+                topics: mergedData.topics,
+                questions: mergedData.questions
             };
             topicCatalog = topicData.topics;
         }
