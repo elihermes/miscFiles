@@ -513,6 +513,7 @@
             const topics = Array.isArray(topicData.topics) ? topicData.topics : [];
 
             const byPath = new Map();
+            const existingTitles = new Set();
             const usedIds = new Set();
             questions.forEach((question) => {
                 const normalizedPath = normalizeRelativeQuestionPath(question.path);
@@ -521,6 +522,9 @@
                     question.topics = [];
                 }
                 byPath.set(normalizedPath, question);
+                if (question.title) {
+                    existingTitles.add(String(question.title));
+                }
                 if (question.id) {
                     usedIds.add(question.id);
                 }
@@ -532,6 +536,10 @@
                     return;
                 }
                 const title = extractTitleFromPath(normalizedPath) || normalizedPath;
+                // Avoid duplicate "pending tagging" rows when a folder already has a tagged main entry.
+                if (existingTitles.has(title)) {
+                    return;
+                }
                 const id = createIdFromTitle(title, usedIds);
                 const newQuestion = {
                     id,
@@ -541,9 +549,32 @@
                 };
                 questions.push(newQuestion);
                 byPath.set(normalizedPath, newQuestion);
+                existingTitles.add(title);
             });
 
-            return { topics, questions };
+            const dedupedByTitle = new Map();
+            questions.forEach((question) => {
+                const title = String(question.title || "").trim();
+                if (!title) {
+                    return;
+                }
+
+                const current = dedupedByTitle.get(title);
+                if (!current) {
+                    dedupedByTitle.set(title, question);
+                    return;
+                }
+
+                const currentTagged = Array.isArray(current.topics) && current.topics.length > 0;
+                const candidateTagged = Array.isArray(question.topics) && question.topics.length > 0;
+
+                // If one duplicate is tagged and the other is empty, keep the tagged entry.
+                if (!currentTagged && candidateTagged) {
+                    dedupedByTitle.set(title, question);
+                }
+            });
+
+            return { topics, questions: [...dedupedByTitle.values()] };
         }
 
         async function loadSolutionsFromTopicsJson() {
