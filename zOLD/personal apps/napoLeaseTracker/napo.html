@@ -102,6 +102,8 @@
     GoogleAuthProvider,
     onAuthStateChanged,
     signInWithPopup,
+    signInWithRedirect,
+    getRedirectResult,
     signOut
   } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
   import {
@@ -135,6 +137,23 @@
   const VAT = 0.18;                   // מע"מ (הנחה)
 
   const $ = (id) => document.getElementById(id);
+
+  function describeAuthError(err){
+    const code = err?.code || 'unknown';
+    if(code === 'auth/unauthorized-domain'){
+      return 'הדומיין לא מורשה ב-Firebase Auth. הוסף את דומיין GitHub Pages לרשימת Authorized domains.';
+    }
+    if(code === 'auth/operation-not-allowed'){
+      return 'Google Sign-in לא פעיל בפרויקט. הפעל Google כספק התחברות ב-Firebase Authentication.';
+    }
+    if(code === 'auth/popup-blocked'){
+      return 'הדפדפן חסם חלון קופץ. מאשר/י popups או נסה/י שוב.';
+    }
+    if(code === 'auth/popup-closed-by-user'){
+      return 'חלון ההתחברות נסגר לפני סיום. אם זה קורה מיד, לרוב מדובר בדומיין לא מורשה.';
+    }
+    return `התחברות נכשלה (${code}).`;
+  }
 
   function daysBetweenInclusive(a, b){
     const MS = 24*60*60*1000;
@@ -583,12 +602,29 @@
     $('annualCapText').textContent = ANNUAL_CAP.toLocaleString('he-IL');
     $('startDateText').textContent = START_DATE.toLocaleDateString('he-IL');
     $('calcBtn').addEventListener('click', () => analyze());
+
+    getRedirectResult(auth).catch((err) => {
+      console.error(err);
+      setSaveStatus(describeAuthError(err), true);
+    });
+
     $('loginBtn').addEventListener('click', async () => {
       try{
         await signInWithPopup(auth, provider);
       }catch(err){
         console.error(err);
-        setSaveStatus('התחברות נכשלה. נסה שוב או בדוק חלון קופץ.', true);
+        const code = err?.code || '';
+        if(code === 'auth/popup-blocked' || code === 'auth/popup-closed-by-user' || code === 'auth/cancelled-popup-request'){
+          try{
+            await signInWithRedirect(auth, provider);
+            return;
+          }catch(redirectErr){
+            console.error(redirectErr);
+            setSaveStatus(describeAuthError(redirectErr), true);
+            return;
+          }
+        }
+        setSaveStatus(describeAuthError(err), true);
       }
     });
     $('logoutBtn').addEventListener('click', async () => {
