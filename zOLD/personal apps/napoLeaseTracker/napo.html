@@ -4,732 +4,143 @@
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
   <title>בדיקת קילומטראז׳ מול מכסה</title>
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Space+Grotesk:wght@500;700&display=swap" rel="stylesheet">
   <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
   <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
   <style>
     * { box-sizing: border-box; }
-    :root {
-      --bg: #0a0d14;
-      --bg-2: #111827;
-      --surface: rgba(22, 28, 39, 0.92);
-      --surface-2: rgba(31, 41, 55, 0.9);
-      --surface-3: rgba(17, 24, 39, 0.76);
-      --line: rgba(148, 163, 184, 0.16);
-      --ink: #f8fafc;
-      --muted: #94a3b8;
-      --accent: #5eead4;
-      --accent-2: #38bdf8;
-      --accent-3: #22c55e;
-      --warn: #f97316;
-      --danger: #fb7185;
-      --ok-bg: rgba(34, 197, 94, 0.16);
-      --bad-bg: rgba(249, 115, 22, 0.18);
-      --shadow: 0 28px 70px rgba(0, 0, 0, 0.46);
-    }
-
-    html, body {
-      width: 100%;
-      max-width: 100%;
-      min-height: 100%;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at top, rgba(56, 189, 248, 0.12), transparent 26%),
-        radial-gradient(circle at bottom, rgba(16, 185, 129, 0.12), transparent 28%),
-        linear-gradient(180deg, #070a10 0%, #0c111b 100%);
-    }
-
-    body {
-      margin: 0;
-      color: var(--ink);
-      font-family: "Assistant", "Segoe UI", sans-serif;
-      display: grid;
-      place-items: center;
-    }
-
-    .phone-shell {
-      width: min(100vw, 460px);
-      height: 100dvh;
-      padding: 12px;
-    }
-
-    .app-shell {
-      position: relative;
-      width: 100%;
-      height: 100%;
-      display: grid;
-      grid-template-rows: auto minmax(0, 1fr) auto;
-      border-radius: 34px;
-      overflow: hidden;
-      background:
-        radial-gradient(circle at top right, rgba(94, 234, 212, 0.14), transparent 24%),
-        radial-gradient(circle at top left, rgba(56, 189, 248, 0.14), transparent 28%),
-        linear-gradient(180deg, #121826 0%, #0d1320 100%);
-      border: 1px solid rgba(255,255,255,0.08);
-      box-shadow: var(--shadow);
-    }
-
-    .app-shell::before {
-      content: "";
-      position: absolute;
-      top: 10px;
-      left: 50%;
-      transform: translateX(-50%);
-      width: 120px;
-      height: 30px;
-      border-radius: 999px;
-      background: rgba(0,0,0,0.46);
-      z-index: 10;
-      pointer-events: none;
-    }
-
-    .topbar {
-      position: relative;
-      z-index: 5;
-      padding: 56px 18px 14px;
-      background: linear-gradient(180deg, rgba(6, 9, 16, 0.84), rgba(6, 9, 16, 0));
-    }
-
-    .status-row-top {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 10px;
-      margin-bottom: 10px;
-    }
-
-    .app-mark {
-      display: inline-flex;
-      align-items: center;
-      gap: 8px;
-      padding: 7px 10px;
-      border-radius: 999px;
-      background: rgba(148, 163, 184, 0.12);
-      color: var(--accent);
-      font-size: 12px;
-      font-weight: 800;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-    }
-
-    .profile-pill {
-      max-width: 58%;
-      padding: 8px 12px;
-      border-radius: 999px;
-      background: rgba(255,255,255,0.06);
-      color: var(--muted);
-      font-size: 13px;
-      white-space: nowrap;
-      overflow: hidden;
-      text-overflow: ellipsis;
-    }
-
-    h1 {
-      margin: 0;
-      font-size: 28px;
-      line-height: 0.95;
-      letter-spacing: -0.04em;
-      font-weight: 800;
-    }
-
-    .headline-copy {
-      margin: 8px 0 0;
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.4;
-      max-width: 34ch;
-    }
-
-    .meta-row {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-      margin-top: 12px;
-    }
-
-    .meta-chip {
-      padding: 8px 10px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.06);
-      border: 1px solid rgba(255,255,255,0.06);
-    }
-
-    .meta-label {
-      display: block;
-      color: var(--muted);
-      font-size: 11px;
-      margin-bottom: 2px;
-    }
-
-    .meta-value {
-      font-family: "Space Grotesk", "Assistant", sans-serif;
-      font-weight: 700;
-      font-size: 16px;
-      direction: ltr;
-      unicode-bidi: plaintext;
-    }
-
-    .screen-stack {
-      position: relative;
-      min-height: 0;
-      padding: 0 12px;
-    }
-
-    .screen {
-      position: absolute;
-      inset: 0;
-      display: none;
-      min-height: 0;
-      overflow-y: auto;
-      overflow-x: hidden;
-      padding: 2px 0 8px;
-      scrollbar-width: none;
-    }
-
-    .screen::-webkit-scrollbar { display: none; }
-    .screen.active { display: block; }
-
-    .card {
-      background: var(--surface);
-      border: 1px solid var(--line);
-      border-radius: 26px;
-      padding: 14px;
-      backdrop-filter: blur(16px);
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.02);
-    }
-
-    .card + .card { margin-top: 10px; }
-
-    .screen[data-screen="home"] {
-      display: none;
-      grid-template-rows: auto;
-      gap: 0;
-      align-content: start;
-    }
-
-    .screen[data-screen="home"].active {
-      display: grid;
-    }
-
-    .screen[data-screen="home"] .card:last-child {
-      min-height: 0;
-      overflow: hidden;
-    }
-
-    .card-title-row {
-      display: flex;
-      justify-content: space-between;
-      align-items: start;
-      gap: 12px;
-      margin-bottom: 10px;
-    }
-
-    .eyebrow {
-      color: var(--accent-2);
-      font-size: 11px;
-      letter-spacing: 0.08em;
-      text-transform: uppercase;
-      font-weight: 800;
-      margin-bottom: 4px;
-    }
-
-    .section-title {
-      margin: 0;
-      font-size: 18px;
-      line-height: 1.05;
-      font-weight: 800;
-      letter-spacing: -0.03em;
-    }
-
-    .section-copy,
-    .hint,
-    .footnote,
-    #historyHint,
-    #saveStatus {
-      color: var(--muted);
-      font-size: 13px;
-      line-height: 1.5;
-      margin: 0;
-    }
-
-    .hero-number {
-      display: flex;
-      align-items: baseline;
-      gap: 10px;
-      margin: 2px 0 6px;
-    }
-
-    .hero-number strong {
-      font-family: "Space Grotesk", "Assistant", sans-serif;
-      font-size: 40px;
-      line-height: 1;
-      letter-spacing: -0.05em;
-    }
-
-    .hero-number span {
-      color: var(--muted);
-      font-size: 16px;
-      font-weight: 600;
-    }
-
-    .input-shell {
-      position: relative;
-      margin: 10px 0 8px;
-    }
-
-    .input-shell::after {
-      content: "ק\"מ";
-      position: absolute;
-      left: 18px;
-      top: 50%;
-      transform: translateY(-50%);
-      color: rgba(248,250,252,0.46);
-      font-size: 16px;
-      font-weight: 700;
-      pointer-events: none;
-    }
-
-    input[type="number"] {
-      width: 100%;
-      min-height: 78px;
-      border: 1px solid rgba(255,255,255,0.08);
-      background: rgba(255,255,255,0.04);
-      color: var(--ink);
-      border-radius: 24px;
-      padding: 14px 72px 14px 18px;
-      font-family: "Space Grotesk", "Assistant", sans-serif;
-      font-size: 36px;
-      font-weight: 700;
-      letter-spacing: -0.05em;
-      box-shadow: inset 0 1px 0 rgba(255,255,255,0.04);
-    }
-
-    input[type="number"]:focus {
-      outline: none;
-      border-color: rgba(94, 234, 212, 0.4);
-      box-shadow: 0 0 0 4px rgba(94, 234, 212, 0.12);
-    }
-
-    .controls-row {
-      display: grid;
-      grid-template-columns: 1.1fr 1fr;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    button {
-      min-height: 48px;
-      border: 0;
-      border-radius: 18px;
-      padding: 10px 14px;
-      font-family: inherit;
-      font-size: 15px;
-      font-weight: 800;
-      cursor: pointer;
-      transition: transform 160ms ease, opacity 160ms ease, box-shadow 160ms ease;
-    }
-
-    button:hover { transform: translateY(-1px); }
-    button:active { transform: translateY(0); }
-
-    #calcBtn {
-      color: #041016;
-      background: linear-gradient(135deg, #5eead4, #38bdf8);
-      box-shadow: 0 18px 28px rgba(56, 189, 248, 0.18);
-    }
-
-    #loginBtn,
-    #logoutBtn {
-      color: var(--ink);
-      background: rgba(255,255,255,0.08);
-      border: 1px solid rgba(255,255,255,0.08);
-    }
-
-    .status-row {
-      display: grid;
-      gap: 8px;
-      margin-top: 10px;
-    }
-
-    #saveStatus,
-    .inline-status {
-      padding: 8px 10px;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.04);
-    }
-
-    .result-hero {
-      padding: 12px;
-      border-radius: 20px;
-      background: linear-gradient(135deg, rgba(56, 189, 248, 0.18), rgba(94, 234, 212, 0.12));
-      border: 1px solid rgba(255,255,255,0.06);
-      margin-bottom: 10px;
-    }
-
-    .result-hero .label {
-      color: rgba(248,250,252,0.7);
-      font-size: 13px;
-      margin-bottom: 6px;
-    }
-
-    .result-hero .value {
-      font-family: "Space Grotesk", "Assistant", sans-serif;
-      font-size: 27px;
-      line-height: 1.05;
-      font-weight: 700;
-      letter-spacing: -0.04em;
-    }
-
-    .result-hero .subvalue {
-      margin-top: 8px;
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .result-grid,
-    .detail-grid {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 8px;
-    }
-
-    .tile {
-      min-height: 86px;
-      padding: 10px;
-      border-radius: 18px;
-      background: var(--surface-2);
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .tile-label {
-      color: var(--muted);
-      font-size: 11px;
-      line-height: 1.35;
-      margin-bottom: 8px;
-    }
-
-    .tile-value {
-      font-family: "Space Grotesk", "Assistant", sans-serif;
-      font-size: 19px;
-      line-height: 1.08;
-      font-weight: 700;
-      letter-spacing: -0.04em;
-      word-break: break-word;
-    }
-
-    .tile-ok {
-      background: linear-gradient(180deg, rgba(34,197,94,0.18), rgba(22,28,39,0.94));
-      border-color: rgba(34,197,94,0.18);
-    }
-
-    .tile-bad {
-      background: linear-gradient(180deg, rgba(249,115,22,0.16), rgba(22,28,39,0.94));
-      border-color: rgba(249,115,22,0.18);
-    }
-
-    .badge {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      padding: 8px 12px;
-      border-radius: 999px;
-      font-size: 13px;
-      font-weight: 800;
-    }
-
-    .ok { background: var(--ok-bg); color: #86efac; }
-    .bad { background: var(--bad-bg); color: #fdba74; }
-
-    .forecast-highlight {
-      display: grid;
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .info-chip {
-      display: flex;
-      justify-content: space-between;
-      gap: 10px;
-      padding: 12px 14px;
-      border-radius: 18px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .info-chip span:first-child {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .info-chip strong {
-      font-family: "Space Grotesk", "Assistant", sans-serif;
-      font-size: 18px;
-    }
-
-    .chart-box {
-      margin-top: 12px;
-      padding: 12px;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .history-list {
-      display: grid;
-      gap: 10px;
-      margin-top: 12px;
-    }
-
-    .history-item {
-      padding: 14px;
-      border-radius: 22px;
-      background: rgba(255,255,255,0.04);
-      border: 1px solid rgba(255,255,255,0.05);
-    }
-
-    .history-item-header {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      gap: 12px;
-      margin-bottom: 12px;
-    }
-
-    .history-date {
-      color: var(--muted);
-      font-size: 13px;
-    }
-
-    .history-km {
-      font-family: "Space Grotesk", "Assistant", sans-serif;
-      font-size: 24px;
-      font-weight: 700;
-      letter-spacing: -0.04em;
-    }
-
-    .history-meta {
-      display: grid;
-      grid-template-columns: repeat(2, minmax(0, 1fr));
-      gap: 10px;
-      margin-bottom: 12px;
-    }
-
-    .history-meta-box {
-      padding: 10px 12px;
-      border-radius: 16px;
-      background: rgba(255,255,255,0.03);
-    }
-
-    .history-meta-box span {
-      display: block;
-      color: var(--muted);
-      font-size: 12px;
-      margin-bottom: 4px;
-    }
-
-    .history-meta-box strong {
-      font-family: "Space Grotesk", "Assistant", sans-serif;
-      font-size: 18px;
-    }
-
-    .history-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .mini-btn {
-      min-height: 40px;
-      padding: 8px 12px;
-      border-radius: 14px;
-      background: rgba(255,255,255,0.08);
-      color: var(--ink);
-      border: 1px solid rgba(255,255,255,0.06);
-      font-size: 13px;
-      font-weight: 700;
-    }
-
-    .danger {
-      color: #fecdd3;
-      background: rgba(251,113,133,0.12);
-      border-color: rgba(251,113,133,0.16);
-    }
-
-    .empty-state {
-      padding: 24px 16px;
-      border-radius: 22px;
-      text-align: center;
-      color: var(--muted);
-      background: rgba(255,255,255,0.03);
-      border: 1px dashed rgba(255,255,255,0.08);
-    }
-
-    .tabbar {
-      position: relative;
-      margin: 0 14px 14px;
-      z-index: 6;
-      display: grid;
-      grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 8px;
-      padding: 10px;
-      border-radius: 24px;
-      background: rgba(11, 17, 27, 0.9);
-      border: 1px solid rgba(255,255,255,0.06);
-      backdrop-filter: blur(18px);
-    }
-
-    .tab-btn {
-      min-height: 56px;
-      background: transparent;
-      color: var(--muted);
-      box-shadow: none;
-      display: grid;
-      place-items: center;
-      gap: 4px;
-      padding: 8px 6px;
-      border-radius: 18px;
-      font-size: 12px;
-      font-weight: 700;
-    }
-
-    .tab-btn.active {
-      color: var(--ink);
-      background: linear-gradient(135deg, rgba(94,234,212,0.18), rgba(56,189,248,0.16));
-      border: 1px solid rgba(94,234,212,0.18);
-    }
-
-    .tab-icon {
-      font-size: 17px;
-      line-height: 1;
-    }
-
-    .footnote {
-      margin-top: 12px;
-      text-align: center;
-    }
-
-    @media (min-width: 700px) {
-      .phone-shell {
-        height: min(920px, calc(100dvh - 28px));
+    :root { --bg:#0f172a; --card:#111827; --ink:#e5e7eb; --muted:#94a3b8; --ok:#10b981; --bad:#ef4444; --accent:#3b82f6; }
+    html, body { width: 100%; max-width: 100%; overflow-x: hidden; background: var(--bg); }
+    body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; color: var(--ink); }
+    .wrap { width: min(760px, 100%); max-width: 100%; margin: 24px auto; padding: 16px; }
+    h1 { font-size: clamp(20px, 3vw, 28px); margin: 0 0 12px; }
+    p.lead { color: var(--muted); margin: 0 0 20px; }
+    .card { background: var(--card); border: 1px solid #1f2937; border-radius: 18px; padding: 16px; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+    .row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; }
+    label { font-weight: 600; margin-bottom: 6px; display:block; }
+    input[type="number"]{ width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid #334155; background: #0b1220; color: var(--ink); }
+    button { padding: 10px 16px; border-radius: 12px; border: 1px solid #334155; background: var(--accent); color: white; font-weight: 700; cursor: pointer; }
+    button:disabled { opacity:.6; cursor: not-allowed; }
+    .result { margin-top: 12px; line-height: 1.7; }
+    .result-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(170px, 1fr)); gap: 8px; }
+    .tile { background: #0b1220; border: 1px solid #243044; border-radius: 12px; padding: 10px 12px; }
+    .tile-label { color: var(--muted); font-size: 13px; line-height: 1.4; margin-bottom: 6px; }
+    .tile-value { font-size: 31px; font-weight: 800; line-height: 1.35; }
+    .tile-ok { border-color: #065f46; }
+    .tile-bad { border-color: #991b1b; }
+    .stat { display: grid; grid-template-columns: 1fr auto; gap: 8px; padding: 8px 0; border-bottom: 1px dashed #243044; }
+    .stat:last-child { border-bottom: 0; }
+    .badge { display:inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight:700 }
+    .ok { background: #064e3b; color:#a7f3d0 }
+    .bad { background: #7f1d1d; color:#fecaca }
+    small { color: var(--muted); }
+    .muted { color: var(--muted); }
+    .hint { font-size: 13px; color: var(--muted); margin-top: 8px; }
+    .grid-2 { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; }
+    .controls-row { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; margin-top: 10px; }
+    .controls-row button { width: 100%; }
+    .status-row { margin-top: 10px; display: grid; grid-template-columns: 1fr; gap: 6px; }
+    .status-row .muted { font-size: 14px; }
+    code { background:#0b1220; padding:2px 6px; border-radius:6px; }
+    .section-title { margin: 14px 0 8px; font-size: 18px; }
+    .table-wrap { overflow-x: auto; border: 1px solid #243044; border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; min-width: 620px; }
+    th, td { padding: 10px; border-bottom: 1px solid #243044; text-align: right; }
+    th { color: var(--muted); font-weight: 700; font-size: 13px; }
+    tr:last-child td { border-bottom: 0; }
+    .mini-btn { padding: 6px 10px; border-radius: 8px; font-size: 12px; }
+    .danger { background: #7f1d1d; }
+    .chart-box { margin-top: 12px; background: #0b1220; border: 1px solid #243044; border-radius: 12px; padding: 10px; }
+
+    @media (max-width: 680px) {
+      .wrap { margin: 10px auto; padding: 10px; }
+      .card { border-radius: 14px; padding: 12px; }
+      .grid-2 { grid-template-columns: 1fr; }
+
+      label { font-size: 16px; }
+      input[type="number"] {
+        min-height: 56px;
+        font-size: 20px;
+        padding: 12px 14px;
       }
-    }
 
-    @media (max-width: 420px) {
-      .topbar { padding-inline: 14px; }
-      h1 { font-size: 27px; }
-      .screen-stack { padding-inline: 10px; }
-      input[type="number"] { font-size: 34px; min-height: 74px; }
-      .hero-number strong { font-size: 38px; }
-      .result-grid,
-      .detail-grid,
-      .history-meta,
-      .meta-row,
-      .controls-row { gap: 8px; }
-      .tile-value { font-size: 18px; }
+      button {
+        min-height: 46px;
+        font-size: 16px;
+      }
+
+      .controls-row { margin-top: 8px; gap: 8px; }
+      .status-row { margin-top: 8px; }
+      .hint { margin-top: 6px; }
+      .result-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 7px; }
+      .tile { padding: 9px 10px; }
+      .tile-label { font-size: 12px; margin-bottom: 4px; }
+      .tile-value { font-size: 25px; }
+
+      .stat { grid-template-columns: 1fr; gap: 4px; padding: 7px 0; }
+      .table-wrap { border-radius: 10px; }
+      table { min-width: 0; table-layout: fixed; }
+      th, td {
+        padding: 8px;
+        font-size: 13px;
+        word-break: break-word;
+      }
+
+      .chart-box { padding: 8px; }
+      #kmChart { height: 180px !important; }
     }
   </style>
 </head>
 <body>
-  <div class="phone-shell">
-    <div class="app-shell">
-      <header class="topbar">
-        <div class="status-row-top">
-          <span class="app-mark">NAPO Lease</span>
-          <div id="userInfo" class="profile-pill">לא מחובר</div>
+  <div class="wrap">
+    <h1>בדיקת קילומטראז׳ מול מכסה שנתית</h1>
+    <p class="lead">מכסה שנתית: <b id="annualCapText">20,000</b> ק״מ. תאריך התחלה: <b id="startDateText">20/04/2025</b>.</p>
+
+    <div class="card">
+      <div class="grid-2">
+        <div>
+          <label for="km">קריאת מד־קילומטר נוכחית (סה״כ ק״מ ברכב)</label>
+          <input id="km" type="number" min="0" step="1" placeholder="לדוגמה: 15320" inputmode="numeric" />
+          <div class="hint">הזן את הקריאה ולחץ על <b>חשב</b>. המכסה עד היום מוצגת גם בלי להזין נתון.</div>
         </div>
-        <h1>בודקים קילומטראז׳</h1>
-        <p class="headline-copy">מקלידים, לוחצים, ורואים מיד מצב, תחזית והיסטוריה. בלי דף ארוך, כמו אפליקציה.</p>
-        <div class="meta-row">
-          <div class="meta-chip">
-            <span class="meta-label">מכסה שנתית</span>
-            <span class="meta-value"><span id="annualCapText">20,000</span> km</span>
-          </div>
-          <div class="meta-chip">
-            <span class="meta-label">תאריך התחלה</span>
-            <span id="startDateText" class="meta-value">20/04/2025</span>
-          </div>
-        </div>
-      </header>
+      </div>
 
-      <main class="screen-stack">
-        <section class="screen active" data-screen="home">
-          <div class="card">
-            <div class="card-title-row">
-              <div>
-                <div class="eyebrow">Input</div>
-                <h2 class="section-title">קריאה חדשה</h2>
-              </div>
-            </div>
-            <div class="hero-number">
-              <strong id="liveKmDisplay">0</strong>
-              <span>ק"מ</span>
-            </div>
-            <p class="section-copy">הזן את הקריאה הנוכחית של מד הקילומטר ברכב.</p>
-            <div class="input-shell">
-              <input id="km" type="number" min="0" step="1" placeholder="15320" inputmode="numeric" />
-            </div>
-            <p class="hint">לחיצה על חשב בלי ערך תציג רק את המכסה המצטברת עד היום.</p>
-            <div class="controls-row">
-              <button id="calcBtn" type="button">חשב</button>
-              <button id="loginBtn" type="button">Google</button>
-              <button id="logoutBtn" type="button" style="display:none;">התנתקות</button>
-            </div>
-            <div class="status-row">
-              <div id="saveStatus" class="inline-status"></div>
-            </div>
-          </div>
-        </section>
+      <div class="controls-row">
+        <button id="calcBtn" type="button">חשב</button>
+        <button id="loginBtn" type="button">התחברות Google</button>
+        <button id="logoutBtn" type="button" style="display:none; background:#374151;">התנתקות</button>
+      </div>
 
-        <section class="screen" data-screen="forecast">
-          <div class="card">
-            <div class="card-title-row">
-              <div>
-                <div class="eyebrow">Forecast</div>
-                <h2 class="section-title">תחזית ותמונה מלאה</h2>
-                <p class="section-copy">כאן נמצאים המדדים המלאים, חריגה צפויה והגרף.</p>
-              </div>
-            </div>
-            <div id="result" class="result"></div>
-            <div id="resultDetails" class="forecast-highlight"></div>
-            <div class="chart-box">
-              <canvas id="kmChart" height="180"></canvas>
-            </div>
-            <p class="footnote">החישוב פשטני ומניח 365 ימים בשנה.</p>
-          </div>
-        </section>
+      <div class="status-row">
+        <div id="userInfo" class="muted">לא מחובר</div>
+        <div id="saveStatus" class="hint"></div>
+      </div>
 
-        <section class="screen" data-screen="history">
-          <div class="card">
-            <div class="card-title-row">
-              <div>
-                <div class="eyebrow">History</div>
-                <h2 class="section-title">קריאות שמורות</h2>
-                <p id="historyHint" class="section-copy">יש להתחבר כדי לראות את הקריאות מהענן.</p>
-              </div>
-            </div>
-            <div id="historyBody" class="history-list">
-              <div class="empty-state">אין נתונים להצגה</div>
-            </div>
-          </div>
-        </section>
-      </main>
+      <div id="result" class="result"></div>
 
-      <nav class="tabbar">
-        <button class="tab-btn active" type="button" data-target="home">
-          <span class="tab-icon">⌂</span>
-          <span>חישוב</span>
-        </button>
-        <button class="tab-btn" type="button" data-target="forecast">
-          <span class="tab-icon">◔</span>
-          <span>תחזית</span>
-        </button>
-        <button class="tab-btn" type="button" data-target="history">
-          <span class="tab-icon">☰</span>
-          <span>היסטוריה</span>
-        </button>
-      </nav>
+      <h2 class="section-title">היסטוריית קריאות</h2>
+      <div id="historyHint" class="hint">יש להתחבר כדי לראות את הקריאות מהענן.</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>תאריך</th>
+              <th>קריאה</th>
+              <th>פער מול מותר</th>
+              <th>קנס משוער</th>
+              <th>פעולות</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <tr><td colspan="5" class="muted">אין נתונים להצגה</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-box">
+        <canvas id="kmChart" height="120"></canvas>
+      </div>
     </div>
+
+    <p class="hint">חישוב פשטני: 365 ימים בשנה. אפשר לשנות בקלות לדיוק לוח־שנה מלא.</p>
   </div>
 
 <script type="module">
@@ -766,7 +177,6 @@
   let readingsUnsubscribe = null;
   let readingsCache = [];
   let kmChart = null;
-  let activeScreen = 'home';
 
   // פרמטרים קבועים (ניתנים לשינוי בהמשך לפי צורך)
   const ANNUAL_CAP = 20000;           // מכסה שנתית בק"מ
@@ -813,47 +223,6 @@
         <div class="tile-value">${value}</div>
       </div>
     `;
-  }
-
-  function heroMetric(label, value, subvalue = '', className = ''){
-    const cls = className ? `result-hero ${className}` : 'result-hero';
-    const sub = subvalue ? `<div class="subvalue">${subvalue}</div>` : '';
-    return `
-      <div class="${cls}">
-        <div class="label">${label}</div>
-        <div class="value">${value}</div>
-        ${sub}
-      </div>
-    `;
-  }
-
-  function infoChip(label, value){
-    return `
-      <div class="info-chip">
-        <span>${label}</span>
-        <strong>${value}</strong>
-      </div>
-    `;
-  }
-
-  function setActiveScreen(nextScreen){
-    activeScreen = nextScreen;
-    document.querySelectorAll('.screen').forEach((screen) => {
-      screen.classList.toggle('active', screen.dataset.screen === nextScreen);
-    });
-    document.querySelectorAll('.tab-btn').forEach((tab) => {
-      tab.classList.toggle('active', tab.dataset.target === nextScreen);
-    });
-  }
-
-  function updateLiveKmDisplay(){
-    const value = $('km').value.trim();
-    $('liveKmDisplay').textContent = value === '' ? '0' : format(Number(value), 0);
-  }
-
-  function renderOverviewResult(primaryHtml, detailsHtml){
-    $('result').innerHTML = primaryHtml;
-    $('resultDetails').innerHTML = detailsHtml;
   }
 
   function allowedSoFar(today){
@@ -932,20 +301,15 @@
   function renderAllowanceOnly(){
     const today = new Date();
     const { days, perDay, allowed } = allowedSoFar(today);
-    const primaryHtml = `
-      ${heroMetric('המכסה המצטברת עד עכשיו', `${format(allowed,0)} ק"מ`, `${format(days)} ימים מתחילת המניין`)}
+    const html = `
       <div class="result-grid">
-        ${statTile('קצב יומי מחושב', `${format(perDay,2)} ק"מ`) }
-        ${statTile('תקופת בדיקה', '3 שנים')}
+        ${statTile('ימים שחלפו מאז תחילת המניין', format(days))}
+        ${statTile('מכסה יומית (פשטני, 365 ימים)', `${format(perDay,2)} ק"מ/יום`)}
+        ${statTile('מכסה מותרת עד היום', `${format(allowed,0)} ק"מ`)}
       </div>
+      <div class="hint">הזן קריאת מד כדי לראות סטטוס, תחזית ל‑3 שנים וקנס משוער אם יש חריגה.</div>
     `;
-    const detailsHtml = `
-      ${infoChip('ימים שחלפו', format(days))}
-      ${infoChip('מכסה יומית', `${format(perDay,2)} ק"מ/יום`)}
-      ${infoChip('מכסה עד היום', `${format(allowed,0)} ק"מ`)}
-      ${infoChip('מה עכשיו?', 'הזן קריאה ולחץ חשב')}
-    `;
-    renderOverviewResult(primaryHtml, detailsHtml);
+    $('result').innerHTML = html;
   }
 
   async function saveReadingToCloud(payload){
@@ -962,11 +326,11 @@
   function setHistoryHint(text, isError = false){
     const el = $('historyHint');
     el.textContent = text;
-    el.style.color = isError ? '#fecdd3' : '';
+    el.style.color = isError ? '#fecaca' : '';
   }
 
   function clearHistoryUi(){
-    $('historyBody').innerHTML = '<div class="empty-state">אין נתונים להצגה</div>';
+    $('historyBody').innerHTML = '<tr><td colspan="5" class="muted">אין נתונים להצגה</td></tr>';
     if(kmChart){
       kmChart.destroy();
       kmChart = null;
@@ -1022,7 +386,7 @@
         const y = yScale.getPixelForValue(forecastEndPoint.y);
         const c = chart.ctx;
         c.save();
-        c.fillStyle = '#344054';
+        c.fillStyle = '#e5e7eb';
         c.font = 'bold 12px Segoe UI';
         c.textAlign = 'left';
         c.fillText(`תחזית סוף תקופה: ${format(forecastEndPoint.y,0)} ק"מ`, x + 8, y - 8);
@@ -1038,8 +402,8 @@
           {
             label: 'קריאות בפועל',
             data: readingPoints,
-            borderColor: '#0f766e',
-            backgroundColor: 'rgba(15,118,110,0.14)',
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59,130,246,0.2)',
             borderWidth: 2,
             tension: 0.2,
             fill: false,
@@ -1048,8 +412,8 @@
           {
             label: 'קו מגמה',
             data: trendLinePoints,
-            borderColor: '#f97316',
-            backgroundColor: 'rgba(249,115,22,0.15)',
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245,158,11,0.15)',
             borderWidth: 2,
             tension: 0,
             fill: false,
@@ -1059,8 +423,8 @@
           {
             label: 'תחזית ל-20/04/2028',
             data: forecastEndPoint ? [forecastEndPoint] : [],
-            borderColor: '#c2410c',
-            backgroundColor: '#c2410c',
+            borderColor: '#ef4444',
+            backgroundColor: '#ef4444',
             pointRadius: 5,
             pointHoverRadius: 6,
             showLine: false
@@ -1071,7 +435,7 @@
         responsive: true,
         plugins: {
           legend: {
-            labels: { color: '#344054' }
+            labels: { color: '#e5e7eb' }
           }
         },
         scales: {
@@ -1080,12 +444,12 @@
             min: START_DATE.getTime(),
             max: END_DATE.getTime(),
             time: { unit: 'month' },
-            ticks: { color: '#667085' },
-            grid: { color: 'rgba(110, 92, 63, 0.12)' }
+            ticks: { color: '#94a3b8' },
+            grid: { color: '#243044' }
           },
           y: {
-            ticks: { color: '#667085' },
-            grid: { color: 'rgba(110, 92, 63, 0.12)' }
+            ticks: { color: '#94a3b8' },
+            grid: { color: '#243044' }
           }
         }
       }
@@ -1094,7 +458,7 @@
 
   function renderHistoryRows(readings){
     if(readings.length === 0){
-      $('historyBody').innerHTML = '<div class="empty-state">אין קריאות שמורות עדיין</div>';
+      $('historyBody').innerHTML = '<tr><td colspan="5" class="muted">אין קריאות שמורות עדיין</td></tr>';
       renderChart([]);
       return;
     }
@@ -1103,29 +467,16 @@
       const diff = Number(r.differenceKm ?? 0);
       const fine = Number(r.estimatedFineIls ?? 0);
       return `
-        <article class="history-item">
-          <div class="history-item-header">
-            <div>
-              <div class="history-date">${fmtDate(r.readingDateIso)}</div>
-              <div class="history-km">${format(r.readingKm,0)} ק"מ</div>
-            </div>
-            ${diff > 0 ? '<span class="badge bad">חריגה</span>' : '<span class="badge ok">בתוך המכסה</span>'}
-          </div>
-          <div class="history-meta">
-            <div class="history-meta-box">
-              <span>פער מול מותר</span>
-              <strong>${format(diff,0)} ק"מ</strong>
-            </div>
-            <div class="history-meta-box">
-              <span>קנס משוער</span>
-              <strong>₪${format(fine,0)}</strong>
-            </div>
-          </div>
-          <div class="history-actions">
+        <tr>
+          <td>${fmtDate(r.readingDateIso)}</td>
+          <td>${format(r.readingKm,0)} ק"מ</td>
+          <td>${format(diff,0)} ק"מ</td>
+          <td>₪${format(fine,0)}</td>
+          <td style="display:flex; gap:8px;">
             <button class="mini-btn" type="button" data-action="edit" data-id="${r.id}">עדכן</button>
             <button class="mini-btn danger" type="button" data-action="delete" data-id="${r.id}">מחק</button>
-          </div>
-        </article>
+          </td>
+        </tr>
       `;
     }).join('');
 
@@ -1240,9 +591,7 @@
   function setSaveStatus(text, isError = false){
     const el = $('saveStatus');
     el.textContent = text;
-    el.style.display = text ? '' : 'none';
-    el.style.color = isError ? '#fecdd3' : '#94a3b8';
-    el.style.background = isError ? 'rgba(251,113,133,0.10)' : 'rgba(255,255,255,0.04)';
+    el.style.color = isError ? '#fecaca' : '';
   }
 
   async function analyze(){
@@ -1266,26 +615,22 @@
       : `<span class="badge ok">בתוך המכסה</span>`;
     const statusTileClass = difference > 0 ? 'tile-bad' : 'tile-ok';
 
-    const primaryHtml = `
-      ${heroMetric('קריאת המד שלך', `${format(km,0)} ק"מ`, `פער נוכחי: ${format(difference,0)} ק"מ`, statusTileClass)}
+    const html = `
       <div class="result-grid">
-        ${statTile('סטטוס מול המותר', statusBadge, statusTileClass)}
-        ${statTile('ניצול המכסה', `${format(percent,1)}%`) }
-        ${statTile('מכסה עד היום', `${format(allowed,0)} ק"מ`) }
-        ${statTile('ימים מתחילת התקופה', format(days)) }
+        ${statTile('ימים שחלפו מאז תחילת המניין', format(days))}
+        ${statTile('מכסה יומית (פשטני, 365 ימים)', `${format(perDay,2)} ק"מ/יום`)}
+        ${statTile('מכסה מותרת עד היום', `${format(allowed,0)} ק"מ`)}
+        ${statTile('קריאת מד שהוזנה', `${format(km,0)} ק"מ`)}
+        ${statTile('סטטוס מול המותר עד כה', statusBadge, statusTileClass)}
+        ${statTile('פער מול המותר עד כה', `${format(difference,0)} ק"מ`)}
+        ${statTile('ניצול המכסה עד היום', `${format(percent,1)}%`)}
+        ${statTile('תחזית ל‑3 שנים בקצב הנוכחי', `${format(projected3Years,0)} ק"מ`)}
+        ${statTile('מכסה מותרת ל‑3 שנים', `${format(allowed3Years,0)} ק"מ`)}
+        ${statTile('חריגה חזויה (אם הקצב יימשך)', `${format(projectedOverage,0)} ק"מ`)}
+        ${statTile('קנס משוער (עלות×מע"מ)', `₪${format(fine,0)}`)}
       </div>
     `;
-
-    const detailsHtml = `
-      ${infoChip('קצב יומי מחושב', `${format(perDay,2)} ק"מ/יום`)}
-      ${infoChip('תחזית ל-3 שנים', `${format(projected3Years,0)} ק"מ`)}
-      ${infoChip('מכסה ל-3 שנים', `${format(allowed3Years,0)} ק"מ`)}
-      ${infoChip('חריגה חזויה', `${format(projectedOverage,0)} ק"מ`)}
-      ${infoChip('קנס משוער', `₪${format(fine,0)}`)}
-    `;
-
-    renderOverviewResult(primaryHtml, detailsHtml);
-    setActiveScreen('forecast');
+    $('result').innerHTML = html;
 
     if(!currentUser){
       setSaveStatus('לא נשמר: צריך להתחבר עם Google כדי לשמור בענן.', true);
@@ -1321,11 +666,6 @@
     $('annualCapText').textContent = ANNUAL_CAP.toLocaleString('he-IL');
     $('startDateText').textContent = START_DATE.toLocaleDateString('he-IL');
     $('calcBtn').addEventListener('click', () => analyze());
-    $('km').addEventListener('input', updateLiveKmDisplay);
-
-    document.querySelectorAll('.tab-btn').forEach((tab) => {
-      tab.addEventListener('click', () => setActiveScreen(tab.dataset.target));
-    });
 
     getRedirectResult(auth).catch((err) => {
       console.error(err);
@@ -1398,8 +738,6 @@
     });
 
     renderAllowanceOnly();
-    updateLiveKmDisplay();
-    setSaveStatus('');
   });
 </script>
 </body>
