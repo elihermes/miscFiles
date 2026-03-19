@@ -161,6 +161,12 @@
             color: #64748b;
         }
 
+        .sort-toolbar {
+            display: flex;
+            justify-content: flex-start;
+            margin-top: 0.25rem;
+        }
+
         .solution-item {
             border: 1px solid var(--slate-200);
             border-radius: 0.75rem;
@@ -329,6 +335,10 @@
                         <div id="topicsFilter" class="topic-filter-box"></div>
                         <p class="filter-note mt-2">אפשר לבחור כמה נושאים יחד. יוצגו שאלות שמכילות לפחות אחד מהנושאים שנבחרו.</p>
                     </div>
+
+                    <div class="sort-toolbar">
+                        <button id="sortByRecentBtn" type="button" class="topic-chip" aria-pressed="false">מיון: ברירת מחדל</button>
+                    </div>
                 </div>
             </div>
 
@@ -361,6 +371,7 @@
         const listEl = document.getElementById("solutionsList");
         const topicsFilterEl = document.getElementById("topicsFilter");
         const clearTopicsBtn = document.getElementById("clearTopicsBtn");
+        const sortByRecentBtn = document.getElementById("sortByRecentBtn");
         const hoverPreview = document.getElementById("hoverPreview");
         const hoverPreviewImg = document.getElementById("hoverPreviewImg");
 
@@ -368,6 +379,7 @@
         let solutions = [...staticSolutions];
         let topicCatalog = [];
         const selectedTopics = new Set();
+        let sortByRecent = false;
 
         function isLocalhost() {
             return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
@@ -391,6 +403,25 @@
                 return a.year - b.year;
             }
             return String(a.question).localeCompare(String(b.question), "he", { numeric: true });
+        }
+
+        function compareSolutionsByRecent(a, b) {
+            const aOrder = Number.isFinite(a.addedOrder) ? a.addedOrder : -1;
+            const bOrder = Number.isFinite(b.addedOrder) ? b.addedOrder : -1;
+            if (aOrder !== bOrder) {
+                return bOrder - aOrder;
+            }
+            return compareSolutions(a, b);
+        }
+
+        function syncSortButtonUi() {
+            if (!sortByRecentBtn) {
+                return;
+            }
+
+            sortByRecentBtn.textContent = sortByRecent ? "מיון: נוסף אחרון" : "מיון: ברירת מחדל";
+            sortByRecentBtn.setAttribute("aria-pressed", sortByRecent ? "true" : "false");
+            sortByRecentBtn.classList.toggle("is-active", sortByRecent);
         }
 
         function normalizeSlashes(path) {
@@ -589,7 +620,7 @@
             const questions = Array.isArray(data.questions) ? data.questions : [];
             topicCatalog = Array.isArray(data.topics) ? data.topics : [];
 
-            return questions.map((entry) => {
+            return questions.map((entry, index) => {
                 const parsed = parseFromFolderName(entry.title) || { year: 0, question: "?", title: entry.title };
                 const topicTags = Array.isArray(entry.topics) ? entry.topics : [];
                 const needsTagging = topicTags.length === 0;
@@ -600,7 +631,8 @@
                     href: `./${entry.path}`,
                     tags: ["מכניקה", "בגרות", ...topicTags],
                     topicTags,
-                    needsTagging
+                    needsTagging,
+                    addedOrder: index
                 };
             });
         }
@@ -762,12 +794,13 @@
                 return yearOk && topicOk;
             });
 
-            filtered.sort(compareSolutions);
+            filtered.sort(sortByRecent ? compareSolutionsByRecent : compareSolutions);
             render(filtered);
 
             const yearText = yearVal === "all" ? "כל השנים" : `שנה ${yearVal}`;
             const topicsText = selectedTopics.size ? ` | נושאים: ${[...selectedTopics].join(", ")}` : "";
-            resultsInfo.textContent = `נמצאו ${filtered.length} פתרונות עבור ${yearText}${topicsText}.`;
+            const sortText = sortByRecent ? " | מיון: נוסף אחרון" : "";
+            resultsInfo.textContent = `נמצאו ${filtered.length} פתרונות עבור ${yearText}${topicsText}${sortText}.`;
         }
 
         document.addEventListener("DOMContentLoaded", async function() {
@@ -804,6 +837,7 @@
 
             yearOptionsInit();
             renderTopicFilters();
+            syncSortButtonUi();
             runFilter();
             yearSelect.addEventListener("change", runFilter);
             clearTopicsBtn.addEventListener("click", () => {
@@ -811,6 +845,13 @@
                 renderTopicFilters();
                 runFilter();
             });
+            if (sortByRecentBtn) {
+                sortByRecentBtn.addEventListener("click", () => {
+                    sortByRecent = !sortByRecent;
+                    syncSortButtonUi();
+                    runFilter();
+                });
+            }
         });
     </script>
 </body>
