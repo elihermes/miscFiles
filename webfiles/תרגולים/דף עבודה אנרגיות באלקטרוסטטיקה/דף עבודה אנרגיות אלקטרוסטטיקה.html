@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מבדק: אנרגיה ופוטנציאל חשמלי</title>
+    
+    <!-- Tailwind CSS for styling -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']]
+            },
+            svg: {
+                fontCache: 'global'
+            },
+            startup: {
+                typeset: false // We will manually typeset when rendering questions to avoid race conditions
+            }
+        };
+    </script>
+    <!-- MathJax for rendering LaTeX formulas -->
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        /* Custom styles to complement Tailwind */
+        body {
+            background-color: #f3f4f6;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .question-card {
+            transition: all 0.3s ease;
+        }
+        /* Hide number input spinners */
+        input[type="number"]::-webkit-inner-spin-button,
+        input[type="number"]::-webkit-outer-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+        input[type="number"] {
+            -moz-appearance: textfield;
+        }
+        .correct-bg { background-color: #d1fae5; border-color: #10b981; }
+        .half-bg { background-color: #fef3c7; border-color: #f59e0b; }
+        .wrong-bg { background-color: #fee2e2; border-color: #ef4444; }
+        
+        /* Ensure equations align properly in RTL */
+        .MathJax {
+            direction: ltr !important;
+        }
+    </style>
+</head>
+<body class="text-gray-800">
+
+    <!-- Login Screen -->
+    <div id="login-screen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-xl shadow-lg max-w-md w-full border-t-4 border-blue-600">
+            <h1 class="text-2xl font-bold text-center text-blue-700 mb-6">מבדק אינטראקטיבי:<br>אנרגיות ופוטנציאל חשמלי</h1>
+            <p class="text-gray-600 mb-6 text-center">הזינו את פרטיכם כדי להתחיל. לכל שאלה יש לכם עד שני ניסיונות. בהצלחה!</p>
+            
+            <div class="space-y-4">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">שם מלא</label>
+                    <input type="text" id="student-name" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="ישראל ישראלי">
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-1">כיתה</label>
+                    <input type="text" id="student-class" class="w-full border border-gray-300 rounded-lg p-3 focus:outline-none focus:ring-2 focus:ring-blue-500" placeholder="יב' 1">
+                </div>
+                <button onclick="startQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 rounded-lg transition duration-200 mt-4">
+                    התחל מבדק
+                </button>
+                <div id="login-error" class="text-red-500 text-sm hidden text-center mt-2">אנא מלאו את כל השדות.</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Quiz Screen -->
+    <div id="quiz-screen" class="hidden min-h-screen pb-20">
+        <!-- Top Sticky Header -->
+        <div class="bg-white shadow-md sticky top-0 z-50">
+            <div class="max-w-4xl mx-auto p-4 flex justify-between items-center">
+                <div>
+                    <span class="font-bold text-lg" id="display-name"></span> | 
+                    <span class="text-gray-600" id="display-class"></span>
+                </div>
+                <div class="text-xl font-bold bg-blue-100 text-blue-800 px-4 py-2 rounded-full">
+                    ציון: <span id="score-display">0</span> / 100
+                </div>
+            </div>
+        </div>
+
+        <div class="max-w-4xl mx-auto p-4 mt-6" id="questions-container">
+            <!-- Questions will be injected here via JS -->
+        </div>
+
+        <!-- Finish Button -->
+        <div class="max-w-4xl mx-auto p-4 text-center mt-8">
+            <button onclick="printAndFinish()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-8 rounded-lg shadow-lg text-lg transition duration-200">
+                סיים מבחן והדפס ל-PDF
+            </button>
+            <p class="text-sm text-gray-500 mt-3">הכפתור ייצר דוח תוצאות ויפתח אוטומטית את חלון ההדפסה.</p>
+        </div>
+    </div>
+
+    <script>
+        // Quiz Data
+        const questionsData = [
+            {
+                type: 'mcq',
+                text: 'מהי ההגדרה המדויקת של "פוטנציאל חשמלי" (\\(V\\)) בנקודה מסוימת במרחב?',
+                options: [
+                    'אנרגיה פוטנציאלית חשמלית ליחידת מטען (\\(V = U/q\\)).',
+                    'כוח חשמלי הפועל על יחידת מטען בנקודה זו.',
+                    'העבודה שעושה השדה החשמלי ליחידת זמן.',
+                    'האנרגיה הקינטית של מטען בוחן המונח בנקודה.'
+                ],
+                correctAnswer: 0,
+                hint: 'זכרו שפוטנציאל מתאר כמה "אנרגיה" מוקצית לכל יחידה של מטען, ולא כוח.'
+            },
+            {
+                type: 'mcq',
+                text: 'מהן יחידות המידה התקניות של פוטנציאל חשמלי ומתח (וולט, V)?',
+                options: [
+                    'ניוטון לקולון (N/C).',
+                    'ג\'אול לקולון (J/C).',
+                    'ג\'אול למטר (J/m).',
+                    'ניוטון למטר (N/m).'
+                ],
+                correctAnswer: 1,
+                hint: 'היזכרו בהגדרת הפוטנציאל מהשאלה הקודמת: אנרגיה חלקי מטען.'
+            },
+            {
+                type: 'mcq',
+                text: 'כיצד ינוע אלקטרון המשוחרר ממנוחה בשדה חשמלי (בהשפעת הכוח החשמלי בלבד)?',
+                options: [
+                    'מפוטנציאל נמוך לפוטנציאל גבוה, תוך ירידה באנרגיה הפוטנציאלית החשמלית שלו.',
+                    'מפוטנציאל גבוה לפוטנציאל נמוך, תוך ירידה באנרגיה הפוטנציאלית החשמלית שלו.',
+                    'מפוטנציאל נמוך לפוטנציאל גבוה, תוך עלייה באנרגיה הפוטנציאלית החשמלית שלו.',
+                    'מפוטנציאל גבוה לפוטנציאל נמוך, תוך עלייה באנרגיה הפוטנציאלית החשמלית שלו.'
+                ],
+                correctAnswer: 0,
+                hint: 'אלקטרון הוא שלילי, ולכן נמשך לפוטנציאל גבוה (חיובי). כל תנועה טבעית בהשפעת הכוח החשמלי תמיד מקטינה את האנרגיה הפוטנציאלית.'
+            },
+            {
+                type: 'mcq',
+                text: 'כיצד ינוע פרוטון המשוחרר ממנוחה בשדה חשמלי (בהשפעת הכוח החשמלי בלבד)?',
+                options: [
+                    'מפוטנציאל גבוה לפוטנציאל נמוך, תוך ירידה באנרגיה הפוטנציאלית החשמלית שלו.',
+                    'מפוטנציאל נמוך לפוטנציאל גבוה, תוך ירידה באנרגיה הפוטנציאלית החשמלית שלו.',
+                    'מפוטנציאל גבוה לפוטנציאל נמוך, תוך עלייה באנרגיה הפוטנציאלית החשמלית שלו.',
+                    'בכיוון הפוך לקווי השדה החשמלי.'
+                ],
+                correctAnswer: 0,
+                hint: 'פרוטון הוא חיובי, הוא ינוע בכיוון קווי השדה, כלומר לאן שהפוטנציאל יורד. כמו כל תנועה חופשית, האנרגיה הפוטנציאלית קטנה.'
+            },
+            {
+                type: 'mcq',
+                text: 'מהי הנוסחה המתארת את עבודת **הכוח החיצוני** (\\(W_{ext}\\)) הדרושה כדי להעביר מטען \\(q\\) מנקודה A לנקודה B במהירות קבועה?',
+                options: [
+                    '\\( W_{ext} = q(V_A - V_B) \\)',
+                    '\\( W_{ext} = q(V_B - V_A) = q\\Delta V \\)',
+                    '\\( W_{ext} = -q\\Delta V \\)',
+                    '\\( W_{ext} = \\Delta V / q \\)'
+                ],
+                correctAnswer: 1,
+                hint: 'עבודת הכוח החיצוני משתווה בדיוק לשינוי באנרגיה הפוטנציאלית של המטען (ΔU).'
+            },
+            {
+                type: 'mcq',
+                text: 'מהי הנוסחה המתארת את עבודת **הכוח החשמלי** (\\(W_{E}\\)) בעת מעבר של מטען \\(q\\) מנקודה A לנקודה B?',
+                options: [
+                    '\\( W_{E} = q(V_B - V_A) = q\\Delta V \\)',
+                    '\\( W_{E} = q(V_A - V_B) = -q\\Delta V \\)',
+                    '\\( W_{E} = \\Delta U \\)',
+                    '\\( W_{E} = U_B + U_A \\)'
+                ],
+                correctAnswer: 1,
+                hint: 'הכוח החשמלי הוא כוח משמר. עבודת הכוח החשמלי שווה למינוס השינוי באנרגיה הפוטנציאלית (-ΔU).'
+            },
+            {
+                type: 'open',
+                text: 'מטען של \\( +3 \\mu C \\) מועבר מנקודה שבה הפוטנציאל הוא \\( 10V \\) לנקודה שבה הפוטנציאל הוא \\( 50V \\). מהו **השינוי באנרגיה הפוטנציאלית החשמלית** שלו (\\( \\Delta U \\)) במיקרו-ג\'אול (\\(\\mu J\\))? כתבו תשובה מספרית בלבד.',
+                correctAnswer: '120',
+                hint: 'השתמשו בנוסחה ΔU = q * ΔV. כפלו את המטען בהפרש הפוטנציאלים (סוף פחות התחלה).'
+            },
+            {
+                type: 'open',
+                text: 'בהמשך לשאלה הקודמת, מהי **עבודת הכוח החיצוני** (במיקרו-ג\'אול) שבוצעה בתהליך, בהנחה שהמטען הועבר במהירות קבועה? כתבו תשובה מספרית בלבד.',
+                correctAnswer: '120',
+                hint: 'עבודת הכוח החיצוני (במהירות קבועה) שווה במדויק לשינוי באנרגיה הפוטנציאלית (ΔU).'
+            },
+            {
+                type: 'open',
+                text: 'ומהי **עבודת הכוח החשמלי** (במיקרו-ג\'אול) שבוצעה בתהליך זה? הקפידו על סימן (+ או -).',
+                correctAnswer: '-120',
+                hint: 'עבודת הכוח החשמלי תמיד מנוגדת לעבודת הכוח החיצוני (או שווה למינוס ΔU).'
+            },
+            {
+                type: 'mcq',
+                text: 'מה המשמעות של הביטוי \\( V_{AB} \\) בפיזיקה (ברוב הספרים בארץ)?',
+                options: [
+                    'הפרש הפוטנציאלים: \\( V_A - V_B \\)',
+                    'הפרש הפוטנציאלים: \\( V_B - V_A \\)',
+                    'מכפלת הפוטנציאלים: \\( V_A \\cdot V_B \\)',
+                    'הפוטנציאל הממוצע בין A ל-B.'
+                ],
+                correctAnswer: 0,
+                hint: 'לרוב במקורות בארץ, כמו אצל משה פרידמן, V_AB משמעותו "הפוטנציאל ב-A פחות הפוטנציאל ב-B".'
+            },
+            {
+                type: 'mcq',
+                text: 'משטח שווה פוטנציאל הוא משטח שבו:',
+                options: [
+                    'השדה החשמלי בכל נקודה עליו הוא אפס.',
+                    'הפוטנציאל שווה לאפס בכל נקודה עליו.',
+                    'עבודת הכוח החשמלי להעברת מטען מנקודה אחת לאחרת על המשטח היא אפס.',
+                    'קווי השדה החשמלי מקבילים למשטח תמיד.'
+                ],
+                correctAnswer: 2,
+                hint: 'אם הפוטנציאל לא משתנה על המשטח, משמע ש- ΔV הוא 0. מה זה אומר על עבודת הכוח החשמלי?'
+            },
+            {
+                type: 'mcq',
+                text: 'מהי הזווית בין קווי השדה החשמלי לבין משטחים שווי פוטנציאל?',
+                options: [
+                    '\\( 0^\\circ \\) (הם מקבילים זה לזה)',
+                    '\\( 45^\\circ \\)',
+                    '\\( 90^\\circ \\) (הם מאונכים זה לזה תמיד)',
+                    'הזווית תלויה בסימן המטען היוצר את השדה.'
+                ],
+                correctAnswer: 2,
+                hint: 'קווי השדה מצביעים לכיוון שבו הפוטנציאל משתנה באופן המקסימלי, ולכן הם תמיד חותכים בניצב את המשטחים בהם הוא אינו משתנה.'
+            },
+            {
+                type: 'open',
+                text: 'הפוטנציאל בנקודה A הוא \\( -20V \\) והפוטנציאל בנקודה B הוא \\( 30V \\). מהו הפרש הפוטנציאלים \\( \\Delta V \\) (המוגדר כ- \\( V_B - V_A \\)) בוולטים? כתבו תשובה מספרית בלבד.',
+                correctAnswer: '50',
+                hint: 'פשוט עשו חישוב של הסוף פחות ההתחלה: 30 פחות (-20).'
+            },
+            {
+                type: 'open',
+                text: 'חלקיק אלפא (בעל מטען \\( q = +2e \\)) מואץ ממנוחה דרך הפרש פוטנציאלים המקנה לו אנרגיה. הוא עובר מפוטנציאל גבוה לנמוך כך ש- \\( \\Delta V = -1000V \\). מהי האנרגיה הקינטית הסופית שלו ביחידות של אלקטרון-וולט (eV)?',
+                correctAnswer: '2000',
+                hint: 'ביחידות eV החישוב מאוד פשוט: מכפילים את כמות מטעני האלקטרון בהפרש הפוטנציאלים. השינוי באנרגיה הקינטית הוא חיובי (הוא מואץ).'
+            },
+            {
+                type: 'mcq',
+                text: 'כיוון קווי השדה החשמלי מצביע תמיד:',
+                options: [
+                    'לכיוון שבו הפוטנציאל החשמלי יורד.',
+                    'לכיוון שבו הפוטנציאל החשמלי עולה.',
+                    'לכיוון שבו האנרגיה הפוטנציאלית של אלקטרון יורדת.',
+                    'מהקוטב השלילי לקוטב החיובי.'
+                ],
+                correctAnswer: 0,
+                hint: 'חשבו על מטען חיובי - הוא תמיד נדחף הרחק מאזור חיובי (פוטנציאל גבוה) לאזור שלילי (פוטנציאל נמוך).'
+            },
+            {
+                type: 'mcq',
+                text: 'מטען **שלילי** מוזז על ידי כוח חיצוני בכיוון קווי השדה החשמלי. מה קורה לאנרגיה הפוטנציאלית החשמלית שלו?',
+                options: [
+                    'היא יורדת, מכיוון שהוא נע בכיוון השדה.',
+                    'היא עולה, מכיוון שהכוח החשמלי הפועל עליו מנוגד לכיוון התנועה (הוא מתרחק ממצבו הטבעי).',
+                    'היא אינה משתנה כי הוא נע לאורך קו שדה.',
+                    'היא מתאפסת.'
+                ],
+                correctAnswer: 1,
+                hint: 'מטען שלילי "רוצה" באופן טבעי לנוע נגד כיוון השדה. אם אנחנו מזיזים אותו עם כיוון השדה, אנחנו מרחיקים אותו מהמצב הטבעי שלו, כמו למתוח קפיץ.'
+            },
+            {
+                type: 'mcq',
+                text: 'אם ידוע כי עבודת הכוח החשמלי בהעברת מטען בין שתי נקודות היא **חיובית**, אזי בהכרח:',
+                options: [
+                    'האנרגיה הפוטנציאלית החשמלית של המערכת קטנה (\\( \\Delta U < 0 \\)).',
+                    'האנרגיה הפוטנציאלית החשמלית של המערכת גדלה (\\( \\Delta U > 0 \\)).',
+                    'המטען חייב להיות חיובי.',
+                    'עבודת הכוח החיצוני (במהירות קבועה) תהיה חיובית גם כן.'
+                ],
+                correctAnswer: 0,
+                hint: 'עבודת הכוח החשמלי שווה למינוס השינוי באנרגיה הפוטנציאלית. אם העבודה חיובית, המערכת משחררת אנרגיה והאנרגיה הפוטנציאלית יורדת.'
+            },
+            {
+                type: 'mcq',
+                text: 'כוח חיצוני מבצע עבודה **שלילית** בעת העברת מטען \\(q\\) **חיובי** במהירות קבועה מנקודה C לנקודה D. מכאן ניתן להסיק ש:',
+                options: [
+                    'הפוטנציאל בנקודה D גבוה מהפוטנציאל בנקודה C (\\( V_D > V_C \\)).',
+                    'הפוטנציאל בנקודה C גבוה מהפוטנציאל בנקודה D (\\( V_C > V_D \\)).',
+                    'האנרגיה הקינטית של המטען גדלה בהכרח.',
+                    'לא בוצעה עבודה על ידי הכוח החשמלי.'
+                ],
+                correctAnswer: 1,
+                hint: 'עבודה חיצונית שלילית אומרת שהמטען ירד באנרגיה הפוטנציאלית שלו (ΔU < 0). עבור מטען חיובי, זה אומר שהוא נע לפוטנציאל נמוך יותר.'
+            },
+            {
+                type: 'mcq',
+                text: 'משוואת חוק שימור האנרגיה (ללא חיכוך וללא כוחות לא משמרים) עבור חלקיק טעון הנע בשדה חשמלי היא:',
+                options: [
+                    '\\( \\Delta K - q\\Delta V = 0 \\)',
+                    '\\( \\Delta K + \\Delta V = 0 \\)',
+                    '\\( \\Delta K + q\\Delta V = 0 \\)',
+                    '\\( \\Delta K = W_{ext} \\)'
+                ],
+                correctAnswer: 2,
+                hint: 'הסכום של השינוי באנרגיה הקינטית (ΔK) והשינוי באנרגיה הפוטנציאלית (ΔU) הוא אפס. זכרו ש- ΔU שווה ל- qΔV.'
+            },
+            {
+                type: 'mcq',
+                text: 'כאשר מאריקים (מחברים לאדמה) גוף מוליך טעון:',
+                options: [
+                    'מטענו תמיד מתאפס לחלוטין.',
+                    'הפוטנציאל שלו משתווה לאפס (פוטנציאל האדמה).',
+                    'הוא תמיד מקבל אלקטרונים מהאדמה.',
+                    'הוא תמיד מוסר אלקטרונים לאדמה.'
+                ],
+                correctAnswer: 1,
+                hint: 'כדור הארץ משמש כמקור קיבול עצום ונקודת ייחוס של אפס וולט. הארקה גורמת לשוויון פוטנציאלים עם האדמה.'
+            }
+        ];
+
+        // State variables
+        let studentName = '';
+        let studentClass = '';
+        let currentScore = 0;
+        let questionsState = questionsData.map(q => ({
+            ...q,
+            attempts: 0,
+            status: 'unanswered', // unanswered, correct_first, correct_second, incorrect
+            earnedPoints: 0
+        }));
+
+        const POINTS_PER_QUESTION = 100 / questionsData.length;
+
+        // Start Quiz Function
+        function startQuiz() {
+            const nameInput = document.getElementById('student-name').value.trim();
+            const classInput = document.getElementById('student-class').value.trim();
+
+            if (!nameInput || !classInput) {
+                document.getElementById('login-error').classList.remove('hidden');
+                return;
+            }
+
+            studentName = nameInput;
+            studentClass = classInput;
+
+            document.getElementById('display-name').textContent = studentName;
+            document.getElementById('display-class').textContent = studentClass;
+
+            document.getElementById('login-screen').classList.add('hidden');
+            document.getElementById('quiz-screen').classList.remove('hidden');
+
+            renderQuestions();
+        }
+
+        // Render Questions
+        function renderQuestions() {
+            const container = document.getElementById('questions-container');
+            container.innerHTML = '';
+
+            questionsState.forEach((q, index) => {
+                const card = document.createElement('div');
+                card.className = 'question-card bg-white rounded-xl shadow p-6 mb-6 border border-gray-200';
+                card.id = `question-card-${index}`;
+
+                let html = `<div class="font-semibold text-lg mb-4">שאלה ${index + 1}: <span class="font-normal block mt-1">${q.text}</span></div>`;
+
+                if (q.type === 'mcq') {
+                    html += `<div class="space-y-3" id="options-${index}">`;
+                    q.options.forEach((opt, optIndex) => {
+                        html += `
+                            <label class="flex items-center space-x-3 space-x-reverse cursor-pointer p-2 rounded hover:bg-gray-50 transition">
+                                <input type="radio" name="q-${index}" value="${optIndex}" class="form-radio h-5 w-5 text-blue-600">
+                                <span class="math-content">${opt}</span>
+                            </label>
+                        `;
+                    });
+                    html += `</div>`;
+                } else if (q.type === 'open') {
+                    html += `
+                        <div class="mt-2" id="options-${index}">
+                            <input type="text" id="open-q-${index}" class="w-full md:w-1/2 border border-gray-300 rounded p-2 focus:ring-2 focus:ring-blue-500 text-left" dir="ltr" placeholder="הכנס תשובה מספרית...">
+                        </div>
+                    `;
+                }
+
+                html += `
+                    <div class="mt-5 flex items-center justify-between">
+                        <button id="btn-check-${index}" onclick="checkAnswer(${index})" class="bg-blue-600 hover:bg-blue-700 text-white font-medium py-2 px-6 rounded transition">בדוק תשובה</button>
+                        <span id="feedback-${index}" class="font-medium text-sm px-3 py-1 rounded hidden w-full ml-4"></span>
+                    </div>
+                `;
+
+                card.innerHTML = html;
+                container.appendChild(card);
+            });
+
+            // Re-render LaTeX carefully
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                // Clear any previous typesetting state for this container
+                MathJax.typesetClear([container]);
+                // Promise-based typeset
+                MathJax.typesetPromise([container]).catch(function (err) {
+                    console.error('MathJax rendering failed: ' + err.message);
+                });
+            }
+        }
+
+        // Check Answer Function
+        function checkAnswer(index) {
+            const q = questionsState[index];
+            const feedbackEl = document.getElementById(`feedback-${index}`);
+            const cardEl = document.getElementById(`question-card-${index}`);
+            const btnEl = document.getElementById(`btn-check-${index}`);
+            
+            let userAnswer = null;
+
+            if (q.type === 'mcq') {
+                const selected = document.querySelector(`input[name="q-${index}"]:checked`);
+                if (!selected) {
+                    alert('אנא בחרו תשובה לפני הבדיקה.');
+                    return;
+                }
+                userAnswer = parseInt(selected.value);
+            } else if (q.type === 'open') {
+                const inputVal = document.getElementById(`open-q-${index}`).value.trim();
+                if (inputVal === '') {
+                    alert('אנא הזינו תשובה לפני הבדיקה.');
+                    return;
+                }
+                userAnswer = inputVal;
+            }
+
+            q.attempts++;
+            let isCorrect = false;
+
+            if (q.type === 'mcq') {
+                isCorrect = (userAnswer === q.correctAnswer);
+            } else if (q.type === 'open') {
+                // strict string comparison for numeric strings
+                isCorrect = (userAnswer === q.correctAnswer);
+            }
+
+            feedbackEl.classList.remove('hidden');
+
+            if (isCorrect) {
+                if (q.attempts === 1) {
+                    q.status = 'correct_first';
+                    q.earnedPoints = POINTS_PER_QUESTION;
+                    feedbackEl.innerHTML = 'תשובה נכונה! (+5 נק\')';
+                    cardEl.classList.add('correct-bg');
+                } else {
+                    q.status = 'correct_second';
+                    q.earnedPoints = POINTS_PER_QUESTION / 2;
+                    feedbackEl.innerHTML = 'תשובה נכונה בניסיון שני! (+2.5 נק\')';
+                    cardEl.classList.add('half-bg');
+                }
+                feedbackEl.className = `font-medium text-sm px-4 py-2 rounded text-green-800 bg-green-200 block mt-2 w-full`;
+                disableQuestion(index);
+                updateScore();
+            } else {
+                if (q.attempts === 1) {
+                    // Injecting hint on first failed attempt
+                    feedbackEl.innerHTML = `תשובה שגויה. נסו שוב! (נותר ניסיון אחד)<br><span class="text-sm font-normal text-orange-900 mt-2 block">💡 <strong>רמז:</strong> ${q.hint}</span>`;
+                    feedbackEl.className = `font-medium text-sm px-4 py-3 rounded text-orange-800 bg-orange-100 block mt-2 w-full border border-orange-200`;
+                    btnEl.textContent = 'בדוק שוב';
+                } else {
+                    q.status = 'incorrect';
+                    q.earnedPoints = 0;
+                    
+                    let correctAnswerText = q.type === 'mcq' ? q.options[q.correctAnswer] : q.correctAnswer;
+                    feedbackEl.innerHTML = `שגוי. התשובה הנכונה היא: <strong class="mr-1 math-content">${correctAnswerText}</strong>`;
+                    feedbackEl.className = `font-medium text-sm px-4 py-2 rounded text-red-800 bg-red-200 block mt-2 w-full`;
+                    cardEl.classList.add('wrong-bg');
+                    disableQuestion(index);
+                    
+                    // Retypeset just in case the correct answer contains math
+                    if (window.MathJax && window.MathJax.typesetPromise) {
+                        MathJax.typesetPromise([feedbackEl]);
+                    }
+                }
+            }
+        }
+
+        function disableQuestion(index) {
+            const q = questionsState[index];
+            document.getElementById(`btn-check-${index}`).disabled = true;
+            document.getElementById(`btn-check-${index}`).classList.add('opacity-50', 'cursor-not-allowed');
+            
+            if (q.type === 'mcq') {
+                const radios = document.querySelectorAll(`input[name="q-${index}"]`);
+                radios.forEach(r => r.disabled = true);
+            } else {
+                document.getElementById(`open-q-${index}`).disabled = true;
+            }
+        }
+
+        function updateScore() {
+            currentScore = questionsState.reduce((sum, q) => sum + q.earnedPoints, 0);
+            document.getElementById('score-display').textContent = currentScore;
+        }
+
+        // Print & Finish function
+        function printAndFinish() {
+            // Calculate final score if there are unanswered questions
+            updateScore();
+            
+            const printWindow = window.open('', '_blank');
+            if (!printWindow) {
+                alert('הדפדפן חסם את פתיחת החלון. אנא אשרו פתיחת חלונות קופצים (Pop-ups) עבור אתר זה.');
+                return;
+            }
+
+            let htmlString = `
+            <!DOCTYPE html>
+            <html lang="he" dir="rtl">
+            <head>
+                <meta charset="UTF-8">
+                <title>דוח מבדק - אנרגיה ופוטנציאל</title>
+                <!-- Configure MathJax for the Print Window -->
+                <script>
+                    window.MathJax = {
+                        tex: {
+                            inlineMath: [['\\\\(', '\\\\)'], ['$', '$']],
+                            displayMath: [['\\\\[', '\\\\]'], ['$$', '$$']]
+                        },
+                        startup: {
+                            // Hook into the pageReady event to ONLY print after rendering is fully complete
+                            pageReady: function () {
+                                return MathJax.startup.defaultPageReady().then(function () {
+                                    // Give browser half a second to paint the SVG elements
+                                    setTimeout(function() {
+                                        window.print();
+                                        // window.close(); - הוסר כדי לאפשר צילום מסך
+                                    }, 500);
+                                });
+                            }
+                        }
+                    };
+                <\/script>
+                <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"><\/script>
+                <style>
+                    body { font-family: 'Segoe UI', Tahoma, sans-serif; padding: 30px; line-height: 1.6; color: #333; }
+                    .header { border-bottom: 2px solid #2563eb; padding-bottom: 10px; margin-bottom: 20px; }
+                    h1 { color: #1e3a8a; font-size: 24px; margin-bottom: 5px; }
+                    .info { font-size: 18px; font-weight: bold; margin-bottom: 20px;}
+                    .score { font-size: 22px; color: #2563eb; font-weight: bold; }
+                    .q-block { margin-bottom: 15px; padding: 10px; border: 1px solid #ddd; border-radius: 8px; page-break-inside: avoid; }
+                    .q-text { font-weight: bold; margin-bottom: 5px; }
+                    .status-correct { color: #15803d; font-weight: bold; }
+                    .status-half { color: #b45309; font-weight: bold; }
+                    .status-wrong { color: #b91c1c; font-weight: bold; }
+                    .status-unanswered { color: #6b7280; font-weight: bold; }
+                    .MathJax { direction: ltr !important; }
+                    @media print {
+                        .no-print { display: none !important; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="no-print" style="background-color: #fef3c7; color: #92400e; padding: 12px; border-radius: 8px; margin-bottom: 20px; text-align: center; border: 1px solid #f59e0b; font-weight: bold;">
+                    הדפסה ל-PDF לא עבדה? אין בעיה, ניתן לצלם את המסך הזה. <br><span style="font-weight: normal; font-size: 14px;">(אפשר לסגור את החלון הזה באופן ידני בסיום)</span>
+                </div>
+                <div class="header">
+                    <h1>דוח מבדק אינטראקטיבי: אנרגיות ופוטנציאל חשמלי</h1>
+                </div>
+                <div class="info">
+                    תלמיד/ה: ${studentName} | כיתה: ${studentClass} <br>
+                    <span class="score">ציון סופי: ${currentScore} / 100</span>
+                </div>
+                
+                <h3>פירוט תשובות:</h3>
+            `;
+
+            questionsState.forEach((q, i) => {
+                let statusClass = 'status-unanswered';
+                let statusText = 'לא נענה';
+                
+                if (q.status === 'correct_first') { statusClass = 'status-correct'; statusText = 'נכון (ניסיון ראשון, 5 נק\')'; }
+                if (q.status === 'correct_second') { statusClass = 'status-half'; statusText = 'נכון (ניסיון שני, 2.5 נק\')'; }
+                if (q.status === 'incorrect') { statusClass = 'status-wrong'; statusText = 'שגוי (0 נק\')'; }
+
+                let correctAnsText = q.type === 'mcq' ? q.options[q.correctAnswer] : q.correctAnswer;
+
+                htmlString += `
+                <div class="q-block">
+                    <div class="q-text">שאלה ${i + 1}: ${q.text}</div>
+                    <div class="${statusClass}">סטטוס: ${statusText}</div>
+                    ${q.status !== 'correct_first' && q.status !== 'correct_second' ? `<div style="font-size: 14px; margin-top:4px;"><strong>התשובה הנכונה:</strong> ${correctAnsText}</div>` : ''}
+                </div>`;
+            });
+
+            htmlString += `
+            </body>
+            </html>`;
+
+            printWindow.document.write(htmlString);
+            printWindow.document.close();
+        }
+    </script>
+</body>
+</html>

@@ -1,0 +1,653 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>בדיקת קילומטראז׳ מול מכסה</title>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-adapter-date-fns@3.0.0/dist/chartjs-adapter-date-fns.bundle.min.js"></script>
+  <style>
+    :root { --bg:#0f172a; --card:#111827; --ink:#e5e7eb; --muted:#94a3b8; --ok:#10b981; --bad:#ef4444; --accent:#3b82f6; }
+    body { margin:0; font-family: system-ui, -apple-system, "Segoe UI", Roboto, "Noto Sans", Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji"; background: var(--bg); color: var(--ink); }
+    .wrap { max-width: 760px; margin: 24px auto; padding: 16px; }
+    h1 { font-size: clamp(20px, 3vw, 28px); margin: 0 0 12px; }
+    p.lead { color: var(--muted); margin: 0 0 20px; }
+    .card { background: var(--card); border: 1px solid #1f2937; border-radius: 18px; padding: 16px; box-shadow: 0 6px 20px rgba(0,0,0,.25); }
+    .row { display: grid; grid-template-columns: 1fr auto; gap: 12px; align-items: end; }
+    label { font-weight: 600; margin-bottom: 6px; display:block; }
+    input[type="number"]{ width: 100%; padding: 10px 12px; border-radius: 12px; border: 1px solid #334155; background: #0b1220; color: var(--ink); }
+    button { padding: 10px 16px; border-radius: 12px; border: 1px solid #334155; background: var(--accent); color: white; font-weight: 700; cursor: pointer; }
+    button:disabled { opacity:.6; cursor: not-allowed; }
+    .result { margin-top: 16px; line-height: 1.8; }
+    .stat { display: grid; grid-template-columns: 1fr auto; gap: 10px; padding: 10px 0; border-bottom: 1px dashed #243044; }
+    .stat:last-child { border-bottom: 0; }
+    .badge { display:inline-block; padding: 2px 8px; border-radius: 999px; font-size: 12px; font-weight:700 }
+    .ok { background: #064e3b; color:#a7f3d0 }
+    .bad { background: #7f1d1d; color:#fecaca }
+    small { color: var(--muted); }
+    .muted { color: var(--muted); }
+    .hint { font-size: 13px; color: var(--muted); margin-top: 8px; }
+    .grid-2 { display:grid; grid-template-columns: repeat(auto-fit, minmax(220px, 1fr)); gap:12px; }
+    code { background:#0b1220; padding:2px 6px; border-radius:6px; }
+    .section-title { margin: 18px 0 10px; font-size: 18px; }
+    .table-wrap { overflow-x: auto; border: 1px solid #243044; border-radius: 12px; }
+    table { width: 100%; border-collapse: collapse; min-width: 620px; }
+    th, td { padding: 10px; border-bottom: 1px solid #243044; text-align: right; }
+    th { color: var(--muted); font-weight: 700; font-size: 13px; }
+    tr:last-child td { border-bottom: 0; }
+    .mini-btn { padding: 6px 10px; border-radius: 8px; font-size: 12px; }
+    .danger { background: #7f1d1d; }
+    .chart-box { margin-top: 12px; background: #0b1220; border: 1px solid #243044; border-radius: 12px; padding: 10px; }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <h1>בדיקת קילומטראז׳ מול מכסה שנתית</h1>
+    <p class="lead">מכסה שנתית: <b id="annualCapText">20,000</b> ק״מ. תאריך התחלה: <b id="startDateText">20/04/2025</b>.</p>
+
+    <div class="card">
+      <div class="grid-2">
+        <div>
+          <label for="km">קריאת מד־קילומטר נוכחית (סה״כ ק״מ ברכב)</label>
+          <input id="km" type="number" min="0" step="1" placeholder="לדוגמה: 15320" inputmode="numeric" />
+          <div class="hint">הזן את הקריאה ולחץ על <b>חשב</b>. המכסה עד היום מוצגת גם בלי להזין נתון.</div>
+        </div>
+        <div style="display:flex; align-items:end; justify-content:flex-end; gap:10px;">
+          <button id="calcBtn" type="button">חשב</button>
+        </div>
+      </div>
+
+      <div class="stat" style="margin-top:14px;">
+        <div id="userInfo" class="muted">לא מחובר</div>
+        <div style="display:flex; gap:8px;">
+          <button id="loginBtn" type="button">התחברות Google</button>
+          <button id="logoutBtn" type="button" style="display:none; background:#374151;">התנתקות</button>
+        </div>
+      </div>
+      <div id="saveStatus" class="hint"></div>
+
+      <div id="result" class="result"></div>
+
+      <h2 class="section-title">היסטוריית קריאות</h2>
+      <div id="historyHint" class="hint">יש להתחבר כדי לראות את הקריאות מהענן.</div>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>תאריך</th>
+              <th>קריאה</th>
+              <th>פער מול מותר</th>
+              <th>קנס משוער</th>
+              <th>פעולות</th>
+            </tr>
+          </thead>
+          <tbody id="historyBody">
+            <tr><td colspan="5" class="muted">אין נתונים להצגה</td></tr>
+          </tbody>
+        </table>
+      </div>
+      <div class="chart-box">
+        <canvas id="kmChart" height="120"></canvas>
+      </div>
+    </div>
+
+    <p class="hint">חישוב פשטני: 365 ימים בשנה. אפשר לשנות בקלות לדיוק לוח־שנה מלא.</p>
+  </div>
+
+<script type="module">
+  import { initializeApp } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-app.js';
+  import {
+    getAuth,
+    GoogleAuthProvider,
+    onAuthStateChanged,
+    signInWithPopup,
+    signOut
+  } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-auth.js';
+  import {
+    getFirestore,
+    collection,
+    addDoc,
+    serverTimestamp,
+    query,
+    orderBy,
+    onSnapshot,
+    doc,
+    updateDoc,
+    deleteDoc
+  } from 'https://www.gstatic.com/firebasejs/10.12.5/firebase-firestore.js';
+
+  const firebaseConfig = {
+    apiKey: 'AIzaSyB9r2za9HR3PnGVNK0fNbROndtoLN0dvaA',
+    authDomain: 'napo-lease-tracker.firebaseapp.com',
+    projectId: 'napo-lease-tracker',
+    storageBucket: 'napo-lease-tracker.firebasestorage.app',
+    messagingSenderId: '903051434298',
+    appId: '1:903051434298:web:1e34220e306ab1844e9803',
+    measurementId: 'G-RE9GNNMT6Z'
+  };
+
+  const app = initializeApp(firebaseConfig);
+  const auth = getAuth(app);
+  const db = getFirestore(app);
+  const provider = new GoogleAuthProvider();
+
+  let currentUser = null;
+  let readingsUnsubscribe = null;
+  let readingsCache = [];
+  let kmChart = null;
+
+  // פרמטרים קבועים (ניתנים לשינוי בהמשך לפי צורך)
+  const ANNUAL_CAP = 20000;           // מכסה שנתית בק"מ
+  const START_DATE = new Date(2025, 3, 20); // 20/04/2025 (חודשים ב-JS: 0=ינואר)
+  const END_DATE = new Date(2028, 3, 20);   // 20/04/2028
+  const COST_PER_KM = 0.9;            // ₪ לכל ק"מ חריגה (הנחה)
+  const VAT = 0.18;                   // מע"מ (הנחה)
+
+  const $ = (id) => document.getElementById(id);
+
+  function daysBetweenInclusive(a, b){
+    const MS = 24*60*60*1000;
+    const start = new Date(a.getFullYear(), a.getMonth(), a.getDate());
+    const end   = new Date(b.getFullYear(), b.getMonth(), b.getDate());
+    return Math.floor((end - start)/MS) + 1; // כולל יום ההתחלה
+  }
+
+  function format(n, digits=0){
+    return Number(n).toLocaleString('he-IL', {maximumFractionDigits: digits, minimumFractionDigits: digits});
+  }
+
+  function allowedSoFar(today){
+    const days = Math.max(0, daysBetweenInclusive(START_DATE, today));
+    const perDay = ANNUAL_CAP / 365; // פשטני
+    return { days, perDay, allowed: perDay * days };
+  }
+
+  function computeProjection(km, readingDate){
+    const { days, perDay, allowed } = allowedSoFar(readingDate);
+    const safeAllowed = Math.max(allowed, 1e-9);
+    const difference = km - allowed;
+    const percent = (km / safeAllowed) * 100;
+    const ratePerDay = km / Math.max(days, 1);
+    const projected3Years = ratePerDay * 365 * 3;
+    const allowed3Years = ANNUAL_CAP * 3;
+    const projectedOverage = Math.max(0, projected3Years - allowed3Years);
+    const fine = projectedOverage * COST_PER_KM * (1 + VAT);
+    return {
+      days,
+      perDay,
+      allowed,
+      difference,
+      percent,
+      projected3Years,
+      allowed3Years,
+      projectedOverage,
+      fine
+    };
+  }
+
+  function toDate(isoValue){
+    const d = new Date(isoValue);
+    return Number.isFinite(d.getTime()) ? d : new Date();
+  }
+
+  function fmtDate(isoValue){
+    return toDate(isoValue).toLocaleDateString('he-IL');
+  }
+
+  function dateToDayIndex(dateValue){
+    const MS = 24 * 60 * 60 * 1000;
+    const d = new Date(dateValue.getFullYear(), dateValue.getMonth(), dateValue.getDate());
+    const s = new Date(START_DATE.getFullYear(), START_DATE.getMonth(), START_DATE.getDate());
+    return Math.round((d - s) / MS);
+  }
+
+  function linearRegression(points){
+    if(points.length < 2){
+      return null;
+    }
+
+    let sumX = 0;
+    let sumY = 0;
+    let sumXY = 0;
+    let sumXX = 0;
+
+    for(const p of points){
+      sumX += p.x;
+      sumY += p.y;
+      sumXY += p.x * p.y;
+      sumXX += p.x * p.x;
+    }
+
+    const n = points.length;
+    const denominator = (n * sumXX) - (sumX * sumX);
+    if(Math.abs(denominator) < 1e-9){
+      return null;
+    }
+
+    const m = ((n * sumXY) - (sumX * sumY)) / denominator;
+    const b = (sumY - (m * sumX)) / n;
+    return { m, b };
+  }
+
+  function renderAllowanceOnly(){
+    const today = new Date();
+    const { days, perDay, allowed } = allowedSoFar(today);
+    const html = `
+      <div class="stat"><div>ימים שחלפו מאז תחילת המניין</div><div><b>${format(days)}</b></div></div>
+      <div class="stat"><div>מכסה יומית (פשטני, 365 ימים)</div><div><b>${format(perDay,2)}</b> ק"מ/יום</div></div>
+      <div class="stat"><div>מכסה מותרת עד היום</div><div><b>${format(allowed,0)}</b> ק"מ</div></div>
+      <div class="hint">הזן קריאת מד כדי לראות סטטוס, תחזית ל‑3 שנים וקנס משוער אם יש חריגה.</div>
+    `;
+    $('result').innerHTML = html;
+  }
+
+  async function saveReadingToCloud(payload){
+    if(!currentUser){
+      throw new Error('not-authenticated');
+    }
+    const readingsRef = collection(db, 'users', currentUser.uid, 'leaseReadings');
+    await addDoc(readingsRef, {
+      ...payload,
+      createdAt: serverTimestamp()
+    });
+  }
+
+  function setHistoryHint(text, isError = false){
+    const el = $('historyHint');
+    el.textContent = text;
+    el.style.color = isError ? '#fecaca' : '';
+  }
+
+  function clearHistoryUi(){
+    $('historyBody').innerHTML = '<tr><td colspan="5" class="muted">אין נתונים להצגה</td></tr>';
+    if(kmChart){
+      kmChart.destroy();
+      kmChart = null;
+    }
+  }
+
+  function renderChart(readings){
+    const ctx = $('kmChart');
+    const sorted = [...readings].sort((a, b) => toDate(a.readingDateIso) - toDate(b.readingDateIso));
+    const readingPoints = sorted.map((r) => ({
+      x: toDate(r.readingDateIso),
+      y: Number(r.readingKm || 0)
+    }));
+
+    if(kmChart){
+      kmChart.destroy();
+      kmChart = null;
+    }
+
+    if(readingPoints.length === 0){
+      return;
+    }
+
+    const regressionInput = readingPoints.map((p) => ({ x: dateToDayIndex(p.x), y: p.y }));
+    const fit = linearRegression(regressionInput);
+
+    let trendLinePoints = [];
+    let forecastEndPoint = null;
+
+    if(fit){
+      const xStart = dateToDayIndex(START_DATE);
+      const xEnd = dateToDayIndex(END_DATE);
+      const yStart = fit.m * xStart + fit.b;
+      const yEnd = fit.m * xEnd + fit.b;
+
+      trendLinePoints = [
+        { x: START_DATE, y: Math.max(0, yStart) },
+        { x: END_DATE, y: Math.max(0, yEnd) }
+      ];
+
+      forecastEndPoint = { x: END_DATE, y: Math.max(0, yEnd) };
+    }
+
+    const forecastLabelPlugin = {
+      id: 'forecastLabelPlugin',
+      afterDatasetsDraw(chart){
+        if(!forecastEndPoint){
+          return;
+        }
+        const xScale = chart.scales.x;
+        const yScale = chart.scales.y;
+        const x = xScale.getPixelForValue(forecastEndPoint.x);
+        const y = yScale.getPixelForValue(forecastEndPoint.y);
+        const c = chart.ctx;
+        c.save();
+        c.fillStyle = '#e5e7eb';
+        c.font = 'bold 12px Segoe UI';
+        c.textAlign = 'left';
+        c.fillText(`תחזית סוף תקופה: ${format(forecastEndPoint.y,0)} ק"מ`, x + 8, y - 8);
+        c.restore();
+      }
+    };
+
+    kmChart = new Chart(ctx, {
+      type: 'line',
+      plugins: [forecastLabelPlugin],
+      data: {
+        datasets: [
+          {
+            label: 'קריאות בפועל',
+            data: readingPoints,
+            borderColor: '#3b82f6',
+            backgroundColor: 'rgba(59,130,246,0.2)',
+            borderWidth: 2,
+            tension: 0.2,
+            fill: false,
+            pointRadius: 3
+          },
+          {
+            label: 'קו מגמה',
+            data: trendLinePoints,
+            borderColor: '#f59e0b',
+            backgroundColor: 'rgba(245,158,11,0.15)',
+            borderWidth: 2,
+            tension: 0,
+            fill: false,
+            borderDash: [8, 6],
+            pointRadius: 0
+          },
+          {
+            label: 'תחזית ל-20/04/2028',
+            data: forecastEndPoint ? [forecastEndPoint] : [],
+            borderColor: '#ef4444',
+            backgroundColor: '#ef4444',
+            pointRadius: 5,
+            pointHoverRadius: 6,
+            showLine: false
+          }
+        ]
+      },
+      options: {
+        responsive: true,
+        plugins: {
+          legend: {
+            labels: { color: '#e5e7eb' }
+          }
+        },
+        scales: {
+          x: {
+            type: 'time',
+            min: START_DATE.getTime(),
+            max: END_DATE.getTime(),
+            time: { unit: 'month' },
+            ticks: { color: '#94a3b8' },
+            grid: { color: '#243044' }
+          },
+          y: {
+            ticks: { color: '#94a3b8' },
+            grid: { color: '#243044' }
+          }
+        }
+      }
+    });
+  }
+
+  function renderHistoryRows(readings){
+    if(readings.length === 0){
+      $('historyBody').innerHTML = '<tr><td colspan="5" class="muted">אין קריאות שמורות עדיין</td></tr>';
+      renderChart([]);
+      return;
+    }
+
+    const html = readings.map((r) => {
+      const diff = Number(r.differenceKm ?? 0);
+      const fine = Number(r.estimatedFineIls ?? 0);
+      return `
+        <tr>
+          <td>${fmtDate(r.readingDateIso)}</td>
+          <td>${format(r.readingKm,0)} ק"מ</td>
+          <td>${format(diff,0)} ק"מ</td>
+          <td>₪${format(fine,0)}</td>
+          <td style="display:flex; gap:8px;">
+            <button class="mini-btn" type="button" data-action="edit" data-id="${r.id}">עדכן</button>
+            <button class="mini-btn danger" type="button" data-action="delete" data-id="${r.id}">מחק</button>
+          </td>
+        </tr>
+      `;
+    }).join('');
+
+    $('historyBody').innerHTML = html;
+    renderChart(readings);
+  }
+
+  function startReadingsListener(){
+    if(readingsUnsubscribe){
+      readingsUnsubscribe();
+      readingsUnsubscribe = null;
+    }
+    readingsCache = [];
+
+    if(!currentUser){
+      clearHistoryUi();
+      setHistoryHint('יש להתחבר כדי לראות את הקריאות מהענן.');
+      return;
+    }
+
+    setHistoryHint('טוען קריאות מהענן...');
+    const q = query(
+      collection(db, 'users', currentUser.uid, 'leaseReadings'),
+      orderBy('readingDateIso', 'asc')
+    );
+
+    readingsUnsubscribe = onSnapshot(q, (snap) => {
+      readingsCache = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+      renderHistoryRows(readingsCache);
+      setHistoryHint(`נטענו ${readingsCache.length} קריאות.`);
+    }, (err) => {
+      console.error(err);
+      setHistoryHint('טעינת ההיסטוריה נכשלה. בדוק הרשאות Firestore.', true);
+    });
+  }
+
+  async function deleteReading(readingId){
+    if(!currentUser){
+      return;
+    }
+    if(!confirm('למחוק את הקריאה הזו?')){
+      return;
+    }
+    try{
+      await deleteDoc(doc(db, 'users', currentUser.uid, 'leaseReadings', readingId));
+      setSaveStatus('הקריאה נמחקה.');
+    }catch(err){
+      console.error(err);
+      setSaveStatus('מחיקה נכשלה.', true);
+    }
+  }
+
+  async function editReading(readingId){
+    if(!currentUser){
+      return;
+    }
+    const original = readingsCache.find((r) => r.id === readingId);
+    if(!original){
+      return;
+    }
+
+    const nextKmStr = prompt('הזן קילומטראז חדש:', String(original.readingKm ?? ''));
+    if(nextKmStr === null){
+      return;
+    }
+
+    const nextKm = Number(nextKmStr);
+    if(!Number.isFinite(nextKm) || nextKm < 0){
+      alert('ערך לא תקין.');
+      return;
+    }
+
+    const defaultDate = toDate(original.readingDateIso).toISOString().slice(0, 10);
+    const nextDateStr = prompt('הזן תאריך קריאה (YYYY-MM-DD):', defaultDate);
+    if(nextDateStr === null){
+      return;
+    }
+
+    const nextDate = new Date(`${nextDateStr}T12:00:00`);
+    if(!Number.isFinite(nextDate.getTime())){
+      alert('תאריך לא תקין. השתמש בפורמט YYYY-MM-DD.');
+      return;
+    }
+
+    const readingDate = nextDate;
+    const calc = computeProjection(nextKm, readingDate);
+
+    try{
+      await updateDoc(doc(db, 'users', currentUser.uid, 'leaseReadings', readingId), {
+        readingDateIso: readingDate.toISOString(),
+        readingKm: nextKm,
+        daysFromStart: calc.days,
+        allowedSoFarKm: calc.allowed,
+        differenceKm: calc.difference,
+        utilizationPercent: calc.percent,
+        projected3YearsKm: calc.projected3Years,
+        projectedOverageKm: calc.projectedOverage,
+        estimatedFineIls: calc.fine,
+        annualCap: ANNUAL_CAP,
+        startDateIso: START_DATE.toISOString(),
+        costPerKm: COST_PER_KM,
+        vat: VAT,
+        updatedAt: serverTimestamp()
+      });
+      setSaveStatus('הקריאה והתאריך עודכנו בהצלחה.');
+    }catch(err){
+      console.error(err);
+      setSaveStatus('עדכון נכשל.', true);
+    }
+  }
+
+  function setSaveStatus(text, isError = false){
+    const el = $('saveStatus');
+    el.textContent = text;
+    el.style.color = isError ? '#fecaca' : '';
+  }
+
+  async function analyze(){
+    const kmStr = $('km').value.trim();
+    if(kmStr === ''){ // אם לא הוזן קלט, פשוט מציגים את המכסה
+      renderAllowanceOnly();
+      setSaveStatus('');
+      return;
+    }
+    const km = Number(kmStr);
+    if(!Number.isFinite(km) || km < 0){
+      alert('אנא הזן מספר תקין שאינו שלילי.');
+      return;
+    }
+
+    const today = new Date();
+    const { days, perDay, allowed, difference, percent, projected3Years, allowed3Years, projectedOverage, fine } = computeProjection(km, today);
+
+    const statusBadge = difference > 0
+      ? `<span class="badge bad">חריגה</span>`
+      : `<span class="badge ok">בתוך המכסה</span>`;
+
+    const html = `
+      <div class="stat"><div>ימים שחלפו מאז תחילת המניין</div><div><b>${format(days)}</b></div></div>
+      <div class="stat"><div>מכסה יומית (פשטני, 365 ימים)</div><div><b>${format(perDay,2)}</b> ק"מ/יום</div></div>
+      <div class="stat"><div>מכסה מותרת עד היום</div><div><b>${format(allowed,0)}</b> ק"מ</div></div>
+      <div class="stat"><div>קריאת מד שהוזנה</div><div><b>${format(km,0)}</b> ק"מ</div></div>
+      <div class="stat"><div>סטטוס מול המותר עד כה</div><div>${statusBadge}</div></div>
+      <div class="stat"><div>פער מול המותר עד כה</div><div><b>${format(difference,0)}</b> ק"מ</div></div>
+      <div class="stat"><div>ניצול המכסה עד היום</div><div><b>${format(percent,1)}%</b></div></div>
+      <div class="stat"><div>תחזית ל‑3 שנים בקצב הנוכחי</div><div><b>${format(projected3Years,0)}</b> ק"מ</div></div>
+      <div class="stat"><div>מכסה מותרת ל‑3 שנים</div><div><b>${format(allowed3Years,0)}</b> ק"מ</div></div>
+      <div class="stat"><div>חריגה חזויה (אם הקצב יימשך)</div><div><b>${format(projectedOverage,0)}</b> ק"מ</div></div>
+      <div class="stat"><div>קנס משוער (עלות×מע"מ)</div><div><b>₪${format(fine,0)}</b></div></div>
+    `;
+    $('result').innerHTML = html;
+
+    if(!currentUser){
+      setSaveStatus('לא נשמר: צריך להתחבר עם Google כדי לשמור בענן.', true);
+      return;
+    }
+
+    try{
+      await saveReadingToCloud({
+        readingKm: km,
+        readingDateIso: today.toISOString(),
+        daysFromStart: days,
+        allowedSoFarKm: allowed,
+        differenceKm: difference,
+        utilizationPercent: percent,
+        projected3YearsKm: projected3Years,
+        projectedOverageKm: projectedOverage,
+        estimatedFineIls: fine,
+        annualCap: ANNUAL_CAP,
+        startDateIso: START_DATE.toISOString(),
+        costPerKm: COST_PER_KM,
+        vat: VAT
+      });
+      setSaveStatus('נשמר בענן בהצלחה.');
+    }catch(err){
+      console.error(err);
+      setSaveStatus('השמירה נכשלה. בדוק הרשאות Firestore וחיבור לחשבון.', true);
+    }
+  }
+
+  // --- אתחול ראשוני: להציג את המכסה כבר בטעינה הראשונה ---
+  document.addEventListener('DOMContentLoaded', () => {
+    // עדכון טקסטים כלליים
+    $('annualCapText').textContent = ANNUAL_CAP.toLocaleString('he-IL');
+    $('startDateText').textContent = START_DATE.toLocaleDateString('he-IL');
+    $('calcBtn').addEventListener('click', () => analyze());
+    $('loginBtn').addEventListener('click', async () => {
+      try{
+        await signInWithPopup(auth, provider);
+      }catch(err){
+        console.error(err);
+        setSaveStatus('התחברות נכשלה. נסה שוב או בדוק חלון קופץ.', true);
+      }
+    });
+    $('logoutBtn').addEventListener('click', async () => {
+      try{
+        await signOut(auth);
+      }catch(err){
+        console.error(err);
+      }
+    });
+
+    onAuthStateChanged(auth, (user) => {
+      currentUser = user || null;
+      if(currentUser){
+        $('userInfo').textContent = `מחובר: ${currentUser.displayName || currentUser.email || 'משתמש'}`;
+        $('loginBtn').style.display = 'none';
+        $('logoutBtn').style.display = '';
+        startReadingsListener();
+      }else{
+        $('userInfo').textContent = 'לא מחובר';
+        $('loginBtn').style.display = '';
+        $('logoutBtn').style.display = 'none';
+        if(readingsUnsubscribe){
+          readingsUnsubscribe();
+          readingsUnsubscribe = null;
+        }
+        clearHistoryUi();
+        setHistoryHint('יש להתחבר כדי לראות את הקריאות מהענן.');
+      }
+    });
+
+    $('historyBody').addEventListener('click', async (event) => {
+      const target = event.target;
+      if(!(target instanceof HTMLElement)){
+        return;
+      }
+      const action = target.dataset.action;
+      const id = target.dataset.id;
+      if(!action || !id){
+        return;
+      }
+      if(action === 'delete'){
+        await deleteReading(id);
+      }
+      if(action === 'edit'){
+        await editReading(id);
+      }
+    });
+
+    renderAllowanceOnly();
+  });
+</script>
+</body>
+</html>

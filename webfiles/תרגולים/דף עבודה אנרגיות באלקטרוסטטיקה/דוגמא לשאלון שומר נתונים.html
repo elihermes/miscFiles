@@ -1,0 +1,399 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מבדק אינטראקטיבי - אנרגיות ופוטנציאל חשמלי</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['\\(', '\\)']], displayMath: [['\\[', '\\]']] },
+            startup: {
+                pageReady: () => {
+                    return MathJax.startup.defaultPageReady().then(() => {
+                        console.log('MathJax initial typesetting complete');
+                    });
+                }
+            }
+        };
+    </script>
+    <script async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .math-text { direction: ltr !important; display: inline-block; }
+    </style>
+</head>
+<body class="bg-gray-50 min-h-screen p-4 md:p-8">
+
+    <!-- Error Banner (Hidden by default) -->
+    <div id="error-banner" class="max-w-4xl mx-auto hidden bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mb-4" role="alert">
+        <strong class="font-bold">שגיאת מערכת:</strong>
+        <span class="block sm:inline" id="error-message"></span>
+    </div>
+
+    <!-- Header -->
+    <div class="max-w-4xl mx-auto bg-white rounded-xl shadow-md overflow-hidden mb-6 p-6 border-t-4 border-blue-600">
+        <div class="flex justify-between items-center">
+            <h1 class="text-2xl md:text-3xl font-bold text-blue-900">מבדק: אנרגיה ופוטנציאל חשמלי</h1>
+            <button id="teacher-btn" class="text-xs text-gray-400 hover:text-blue-600 underline">כניסת מורה</button>
+        </div>
+        <p class="text-gray-600 mt-2">מבדק מסכם. שימו לב: התשובות שלכם נשמרות בענן באופן אוטומטי תוך כדי הקלדה.</p>
+    </div>
+
+    <!-- Main Content Area -->
+    <div id="app-container" class="max-w-4xl mx-auto">
+        <div class="text-center py-10">
+            <div class="inline-block animate-spin rounded-full h-8 w-8 border-b-2 border-blue-600"></div>
+            <p class="mt-2 text-gray-600">מתחבר לענן...</p>
+        </div>
+    </div>
+
+    <!-- Core Logic and Cloud Integration -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInWithCustomToken, signInAnonymously, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDocs, collection, serverTimestamp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Firebase Initialization (System provided)
+        let app, auth, db;
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-app-id';
+        
+        try {
+            const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : null;
+            if (!firebaseConfig || Object.keys(firebaseConfig).length === 0) {
+                throw new Error("הגדרות הענן חסרות. אם פתחתם את הקובץ ישירות מהמחשב או ב-Google Sites ללא הגדרות מתאימות, הענן לא יעבוד.");
+            }
+            app = initializeApp(firebaseConfig);
+            auth = getAuth(app);
+            db = getFirestore(app);
+        } catch (error) {
+            console.error("Initialization Error:", error);
+            document.getElementById('app-container').innerHTML = ''; // מנקה את טקסט הטעינה
+            document.getElementById('error-banner').classList.remove('hidden');
+            document.getElementById('error-message').innerText = error.message;
+        }
+        
+        let currentUser = null;
+        let isTeacher = false;
+
+        // Quiz State
+        let studentInfo = { name: '', className: '' };
+        let studentAnswers = {};
+        let quizStatus = 'login'; // login, in-progress, submitted
+
+        // Questions Data (with LaTeX)
+        const questionsData = [
+            {
+                type: 'mcq',
+                text: 'מהי ההגדרה המדויקת של "פוטנציאל חשמלי" (\\(V\\)) בנקודה מסוימת במרחב?',
+                options: [
+                    'אנרגיה פוטנציאלית חשמלית ליחידת מטען (\\(V = U/q\\)).',
+                    'כוח חשמלי הפועל על יחידת מטען בנקודה זו.',
+                    'העבודה שעושה השדה החשמלי ליחידת זמן.',
+                    'האנרגיה הקינטית של מטען בוחן המונח בנקודה.'
+                ],
+                correctAnswer: 0
+            },
+            {
+                type: 'mcq',
+                text: 'מהן יחידות המידה התקניות של פוטנציאל חשמלי ומתח (וולט, \\(V\\))?',
+                options: [
+                    'ניוטון לקולון (\\(N/C\\)).',
+                    'ג\'אול לקולון (\\(J/C\\)).',
+                    'ג\'אול למטר (\\(J/m\\)).',
+                    'ניוטון למטר (\\(N/m\\)).'
+                ],
+                correctAnswer: 1
+            },
+            {
+                type: 'mcq',
+                text: 'כיצד ינוע אלקטרון המשוחרר ממנוחה בשדה חשמלי (בהשפעת הכוח החשמלי בלבד)?',
+                options: [
+                    'מפוטנציאל נמוך לפוטנציאל גבוה, תוך ירידה באנרגיה הפוטנציאלית החשמלית שלו.',
+                    'מפוטנציאל גבוה לפוטנציאל נמוך, תוך ירידה באנרגיה הפוטנציאלית החשמלית שלו.',
+                    'מפוטנציאל נמוך לפוטנציאל גבוה, תוך עלייה באנרגיה הפוטנציאלית החשמלית שלו.',
+                    'מפוטנציאל גבוה לפוטנציאל נמוך, תוך עלייה באנרגיה הפוטנציאלית החשמלית שלו.'
+                ],
+                correctAnswer: 0
+            },
+            {
+                type: 'open',
+                text: 'מטען של \\(+3\\mu C\\) מועבר מנקודה שבה הפוטנציאל הוא \\(10V\\) לנקודה שבה הפוטנציאל הוא \\(50V\\). מהו השינוי באנרגיה הפוטנציאלית החשמלית שלו (\\(\\Delta U\\)) במיקרו-ג\'אול (\\(\\mu J\\))? (כתבו מספר בלבד)',
+                correctAnswer: '120'
+            },
+            {
+                type: 'open',
+                text: 'בהמשך לשאלה הקודמת, מהי עבודת הכוח החיצוני (ב-\\(\\mu J\\)) שבוצעה בתהליך, בהנחה שהמטען הועבר במהירות קבועה? (כתבו מספר בלבד)',
+                correctAnswer: '120'
+            },
+            {
+                type: 'mcq',
+                text: 'משטח שווה פוטנציאל הוא משטח שבו:',
+                options: [
+                    'השדה החשמלי בכל נקודה עליו הוא אפס.',
+                    'הפוטנציאל שווה לאפס בכל נקודה עליו.',
+                    'עבודת הכוח החשמלי להעברת מטען מנקודה אחת לאחרת על המשטח היא אפס.',
+                    'קווי השדה החשמלי מקבילים למשטח תמיד.'
+                ],
+                correctAnswer: 2
+            },
+            {
+                type: 'open',
+                text: 'הפוטנציאל בנקודה A הוא \\(-20V\\) והפוטנציאל בנקודה B הוא \\(30V\\). מהו הפרש הפוטנציאלים \\(\\Delta V\\) (המוגדר כ- \\(V_B - V_A\\)) בוולטים? (כתבו מספר בלבד)',
+                correctAnswer: '50'
+            },
+            {
+                type: 'mcq',
+                text: 'משוואת חוק שימור האנרגיה (ללא כוחות לא משמרים) עבור חלקיק טעון הנע בשדה חשמלי היא:',
+                options: [
+                    '\\(\\Delta K - q\\Delta V = 0\\)',
+                    '\\(\\Delta K + \\Delta V = 0\\)',
+                    '\\(\\Delta K + q\\Delta V = 0\\)',
+                    '\\(\\Delta K = W_{ext}\\)'
+                ],
+                correctAnswer: 2
+            }
+        ];
+
+        // Core Functions
+        const initAuth = async () => {
+            try {
+                if (typeof __initial_auth_token !== 'undefined' && __initial_auth_token) {
+                    await signInWithCustomToken(auth, __initial_auth_token);
+                } else {
+                    await signInAnonymously(auth);
+                }
+            } catch (error) {
+                console.error("Auth error:", error);
+                document.getElementById('app-container').innerHTML = '<p class="text-red-500">שגיאת חיבור לענן. נסו לרענן.</p>';
+            }
+        };
+
+        const saveToCloud = async (statusOverride = null) => {
+            if (!currentUser) return;
+            const currentStatus = statusOverride || quizStatus;
+            
+            // Calculate score if submitted
+            let score = 0;
+            if (currentStatus === 'submitted') {
+                questionsData.forEach((q, idx) => {
+                    const ans = studentAnswers[idx];
+                    if (q.type === 'mcq' && parseInt(ans) === q.correctAnswer) score += 12.5;
+                    if (q.type === 'open' && ans && ans.trim() === q.correctAnswer) score += 12.5;
+                });
+            }
+
+            const payload = {
+                studentName: studentInfo.name,
+                className: studentInfo.className,
+                status: currentStatus,
+                answers: studentAnswers,
+                score: score,
+                timestamp: new Date().toISOString()
+            };
+
+            try {
+                // Rule 1 & 3: Auth verified, strict public path used
+                const docRef = doc(db, 'artifacts', appId, 'public', 'data', 'quiz_attempts', currentUser.uid);
+                await setDoc(docRef, payload, { merge: true });
+                console.log("Auto-saved to cloud:", payload);
+            } catch (error) {
+                console.error("Error saving to cloud:", error);
+            }
+        };
+
+        // Render Functions
+        const renderApp = () => {
+            const container = document.getElementById('app-container');
+            if (quizStatus === 'login') {
+                container.innerHTML = `
+                    <div class="bg-white p-8 rounded-xl shadow-md max-w-md mx-auto">
+                        <h2 class="text-xl font-bold mb-4 text-gray-800">הזדהות למבדק</h2>
+                        <div class="space-y-4">
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">שם מלא</label>
+                                <input type="text" id="input-name" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 focus:border-blue-500 focus:ring-blue-500" placeholder="לדוגמה: ישראל ישראלי">
+                            </div>
+                            <div>
+                                <label class="block text-sm font-medium text-gray-700">כיתה</label>
+                                <input type="text" id="input-class" class="mt-1 block w-full rounded-md border-gray-300 shadow-sm border p-2 focus:border-blue-500 focus:ring-blue-500" placeholder="לדוגמה: יב' 1">
+                            </div>
+                            <button id="start-btn" class="w-full bg-blue-600 text-white font-bold py-2 px-4 rounded hover:bg-blue-700 transition">התחל מבדק</button>
+                        </div>
+                    </div>
+                `;
+                document.getElementById('start-btn').addEventListener('click', () => {
+                    const n = document.getElementById('input-name').value.trim();
+                    const c = document.getElementById('input-class').value.trim();
+                    if (n && c) {
+                        studentInfo = { name: n, className: c };
+                        quizStatus = 'in-progress';
+                        saveToCloud(); // Save initial "started" state
+                        renderApp();
+                    } else {
+                        alert("אנא הזינו שם וכיתה.");
+                    }
+                });
+            } else if (quizStatus === 'in-progress') {
+                let html = `<div class="bg-white p-6 rounded-xl shadow-md mb-6"><h2 class="text-lg font-bold mb-2">שלום ${studentInfo.name} (${studentInfo.className})</h2><p class="text-sm text-green-600 mb-4">🟢 מתחבר לענן... השינויים נשמרים אוטומטית.</p><div class="space-y-8">`;
+                
+                questionsData.forEach((q, idx) => {
+                    html += `<div class="p-4 border border-gray-200 rounded-lg bg-gray-50">
+                                <p class="font-bold mb-3">${idx + 1}. ${q.text}</p>`;
+                    
+                    if (q.type === 'mcq') {
+                        html += `<div class="space-y-2">`;
+                        q.options.forEach((opt, optIdx) => {
+                            const isChecked = studentAnswers[idx] === String(optIdx) ? 'checked' : '';
+                            html += `
+                                <label class="flex items-start space-x-3 space-x-reverse cursor-pointer p-2 hover:bg-gray-100 rounded">
+                                    <input type="radio" name="q_${idx}" value="${optIdx}" class="quiz-input form-radio h-5 w-5 text-blue-600 mt-0.5" ${isChecked}>
+                                    <span class="text-gray-700">${opt}</span>
+                                </label>`;
+                        });
+                        html += `</div>`;
+                    } else if (q.type === 'open') {
+                        const val = studentAnswers[idx] || '';
+                        html += `<input type="text" inputmode="decimal" dir="ltr" name="q_${idx}" class="quiz-input mt-2 block w-full text-left rounded-md border-gray-300 border p-2 shadow-sm focus:border-blue-500 focus:ring-blue-500" value="${val}" placeholder="הזן מספר...">`;
+                    }
+                    html += `</div>`;
+                });
+
+                html += `</div>
+                    <div class="mt-8 text-center">
+                        <button id="submit-btn" class="bg-green-600 text-white text-lg font-bold py-3 px-8 rounded-full hover:bg-green-700 shadow-lg transition transform hover:scale-105">הגש מבדק סופי</button>
+                    </div>
+                </div>`;
+                
+                container.innerHTML = html;
+                MathJax.typesetPromise([container]);
+
+                // Attach auto-save listeners
+                document.querySelectorAll('.quiz-input').forEach(input => {
+                    input.addEventListener('change', (e) => {
+                        const qIdx = e.target.name.split('_')[1];
+                        studentAnswers[qIdx] = e.target.value;
+                        saveToCloud(); // Autosave
+                    });
+                });
+
+                document.getElementById('submit-btn').addEventListener('click', () => {
+                    if(confirm("האם אתם בטוחים שברצונכם להגיש את המבדק?")) {
+                        quizStatus = 'submitted';
+                        saveToCloud();
+                        renderApp();
+                    }
+                });
+            } else if (quizStatus === 'submitted') {
+                container.innerHTML = `
+                    <div class="bg-white p-8 rounded-xl shadow-md text-center border-t-8 border-green-500">
+                        <h2 class="text-3xl font-bold text-gray-800 mb-4">כל הכבוד, ${studentInfo.name}!</h2>
+                        <p class="text-xl text-gray-600 mb-6">המבדק הוגש בהצלחה ונשמר בענן.</p>
+                        <p class="text-sm text-gray-500">תוכלו לסגור את החלון כעת.</p>
+                    </div>
+                `;
+            }
+        };
+
+        const renderTeacherDashboard = async () => {
+            const container = document.getElementById('app-container');
+            container.innerHTML = `<div class="text-center py-10"><p>טוען נתונים מהענן...</p></div>`;
+            
+            try {
+                // Rule 2 & 1: Simple collection query on public path
+                const querySnapshot = await getDocs(collection(db, 'artifacts', appId, 'public', 'data', 'quiz_attempts'));
+                let attempts = [];
+                querySnapshot.forEach((doc) => {
+                    attempts.push({ id: doc.id, ...doc.data() });
+                });
+                
+                // Sort by time (newest first)
+                attempts.sort((a, b) => new Date(b.timestamp) - new Date(a.timestamp));
+
+                let html = `
+                    <div class="bg-white p-6 rounded-xl shadow-md">
+                        <div class="flex justify-between items-center mb-6">
+                            <h2 class="text-2xl font-bold text-blue-900">לוח בקרה למורה</h2>
+                            <button id="back-btn" class="text-blue-600 underline">חזור לתצוגת תלמיד</button>
+                        </div>
+                        <div class="overflow-x-auto">
+                            <table class="min-w-full divide-y divide-gray-200">
+                                <thead class="bg-gray-50">
+                                    <tr>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">שם התלמיד</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">כיתה</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">סטטוס</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">ציון (רק למגישים)</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">עודכן לאחרונה</th>
+                                        <th class="px-6 py-3 text-right text-xs font-medium text-gray-500 uppercase">תשובות מוקלדות</th>
+                                    </tr>
+                                </thead>
+                                <tbody class="bg-white divide-y divide-gray-200">
+                `;
+
+                if (attempts.length === 0) {
+                    html += `<tr><td colspan="6" class="px-6 py-4 text-center text-gray-500">אין עדיין נתונים בענן.</td></tr>`;
+                }
+
+                attempts.forEach(attempt => {
+                    const statusBadge = attempt.status === 'submitted' 
+                        ? '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-green-100 text-green-800">הוגש</span>' 
+                        : '<span class="px-2 inline-flex text-xs leading-5 font-semibold rounded-full bg-yellow-100 text-yellow-800">בתהליך</span>';
+                    
+                    const timeStr = new Date(attempt.timestamp).toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'});
+                    
+                    const answeredCount = attempt.answers ? Object.keys(attempt.answers).length : 0;
+
+                    html += `
+                        <tr class="hover:bg-gray-50">
+                            <td class="px-6 py-4 whitespace-nowrap font-medium text-gray-900">${attempt.studentName || 'ללא שם'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500">${attempt.className || '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap">${statusBadge}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-900 font-bold">${attempt.status === 'submitted' ? attempt.score : '-'}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-sm">${timeStr}</td>
+                            <td class="px-6 py-4 whitespace-nowrap text-gray-500 text-sm">ענה על ${answeredCount}/8 שאלות</td>
+                        </tr>
+                    `;
+                });
+
+                html += `</tbody></table></div></div>`;
+                container.innerHTML = html;
+
+                document.getElementById('back-btn').addEventListener('click', () => {
+                    isTeacher = false;
+                    renderApp();
+                });
+
+            } catch (error) {
+                console.error("Error fetching dashboard:", error);
+                container.innerHTML = `<p class="text-red-500 text-center py-10">שגיאה בטעינת הנתונים. ודאו הרשאות ענן.</p>`;
+            }
+        };
+
+        // Main Auth Listener
+        onAuthStateChanged(auth, (user) => {
+            if (user) {
+                currentUser = user;
+                if (!isTeacher) {
+                    renderApp();
+                }
+            }
+        });
+
+        // Setup Teacher Button
+        document.getElementById('teacher-btn').addEventListener('click', () => {
+            const pwd = prompt("הכנס סיסמת מורה (רמז: פיזיקאלי):");
+            if (pwd === "פיזיקאלי") {
+                isTeacher = true;
+                renderTeacherDashboard();
+            } else if (pwd !== null) {
+                alert("סיסמה שגויה.");
+            }
+        });
+
+        // Initialize
+        initAuth();
+
+    </script>
+</body>
+</html>
