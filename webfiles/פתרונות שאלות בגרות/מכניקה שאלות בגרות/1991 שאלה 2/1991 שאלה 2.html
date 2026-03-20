@@ -1,0 +1,590 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 1991, שאלה 2</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for LaTeX rendering -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                renderActions: {
+                    addMenu: []
+                }
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-card > h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .step-title {
+            font-weight: 700;
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background: var(--green-50);
+            border: 2px solid var(--green-500);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 1.03rem;
+            font-weight: 700;
+            color: #166534;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .svg-container {
+            width: 100%;
+            overflow-x: auto;
+            margin: 1.5rem 0;
+            padding: 1rem;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            display: flex;
+            justify-content: center;
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        p {
+            line-height: 1.8;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-shell">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - מכניקה 1991, שאלה 2</h1>
+            <p class="text-lg text-slate-600 mb-6">ניתוח תנועת מכונית, גרף מהירות-זמן, דינמיקה ותנועה מעגלית</p>
+            
+            <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+                <span class="version-label">עודכן:</span>
+                <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+            </div>
+        </header>
+
+        <section class="section-card border-t-4 border-slate-300">
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <div style="display:none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+                <p>תמונת השאלה (question-image.png) לא נמצאה בנתיב. אנא ודאו כי הקובץ נמצא באותה תיקייה.</p>
+            </div>
+        </section>
+
+        <!-- סעיף א -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b-2 border-blue-100 pb-2">סעיף א'</h2>
+            
+            <div class="mb-4">
+                    <img src="image-4.png" alt="תרשים סעיף ד" class="w-full h-auto" style="max-width: 400px;" onerror="this.style.display='none';" />
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    טיפ מורה:
+                </h4>
+                <p>תלמידים יקרים, אל תתבלבלו בין המושגים! העובדה שהמהירות גדולה (למשל ב-\(t=4\text{ s}\)) אינה אומרת שהתאוצה גדולה. התאוצה מודדת אך ורק את <strong>קצב השינוי</strong>. בדיוק ברגע המעבר בין עלייה לירידה, המהירות 'קופאת' לשבריר שנייה ולא משתנה, ולכן התאוצה שם היא אפס.</p>
+            </div>
+        </div>
+
+        <!-- סעיף ב -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b-2 border-blue-100 pb-2">סעיף ב'</h2>
+            
+            <div class="mb-4">
+                <h3 class="step-title">א. מה נתון:</h3>
+                <p>אנו ממקדים את תשומת ליבנו במרווח הזמן שבין \(t = 14\text{ s}\) לבין \(t = 24\text{ s}\). בחינה של הגרף בתחום זה מראה כי גודל המהירות עולה, אולם צורת הגרף היא של פונקציה קעורה כלפי מטה (הגרף הולך ומתמתן). יחידות המידה נשארו סטנדרטיות (MKS).</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">ב. מה מחפשים:</h3>
+                <p>עלינו לקבוע מה קורה ל<strong>כוח השקול</strong> \(\Sigma F\) הפועל על המכונית במרווח זמן זה – האם הוא הולך וקטן, נשאר קבוע, או הולך וגדל כפונקציה של הזמן, ולנמק זאת בעזרת חוקי ניוטון.</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">ג. נוסחאות בשימוש:</h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="formula-badge">\(\Sigma F = m \cdot a\)</span>
+                    <span class="formula-badge">\(a = \frac{\Delta v}{\Delta t}\)</span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">ד. הצבה ופתרון:</h3>
+                <p>על פי החוק השני של ניוטון, \(\Sigma F = m \cdot a\), ישנו יחס ישר בין הכוח השקול לבין תאוצת המכונית, כאשר המסה \(m\) נשארת קבועה לאורך התנועה. כלומר, התנהגות הכוח השקול לאורך זמן זהה לחלוטין להתנהגות התאוצה.</p>
+                <p class="mt-2">נבדוק את תאוצת המכונית על פי הגרף בתחום הזמן המבוקש. התאוצה \(a\) שווה לשיפוע המשיק לגרף המהירות-זמן. בין \(t = 14\text{ s}\) ל- \(t = 24\text{ s}\), אנו רואים שהמהירות אכן גדלה (השיפוע חיובי), אך קצב הגידול הולך ופוחת משום שהגרף הופך פחות ופחות תלול ומתקרב למצב אופקי. מכיוון ששיפוע המשיק הולך וקטן, המשמעות היא שגם התאוצה \(a\) הולכת וקטנה. כתוצאה מכך, משום שהתאוצה קטנה, גם הכוח השקול \(\Sigma F\) חייב ללכת ולקטון עם הזמן.</p>
+                
+                <div class="svg-container">
+                    <img src="image-2.png" alt="תרשים סעיף ב" class="w-full h-auto" style="max-width: 400px;" onerror="this.style.display='none';" />
+                </div>
+                
+                <div class="final-answer">
+                    הכוח השקול הפועל על המכונית הולך וקטן כפונקציה של הזמן בתחום זה.
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <h4 class="font-bold text-amber-800 flex items-center gap-2 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    טיפ מורה:
+                </h4>
+                <p>מלכודת קלאסית! נהוג לחשוב בטעות שאם המהירות גדלה, אז מישהו דוחף את הגוף חזק יותר ויותר. זה לא נכון. כל עוד פועל על הגוף כוח בכיוון התנועה (ולו הקטן ביותר), גודל המהירות שלו ימשיך לגדול. בגרף שלנו העלייה הופכת למתונה יותר, משמע אנו עדיין דוחפים את המכונית קדימה, אבל בעוצמה חלשה יותר משהייתה שנייה קודם לכן.</p>
+            </div>
+        </div>
+
+        <!-- סעיף ג -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b-2 border-blue-100 pb-2">סעיף ג'</h2>
+            
+            <div class="mb-4">
+                <h3 class="step-title">א. מה נתון:</h3>
+                <p>אנו מתייחסים שוב לגרף המתאר את תנועת המכונית במסלול הישר לאורך כל 24 השניות הראשונות (\(t=0\) עד \(t=24\text{ s}\)).</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">ב. מה מחפשים:</h3>
+                <p>מבקשים מאיתנו להעריך, על ידי בחינת הגרף, מתי בקירוב במהלך תנועה זו תאוצת המכונית מגיעה לערך המרבי (המקסימלי החיובי) שלה, ולספק הסבר.</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">ג. נוסחאות בשימוש:</h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="formula-badge">\(a = \frac{\Delta v}{\Delta t}\)</span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">ד. הצבה ופתרון:</h3>
+                <p>כפי שציינו, תאוצת הגוף מיוצגת בגרף על ידי שיפוע המשיק. על מנת למצוא את התאוצה המרבית, עלינו למצוא את הנקודה בגרף שבה שיפוע המשיק הוא התלול ביותר כלפי מעלה. אם נסרוק את העקומה במבט משמאל לימין, נבחין שעליית המהירות התלולה ביותר מתרחשת בחלקו הראשון של הגרף, במרווח הזמן שלפני \(t=4\text{ s}\).</p>
+                <p class="mt-2">הגרף מתחיל בשיפוע מתון שעולה, הופך להיות תלול מאוד (נקודת פיתול), ולאחר מכן מתמתן שוב לקראת שיא המהירות. נקודת התלילות המרבית (נקודת הפיתול של הפונקציה באזור העלייה) מתרחשת בחלקו השני של קטע העלייה, שבאופן ויזואלי נמצאת בסביבות הזמן \(t = 3\text{ s}\). בנקודה זו קצב שינוי המהירות הוא הגדול ביותר ולכן התאוצה שם מקסימלית.</p>
+                <div class="svg-container">
+                    <img src="image-3.png" alt="תרשים סעיף ג" class="w-full h-auto" style="max-width: 400px;" onerror="this.style.display='none';" />
+                </div>
+                <div class="final-answer">
+                    תאוצת המכונית היא מרבית בערך ברגע \(t = 3\text{ s}\).
+                </div>
+            </div>
+            
+            <div class="teacher-highlight">
+                <h4 class="font-bold text-amber-800 flex items-center gap-2 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    טיפ מורה:
+                </h4>
+                <p>היזהרו ממלכודת נפוצה – גרף המהירות אינו מתאר את צורת המסלול או "גבעות" בכביש! כשאתם מסתכלים על הגרף, דמיינו את מחוג מד המהירות ברכב. הנקודה הגבוהה ביותר בגרף (הפסגה) היא הרגע שבו נוסעים הכי מהר. אבל תאוצה מרבית פירושה שהמחוג "מזנק" למעלה בקצב המהיר ביותר (כאילו לחצתם עד הסוף על דוושת הגז). זה קורה היכן שהגרף תלול ביותר, ולא היכן שהוא הגבוה ביותר.</p>
+            </div>
+        </div>
+
+        <!-- סעיף ד -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b-2 border-blue-100 pb-2">סעיף ד'</h2>
+            
+            <div class="mb-4">
+                <h3 class="step-title">א. מה נתון:</h3>
+                <p>החל מהרגע \(t = 24\text{ s}\) ועד לזמן \(t = 32\text{ s}\), המכונית עוברת מנקודה B לנקודה C. בחלק זה, כפי שמוצג בתרשים א', המסלול הופך מ<strong>מסלול ישר למסלול עקום</strong> (מעגלי/קשתי). מתוך תרשים ב', הגרף מצביע על כך שבתחום זמן זה, גודל המהירות נשאר קבוע, וערכו עומד על כ- \(v = 17.5\text{ m/s}\).</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">ב. מה מחפשים:</h3>
+                <p>השאלה היא האם תאוצת המכונית על פני המסלול העקום היא אפס. עלינו לענות ולהסביר בהסתמך על אופי התנועה.</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">ג. נוסחאות בשימוש:</h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="formula-badge">\(a_R = \frac{v^2}{R}\)</span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">ד. הצבה ופתרון:</h3>
+                <p>כדי לענות על שאלה זו, עלינו להיזכר בהגדרה המלאה של וקטור המהירות. מהירות אינה רק 'גודל' אלא וקטור בעל גודל וכיוון. תאוצה נוצרת בכל פעם שיש שינוי בווקטור המהירות – בין אם הגודל משתנה, בין אם הכיוון משתנה, או שניהם יחד.</p>
+                <p class="mt-2">על אף שגרף המהירות (אשר מציג רק את גודל המהירות) הוא אופקי באזור זה וגודל המהירות קבוע במרווח זמן זה, המסלול הוא עקום. המשמעות היא שכיוון התנועה של המכונית, ולכן כיוון וקטור המהירות, משתנה בכל רגע ורגע. על מנת לעקם את מסלול המכונית, חייב לפעול עליה כוח שקול (כוח חיכוך מהכביש) הפונה למרכז עקמומיות המסלול. כוח זה מייצר תאוצה רדיאלית (או צנטריפטלית), אשר מוגדרת בנוסחה \(a_R = \frac{v^2}{R}\), כאשר \(R\) הוא רדיוס העקמומיות. מאחר שהמהירות אינה אפס והמסלול עקום, קיימת תאוצה רדיאלית, ולכן התאוצה הכוללת שונה מאפס.</p>
+                
+                <div class="svg-container">
+                    <img src="image-4.png" alt="תרשים סעיף ד" class="w-full h-auto" style="max-width: 400px;" onerror="this.style.display='none';" />
+                </div>
+
+                <div class="final-answer">
+                    לא, התאוצה אינה אפס. קיימת תאוצה רדיאלית הדרושה לשינוי כיוון המהירות במסלול העקום.
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <h4 class="font-bold text-amber-800 flex items-center gap-2 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    טיפ מורה:
+                </h4>
+                <p>זו אחת השאלות החשובות ביותר בפיזיקה! גרף קינמטי רגיל מציג לעיתים קרובות רק את הגודל הסקלרי (הספידמטר של הרכב). אבל תאוצה לא מתעניינת רק במחט הספידמטר, אלא גם בהגה! אם ההגה מסובב, כיוון התנועה משתנה, ולכן בהכרח קיימת תאוצה. זכרו: תנועה במעגל לעולם אינה יכולה להיות ללא תאוצה.</p>
+            </div>
+        </div>
+
+        <!-- סעיף ה -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-slate-800 mb-4 border-b-2 border-blue-100 pb-2">סעיף ה'</h2>
+            
+            <div class="mb-4">
+                <h3 class="step-title">א. מה נתון:</h3>
+                <p>אנו משווים בין שני פרקי זמן במהלך התנועה הישרה: פרק זמן ראשון בין \(t_1 = 2\text{ s}\) ל- \(t_2 = 6\text{ s}\) (משך של 4 שניות), ופרק זמן שני בין \(t_3 = 8\text{ s}\) ל- \(t_4 = 14\text{ s}\) (משך של 6 שניות). נשתמש בגרף המהירות-זמן כדי להעריך את המרחקים.</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">ב. מה מחפשים:</h3>
+                <p>האם הדרך שעברה המכונית בפרק הזמן הראשון (בין 2 ל-6 שניות) קטנה, גדולה או שווה לדרך שעברה בפרק הזמן השני (בין 8 ל-14 שניות)? יש לנמק את הקביעה.</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">ג. נוסחאות בשימוש:</h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="formula-badge">\(\Delta x =\) <span dir="rtl">שטח מתחת לגרף</span> \(v(t)\)</span>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">ד. הצבה ופתרון:</h3>
+                <p>בקינמטיקה, הדרך \(\Delta x\) שעובר גוף בתנועה חד-ממדית (כאשר כיוון המהירות אינו מתהפך) שווה לשטח הכלוא בין גרף המהירות-זמן לבין ציר הזמן. נשווה איכותית וגיאומטרית בין שני השטחים הללו המיוצגים בגרף.</p>
+                
+                <p class="mt-2"><strong>שטח ראשון (\(t=2\text{ s}\) עד \(t=6\text{ s}\)):</strong> בסיס השטח הוא 4 שניות. בפרק זמן זה, הגרף כולל את פסגת המהירות. המהירות מתחילה בסביבות ה- \(10\text{ m/s}\), מזנקת עד ל- \(20\text{ m/s}\), ויורדת ל- \(15\text{ m/s}\). המהירות הממוצעת גבוהה מאוד, רובה מעל 15 מטרים לשנייה. אומדן חסר של השטח (מלבן של \(4 \times 12.5\)) נותן יותר מ- \(50\text{ m}\) דרך.</p>
+                
+                <p class="mt-2"><strong>שטח שני (\(t=8\text{ s}\) עד \(t=14\text{ s}\)):</strong> בסיס השטח רחב יותר, 6 שניות. עם זאת, בפרק זמן זה המכונית נוסעת לאט מאוד (זהו אזור ה"עמק" בגרף). המהירות יורדת מ- \(10\text{ m/s}\) עד לשפל של \(5\text{ m/s}\) ועולה קלות ל- \(7.5\text{ m/s}\). המהירות הממוצעת כאן נמוכה מאוד, בסביבות ה- \(6\text{ m/s}\) עד \(7\text{ m/s}\). אומדן השטח הכולל (למשל מלבן של \(6 \times 7\)) ייתן קצת יותר מ- \(40\text{ m}\).</p>
+                
+                <p class="mt-2">ניתן לראות בבירור שהפסגה הגבוהה בחלק הראשון מייצרת שטח גדול בהרבה מהעמק הממושך אך הנמוך שבחלק השני.</p>
+                
+                <div class="svg-container">
+                    <img src="image-5.png" alt="תרשים סעיף ה" class="w-full h-auto" style="max-width: 545px;" onerror="this.style.display='none';" />
+                </div>
+                
+                <div class="final-answer">
+                    הדרך שעברה המכונית בין \(t=2\text{ s}\) ל- \(t=6\text{ s}\) גדולה מהדרך שעברה בין \(t=8\text{ s}\) ל- \(t=14\text{ s}\).
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <h4 class="font-bold text-amber-800 flex items-center gap-2 mb-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" /></svg>
+                    טיפ מורה:
+                </h4>
+                <p>במקרים רבים בבחינות הבגרות אינכם נדרשים לבצע חישוב מדויק עד רמת המילימטר, אלא להראות הבנה איכותית. אם שטח אחד בבירור תופס גובה רב בהרבה (ולכן שטח גדול יותר, גם אם הבסיס קצר במעט), ניתן להסתמך על אומדן ויזואלי של ה"משבצות" בגרף כהוכחה מספקת.</p>
+            </div>
+        </div>
+
+    </div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                <div style="display:none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    תמונת השאלה (question-image.png) חסרה.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה: ' + document.lastModified;
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const day = pad(modified.getDate());
+                const month = pad(modified.getMonth() + 1);
+                const year = String(modified.getFullYear()).slice(-2);
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
