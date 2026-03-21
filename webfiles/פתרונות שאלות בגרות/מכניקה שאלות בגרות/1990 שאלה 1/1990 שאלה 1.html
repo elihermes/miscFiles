@@ -272,7 +272,7 @@
         <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות במכניקה – שנת 1990 שאלה 1</h1>
         <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
             <span class="version-label">עודכן:</span>
-            <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
         </div>
     </header>
 
@@ -521,20 +521,25 @@
             const versionStamp = document.getElementById('versionStamp');
             const versionUpdatedAt = document.getElementById('versionUpdatedAt');
             if (versionStamp) {
-                versionStamp.title = 'עודכן לאחרונה: ' + document.lastModified;
+                versionStamp.title = 'עודכן לאחרונה';
             }
 
             const modified = new Date(document.lastModified);
             if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
                 const pad = (n) => String(n).padStart(2, '0');
-                const day = pad(modified.getDate());
-                const month = pad(modified.getMonth() + 1);
-                const year = String(modified.getFullYear()).slice(-2);
+
+                const year = modified.getFullYear();
+                const month = modified.getMonth() + 1;
+                const day = modified.getDate();
+                const seed = (year * 372) + (month * 31) + day + 157;
+                const codeNum = (seed * 73) % 46656;
+                const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
                 const hours = pad(modified.getHours());
                 const minutes = pad(modified.getMinutes());
                 const seconds = pad(modified.getSeconds());
 
-                versionUpdatedAt.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+                versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
             }
 
             const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
