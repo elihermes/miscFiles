@@ -1,0 +1,576 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2001 שאלון 2</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for rendering math equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: #dcfce7;
+            border-right: 4px solid #22c55e;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0.5rem 0 0 0.5rem;
+            font-weight: 500;
+            color: #166534;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .svg-container {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+
+        .math-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: block;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">פתרון מודרך: בגרות בפיזיקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מכניקה, שנת 2001, שאלה 2 - תנועה במישור (קינמטיקה)</h2>
+
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div style="display: none;" class="bg-red-50 text-red-600 p-4 rounded-lg border border-red-200 mt-3">
+            לא ניתן לטעון את תמונת השאלה (question-image.png אינו נמצא באותה תיקייה).
+        </div>
+    </section>
+
+    <main>
+        <!-- הגדרת מערכת הצירים מראש (שלב 0) -->
+        <div class="teacher-highlight">
+            <strong>הנחת עבודה בסיסית וקביעת צירים לפני שמתחילים:</strong>
+            בבעיות קינמטיקה הכוללות תנועה במרחב (זריקה משופעת/אופקית), חשוב מאוד לקבוע במדויק את מערכת הצירים שלנו. בפתרון זה, נבחר את ראשית הצירים \( (x=0, y=0) \) בנקודה P שעל הקרקע. נגדיר את ציר ה-\( y \) כחיובי כלפי מעלה, ואת ציר ה-\( x \) כחיובי ימינה (כיוון תנועת הכדור הפורח). מכיוון שציר ה-\( y \) חיובי כלפי מעלה וכוח הכובד מושך מטה, תאוצת האבן בציר האנכי תהיה שלילית: \( a_y = -g = -10 \text{ m/s}^2 \). בציר האופקי אין כוחות (מזניחים התנגדות אוויר), ולכן תאוצת האבן שם היא אפס: \( a_x = 0 \).
+        </div>
+
+        <!-- סעיף א -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף א': מציאת פונקציית המסלול וסרטוטו</h3>
+            
+            <h4 class="font-semibold mt-4 mb-2">א. מה נתון:</h4>
+            <ul class="list-disc list-inside text-slate-700 space-y-1 mb-4">
+                <li>הכדור הפורח עולה במהירות אנכית בגודל \( v_{0y} = 5 \text{ m/s} \).</li>
+                <li>הכדור נסחף אופקית במהירות בגודל \( v_{0x} = 4.5 \text{ m/s} \).</li>
+                <li>האבן משוחררת מנקודה A בגובה \( y_0 = 4 \text{ m} \) ומיקום התחלתי \( x_0 = 0 \text{ m} \) מעל הקרקע (נקודה P). היחידות כבר בשיטת MKS.</li>
+                <li><strong>התנגדות האוויר מוזנחת:</strong> משמעות הדבר היא בציר האנכי פועל כוח הכובד המקנה לאבן תאוצה \( a_y = -10 \text{ m/s}^2 \), ואילו בציר האופקי אין כוחות ולכן התאוצה היא \( a_x = 0 \).</li>
+            </ul>
+
+            <h4 class="font-semibold mt-4 mb-2">ב. מה מחפשים:</h4>
+            <p class="mb-4 text-slate-700">פיתוח מתמטי של משוואת המסלול \( y(x) \) כדי להוכיח שצורת המסלול היא פרבולה, ולאחר מכן לסרטט את תרשים המסלול של האבן מרגע שחרורה בנקודה A ועד פגיעתה בקרקע בנקודה Q.</p>
+
+            <h4 class="font-semibold mt-4 mb-2">ג. נוסחאות ועקרונות בשימוש:</h4>
+            <p class="mb-2 text-slate-700">נשתמש בנוסחת המיקום כפונקציה של הזמן עבור תנועה שוות-תאוצה מתוך דף הנוסחאות:</p>
+            <div class="text-center my-2">
+                <span class="formula-badge">\( x = x_0 + v_0t + \frac{1}{2}at^2 \)</span>
+            </div>
+            <p class="mb-4 text-slate-700">ניישם נוסחה זו בנפרד עבור כל ציר, ואז נבצע "בידוד משתנים" כדי למצוא קשר ישיר בין קואורדינטת \( y \) לקואורדינטת \( x \).</p>
+
+            <h4 class="font-semibold mt-4 mb-2">ד. הצבה ופתרון:</h4>
+            
+            <div class="bg-blue-50 border-r-4 border-blue-500 p-4 mb-6 rounded-l-lg text-slate-700">
+                <strong>רגע לפני המשוואות - אינטואיציה פיזיקלית:</strong><br>
+                מרגע שחרור האבן, הכוח היחיד שפועל עליה הוא כוח הכובד (נפילה חופשית), ויש לה מהירות התחלתית משולבת – גם בציר האנכי וגם בציר האופקי. מצב זה מוגדר כ<strong>זריקה משופעת</strong>. מהתיאוריה הבסיסית של קינמטיקה, אנו יודעים שכל גוף הנע בזריקה משופעת יתווה מסלול צורני של פרבולה.<br>
+                <span class="font-semibold text-blue-800">אבל אנחנו לא מסתפקים רק בלשנן עובדות – בואו נראה שהפיזיקה באמת מסתדרת לנו, ונוכיח שהמסלול הוא פרבולה בעזרת פיתוח המשוואות!</span>
+            </div>
+
+            <p class="mb-2 text-slate-700">נבנה תחילה את משוואת התנועה עבור ציר ה-\( x \) (תנועה במהירות קבועה כי התאוצה אפסית):</p>
+            <div class="math-scroll mb-4 text-lg">
+                \[ x(t) = 0 + 4.5 \cdot t + 0 \implies x = 4.5t \]
+            </div>
+            <p class="mb-2 text-slate-700">כעת, נבנה את משוואת התנועה עבור ציר ה-\( y \) (נפילה חופשית עם מהירות התחלתית כלפי מעלה):</p>
+            <div class="math-scroll mb-4 text-lg">
+                \[ y(t) = 4 + 5 \cdot t + \frac{1}{2} \cdot (-10) \cdot t^2 \implies y = 4 + 5t - 5t^2 \]
+            </div>
+            <p class="mb-2 text-slate-700">כדי למצוא את פונקציית המסלול \( y(x) \), נבודד את פרמטר הזמן \( t \) מתוך משוואת ציר ה-\( x \) ונקבל כי \( t = \frac{x}{4.5} \). נציב ביטוי זה לתוך משוואת ציר ה-\( y \):</p>
+            <div class="math-scroll mb-4 text-lg">
+                \[ y(x) = 4 + 5 \left( \frac{x}{4.5} \right) - 5 \left( \frac{x}{4.5} \right)^2 \]
+                \[ y(x) = 4 + \frac{10}{9}x - \frac{20}{81}x^2 \]
+            </div>
+            <p class="mb-4 text-slate-700">הפונקציה שקיבלנו היא פונקציה ריבועית מהצורה הכללית \( y = c + bx + ax^2 \). כיוון שהחזקה הגבוהה ביותר של המשתנה \( x \) היא 2, והמקדם של \( x^2 \) הוא שלילי (\( -\frac{20}{81} \)), הוכחנו מתמטית שמסלול התנועה הוא פרבולה הפוכה ("בוכה"). כעת, בידיעה ודאית שזוהי פרבולה שמתחילה בעלייה (בגלל שהמהירות ההתחלתית כלפי מעלה), נסרטט את המסלול.</p>
+            
+            <div class="svg-container flex justify-center my-4">
+                <img src="image-1.png" alt="סרטוט המסלול בסעיף א" class="w-full h-auto" style="max-width: 500px;" />
+            </div>
+            
+            <div class="final-answer">
+                מסלול האבן הוא פרבולה מהצורה \( y(x) = 4 + \frac{10}{9}x - \frac{20}{81}x^2 \). המסלול מתחיל בעלייה (בשל מהירות התחלתית אנכית כלפי מעלה הלקוחה מהכדור הפורח) ולאחר מכן יורד עד לפגיעה בקרקע.
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>טיפ מורה: אלימינציה של הזמן</strong> השיטה שבה השתמשנו להפוך שתי משוואות שתלויות בזמן (\( x(t) \) ו- \( y(t) \)) למשוואה אחת המקשרת ביניהן במרחב נקראת "בידוד פרמטר". הזמן הוא הגורם המקשר בין שני צירי התנועה. כאשר אנו מבודדים אותו ומציבים אותו במשוואה השנייה, אנו מקבלים פונקציית מסלול טהורה נטולת זמן. זוהי דרך אלגנטית ומדויקת ביותר להוכיח צורות גיאומטריות של מסלולי תנועה בפיזיקה!
+            </div>
+        </div>
+
+        <!-- סעיף ב -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ב': חישוב גודל הרכיב האנכי של המהירות בפגיעה</h3>
+            
+            <h4 class="font-semibold mt-4 mb-2">א. מה נתון:</h4>
+            <p class="mb-2 text-slate-700">נתמקד אך ורק בציר האנכי (ציר \( y \)). נתוני הציר האנכי, על פי מערכת הצירים שבחרנו:</p>
+            <ul class="list-disc list-inside text-slate-700 space-y-1 mb-4">
+                <li>מיקום התחלתי: \( y_0 = 4 \text{ m} \) (נקודה A).</li>
+                <li>מיקום סופי בפגיעה בקרקע: \( y = 0 \text{ m} \) (נקודה Q).</li>
+                <li>מהירות התחלתית בציר האנכי: \( v_{0y} = +5 \text{ m/s} \).</li>
+                <li>תאוצה בציר האנכי (נפילה חופשית): \( a_y = -10 \text{ m/s}^2 \).</li>
+            </ul>
+
+            <h4 class="font-semibold mt-4 mb-2">ב. מה מחפשים:</h4>
+            <p class="mb-4 text-slate-700">את גודל המהירות האנכית, נקרא לה \( |v_y| \), ברגע שהאבן מגיעה לקרקע (\( y=0 \)).</p>
+
+            <h4 class="font-semibold mt-4 mb-2">ג. נוסחאות בשימוש:</h4>
+            <p class="mb-2 text-slate-700">מתוך דף הנוסחאות, בפרק "קינמטיקה - תנועה לאורך קו ישר", נשתמש בנוסחת הקינמטיקה המקשרת בין מהירות, תאוצה והעתק (ללא זמן):</p>
+            <div class="text-center my-2">
+                <span class="formula-badge">\( v^2 = v_0^2 + 2a(x - x_0) \)</span>
+            </div>
+            <p class="mb-4 text-slate-700">נתאים את הנוסחה לציר ה-\( y \) שלנו:</p>
+            <div class="text-center my-2">
+                <span class="formula-badge">\( v_y^2 = v_{0y}^2 + 2a_y(y - y_0) \)</span>
+            </div>
+
+            <h4 class="font-semibold mt-4 mb-2">ד. הצבה ופתרון:</h4>
+            <div class="math-scroll mb-4 text-lg">
+                \[ v_y^2 = (5)^2 + 2 \cdot (-10) \cdot (0 - 4) \]
+                \[ v_y^2 = 25 + (-20) \cdot (-4) \]
+                \[ v_y^2 = 25 + 80 = 105 \]
+            </div>
+            <p class="mb-4 text-slate-700">כעת נוציא שורש ריבועי כדי למצוא את המהירות:</p>
+            <div class="math-scroll mb-4 text-lg">
+                \[ v_y = \pm \sqrt{105} \approx \pm 10.247 \text{ m/s} \]
+            </div>
+            <p class="mb-4 text-slate-700">מכיוון שהאבן פוגעת בקרקע כשהיא בדרכה מטה (נגד הכיוון החיובי של ציר \( y \)), המהירות שלה היא שלילית: \( v_y = -10.247 \text{ m/s} \). אולם, השאלה ביקשה את <strong>גודל</strong> הרכיב האנכי, ולכן ניקח את הערך המוחלט.</p>
+            
+            <div class="final-answer">
+                גודל הרכיב האנכי של מהירות האבן ברגע הפגיעה בקרקע הוא: \( |v_y| = \sqrt{105} \approx 10.25 \text{ m/s} \)
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>טיפ מורה:</strong> למה השתמשנו בנוסחה ללא זמן? תמיד כדאי לבחור את הנוסחה שמכילה את הנעלם שלנו (במקרה זה \( v_y \)) ומורכבת רק מהנתונים שכבר ידועים לנו. אם היינו משתמשים בנוסחה \( v = v_0 + at \), היינו נתקעים כי חסר לנו נתון הזמן \( t \).
+            </div>
+        </div>
+
+        <!-- סעיף ג -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ג': חישוב זווית הפגיעה בקרקע</h3>
+            
+            <h4 class="font-semibold mt-4 mb-2">א. מה נתון:</h4>
+            <p class="mb-2 text-slate-700">מכיוון שהזנחנו את התנגדות האוויר, בציר האופקי אין שום כוח שפועל על האבן (\( \Sigma F_x = 0 \)). לפי החוק הראשון של ניוטון, המהירות בציר זה נשארת קבועה לאורך כל התנועה.</p>
+            <ul class="list-disc list-inside text-slate-700 space-y-1 mb-4">
+                <li>מהירות אופקית בפגיעה: \( v_x = v_{0x} = 4.5 \text{ m/s} \).</li>
+                <li>מהירות אנכית בפגיעה (מסעיף ב'): \( v_y = -10.247 \text{ m/s} \).</li>
+            </ul>
+
+            <h4 class="font-semibold mt-4 mb-2">ב. מה מחפשים:</h4>
+            <p class="mb-4 text-slate-700">את זווית הפגיעה בקרקע, נקרא לה \( \alpha \), המוגדרת כזווית שיוצר וקטור המהירות השקול עם הכיוון האופקי בעת הפגיעה בנקודה Q.</p>
+
+            <h4 class="font-semibold mt-4 mb-2">ג. נוסחאות בשימוש:</h4>
+            <p class="mb-2 text-slate-700">וקטור המהירות מורכב משני רכיבים הניצבים זה לזה. על פי טריגונומטריה בסיסית במשולש ישר זווית (פירוק וקטורים):</p>
+            <div class="text-center my-2">
+                <span class="formula-badge">\( \tan(\alpha) = \frac{|v_y|}{v_x} \)</span>
+            </div>
+
+            <h4 class="font-semibold mt-4 mb-2">ד. הצבה ופתרון:</h4>
+            <p class="mb-4 text-slate-700">נחשב קודם את היחס בעזרת הגדלים המוחלטים (כדי לקבל זווית חיובית הכלואה בין הווקטור לקרקע):</p>
+            <div class="math-scroll mb-4 text-lg">
+                \[ \tan(\alpha) = \frac{10.247}{4.5} \approx 2.277 \]
+            </div>
+            <p class="mb-4 text-slate-700">נבצע פעולת פונקציה הפוכה (\( \arctan \) או במחשבון Shift+tan):</p>
+            <div class="math-scroll mb-4 text-lg">
+                \[ \alpha = \arctan(2.277) \approx 66.28^\circ \]
+            </div>
+            
+            <div class="final-answer">
+                זווית הפגיעה של האבן בקרקע יחסית לכיוון האופקי היא \( \alpha \approx 66.28^\circ \) (מתחת לאופק).
+            </div>
+
+            <!-- סרטוט קטן להמחשת הזווית -->
+            <div class="svg-container flex justify-center mt-6">
+                <img src="image-3.png" alt="המחשת זווית הפגיעה בסעיף ג" class="w-full h-auto" style="max-width: 260px;" />
+            </div>
+        </div>
+
+        <!-- סעיף ד -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ד': מיקום הכדור הפורח ברגע הפגיעה</h3>
+            
+            <h4 class="font-semibold mt-4 mb-2">א. מה נתון:</h4>
+            <p class="mb-2 text-slate-700">אנו צריכים למצוא את מיקום הכדור הפורח. נתון לגבי תנועת הכדור הפורח (שאינה מושפעת משחרור האבן):</p>
+            <ul class="list-disc list-inside text-slate-700 space-y-1 mb-4">
+                <li>מהירות אופקית: קבועה, \( v_{xB} = 4.5 \text{ m/s} \).</li>
+                <li>מהירות אנכית: עולה במהירות קבועה, \( v_{yB} = 5 \text{ m/s} \).</li>
+                <li>מיקום התחלתי ב-\( t=0 \) (רגע השחרור): \( x_{0B} = 0 \), \( y_{0B} = 4 \text{ m} \).</li>
+            </ul>
+
+            <h4 class="font-semibold mt-4 mb-2">ב. מה מחפשים:</h4>
+            <p class="mb-4 text-slate-700">באותו רגע \( t \) שבו האבן פוגעת בקרקע בנקודה Q, באיזה מרחק אופקי ובאיזה גובה נמצא הכדור הפורח יחסית לנקודה Q.</p>
+
+            <h4 class="font-semibold mt-4 mb-2">ג. נוסחאות בשימוש:</h4>
+            <p class="mb-2 text-slate-700">כדי לדעת איפה הכדור הפורח, עלינו קודם לדעת <strong>מתי</strong> האבן פגעה בקרקע. לכן נשתמש בנוסחת המהירות כפונקציה של הזמן עבור האבן:</p>
+            <div class="text-center my-2">
+                <span class="formula-badge">\( v = v_0 + at \)</span>
+            </div>
+            <p class="mb-2 text-slate-700">לאחר מכן נשתמש בנוסחת המיקום כפונקציה של הזמן עבור הכדור הפורח. מכיוון שהכדור הפורח נע במהירות קבועה (תאוצה \( a=0 \)), משוואת התנועה \( x = x_0 + v_0t + \frac{1}{2}at^2 \) מצטמצמת ל:</p>
+            <div class="text-center my-2">
+                <span class="formula-badge">\( x = x_0 + v \cdot t \)</span> (לשני הצירים)
+            </div>
+
+            <h4 class="font-semibold mt-4 mb-2">ד. הצבה ופתרון (שלב-אחר-שלב):</h4>
+            
+            <p class="font-bold text-slate-800 underline mt-4">שלב 1: חישוב זמן המעוף של האבן</p>
+            <p class="mb-2 text-slate-700">נציב את נתוני האבן שמצאנו בסעיפים הקודמים (\( v_{0y} = 5, v_y = -10.247, a_y = -10 \)) בנוסחת הזמן:</p>
+            <div class="math-scroll mb-4 text-lg">
+                \[ v_y = v_{0y} + a_y \cdot t \]
+                \[ -10.247 = 5 + (-10) \cdot t \]
+                \[ -15.247 = -10t \quad \Rightarrow \quad t = \frac{-15.247}{-10} \approx 1.525 \text{ s} \]
+            </div>
+            <p class="mb-4 text-slate-700">כלומר, האבן פגעה בקרקע \( 1.525 \) שניות לאחר שחרורה.</p>
+
+            <p class="font-bold text-slate-800 underline mt-4">שלב 2: מיקום האופקי של הכדור והאבן ב-\( t = 1.525 \text{ s} \)</p>
+            <p class="mb-2 text-slate-700">נחשב איזה מרחק אופקי עבר הכדור הפורח בזמן הזה:</p>
+            <div class="math-scroll mb-4 text-lg">
+                \[ x_{B} = 0 + 4.5 \cdot 1.525 \approx 6.86 \text{ m} \]
+            </div>
+            <p class="mb-4 text-slate-700">אבל רגע! גם האבן נעה אופקית באותה מהירות בדיוק (\( 4.5 \text{ m/s} \)), ולכן גם מיקום הנקודה Q הוא \( x_Q = 6.86 \text{ m} \). מכאן, המרחק האופקי ביניהם הוא אפס.</p>
+
+            <p class="font-bold text-slate-800 underline mt-4">שלב 3: הגובה של הכדור הפורח ב-\( t = 1.525 \text{ s} \)</p>
+            <p class="mb-2 text-slate-700">נחשב לאיזה גובה הגיע הכדור הפורח, שמתחיל מגובה \( 4 \text{ m} \) ועולה במהירות קבועה של \( 5 \text{ m/s} \):</p>
+            <div class="math-scroll mb-4 text-lg">
+                \[ y_{B} = y_{0B} + v_{yB} \cdot t \]
+                \[ y_{B} = 4 + 5 \cdot 1.525 = 4 + 7.625 = 11.625 \text{ m} \]
+            </div>
+
+            <div class="final-answer">
+                ברגע פגיעת האבן בקרקע בנקודה Q, הכדור הפורח נמצא בדיוק מעליה (מרחק אופקי אפס), בגובה של \( 11.625 \text{ m} \) מהקרקע.
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>טיפ מורה:</strong> המסקנה שהמרחק האופקי ביניהם הוא אפס אינה מקרית. ברגע השחרור, לאבן יש אותה מהירות אופקית כמו לכדור הפורח (\( 4.5 \text{ m/s} \)). מכיוון שאין כוחות בציר האופקי (הזנחנו את התנגדות האוויר), המהירות הזו נשארת קבועה עבור שניהם. לכן, אם שניהם התחילו מאותו מיקום אופקי ונעים בדיוק באותה מהירות אופקית, הם יעברו את אותו מרחק אופקי בכל רגע נתון. האבן תמיד תמצא את עצמה בדיוק מתחת לכדור הפורח!
+            </div>
+        </div>
+
+    </main>
+
+</div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img src="question-image.png" alt="תמונת השאלה המוגדלת" class="max-w-full h-auto rounded-lg" onerror="this.src=''; this.alt='התמונה לא נמצאה';" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה';
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+
+                const year = modified.getFullYear();
+                const month = modified.getMonth() + 1;
+                const day = modified.getDate();
+                const seed = (year * 372) + (month * 31) + day + 157;
+                const codeNum = (seed * 73) % 46656;
+                const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
