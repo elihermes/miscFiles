@@ -1,0 +1,572 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 1990 שאלה 1</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: #dcfce7;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 1rem;
+            border: 1px solid #bbf7d0;
+            font-size: 1.125rem;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+            margin-top: 1.5rem;
+        }
+
+        p {
+            line-height: 1.75;
+            color: #334155;
+            margin-bottom: 0.75rem;
+        }
+
+        .math-container,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-container mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-container mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות במכניקה – שנת 1990 שאלה 1</h1>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            תמונת השאלה (question-image.png) לא נמצאה בנתיב המצופה.
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <div class="section-card">
+        <h2 class="text-2xl text-blue-600 mb-4">סעיף א'</h2>
+        
+        <h3>א. מה נתון</h3>
+        <ul class="list-disc list-inside space-y-2 mb-4 text-slate-700">
+            <li>מסת הכדור: \( m = 0.1\text{ kg} \)</li>
+            <li>גובה הבניין: \( h = 5\text{ m} \)</li>
+            <li>מהירות התחלתית אופקית: \( v_{0x} = 5\text{ m/s} \)</li>
+            <li>מהירות התחלתית אנכית: \( v_{0y} = 0\text{ m/s} \)</li>
+            <li>התנגדות האוויר זניחה (כוח הכובד הוא היחיד שפועל).</li>
+            <li>ראשית הצירים: \( (x_{0}, y_{0}) = (0, 0) \) מוקמה בנקודת הזריקה.</li>
+            <li>כיוון הצירים: ציר \( x \) חיובי ימינה, ציר \( y \) חיובי כלפי מטה.</li>
+        </ul>
+
+        <h3>ב. מה מחפשים</h3>
+        <p>
+            אנו מחפשים את המרחק האופקי מבסיס הבניין שבו יפגע הכדור בקרקע. במילים אחרות, עלינו למצוא את שיעור ה-\( x \) של הכדור ברגע שבו הוא מגיע לקרקע, כלומר כאשר שיעור ה-\( y \) שלו הוא \( y = 5\text{ m} \).
+        </p>
+
+        <h3>ג. נוסחאות בשימוש</h3>
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="formula-badge">\( x = x_{0} + v_{0}t + \frac{1}{2}at^{2} \)</span>
+        </div>
+
+        <h3>ד. הצבה ופתרון</h3>
+        <p>
+            ראשית, נשרטט תרשים קינמטי המציג את כיווני המהירות ההתחלתית והתאוצה של הכדור באוויר.
+        </p>
+        
+        <div class="svg-container flex justify-center my-4">
+            <img src="image-1.png" alt="תרשים סעיף א" class="w-56 h-56 object-contain bg-white border border-slate-100 rounded-lg shadow-sm" onerror="this.style.display='none';" />
+        </div>
+
+        <p>
+            מכיוון שזוהי זריקה אופקית (נפילה חופשית), אנו יודעים מעקרונות הקינמטיקה כי תאוצת הכדור בציר האנכי היא תאוצת הכובד כלפי מטה:
+            \[ a_{y} = g = 10\text{ m/s}^{2} \]
+            בציר האופקי אין תאוצה (התנגדות האוויר זניחה), ולכן המהירות נשארת קבועה:
+            \[ a_{x} = 0 \]
+            כעת, נשתמש בנוסחת המקום-זמן עבור הציר האנכי כדי למצוא את זמן המעוף (\( t \)) עד לפגיעה בקרקע (\( y = 5\text{ m} \)):
+            \[ y = y_{0} + v_{0y}t + \frac{1}{2}a_{y}t^{2} \]
+            נציב את הנתונים הידועים לנו:
+            \[ 5 = 0 + 0 \cdot t + \frac{1}{2} \cdot 10 \cdot t^{2} \]
+            \[ 5 = 5t^{2} \Rightarrow t^{2} = 1 \Rightarrow t = 1\text{ s} \]
+            כעת, משמצאנו שהכדור באוויר בדיוק שנייה אחת, נציב זמן זה בנוסחת המקום-זמן של הציר האופקי כדי למצוא את המרחק האופקי:
+            \[ x = x_{0} + v_{0x}t + \frac{1}{2}a_{x}t^{2} \]
+            \[ x = 0 + 5 \cdot 1 + \frac{1}{2} \cdot 0 \cdot 1^{2} \]
+            \[ x = 5\text{ m} \]
+        </p>
+
+        <div class="final-answer">
+            הכדור יפגע בקרקע במרחק אופקי של \( x = 5\text{ m} \) מבסיס הבניין.
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> תלמידים יקרים, שימו לב כיצד בחרנו את ציר ה-\( y \) כחיובי <strong>כלפי מטה</strong>. בחירה זו חכמה כיוון שהיא הופכת גם את ההעתק (\( +5\text{ m} \)) וגם את תאוצת הכובד (\( a = +g = +10\text{ m/s}^{2} \)) לחיוביים, ומונעת טעויות של סימני מינוס בחישוב. בנוסף, זכרו את "עקרון אי-התלות בין הצירים" - התנועה בציר האופקי והתנועה בציר האנכי אינן משפיעות זו על זו!
+        </div>
+    </div>
+
+    <!-- סעיף ב -->
+    <div class="section-card">
+        <h2 class="text-2xl text-blue-600 mb-4">סעיף ב'</h2>
+        
+        <h3>א. מה נתון</h3>
+        <ul class="list-disc list-inside space-y-2 mb-4 text-slate-700">
+            <li>זמן המעוף (חושב בסעיף א'): \( t = 1\text{ s} \)</li>
+            <li>תאוצה בציר האופקי: \( a_{x} = 0\text{ m/s}^{2} \)</li>
+            <li>תאוצה בציר האנכי: \( a_{y} = 10\text{ m/s}^{2} \)</li>
+            <li>מהירות התחלתית אופקית: \( v_{0x} = 5\text{ m/s} \)</li>
+            <li>מהירות התחלתית אנכית: \( v_{0y} = 0\text{ m/s} \)</li>
+        </ul>
+
+        <h3>ב. מה מחפשים</h3>
+        <p>
+            אנו מחפשים את גודל המהירות הכוללת של הכדור ברגע שבו הוא פוגע בקרקע (גודל בלבד, ללא כיוון). עלינו לחשב את הרכיב האופקי והאנכי של המהירות ברגע זה, ולאחר מכן לחשב את גודל הווקטור השקול.
+        </p>
+
+        <h3>ג. נוסחאות בשימוש</h3>
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="formula-badge">\( v = v_{0} + at \)</span>
+        </div>
+
+        <h3>ד. הצבה ופתרון</h3>
+        <p>
+            נחשב את רכיב המהירות בציר האופקי ברגע הפגיעה. מכיוון שהתאוצה בציר זה אפס (\( a_{x} = 0 \)), המהירות נשארת קבועה:
+            \[ v_{x} = v_{0x} + a_{x}t = 5 + 0 \cdot 1 = 5\text{ m/s} \]
+            כעת, נחשב את רכיב המהירות בציר האנכי ברגע הפגיעה:
+            \[ v_{y} = v_{0y} + a_{y}t = 0 + 10 \cdot 1 = 10\text{ m/s} \]
+            כדי למצוא את גודל המהירות הכוללת (\( v \)), שהיא בעצם אורך וקטור המהירות השקול, נשתמש במשפט פיתגורס. המהירות היא השקול של שני הרכיבים המאונכים זה לזה:
+            \[ v = \sqrt{v_{x}^{2} + v_{y}^{2}} \]
+            נציב את הערכים שחישבנו:
+            \[ v = \sqrt{5^{2} + 10^{2}} = \sqrt{25 + 100} = \sqrt{125} \]
+            \[ v \approx 11.18\text{ m/s} \]
+        </p>
+
+        <div class="final-answer">
+            גודל מהירות הכדור רגע לפני הפגיעה בקרקע הוא \( v = 11.18\text{ m/s} \).
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> תלמידים יקרים במגמת פיזיקה, כשמבקשים "מהירות", הכוונה היא בדרך כלל לווקטור (גודל וכיוון). אך אם מודגש "גודל בלבד" או "גודל המהירות", עליכם לחשב את אורך הווקטור בעזרת פיתגורס. אל תשכחו שהמהירות האופקית לא נעלמת! טעות נפוצה היא להציג רק את \( v_{y} \) כתשובה הסופית.
+        </div>
+    </div>
+
+    <!-- סעיף ג -->
+    <div class="section-card">
+        <h2 class="text-2xl text-blue-600 mb-4">סעיף ג'</h2>
+        
+        <h3>א. מה נתון</h3>
+        <ul class="list-disc list-inside space-y-2 mb-4 text-slate-700">
+            <li>מסת הכדור נותרה ללא שינוי: \( m = 0.1\text{ kg} \)</li>
+            <li>כוח אופקי קבוע שנוסף למערכת: \( F = 0.2\text{ N} \)</li>
+            <li>כיוון הכוח האופקי: בכיוון המהירות ההתחלתית (כיוון ציר \( +x \)).</li>
+            <li>שאר תנאי ההתחלה נותרו ללא שינוי.</li>
+        </ul>
+
+        <h3>ב. מה מחפשים</h3>
+        <p>
+            אנו מחפשים כעת את המרחק האופקי החדש (\( x \)) מבסיס הבניין שבו יפגע הכדור בקרקע בהשפעת הכוח הנוסף.
+        </p>
+
+        <h3>ג. נוסחאות בשימוש</h3>
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+            <span class="formula-badge">\( x = x_{0} + v_{0}t + \frac{1}{2}at^{2} \)</span>
+        </div>
+
+        <h3>ד. הצבה ופתרון</h3>
+        <p>
+            נשרטט תרשים כוחות מעודכן (FBD) ובו נראה שעל הכדור פועלים כעת שני כוחות מאונכים.
+        </p>
+
+        <div class="svg-container flex justify-center my-4">
+            <img src="image-3.png" alt="תרשים סעיף ג" class="w-64 h-64 object-contain bg-white border border-slate-100 rounded-lg shadow-sm" onerror="this.style.display='none';" />
+        </div>
+
+        <p>
+            כעת נבדוק את הציר האופקי. הפעם ניעזר בחוק השני של ניוטון, כיוון ששקול הכוחות אינו אפס:
+            \[ \Sigma F_{x} = F \]
+            נציב את הנתונים שלנו לתוך החוק השני של ניוטון:
+            \[ 0.2 = 0.1 \cdot a_{x} \]
+            נחלק את שני האגפים ב-0.1 ונקבל את התאוצה החדשה בציר האופקי:
+            \[ a_{x} = 2\text{ m/s}^{2} \]
+            נציב את התאוצה החדשה, זמן המעוף והמהירות ההתחלתית בתוך משוואת המקום-זמן של הציר האופקי כדי למצוא את המרחק החדש:
+            \[ x = x_{0} + v_{0x}t + \frac{1}{2}a_{x}t^{2} \]
+            \[ x = 0 + 5 \cdot 1 + \frac{1}{2} \cdot 2 \cdot 1^{2} \]
+            \[ x = 5 + 1 = 6\text{ m} \]
+        </p>
+
+        <div class="final-answer">
+            בעקבות הפעלת הכוח האופקי, הכדור יפגע בקרקע במרחק של \( x = 6\text{ m} \) מבסיס הבניין.
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> זהו סעיף קלאסי שמדגיש את העצמאות של הצירים! כוח הפועל בציר \( x \) משפיע <strong>אך ורק</strong> על התאוצה ועל גודל המהירות בציר \( x \), ואינו מסוגל לשנות שום פרט בתנועה של ציר \( y \). זו הסיבה שזמן הנפילה לא השתנה למרות שהוספנו כוח למערכת.
+        </div>
+    </div>
+
+    <!-- סעיף ד -->
+    <div class="section-card">
+        <h2 class="text-2xl text-blue-600 mb-4">סעיף ד'</h2>
+        
+        <h3>א. מה נתון</h3>
+        <ul class="list-disc list-inside space-y-2 mb-4 text-slate-700">
+            <li>מהירות התחלתית: \( \vec{v}_{0} = 0 \) (הכדור משוחרר ממנוחה).</li>
+            <li>כוח הכובד פועל כלפי מטה.</li>
+            <li>כוח אופקי קבוע פועל ימינה: \( F = 0.2\text{ N} \)</li>
+        </ul>
+
+        <h3>ב. מה מחפשים</h3>
+        <p>
+            אנו מתבקשים לקבוע מהי צורת מסלול הכדור (ישר, פרבולה, היפרבולה או מסלול אחר) במרחב ולנמק מדוע.
+        </p>
+
+        <h3>ג. נוסחאות בשימוש</h3>
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+        </div>
+
+        <h3>ד. הצבה ופתרון</h3>
+        <p>
+            ננתח את סכום הכוחות הווקטורי הפועל על הכדור:
+            \[ \Sigma\vec{F} = \vec{F}_{x} + \vec{F}_{y} = \vec{F} + m\vec{g} \]
+            מכיוון שגם הכוח \( \vec{F} \) וגם כוח הכובד \( m\vec{g} \) הם וקטורים קבועים (קבועים בגודלם ובכיוונם), הסכום הווקטורי שלהם הוא וקטור כוח שקול חדש ומלוכסן, שגם הוא <strong>קבוע לחלוטין</strong> לאורך כל התנועה.
+        </p>
+
+        <div class="svg-container flex justify-center my-4">
+            <img src="image-4.png" alt="תרשים סעיף ד" class="w-64 h-64 object-contain bg-white border border-slate-100 rounded-lg shadow-sm" onerror="this.style.display='none';" />
+        </div>
+
+        <p>
+            על פי החוק השני של ניוטון, וקטור התאוצה של הכדור פרופורציונלי לווקטור הכוח השקול וכיוונו ככיוון הכוח השקול:
+            \[ \vec{a} = \frac{\Sigma\vec{F}}{m} \]
+            משמעות הדבר היא שווקטור התאוצה \( \vec{a} \) של הכדור קבוע בגודלו ובכיוונו לאורך כל זמן הנפילה.
+            כאשר גוף משוחרר ממנוחה (\( \vec{v}_{0} = 0 \)) ופועלת עליו תאוצה כיוונית קבועה, הוא צובר מהירות אך ורק בכיוון וקטור התאוצה. לפיכך, הגוף ינוע במסלול של קו ישר לאורך כיוונו של הכוח השקול.
+        </p>
+
+        <div class="final-answer">
+            צורת המסלול של הכדור תהיה <strong>ישר</strong>. זאת מכיוון שהגוף מתחיל את תנועתו ממנוחה ונע תחת השפעת כוח שקול קבוע (וכתוצאה מכך תאוצה קבועה), מה שמייצר תנועה בקו ישר בכיוון הכוח השקול.
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> תלמידים יקרים, זהו אחד ההבדלים המהותיים ביותר בקינמטיקה: אם מהירותו ההתחלתית של הגוף אינה מקבילה לתאוצה (כמו בסעיף ג'), המסלול יהיה פרבולי. אך אם הגוף מתחיל ממנוחה, או שמהירותו ההתחלתית מקבילה לקו הפעולה של כוח קבוע, הגוף פשוט "יימשך" בקו ישר בכיוון הכוח השקול.
+        </div>
+    </div>
+
+    <!-- כפתור צף להצגת תמונת השאלה -->
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <!-- מודל לתמונת השאלה -->
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    תמונת השאלה (question-image.png) לא נמצאה בנתיב המצופה.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה: ' + document.lastModified;
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const day = pad(modified.getDate());
+                const month = pad(modified.getMonth() + 1);
+                const year = String(modified.getFullYear()).slice(-2);
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>
