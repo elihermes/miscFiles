@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 1992 שאלה 1</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: #dcfce7;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 1rem;
+            border: 1px solid #bbf7d0;
+            font-size: 1.125rem;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+            margin-top: 1.5rem;
+        }
+
+        p {
+            line-height: 1.75;
+            color: #334155;
+            margin-bottom: 0.75rem;
+        }
+
+        .math-container,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-container mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-container mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות במכניקה – שנת 1992 שאלה 1</h1>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            תמונת השאלה (question-image.png) לא נמצאה בנתיב המצופה.
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <div class="section-card">
+        <h2 class="text-2xl text-blue-600 mb-4">סעיף א'</h2>
+        
+        <h3>א. מה נתון</h3>
+        <ul class="list-disc list-inside space-y-2 mb-4 text-slate-700">
+            <li>גרף מהירות-זמן של תנועת מעלית בין הזמנים \( t = 0\text{ s} \) עד \( t = 17\text{ s} \).</li>
+            <li>המעלית מתחילה את תנועתה מן הקרקע: ב-\( t=0 \) הגובה הוא \( y_{0} = 0 \).</li>
+            <li>כיוון ציר הייחוס: הכיוון כלפי <strong>מעלה</strong> נבחר כחיובי (כלומר מהירות חיובית \( v > 0 \) משמעותה עלייה, ומהירות שלילית משמעותה ירידה).</li>
+        </ul>
+
+        <h3>ב. מה מחפשים</h3>
+        <p>
+            עלינו לקבוע עבור כל אחד משבעת הקטעים (מ-A עד G) האם המעלית עולה או יורדת, והאם <strong>גודל</strong> המהירות שלה גדל, קטן או נשאר קבוע.
+        </p>
+
+        <h3>ג. נוסחאות בשימוש</h3>
+        <p class="text-slate-700">
+            אין צורך בנוסחאות חישוביות בסעיף זה, אלא בהבנה קונספטואלית של גרף מהירות-זמן ושל משמעות סימן המהירות ומרחקה מאפס.
+        </p>
+
+        <h3>ד. הצבה ופתרון</h3>
+        <p>
+            ננתח כל קטע בנפרד על סמך קריאת הגרף. נזכור שסימן המהירות (חיובי או שלילי) קובע את כיוון התנועה, והמרחק של הגרף מציר ה-\( t \) (ערך מוחלט של המהירות) קובע אם גודל המהירות משתנה.
+        </p>
+        <div class="overflow-x-auto my-4">
+            <table class="min-w-full bg-white border border-slate-200 shadow-sm rounded-lg text-slate-700 text-center">
+                <thead>
+                    <tr class="bg-blue-50">
+                        <th class="py-2 px-4 border-b font-semibold">קטע</th>
+                        <th class="py-2 px-4 border-b font-semibold">סימן המהירות (\( v \))</th>
+                        <th class="py-2 px-4 border-b font-semibold">כיוון התנועה</th>
+                        <th class="py-2 px-4 border-b font-semibold">גודל המהירות (\( |v| \))</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr>
+                        <td class="py-2 px-4 border-b font-bold">A</td>
+                        <td class="py-2 px-4 border-b text-green-600">חיובי</td>
+                        <td class="py-2 px-4 border-b">עולה</td>
+                        <td class="py-2 px-4 border-b">מתרחק מ-0 \(\rightarrow\) <strong>גדל</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4 border-b font-bold">B</td>
+                        <td class="py-2 px-4 border-b text-green-600">חיובי</td>
+                        <td class="py-2 px-4 border-b">עולה</td>
+                        <td class="py-2 px-4 border-b">נשאר על 3 \(\rightarrow\) <strong>קבוע</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4 border-b font-bold">C</td>
+                        <td class="py-2 px-4 border-b text-green-600">חיובי</td>
+                        <td class="py-2 px-4 border-b">עולה</td>
+                        <td class="py-2 px-4 border-b">מתקרב ל-0 \(\rightarrow\) <strong>קטן</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4 border-b font-bold">D</td>
+                        <td class="py-2 px-4 border-b text-slate-400">אפס</td>
+                        <td class="py-2 px-4 border-b">במנוחה (לא עולה ולא יורדת)</td>
+                        <td class="py-2 px-4 border-b">נשאר על 0 \(\rightarrow\) <strong>קבוע</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4 border-b font-bold">E</td>
+                        <td class="py-2 px-4 border-b text-red-600">שלילי</td>
+                        <td class="py-2 px-4 border-b">יורדת</td>
+                        <td class="py-2 px-4 border-b">מתרחק מ-0 מטה \(\rightarrow\) <strong>גדל</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4 border-b font-bold">F</td>
+                        <td class="py-2 px-4 border-b text-red-600">שלילי</td>
+                        <td class="py-2 px-4 border-b">יורדת</td>
+                        <td class="py-2 px-4 border-b">נשאר על -2 \(\rightarrow\) <strong>קבוע</strong></td>
+                    </tr>
+                    <tr>
+                        <td class="py-2 px-4 border-b font-bold">G</td>
+                        <td class="py-2 px-4 border-b text-red-600">שלילי</td>
+                        <td class="py-2 px-4 border-b">יורדת</td>
+                        <td class="py-2 px-4 border-b">מתקרב ל-0 מעלה \(\rightarrow\) <strong>קטן</strong></td>
+                    </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div class="final-answer">
+            כיווני התנועה והשתנות גודל המהירות מפורטים בטבלה מעלה.
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> תלמידים יקרים, זכרו כלל זהב בקינמטיקה: בגרף מהירות-זמן, <strong>כיוון התנועה</strong> נקבע אך ורק על פי סימן המהירות (מעל או מתחת לציר הזמן), ולא על פי שיפוע הגרף! שיפוע הגרף מייצג את התאוצה. בנוסף, שימו לב שבקטע E המעלית יורדת וגודל מהירותה <strong>גדל</strong> (מ-0 ל-2), אף על פי שהגרף "יורד" לכיוון שלילי.
+        </div>
+    </div>
+
+    <!-- סעיף ב -->
+    <div class="section-card">
+        <h2 class="text-2xl text-blue-600 mb-4">סעיף ב'</h2>
+        
+        <h3>א. מה נתון</h3>
+        <ul class="list-disc list-inside space-y-2 mb-4 text-slate-700">
+            <li>גרף התנועה ממשיך להוות את בסיס הנתונים שלנו.</li>
+            <li>קטעי העלייה הם A, B, C (בין \( t = 0\text{ s} \) לבין \( t = 7\text{ s} \)). בנקודה זו המעלית עוצרת ומתחילה מנוחה, ולאחריה היא תרד.</li>
+        </ul>
+
+        <h3>ב. מה מחפשים</h3>
+        <p>
+            אנו מחפשים את הגובה המקסימלי אליו מגיעה המעלית. גובה זה מושג בדיוק בסיום שלב העלייה שלה, כלומר ברגע \( t = 7\text{ s} \) לפני שהיא מתחילה לרדת.
+        </p>
+
+        <h3>ג. נוסחאות בשימוש</h3>
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="formula-badge">\(\Delta y =\) שטח מתחת לגרף \(v-t\)</span>
+        </div>
+
+        <h3>ד. הצבה ופתרון</h3>
+        <p>
+            כאשר נתון לנו גרף מהירות-זמן, הדרך הפשוטה והבטוחה ביותר למצוא את ההעתק היא חישוב השטח הכלוא בין גרף המהירות לבין ציר הזמן. השטח שמעל לציר הזמן חיובי ומייצג העתק כלפי מעלה.
+            הצורה שנוצרת מקטעים A, B ו-C היא טרפז. בסיסו התחתון נמשך מ-\( t=0 \) עד \( t=7 \), בסיסו העליון נמשך מ-\( t=3 \) עד \( t=6 \), וגובה הטרפז הוא המהירות המקסימלית \( v=3\text{ m/s} \).
+            <br><br>
+            נחשב את שטח הטרפז (\( S = \frac{(a+b)\cdot h}{2} \)):
+            \[ \Delta y = \frac{(7 - 0) + (6 - 3)}{2} \cdot 3 \]
+            \[ \Delta y = \frac{7 + 3}{2} \cdot 3 \]
+            \[ \Delta y = \frac{10}{2} \cdot 3 = 5 \cdot 3 = 15\text{ m} \]
+            מכיוון שהמעלית התחילה מן הקרקע (\( y_{0} = 0 \)), ההעתק שווה לגובה הסופי בשלב זה.
+        </p>
+
+        <div class="final-answer">
+            הגובה המקסימלי אליו מגיעה המעלית הוא \( y = 15\text{ m} \).
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> חישוב שטחים בגרף \( v-t \) חוסך לנו המון עבודה! במקום להשתמש ב-3 משוואות קינמטיקה שונות (אחת לכל קטע A, B, C) ולחשב תאוצות, הפעולה הגרפית מאפשרת למצוא את התשובה בשורה אחת. זכרו תמיד את היתרון שבגישה הגרפית.
+        </div>
+    </div>
+
+    <!-- סעיף ג -->
+    <div class="section-card">
+        <h2 class="text-2xl text-blue-600 mb-4">סעיף ג'</h2>
+        
+        <h3>א. מה נתון</h3>
+        <ul class="list-disc list-inside space-y-2 mb-4 text-slate-700">
+            <li>גובה המעלית בשיא (ברגע \( t=10\text{ s} \), לאחר המנוחה) הוא \( y = 15\text{ m} \).</li>
+            <li>קטעי הירידה (E, F, G) מתרחשים בין הזמנים \( t = 10\text{ s} \) לבין \( t = 17\text{ s} \).</li>
+        </ul>
+
+        <h3>ב. מה מחפשים</h3>
+        <p>
+            אנו מחפשים את הגובה הסופי של המעלית מעל הקרקע בגמר כל התנועה (ברגע \( t = 17\text{ s} \)). 
+        </p>
+
+        <h3>ג. נוסחאות בשימוש</h3>
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="formula-badge">\(\Delta y =\) שטח מתחת לגרף \(v-t\)</span>
+            <span class="formula-badge">\( y = y_{0} + \Delta y \)</span>
+        </div>
+
+        <h3>ד. הצבה ופתרון</h3>
+        <p>
+            בדיוק כפי שעשינו בסעיף הקודם, נחשב את ההעתק בשלב הירידה על ידי חישוב השטח הכלוא בין הגרף לציר הזמן עבור קטעים E, F ו-G. הפעם השטח נמצא <strong>מתחת</strong> לציר הזמן, ולכן ייצג העתק שלילי.
+            <br><br>
+            הצורה הנוצרת שוב היא טרפז. בסיסו העליון (על ציר ה-\( t \)) נמשך מ-\( t=10 \) עד \( t=17 \), בסיסו התחתון נמשך מ-\( t=11 \) עד \( t=14 \), ו"גובה" הטרפז (שיעור המהירות) הוא \( -2\text{ m/s} \).
+            <br><br>
+            נחשב את שטח הטרפז של הירידה:
+            \[ \Delta y_{\text{down}} = \frac{(17 - 10) + (14 - 11)}{2} \cdot (-2) \]
+            \[ \Delta y_{\text{down}} = \frac{7 + 3}{2} \cdot (-2) \]
+            \[ \Delta y_{\text{down}} = 5 \cdot (-2) = -10\text{ m} \]
+            כעת נחבר את ההעתק השלילי הזה לגובה שממנו התחילה הירידה (\( 15\text{ m} \)):
+            \[ y_{\text{final}} = y_{\text{max}} + \Delta y_{\text{down}} \]
+            \[ y_{\text{final}} = 15 - 10 = 5\text{ m} \]
+        </p>
+
+        <div class="final-answer">
+            בגמר תנועתה, המעלית נמצאת בגובה של \( y = 5\text{ m} \) מעל הקרקע.
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> שימו לב למשמעות הפיזיקלית של השטח מתחת לציר הזמן: הוא מסמל חזרה אחורה אל נקודת ההתחלה. הטרפז השלילי "אכל" חלק מהגובה שהושג בעלייה, אך מכיוון ששטח הירידה (\( -10 \)) קטן בערכו המוחלט משטח העלייה (\( +15 \)), המעלית לא חזרה עד הקרקע.
+        </div>
+    </div>
+
+    <!-- סעיף ד -->
+    <div class="section-card">
+        <h2 class="text-2xl text-blue-600 mb-4">סעיף ד'</h2>
+        
+        <h3>א. מה נתון</h3>
+        <ul class="list-disc list-inside space-y-2 mb-4 text-slate-700">
+            <li>שק מלט מונח על מאזני קפיץ במעלית.</li>
+            <li>הוראת המאזניים בקטע A: צג המאזניים מראה את המספר 55 (המאזניים מכוילים בקילוגרמים).</li>
+            <li>תאוצת הכובד: נזכיר תמיד \( g = 10\text{ m/s}^{2} \) חיובי כלפי מטה (אך במערכת הצירים שלנו מעלה חיובי ולכן הכוח יסומן כמינוס \( mg \)).</li>
+        </ul>
+
+        <h3>ב. מה מחפשים</h3>
+        <p>
+            אנו מתבקשים למצוא את המספר שיופיע על צג המאזניים (ה"מסה המדומה") בכל אחד משאר הקטעים (מ-B עד G). לשם כך עלינו למצוא תחילה את מסתו האמיתית של שק המלט, ולאחר מכן לחשב את הכוח הנורמלי בכל קטע לפי התאוצה המתאימה.
+        </p>
+
+        <h3>ג. נוסחאות בשימוש</h3>
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="formula-badge">\( a = \frac{\Delta v}{\Delta t} \)</span>
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+            <span class="formula-badge">\( F_{g} = mg \)</span>
+        </div>
+
+        <h3>ד. הצבה ופתרון</h3>
+        <p>
+            <strong>שלב 0 - הבנת המאזניים:</strong> מאזני קפיץ אינם מודדים מסה אלא מודדים את הכוח הנורמלי (\( N \)) שהם מפעילים כלפי מעלה על הגוף. מכיוון שהם "מכוילים בקילוגרמים", המספר על הצג הוא הכוח הנורמלי מחולק ב-\( g \). 
+            מכאן שנוכל להמיר את נתוני קטע A חזרה לכוח במונחי MKS:
+            \[ N_{A} = 55 \cdot 10 = 550\text{ N} \]
+        </p>
+
+        <p>
+            נשרטט תרשים כוחות חופשי (FBD) עבור שק המלט במעלית. על השק פועלים כוח הכובד (\( mg \)) כלפי מטה והכוח הנורמלי מהמאזניים (\( N \)) כלפי מעלה. כיוון שהגדרנו מעלה כחיובי, תאוצת הגוף תסומן ב-\( a_{y} \).
+        </p>
+
+        <div class="svg-container flex justify-center my-4">
+            <img src="image-4.png" alt="תרשים סעיף ד" class="w-56 h-64 object-contain bg-white border border-slate-100 rounded-lg shadow-sm" onerror="this.style.display='none';" />
+        </div>
+
+        <p>
+            נרשום את משוואת החוק השני של ניוטון עבור שק המלט (בציר \( y \)):
+            \[ \Sigma F_{y} = N - mg = ma_{y} \quad \Rightarrow \quad N = m(g + a_{y}) \]
+            משוואה זו היא <strong>"משוואת הנורמל"</strong> שלנו, והיא תלווה אותנו לאורך כל הסעיף!
+            <br><br>
+            בשלב הראשון, נשתמש בה כדי למצוא את המסה האמיתית \( m \). לשם כך עלינו למצוא את התאוצה \( a_{y} \) בקטע A בעזרת שיפוע הגרף:
+            \[ a_{A} = \frac{\Delta v}{\Delta t} = \frac{3 - 0}{3 - 0} = 1\text{ m/s}^{2} \]
+            נציב את הנתונים (\(N=550\text{ N}, g=10\text{ m/s}^2, a_{A}=1\text{ m/s}^2\)) בתוך "משוואת הנורמל":
+            \[ 550 = m(10 + 1) \]
+            \[ 550 = 11m \quad \Rightarrow \quad m = 50\text{ kg} \]
+            כעת, כשאנו יודעים שהמסה היא \(50\text{ kg}\), נחזור אל <strong>"משוואת הנורמל"</strong> הכללית שיצרנו קודם, נציב בה את המסה ואת תאוצת הכובד (\(g=10\)) ונקבל את הנוסחה לחישוב הנורמל בכל שאר קטעי התנועה:
+            \[ N = 50(10 + a_{y}) \]
+            מכיוון שהמאזניים מכוילים בקילוגרמים, נחלק את הכוח הנורמלי ב-10 כדי לקבל את <strong>קריאת המאזניים</strong> (\( M_{\text{read}} \)):
+            \[ M_{\text{read}} = \frac{N}{10} = 5(10 + a_{y}) \]
+        </p>
+        
+        <p>
+            כעת, נחשב את התאוצות בכל שאר הקטעים (מהזמנים המדויקים מהגרף) ונציב במשוואה:
+        </p>
+        <ul class="list-disc list-inside space-y-4 mb-4 text-slate-700 ml-4">
+            <li>
+                <strong>קטעים B, D, F:</strong> המהירות קבועה (או אפס), ולכן שיפוע הגרף והתאוצה הם אפס.
+                \[ a_{y} = 0\text{ m/s}^{2} \quad \Rightarrow \quad M_{\text{read}} = 5(10 + 0) = 50\text{ kg} \]
+            </li>
+            <li>
+                <strong>קטע C (זמן 6 עד 7):</strong> נחשב את שיפוע הקטע מהנקודה \((6,3)\) לנקודה \((7,0)\):
+                \[ a_{C} = \frac{0 - 3}{7 - 6} = \frac{-3}{1} = -3\text{ m/s}^{2} \]
+                \[ M_{\text{read}} = 5(10 - 3) = 5 \cdot 7 = 35\text{ kg} \]
+            </li>
+            <li>
+                <strong>קטע E (זמן 10 עד 11):</strong> נחשב את שיפוע הקטע מהנקודה \((10,0)\) לנקודה \((11,-2)\):
+                \[ a_{E} = \frac{-2 - 0}{11 - 10} = \frac{-2}{1} = -2\text{ m/s}^{2} \]
+                \[ M_{\text{read}} = 5(10 - 2) = 5 \cdot 8 = 40\text{ kg} \]
+            </li>
+            <li>
+                <strong>קטע G (זמן 14 עד 17):</strong> נחשב את שיפוע הקטע מהנקודה \((14,-2)\) לנקודה \((17,0)\):
+                \[ a_{G} = \frac{0 - (-2)}{17 - 14} = \frac{2}{3}\text{ m/s}^{2} \]
+                \[ M_{\text{read}} = 5(10 + \frac{2}{3}) = 5 \cdot \frac{32}{3} = \frac{160}{3} \approx 53.33\text{ kg} \]
+            </li>
+        </ul>
+
+        <div class="final-answer">
+            הקריאות על צג המאזניים (בקילוגרמים) יהיו:<br>
+            קטעים B, D, F: \( 50\text{ kg} \) | קטע C: \( 35\text{ kg} \) | קטע E: \( 40\text{ kg} \) | קטע G: \( 53.33\text{ kg} \)
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> זכרו, המאזניים "עיוורים" – הם לא יודעים מה המסה שלכם וגם לא באיזו מהירות המעלית זזה. הדבר היחיד שהם מרגישים הוא כמה חזק עליהם לדחוף אתכם כדי שתזוזו יחד איתם. כאשר המעלית מאיצה כלפי מטה (למשל בקטעים C או E שבהם \( a_{y} \) שלילי), הרצפה כאילו "בורחת" מתחתינו, המאזניים צריכים להפעיל פחות כוח כדי למנוע מאיתנו ליפול, ולכן קריאת המשקל המדומה יורדת!
+        </div>
+    </div>
+
+    <!-- כפתור צף להצגת תמונת השאלה -->
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <!-- מודל לתמונת השאלה -->
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    תמונת השאלה (question-image.png) לא נמצאה בנתיב המצופה.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה';
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+
+                const year = modified.getFullYear();
+                const month = modified.getMonth() + 1;
+                const day = modified.getDate();
+                const seed = (year * 372) + (month * 31) + day + 157;
+                const codeNum = (seed * 73) % 46656;
+                const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>
