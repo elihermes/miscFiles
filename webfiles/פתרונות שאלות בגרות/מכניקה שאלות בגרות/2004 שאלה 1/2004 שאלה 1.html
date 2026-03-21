@@ -1,0 +1,596 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2004, שאלה 1</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: #ecfdf5;
+            border-right: 4px solid #10b981;
+            color: #065f46;
+            padding: 1rem 2.5rem 1rem 1rem;
+            border-radius: 0.375rem;
+            margin-top: 1rem;
+            font-weight: 700;
+            position: relative;
+        }
+
+        .final-answer::before {
+            content: "✓";
+            position: absolute;
+            right: 0.75rem;
+            top: 0.85rem;
+            color: #10b981;
+            font-size: 1.25rem;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+            display: flex;
+            align-items: flex-start;
+        }
+
+        .teacher-highlight svg {
+            width: 1.5rem;
+            height: 1.5rem;
+            margin-left: 0.75rem;
+            flex-shrink: 0;
+            color: #eab308;
+        }
+
+        .math-scroll,
+        .math-container,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-shell">
+
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון שאלה 1 - מכניקה 2004</h1>
+        <p class="mt-3 text-slate-500">תנועה במישור (זריקה אופקית ומשופעת) • משוואות קינמטיות</p>
+        
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="text-sm">התמונה question-image.png לא נמצאה בנתיב המקומי.</span>
+        </div>
+    </section>
+
+    <!-- הגדרת מערכת צירים כללית -->
+    <div class="section-card">
+        <h2 class="text-xl font-bold text-slate-800 mb-3 border-b-2 border-slate-100 pb-2">הכנה מוקדמת: קביעת מערכת צירים ותרשים כוחות (FBD)</h2>
+        <p class="text-slate-700 leading-relaxed mb-4">
+            לפני שניגש לסעיפים, נגדיר מערכת צירים אחידה לכל השאלה. נבחר את ראשית הצירים \( (x=0, y=0) \) בנקודה על הקרקע שנמצאת בדיוק מתחת לקשת. כיוון ציר ה-\( x \) החיובי יהיה ימינה (לכיוון התפוח), וכיוון ציר ה-\( y \) החיובי יהיה כלפי מעלה.
+            תאוצת הכובד \( g = 10 \text{ m/s}^2 \) פועלת תמיד כלפי מטה. לכן, בציר האנכי התאוצה של כל גוף חופשי תהיה \( a_y = -10 \text{ m/s}^2 \).
+        </p>
+        <div class="svg-container flex justify-center my-4">
+            <img src="image-0.png" alt="תרשים כוחות FBD" width="400" height="250" style="max-width:100%;height:auto;display:block;" />
+        </div>
+        <div class="teacher-highlight">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div>
+                <strong>הערת מורה:</strong> תרשים הכוחות של שני הגופים מראה שלאחר הרגע שבו הם שוחררו/נורו, הכוח היחיד שפועל עליהם הוא כוח הכובד (בהזנחת התנגדות האוויר). לפי החוק השני של ניוטון \( \Sigma F_y = ma_y \Rightarrow -mg = ma_y \Rightarrow a_y = -g = -10 \text{ m/s}^2 \). בציר האופקי, \( \Sigma F_x = 0 \), ולכן תאוצתם האופקית היא אפס (\( a_x = 0 \)).
+            </div>
+        </div>
+    </div>
+
+    <!-- סעיף א' -->
+    <div class="section-card" id="section-a">
+        <h2 class="text-xl font-bold text-blue-800 mb-3 border-b-2 border-blue-100 pb-2">סעיף א'</h2>
+        
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">מה נתון:</h3>
+        <ul class="list-disc list-inside text-slate-700 mb-4 space-y-1">
+            <li>גובה התחלתי של החץ והתפוח: \( y_{0A} = y_{0B} = 1.8 \text{ m} \).</li>
+            <li>מרחק אופקי התחלתי ביניהם: החץ יוצא מ-\( x_{0A} = 0 \), התפוח נמצא ב-\( x_{0B} = 6 \text{ m} \).</li>
+            <li>מהירות התחלתית של החץ: אופקית בלבד, \( v_{0xA} = 20 \text{ m/s} \) ו-\( v_{0yA} = 0 \).</li>
+            <li>מהירות התחלתית של התפוח: משוחרר ממנוחה, \( v_{0xB} = 0 \) ו-\( v_{0yB} = 0 \).</li>
+        </ul>
+
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">מה מחפשים:</h3>
+        <p class="text-slate-700 mb-4">
+            להראות כי הזמן שלוקח לחץ לעבור את המרחק האופקי עד לקו של התפוח קטן מהזמן שלוקח לתפוח ליפול עד הקרקע.
+        </p>
+
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">נוסחאות בשימוש (מתוך דף הנוסחאות):</h3>
+        <div class="mb-4">
+            <span class="formula-badge">\( x = x_0 + v_0 t + \frac{1}{2} a t^2 \)</span>
+        </div>
+
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">הצבה ופתרון:</h3>
+        <div class="text-slate-700 mb-4 space-y-4">
+            <p><strong>שלב 1: נבנה את משוואות התנועה כפונקציה של הזמן עבור כל גוף בנפרד.</strong></p>
+            <p>עבור התפוח (תנועה אנכית בלבד, משוחרר ממנוחה תחת תאוצת הכובד):</p>
+            <div class="math-scroll">
+                \[ y_B(t) = y_{0B} + v_{0yB}t + \frac{1}{2}a_y t^2 \Rightarrow y_B(t) = 1.8 + 0 \cdot t - \frac{1}{2} \cdot 10 \cdot t^2 \Rightarrow y_B(t) = 1.8 - 5t^2 \]
+            </div>
+            <p>עבור החץ (תנועה אופקית בלבד, גודל המהירות נשאר קבוע כי \( a_x = 0 \)):</p>
+            <div class="math-scroll">
+                \[ x_A(t) = x_{0A} + v_{0xA}t + \frac{1}{2}a_x t^2 \Rightarrow x_A(t) = 0 + 20 \cdot t + 0 \Rightarrow x_A(t) = 20t \]
+            </div>
+            
+            <p><strong>שלב 2: מציאת זמן הנפילה של התפוח.</strong> נציב את גובה הקרקע \( y_B = 0 \) במשוואת התנועה של התפוח:</p>
+            <div class="math-scroll">
+                \[ 0 = 1.8 - 5t^2 \Rightarrow 5t^2 = 1.8 \Rightarrow t^2 = 0.36 \Rightarrow t = \sqrt{0.36} = 0.6 \text{ s} \]
+            </div>
+            
+            <p><strong>שלב 3: מציאת זמן ההגעה של החץ אל קו התפוח.</strong> נציב את המרחק האופקי הדרוש \( x_A = 6 \text{ m} \) במשוואת התנועה של החץ:</p>
+            <div class="math-scroll">
+                \[ 6 = 20t \Rightarrow t = \frac{6}{20} = 0.3 \text{ s} \]
+            </div>
+            
+            <p><strong>שלב 4: מסקנה.</strong> נשווה בין הזמנים ונראה בבירור כי \( 0.3 \text{ s} < 0.6 \text{ s} \).</p>
+        </div>
+
+        <div class="final-answer">
+            מכיוון שהזמן הדרוש לחץ להגיע לקו התפוח (0.3s) קטן מזמן הנפילה של התפוח (0.6s), הוכחנו שהחץ עובר את המרחק האופקי בטרם התפוח פוגע בקרקע.
+        </div>
+    </div>
+
+    <!-- סעיף ב' -->
+    <div class="section-card" id="section-b">
+        <h2 class="text-xl font-bold text-blue-800 mb-3 border-b-2 border-blue-100 pb-2">סעיף ב'</h2>
+        
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">מה נתון:</h3>
+        <p class="text-slate-700 mb-4">משתמשים באותם תנאי ההתחלה של סעיף א'. נזכיר: מצאנו שהחץ מגיע לאותו מיקום אופקי של התפוח ב-\( t = 0.3 \text{ s} \).</p>
+
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">מה מחפשים:</h3>
+        <p class="text-slate-700 mb-4">להסביר מדוע בנקודת זמן זו (ובהנחה שהתפוח בקו האש), החץ פוגע בו (כלומר, מיקומם האנכי זהה).</p>
+
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">נוסחאות בשימוש:</h3>
+        <div class="mb-4">
+            <span class="formula-badge">\( y = y_0 + v_{0y} t + \frac{1}{2} a_y t^2 \)</span>
+        </div>
+
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">הצבה ופתרון (הסבר נוסיחי):</h3>
+        <div class="text-slate-700 mb-4 space-y-4">
+            <p>נרשום את משוואות התנועה לאורך ציר ה-\( y \) עבור שני הגופים:</p>
+            <div class="math-scroll">
+                \[ y_A(t) = y_{0A} + v_{0yA}t + \frac{1}{2}a_y t^2 \]
+                \[ y_B(t) = y_{0B} + v_{0yB}t + \frac{1}{2}a_y t^2 \]
+            </div>
+            <p>נשווה את הנתונים ההתחלתיים שלהם:</p>
+            <ul class="list-disc list-inside pl-4">
+                <li>הגובה ההתחלתי זהה: \( y_{0A} = y_{0B} = 1.8 \text{ m} \).</li>
+                <li>המהירות האנכית ההתחלתית זהה: \( v_{0yA} = v_{0yB} = 0 \).</li>
+                <li>תאוצתם שווה: \( a_y = -10 \text{ m/s}^2 \) (כיוון ששניהם באוויר תחת כוח הכובד).</li>
+            </ul>
+            <p>מכאן נובע שעבור כל זמן \( t \) חופף באוויר, יתקיים \( y_A(t) = y_B(t) \). בעת הגעת החץ אל ציר ה-\( y \) בו נמצא התפוח (\( t=0.3 \text{ s} \)), שניהם נמצאים בדיוק באותו גובה.</p>
+        </div>
+
+        <div class="final-answer">
+            החץ פוגע בתפוח כיוון שהרכיב האנכי של תנועת שניהם מתחיל באותם תנאים (גובה 1.8 מטר, מהירות התחלתית אנכית אפס) וכפוף לאותה תאוצה. לפיכך, הם נופלים יחד בדיוק באותו הקצב ולכן ייפגשו במרחב.
+        </div>
+        
+        <div class="teacher-highlight">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            <div>
+                <strong>הערת מורה:</strong> שימו לב לעיקרון המרתק שמומחש כאן: עקרון אי-תלות התנועות בצירים מאונכים. התנועה האופקית המהירה של החץ (שקובעת רק מתי הוא יגיע לקו של התפוח) אינה משפיעה כלל על קצב נפילתו האנכית! מאחר שגם התפוח וגם החץ חולקים בדיוק את אותם תנאי התחלה בציר האנכי, כוח הכובד מייצר עבור שניהם בדיוק את אותו שינוי במיקום האנכי בכל רגע ורגע (\( \Delta y = -\frac{1}{2}gt^2 \)), כך שהם תמיד יישארו באותו גובה זה לזה במהלך הנפילה.
+            </div>
+        </div>
+    </div>
+
+    <!-- סעיף ג' -->
+    <div class="section-card" id="section-c">
+        <h2 class="text-xl font-bold text-blue-800 mb-3 border-b-2 border-blue-100 pb-2">סעיף ג'</h2>
+        
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">מה נתון:</h3>
+        <p class="text-slate-700 mb-4">זמן הפגיעה הוא \( t = 0.3 \text{ s} \). המהירות ההתחלתית של החץ היא \( v_{0x} = 20 \text{ m/s} \) ו-\( v_{0y} = 0 \). התאוצה היא \( a_x = 0 \) ו-\( a_y = -10 \text{ m/s}^2 \).</p>
+
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">מה מחפשים:</h3>
+        <p class="text-slate-700 mb-4">את וקטור המהירות השקול של החץ ברגע הפגיעה (גודל וכיוון ביחס לאופק).</p>
+
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">נוסחאות בשימוש:</h3>
+        <div class="mb-4 space-y-2 flex flex-col items-start">
+            <span class="formula-badge">\( v = v_0 + at \)</span>
+            <span class="formula-badge">\( |v| = \sqrt{v_x^2 + v_y^2} \) (פיתגורס לחישוב גודל וקטור)</span>
+            <span class="formula-badge">\( \tan \alpha = \frac{|v_y|}{|v_x|} \) (חישוב זווית ממשולש מהירויות)</span>
+        </div>
+
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">הצבה ופתרון:</h3>
+        <div class="text-slate-700 mb-4 space-y-4">
+            <p>ראשית, נמצא את רכיבי המהירות בזמן \( t = 0.3 \text{ s} \).</p>
+            <p><strong>רכיב אופקי (\( v_x \)):</strong> מאחר ש-\( a_x = 0 \), גודל המהירות נשאר קבוע.</p>
+            <div class="math-scroll">
+                \[ v_x = v_{0x} = 20 \text{ m/s} \]
+            </div>
+            <p><strong>רכיב אנכי (\( v_y \)):</strong> גודל המהירות משתנה לפי התאוצה (נפילה חופשית).</p>
+            <div class="math-scroll">
+                \[ v_y = v_{0y} + a_y t = 0 - 10 \cdot 0.3 = -3 \text{ m/s} \]
+            </div>
+            <p>כעת, נחשב את <strong>גודל</strong> המהירות השקולה:</p>
+            <div class="math-scroll">
+                \[ v = \sqrt{v_x^2 + v_y^2} = \sqrt{20^2 + (-3)^2} = \sqrt{400 + 9} = \sqrt{409} \approx 20.22 \text{ m/s} \]
+            </div>
+            <p>ולבסוף, את <strong>הכיוון</strong> (הזווית \( \alpha \) ביחס לציר \( x \) החיובי):</p>
+            <div class="math-scroll">
+                \[ \tan \alpha = \frac{|v_y|}{v_x} = \frac{3}{20} = 0.15 \]
+                \[ \alpha = \arctan(0.15) \approx 8.53^\circ \]
+            </div>
+            <p>המהירות האנכית שלילית, ולכן הכיוון הוא מתחת לציר האופק.</p>
+        </div>
+
+        <div class="final-answer">
+            <div class="mb-2">גודל המהירות בו פוגע החץ בתפוח הוא <strong>\( 20.22 \text{ m/s} \)</strong>.</div>
+            <div>הכיוון הוא בזווית של <strong>\( 8.53^\circ \) מתחת לאופק</strong>.</div>
+        </div>
+    </div>
+
+    <!-- סעיף ד' -->
+    <div class="section-card" id="section-d">
+        <h2 class="text-xl font-bold text-blue-800 mb-3 border-b-2 border-blue-100 pb-2">סעיף ד'</h2>
+        
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">מה נתון (תרחיש חדש):</h3>
+        <ul class="list-disc list-inside text-slate-700 mb-4 space-y-1">
+            <li>לחץ יש כעת מהירות התחלתית משופעת: \( v_{0xA} = 20 \text{ m/s} \), \( v_{0yA} = 20 \text{ m/s} \) (כלפי מעלה).</li>
+            <li>התפוח כבר לא משוחרר ממנוחה, אלא נזרק אנכית כלפי מעלה. \( v_{0xB} = 0 \) (תנועה אנכית בלבד).</li>
+            <li>מועדי הזריקה, תאוצת הכובד, והעמדות ההתחלתיות נשארים כפי שהיו: שניהם מגובה 1.8 מטר, שניהם פועלים תחת \( a_y = -10 \text{ m/s}^2 \).</li>
+        </ul>
+
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">מה מחפשים:</h3>
+        <p class="text-slate-700 mb-4">מה צריכה להיות המהירות ההתחלתית של התפוח כלפי מעלה (\( v_{0yB} \)) כדי שהחץ יפגע בו, יחד עם הסבר/נימוק.</p>
+
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">נוסחאות בשימוש:</h3>
+        <div class="mb-4">
+            <span class="formula-badge">\( y = y_0 + v_{0y} t + \frac{1}{2} a_y t^2 \)</span>
+        </div>
+
+        <h3 class="font-bold text-slate-700 mt-4 mb-2">הצבה ופתרון:</h3>
+        <div class="text-slate-700 mb-4 space-y-4">
+            <p>שוב, כיוון שהמהירות האופקית של החץ נותרה \( 20 \text{ m/s} \) (התנועה האופקית לא הושפעה מהרכיב האנכי החדש), גם כעת הזמן הדרוש לחץ להגיע למרחק \( x = 6 \text{ m} \) שבו נמצא התפוח הוא \( t_{hit} = 0.3 \text{ s} \).</p>
+            <p>על מנת שתתרחש פגיעה, חייב להתקיים שוויון גבהים בנקודת הזמן הזו: \( y_A(t_{hit}) = y_B(t_{hit}) \).</p>
+            <p>נרשום את משוואות הגובה לשניהם ונשווה:</p>
+            <div class="math-scroll">
+                \[ y_0 + v_{0yA}t + \frac{1}{2}a_y t^2 = y_0 + v_{0yB}t + \frac{1}{2}a_y t^2 \]
+            </div>
+            <p>נשים לב שהגובה ההתחלתי \( y_0 \) מופיע בשני האגפים ואפשר לצמצם אותו. כמו כן, איבר תאוצת הכובד \( \frac{1}{2}a_y t^2 \) זהה לחלוטין לשניהם ואפשר גם אותו לצמצם. נישאר עם:</p>
+            <div class="math-scroll">
+                \[ v_{0yA}t = v_{0yB}t \]
+            </div>
+            <p>מכיוון שזמן הפגיעה שונה מאפס (\( t > 0 \)), נוכל לחלק ב-\( t \):</p>
+            <div class="math-scroll">
+                \[ v_{0yB} = v_{0yA} \]
+            </div>
+            <p>לכן, כיוון שנתון \( v_{0yA} = 20 \text{ m/s} \), נדרש שהמהירות ההתחלתית של התפוח תהיה בדיוק זהה.</p>
+        </div>
+
+        <div class="final-answer">
+            על מנת שהחץ יפגע בתפוח, המהירות ההתחלתית של זריקת התפוח צריכה להיות שווה לרכיב המהירות ההתחלתית האנכית של החץ, כלומר <strong>\( 20 \text{ m/s} \) כלפי מעלה</strong>.
+        </div>
+
+        <div class="teacher-highlight">
+            <svg fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+            <div>
+                <strong>הערת מורה:</strong> היופי בפיזיקה מתבטא בכך שהשפעת כוח הכובד מייצרת העתק זהה לשני הגופים בכל רגע ורגע (האיבר \( -\frac{1}{2}gt^2 \)). כל עוד נבטיח שתנאי ההתחלה האנכיים (מיקום ומהירות) יהיו זהים – הם ימשיכו לנוע בסינכרון מוחלט על ציר ה-\( y \), ולכן מובטחת התנגשות ברגע שבו הקואורדינטות בציר ה-\( x \) ישתוו.
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img
+                    src="question-image.png"
+                    alt="תמונת השאלה המקורית"
+                    class="max-w-full h-auto rounded-lg"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                >
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    <span class="text-sm">התמונה question-image.png לא נמצאה בנתיב המקומי.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה';
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const year = modified.getFullYear();
+                const month = modified.getMonth() + 1;
+                const day = modified.getDate();
+                const seed = (year * 372) + (month * 31) + day + 157;
+                const codeNum = (seed * 73) % 46656;
+                const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+
+    
+</body>
+</html>
