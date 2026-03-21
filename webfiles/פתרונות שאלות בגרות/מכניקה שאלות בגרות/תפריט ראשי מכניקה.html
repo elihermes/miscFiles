@@ -405,7 +405,39 @@
             return String(a.question).localeCompare(String(b.question), "he", { numeric: true });
         }
 
+        function parseAddedAtToTimestamp(value) {
+            if (typeof value !== "string") {
+                return NaN;
+            }
+
+            const trimmed = value.trim();
+            const match = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})$/);
+            if (!match) {
+                return NaN;
+            }
+
+            const year = Number(match[1]);
+            const month = Number(match[2]) - 1;
+            const day = Number(match[3]);
+            const hour = Number(match[4]);
+            const minute = Number(match[5]);
+            const second = Number(match[6]);
+
+            const ts = new Date(year, month, day, hour, minute, second).getTime();
+            return Number.isFinite(ts) ? ts : NaN;
+        }
+
         function compareSolutionsByRecent(a, b) {
+            if (Boolean(a.needsTagging) !== Boolean(b.needsTagging)) {
+                return a.needsTagging ? -1 : 1;
+            }
+
+            const aAddedAtTs = Number.isFinite(a.addedAtTs) ? a.addedAtTs : -1;
+            const bAddedAtTs = Number.isFinite(b.addedAtTs) ? b.addedAtTs : -1;
+            if (aAddedAtTs !== bAddedAtTs) {
+                return bAddedAtTs - aAddedAtTs;
+            }
+
             const aOrder = Number.isFinite(a.addedOrder) ? a.addedOrder : -1;
             const bOrder = Number.isFinite(b.addedOrder) ? b.addedOrder : -1;
             if (aOrder !== bOrder) {
@@ -624,6 +656,7 @@
                 const parsed = parseFromFolderName(entry.title) || { year: 0, question: "?", title: entry.title };
                 const topicTags = Array.isArray(entry.topics) ? entry.topics : [];
                 const needsTagging = topicTags.length === 0;
+                const addedAtTs = parseAddedAtToTimestamp(entry.addedAt);
                 return {
                     year: parsed.year,
                     question: parsed.question,
@@ -632,6 +665,8 @@
                     tags: ["מכניקה", "בגרות", ...topicTags],
                     topicTags,
                     needsTagging,
+                    addedAt: typeof entry.addedAt === "string" ? entry.addedAt : "",
+                    addedAtTs,
                     addedOrder: index
                 };
             });

@@ -1,0 +1,556 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 1993 שאלה 1</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: #dcfce7;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 1rem;
+            border: 1px solid #bbf7d0;
+            font-size: 1.125rem;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        h3 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+            margin-top: 1.5rem;
+        }
+
+        p {
+            line-height: 1.75;
+            color: #334155;
+            margin-bottom: 0.75rem;
+        }
+
+        .math-container,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-container mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-container mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות במכניקה – שנת 1993 שאלה 1</h1>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            תמונת השאלה (question-image.png) לא נמצאה בנתיב המצופה.
+        </div>
+    </section>
+
+    <!-- סעיף א(1) -->
+    <div class="section-card">
+        <h2 class="text-2xl text-blue-600 mb-4">סעיף א' (1)</h2>
+        
+        <h3>א. מה נתון</h3>
+        <ul class="list-disc list-inside space-y-2 mb-4 text-slate-700">
+            <li>תרשים מיקום (סטרובוסקופי) של גוף א' כל שנייה, החל מ- \( t = 0\text{ s} \) עד \( t = 4\text{ s} \).</li>
+            <li>הגוף נזרק אופקית, משמע מהירותו ההתחלתית בציר האנכי היא אפס: \( v_{0y} = 0\text{ m/s} \).</li>
+            <li>כיווני הצירים בגרף: ציר ה- \( x \) חיובי ימינה, וציר ה- \( y \) חיובי כלפי <strong>מטה</strong>.</li>
+            <li>ראשית הצירים: הגוף מתחיל מנקודת המוצא \( (0,0) \).</li>
+        </ul>
+
+        <h3>ב. מה מחפשים</h3>
+        <p>
+            אנו מתבקשים למצוא את גודל המהירות ההתחלתית האופקית שבה נזרק הגוף (את \( v_{0x} \)).
+        </p>
+
+        <h3>ג. נוסחאות בשימוש</h3>
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="formula-badge">\( v = \frac{\Delta x}{\Delta t} \)</span>
+        </div>
+
+        <h3>ד. הצבה ופתרון</h3>
+        <p>
+            על פי עקרון אי-התלות בין הצירים של גלילאו, התנועה בציר האופקי לא מושפעת מהנפילה, ובהיעדר התנגדות אוויר אין תאוצה אופקית (\( a_{x} = 0 \)). לכן, המהירות האופקית היא קבועה.
+            <br><br>
+            נקרא את מיקומי הגוף בציר ה- \( x \) מתוך הגרף בשניות הראשונות (שימו לב שכל משבצת קטנה שווה ל-1 מטר):
+            <br>
+            בזמן \( t=0 \): \( x_{0} = 0\text{ m} \)
+            <br>
+            בזמן \( t=1 \): \( x_{1} = 3\text{ m} \)
+            <br>
+            נציב בנוסחת המהירות הקבועה:
+            \[ v_{x} = \frac{\Delta x}{\Delta t} = \frac{3 - 0}{1 - 0} = 3\text{ m/s} \]
+            (ניתן לאמת זאת בעזרת נקודה נוספת: ב- \( t=2 \), שיעור ה- \( x \) הוא 6 מטר, ולכן \( 6 / 2 = 3\text{ m/s} \), כנדרש).
+        </p>
+
+        <div class="final-answer">
+            גודל המהירות ההתחלתית האופקית של גוף א' הוא \( v_{0x} = 3\text{ m/s} \).
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> תלמידים יקרים, תמיד טוב לאמת את הקריאה מהגרף בעזרת יותר מנקודה אחת! זה מוודא שלא טעינו בקנה המידה (ספירת המשבצות) ושבאמת מדובר בתנועה שוות-מהירות בציר האופקי.
+        </div>
+    </div>
+
+    <!-- סעיף א(2) -->
+    <div class="section-card">
+        <h2 class="text-2xl text-blue-600 mb-4">סעיף א' (2)</h2>
+        
+        <h3>א. מה נתון</h3>
+        <ul class="list-disc list-inside space-y-2 mb-4 text-slate-700">
+            <li>מהירות התחלתית בציר האנכי נותרה אפס: \( v_{0y} = 0\text{ m/s} \).</li>
+            <li>מיקום התחלתי בציר האנכי: \( y_{0} = 0\text{ m} \).</li>
+            <li>התנועה האנכית היא נפילה חופשית תחת תאוצת כובד של כוכב דמיוני, שנסמנה ב- \( g' \).</li>
+        </ul>
+
+        <h3>ב. מה מחפשים</h3>
+        <p>
+            עלינו למצוא את תאוצת הנפילה החופשית של הכוכב הדמיוני (כלומר, את ערכו של \( g' \)).
+        </p>
+
+        <h3>ג. נוסחאות בשימוש</h3>
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="formula-badge">\( y = y_{0} + v_{0}t + \frac{1}{2}at^{2} \)</span>
+        </div>
+
+        <h3>ד. הצבה ופתרון</h3>
+        <p>
+            בציר ה- \( y \), התנועה היא נפילה חופשית (תאוצה קבועה). מכיוון שציר ה- \( y \) בגרף מוגדר חיובי <strong>כלפי מטה</strong>, גם ההעתק (\( y \)) וגם תאוצת הכובד (\( a_{y} = g' \)) יהיו חיוביים.
+            <br><br>
+            נבנה את משוואת המקום-זמן עבור ציר ה- \( y \) ונציב את הנתונים ההתחלתיים:
+            \[ y = 0 + 0 \cdot t + \frac{1}{2} g' t^{2} \quad \Rightarrow \quad y = \frac{1}{2} g' t^{2} \]
+            כעת, נקרא נקודה נוחה מתוך הגרף: למשל, בזמן \( t = 2\text{ s} \), שיעור ה- \( y \) של הגוף הוא \( y = 4\text{ m} \).
+            <br>
+            נציב נתונים אלו למשוואה שלנו:
+            \[ 4 = \frac{1}{2} \cdot g' \cdot (2)^{2} \]
+            \[ 4 = \frac{1}{2} \cdot g' \cdot 4 \]
+            \[ 4 = 2g' \quad \Rightarrow \quad g' = 2\text{ m/s}^{2} \]
+            כדי להיות בטוחים, נבדוק נקודה נוספת בגרף: עבור \( t = 3\text{ s} \), שיעור ה- \( y \) הוא 9 מטר.
+            נציב \( t=3 \) במשוואה עם התאוצה שמצאנו: \( y = \frac{1}{2} \cdot 2 \cdot 3^{2} = 9\text{ m} \). ואכן, הנתונים מתאימים בשלמות!
+        </p>
+
+        <div class="final-answer">
+            תאוצת הנפילה החופשית על-פני כוכב הלכת היא \( g' = 2\text{ m/s}^{2} \).
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> שימו לב לקשר הריבועי המקסים: העתקי הגוף בציר האנכי הם \( 1, 4, 9, 16 \). המספרים הללו הם בדיוק הריבועים של הזמנים \( 1, 2, 3, 4 \). זהו סימן היכר מובהק למשוואת פרבולה (תנועה שוות-תאוצה).
+        </div>
+    </div>
+
+    <!-- סעיף ב -->
+    <div class="section-card">
+        <h2 class="text-2xl text-blue-600 mb-4">סעיף ב'</h2>
+        
+        <h3>א. מה נתון</h3>
+        <ul class="list-disc list-inside space-y-2 mb-4 text-slate-700">
+            <li>גוף ב' משוחרר ממנוחה (נפילה חופשית אנכית), ולכן: \( v_{0x} = 0 \).</li>
+            <li>גוף ג' נזרק אופקית במהירות כפולה מזו של א', ולכן: \( v_{0x} = 2 \cdot 3 = 6\text{ m/s} \).</li>
+            <li>כל הגופים מתחילים מאותו גובה ללא מהירות אנכית התחלתית (\( v_{0y} = 0 \)), ותחת אותה תאוצת כובד (\( g' = 2\text{ m/s}^{2} \)).</li>
+        </ul>
+
+        <h3>ב. מה מחפשים</h3>
+        <p>
+            עלינו להעתיק את הגרף ולסמן עליו את מיקומיהם של כל שלושת הגופים (א', ב', ג') עבור הזמנים \( t = 0, 1, 2, 3, 4 \) שניות.
+        </p>
+
+        <h3>ג. נוסחאות בשימוש</h3>
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="formula-badge">\( x = x_{0} + v_{x}t \)</span>
+            <span class="formula-badge">\( y = \frac{1}{2}g't^{2} \)</span>
+        </div>
+
+        <h3>ד. הצבה ופתרון</h3>
+        <p>
+            לפי עקרון אי-התלות בין הצירים, התנועה האנכית זהה לחלוטין עבור כל הגופים! מהירות הזריקה האופקית לא משפיעה בשום צורה על קצב הנפילה מטה. לכן, לכל שלושת הגופים יהיו בדיוק את אותם ערכי ה- \( y \) בכל שנייה:
+            \( y(t) = 0, 1, 4, 9, 16 \).
+            <br><br>
+            ההבדל היחיד ביניהם הוא התקדמותם בציר ה- \( x \):
+        </p>
+        <ul class="list-disc list-inside space-y-2 mb-4 text-slate-700 ml-4">
+            <li><strong>גוף ב' (אדום):</strong> לא זז אופקית ולכן ה- \( x \) שלו תמיד 0. המסלול יהיה קו ישר אנכי.</li>
+            <li><strong>גוף א' (שחור):</strong> מתקדם ב-3 מטרים בכל שנייה (מיקומיו חישבנו כבר קודם).</li>
+            <li><strong>גוף ג' (כחול):</strong> מתקדם ב-6 מטרים בכל שנייה, ולכן נקודות ה- \( x \) שלו יהיו: \( 0, 6, 12, 18, 24 \).</li>
+        </ul>
+
+        <p>להלן השרטוט הגרפי של תנועת הגופים (א' בשחור, ב' באדום, ג' בכחול):</p>
+
+        <div class="svg-container flex justify-center my-6">
+            <img src="image-2.png" alt="תרשים סעיף ב" class="w-full max-w-lg object-contain bg-white border border-slate-100 rounded-lg shadow-sm" onerror="this.style.display='none';" />
+        </div>
+
+        <div class="final-answer">
+            הגרף מוצג מעלה ובו ממוקמים מיקומי כל שלושת הגופים. לכולם אותם ערכי \( y \) בדיוק בכל שנייה.
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> זהו הייצוג הוויזואלי היפה ביותר לעקרון גלילאו! שימו לב איך בגרף שציירנו כל שלוש הנקודות (עבור זמנים זהים כמו \( t=2 \) למשל) יושבות בדיוק על אותו קו אופקי אחד, מה שמוכיח שהמהירות האופקית לא מעניקה שום "יתרון" או "חיסרון" בנפילה כלפי מטה.
+        </div>
+    </div>
+
+    <!-- סעיף ג -->
+    <div class="section-card">
+        <h2 class="text-2xl text-blue-600 mb-4">סעיף ג'</h2>
+        
+        <h3>א. מה נתון</h3>
+        <ul class="list-disc list-inside space-y-2 mb-4 text-slate-700">
+            <li>גוף נזרק אופקית (מהירות אופקית התחלתית, ותאוצת כובד כלפי מטה).</li>
+            <li>נתונים שני וקטורי מהירות: \( \vec{v}_{1} \) בזמן \( t_{1} \) ו- \( \vec{v}_{2} \) בזמן המאוחר יותר \( t_{2} \).</li>
+        </ul>
+
+        <h3>ב. מה מחפשים</h3>
+        <p>
+            עלינו להסביר פיזיקלית מדוע כיוונו של וקטור הפרש המהירויות, המסומן כ- \( \Delta\vec{v} = \vec{v}_{2} - \vec{v}_{1} \), הוא תמיד מופנה אנכית כלפי מטה.
+        </p>
+
+        <h3>ג. נוסחאות בשימוש</h3>
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+            <span class="formula-badge">\( \vec{a} = \frac{\Delta\vec{v}}{\Delta t} \)</span>
+        </div>
+
+        <h3>ד. הצבה ופתרון</h3>
+        <p>
+            אפשר לגשת להסבר בשתי דרכים פשוטות ונכונות המבוססות על קינמטיקה טהורה:
+            <br><br>
+            <strong>דרך ראשונה (הבנת פירוק לרכיבים):</strong><br>
+            נפרק את המהירויות של הגוף לרכיבי \( x \) ו- \( y \). 
+            מכיוון שהגוף בתנועה שוות-מהירות בציר האופקי, המהירות שלו בכיוון \( x \) נשארת קבועה לאורך כל המסלול. כלומר: \( \Delta v_{x} = 0 \). 
+            מנגד, בציר האנכי, הגוף צובר מהירות כלפי מטה בגלל תאוצת הכובד. כלומר, ההבדל היחיד בין המהירות בנקודה הראשונה למהירות בנקודה השנייה הוא תוספת של מהירות <strong>כלפי מטה</strong>. משום כך, כשנחסר את הווקטורים (\( \vec{v}_{2} - \vec{v}_{1} \)), הרכיבים האופקיים יבטלו זה את זה לחלוטין, ויישאר רק הרכיב האנכי המצביע מטה.
+            <br><br>
+            <strong>דרך שנייה (הגדרת התאוצה):</strong><br>
+            על פי הנוסחה הקינמטית, תאוצה היא קצב שינוי המהירות: \( \Delta\vec{v} = \vec{a} \cdot \Delta t \). 
+            כיוון שזמן (\( \Delta t \)) הוא סקלר חיובי, כיוונו של הווקטור \( \Delta\vec{v} \) חייב להיות זהה לחלוטין לכיוונו של וקטור התאוצה \( \vec{a} \). מכיוון שהתאוצה היחידה הפועלת על הגוף היא תאוצת הכובד, המכוונת כלפי מטה אל מרכז הכוכב, המסקנה ההכרחית היא שגם וקטור השינוי במהירות מופנה כלפי מטה.
+        </p>
+
+        <div class="final-answer">
+            כיוון וקטור \( \Delta\vec{v} \) הוא כלפי מטה כיוון שאין שום שינוי במהירות האופקית (\( \Delta v_{x} = 0 \)), והשינוי היחיד שמתרחש הוא צבירת מהירות אנכית כלפי מטה עקב תאוצת הכובד.
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> דרך מצוינת לראות זאת היא בעזרת שרטוט של חיסור וקטורים "ראש לזנב"! אם נצייר את שני וקטורי המהירות כך שהזנבות שלהם מחוברים באותה נקודה (נקודת מוצא משותפת), הווקטור ההפרש \( \Delta\vec{v} \) יימתח מראש הווקטור הראשון אל ראש הווקטור השני. מכיוון שהרכיב האופקי שלהם זהה לחלוטין, הראשים שלהם יושבים בדיוק על אותו קו אנכי, ולכן הווקטור המחבר ביניהם חייב להצביע ישר כלפי מטה!
+        </div>
+    </div>
+
+    <!-- כפתור צף להצגת תמונת השאלה -->
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <!-- מודל לתמונת השאלה -->
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    תמונת השאלה (question-image.png) לא נמצאה בנתיב המצופה.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה';
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+
+                const year = modified.getFullYear();
+                const month = modified.getMonth() + 1;
+                const day = modified.getDate();
+                const seed = (year * 372) + (month * 31) + day + 157;
+                const codeNum = (seed * 73) % 46656;
+                const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</div>
+</body>
+</html>
