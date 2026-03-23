@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 1997 שאלה 2</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Custom Config for Tailwind and CSS -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    colors: {
+                        primary: '#0f766e', /* Teal */
+                        secondary: '#0ea5e9', /* Sky blue */
+                        accent: '#f59e0b',
+                        background: '#f8fafc',
+                        surface: '#ffffff',
+                    },
+                    fontFamily: {
+                        sans: ['Segoe UI', 'Tahoma', 'Geneva', 'Verdana', 'sans-serif'],
+                    }
+                }
+            }
+        }
+    </script>
+    
+    <style>
+        body {
+            background-color: #f8fafc;
+            color: #334155;
+            line-height: 1.6;
+        }
+        
+        h1, h2, h3 {
+            color: #0f766e;
+        }
+        
+        .section-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-top: 4px solid #0ea5e9;
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: #0f766e;
+            margin-bottom: 0.5rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-title::before {
+            content: '';
+            display: inline-block;
+            width: 8px;
+            height: 8px;
+            background-color: #f59e0b;
+            border-radius: 50%;
+        }
+
+        .formula-badge {
+            display: inline-block;
+            background-color: #f0fdfa;
+            border: 1px solid #5eead4;
+            color: #0f766e;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-family: monospace;
+            margin: 0.25rem;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: #f0fdf4;
+            border: 2px solid #4ade80;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            text-align: center;
+            font-size: 1.125rem;
+            font-weight: bold;
+            margin-top: 1.5rem;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            overflow-x: auto;
+        }
+
+        .teacher-highlight {
+            background-color: #f0f9ff;
+            border-right: 4px solid #0ea5e9;
+            padding: 1rem;
+            border-radius: 0.375rem 0 0 0.375rem;
+            margin-top: 1.5rem;
+            color: #0369a1;
+            font-style: italic;
+        }
+
+        .version-stamp {
+            text-align: left;
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+            direction: ltr;
+            display: flex;
+            justify-content: flex-end;
+            gap: 0.25rem;
+        }
+
+        .math-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.5rem 0;
+            width: 100%;
+        }
+
+        /* Modal Styles */
+        .modal {
+            display: none;
+            position: fixed;
+            z-index: 50;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+        }
+        
+        .modal-content {
+            margin: auto;
+            display: block;
+            width: 90%;
+            max-width: 800px;
+            max-height: 90vh;
+            object-fit: contain;
+            margin-top: 5vh;
+            border-radius: 0.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+
+        .close-modal {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            transition: 0.3s;
+            cursor: pointer;
+        }
+
+        .close-modal:hover,
+        .close-modal:focus {
+            color: #bbb;
+            text-decoration: none;
+        }
+
+        .floating-btn {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background-color: #0f766e;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 9999px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: bold;
+            z-index: 40;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .floating-btn:hover {
+            background-color: #115e59;
+            transform: translateY(-2px);
+        }
+
+        .svg-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-5xl mx-auto">
+
+    <!-- Header & Version -->
+    <header class="mb-8 text-center">
+        <h1 class="text-3xl md:text-4xl font-extrabold mb-2">פתרון בגרות בפיזיקה - מכניקה 1997</h1>
+        <h2 class="text-xl md:text-2xl text-secondary font-semibold">שאלה 2 - מטוטלת קונית (קרוסלה)</h2>
+    </header>
+
+    <!-- Question Image -->
+    <div class="mb-10 text-center relative">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full md:w-3/4 h-auto rounded-lg border border-slate-200 mx-auto shadow-sm" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" id="mainQuestionImage" />
+        <div class="hidden bg-red-50 text-red-600 p-4 rounded-lg border border-red-200 mx-auto w-3/4">
+            לא ניתן לטעון את תמונת השאלה (question-image.png). אנא וודאו שהקובץ נמצא באותה תיקייה.
+        </div>
+    </div>
+
+    <!-- Section A -->
+    <div class="section-card">
+        <h3 class="text-2xl font-bold mb-4 border-b pb-2">סעיף א': מציאת המתיחות בחבל</h3>
+        
+        <div class="step-title">מה נתון ומה נדרש</div>
+        <p>
+            מסת המערכת הכוללת (הכיסא, המאזניים והנער) היא \( M \). 
+            המערכת מסתובבת במהירות קבועה במסלול מעגלי אופקי, והחבל נטוי בזווית \( \alpha \) ביחס לאנך.
+            נדרש לבטא את כוח המתיחות (\( T \)) באמצעות נתוני השאלה.
+        </p>
+
+        <div class="step-title">תרשים כוחות חופשי (FBD) על המערכת הכוללת</div>
+        <div class="svg-container flex justify-center my-4">
+            <svg viewBox="0 0 300 250" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto">
+                <!-- Vertical reference axis -->
+                <line x1="150" y1="20" x2="150" y2="230" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,5"/>
+                
+                <!-- Angle alpha arc -->
+                <path d="M 150 70 A 50 50 0 0 0 120 85" fill="none" stroke="#0f766e" stroke-width="2"/>
+                <text x="135" y="65" font-family="sans-serif" font-size="16" fill="#0f766e" font-style="italic">α</text>
+
+                <!-- System (Mass M) -->
+                <rect x="70" y="110" width="40" height="40" rx="4" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+                <circle x="90" y="130" r="4" fill="#1e293b"/>
+                <text x="115" y="135" font-family="sans-serif" font-size="16" fill="#475569" font-weight="bold">M</text>
+
+                <!-- Forces -->
+                <!-- Tension T -->
+                <line x1="90" y1="130" x2="150" y2="30" stroke="#f59e0b" stroke-width="3"/>
+                <polygon points="144,38 150,30 139,35" fill="#f59e0b"/>
+                <text x="110" y="50" font-family="sans-serif" font-size="18" fill="#f59e0b" font-weight="bold">T</text>
+
+                <!-- Gravity Mg -->
+                <line x1="90" y1="130" x2="90" y2="210" stroke="#dc2626" stroke-width="3"/>
+                <polygon points="85,200 90,210 95,200" fill="#dc2626"/>
+                <text x="100" y="205" font-family="sans-serif" font-size="18" fill="#dc2626" font-style="italic">Mg</text>
+
+                <!-- Components of T (Dashed) -->
+                <line x1="90" y1="130" x2="90" y2="50" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,4"/>
+                <line x1="90" y1="50" x2="150" y2="50" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,4"/>
+                <line x1="150" y1="30" x2="150" y2="50" stroke="#f59e0b" stroke-width="1.5" stroke-dasharray="4,4"/>
+                
+                <text x="60" y="80" font-family="sans-serif" font-size="14" fill="#f59e0b" font-style="italic">T·cos(α)</text>
+            </svg>
+        </div>
+
+        <div class="step-title">משוואות ופתרון</div>
+        <p>
+            מכיוון שהתנועה מתרחשת במישור אופקי בלבד, אין למערכת תאוצה בציר האנכי (ציר \( y \)). 
+            לכן, סכום הכוחות בציר זה שווה לאפס, והרכיב האנכי של המתיחות מאזן את כוח הכובד:
+        </p>
+        <div class="math-scroll">
+            \[ \Sigma F_y = 0 \]
+            \[ T \cos\alpha - Mg = 0 \]
+        </div>
+        <p>
+            נעביר אגפים ונבודד את \( T \):
+        </p>
+        <div class="final-answer math-scroll">
+            \[ T = \frac{Mg}{\cos\alpha} \]
+        </div>
+    </div>
+
+    <!-- Section B -->
+    <div class="section-card">
+        <h3 class="text-2xl font-bold mb-4 border-b pb-2">סעיף ב': תאוצת הכיסא</h3>
+
+        <div class="step-title">מה מחפשים</div>
+        <p>
+            עלינו לבטא את תאוצת הכיסא (שהיא למעשה התאוצה הרדיאלית \( a_R \), כיוון שמהירות הסיבוב קבועה) באמצעות נתוני השאלה.
+        </p>
+
+        <div class="step-title">משוואות ופתרון</div>
+        <p>
+            בציר האופקי (הרדיאלי), הרכיב האופקי של המתיחות הוא הכוח היחיד שפועל על המערכת והוא זה שמספק את הכוח הצנטריפטלי הגורם לתנועה המעגלית:
+        </p>
+        <div class="math-scroll">
+            \[ \Sigma F_x = M a_R \]
+            \[ T \sin\alpha = M a_R \]
+        </div>
+        <p>
+            נציב את הביטוי למתיחות \( T \) שמצאנו בסעיף א':
+        </p>
+        <div class="math-scroll">
+            \[ \left(\frac{Mg}{\cos\alpha}\right) \sin\alpha = M a_R \]
+        </div>
+        <p>
+            נצמצם את המסה \( M \) משני האגפים ונשתמש בזהות הטריגונומטרית \( \frac{\sin\alpha}{\cos\alpha} = \tan\alpha \):
+        </p>
+        <div class="final-answer math-scroll">
+            \[ a_R = g \tan\alpha \]
+        </div>
+    </div>
+
+    <!-- Section C -->
+    <div class="section-card">
+        <h3 class="text-2xl font-bold mb-4 border-b pb-2">סעיף ג': כוחות הפועלים על הנער</h3>
+
+        <div class="step-title">תרשים כוחות חופשי - הנער בלבד</div>
+        <p>
+            כעת אנו מתמקדים <strong>רק בנער</strong>. חשוב להבחין שהכיסא במתקנים מסוג זה, בהיותו תלוי מנקודה אחת, נוטה בדיוק לזווית \( \alpha \), כך שמשטח העמידה מאונך לחבל. לכן הכוח הנורמלי (שפועל תמיד בניצב למשטח) מכוון לאורך אותו הקו של החבל.
+        </p>
+
+        <div class="svg-container flex justify-center my-4">
+            <svg viewBox="0 0 300 250" xmlns="http://www.w3.org/2000/svg" class="w-full h-auto">
+                <!-- Vertical reference axis -->
+                <line x1="150" y1="20" x2="150" y2="230" stroke="#94a3b8" stroke-width="1.5" stroke-dasharray="5,5"/>
+                
+                <!-- Angle alpha arc -->
+                <path d="M 150 70 A 50 50 0 0 0 120 85" fill="none" stroke="#0f766e" stroke-width="2"/>
+                <text x="135" y="65" font-family="sans-serif" font-size="16" fill="#0f766e" font-style="italic">α</text>
+
+                <!-- Boy (Point mass m) -->
+                <circle x="110" y="130" r="8" fill="#0ea5e9"/>
+                <text x="125" y="135" font-family="sans-serif" font-size="16" fill="#0369a1" font-weight="bold">m</text>
+
+                <!-- Forces -->
+                <!-- Normal Force N -->
+                <line x1="110" y1="130" x2="160" y2="46" stroke="#10b981" stroke-width="3"/>
+                <polygon points="153,53 160,46 149,49" fill="#10b981"/>
+                <text x="165" y="60" font-family="sans-serif" font-size="18" fill="#10b981" font-weight="bold">N</text>
+
+                <!-- Gravity mg -->
+                <line x1="110" y1="130" x2="110" y2="210" stroke="#dc2626" stroke-width="3"/>
+                <polygon points="105,200 110,210 115,200" fill="#dc2626"/>
+                <text x="120" y="205" font-family="sans-serif" font-size="18" fill="#dc2626" font-style="italic">mg</text>
+            </svg>
+        </div>
+
+        <div class="step-title">פירוט הכוחות</div>
+        <ul class="list-disc list-inside space-y-3 mt-4 text-lg">
+            <li>
+                <strong>כוח כובד (\( W \) או \( mg \)):</strong> 
+                <br>כיוון: אנכית כלפי מטה. 
+                <br><span class="text-primary font-medium">מי מפעיל:</span> כדור הארץ.
+            </li>
+            <li>
+                <strong>כוח נורמלי (\( N \)):</strong> 
+                <br>כיוון: מאונך למשטח הכיסא (כלומר, נוטה בזווית \( \alpha \) ביחס לאנך, באותו כיוון של החבל).
+                <br><span class="text-primary font-medium">מי מפעיל:</span> המאזניים (הכיסא) עליהם עומד הנער.
+            </li>
+        </ul>
+        <p class="text-sm text-slate-500 mt-2">* הערה: אין כוח חיכוך משום שהכוח הנורמלי מספק בדיוק את הכוח הצנטריפטלי הדרוש לתנועה.</p>
+    </div>
+
+    <!-- Section D -->
+    <div class="section-card">
+        <h3 class="text-2xl font-bold mb-4 border-b pb-2">סעיף ד': הוריית המאזניים</h3>
+
+        <div class="step-title">משמעות הוריית המאזניים</div>
+        <p>
+            מאזני קפיץ שעליהם עומד אדם אינם מודדים ישירות את כוח הכובד (את המסה), אלא הם מודדים את הכוח <strong>שהם מפעילים עליו</strong> כדי לתמוך בו - כלומר את הכוח ה<strong>נורמלי</strong> (\( N \)).
+        </p>
+
+        <div class="step-title">חישוב והסקה</div>
+        <p>
+            נרשום את משוואת הכוחות בציר האנכי עבור <strong>הנער בלבד</strong> (שמסתור \( m \)):
+        </p>
+        <div class="math-scroll">
+            \[ \Sigma F_y = 0 \implies N \cos\alpha - mg = 0 \]
+            \[ N = \frac{mg}{\cos\alpha} \]
+        </div>
+        <p>
+            הזווית \( \alpha \) (זווית החבל עם האנך) היא זווית חדה שבין \( 0^\circ \) ל-\( 90^\circ \).
+            עבור זוויות בטווח זה, ידוע כי \( \cos\alpha < 1 \).
+        </p>
+        <p>
+            כאשר מחלקים מספר חיובי (\( mg \)) בשבר קטן מאחד (\( \cos\alpha \)), התוצאה תהיה תמיד <strong>גדולה</strong> מהמספר המקורי.
+        </p>
+        
+        <div class="final-answer">
+            המאזניים מראים ערך <strong>גדול יותר</strong> מ- \( mg \).
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>למה זה קורה פיזיקלית?</strong> 
+            המשטח (המאזניים) צריך גם להחזיק את הנער שלא ייפול למטה (כמו במצב מנוחה רגיל, שם היה מספיק כוח השווה ל-\( mg \)), ו<strong>בנוסף</strong> הוא צריך לדחוף אותו פנימה לכיוון מרכז המעגל כדי לאלץ אותו לבצע תנועה מעגלית. שני התפקידים האלו יחד דורשים מהמאזניים להפעיל כוח כולל גדול יותר ממשקלו הרגיל של הנער!
+        </div>
+    </div>
+
+    <!-- Floating Button for Modal -->
+    <button id="openModalBtn" class="floating-btn">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <span>הצג שאלה</span>
+    </button>
+
+    <!-- Modal Background -->
+    <div id="imageModal" class="modal">
+        <span id="closeModalBtn" class="close-modal">&times;</span>
+        <img class="modal-content" id="modalImage" src="question-image.png" alt="תמונת השאלה מוגדלת">
+    </div>
+
+    <!-- JS for Modal Functionality -->
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const modal = document.getElementById("imageModal");
+            const btn = document.getElementById("openModalBtn");
+            const span = document.getElementById("closeModalBtn");
+            const img = document.getElementById("mainQuestionImage");
+            const modalImg = document.getElementById("modalImage");
+
+            // Open modal when button is clicked
+            btn.onclick = function() {
+                modal.style.display = "block";
+                modalImg.src = img.src;
+            }
+
+            // Close modal when X is clicked
+            span.onclick = function() {
+                modal.style.display = "none";
+            }
+
+            // Close modal when clicking outside the image
+            window.onclick = function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+            }
+
+            // Add escape key listener to close modal
+            document.addEventListener('keydown', function(event) {
+                if (event.key === "Escape" && modal.style.display === "block") {
+                    modal.style.display = "none";
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
