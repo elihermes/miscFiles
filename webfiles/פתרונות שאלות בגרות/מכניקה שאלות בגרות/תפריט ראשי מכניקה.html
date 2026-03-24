@@ -474,7 +474,11 @@
         function extractTitleFromPath(path) {
             const normalized = normalizeRelativeQuestionPath(path);
             const parts = normalized.split("/").filter(Boolean);
-            return parts.length >= 2 ? parts[0] : "";
+            const questionFolder = parts.find((part) => folderNamePattern.test(part));
+            if (questionFolder) {
+                return questionFolder;
+            }
+            return parts.length >= 2 ? parts[parts.length - 2] : "";
         }
 
         function createIdFromTitle(title, usedIds) {
@@ -515,7 +519,10 @@
             if (DISCOVERY_EXCLUDED_FILES.has(fileName)) {
                 return false;
             }
-            return folderNamePattern.test(parts[0]);
+            // Support nested folders (e.g. "נסיון/1993 שאלה 2/1993 שאלה 2.html")
+            // by checking the parent folder of the html file.
+            const parentFolder = parts[parts.length - 2];
+            return folderNamePattern.test(parentFolder);
         }
 
         async function discoverQuestionPaths() {
