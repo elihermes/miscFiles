@@ -1,0 +1,664 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות פיזיקה - מכניקה 2016 שאלה 1</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-title {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+        
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            color: #1f2937;
+        }
+
+        .step-title::before {
+            display: none;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .svg-container {
+            width: 100%;
+            overflow-x: auto;
+            background-color: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1rem;
+            margin: 1rem 0;
+            display: flex;
+            justify-content: center;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .math-scroll,
+        .math-container,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מלא: בגרות מכניקה 2016 - שאלה 1</h1>
+            <p class="mt-3 text-slate-500">קינמטיקה וזריקה אופקית מדרגות</p>
+            <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+                <span class="version-label">עודכן:</span>
+                <span id="versionUpdatedAt">--- --:--:--</span>
+            </div>
+        </header>
+
+        <section class="section-card border-t-4 border-slate-300">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="w-full h-auto rounded-lg border border-slate-200"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            />
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+            </div>
+        </section>
+
+    <!-- General Preparations -->
+    <div class="section-card bg-slate-50 border-t-slate-400">
+        <h2 class="section-title">שלב 0 - הכנות מוקדמות והנחות יסוד</h2>
+        <p class="mb-2">לפני שניגש לסעיפים, נגדיר את מערכת הצירים ונתרגם את הנתונים ליחידות תקניות (MKS):</p>
+        <ul class="list-disc list-inside space-y-2 mr-4">
+            <li><strong>בחירת צירים:</strong> נקבע את ראשית הצירים $(0,0)$ בקצה הימני של מדרגה 1 (נקודת הזריקה של תרשים 1). ציר $x$ חיובי ימינה, וציר $y$ חיובי כלפי מטה.</li>
+            <li><strong>תאוצת הכובד:</strong> מכיוון שציר $y$ מכוון מטה, גודל התאוצה האנכית הוא חיובי $a_y = +g = 10 \text{ m/s}^2$. אין כוחות בציר האופקי (חיכוך זניח), ולכן התאוצה האופקית היא $a_x = 0$.</li>
+            <li><strong>המרת יחידות אורך (MKS):</strong><br>
+                גובה מדרגה: $L = 18 \text{ cm} = 0.18 \text{ m}$<br>
+                עומק מדרגה: $D = 20 \text{ cm} = 0.20 \text{ m}$
+            </li>
+            <li><strong>מיפוי המדרגות במערכת הצירים:</strong>
+                קצה ימני של מדרגה 1: $x=0$.<br>
+                מדרגה 2 משתרעת בין $x=0$ ל- $x=D$, בגובה $y=L$.<br>
+                מדרגה 3 משתרעת בין $x=D$ ל- $x=2D$, בגובה $y=2L$.<br>
+                מדרגה 4 משתרעת בין $x=2D$ ל- $x=3D$, בגובה $y=3L$.
+            </li>
+        </ul>
+        
+        <div class="svg-container">
+            <img
+                src="image-0.png"
+                alt="מבט סכמטי של הצירים"
+                style="width: 100%; max-width: 500px; height: auto; display: block;"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            />
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-4 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">לא נמצאה התמונה image-0.png</span>
+            </div>
+        </div>
+    </div>
+
+    <!-- Section A -->
+    <div class="section-card">
+        <h2 class="section-title">סעיף א'</h2>
+        
+        <div class="mb-4">
+            <div class="step-title">מה נתון:</div>
+            <p>הכדור נזרק מראשית הצירים $(x_0=0, y_0=0)$ במהירות אופקית $v_0$ (כלומר המהירות ההתחלתית בציר $y$ היא $v_{0y}=0$).<br>
+            הכדור פוגע ב<b>אמצע מדרגה 4</b>. נחשב את נקודת הפגיעה בהתבסס על המיפוי שלנו:</p>
+            <ul class="list-disc list-inside ml-4 mt-2">
+                <li>מיקום אופקי ($x_f$): מדרגה 4 משתרעת מ-$2D$ עד $3D$. האמצע שלה הוא ב- $x_f = 2.5D = 2.5 \cdot 0.20 \text{ m} = 0.50 \text{ m}$.</li>
+                <li>מיקום אנכי ($y_f$): גובה פני מדרגה 4 הוא המרחק משפת מדרגה 1 (ירידה של 3 מדרגות). לכן $y_f = 3L = 3 \cdot 0.18 \text{ m} = 0.54 \text{ m}$.</li>
+            </ul>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title">מה מחפשים:</div>
+            <p>את גודל המהירות האופקית ההתחלתית, $v_0$.</p>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title">נוסחאות בשימוש מדף הנוסחאות:</div>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="formula-badge">\( x = x_0 + v_0 t \)</span> 
+                <span class="text-slate-600">(קינמטיקה, תנועה שוות מהירות בציר האופקי)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="formula-badge">\( y = y_0 + v_{0y} t + \frac{1}{2} a_y t^2 \)</span> 
+                <span class="text-slate-600">(קינמטיקה, תנועה שוות תאוצה בציר האנכי)</span>
+            </div>
+        </div>
+
+        <div class="mb-4 math-scroll">
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>נתחיל ממשוואת ציר ה-$y$ כדי למצוא את זמן המעוף $t$ עד רגע הפגיעה. נציב את הנתונים שלנו ($y_0=0, v_{0y}=0, a_y=10, y_f=0.54$):</p>
+            $$0.54 = 0 + 0\cdot t + \frac{1}{2}\cdot 10\cdot t^2$$
+            $$0.54 = 5t^2$$
+            $$t^2 = 0.108 \implies t \approx 0.3286 \text{ s}$$
+            
+            <p class="mt-4">כעת, נשתמש בזמן שמצאנו במשוואת ציר ה-$x$ כדי למצוא את $v_0$. נציב את הנתונים ($x_0=0, x_f=0.50, t \approx 0.3286$):</p>
+            $$0.50 = 0 + v_0 \cdot 0.3286$$
+            $$v_0 = \frac{0.50}{0.3286} \approx 1.521 \text{ m/s}$$
+            
+            <div class="final-answer">
+                $v_0 \approx 1.52 \text{ m/s}$
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה 💡:</strong> בבעיות זריקה משופעת/אופקית, ציר ה-$y$ (המושפע מכוח הכבידה) הוא בדרך כלל "השעון" של המערכת. הוא קובע כמה זמן הגוף יהיה באוויר, ואז משתמשים בזמן הזה כדי לחשב כמה רחוק הוא יגיע בציר ה-$x$. הקפידו מאוד על ספירת המדרגות נכון בעת בניית מיקום הפגיעה!
+        </div>
+    </div>
+
+    <!-- Section B -->
+    <div class="section-card">
+        <h2 class="section-title">סעיף ב'</h2>
+        
+        <div class="mb-4">
+            <div class="step-title">מה נתון:</div>
+            <p>במהלך הפגיעה במדרגה 4, הרכיב האנכי של המהירות התאפס ($v_y = 0$), אך הכדור המשיך לנוע אופקית במהירות $v_0$. משמעות הדבר היא שלפני הפגיעה הייתה לכדור מהירות אנכית (אותה צבר במהלך הנפילה), ומיד לאחריה המהירות האנכית הפכה לאפס.</p>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title">מה מחפשים:</div>
+            <p>לקבוע ולנמק האם במהלך הפגיעה במדרגה 4 הייתה לכדור תאוצה.</p>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title">נוסחאות בשימוש מדף הנוסחאות:</div>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="formula-badge">\( \vec{a} = \frac{\Delta \vec{v}}{\Delta t} \)</span>
+                <span class="text-slate-600">(הגדרת תאוצה ממוצעת כקצב שינוי המהירות)</span>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>התשובה היא <strong>כן, לכדור הייתה תאוצה</strong> במהלך הפגיעה.</p>
+            <p><strong>נימוק:</strong> על פי ההגדרה הקינמטית, תאוצה מוגדרת כשינוי בווקטור המהירות לאורך זמן ($\vec{a} = \frac{\Delta \vec{v}}{\Delta t}$). לפני הפגיעה במדרגה 4, לכדור הייתה מהירות אנכית מסוימת שכוונה כלפי מטה. במהלך ההתנגשות עם המדרגה (אשר התרחשה בפרק זמן קצר מאוד $\Delta t$), הרכיב האנכי של מהירות הכדור התאפס לחלוטין.</p>
+            <p>מכיוון שהמהירות האנכית השתנתה ($\Delta v_y \neq 0$), הרי שבהכרח קיימת תאוצה. תאוצה זו פעלה בכיוון מעלה (בניגוד לכיוון הנפילה), והיא זו שגרמה לאיפוס המהירות האנכית של הכדור.</p>
+            
+            <div class="final-answer">
+                כן, לכדור הייתה תאוצה במהלך הפגיעה מכיוון שמהירותו האנכית השתנתה ממספר שאינו אפס לאפס.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה 💡:</strong> שימו לב למונח "תאוצה". לעיתים תלמידים מתבלבלים וחושבים שתאוצה פירושה רק "הגברת מהירות". בפיזיקה, תאוצה היא <b>כל שינוי</b> במהירות - בין אם זה שינוי בגודל (למשל עצירה או האטה) או שינוי בכיוון. ברגע שזיהינו שהמהירות השתנתה מול הזמן, ההוכחה לקיום תאוצה היא מיידית מתוך ההגדרה הקינמטית שלה! בנימוק שאלות מסוג זה, הדרך הבטוחה ביותר היא להישען ישירות על הגדרת התאוצה $\Delta v \neq 0$.
+        </div>
+    </div>
+
+    <!-- Section C -->
+    <div class="section-card">
+        <h2 class="section-title">סעיף ג'</h2>
+        
+        <div class="mb-4">
+            <div class="step-title">מה נתון:</div>
+            <p>הכדור פגע באמצע מדרגה 4, אך כפי שמתואר בשאלה, הוא ממשיך לנוע עליה אופקית עד שהוא נופל מקצה המדרגה. נקודה A נמצאת בדיוק מתחת לקצה הימני של מדרגה 4 שממנו מתחילה הנפילה.</p>
+            <ul class="list-disc list-inside ml-4 mt-2">
+                <li>הקצה הימני של מדרגה 4 נמצא לאחר 3 מדרגות מלאות (1, 2 ו-3). המיקום האופקי שלו (ושל נקודה A) הוא: $x_A = 3D = 3 \cdot 0.20 = 0.60 \text{ m}$.</li>
+                <li>הכדור מתחיל ליפול מגובה מדרגה 4 ($y_f = 3L = 0.54 \text{ m}$).</li>
+                <li>גובה הקרקע ביחס לראשית (5 מדרגות מטה): $y_{ground} = 5L = 5 \cdot 0.18 = 0.90 \text{ m}$.</li>
+                <li>הפרש הגבהים בנפילה החדשה: $\Delta y = 0.90 - 0.54 = 0.36 \text{ m}$.</li>
+                <li>המהירות האופקית ממשיכה להיות $v_0 \approx 1.521 \text{ m/s}$. הרכיב האנכי בתחילת הנפילה מתאפס ($v_{0y\_new} = 0$).</li>
+            </ul>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title">מה מחפשים:</div>
+            <p>את אורך הקטע $AB$, כלומר המרחק בין המיקום האופקי בו פגע הכדור בקרקע (נקודה B) למיקום נקודה A: $AB = x_B - x_A$.</p>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title">נוסחאות בשימוש מדף הנוסחאות:</div>
+            <div class="flex items-center gap-2 mb-2">
+                <span class="formula-badge">\( y = y_0 + v_{0y} t + \frac{1}{2} a_y t^2 \)</span>
+            </div>
+            <div class="flex items-center gap-2">
+                <span class="formula-badge">\( x = x_0 + v_x t \)</span>
+            </div>
+        </div>
+
+        <div class="mb-4 math-scroll">
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>ראשית, נמצא את זמן הנפילה החדש מקצה מדרגה 4 לקרקע:</p>
+            $$0.90 = 0.54 + 0\cdot t_{new} + \frac{1}{2}\cdot 10\cdot t_{new}^2$$
+            $$0.36 = 5 t_{new}^2$$
+            $$t_{new}^2 = 0.072 \implies t_{new} \approx 0.2683 \text{ s}$$
+            
+            <p class="mt-4">כעת, נחשב את המיקום האופקי הסופי בו יפגע הכדור בקרקע (נקודה B). תנועת הנפילה האחרונה מתחילה מהקצה ($x_A = 0.60\text{ m}$):</p>
+            $$x_B = x_A + v_0 \cdot t_{new}$$
+            $$x_B = 0.60 + 1.521 \cdot 0.2683$$
+            $$x_B = 0.60 + 0.408 \approx 1.008 \text{ m}$$
+            
+            <p class="mt-4">לבסוף, נמצא את אורך הקטע $AB$ על ידי חיסור מיקום A ממיקום B:</p>
+            $$AB = x_B - x_A$$
+            $$AB = 1.008 \text{ m} - 0.60 \text{ m} = 0.408 \text{ m}$$
+            
+            <div class="final-answer">
+                אורך הקטע AB הוא $40.8 \text{ cm}$ (או $0.408 \text{ m}$)
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה 💡:</strong> שימו לב שמרחק AB הוא בעצם ההעתק האופקי נטו שהכדור עבר באוויר <b>בזמן הנפילה</b> מקצה המדרגה. לכן, הוא שווה מלכתחילה ל-$v_0 \cdot t_{new}$ ויכולנו לחשב אותו ישירות מבלי למצוא את המיקום המוחלט $x_B$ קודם לכן. עם זאת, עבודה רציפה במערכת צירים יחידה מונעת טעויות ובלבולים!
+        </div>
+    </div>
+
+    <!-- Section D -->
+    <div class="section-card">
+        <h2 class="section-title">סעיף ד'</h2>
+        
+        <div class="mb-4">
+            <div class="step-title">מה נתון:</div>
+            <p>אנו צריכים לסרטט את רכיב המהירות האנכי $v_y$ כפונקציה של הזמן מהזריקה עד הפגיעה בקרקע. לשם כך נאגד את הנתונים שחישבנו:</p>
+            <ul class="list-disc list-inside ml-4 mt-2">
+                <li>התאוצה האנכית בזמן שהכדור באוויר היא קבועה ושווה ל- $g = +10 \text{ m/s}^2$ (שיפוע הגרף).</li>
+                <li><strong>שלב 1 (עד מדרגה 4):</strong> מתחיל ב-$t=0$ ממהירות $v_{0y}=0$. נמשך $t_1 \approx 0.33 \text{ s}$.<br>
+                מהירות רגע לפני הפגיעה: $v_{y1} = v_{0y} + a_y t_1 = 0 + 10 \cdot 0.3286 \approx 3.29 \text{ m/s}$.</li>
+                <li><strong>ההתנגשות:</strong> בזמן הפגיעה המהירות מתאפסת באופן מידי (זמן ההתנגשות זניח).</li>
+                <li><strong>שלב 2 (ממדרגה 4 לקרקע):</strong> מתחיל במהירות $v_y = 0$. נמשך עוד $t_{new} \approx 0.27 \text{ s}$ (כלומר עד לזמן כולל של $0.33 + 0.27 = 0.60 \text{ s}$).<br>
+                מהירות רגע לפני הפגיעה בקרקע: $v_{y2} = 0 + 10 \cdot 0.2683 \approx 2.68 \text{ m/s}$.</li>
+            </ul>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title">מה מחפשים:</div>
+            <p>גרף $v_y$ כפונקציה של הזמן $t$.</p>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title">נוסחאות בשימוש מדף הנוסחאות:</div>
+            <div class="flex items-center gap-2">
+                <span class="formula-badge">\( v = v_0 + a t \)</span>
+                <span class="text-slate-600">(משוואת מהירות-זמן)</span>
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>הגרף יהיה מורכב משני קווים ישרים מקבילים בעלי שיפוע חיובי וקבוע של 10 (תאוצת הכובד). ביניהם תהיה קפיצה אנכית פתאומית לאפס המייצגת את הפגיעה במדרגה 4.</p>
+            
+            <div class="svg-container">
+                <img
+                    src="image-4.png"
+                    alt="גרף vy כפונקציה של הזמן"
+                        style="width: 100%; max-width: 575px; height: auto; display: block;"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                />
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-4 rounded-lg border border-blue-200 text-center w-full">
+                    <span class="block font-bold mb-1">לא נמצאה התמונה image-4.png</span>
+                </div>
+            </div>
+            
+            <div class="final-answer">
+                הגרף מורכב משני קווים ישרים מקבילים בעלי שיפוע חיובי של $10 \text{ m/s}^2$ המופרדים על ידי נפילה מיידית של המהירות לאפס ברגע הפגיעה ($t \approx 0.33 \text{ s}$).
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה 💡:</strong> שימו לב שזמן ההתנגשות מוגדר כזניח. בגרף אמיתי בחיים, הירידה של הקו האדום המקווקו לא הייתה אנכית לחלוטין אלא לוקחת זמן קצר מאוד (אלפיות שנייה), והשיפוע שלה בשלב זה (התאוצה האדירה ממעלה) היה שלילי וגדול מאוד. הפישוט שלנו מציג אותה כירידה רגעית. כמו כן, שימו לב שהגרף נמצא כולו בחלק החיובי של ציר $v_y$ מכיוון שהגדרנו את הכיוון מטה כחיובי.
+        </div>
+    </div>
+
+    <!-- Section E -->
+    <div class="section-card">
+        <h2 class="section-title">סעיף ה'</h2>
+        
+        <div class="mb-4">
+            <div class="step-title">מה נתון:</div>
+            <p>הכדור נזרק כעת מאותה נקודה התחלתית (קצה שמאלי של מדרגה 1, אך מהשרטוט נראה שמדובר בזריקה מאותו גובה התחלתי) במהירות בגודל $v_0$ לכיוון <b>שמאל</b> (תרשים 2). הכדור נופל ישירות לקרקע ללא פגיעה במדרגות בדרך, מכיוון שאין מדרגות בצד השמאלי. סך הגובה שהוא נופל הוא גובהו הכולל של גרם המדרגות: $5L = 0.90 \text{ m}$.</p>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title">מה מחפשים:</div>
+            <p>לקבוע <b>בלי לחשב</b> האם הזמן עד הפגיעה בקרקע זהה לזמן הכולל בשתי הפעמים (בסעיפים הקודמים). ולנמק.</p>
+        </div>
+
+        <div class="mb-4">
+            <div class="step-title">הצבה ופתרון (נימוק איכותני):</div>
+            <p>התשובה היא <strong>לא. הזמן בזריקה שמאלה יהיה קצר יותר.</strong></p>
+            <p><strong>נימוק:</strong> בשני המקרים, הכדור צריך לעבור את אותו מרחק אנכי כולל של $5L$. תאוצת הכובד היא זהה בשני המקרים ומאיצה את הכדור כלפי מטה. ההבדל הוא שבזריקה ימינה, המהירות האנכית של הכדור התאפסה באמצע הדרך (במדרגה 4). ה"עצירה" הזו מאלצת את הכדור להתחיל להאיץ מאפס מחדש.</p>
+            <p>בזריקה שמאלה (תרשים 2), הכדור מאיץ ברציפות וצובר מהירות אנכית גבוהה יותר ככל שהוא נופל. כתוצאה מכך, <b>המהירות האנכית הממוצעת</b> של הכדור לאורך כל הדרך בזריקה שמאלה תהיה גבוהה יותר מאשר המהירות האנכית הממוצעת בזריקה ימינה (שבה איבד את מהירותו). מכיוון שהמהירות הממוצעת גדולה יותר עבור אותו מרחק כולל, הזמן הדרוש למעבר המרחק יהיה קצר יותר.</p>
+            
+            <div class="final-answer">
+                זמן הנפילה אינו זהה. הזמן בזריקה שמאלה (תרשים 2) קצר יותר, מכיוון שהנפילה רציפה והמהירות האנכית הממוצעת גבוהה יותר.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה 💡:</strong> שאלות של "בלי לחשב, קבע ונמק" דורשות הבנה עמוקה של מושגים. דרך קלה נוספת לראות זאת היא דרך הגרף שסרטטנו בסעיף ד'. השטח מתחת לגרף המהירות-זמן הוא ההעתק ($5L$). כדי לקבל את אותו שטח עם משולש רציף אחד בעל אותו שיפוע (זריקה שמאלה), בסיס המשולש (הזמן) חייב להיות קצר יותר מאשר סכום הבסיסים של שני משולשים קטנים יותר שהופרדו. כלומר, נפילה ללא "עצירה" מכסה שטח מהר יותר!
+        </div>
+    </div>
+
+    </div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img
+                    src="question-image.png"
+                    alt="תמונת השאלה המקורית"
+                    class="max-w-full h-auto rounded-lg"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                >
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה';
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+
+                const year = modified.getFullYear();
+                const month = modified.getMonth() + 1;
+                const day = modified.getDate();
+                const seed = (year * 372) + (month * 31) + day + 157;
+                const codeNum = (seed * 73) % 46656;
+                const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            if (openQuestionModalBtn && closeQuestionModalBtn && questionModal) {
+                openQuestionModalBtn.addEventListener('click', openQuestionModal);
+                closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+                questionModal.addEventListener('click', function(event) {
+                    if (event.target === questionModal) {
+                        closeQuestionModal();
+                    }
+                });
+
+                document.addEventListener('keydown', function(event) {
+                    if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                        closeQuestionModal();
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
