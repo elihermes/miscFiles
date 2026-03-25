@@ -1,0 +1,637 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות פיזיקה - מכניקה 1995 שאלה 3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-chtml.js"></script>
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html { overflow-x: clip; }
+        body { overflow-x: clip; }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        /* h2 inside section-card styled as section-header */
+        .section-card h2,
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a !important;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+            margin-top: 0;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .teacher-highlight::before {
+            content: 'הערת מורה:';
+            display: block;
+            font-weight: bold;
+            margin-bottom: 0.5rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.6rem;
+            padding: 0.9rem;
+            margin-top: 0.8rem;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #1e3a8a;
+            margin-top: 1rem;
+            margin-bottom: 0.4rem;
+            display: block;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            border: 1px solid var(--green-500);
+            color: #166534;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            text-align: center;
+        }
+
+        /* MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+            .page-shell { padding-bottom: 8.5rem; }
+            .question-modal-header { flex-wrap: wrap; }
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+            .question-modal-close { order: 1; }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open { display: flex; }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close { flex-shrink: 0; }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open { overflow: hidden; }
+
+        .svg-container svg {
+            max-width: 100%;
+            height: auto;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - מכניקה 1995 שאלה 3</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מכניקה · 1995 · שאלה 3</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך צעד-אחר-צעד</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+        <!-- סעיף א -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">סעיף א'</h2>
+            
+            <div class="step-title">מה נתון</div>
+            <p>
+                גוף נמצא בראשית הצירים ( \( x_0 = 0, y_0 = 0 \) ). פועל עליו כוח יחיד \( \vec{F} \) שכיוונו חיובי לאורך ציר ה-x וגודלו קבוע. ברגע \( t=0 \) מעניקים לגוף מהירות התחלתית \( \vec{v}_0 \) בכיוון השלילי של ציר ה-x. כלומר, במרחב תיאורטי זה לא קיימים כוחות נוספים כלל (אין כוח כובד, אין כוח נורמל ואין משטח חיכוך). הכוח הנתון הוא היחיד שפועל.
+            </p>
+
+            <div class="svg-container flex justify-center my-6">
+                <!-- תרשים וקטורי התחלתי -->
+                <img 
+                    src="image-1.png"
+                    alt="תרשים וקטורי התחלתי"
+                    class="rounded-lg border border-slate-200"
+                    style="max-width: 400px; height: auto;"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                />
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center">
+                    <span class="block font-bold mb-1">[תרשים וקטורי התחלתי]</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>image-1.png</code> באותה תיקייה.</span>
+                </div>
+            </div>
+
+            <div class="step-title">מה מחפשים</div>
+            <p>את צורת מסלול תנועתו של הגוף (לדוגמה: קו ישר, פרבולה, וכו').</p>
+
+            <div class="step-title">נוסחאות בשימוש</div>
+            <div class="overflow-x-auto text-center">
+                <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+            </div>
+
+            <div class="step-title">הצבה ופתרון</div>
+            <p>
+                הכוח השקול הפועל על הגוף (ולכן גם התאוצה) נמצאים אך ורק לאורך ציר ה-x. כמו כן, וקטור המהירות ההתחלתית נמצא אך ורק לאורך ציר ה-x. מכיוון שאין לגוף שום רכיב מהירות ושום רכיב תאוצה בכיוון ציר ה-y, הוא לעולם לא ינוע מחוץ לציר ה-x.
+                <br>
+                לכן, התנועה מוגבלת למימד אחד בלבד.
+            </p>
+            <div class="final-answer">
+                צורת מסלול התנועה של הגוף היא קו ישר (על ציר ה-x).
+            </div>
+
+            <div class="teacher-highlight">
+                כאשר וקטור המהירות ווקטור הכוח (התאוצה) פועלים בדיוק על אותו קו פעולה (באותו כיוון או מנוגדים לחלוטין), לא ייווצר רכיב תנועה חדש בציר הניצב. במקרים כאלו, המסלול הוא תמיד ישר. אם המהירות והכוח הם על אותו קו ומנוגדים בכיוון (כמו במקרה שלנו), הגוף ינוע בכיוון תנועתו כך שגודל מהירותו קטן עד לעצירה רגעית, ואז ינוע כשגודל מהירותו הולך וגדל בכיוון הכוח (בדומה לגוף הנזרק כלפי מעלה תחת השפעת כוח הכובד). לשם השוואה, אם היה רכיב מהירות הניצב לכוח, היינו מקבלים מסלול עקום (כמו פרבולה).
+            </div>
+        </div>
+
+        <!-- סעיף ב -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">סעיף ב'</h2>
+            
+            <div class="step-title">מה נתון</div>
+            <p>הכוח היחיד הפועל על הגוף, \( \vec{F} \), הוא קבוע בגודלו ובכיוונו (בכיוון החיובי של ציר ה-x) במהלך כל התנועה.</p>
+
+            <div class="step-title">מה מחפשים</div>
+            <p>את כיוון התאוצה במהלך התנועה, ואם יש צורך להפריד את התשובה לקטעי תנועה שונים.</p>
+
+            <div class="step-title">נוסחאות בשימוש</div>
+            <div class="overflow-x-auto text-center">
+                <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+            </div>
+
+            <div class="step-title">הצבה ופתרון</div>
+            <p>
+                על פי החוק השני של ניוטון, כיוון התאוצה \( \vec{a} \) תמיד זהה לחלוטין לכיוון הכוח השקול \( \Sigma\vec{F} \) הפועל על הגוף (שכן המסה \( m \) היא סקלר חיובי קבוע).
+                מכיוון שהכוח קבוע בכיוונו (בכיוון החיובי של ציר ה-x) לכל אורך התנועה, גם התאוצה נשארת קבועה בכיוונה לכל אורך התנועה. שינוי במגמת המהירות (מהתקדמות שמאלה להתקדמות ימינה) אינו משפיע על כיוון הכוח השקול.
+            </p>
+            <div class="final-answer">
+                כיוון התאוצה הוא כל הזמן בכיוון החיובי של ציר ה-x. אין צורך לחלק לקטעי תנועה שונים מכיוון שהכוח השקול אינו משתנה במהלך התנועה.
+            </div>
+
+            <div class="teacher-highlight">
+                מלכודת נפוצה! תלמידים נוטים לקשר בין כיוון התנועה (מהירות) לכיוון התאוצה. זכרו תמיד: התאוצה מוכתבת אך ורק על ידי הכוחות הפועלים על הגוף באותו רגע, ולא על ידי לאן הגוף נע. הכוח ימינה? התאוצה ימינה!
+            </div>
+        </div>
+
+        <!-- סעיף ג -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">סעיף ג'</h2>
+            
+            <div class="step-title">מה נתון</div>
+            <p>מהירות התחלתית בכיוון שלילי (\( -x \)), תאוצה קבועה בכיוון חיובי (\( +x \)).</p>
+
+            <div class="step-title">מה מחפשים</div>
+            <p>האם גודל המהירות גדל, קטן או אינו משתנה, תוך התייחסות לקטעי התנועה השונים אם נדרש.</p>
+
+            <div class="step-title">נוסחאות בשימוש</div>
+            <div class="overflow-x-auto text-center">
+                <span class="formula-badge">\( v = v_0 + at \)</span>
+            </div>
+
+            <div class="step-title">הצבה ופתרון</div>
+            <p>
+                כאן אנו חייבים לחלק את התנועה לשני שלבים נפרדים:
+                <br><br>
+                <strong>שלב 1 (מההתחלה ועד העצירה הרגעית):</strong> הגוף נע שמאלה (מהירות שלילית) בעוד הכוח דוחף אותו ימינה (תאוצה חיובית). כאשר וקטור המהירות ווקטור התאוצה מנוגדים זה לזה, <strong>גודל המהירות קטן</strong>. הגוף ממשיך לנוע שמאלה לאט יותר ויותר, עד שברגע מסוים מהירותו מתאפסת (עצירה רגעית).
+                <br><br>
+                <strong>שלב 2 (לאחר העצירה הרגעית):</strong> הגוף מתחיל לנוע חזרה ימינה (מהירות חיובית). הכוח ממשיך לדחוף אותו ימינה (תאוצה חיובית). כעת, וקטור המהירות ווקטור התאוצה הם באותו הכיוון. במצב כזה, <strong>גודל המהירות גדל</strong> (הגוף תופס תאוצה).
+            </p>
+            <div class="final-answer">
+                בשלב הראשון (תנועה שמאלה) גודל המהירות קטן עד להתאפסות המהירות. בשלב השני (תנועה ימינה) גודל המהירות גדל בהתמדה. לכן, התשובה חייבת להתייחס לשני קטעי תנועה שונים.
+            </div>
+
+            <div class="teacher-highlight">
+                הסוד כאן הוא להפריד בין 'לאן הגוף נע' (מהירות) לבין 'לאן דוחפים אותו' (תאוצה). דמיינו עגלת סופר שמתגלגלת אליכם (מהירות שמאלה), ואתם מפעילים כוח קבוע כדי לדחוף אותה חזרה (כוח ימינה). ברור שקודם כל הכוח שלכם יבלום את העגלה בהדרגה עד לעצירה (גודל המהירות קטן), ורק לאחר מכן יתחיל להאיץ אותה הרחק מכם (גודל המהירות גדל). המסקנה: תאוצה חיובית לא תמיד גורמת להגברת המהירות! הכל תלוי בשאלה האם התאוצה פועלת עם או נגד כיוון התנועה הנוכחי.
+            </div>
+        </div>
+
+        <!-- סעיף ד -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">סעיף ד'</h2>
+            
+            <div class="step-title">מה נתון</div>
+            <p>
+                מציבים גוף שני בראשית הצירים ( \( x_0 = 0, y_0 = 0 \) ). ברגע \( t=0 \) מעניקים לו מהירות התחלתית בכיוון <strong>החיובי של ציר ה-y</strong> (\( \vec{v}_0 = (0, v_{0y}) \)). הכוח ממשיך לפעול בכיוון החיובי של ציר ה-x כפי שהיה.
+            </p>
+
+            <div class="svg-container flex justify-center my-6">
+                <!-- תרשים דו מימדי חדש -->
+                <img
+                    src="image-4.png"
+                    alt="תרשים דו מימדי חדש"
+                    class="rounded-lg border border-slate-200"
+                    width="400"
+                    height="200"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                />
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center">
+                    <span class="block font-bold mb-1">[תרשים דו מימדי חדש]</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>image-4.png</code> באותה תיקייה.</span>
+                </div>
+            </div>
+
+            <div class="step-title">מה מחפשים</div>
+            <p>את צורת מסלול תנועתו של הגוף השני (בדומה לשאלה בסעיף א').</p>
+
+            <div class="step-title">נוסחאות בשימוש</div>
+            <div class="overflow-x-auto text-center">
+                <span class="formula-badge">\( x = x_0 + v_{0}t + \frac{1}{2}at^2 \)</span>
+            </div>
+
+            <div class="step-title">הצבה ופתרון</div>
+            <p>
+                ננתח את התנועה בשני הצירים בנפרד (על פי עקרון בלתי תלות התנועות של גלילאו):
+                <br>
+                <strong>ציר ה-y:</strong> אין כוחות שפועלים בציר זה (\( \Sigma F_y = 0 \)), לכן אין תאוצה. הגוף ינוע במהירות קבועה: \( y(t) = v_{0y} \cdot t \).
+                <br>
+                <strong>ציר ה-x:</strong> פועל כוח קבוע המקנה תאוצה קבועה, והמהירות ההתחלתית בציר זה היא אפס. משוואת המיקום: \( x(t) = \frac{1}{2}a_x t^2 \).
+                <br><br>
+                שילוב של תנועה קצובה בציר אחד, עם תנועה שוות-תאוצה בציר הניצב לו, יוצר תמיד מסלול של פרבולה.
+            </p>
+            <div class="final-answer">
+                צורת מסלול תנועתו של הגוף היא פרבולה.
+            </div>
+
+            <div class="teacher-highlight">
+                זהו מצב הזהה לחלוטין קינמטית ל"זריקה אופקית" שלמדתם, שם כוח הכובד מאיץ את הגוף מטה בעוד מהירותו האופקית קבועה. פה פשוט סובבנו את המערכת ב-90 מעלות. התאוצה היא ימינה והמהירות הקבועה היא כלפי מעלה.
+            </div>
+        </div>
+
+        <!-- סעיף ה -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">סעיף ה'</h2>
+            
+            <div class="step-title">מה נתון</div>
+            <p>
+                המהירות בציר y קבועה (\( v_y = v_{0y} \)). בציר x קיימת תאוצה קבועה והמהירות מתחילה מאפס.
+            </p>
+
+            <div class="step-title">מה מחפשים</div>
+            <p>האם גודל המהירות של הגוף השני (הווקטור השקול) גדל, קטן או אינו משתנה.</p>
+
+            <div class="step-title">נוסחאות בשימוש</div>
+            <div class="overflow-x-auto text-center flex flex-col items-center gap-2">
+                <span class="formula-badge">\( v = v_0 + at \)</span>
+                <span class="formula-badge">\( |\vec{v}| = \sqrt{v_x^2 + v_y^2} \) (משפט פיתגורס - חיבור וקטורים)</span>
+            </div>
+
+            <div class="step-title">הצבה ופתרון</div>
+            <p>
+                נבדוק מה קורה לרכיבי המהירות כפונקציה של הזמן:
+                <br>
+                רכיב המהירות בציר y נשאר קבוע לאורך כל התנועה: \( v_y(t) = v_{0y} \).
+                <br>
+                רכיב המהירות בציר x גדל בערכו המוחלט עם הזמן עקב התאוצה הקבועה: \( v_x(t) = a_x \cdot t \).
+                <br><br>
+                גודל המהירות הכוללת הוא אורך היתר במשולש שניצביו הם \( v_x \) ו-\( v_y \):
+                \[ |\vec{v}| = \sqrt{ (a_x \cdot t)^2 + v_{0y}^2 } \]
+                מכיוון שהזמן \( t \) הולך וגדל, הביטוי בתוך השורש הולך וגדל.
+            </p>
+            <div class="final-answer">
+                גודל המהירות הכוללת הולך וגדל לאורך כל זמן התנועה. אין צורך לחלק לקטעים, זוהי עלייה רציפה.
+            </div>
+
+            <div class="teacher-highlight">
+                כאשר וקטור הכוח אנכי לחלוטין לווקטור המהירות (כמו ברגע \( t=0 \) כאן), הוא אינו משנה את גודל המהירות אלא רק את כיוונה. אולם, מיד לאחר מכן נוצר רכיב מהירות בכיוון הכוח, ואז הכוח מגדיל את הרכיב הזה ומגדיל את המהירות הכללית. בדומה למכונית שנוסעת צפונה ולפתע פועלת עליה רוח מזרחית שגורמת לה להאיץ מזרחה.
+            </div>
+        </div>
+
+        <!-- סעיף ו -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-blue-600 mb-4">סעיף ו'</h2>
+            
+            <div class="step-title">מה נתון</div>
+            <ul class="list-disc list-inside text-slate-700 mb-4">
+                <li>מהירות התחלתית (בציר y): \( v_{0y} = 24 \text{ m/s} \)</li>
+                <li>גודל הכוח (בציר x): \( F = 1.6 \text{ N} \)</li>
+                <li>מסת הגוף: \( m = 0.2 \text{ kg} \)</li>
+                <li>זמן התנועה הנדרש: \( t = 4 \text{ s} \)</li>
+                <li>מיקום התחלתי: \( x_0 = 0, y_0 = 0 \)</li>
+                <li>מהירות התחלתית בציר x: \( v_{0x} = 0 \)</li>
+            </ul>
+
+            <div class="step-title">מה מחפשים</div>
+            <p>את מקום הגוף ברגע \( t = 4 \text{ s} \) (כלומר, יש לחשב את הקואורדינטה \( x \) והקואורדינטה \( y \)).</p>
+
+            <div class="step-title">נוסחאות בשימוש</div>
+            <div class="overflow-x-auto text-center flex flex-col items-center gap-2">
+                <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+                <span class="formula-badge">\( x = x_0 + v_{0}t + \frac{1}{2}at^2 \)</span>
+            </div>
+
+            <div class="step-title">הצבה ופתרון</div>
+            <p>
+                תחילה, נחשב את תאוצת הגוף בציר ה-x לפי החוק השני של ניוטון:
+                \[ a_x = \frac{\Sigma F_x}{m} = \frac{1.6}{0.2} = 8 \text{ m/s}^2 \]
+                (בציר ה-y אין כוחות ולכן \( a_y = 0 \)).
+                <br><br>
+                כעת נחשב את מיקום הגוף עבור כל ציר בנפרד, לאחר \( t=4\text{s} \):
+            </p>
+            <p class="font-bold text-blue-600 mt-4 mb-2">חישוב בציר ה-x:</p>
+            <div class="overflow-x-auto">
+                \[ x(t) = x_0 + v_{0x}t + \frac{1}{2}a_x t^2 \]
+                \[ x(4) = 0 + 0 \cdot 4 + \frac{1}{2} \cdot 8 \cdot (4)^2 \]
+                \[ x(4) = 4 \cdot 16 = 64 \text{ m} \]
+            </div>
+
+            <p class="font-bold text-blue-600 mt-4 mb-2">חישוב בציר ה-y:</p>
+            <div class="overflow-x-auto">
+                \[ y(t) = y_0 + v_{0y}t + \frac{1}{2}a_y t^2 \]
+                \[ y(4) = 0 + 24 \cdot 4 + \frac{1}{2} \cdot 0 \cdot (4)^2 \]
+                \[ y(4) = 96 \text{ m} \]
+            </div>
+
+            <div class="final-answer">
+                מיקום הגוף ברגע \( t=4\text{s} \) הוא בקואורדינטות: \( (x=64\text{ m}, y=96\text{ m}) \)
+            </div>
+
+            <div class="teacher-highlight">
+                תמיד זכרו לפעול בשני הצירים באופן בלתי תלוי! ה"דבק" היחיד שמחבר בין תנועות הצירים הוא הזמן \( t \). לכן פתרנו את משוואות הקינמטיקה פעמיים – פעם ל-x ופעם ל-y.
+            </div>
+        </div>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+</body>
+</html>

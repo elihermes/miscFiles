@@ -1,0 +1,585 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>תכנית הלימודים המלאה במכניקה</title>
+
+	<script src="https://cdn.tailwindcss.com"></script>
+
+	<style>
+		:root {
+			--bg-page: #f6f8fc;
+			--bg-card: #ffffff;
+			--text-main: #1f2937;
+			--text-soft: #64748b;
+			--line: #dbe3f0;
+			--accent: #0f4c81;
+			--accent-soft: #e0f2fe;
+			--accent-strong: #075985;
+			--mint: #ecfeff;
+			--mint-line: #a5f3fc;
+			--formula-bg: #eff6ff;
+			--formula-line: #bfdbfe;
+		}
+
+		html {
+			overflow-x: clip;
+			scroll-behavior: smooth;
+		}
+
+		body {
+			margin: 0;
+			font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+			background:
+				radial-gradient(circle at top right, rgba(14, 165, 233, 0.12), transparent 22%),
+				linear-gradient(180deg, #f8fbff 0%, #f6f8fc 45%, #eef3f9 100%);
+			color: var(--text-main);
+			line-height: 1.7;
+			overflow-x: clip;
+		}
+
+		.page-shell {
+			max-width: 1180px;
+			margin: 0 auto;
+			padding: 1rem;
+			padding-bottom: 4rem;
+		}
+
+		.hero-card,
+		.panel,
+		.chapter-card,
+		.section-card {
+			background: rgba(255, 255, 255, 0.92);
+			border: 1px solid var(--line);
+			border-radius: 1rem;
+			box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06);
+			backdrop-filter: blur(6px);
+		}
+
+		.hero-card {
+			padding: 1.25rem;
+			margin-bottom: 1rem;
+		}
+
+		.hero-title {
+			font-size: clamp(2rem, 3.8vw, 3.4rem);
+			line-height: 1.05;
+			font-weight: 800;
+			color: #0f172a;
+			margin: 0;
+		}
+
+		.hero-subtitle {
+			color: var(--text-soft);
+			font-size: 1.05rem;
+			margin-top: 0.9rem;
+			max-width: 68ch;
+		}
+
+		.hero-grid {
+			display: grid;
+			gap: 1rem;
+			grid-template-columns: 1.4fr 0.95fr;
+			align-items: start;
+		}
+
+		.stats-grid {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 0.75rem;
+			margin-top: 1rem;
+		}
+
+		.stat-box {
+			background: linear-gradient(180deg, #ffffff 0%, #f8fbff 100%);
+			border: 1px solid var(--line);
+			border-radius: 0.9rem;
+			padding: 0.85rem 1rem;
+		}
+
+		.stat-value {
+			display: block;
+			font-size: 1.65rem;
+			font-weight: 800;
+			color: var(--accent);
+			line-height: 1;
+		}
+
+		.stat-label {
+			display: block;
+			color: var(--text-soft);
+			font-size: 0.88rem;
+			margin-top: 0.35rem;
+		}
+
+		.panel {
+			padding: 1rem;
+			height: 100%;
+		}
+
+		.panel-title {
+			font-size: 1rem;
+			font-weight: 800;
+			color: var(--accent-strong);
+			margin: 0 0 0.7rem;
+		}
+
+		.chip-list {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.55rem;
+		}
+
+		.chapter-chip {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			text-decoration: none;
+			padding: 0.5rem 0.8rem;
+			border-radius: 9999px;
+			border: 1px solid #c7d2fe;
+			background: #eef2ff;
+			color: #3730a3;
+			font-weight: 700;
+			font-size: 0.92rem;
+			transition: transform 0.15s ease, background-color 0.15s ease;
+		}
+
+		.chapter-chip:hover {
+			transform: translateY(-1px);
+			background: #e0e7ff;
+		}
+
+		.toolbar {
+			display: grid;
+			grid-template-columns: 1fr auto;
+			gap: 0.8rem;
+			margin: 1rem 0 1.25rem;
+			align-items: center;
+		}
+
+		.search-input {
+			width: 100%;
+			border: 1px solid var(--line);
+			border-radius: 0.9rem;
+			padding: 0.9rem 1rem;
+			font: inherit;
+			color: var(--text-main);
+			background: rgba(255, 255, 255, 0.92);
+			box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
+		}
+
+		.search-input:focus {
+			outline: 2px solid rgba(14, 165, 233, 0.18);
+			border-color: #7dd3fc;
+		}
+
+		.results-note {
+			color: var(--text-soft);
+			font-size: 0.92rem;
+			white-space: nowrap;
+		}
+
+		.chapters-stack {
+			display: grid;
+			gap: 1rem;
+		}
+
+		.chapter-card {
+			padding: 1.1rem;
+		}
+
+		.chapter-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 1rem;
+			padding-bottom: 0.8rem;
+			border-bottom: 1px solid var(--line);
+			margin-bottom: 1rem;
+			flex-wrap: wrap;
+		}
+
+		.chapter-title {
+			margin: 0;
+			font-size: 1.45rem;
+			font-weight: 800;
+			color: #0f172a;
+		}
+
+		.chapter-meta {
+			color: var(--text-soft);
+			font-size: 0.92rem;
+			background: #f8fafc;
+			border: 1px solid var(--line);
+			border-radius: 9999px;
+			padding: 0.3rem 0.7rem;
+		}
+
+		.sections-grid {
+			display: grid;
+			gap: 0.9rem;
+		}
+
+		.section-card {
+			padding: 1rem;
+		}
+
+		.section-top {
+			display: flex;
+			align-items: center;
+			gap: 0.7rem;
+			flex-wrap: wrap;
+			margin-bottom: 0.75rem;
+		}
+
+		.section-number {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			min-width: 3.2rem;
+			padding: 0.25rem 0.7rem;
+			border-radius: 9999px;
+			background: var(--accent);
+			color: #ffffff;
+			font-weight: 800;
+			font-size: 0.9rem;
+			line-height: 1;
+		}
+
+		.section-title {
+			margin: 0;
+			font-size: 1.06rem;
+			font-weight: 800;
+			color: #0f172a;
+		}
+
+		.detail-list,
+		.formula-list {
+			margin: 0;
+			padding-right: 1.2rem;
+		}
+
+		.detail-list li,
+		.formula-list li {
+			margin-bottom: 0.4rem;
+		}
+
+		.content-block + .content-block {
+			margin-top: 0.9rem;
+		}
+
+		.block-label {
+			display: inline-block;
+			font-size: 0.82rem;
+			font-weight: 800;
+			letter-spacing: 0.02em;
+			color: var(--accent-strong);
+			background: var(--accent-soft);
+			border: 1px solid #bae6fd;
+			border-radius: 9999px;
+			padding: 0.18rem 0.6rem;
+			margin-bottom: 0.55rem;
+		}
+
+		.formula-wrap {
+			background: linear-gradient(180deg, #f8fbff 0%, #eff6ff 100%);
+			border: 1px solid var(--formula-line);
+			border-radius: 0.9rem;
+			padding: 0.85rem 1rem;
+		}
+
+		.formula-list {
+			direction: ltr;
+			text-align: left;
+			color: #1e3a8a;
+			font-family: "Menlo", "Consolas", monospace;
+			font-size: 0.96rem;
+		}
+
+		.empty-state {
+			padding: 1.25rem;
+			text-align: center;
+			color: var(--text-soft);
+		}
+
+		.source-note {
+			margin-top: 1rem;
+			color: var(--text-soft);
+			font-size: 0.88rem;
+		}
+
+		@media (max-width: 900px) {
+			.hero-grid,
+			.toolbar {
+				grid-template-columns: 1fr;
+			}
+
+			.results-note {
+				white-space: normal;
+			}
+		}
+
+		@media (max-width: 640px) {
+			.page-shell {
+				padding: 0.75rem;
+				padding-bottom: 3rem;
+			}
+
+			.stats-grid {
+				grid-template-columns: 1fr;
+			}
+
+			.chapter-title {
+				font-size: 1.2rem;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="page-shell">
+		<header class="hero-card">
+			<div class="hero-grid">
+				<div>
+					<p class="text-sm font-bold tracking-[0.2em] text-sky-800 uppercase m-0">Physics Curriculum</p>
+					<h1 id="mainTitle" class="hero-title">תכנית הלימודים במכניקה</h1>
+					<p id="mainSubtitle" class="hero-subtitle">טעינת נתונים...</p>
+
+					<div class="stats-grid">
+						<div class="stat-box">
+							<span id="chapterCount" class="stat-value">0</span>
+							<span class="stat-label">פרקים</span>
+						</div>
+						<div class="stat-box">
+							<span id="sectionCount" class="stat-value">0</span>
+							<span class="stat-label">סעיפים</span>
+						</div>
+						<div class="stat-box">
+							<span id="formulaCount" class="stat-value">0</span>
+							<span class="stat-label">נוסחאות</span>
+						</div>
+					</div>
+				</div>
+
+				<aside class="panel">
+					<h2 class="panel-title">ניווט מהיר בין הפרקים</h2>
+					<div id="chapterNav" class="chip-list"></div>
+					<p class="source-note">העמוד נטען מתוך הקובץ תכנית הלימודים המלאה במכניקה.json ומציג את כל הפרקים, הסעיפים, הפירוט והנוסחאות.</p>
+				</aside>
+			</div>
+		</header>
+
+		<section class="toolbar" aria-label="סרגל סינון">
+			<input id="searchInput" class="search-input" type="search" placeholder="חיפוש לפי פרק, סעיף, מושג או נוסחה..." />
+			<div id="resultsInfo" class="results-note">טוען נתונים...</div>
+		</section>
+
+		<main id="chaptersContainer" class="chapters-stack" aria-live="polite">
+			<div class="empty-state">טוען את תכנית הלימודים...</div>
+		</main>
+	</div>
+
+	<script>
+		const state = {
+			chapters: [],
+			topicName: "",
+			query: ""
+		};
+
+		const mainTitle = document.getElementById("mainTitle");
+		const mainSubtitle = document.getElementById("mainSubtitle");
+		const chapterCountEl = document.getElementById("chapterCount");
+		const sectionCountEl = document.getElementById("sectionCount");
+		const formulaCountEl = document.getElementById("formulaCount");
+		const chapterNav = document.getElementById("chapterNav");
+		const chaptersContainer = document.getElementById("chaptersContainer");
+		const searchInput = document.getElementById("searchInput");
+		const resultsInfo = document.getElementById("resultsInfo");
+
+		function normalizeText(value) {
+			return String(value || "")
+				.replace(/\[cite:\s*\d+\]/gi, "")
+				.replace(/\s+/g, " ")
+				.trim();
+		}
+
+		function countAll(chapters) {
+			let sectionCount = 0;
+			let formulaCount = 0;
+
+			chapters.forEach((chapter) => {
+				const sections = Array.isArray(chapter["סעיפים"]) ? chapter["סעיפים"] : [];
+				sectionCount += sections.length;
+				sections.forEach((section) => {
+					formulaCount += Array.isArray(section["נוסחאות"]) ? section["נוסחאות"].length : 0;
+				});
+			});
+
+			return {
+				chapterCount: chapters.length,
+				sectionCount,
+				formulaCount
+			};
+		}
+
+		function buildSearchText(chapter, section) {
+			return [
+				chapter["שם_הפרק"],
+				section["מספר_סעיף"],
+				section["שם_הסעיף"],
+				...(Array.isArray(section["פירוט"]) ? section["פירוט"] : []),
+				...(Array.isArray(section["נוסחאות"]) ? section["נוסחאות"] : [])
+			].map(normalizeText).join(" ").toLowerCase();
+		}
+
+		function filterChapters(chapters, query) {
+			const normalizedQuery = normalizeText(query).toLowerCase();
+			if (!normalizedQuery) {
+				return chapters;
+			}
+
+			return chapters
+				.map((chapter) => {
+					const sections = Array.isArray(chapter["סעיפים"]) ? chapter["סעיפים"] : [];
+					const matchingSections = sections.filter((section) => buildSearchText(chapter, section).includes(normalizedQuery));
+					if (!matchingSections.length) {
+						return null;
+					}
+					return {
+						...chapter,
+						"סעיפים": matchingSections
+					};
+				})
+				.filter(Boolean);
+		}
+
+		function renderNavigation(chapters) {
+			chapterNav.innerHTML = "";
+
+			chapters.forEach((chapter, index) => {
+				const link = document.createElement("a");
+				link.className = "chapter-chip";
+				link.href = `#chapter-${index + 1}`;
+				link.textContent = normalizeText(chapter["שם_הפרק"]);
+				chapterNav.appendChild(link);
+			});
+		}
+
+		function renderChapters(chapters) {
+			chaptersContainer.innerHTML = "";
+
+			if (!chapters.length) {
+				const empty = document.createElement("div");
+				empty.className = "panel empty-state";
+				empty.textContent = "לא נמצאו סעיפים התואמים לחיפוש שביצעת.";
+				chaptersContainer.appendChild(empty);
+				return;
+			}
+
+			chapters.forEach((chapter, chapterIndex) => {
+				const chapterCard = document.createElement("section");
+				chapterCard.className = "chapter-card";
+				chapterCard.id = `chapter-${chapterIndex + 1}`;
+
+				const sections = Array.isArray(chapter["סעיפים"]) ? chapter["סעיפים"] : [];
+
+				const sectionCards = sections.map((section) => {
+					const details = Array.isArray(section["פירוט"]) ? section["פירוט"] : [];
+					const formulas = Array.isArray(section["נוסחאות"]) ? section["נוסחאות"] : [];
+
+					const detailsHtml = details.length
+						? `
+							<div class="content-block">
+								<span class="block-label">פירוט</span>
+								<ul class="detail-list">${details.map((item) => `<li>${normalizeText(item)}</li>`).join("")}</ul>
+							</div>
+						`
+						: "";
+
+					const formulasHtml = formulas.length
+						? `
+							<div class="content-block formula-wrap">
+								<span class="block-label">נוסחאות</span>
+								<ul class="formula-list">${formulas.map((item) => `<li>${normalizeText(item)}</li>`).join("")}</ul>
+							</div>
+						`
+						: "";
+
+					return `
+						<article class="section-card">
+							<div class="section-top">
+								<span class="section-number">${normalizeText(section["מספר_סעיף"]) || "-"}</span>
+								<h3 class="section-title">${normalizeText(section["שם_הסעיף"]) || "ללא כותרת"}</h3>
+							</div>
+							${detailsHtml}
+							${formulasHtml}
+						</article>
+					`;
+				}).join("");
+
+				chapterCard.innerHTML = `
+					<div class="chapter-header">
+						<h2 class="chapter-title">${normalizeText(chapter["שם_הפרק"])}</h2>
+						<div class="chapter-meta">${sections.length} סעיפים בפרק</div>
+					</div>
+					<div class="sections-grid">${sectionCards}</div>
+				`;
+
+				chaptersContainer.appendChild(chapterCard);
+			});
+		}
+
+		function render() {
+			const filteredChapters = filterChapters(state.chapters, state.query);
+			const filteredCounts = countAll(filteredChapters);
+
+			renderNavigation(state.chapters);
+			renderChapters(filteredChapters);
+
+			resultsInfo.textContent = state.query
+				? `נמצאו ${filteredCounts.sectionCount} סעיפים ב-${filteredCounts.chapterCount} פרקים עבור החיפוש.`
+				: `מוצגים ${filteredCounts.sectionCount} סעיפים ב-${filteredCounts.chapterCount} פרקים.`;
+		}
+
+		async function loadCurriculum() {
+			const response = await fetch("./תכנית הלימודים המלאה במכניקה.json", { cache: "no-store" });
+			if (!response.ok) {
+				throw new Error("curriculum-load-failed");
+			}
+
+			const data = await response.json();
+			const root = data["תכנית_הלימודים_בפיזיקה"] || {};
+			const topicName = normalizeText(root["נושא_ראשי"]) || "מכניקה";
+			const chapters = Array.isArray(root["פרקים"]) ? root["פרקים"] : [];
+
+			state.chapters = chapters;
+			state.topicName = topicName;
+
+			const counts = countAll(chapters);
+			mainTitle.textContent = `תכנית הלימודים המלאה ב${topicName}`;
+			mainSubtitle.textContent = "תצוגה מלאה של כל פרקי הלימוד, הסעיפים, הפירוט ונוסחאות היסוד כפי שמופיעים בקובץ התכנית.";
+			chapterCountEl.textContent = String(counts.chapterCount);
+			sectionCountEl.textContent = String(counts.sectionCount);
+			formulaCountEl.textContent = String(counts.formulaCount);
+
+			render();
+		}
+
+		document.addEventListener("DOMContentLoaded", async () => {
+			searchInput.addEventListener("input", (event) => {
+				state.query = event.target.value;
+				render();
+			});
+
+			try {
+				await loadCurriculum();
+			} catch (_error) {
+				mainSubtitle.textContent = "לא ניתן היה לטעון את קובץ תכנית הלימודים.";
+				chaptersContainer.innerHTML = '<div class="panel empty-state">אירעה שגיאה בטעינת הנתונים. ודא/י שהקובץ תכנית הלימודים המלאה במכניקה.json נמצא באותה תיקייה.</div>';
+				resultsInfo.textContent = "טעינת הנתונים נכשלה.";
+			}
+		});
+	</script>
+</body>
+</html>
