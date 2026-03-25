@@ -465,8 +465,19 @@
             if (normalized.startsWith("./")) {
                 normalized = normalized.slice(2);
             }
-            if (normalized.startsWith(`${MECHANICS_FOLDER_REPO_PATH}/`)) {
-                normalized = normalized.slice(MECHANICS_FOLDER_REPO_PATH.length + 1);
+
+            const mechanicsRootWithSlash = `${MECHANICS_FOLDER_REPO_PATH}/`;
+            const directIdx = normalized.indexOf(mechanicsRootWithSlash);
+            if (directIdx >= 0) {
+                normalized = normalized.slice(directIdx + mechanicsRootWithSlash.length);
+                return normalized;
+            }
+
+            const mechanicsFolderName = "מכניקה שאלות בגרות";
+            const folderWithSlash = `${mechanicsFolderName}/`;
+            const folderIdx = normalized.indexOf(folderWithSlash);
+            if (folderIdx >= 0) {
+                normalized = normalized.slice(folderIdx + folderWithSlash.length);
             }
             return normalized;
         }
@@ -492,6 +503,14 @@
             }
             usedIds.add(candidate);
             return candidate;
+        }
+
+        function idBaseFromTitle(title) {
+            const parsed = parseFromFolderName(title);
+            if (parsed) {
+                return `${parsed.year}-${String(parsed.question).replace(/\s+/g, "-")}`;
+            }
+            return String(title || "").replace(/\s+/g, "-");
         }
 
         function getRepoContextFromLocation() {
@@ -525,8 +544,91 @@
             return folderNamePattern.test(parentFolder);
         }
 
+        function getFileName(path) {
+            const normalized = normalizeRelativeQuestionPath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            return parts.length ? parts[parts.length - 1] : "";
+        }
+
+        function getFolderPath(path) {
+            const normalized = normalizeRelativeQuestionPath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            if (parts.length <= 1) {
+                return "";
+            }
+            return parts.slice(0, -1).join("/");
+        }
+
+        function pickHtmlInSolutionFolder(folderPath, htmlFiles) {
+            const files = [...htmlFiles].sort((a, b) => a.localeCompare(b, "he", { numeric: true }));
+            if (!files.length) {
+                return "";
+            }
+
+            const folderName = folderPath.split("/").filter(Boolean).pop() || "";
+            const exactFolderMatch = `${folderName}.html`;
+            if (files.includes(exactFolderMatch)) {
+                return exactFolderMatch;
+            }
+
+            const parsed = parseFromFolderName(folderName);
+            if (parsed) {
+                const startsWithYear = files.find((file) => file.startsWith(String(parsed.year)));
+                if (startsWithYear) {
+                    return startsWithYear;
+                }
+            }
+
+            return files[0];
+        }
+
         async function discoverQuestionPaths() {
             const discovered = new Set();
+            const folders = new Map();
+
+            function ensureFolder(folderPath) {
+                if (!folders.has(folderPath)) {
+                    folders.set(folderPath, {
+                        hasQuestionImage: false,
+                        htmlFiles: new Set()
+                    });
+                }
+                return folders.get(folderPath);
+            }
+
+            function collectNodePath(nodePath) {
+                const relativePath = normalizeRelativeQuestionPath(nodePath);
+                const fileName = getFileName(relativePath);
+                const folderPath = getFolderPath(relativePath);
+                if (!fileName || !folderPath) {
+                    return;
+                }
+
+                const entry = ensureFolder(folderPath);
+                if (fileName.toLowerCase() === "question-image.png") {
+                    entry.hasQuestionImage = true;
+                    return;
+                }
+
+                if (fileName.toLowerCase().endsWith(".html") && !DISCOVERY_EXCLUDED_FILES.has(fileName)) {
+                    entry.htmlFiles.add(fileName);
+                }
+            }
+
+            function finalizeDiscoveredPaths() {
+                folders.forEach((entry, folderPath) => {
+                    if (!entry.hasQuestionImage || entry.htmlFiles.size === 0) {
+                        return;
+                    }
+
+                    const htmlFile = pickHtmlInSolutionFolder(folderPath, entry.htmlFiles);
+                    if (!htmlFile) {
+                        return;
+                    }
+
+                    discovered.add(`${folderPath}/${htmlFile}`);
+                });
+            }
 
             if (isLocalhost()) {
                 const response = await fetch("/api/local-tree", { cache: "no-store" });
@@ -542,11 +644,10 @@
                     if (!node.path.startsWith(`${MECHANICS_FOLDER_REPO_PATH}/`)) {
                         return;
                     }
-                    if (!isQuestionHtmlPath(node.path)) {
-                        return;
-                    }
-                    discovered.add(normalizeRelativeQuestionPath(node.path));
+                    collectNodePath(node.path);
                 });
+
+                finalizeDiscoveredPaths();
                 return [...discovered];
             }
 
@@ -570,11 +671,10 @@
                 if (!node.path.startsWith(`${MECHANICS_FOLDER_REPO_PATH}/`)) {
                     return;
                 }
-                if (!isQuestionHtmlPath(node.path)) {
-                    return;
-                }
-                discovered.add(normalizeRelativeQuestionPath(node.path));
+                collectNodePath(node.path);
             });
+
+            finalizeDiscoveredPaths();
             return [...discovered];
         }
 
@@ -583,6 +683,8 @@
             const topics = Array.isArray(topicData.topics) ? topicData.topics : [];
 
             const byPath = new Map();
+            const byTitle = new Map();
+            const byId = new Map();
             const existingTitles = new Set();
             const usedIds = new Set();
             questions.forEach((question) => {
@@ -593,10 +695,17 @@
                 }
                 byPath.set(normalizedPath, question);
                 if (question.title) {
-                    existingTitles.add(String(question.title));
+                    const title = String(question.title);
+                    existingTitles.add(title);
+                    if (!byTitle.has(title)) {
+                        byTitle.set(title, question);
+                    }
                 }
                 if (question.id) {
                     usedIds.add(question.id);
+                    if (!byId.has(question.id)) {
+                        byId.set(question.id, question);
+                    }
                 }
             });
 
@@ -606,10 +715,27 @@
                     return;
                 }
                 const title = extractTitleFromPath(normalizedPath) || normalizedPath;
-                // Avoid duplicate "pending tagging" rows when a folder already has a tagged main entry.
-                if (existingTitles.has(title)) {
+
+                // Also reconcile by id inferred from title, so moved folders are found
+                // even if there are duplicate titles in JSON.
+                const inferredId = idBaseFromTitle(title);
+                const existingById = byId.get(inferredId);
+                if (existingById) {
+                    byPath.delete(normalizeRelativeQuestionPath(existingById.path));
+                    existingById.path = normalizedPath;
+                    byPath.set(normalizedPath, existingById);
                     return;
                 }
+
+                // If the question moved to another folder, keep existing tags and update the saved path.
+                const existingByTitle = byTitle.get(title);
+                if (existingByTitle) {
+                    byPath.delete(normalizeRelativeQuestionPath(existingByTitle.path));
+                    existingByTitle.path = normalizedPath;
+                    byPath.set(normalizedPath, existingByTitle);
+                    return;
+                }
+
                 const id = createIdFromTitle(title, usedIds);
                 const newQuestion = {
                     id,
@@ -620,6 +746,7 @@
                 questions.push(newQuestion);
                 byPath.set(normalizedPath, newQuestion);
                 existingTitles.add(title);
+                byTitle.set(title, newQuestion);
             });
 
             const dedupedByTitle = new Map();
