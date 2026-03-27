@@ -1,0 +1,635 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2005 שאלה 3</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #334155;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.75rem 1rem;
+            margin-top: 0.75rem;
+            color: #166534;
+            font-weight: 700;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מודרך: בגרות בפיזיקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">נושא: חוקי ניוטון (מכניקה 2005, שאלה 3)</h2>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+        <div class="bg-blue-50 border border-blue-100 rounded-lg p-6 mb-8 text-blue-900 shadow-sm">
+            <h3 class="font-bold text-lg mb-2 flex items-center">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 ml-2 text-blue-500" viewBox="0 0 20 20" fill="currentColor">
+                    <path fill-rule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zM9 9a1 1 0 000 2v3a1 1 0 001 1h1a1 1 0 100-2v-3a1 1 0 00-1-1H9z" clip-rule="evenodd" />
+                </svg>
+                רקע לתרגיל - הכרת המערכת
+            </h3>
+            <p>
+                לפנינו מערכת גלגלת המקשרת בין שני גופים (רמי ויעל) באמצעות חבל. אנו מניחים (כפי שמקובל כשלא מצוין אחרת) שמסת החבל והגלגלת ניתנת להזנחה, ושאין חיכוך בציר הגלגלת. לכן, מתיחות החבל (T) שווה לכל אורכו. במצב ההתחלתי, המערכת נמצאת במנוחה מלאה.
+            </p>
+        </div>
+
+        <!-- Section A -->
+        <div class="section-card" id="section-A">
+            <h3 class="section-header">סעיף א': תרשים כוחות</h3>
+            
+            <div class="step-title">מה נתון:</div>
+            <p>
+                מסת רמי: \( m_R = 70 \text{ kg} \). <br>
+                מסת יעל: \( m_Y = 60 \text{ kg} \). <br>
+                תאוצת הכובד: \( g = 10 \text{ m/s}^2 \). (יחידות תקינות MKS).<br>
+                המערכת במנוחה (מהירות אפס ותאוצה אפס). רמי עומד על הרצפה. יעל תלויה באוויר.
+            </p>
+
+            <div class="step-title">מה מחפשים:</div>
+            <p>לשרטט תרשים כוחות (Free Body Diagram) נפרד לרמי ונפרד ליעל, ולציין את שמם של הכוחות הפועלים עליהם.</p>
+
+            <div class="step-title">נוסחאות בשימוש:</div>
+            <p>הסעיף הוא רעיוני בעיקרו ומסתמך על זיהוי אינטראקציות, אך נזכור את כוח הכובד מתוך דף הנוסחאות:</p>
+            <div class="text-center"><span class="formula-badge">\( F = mg \)</span></div>
+
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>
+                נסתכל על האינטראקציות של כל גוף. <br>
+                <strong>יעל:</strong> נמצאת באוויר ולכן פועלים עליה רק שני כוחות - כוח המשיכה כלפי מטה (משקלה), וכוח המתיחות של החבל שמושך אותה כלפי מעלה. <br>
+                <strong>רמי:</strong> עומד על הרצפה ומחזיק בחבל. פועלים עליו שלושה כוחות - כוח המשיכה כלפי מטה, כוח מתיחות החבל המושך אותו כלפי מעלה, וכוח נורמלי מהרצפה שדוחף אותו גם הוא כלפי מעלה.
+            </p>
+            
+            <div class="svg-container flex justify-center my-6 overflow-x-auto">
+                <img
+                    src="image-1.png"
+                    alt="תרשים כוחות (FBD)"
+                    width="600"
+                    height="350"
+                    class="border border-slate-200 rounded-lg bg-slate-50"
+                    style="width: 600px; height: 350px; object-fit: contain;"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                />
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center">
+                    <span class="block font-bold mb-1">[תרשים כוחות]</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>image-1.png</code> באותה תיקייה.</span>
+                </div>
+            </div>
+
+            <div class="final-answer">
+                מקרא כוחות:<br>
+                \( T \) - כוח מתיחות החבל (מופעל על ידי החבל, פועל כלפי מעלה).<br>
+                \( m_Y g \) , \( m_R g \) - כוחות הכובד/משקל (מופעלים על ידי כדור הארץ, פועלים כלפי מטה).<br>
+                \( N \) - כוח נורמלי (מופעל על ידי הרצפה על רמי בלבד, פועל בניצב למשטח כלפי מעלה).
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 הערת מורה:</strong> שימו לב ששני הגופים חולקים את אותו כוח מתיחות \( T \). מכיוון שגלגלת היא אידיאלית (חסרת מסה וללא חיכוך) והחבל חסר מסה, המתיחות חייבת להיות אחידה לאורך כל החבל. אינטואיציה חשובה: למה ציירנו את \( N \) ו- \( T \) יחד אצל רמי? כי רמי נתמך חלקית על ידי הרצפה וחלקית על ידי החבל.
+            </div>
+        </div>
+
+        <!-- Section B -->
+        <div class="section-card" id="section-B">
+            <h3 class="section-header">סעיף ב': חישוב הכוח הנורמלי במנוחה</h3>
+            
+            <div class="step-title">מה נתון:</div>
+            <p>המערכת במנוחה. לכן התאוצה של כל גוף היא אפס: \( a_Y = 0 \) ו- \( a_R = 0 \).</p>
+
+            <div class="step-title">מה מחפשים:</div>
+            <p>את גודל הכוח שהרצפה מפעילה על רמי. כוח זה הוא הכוח הנורמלי, נסמן אותו באות \( N \).</p>
+
+            <div class="step-title">נוסחאות בשימוש:</div>
+            <p>מכיוון שהמערכת במנוחה (מצב התמדה), נשתמש ב<strong>חוק הראשון של ניוטון</strong> הקובע שסכום הכוחות הפועלים על גוף במנוחה שווה לאפס:</p>
+            <div class="text-center"><span class="formula-badge">\( \Sigma\vec{F} = 0 \)</span></div>
+
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>כאן נלמד עיקרון חשוב בבחירת צירים. במערכת של שני גופים המחוברים בחוט דרך גלגלת, כיווני התנועה שלהם תלויים זה בזה (אם אחד עולה, השני יורד). לכן, נכין מראש "ציר תנועה" (ציר מתקפל) בהתאם לכיוון התנועה המשותף האפשרי להמשך. נבחר כיוון חיובי עבור יעל כלפי <strong>מעלה</strong>, וכתוצאה מכך הכיוון החיובי עבור רמי יהיה כלפי <strong>מטה</strong>. נרשום את משוואות הכוחות לכל גוף בנפרד לפי החוק הראשון.</p>
+            
+            <p>נתחיל מיעל (כיוון חיובי מעלה):</p>
+            <div class="math-scroll">
+                \[ \Sigma F_y (\text{Yael}) = 0 \]
+                \[ T - m_Y g = 0 \]
+                \[ T = m_Y g = 60 \text{ kg} \cdot 10 \text{ m/s}^2 = 600 \text{ N} \]
+            </div>
+            
+            <p>כעת, ניגש לרמי (כיוון חיובי מטה). אנו יודעים כעת את מתיחות החבל \( T \), ומחפשים את \( N \):</p>
+            <div class="math-scroll">
+                \[ \Sigma F_y (\text{Rami}) = 0 \]
+                \[ m_R g - T - N = 0 \]
+                \[ N = m_R g - T \]
+            </div>
+            
+            <p>נציב את הנתונים המספריים:</p>
+            <div class="math-scroll">
+                \[ N = (70 \cdot 10) - 600 \]
+                \[ N = 700 - 600 = 100 \text{ N} \]
+            </div>
+
+            <div class="final-answer">
+                גודל הכוח שהרצפה מפעילה על רמי הוא: \( N = 100 \text{ N} \).
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 הערת מורה:</strong> שימו לב לבחירת הצירים! חדי העין ודאי יבחינו שאמנם כרגע אין תנועה, אך אם היינו בוחרים ציר כלפי מעלה לשניהם, הייתה נוצרת בעיה של חוסר עקביות בסעיפים הבאים. בתנועה מקושרת, כשאחד נע למעלה השני נע למטה. קביעת "ציר תנועה" (למעלה אצל יעל ולמטה אצל רמי) מבטיחה שאם תיווצר תנועה, לשניהם תהיה בדיוק אותה תאוצה \( a \) עם אותו סימן. הרגל פדגוגי זה ימנע מכם בלבול רב וטעויות סימן מיותרות בהמשך!
+            </div>
+        </div>
+
+        <!-- Section C -->
+        <div class="section-card" id="section-C">
+            <h3 class="section-header">סעיף ג': יעל מטפסת - ניתוח איכותי</h3>
+            
+            <div class="step-title">מה נתון:</div>
+            <p>יעל מטפסת במעלה החבל בתאוצה קבועה של \( a_Y = 0.25 \text{ m/s}^2 \) כלפי מעלה (ביחס לרצפה). רמי נשאר במנוחה על הרצפה (\( a_R = 0 \)).</p>
+
+            <div class="step-title">מה מחפשים:</div>
+            <p>האם הכוח הנורמלי (שהרצפה מפעילה על רמי) גדל, קטן, או נשאר שווה ביחס למצב הקודם? יש לנמק.</p>
+
+            <div class="step-title">נוסחאות בשימוש:</div>
+            <div class="text-center"><span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span></div>
+
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>נסמן את הכוחות החדשים עם גרש ( ' ) כדי להבדילם מסעיף ב'.</p>
+            <p>נבחן מה קורה למתיחות החבל כאשר יעל מאיצה כלפי מעלה. נרשום את חוק השני של ניוטון עבור יעל (כיוון חיובי מעלה):</p>
+            <div class="math-scroll">
+                \[ \Sigma F_y = m_Y a_Y \]
+                \[ T' - m_Y g = m_Y \cdot a_Y \]
+            </div>
+            <p>מכיוון שהתאוצה \( a_Y \) כעת גדולה מאפס (וחיובית, כי היא למעלה), אנו מקבלים ש- \( T' \) חייב להיות גדול מ- \( m_Y g \). כלומר, המתיחות בחבל <strong>גדלה</strong>.</p>
+            
+            <p>כעת נסתכל על רמי. הוא עדיין במנוחה, ולכן סכום הכוחות עליו נשאר אפס. נזכור שהציר החיובי שלו מוגדר כעת כלפי <strong>מטה</strong>:</p>
+            <div class="math-scroll">
+                \[ m_R g - T' - N' = 0 \]
+                \[ N' = m_R g - T' \]
+            </div>
+            <p>משקלו של רמי (\( m_R g \)) נשאר קבוע. מכיוון שמתיחות החבל \( T' \) <strong>גדלה</strong>, הסכום שאנו מחסירים מהמשקל גדול יותר, ולכן הכוח הנורמלי \( N' \) חייב להיות <strong>קטן</strong> יותר.</p>
+
+            <div class="final-answer">
+                הכוח שהרצפה מפעילה על רמי (הנורמל) <strong>קטן</strong> מהכוח שחושב בסעיף ב'. <br>
+                נימוק: יעל מאיצה כלפי מעלה ולכן מתיחות החבל גדלה. מכיוון שמשקלו של רמי קבוע, החבל מושך את רמי חזק יותר כלפי מעלה, ורמי "נשען" פחות על הרצפה.
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 הערת מורה:</strong> זהו סעיף הבנה קלאסי. אנחנו לא חייבים להציב מספרים כדי להוכיח! כתיבת המשוואות והסקת המסקנה המתמטית (\( T \) גדל ולכן בחיסור נקבל תוצאה קטנה יותר עבור \( N \)) מהווה הוכחה (נימוק) מלאה ותקינה בבגרות.
+            </div>
+        </div>
+
+        <!-- Section D -->
+        <div class="section-card" id="section-D">
+            <h3 class="section-header">סעיף ד': חישוב המתיחות כשיעל מאיצה</h3>
+            
+            <div class="step-title">מה נתון:</div>
+            <p>תאוצתה של יעל כלפי מעלה: \( a_Y = 0.25 \text{ m/s}^2 \). מסתה \( m_Y = 60 \text{ kg} \).</p>
+
+            <div class="step-title">מה מחפשים:</div>
+            <p>את גודל מתיחות החבל \( T' \) בזמן תנועתה של יעל בתאוצה זו.</p>
+
+            <div class="step-title">נוסחאות בשימוש:</div>
+            <div class="text-center"><span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span></div>
+
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>בסעיף זה מתמקדים ביעל בלבד, שכן אנו יודעים את התאוצה שלה ומשוואת הכוחות שלה מספיקה כדי למצוא את המתיחות בחבל. אין צורך לערב את רמי בחישוב זה.</p>
+            <p>נרשום את החוק השני של ניוטון עבור יעל (כיוון חיובי מעלה):</p>
+            <div class="math-scroll">
+                \[ \Sigma F_y (\text{Yael}) = m_Y a_Y \]
+                \[ T' - m_Y g = m_Y a_Y \]
+            </div>
+            <p>נעביר אגפים ונציב את הנתונים:</p>
+            <div class="math-scroll">
+                \[ T' = m_Y g + m_Y a_Y = m_Y(g + a_Y) \]
+                \[ T' = 60 \cdot (10 + 0.25) \]
+                \[ T' = 60 \cdot 10.25 = 615 \text{ N} \]
+            </div>
+
+            <div class="final-answer">
+                מתיחות החבל בזמן שיעל מאיצה היא: \( T' = 615 \text{ N} \).
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 הערת מורה:</strong> דרך מצוינת לבדוק את עצמנו: בסעיף ב' במנוחה קיבלנו \( T = 600 \text{ N} \). בסעיף ג' אמרנו מילולית שכאשר היא מאיצה כלפי מעלה המתיחות אמורה לגדול. וכאן, בחישוב מתמטי מדויק, אכן קיבלנו \( 615 \text{ N} > 600 \text{ N} \). הפיזיקה עקבית!
+            </div>
+        </div>
+
+        <!-- Section E -->
+        <div class="section-card" id="section-E">
+            <h3 class="section-header">סעיף ה': תאוצה מינימלית להתרוממות (סף ניתוק)</h3>
+            
+            <div class="step-title">מה נתון בשאלה:</div>
+            <p>אנו עוסקים במצב שבו רמי בדיוק "מתרומם מהרצפה".</p>
+
+            <div class="step-title">מה מחפשים:</div>
+            <p>את התאוצה ה<strong>מינימלית</strong> של יעל (\( a_{min} \)) הדרושה כדי לגרום לזה לקרות.</p>
+
+            <div class="bg-blue-50 border-r-4 border-blue-500 p-4 my-6 rounded-l-md text-slate-800 shadow-sm">
+                <strong>🤔 איך מתרגמים את השאלה לפיזיקה? (תיווך להבנה)</strong><br>
+                כאשר השאלה מבקשת את התאוצה ה<em>מינימלית</em> כדי שרמי יתרומם, עלינו למצוא את <strong>מצב הגבול</strong>. 
+                ראינו בסעיף ג' שככל שיעל מאיצה יותר כלפי מעלה, מתיחות החבל גדלה. החבל מושך את רמי חזק יותר, ולכן רמי "נשען" פחות על הרצפה וכוח התגובה של הרצפה (הכוח הנורמלי, \(N\)) הולך וקטן.<br><br>
+                <strong>מתי בדיוק מתחילים להתרומם?</strong> הרגע המדויק שבו גוף מאבד מגע עם משטח ומתחיל לרחף הוא הרגע שבו המשענת נעלמת לחלוטין – כלומר, הכוח הנורמלי מתאפס. למצב גבול זה אנו קוראים <strong>"סף ניתוק" (\( N = 0 \))</strong>.<br>
+                לכן, אסטרטגיית הפתרון שלנו היא לדרוש ש-\( N = 0 \) (רמי על סף התרוממות, אך התאוצה שלו עדיין אפס), ומתוך תנאי זה לחלץ איזו תאוצה יעל הייתה צריכה להפיק כדי להגיע למתיחות שאיפסה את הנורמל.
+            </div>
+
+            <div class="step-title">נוסחאות בשימוש:</div>
+            <div class="text-center"><span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span></div>
+
+            <div class="step-title">הצבה ופתרון:</div>
+            <p>כפי שהסברנו, ננתח קודם כל את המצב של רמי <strong>על סף הניתוק</strong>. הוא עדיין לא זז (\( a_R = 0 \)), אך הנורמל בדיוק התאפס (\( N = 0 \)). נרשום את סכום הכוחות על רמי (כיוון חיובי מטה):</p>
+            <div class="math-scroll">
+                \[ \Sigma F_y (\text{Rami}) = m_R a_R \]
+                \[ m_R g - T_{lift} - N = m_R \cdot 0 \]
+            </div>
+            <p>נציב את הנתונים: המסה של רמי היא \(70\text{ kg}\), \(g=10\), והכי חשוב - כיוון שאנו על סף ניתוק נציב \(N=0\):</p>
+            <div class="math-scroll">
+                \[ (70 \cdot 10) - T_{lift} - 0 = 0 \]
+                \[ 700 - T_{lift} = 0 \]
+                \[ T_{lift} = 700 \text{ N} \]
+            </div>
+            <p>המסקנה היא שכדי שרמי יתחיל להתרומם מהרצפה, המתיחות בחבל חייבת להגיע ל- \( 700 \text{ N} \) (כדי "לנצח" את כוח הכובד שמושך אותו למטה).</p>
+            
+            <p>כעת, ניקח מתיחות זו ונדרוש שיעל תייצר אותה על ידי הטיפוס שלה. נחזור למשוואת הכוחות של יעל:</p>
+            <div class="math-scroll">
+                \[ \Sigma F_y (\text{Yael}) = m_Y a_{min} \]
+                \[ T_{lift} - m_Y g = m_Y a_{min} \]
+            </div>
+            <p>נציב את הנתונים ואת המתיחות שמצאנו:</p>
+            <div class="math-scroll">
+                \[ 700 - (60 \cdot 10) = 60 \cdot a_{min} \]
+                \[ 700 - 600 = 60 \cdot a_{min} \]
+                \[ 100 = 60 \cdot a_{min} \]
+                \[ a_{min} = \frac{100}{60} = \frac{10}{6} = \frac{5}{3} \approx 1.67 \text{ m/s}^2 \]
+            </div>
+
+            <div class="final-answer">
+                התאוצה המינימלית שבה יעל צריכה לטפס כדי שרמי יתרומם מהרצפה היא: \( a_{min} = 1.67 \text{ m/s}^2 \) (או בדיוק \( 1\frac{2}{3} \text{ m/s}^2 \)).
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 הערת מורה:</strong> המילה "סף" בפיזיקה היא מילת קוד ל<strong>מצב גבול</strong>. ההקשר בשאלה קובע איזה כוח הגיע לגבול שלו!
+                <ul class="list-disc list-inside mt-2 mb-2 space-y-1">
+                    <li>"על סף ניתוק" / "מתרומם ממשטח" פירושו משענת שנעלמת: <strong>\( N = 0 \)</strong> (כמו בתרגיל שלנו).</li>
+                    <li>"על סף החלקה" פירושו הגעה לחיכוך סטטי מקסימלי: <strong>\( f_s = \mu_s N \)</strong>.</li>
+                    <li>"סף קריעה" של חוט פירושו הגעה למתיחות מקסימלית: <strong>\( T = T_{max} \)</strong>.</li>
+                </ul>
+                זכרו לקרוא היטב מיהו הכוח שמתקרב לקצה גבול היכולת שלו. בנוסף, הקפידו לעבוד בשלבים: קודם למצוא את הדרישה של הגוף המוגבל (ה-T שרמי דורש), ואז לבדוק את התנאים של הגוף השני (יעל).
+            </div>
+        </div>
+
+    </div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+</body>
+</html>
