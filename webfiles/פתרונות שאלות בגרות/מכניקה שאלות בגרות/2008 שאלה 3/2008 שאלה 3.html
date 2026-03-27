@@ -1,0 +1,752 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2008 שאלה 3</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+        
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-top: 4px solid #3b82f6;
+        }
+
+        .formula-badge {
+            display: inline-block;
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-weight: 500;
+            margin: 0.25rem;
+            border: 1px solid #bfdbfe;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: #ecfdf5;
+            color: #065f46;
+            border: 2px solid #34d399;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 1.5rem;
+            font-size: 1.125rem;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+        }
+
+        .teacher-highlight {
+            background-color: #fffbeb;
+            border-right: 4px solid #fbbf24;
+            padding: 1rem;
+            border-radius: 0.375rem;
+            margin-top: 1.5rem;
+            color: #92400e;
+            display: flex;
+            align-items: start;
+            gap: 0.75rem;
+            line-height: 1.6;
+        }
+
+        .teacher-highlight::before {
+            content: '💡';
+            font-size: 1.25rem;
+            margin-top: 0.1rem;
+        }
+
+        .version-stamp {
+            background-color: #e2e8f0;
+            color: #475569;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.25rem;
+            display: inline-flex;
+            gap: 0.5rem;
+            font-size: 0.875rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+
+        h1 {
+            color: #1e293b;
+            font-size: 2rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-align: center;
+        }
+
+        h2 {
+            color: #2563eb;
+            font-size: 1.5rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            border-bottom: 2px solid #bfdbfe;
+            padding-bottom: 0.5rem;
+        }
+
+        h3 {
+            color: #475569;
+            font-size: 1.125rem;
+            font-weight: 600;
+            margin-top: 1rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .step-container {
+            margin-bottom: 1rem;
+        }
+
+        mjx-container {
+            direction: ltr !important;
+        }
+
+        .math-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.5rem 0;
+            margin: 0.5rem 0;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - מכניקה 2008 שאלה 3</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מכניקה | קיץ 2008 | שאלה 3</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך, צעד-אחר-צעד, כולל הסברים פדגוגיים ותרשימים</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <main>
+        
+        <!-- סעיף א -->
+        <div class="section-card">
+            <h2>סעיף א': מציאת מסת גוף 2</h2>
+            
+            <div class="step-container">
+                <h3>א. מה נתון:</h3>
+                <ul class="list-disc list-inside text-slate-700 space-y-1">
+                    <li>מסת גוף 1 מנתוני השאלה: \( m_1 = 0.5 \text{ kg} \). היחידות כבר בשיטת MKS התקנית.</li>
+                    <li>מתוך גרף המהירות-זמן, החל מרגע \( t = 6 \text{ s} \) ועד \( t = 12 \text{ s} \), גודל המהירות של גוף 1 הוא קבוע ועומד על \( v = 30 \text{ m/s} \).</li>
+                    <li>החל מרגע \( t = 6 \text{ s} \) הכוח החיצוני \( F_1 \) מפסיק לפעול.</li>
+                    <li>תאוצת הכובד: \( g = 10 \text{ m/s}^2 \).</li>
+                </ul>
+            </div>
+
+            <div class="step-container">
+                <h3>ב. מה מחפשים:</h3>
+                <p class="text-slate-700">את ערכה של המסה \( m_2 \).</p>
+            </div>
+
+            <div class="step-container">
+                <h3>ג. נוסחאות בשימוש:</h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="formula-badge">\( \Sigma \vec{F} = m\vec{a} \)</span>
+                    <span class="formula-badge">\( a = \frac{dv}{dt} \)</span>
+                    <span class="formula-badge">\( F = mg \)</span>
+                </div>
+            </div>
+
+            <div class="step-container">
+                <h3>ד. הצבה ופתרון:</h3>
+                <p class="text-slate-700 mb-2">
+                    מכיוון שהחל מרגע \( t = 6 \text{ s} \) וקטור המהירות קבוע (גם הגודל וגם הכיוון אינם משתנים), התאוצה של המערכת היא אפס (\( a = 0 \)).
+                    נשרטט תרשים כוחות עבור כל גוף במצב זה:
+                </p>
+                
+                <div class="svg-container flex justify-center my-4">
+                    <img src="image-1.png" width="300" height="200" style="width:300px;height:200px;object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                    <div style="display:none;width:300px;height:200px;background:#f1f5f9;border:1px dashed #94a3b8;border-radius:4px;align-items:center;justify-content:center;color:#64748b;font-size:12px;">תרשים לא זמין</div>
+                </div>
+
+                <p class="text-slate-700 leading-relaxed">
+                    נבחר ציר עבודה בהתאם לכיוון התנועה של המערכת: כלומר, ציר חיובי מטה עבור גוף 1, וציר חיובי מעלה עבור גוף 2. 
+                    מכיוון שהתאוצה היא אפס, שקול הכוחות על כל גוף מתאפס. נרשום את משוואות הכוחות:
+                </p>
+                <div class="math-scroll text-center text-lg my-3">
+                    <span class="font-bold ml-2">עבור גוף 1 (כיוון חיובי מטה):</span>
+                    \( m_1 g - T = 0 \implies T = m_1 g \)
+                </div>
+                <div class="math-scroll text-center text-lg my-3">
+                    <span class="font-bold ml-2">עבור גוף 2 (כיוון חיובי מעלה):</span>
+                    \( T - m_2 g = 0 \implies T = m_2 g \)
+                </div>
+                <p class="text-slate-700 leading-relaxed">
+                    משתי המשוואות נובע בבירור כי המתיחות שווה למשקל של כל אחד מהגופים, ולכן משקלי הגופים שווים. מכאן שהמסות זהות:
+                </p>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( m_1 g = m_2 g \implies m_1 = m_2 \)
+                </div>
+                
+                <div class="final-answer">
+                    \( m_2 = 0.5 \text{ kg} \)
+                </div>
+            </div>
+
+            <div class="teacher-highlight flex-col">
+                <div class="mb-3">
+                    <strong>הערה 1 - תאוצה אפס:</strong>
+                    חשוב לדייק: גודל מהירות קבוע כשלעצמו אינו מבטיח תאוצה אפס (למשל בתנועה מעגלית שם כיוון המהירות משתנה ולכן יש תאוצה). אולם, התאוצה היא אפס רק אם <strong>גם גודל המהירות וגם כיוונה</strong> אינם משתנים. מאחר ובשאלה זו מדובר בתנועה בקו ישר, וקטור המהירות כולו קבוע והתאוצה אכן מתאפסת.
+                </div>
+                <div>
+                    <strong>הערה 2 - אסטרטגיה בבחירת צירים:</strong>
+                    בבניית המשוואות, בחרנו 'ציר מערכת' שעוקב אחר כיוון התנועה (מטה לגוף 1, ומעלה לגוף 2). שימו לב שגישה זו גורמת לכוח המתיחות \(T\) להיות שלילי במשוואה אחת וחיובי בשנייה. אומנם בסעיף זה התאוצה היא אפס וכל בחירת צירים הייתה "מסתדרת", אך הרגל זה קריטי! בחירה עקבית בציר בכיוון התנועה תבטיח שתמיד תוכלו לחבר את משוואות הגופים ולבטל את המתיחות האלגברית, גם כאשר למערכת יש תאוצה (כפי שנראה בסעיף הבא).
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ב -->
+        <div class="section-card">
+            <h2>סעיף ב': חישוב גודל הכוח \( F_1 \)</h2>
+            
+            <div class="step-container">
+                <h3>א. מה נתון:</h3>
+                <ul class="list-disc list-inside text-slate-700 space-y-1">
+                    <li>בפרק הזמן של \( 0 \le t \le 6 \text{ s} \) הכוח \( F_1 \) פועל כלפי מטה על גוף 1.</li>
+                    <li>מתוך הגרף, ברגע \( t = 0 \) המהירות היא \( v_0 = 0 \).</li>
+                    <li>ברגע \( t = 6 \text{ s} \) המהירות היא \( v = 30 \text{ m/s} \) (הגרף עולה בקו ישר, לכן התנועה היא שוות-תאוצה).</li>
+                    <li>מסת שני הגופים ידועה כעת: \( m_1 = m_2 = 0.5 \text{ kg} \).</li>
+                </ul>
+            </div>
+
+            <div class="step-container">
+                <h3>ב. מה מחפשים:</h3>
+                <p class="text-slate-700">את גודלו של הכוח החיצוני \( F_1 \) הפועל על גוף 1.</p>
+            </div>
+
+            <div class="step-container">
+                <h3>ג. נוסחאות בשימוש:</h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="formula-badge">\( v = v_0 + at \)</span>
+                    <span class="formula-badge">\( \Sigma \vec{F} = m\vec{a} \)</span>
+                </div>
+            </div>
+
+            <div class="step-container">
+                <h3>ד. הצבה ופתרון:</h3>
+                <p class="text-slate-700 mb-2">
+                    תחילה נחשב את התאוצה של המערכת בפרק הזמן שבו פועל הכוח. מכיוון שהגרף מתאר מהירות בציר שמכוון כלפי מטה, שיפוע הגרף ייתן לנו את התאוצה.
+                </p>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( a = \frac{\Delta v}{\Delta t} = \frac{30 - 0}{6 - 0} = 5 \text{ m/s}^2 \)
+                </div>
+                <p class="text-slate-700 mb-2">
+                    התאוצה היא חיובית לפי הגרף, כלומר תאוצתו של גוף 1 היא כלפי מטה בשיעור של \( 5 \text{ m/s}^2 \), וכתוצאה מכך תאוצתו של גוף 2 היא באותו גודל אך כלפי מעלה. נשרטט את הכוחות:
+                </p>
+
+                <div class="svg-container flex justify-center my-4">
+                    <img src="image-2.png" width="300" height="230" style="width:300px;height:230px;object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                    <div style="display:none;width:300px;height:230px;background:#f1f5f9;border:1px dashed #94a3b8;border-radius:4px;align-items:center;justify-content:center;color:#64748b;font-size:12px;">תרשים לא זמין</div>
+                </div>
+
+                <p class="text-slate-700 leading-relaxed">
+                    כעת נרשום את משוואת החוק השני של ניוטון עבור כל גוף בנפרד, בדיוק כפי שעשינו בסעיף הקודם: נשתמש בציר החיובי בכיוון תנועתו של כל גוף (לגוף 1 מטה, ולגוף 2 מעלה).
+                </p>
+                <div class="math-scroll text-lg my-3 bg-slate-100 p-4 rounded-md inline-block min-w-full text-center leading-loose">
+                    <span class="font-bold ml-2">(1) גוף 1 (חיובי מטה):</span>
+                    \( m_1 g + F_1 - T = m_1 a \) <br>
+                    <span class="font-bold ml-2">(2) גוף 2 (חיובי מעלה):</span>
+                    \( T - m_2 g = m_2 a \)
+                </div>
+                <p class="text-slate-700 leading-relaxed">
+                    בזכות בחירת הצירים העקבית שלנו, כדי לבטל את הנעלם \( T \), פשוט נחבר את שתי המשוואות יחד באופן אלגברי:
+                </p>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( m_1 g + F_1 - T + T - m_2 g = m_1 a + m_2 a \)
+                </div>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( m_1 g + F_1 - m_2 g = (m_1 + m_2) a \)
+                </div>
+                <p class="text-slate-700 leading-relaxed">
+                    נציב את הנתונים המספריים: \( m_1 = 0.5 \), \( m_2 = 0.5 \), \( g = 10 \), \( a = 5 \):
+                </p>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( 0.5 \cdot 10 + F_1 - 0.5 \cdot 10 = (0.5 + 0.5) \cdot 5 \)
+                </div>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( 5 + F_1 - 5 = 1 \cdot 5 \)
+                </div>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( F_1 = 5 \text{ N} \)
+                </div>
+                
+                <div class="final-answer">
+                    \( F_1 = 5 \text{ N} \)
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <div>
+                    <strong>טיפ אסטרטגי לפתרון:</strong>
+                    בבעיות של גופים קשורים, נוטים פעמים רבות להתייחס מיד למערכת כולה כאל "גוף אחד". זו גישה לגיטימית לחלוטין ולרוב קלה ומהירה יותר למציאת תאוצת המערכת. הבעיה מתחילה כאשר השאלה דורשת לענות גם על כוחות פנימיים במערכת (כמו המתיחות בחוט, כפי שקורה בהמשך השאלה). במקרים כאלה, ממילא נידרש לכתוב את משוואות התנועה לכל גוף בנפרד כדי לחלץ את המתיחות, כך ששיטת ה"גוף האחד" לא באמת חוסכת לנו עבודה. לכן, לרוב עדיף לבנות מראש משוואה לכל גוף (תוך הקפדה על ציר עקבי) שתשרת אותנו לכל סעיפי השאלה.
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ג -->
+        <div class="section-card">
+            <h2>סעיף ג': המתיחות בחוט b</h2>
+            
+            <div class="step-container">
+                <h3>א. מה נתון:</h3>
+                <ul class="list-disc list-inside text-slate-700 space-y-1">
+                    <li>מתוך החישובים הקודמים, ידועה לנו תאוצת המערכת ב-6 השניות הראשונות: \( a = 5 \text{ m/s}^2 \).</li>
+                    <li>מסת גוף 2 היא \( m_2 = 0.5 \text{ kg} \).</li>
+                    <li>חוט b הוא החוט המחבר בין שני הגופים. המתיחות בו סומנה כ- \( T \).</li>
+                </ul>
+            </div>
+
+            <div class="step-container">
+                <h3>ב. מה מחפשים:</h3>
+                <p class="text-slate-700">את גודל כוח המתיחות \( T \) בחוט b.</p>
+            </div>
+
+            <div class="step-container">
+                <h3>ג. נוסחאות בשימוש:</h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="formula-badge">\( \Sigma \vec{F} = m\vec{a} \)</span>
+                </div>
+            </div>
+
+            <div class="step-container">
+                <h3>ד. הצבה ופתרון:</h3>
+                <p class="text-slate-700 mb-2">
+                    נשתמש במשוואת החוק השני של ניוטון עבור גוף 2, שרשמנו בסעיף הקודם. בחרנו במשוואה זו מכיוון שהיא פשוטה יותר ואינה כוללת את \( F_1 \):
+                </p>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( T - m_2 g = m_2 a \)
+                </div>
+                <p class="text-slate-700 leading-relaxed">
+                    נבודד את המתיחות \( T \):
+                </p>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( T = m_2 a + m_2 g = m_2 (a + g) \)
+                </div>
+                <p class="text-slate-700 leading-relaxed">
+                    נציב את הנתונים: \( m_2 = 0.5 \text{ kg} \), \( a = 5 \text{ m/s}^2 \), \( g = 10 \text{ m/s}^2 \):
+                </p>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( T = 0.5 \cdot (5 + 10) = 0.5 \cdot 15 = 7.5 \text{ N} \)
+                </div>
+                
+                <div class="final-answer">
+                    \( T = 7.5 \text{ N} \)
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <div>
+                    <strong>דרך נוספת:</strong>
+                    אפשר היה להציב את הנתונים גם במשוואה של גוף 1: \( m_1 g + F_1 - T = m_1 a \). הצבה תיתן: \( 5 + 5 - T = 0.5 \cdot 5 \implies 10 - T = 2.5 \implies T = 7.5 \text{ N} \). תמיד כדאי לבחור את המשוואה הפשוטה יותר כדי למזער טעויות אלגבריות, אך טוב לדעת ששתי הדרכים מובילות לאותה התוצאה!
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ד -->
+        <div class="section-card">
+            <h2>סעיף ד': המתיחות בחוט c</h2>
+            
+            <div class="step-container">
+                <h3>א. מה נתון:</h3>
+                <ul class="list-disc list-inside text-slate-700 space-y-1">
+                    <li>המתיחות בחוט b (משני צידי הגלגלת) ידועה כעת: \( T = 7.5 \text{ N} \).</li>
+                    <li>חוט c מחזיק את הגלגלת כולה המחוברת לתקרה. נסמן את המתיחות בו כ- \( T_c \).</li>
+                    <li>מסתו של חוט וגלגלת בבעיות בגרות (אלא אם נאמר אחרת) נחשבת לזניחה (\( m = 0 \)).</li>
+                </ul>
+            </div>
+
+            <div class="step-container">
+                <h3>ב. מה מחפשים:</h3>
+                <p class="text-slate-700">את גודל כוח המתיחות \( T_c \) בחוט c המחבר את הגלגלת לתקרה.</p>
+            </div>
+
+            <div class="step-container">
+                <h3>ג. נוסחאות בשימוש:</h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="formula-badge">\( \Sigma \vec{F} = 0 \)</span> (עבור גוף חסר מסה)
+                </div>
+            </div>
+
+            <div class="step-container">
+                <h3>ד. הצבה ופתרון:</h3>
+                <p class="text-slate-700 mb-2">
+                    נשרטט את תרשים הכוחות הפועלים על הגלגלת עצמה. חוט c מושך את הגלגלת כלפי מעלה בכוח \( T_c \). חוט b (הכרוך על הגלגלת) מושך את הגלגלת כלפי מטה משני צדדיה בכוח \( T \).
+                </p>
+
+                <div class="svg-container flex justify-center my-4">
+                    <img src="image-4.png" width="200" height="200" style="width:200px;height:200px;object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                    <div style="display:none;width:200px;height:200px;background:#f1f5f9;border:1px dashed #94a3b8;border-radius:4px;align-items:center;justify-content:center;color:#64748b;font-size:12px;">תרשים לא זמין</div>
+                </div>
+
+                <p class="text-slate-700 leading-relaxed">
+                    מכיוון שהגלגלת חסרת מסה (\( m = 0 \)), שקול הכוחות עליה חייב להיות שווה לאפס תמיד (שכן \( \Sigma F = 0 \cdot a = 0 \)). לכן הכוח שמושך מעלה חייב לאזן בדיוק את הכוחות שמושכים מטה.
+                </p>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( \Sigma F_{y} = T_c - T - T = 0 \)
+                </div>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( T_c = 2T \)
+                </div>
+                <p class="text-slate-700 leading-relaxed">
+                    נציב את הערך של \( T \) שמצאנו:
+                </p>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( T_c = 2 \cdot 7.5 = 15 \text{ N} \)
+                </div>
+                
+                <div class="final-answer">
+                    \( T_c = 15 \text{ N} \)
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <div>
+                    <strong>חשוב לשים לב:</strong>
+                    על אף שהמערכת כולה מאיצה, הגלגלת עצמה אינה נעה במרחב אלא רק מסתובבת במקום. מעבר לכך, מכיוון שאנו מניחים בבגרות שהגלגלת היא גוף חסר מסה, שקול הכוחות עליה מתאפס לחלוטין. הכלל "מתיחות בחוט התקרה שווה לפעמיים המתיחות בחוט הגלגלת" עובד תמיד עבור גלגלת חסרת מסה אידיאלית.
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ה -->
+        <div class="section-card">
+            <h2>סעיף ה': האם הגרף יישאר זהה?</h2>
+            
+            <div class="step-container">
+                <h3>א. מה נתון:</h3>
+                <ul class="list-disc list-inside text-slate-700 space-y-1">
+                    <li>המערכת במצב מנוחה. מדביקים לגוף 1 גוף נוסף, גוף 3.</li>
+                    <li>המשקל של גוף 3 זהה בגודלו לכוח \( F_1 \), כלומר: \( W_3 = F_1 = 5 \text{ N} \).</li>
+                    <li>מכאן נחשב את מסתו של גוף 3: \( m_3 = \frac{W_3}{g} = \frac{5}{10} = 0.5 \text{ kg} \).</li>
+                    <li>המשקל המשותף בצד שמאל מושך מטה, והמערכת משוחררת מנוחה.</li>
+                </ul>
+            </div>
+
+            <div class="step-container">
+                <h3>ב. מה מחפשים:</h3>
+                <p class="text-slate-700">לקבוע האם גרף המהירות-זמן של גוף 1 בשש השניות הראשונות בתרחיש החדש יהיה זהה לגרף ב, שונה ממנו, ולנמק.</p>
+            </div>
+
+            <div class="step-container">
+                <h3>ג. נוסחאות בשימוש:</h3>
+                <div class="flex flex-wrap gap-2">
+                    <span class="formula-badge">\( \Sigma \vec{F} = m\vec{a} \)</span>
+                </div>
+            </div>
+
+            <div class="step-container">
+                <h3>ד. הצבה ופתרון:</h3>
+                <p class="text-slate-700 mb-2">
+                    בגרף הנתון (גרף ב'), שיפוע הגרף מייצג את תאוצת המערכת ב-6 השניות הראשונות, והיא הייתה \( a = 5 \text{ m/s}^2 \). כדי לדעת אם הגרף יהיה זהה, עלינו לבדוק אם התאוצה החדשה (נסמן אותה \( a' \)) תהיה זהה לתאוצה המקורית.
+                </p>
+                <p class="text-slate-700 mb-2">
+                    במצב החדש, נרשום את משוואות החוק השני של ניוטון עבור המערכת. בצד אחד של הגלגלת יש לנו כעת את המסה המשותפת \( m_1 + m_3 \), ובצד השני את המסה \( m_2 \).
+                </p>
+
+                <div class="svg-container flex justify-center my-4">
+                    <img src="image-5.png" width="300" height="230" style="width:300px;height:230px;object-fit:contain;" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+                    <div style="display:none;width:300px;height:230px;background:#f1f5f9;border:1px dashed #94a3b8;border-radius:4px;align-items:center;justify-content:center;color:#64748b;font-size:12px;">תרשים לא זמין</div>
+                </div>
+
+                <div class="math-scroll text-lg my-3 bg-slate-100 p-4 rounded-md inline-block min-w-full text-center leading-loose">
+                    <span class="font-bold ml-2">צד שמאל (חיובי מטה):</span>
+                    \( (m_1 + m_3) g - T' = (m_1 + m_3) a' \) <br>
+                    <span class="font-bold ml-2">צד ימין (חיובי מעלה):</span>
+                    \( T' - m_2 g = m_2 a' \)
+                </div>
+                <p class="text-slate-700 leading-relaxed">
+                    נחבר שוב את שתי המשוואות כדי לבטל את המתיחות \( T' \):
+                </p>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( (m_1 + m_3) g - m_2 g = (m_1 + m_2 + m_3) a' \)
+                </div>
+                <p class="text-slate-700 leading-relaxed">
+                    שימו לב למשמעות הפיזיקלית: הכוח המניע נטו נשאר בדיוק כפי שהיה במצב הראשון (\( 5 \text{ N} \)), אך כעת המסה הכוללת שצריך להאיץ גדולה יותר!
+                    נציב את הנתונים כדי למצוא את \( a' \):
+                </p>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( (0.5 + 0.5) \cdot 10 - 0.5 \cdot 10 = (0.5 + 0.5 + 0.5) a' \)
+                </div>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( 10 - 5 = 1.5 a' \)
+                </div>
+                <div class="math-scroll text-center text-lg my-3">
+                    \( 5 = 1.5 a' \implies a' = \frac{5}{1.5} = \frac{10}{3} \approx 3.33 \text{ m/s}^2 \)
+                </div>
+                <p class="text-slate-700 leading-relaxed">
+                    תאוצת המערכת כעת היא \( \approx 3.33 \text{ m/s}^2 \), בעוד שקודם היא הייתה \( 5 \text{ m/s}^2 \). מכיוון שהתאוצה קטנה יותר, שיפוע גרף המהירות-זמן יהיה מתון (קטן) יותר.
+                </p>
+                
+                <div class="final-answer">
+                    הגרף לא יהיה זהה (הוא יהיה שונה). שיפוע הגרף החדש יהיה קטן יותר.
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <div>
+                    <strong>טיפ למבחן:</strong>
+                    זהו סעיף הבנה קלאסי בבגרויות. חייבים להבחין בין הפעלת "כוח משיכה" חיצוני (כמו יד שמושכת) לבין "תליית מסה" שגורמת לכוח משיכה כובדי זהה. המסה שתלינו אומנם מוסיפה כוח מניע זהה ל- \( F_1 \), אבל היא גם מוסיפה "התמדה" (אינרציה) למערכת! עכשיו הכוח המניע צריך לסחוב עמו גם את גוף 3, ולכן התאוצה פוחתת. תמיד כדאי לרשום את משוואת התאוצה הכללית: \( a = \frac{\Sigma F}{\Sigma m} \) – המונה נשאר זהה, אך המכנה גדל!
+                </div>
+            </div>
+        </div>
+
+    </main>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
