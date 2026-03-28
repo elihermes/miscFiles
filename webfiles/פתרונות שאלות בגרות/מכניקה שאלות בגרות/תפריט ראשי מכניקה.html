@@ -108,6 +108,12 @@
             gap: 0.55rem;
         }
 
+        .skill-filter-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+
         .topic-chip {
             border: 1px solid var(--slate-300);
             background: #fff;
@@ -154,6 +160,54 @@
         .topic-chip.is-active .topic-count {
             background: rgba(255, 255, 255, 0.18);
             color: #eff6ff;
+        }
+
+        .skill-chip {
+            border: 1px solid #86efac;
+            background: #f0fdf4;
+            color: #166534;
+            border-radius: 9999px;
+            padding: 0.42rem 0.8rem;
+            font: inherit;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .skill-chip:hover {
+            border-color: #4ade80;
+            transform: translateY(-1px);
+        }
+
+        .skill-chip.is-active {
+            background: #166534;
+            color: #ecfdf5;
+            border-color: #166534;
+        }
+
+        .skill-chip.is-empty {
+            opacity: 0.55;
+        }
+
+        .skill-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.45rem;
+            height: 1.45rem;
+            padding: 0 0.35rem;
+            margin-inline-start: 0.35rem;
+            border-radius: 9999px;
+            background: #dcfce7;
+            color: #166534;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .skill-chip.is-active .skill-count {
+            background: rgba(255, 255, 255, 0.18);
+            color: #ecfdf5;
         }
 
         .filter-note {
@@ -210,6 +264,12 @@
             border-color: #bfdbfe;
             color: #1d4ed8;
             background: #eff6ff;
+        }
+
+        .meta-pill.skill {
+            border-color: #86efac;
+            color: #166534;
+            background: #f0fdf4;
         }
 
         .meta-pill.pending {
@@ -333,7 +393,16 @@
                             <button id="clearTopicsBtn" type="button" class="text-sm text-blue-700 hover:underline">נקה תגיות</button>
                         </div>
                         <div id="topicsFilter" class="topic-filter-box"></div>
-                        <p class="filter-note mt-2">אפשר לבחור כמה נושאים יחד. יוצגו שאלות שמכילות לפחות אחד מהנושאים שנבחרו.</p>
+                        <p class="filter-note mt-2">אפשר לבחור כמה נושאים יחד. יוצגו רק שאלות שמכילות את כל הנושאים שנבחרו.</p>
+                    </div>
+
+                    <div>
+                        <div class="topics-toolbar mb-2">
+                            <span class="block text-sm font-semibold text-slate-700">סינון לפי מיומנויות</span>
+                            <button id="clearSkillsBtn" type="button" class="text-sm text-green-700 hover:underline">נקה מיומנויות</button>
+                        </div>
+                        <div id="skillsFilter" class="skill-filter-box"></div>
+                        <p class="filter-note mt-2">אפשר לבחור כמה מיומנויות יחד. יוצגו רק שאלות שמכילות את כל המיומנויות שנבחרו.</p>
                     </div>
 
                     <div class="sort-toolbar">
@@ -370,7 +439,9 @@
         const resultsInfo = document.getElementById("resultsInfo");
         const listEl = document.getElementById("solutionsList");
         const topicsFilterEl = document.getElementById("topicsFilter");
+        const skillsFilterEl = document.getElementById("skillsFilter");
         const clearTopicsBtn = document.getElementById("clearTopicsBtn");
+        const clearSkillsBtn = document.getElementById("clearSkillsBtn");
         const sortByRecentBtn = document.getElementById("sortByRecentBtn");
         const hoverPreview = document.getElementById("hoverPreview");
         const hoverPreviewImg = document.getElementById("hoverPreviewImg");
@@ -378,7 +449,9 @@
         let previewActive = false;
         let solutions = [...staticSolutions];
         let topicCatalog = [];
+        let skillCatalog = [];
         const selectedTopics = new Set();
+        const selectedSkills = new Set();
         let sortByRecent = false;
 
         function isLocalhost() {
@@ -681,6 +754,7 @@
         function mergeTopicDataWithDiscovered(topicData, discoveredPaths) {
             const questions = Array.isArray(topicData.questions) ? topicData.questions.map((q) => ({ ...q })) : [];
             const topics = Array.isArray(topicData.topics) ? topicData.topics : [];
+            const skills = Array.isArray(topicData.skills) ? topicData.skills : [];
 
             const byPath = new Map();
             const byTitle = new Map();
@@ -692,6 +766,9 @@
                 question.path = normalizedPath;
                 if (!Array.isArray(question.topics)) {
                     question.topics = [];
+                }
+                if (!Array.isArray(question.skills)) {
+                    question.skills = [];
                 }
                 byPath.set(normalizedPath, question);
                 if (question.title) {
@@ -741,7 +818,8 @@
                     id,
                     title,
                     path: normalizedPath,
-                    topics: []
+                    topics: [],
+                    skills: []
                 };
                 questions.push(newQuestion);
                 byPath.set(normalizedPath, newQuestion);
@@ -771,7 +849,7 @@
                 }
             });
 
-            return { topics, questions: [...dedupedByTitle.values()] };
+            return { topics, skills, questions: [...dedupedByTitle.values()] };
         }
 
         async function loadSolutionsFromTopicsJson() {
@@ -785,10 +863,12 @@
             const data = mergeTopicDataWithDiscovered(rawData, discoveredPaths);
             const questions = Array.isArray(data.questions) ? data.questions : [];
             topicCatalog = Array.isArray(data.topics) ? data.topics : [];
+            skillCatalog = Array.isArray(data.skills) ? data.skills : [];
 
             return questions.map((entry, index) => {
                 const parsed = parseFromFolderName(entry.title) || { year: 0, question: "?", title: entry.title };
                 const topicTags = Array.isArray(entry.topics) ? entry.topics : [];
+                const skillTags = Array.isArray(entry.skills) ? entry.skills : [];
                 const needsTagging = topicTags.length === 0;
                 const addedAtTs = parseAddedAtToTimestamp(entry.addedAt);
                 return {
@@ -798,6 +878,7 @@
                     href: `./${entry.path}`,
                     tags: ["מכניקה", "בגרות", ...topicTags],
                     topicTags,
+                    skillTags,
                     needsTagging,
                     addedAt: typeof entry.addedAt === "string" ? entry.addedAt : "",
                     addedAtTs,
@@ -868,19 +949,16 @@
             });
         }
 
-        function getTopicCountForCurrentYear(topic) {
-            const yearVal = yearSelect.value;
-            return solutions.filter((solution) => {
-                const yearOk = yearVal === "all" || String(solution.year) === yearVal;
-                return yearOk && (solution.topicTags || []).includes(topic);
-            }).length;
+        function getTopicCountFromList(topic, items) {
+            return items.filter((solution) => (solution.topicTags || []).includes(topic)).length;
         }
 
-        function renderTopicFilters() {
+        function renderTopicFilters(items) {
             topicsFilterEl.innerHTML = "";
+            const scopedItems = Array.isArray(items) ? items : solutions;
 
             topicCatalog.forEach((topic) => {
-                const count = getTopicCountForCurrentYear(topic);
+                const count = getTopicCountFromList(topic, scopedItems);
                 const button = document.createElement("button");
                 button.type = "button";
                 button.className = "topic-chip";
@@ -912,6 +990,59 @@
             });
         }
 
+        function getSkillCountFromList(skill, items) {
+            return items.filter((solution) => (solution.skillTags || []).includes(skill)).length;
+        }
+
+        function renderSkillFilters(items) {
+            skillsFilterEl.innerHTML = "";
+            const scopedItems = Array.isArray(items) ? items : solutions;
+
+            skillCatalog.forEach((skill) => {
+                const count = getSkillCountFromList(skill, scopedItems);
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "skill-chip";
+                if (selectedSkills.has(skill)) {
+                    button.classList.add("is-active");
+                }
+                if (count === 0) {
+                    button.classList.add("is-empty");
+                }
+
+                const label = document.createElement("span");
+                label.textContent = skill;
+
+                const countBadge = document.createElement("span");
+                countBadge.className = "skill-count";
+                countBadge.textContent = String(count);
+
+                button.append(label, countBadge);
+                button.addEventListener("click", () => {
+                    if (selectedSkills.has(skill)) {
+                        selectedSkills.delete(skill);
+                    } else {
+                        selectedSkills.add(skill);
+                    }
+                    renderSkillFilters();
+                    runFilter();
+                });
+                skillsFilterEl.appendChild(button);
+            });
+        }
+
+        function getFilteredSolutions() {
+            const yearVal = yearSelect.value;
+            return solutions.filter((s) => {
+                const yearOk = yearVal === "all" || String(s.year) === yearVal;
+                const topicOk = selectedTopics.size === 0
+                    || [...selectedTopics].every((topic) => (s.topicTags || []).includes(topic));
+                const skillOk = selectedSkills.size === 0
+                    || [...selectedSkills].every((skill) => (s.skillTags || []).includes(skill));
+                return yearOk && topicOk && skillOk;
+            });
+        }
+
         function render(items) {
             listEl.innerHTML = "";
 
@@ -931,6 +1062,7 @@
                         const cls = (item.topicTags || []).includes(t) ? "meta-pill topic" : "meta-pill";
                         return `<span class="${cls}">${t}</span>`;
                     }).join(" ");
+                    const skillsHtml = (item.skillTags || []).map((s) => `<span class="meta-pill skill">${s}</span>`).join(" ");
                     const pendingTag = item.needsTagging ? '<span class="meta-pill pending">נדרש תיוג</span>' : "";
 
                     card.innerHTML = `
@@ -942,6 +1074,7 @@
                             <a class="solution-link" href="${item.href}">${item.title}</a>
                             <div class="mt-2 text-sm text-slate-600">שנה: <strong>${item.year}</strong> | שאלה: <strong>${item.question}</strong></div>
                             <div class="mt-2">${pendingTag} ${tagsHtml}</div>
+                            <div class="mt-2 text-sm text-slate-600">מיומנויות: ${skillsHtml || '<span class="meta-pill">ללא תיוג</span>'}</div>
                         </div>
                     `;
 
@@ -954,22 +1087,18 @@
 
         function runFilter() {
             const yearVal = yearSelect.value;
-            renderTopicFilters();
-
-            const filtered = solutions.filter((s) => {
-                const yearOk = yearVal === "all" || String(s.year) === yearVal;
-                const topicOk = selectedTopics.size === 0
-                    || [...selectedTopics].some((topic) => (s.topicTags || []).includes(topic));
-                return yearOk && topicOk;
-            });
+            const filtered = getFilteredSolutions();
+            renderTopicFilters(filtered);
+            renderSkillFilters(filtered);
 
             filtered.sort(sortByRecent ? compareSolutionsByRecent : compareSolutions);
             render(filtered);
 
             const yearText = yearVal === "all" ? "כל השנים" : `שנה ${yearVal}`;
             const topicsText = selectedTopics.size ? ` | נושאים: ${[...selectedTopics].join(", ")}` : "";
+            const skillsText = selectedSkills.size ? ` | מיומנויות: ${[...selectedSkills].join(", ")}` : "";
             const sortText = sortByRecent ? " | מיון: נוסף אחרון" : "";
-            resultsInfo.textContent = `נמצאו ${filtered.length} פתרונות עבור ${yearText}${topicsText}${sortText}.`;
+            resultsInfo.textContent = `נמצאו ${filtered.length} פתרונות עבור ${yearText}${topicsText}${skillsText}${sortText}.`;
         }
 
         document.addEventListener("DOMContentLoaded", async function() {
@@ -1002,10 +1131,10 @@
             } catch (_err) {
                 solutions = [...staticSolutions];
                 topicCatalog = [];
+                skillCatalog = [];
             }
 
             yearOptionsInit();
-            renderTopicFilters();
             syncSortButtonUi();
             runFilter();
             yearSelect.addEventListener("change", runFilter);
@@ -1014,6 +1143,13 @@
                 renderTopicFilters();
                 runFilter();
             });
+            if (clearSkillsBtn) {
+                clearSkillsBtn.addEventListener("click", () => {
+                    selectedSkills.clear();
+                    renderSkillFilters();
+                    runFilter();
+                });
+            }
             if (sortByRecentBtn) {
                 sortByRecentBtn.addEventListener("click", () => {
                     sortByRecent = !sortByRecent;
