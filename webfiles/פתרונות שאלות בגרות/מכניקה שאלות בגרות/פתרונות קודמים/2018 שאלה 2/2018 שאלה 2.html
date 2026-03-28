@@ -1,0 +1,696 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2018 שאלה 2</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .data-box {
+            background-color: #f0fdf4;
+            border: 1px solid #bbf7d0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .goal-box {
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+        }
+
+        .formula-box {
+            background-color: #fffbeb;
+            border: 1px solid #fde68a;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-bottom: 1rem;
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.5rem;
+            align-items: center;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .solution-box {
+            background-color: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1.5rem;
+            margin-bottom: 1rem;
+            overflow-x: auto;
+        }
+
+        .final-answer {
+            background-color: #eef2ff;
+            border: 2px solid #818cf8;
+            color: #3730a3;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 1.125rem;
+            direction: ltr; /* Better for equations */
+        }
+        
+        .final-answer-he {
+            direction: rtl;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .svg-container {
+            width: 100%;
+            max-width: 600px;
+            margin: 1rem auto;
+            background: white;
+            border: 1px dashed var(--slate-300);
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+        
+        .step-explanation {
+            background-color: #f8fafc;
+            border-right: 3px solid #cbd5e1;
+            padding: 0.75rem 1rem;
+            margin: 1rem 0;
+            border-radius: 0.25rem;
+        }
+
+        @media (max-width: 640px) {
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-2">פתרון בגרות בפיזיקה - מכניקה 2018</h1>
+        <h2 class="text-xl text-slate-600 mb-6">שאלה 2: דינמיקה וקינמטיקה של מערכת גופים</h2>
+        
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div style="display:none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">התמונה question-image.png לא נמצאה בתיקייה. אנא ודא שהיא קיימת.</div>
+    </section>
+
+    <main>
+        <!-- פתיח מורה -->
+        <div class="bg-blue-50 border border-blue-200 rounded-lg p-6 mb-8 shadow-sm">
+            <h3 class="text-xl font-bold text-blue-800 mb-2">שלום תלמידים יקרים 👋</h3>
+            <p class="text-slate-700 leading-relaxed">
+                בשאלה זו אנו מתמודדים עם בעיית דינמיקה קלאסית. בניתוח נתונים ניסויים (סעיפים ג-ה), חשוב לזכור את כלל הברזל של מעבדות בפיזיקה: אנו מותחים את קו המגמה <strong>לפי העין בעזרת סרגל</strong>, מנסים להעביר אותו קרוב ככל הניתן למרכז הנקודות. לאחר מכן, כל חישוב שנידרש לעשות יתבסס אך ורק על <strong>שתי נקודות שבחרנו מתוך הקו שסרטטנו</strong>, ולא על הנקודות המקוריות של הניסוי.
+            </p>
+        </div>
+
+        <!-- סעיף א -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף א': תרשים כוחות חופשי (FBD) וקביעת צירים</h3>
+            
+            <div class="data-box">
+                <h4 class="font-bold text-green-800 mb-1">שלב 1: מה נתון?</h4>
+                <ul class="list-disc list-inside text-green-700 space-y-1">
+                    <li>מערכת של שני גופים: \( m_1 \) ו- \( m_2 \).</li>
+                    <li>הגוף \( m_1 \) נמצא על מדרון משופע בזווית \( \alpha \). המדרון <strong>חלק</strong> (אין חיכוך).</li>
+                    <li>החוט והגלגלת אידיאליים, לכן המתיחות \( T \) שווה בשני צדי החוט.</li>
+                    <li>על גוף \( m_1 \) מופעל כוח קבוע \( F \) במקביל למדרון כלפי מטה.</li>
+                    <li>הגוף \( m_1 \) נע במורד המדרון בתאוצה \( a \).</li>
+                </ul>
+            </div>
+
+            <div class="goal-box">
+                <h4 class="font-bold text-blue-800 mb-1">שלב 2: מה מחפשים?</h4>
+                <p class="text-blue-900">לסרטט תרשים כוחות חופשי לכל אחד מהגופים בנפרד, כולל קביעת מערכת צירים מתאימה.</p>
+            </div>
+
+            <div class="formula-box">
+                <h4 class="font-bold text-yellow-800 w-full mb-1">שלב 3: נוסחאות ומושגים בשימוש:</h4>
+                <span class="formula-badge">כוח כובד: \( W = mg \)</span>
+                <span class="formula-badge">מתיחות: \( T \)</span>
+                <span class="formula-badge">כוח נורמלי: \( N \)</span>
+            </div>
+
+            <div class="solution-box">
+                <h4 class="font-bold text-slate-800 mb-4">שלב 4: הצבה ופתרון (תרשימי הכוחות)</h4>
+                <p class="mb-4">כדי להקל על פתרון המשוואות, ניצור "ציר תנועה" משותף למערכת. נגדיר את הכיוון החיובי כך שיעקוב אחר תנועת הגופים לאורך החוט: מכיוון שהגוף \( m_1 \) מאיץ במורד המדרון ומושך אחריו את הגוף \( m_2 \), נגדיר עבור \( m_1 \) את הכיוון החיובי (ציר \( x \)) <strong>במורד המדרון</strong>. בהתאמה, עבור הגוף \( m_2 \), הכיוון החיובי (ציר \( y \)) ייקבע <strong>כלפי מעלה</strong>. כך אנו מוודאים שהתאוצה של שני הגופים תיוצג על ידי אותו משתנה חיובי (\( a \)).</p>
+                
+                <div class="flex flex-col md:flex-row gap-6 justify-center">
+                    <!-- FBD m1 -->
+                    <div class="svg-container text-center w-full md:w-1/2">
+                        <h5 class="font-semibold mb-2">תרשים עבור \( m_1 \)</h5>
+                        <img src="image-1.1.png" alt="תרשים עבור m1" class="w-full h-auto" />
+                    </div>
+
+                    <!-- FBD m2 -->
+                    <div class="svg-container text-center w-full md:w-1/2">
+                        <h5 class="font-semibold mb-2">תרשים עבור \( m_2 \)</h5>
+                        <img src="image-1.2.png" alt="תרשים עבור m2" class="w-full h-auto" />
+                    </div>
+                </div>
+            </div>
+            
+            <div class="teacher-highlight">
+                <strong>💡 טיפ מורה על בחירת צירים:</strong> בבעיות עם גלגלת וחוט, כדאי לחשוב על הכיוון החיובי כנתיב רציף העוקב אחר החוט. במקום לנתח כל גוף בנפרד ולשבור את הראש עם כיוונים מנוגדים, אנו בוחרים כיוון חיובי ש"זורם" יחד עם התנועה לאורך החוט. אם המערכת נעה כך ש-\( m_1 \) יורד ו-\( m_2 \) עולה – אלו בדיוק יהיו הכיוונים החיוביים שנגדיר! גישה זו מבטיחה שהתאוצה של שניהם תהיה בעלת אותו סימן במשוואות ניוטון.
+            </div>
+            <svg style="width:0;height:0;position:absolute;">
+                <defs>
+                    <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#ef4444" /></marker>
+                    <marker id="arrow-purple" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#a855f7" /></marker>
+                    <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#3b82f6" /></marker>
+                    <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#f97316" /></marker>
+                    <marker id="arrow-gray" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#94a3b8" /></marker>
+                    <marker id="arrow-black" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth"><path d="M0,0 L0,6 L9,3 z" fill="#333" /></marker>
+                </defs>
+            </svg>
+        </div>
+
+        <!-- סעיף ב -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ב': פיתוח ביטוי לתאוצה</h3>
+
+            <div class="data-box">
+                <h4 class="font-bold text-green-800 mb-1">שלב 1: מה נתון?</h4>
+                <p class="text-green-700">תרשימי הכוחות שסרטטנו בסעיף א'. מערכת הצירים מוגדרת עם כיוון התנועה.</p>
+            </div>
+
+            <div class="goal-box">
+                <h4 class="font-bold text-blue-800 mb-1">שלב 2: מה מחפשים?</h4>
+                <p class="text-blue-900">לפתח ביטוי עבור התאוצה \( a \) כתלות בכוח המשתנה \( F \) ושאר פרמטרי המערכת (מסות וזווית).</p>
+            </div>
+
+            <div class="formula-box">
+                <h4 class="font-bold text-yellow-800 w-full mb-1">שלב 3: נוסחאות בשימוש:</h4>
+                <span class="formula-badge">החוק השני של ניוטון: \( \Sigma F = m \cdot a \)</span>
+            </div>
+
+            <div class="solution-box">
+                <h4 class="font-bold text-slate-800 mb-2">שלב 4: הצבה ופתרון</h4>
+                <p class="mb-2">נרשום את משוואות התנועה לפי החוק השני של ניוטון:</p>
+                <div class="step-explanation">
+                    <p>עבור \( m_1 \) (בכיוון המדרון מטה, מוגדר כחיובי):</p>
+                    \[ F + m_1g \sin\alpha - T = m_1a \]
+                    <p>עבור \( m_2 \) (בכיוון מעלה, מוגדר כחיובי):</p>
+                    \[ T - m_2g = m_2a \]
+                </div>
+                
+                <div class="step-explanation">
+                    <p class="mb-2"><strong>נחבר את שתי המשוואות יחד</strong>: פעולה זו מאפשרת לנו "להעלים" את המתיחות הלא ידועה \( T \) (כי \( -T \) ו-\( +T \) מבטלים זה את זה):</p>
+                    \[ (F + m_1g \sin\alpha - T) + (T - m_2g) = m_1a + m_2a \]
+                    \[ F + m_1g \sin\alpha - m_2g = a(m_1 + m_2) \]
+                </div>
+                
+                <div class="step-explanation">
+                    <p class="mb-2">עכשיו <strong>נבודד את התאוצה \( a \) שלב אחר שלב</strong>. תחילה, נחלק את שני אגפי המשוואה בביטוי של המסות \( (m_1 + m_2) \):</p>
+                    \[ a = \frac{F + m_1g \sin\alpha - m_2g}{m_1 + m_2} \]
+                </div>
+                
+                <div class="step-explanation">
+                    <p class="mb-2">כעת, מכיוון שבהמשך נידרש לסרטט גרף של \( a \) כפונקציה של \( F \), נסדר את המשוואה במבנה של קו ישר (\( y = mx + b \)). לשם כך, נפריד את השבר הגדול לשני שברים נפרדים: חלק אחד שמכיל את \( F \) (המשתנה הבלתי תלוי שלנו - ה"איקס"), וחלק שני שמכיל את שאר הגורמים הקבועים (שישמש כנקודת החיתוך):</p>
+                    \[ a = \frac{F}{m_1 + m_2} + \frac{m_1g \sin\alpha - m_2g}{m_1 + m_2} \]
+                </div>
+                
+                <div class="step-explanation">
+                    <p class="mb-2">לסיום, כדי שהשיפוע יהיה ברור לעין, נוציא את \( F \) ככופל נפרד ליד השבר, ונוציא גורם משותף \( g \) מהמונה של האיבר השני:</p>
+                </div>
+                
+                <div class="final-answer">
+                    <div class="final-answer-he">
+                        ביטוי התאוצה כפונקציה של הכוח הוא:<br>
+                    </div>
+                    \( a = \left( \frac{1}{m_1 + m_2} \right) \cdot F + \frac{g(m_1 \sin\alpha - m_2)}{m_1 + m_2} \)
+                </div>
+            </div>
+            
+            <div class="teacher-highlight">
+                <strong>💡 טיפ מורה:</strong> תמיד חפשו רמזים להמשך! כשהשאלה מבקשת "לבטא משתנה אחד כתלות בשני" (פה a כתלות ב-F), סביר מאוד להניח שהסעיף הבא יעסוק בגרף. סידור הביטוי בצורת משוואת ישר \( y = mx+b \) מראש יעשה לכם חיים קלים.
+            </div>
+        </div>
+
+        <!-- סעיף ג -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ג': סרטוט הגרף וקו מגמה</h3>
+            
+            <div class="data-box">
+                <h4 class="font-bold text-green-800 mb-1">שלב 1: מה נתון?</h4>
+                <p class="text-green-700">טבלת נתוני הניסוי המציגה את הקשר בין הכוח המופעל לבין התאוצה. הנקודות הן: \( (20, 3.0), (30, 5.0), (40, 7.4), (50, 9.1), (60, 12.5) \).</p>
+            </div>
+
+            <div class="goal-box">
+                <h4 class="font-bold text-blue-800 mb-1">שלב 2: מה מחפשים?</h4>
+                <p class="text-blue-900">לסרטט גרף פיזור של הנקודות במערכת צירים תקנית, ולהעביר דרכן קו מגמה מתאים (קו ישר).</p>
+            </div>
+
+            <div class="formula-box">
+                <h4 class="font-bold text-yellow-800 w-full mb-1">שלב 3: חוקי סרטוט גרף בבגרות:</h4>
+                <span class="formula-badge">ציר X = המשתנה הבלתי תלוי (הכוח F)</span>
+                <span class="formula-badge">ציר Y = המשתנה התלוי (התאוצה a)</span>
+                <span class="formula-badge">כותרות לצירים + יחידות מידה</span>
+            </div>
+
+            <div class="solution-box">
+                <h4 class="font-bold text-slate-800 mb-2">שלב 4: ביצוע הסרטוט</h4>
+                <p class="mb-4">במבחן בגרות, מעבירים <strong>"לפי העין"</strong> בעזרת סרגל את הקו המיטבי – קו שעובר קרוב ככל הניתן לכל הנקודות בפיזור מאוזן.</p>
+                
+                <div class="svg-container text-center relative">
+                    <img src="image-3.png" alt="תרשים גרף סעיף ג" class="w-full h-auto bg-white" />
+                    <p class="text-sm text-slate-500 mt-2">גרף 1: תאוצת המערכת כפונקציה של הכוח המופעל. הנקודות האדומות הן נתוני הניסוי. הצלבים הכחולים מסמנים נקודות שנבחרו מהקו לטובת חישובים.</p>
+                </div>
+            </div>
+            
+            <div class="teacher-highlight">
+                <strong>💡 חוק ברזל במעבדה:</strong> לאחר שסרטטתם את קו המגמה עם סרגל, הנתונים המקוריים בטבלה אינם משמשים יותר כברירת מחדל לחישובים. מעתה והלאה, כל חישוב של שיפוע או נקודת חיתוך ייעשה באמצעות <strong>בחירת שתי נקודות הנמצאות על הקו הישר שסרטטתם</strong>. שימו לב: מותר להשתמש בנקודות מתוך טבלת הנתונים לחישוב השיפוע אך ורק אם וידאתם שהן אכן יושבות בדיוק על קו המגמה שהעברתם!
+            </div>
+        </div>
+
+        <!-- סעיף ד -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ד': חישוב מסת הגופים</h3>
+            
+            <div class="data-box">
+                <h4 class="font-bold text-green-800 mb-1">שלב 1: מה נתון?</h4>
+                <p class="text-green-700">נתון כי המסות שוות: \( m_1 = m_2 = m \). יש לנו את קו המגמה שסרטטנו בסעיף ג', ואת המשוואה התיאורטית שפיתחנו בסעיף ב'.</p>
+            </div>
+
+            <div class="goal-box">
+                <h4 class="font-bold text-blue-800 mb-1">שלב 2: מה מחפשים?</h4>
+                <p class="text-blue-900">למצוא את ערכה המספרי של המסה \( m \) באמצעות השוואה בין המודל התיאורטי לנתוני הגרף.</p>
+            </div>
+
+            <div class="formula-box">
+                <h4 class="font-bold text-yellow-800 w-full mb-1">שלב 3: נוסחאות בשימוש:</h4>
+                <span class="formula-badge">שיפוע מתוך גרף: \( Slope = \frac{\Delta y}{\Delta x} = \frac{\Delta a}{\Delta F} = \frac{a_2 - a_1}{F_2 - F_1} \)</span>
+                <span class="formula-badge">שיפוע מהתיאוריה: מקדם ה-F במשוואה של סעיף ב'</span>
+            </div>
+
+            <div class="solution-box">
+                <h4 class="font-bold text-slate-800 mb-2">שלב 4: הצבה ופתרון - צעד אחר צעד</h4>
+                
+                <div class="step-explanation">
+                    <p class="font-semibold text-blue-800 mb-1">חלק 1: חישוב שיפוע הגרף הניסויי</p>
+                    <p>נבחר שתי נקודות <strong>הנמצאות במדויק על קו המגמה</strong> שסרטטנו (המסומנות בצלבים כחולים בגרף):</p>
+                    <ul class="list-disc list-inside text-slate-700 space-y-1 mb-2">
+                        <li>נקודה ראשונה: \( (F_1, a_1) = (20, 2.8) \)</li>
+                        <li>נקודה שנייה: \( (F_2, a_2) = (60, 12.0) \)</li>
+                    </ul>
+                    <p>נציב את ערכי הנקודות בנוסחת השיפוע:</p>
+                    \[ \text{Slope}_{graph} = \frac{12.0 - 2.8}{60 - 20} \]
+                    <p>נחשב את המונה והמכנה בנפרד:</p>
+                    \[ \text{Slope}_{graph} = \frac{9.2}{40} = 0.23 \text{ kg}^{-1} \]
+                </div>
+
+                <div class="step-explanation">
+                    <p class="font-semibold text-blue-800 mb-1">חלק 2: מציאת הקשר התיאורטי לשיפוע</p>
+                    <p>נסתכל על המשוואה התיאורטית שפיתחנו בסעיף ב': \( a = \left( \frac{1}{m_1 + m_2} \right) \cdot F + ... \)</p>
+                    <p>הביטוי שכופל את המשתנה הבלתי תלוי (\( F \)) הוא השיפוע של הישר. נציב בביטוי זה את הנתון מהשאלה שהמסות שוות (\( m_1 = m_2 = m \)):</p>
+                    \[ \text{Slope}_{theory} = \frac{1}{m + m} = \frac{1}{2m} \]
+                </div>
+                
+                <div class="step-explanation">
+                    <p class="font-semibold text-blue-800 mb-1">חלק 3: השוואה ובידוד המסה</p>
+                    <p>כדי למצוא את המסה בניסוי, נשווה את השיפוע התיאורטי לערך המספרי של השיפוע שמצאנו מהגרף:</p>
+                    \[ \frac{1}{2m} = 0.23 \]
+                    <p>כדי לחלץ את הנעלם \( m \) מהמכנה, נכפול את שני אגפי המשוואה בביטוי \( 2m \):</p>
+                    \[ 1 = 0.23 \cdot 2m \]
+                    <p>נבצע את הכפל באגף ימין:</p>
+                    \[ 1 = 0.46m \]
+                    <p>כעת, נחלק את שני האגפים במקדם 0.46 כדי לבודד את המסה:</p>
+                    \[ m = \frac{1}{0.46} \approx 2.174 \text{ kg} \]
+                </div>
+                
+                <div class="final-answer">
+                    <div class="final-answer-he">
+                        המסה של כל אחד מהגופים היא:<br>
+                    </div>
+                    \( m \approx 2.17 \text{ kg} \)
+                </div>
+            </div>
+            
+            <div class="teacher-highlight">
+                <strong>💡 טיפ מורה:</strong> אל תשכחו לרשום יחידות מידה בתשובה הסופית! יחידת המידה הסטנדרטית למסה בפיזיקה היא קילוגרם (kg). העדר יחידות מידה גורר הורדת נקודות מיותרת לגמרי בבגרות. תמיד תראו את ההשוואה הברורה בין "תיאוריה" ל"ניסוי".
+            </div>
+        </div>
+
+        <!-- סעיף ה -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ה': תנועה במהירות קבועה</h3>
+
+            <div class="data-box">
+                <h4 class="font-bold text-green-800 mb-1">שלב 1: מה נתון?</h4>
+                <p class="text-green-700">המערכת צריכה לנוע במהירות קבועה.</p>
+            </div>
+
+            <div class="goal-box">
+                <h4 class="font-bold text-blue-800 mb-1">שלב 2: מה מחפשים?</h4>
+                <p class="text-blue-900">לחשב מהו גודל הכוח \( F \) שצריך להפעיל כדי לייצר מצב זה.</p>
+            </div>
+
+            <div class="formula-box">
+                <h4 class="font-bold text-yellow-800 w-full mb-1">שלב 3: נוסחאות בשימוש:</h4>
+                <span class="formula-badge">החוק הראשון של ניוטון: במצב של מהירות קבועה \( \Rightarrow a = 0 \)</span>
+                <span class="formula-badge">משוואת ישר (קו מגמה): \( y = mx + b \Rightarrow a = \text{Slope} \cdot F + b \)</span>
+            </div>
+
+            <div class="solution-box">
+                <h4 class="font-bold text-slate-800 mb-2">שלב 4: הצבה ופתרון - צעד אחר צעד</h4>
+                
+                <div class="step-explanation">
+                    <p class="font-semibold text-blue-800 mb-1">חלק 1: השלמת משוואת הישר של הניסוי</p>
+                    <p>כדי לחשב את הכוח הדרוש, אנו זקוקים למשוואה המלאה המקשרת בין תאוצה לכוח בניסוי שלנו. התבנית היא \( a = \text{Slope} \cdot F + b \). את השיפוע מצאנו בסעיף הקודם (\( 0.23 \)), אך חסרה לנו נקודת החיתוך עם ציר התאוצה (\( b \)).</p>
+                    <p>כדי למצוא את \( b \), נציב את אחת הנקודות מקו המגמה, למשל הנקודה \( (F, a) = (20, 2.8) \), לתוך המשוואה:</p>
+                    \[ 2.8 = 0.23 \cdot 20 + b \]
+                    <p>נבצע את הכפל:</p>
+                    \[ 2.8 = 4.6 + b \]
+                    <p>נחסר 4.6 משני אגפי המשוואה כדי לבודד את \( b \):</p>
+                    \[ b = 2.8 - 4.6 = -1.8 \]
+                    <p>כעת יש לנו את משוואת התנועה המלאה והסופית של הניסוי:</p>
+                    \[ a = 0.23F - 1.8 \]
+                </div>
+                
+                <div class="step-explanation">
+                    <p class="font-semibold text-blue-800 mb-1">חלק 2: יישום תנאי הפיזיקה (מהירות קבועה)</p>
+                    <p>השאלה דורשת מצב של "מהירות קבועה". על פי החוק הראשון של ניוטון, אם גוף נע במהירות קבועה (או עומד במקום), שקול הכוחות עליו הוא אפס, ולכן גם התאוצה שלו היא אפס. מכאן שנדרוש: <strong>\( a = 0 \)</strong>.</p>
+                    <p>נציב \( a = 0 \) במשוואת הישר שלנו כדי למצוא את הכוח \( F \) המתאים:</p>
+                    \[ 0 = 0.23F - 1.8 \]
+                    <p>נעביר את האיבר החופשי (-1.8) לאגף השמאלי על ידי הוספת 1.8 לשני האגפים:</p>
+                    \[ 1.8 = 0.23F \]
+                    <p>נחלק את המשוואה במקדם של \( F \) (שהוא 0.23) כדי לבודד אותו:</p>
+                    \[ F = \frac{1.8}{0.23} \approx 7.826 \text{ N} \]
+                </div>
+                
+                <div class="final-answer">
+                    <div class="final-answer-he">
+                        הכוח הנדרש לתנועה במהירות קבועה הוא:<br>
+                    </div>
+                    \( F \approx 7.83 \text{ N} \)
+                </div>
+            </div>
+            
+            <div class="teacher-highlight">
+                <strong>💡 טיפ מורה לזיהוי רמזים בשאלה:</strong> הביטוי "מהירות קבועה" הוא למעשה מתנה בשאלות פיזיקה! הוא רומז לכם מיד ששקול הכוחות שווה לאפס, ולכן גם התאוצה שווה לאפס (\(a=0\)).
+                <br><br>
+                בנוסף, הדרך היעילה והבטוחה ביותר לפתור סעיפים הדורשים חילוץ נתונים מגרף, היא לבנות קודם את משוואת הישר המלאה (כולל מציאת נקודת החיתוך \(b\)). ברגע שיש לכם את המשוואה ביד (\(a = 0.23F - 1.8\)), יש לכם כלי עוצמתי - פשוט מציבים את התנאי החדש ומגלים את התשובה בקלות!
+            </div>
+        </div>
+    </main>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div style="display:none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">התמונה question-image.png לא נמצאה בתיקייה. אנא ודא שהיא קיימת.</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+</body>
+</html>
