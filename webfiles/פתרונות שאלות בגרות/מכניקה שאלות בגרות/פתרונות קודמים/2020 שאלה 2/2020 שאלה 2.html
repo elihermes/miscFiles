@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2020 שאלה 2</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for rendering equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Rubik', 'Assistant', 'system-ui', 'sans-serif'],
+                    },
+                    colors: {
+                        primary: '#2563eb',
+                        secondary: '#475569',
+                        accent: '#f59e0b',
+                    }
+                }
+            }
+        }
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&family=Rubik:wght@400;500;700&display=swap');
+
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: 'Rubik', sans-serif;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-card > h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            font-family: monospace;
+            font-size: 1rem;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            border-right: 5px solid var(--green-500);
+            padding: 1rem 1.25rem;
+            border-radius: 0.5rem 0 0 0.5rem;
+            margin-top: 1rem;
+            font-weight: 700;
+            color: #166534;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            padding: 0.9rem;
+            border-radius: 0.5rem 0 0 0.5rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 1rem;
+            line-height: 1.6;
+            color: #166534;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+            direction: ltr;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        .equation-row {
+            display: flex;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .equation-label {
+            font-weight: 600;
+            color: #334155;
+            white-space: nowrap;
+        }
+
+        .equation-content {
+            direction: ltr;
+            overflow-x: auto;
+            max-width: 100%;
+            padding: 0.25rem 0;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .svg-text {
+            font-family: 'Assistant', sans-serif;
+            font-weight: 600;
+            font-size: 14px;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-shell">
+
+    <!-- Header Section -->
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-4">פתרון בגרות בפיזיקה - מכניקה 2020 שאלה 2</h1>
+        
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+        </div>
+        
+        <p class="text-lg text-slate-600 max-w-3xl mx-auto">
+            בשאלה זו אנו עוסקים בדינמיקה של שני גופים המחוברים בחוט על גבי שני מישורים משופעים. ננתח את הכוחות, נבנה משוואות כוחות (חוק שני של ניוטון) ונבדוק כיצד כיוון התנועה משפיע על כוח החיכוך.
+        </p>
+    </header>
+
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">תמונת השאלה המקורית</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <div class="section-card" id="sectionA">
+        <h2 class="text-2xl font-bold text-primary mb-4">סעיף א' - תרשים כוחות (FBD)</h2>
+        
+        <div class="mb-4">
+            <h3 class="font-bold text-slate-700 text-lg mb-1">א. מה נתון:</h3>
+            <ul class="list-disc list-inside space-y-1 text-slate-600 ml-4">
+                <li>מסת הגוף הראשון: \( m_1 = 1 \text{ kg} \).</li>
+                <li>מסת הגוף השני: \( m_2 = 4 \text{ kg} \).</li>
+                <li>זווית השיפוע של שני המישורים: \( \alpha = 36.9^\circ \).</li>
+                <li>המערכת משוחררת ממנוחה ומתחילה לנוע בתאוצה שגודלה \( a = 2 \text{ m/s}^2 \).</li>
+                <li>החוט והגלגלת אידיאליים, כלומר המתיחות \( T \) שווה לאורך כל החוט.</li>
+                <li>תאוצת הכובד היא תמיד \( g = 10 \text{ m/s}^2 \) (כיוונה כלפי מטה).</li>
+            </ul>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="font-bold text-slate-700 text-lg mb-1">ב. מה מחפשים:</h3>
+            <p class="text-slate-600">
+                לסרטט את תרשים הכוחות הפועלים על הגוף \( m_1 \) ואת תרשים הכוחות הפועלים על הגוף \( m_2 \), ולציין את שם כל כוח לצד הסימון שלו.
+            </p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="font-bold text-slate-700 text-lg mb-1">ג. קביעת כיווני התנועה וצירי הייחוס (הכנה לשרטוט):</h3>
+            <p class="text-slate-600 leading-relaxed">
+                מכיוון שזווית השיפוע שווה בשני הצדדים, המסה הגדולה יותר (הגוף \( m_2 \)) היא זו שתכתיב את כיוון התנועה הכללי של המערכת. רכיב כוח הכובד המושך את \( m_2 \) במורד המישור שלו, גדול מרכיב כוח הכובד המושך את \( m_1 \) במורד המישור שלו. לכן, המערכת תאיץ כך ש<strong class="text-primary">גוף \( m_2 \) ינוע במורד המישור השמאלי</strong>, ו<strong class="text-primary">גוף \( m_1 \) יימשך במעלה המישור הימני</strong>. 
+            </p>
+        </div>
+
+        <div class="mb-6">
+            <h3 class="font-bold text-slate-700 text-lg mb-3">ד. שרטוטי תרשימי הכוחות (FBD):</h3>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                
+                <!-- תרשים FBD עבור m1 -->
+                <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 text-center">
+                    <h4 class="font-bold mb-2">תרשים כוחות עבור גוף \( m_1 \)</h4>
+                    <p class="text-sm text-slate-500 mb-2">נע במעלה המישור. הציר החיובי נבחר במעלה המישור.</p>
+                    <div class="svg-container flex justify-center my-4">
+                        <img src="image-1.1.png" alt="תרשים כוחות עבור גוף m1" class="max-w-full h-auto object-contain" style="max-height: 336px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                        <div style="display: none;" class="text-center text-red-500 bg-red-50 p-4 rounded-lg border border-red-200 w-full">
+                            התמונה image-1.1.png לא נמצאה בנתיב המקומי.
+                        </div>
+                    </div>
+                </div>
+
+                <!-- תרשים FBD עבור m2 -->
+                <div class="bg-slate-50 border border-slate-200 rounded-lg p-4 text-center">
+                    <h4 class="font-bold mb-2">תרשים כוחות עבור גוף \( m_2 \)</h4>
+                    <p class="text-sm text-slate-500 mb-2">נע במורד המישור. הציר החיובי נבחר במורד המישור.</p>
+                    <div class="svg-container flex justify-center my-4">
+                        <img src="image-1.2.png" alt="תרשים כוחות עבור גוף m2" class="max-w-full h-auto object-contain" style="max-height: 336px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                        <div style="display: none;" class="text-center text-red-500 bg-red-50 p-4 rounded-lg border border-red-200 w-full">
+                            התמונה image-1.2.png לא נמצאה בנתיב המקומי.
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- סעיף ב -->
+    <div class="section-card" id="sectionB">
+        <h2 class="text-2xl font-bold text-primary mb-4">סעיף ב' - משוואות הכוחות</h2>
+        
+        <div class="mb-4">
+            <h3 class="font-bold text-slate-700 text-lg mb-1">א. מה נתון:</h3>
+            <p class="text-slate-600">כל הנתונים מסעיף א' תקפים. המערכת מאיצה.</p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="font-bold text-slate-700 text-lg mb-1">ב. מה מחפשים:</h3>
+            <p class="text-slate-600">את משוואות החוק השני של ניוטון בצירים הרלוונטיים עבור כל אחד מן הגופים בנפרד.</p>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="font-bold text-slate-700 text-lg mb-1">ג. נוסחאות בשימוש:</h3>
+            <div class="flex flex-wrap items-center">
+                <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span> - החוק השני של ניוטון.
+                <span class="formula-badge">\( f_k = \mu_k N \)</span> - גודל כוח החיכוך הקינטי.
+            </div>
+        </div>
+
+        <div class="mb-4">
+            <h3 class="font-bold text-slate-700 text-lg mb-1">ד. הצבה ופתרון (פיתוח המשוואות):</h3>
+            
+            <p class="text-slate-600 mb-4"><strong>עבור גוף \( m_1 \):</strong> נבחר את ציר ה-x החיובי <strong>במעלה</strong> המישור הימני (כיוון התאוצה שנגזר ממערכת הצירים שבחרנו), ואת ציר ה-y במאונך למישור כלפי מעלה.</p>
+            
+            <!-- Structural separation of Hebrew and MathJax -->
+            <div class="equation-row">
+                <div class="equation-label">ציר y:</div>
+                <div class="equation-content">\( \displaystyle \Sigma F_{y1} = 0 \Rightarrow N_1 - m_1g\cos\alpha = 0 \Rightarrow N_1 = m_1g\cos\alpha \)</div>
+            </div>
+            
+            <div class="equation-row">
+                <div class="equation-label">ציר x:</div>
+                <div class="equation-content">\( \displaystyle \Sigma F_{x1} = m_1a \Rightarrow T - m_1g\sin\alpha - f_{k1} = m_1a \)</div>
+            </div>
+            
+            <p class="text-slate-600 mb-2 mt-4">נציב את ביטוי החיכוך הקינטי \( f_{k1} = \mu_k N_1 \):</p>
+            <div class="final-answer">
+                <div class="equation-row mb-0">
+                    <div class="equation-label text-green-800">(1)</div>
+                    <div class="equation-content">\( \displaystyle T - m_1g\sin\alpha - \mu_k m_1g\cos\alpha = m_1a \)</div>
+                </div>
+            </div>
+
+            <p class="text-slate-600 mt-8 mb-4"><strong>עבור גוף \( m_2 \):</strong> נבחר את ציר ה-x החיובי <strong>במורד</strong> המישור השמאלי (כיוון התאוצה שהגדרנו למערכת), ואת ציר ה-y במאונך למישור כלפי מעלה.</p>
+            
+            <!-- Structural separation of Hebrew and MathJax -->
+            <div class="equation-row">
+                <div class="equation-label">ציר y:</div>
+                <div class="equation-content">\( \displaystyle \Sigma F_{y2} = 0 \Rightarrow N_2 - m_2g\cos\alpha = 0 \Rightarrow N_2 = m_2g\cos\alpha \)</div>
+            </div>
+            
+            <div class="equation-row">
+                <div class="equation-label">ציר x:</div>
+                <div class="equation-content">\( \displaystyle \Sigma F_{x2} = m_2a \Rightarrow m_2g\sin\alpha - T - f_{k2} = m_2a \)</div>
+            </div>
+            
+            <p class="text-slate-600 mb-2 mt-4">נציב את ביטוי החיכוך הקינטי \( f_{k2} = \mu_k N_2 \):</p>
+            <div class="final-answer">
+                <div class="equation-row mb-0">
+                    <div class="equation-label text-green-800">(2)</div>
+                    <div class="equation-content">\( \displaystyle m_2g\sin\alpha - T - \mu_k m_2g\cos\alpha = m_2a \)</div>
+                </div>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <div class="shrink-0 mt-1">
+                <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div>
+                <strong class="text-amber-700 block mb-1">הערת מורה - קביעת צירים מערכתית:</strong> 
+                בבגרות, אמנם חובה לכתוב את חוקי ניוטון עבור כל גוף בנפרד, אך שימו לב היטב לאופן שבו קבענו את הצירים! לא בחרנו מערכת צירים עצמאית ושרירותית לכל גוף. קבענו <strong>כיוון חיובי אחד למערכת כולה</strong> – במקרה זה, עם כיוון התנועה הצפוי של החוט. 
+                <br><br>
+                ברגע שהחלטנו (כפי שהסקנו מנתוני השאלה) שהתנועה של \( m_2 \) במורד המישור היא הכיוון החיובי של המערכת, <strong>נגזר מכך בהכרח</strong> שהכיוון החיובי עבור \( m_1 \) הוא במעלה המישור, שכן שני הגופים נעים יחד – כשהאחד יורד, השני עולה. התפיסה של "ציר תנועה מערכתי" היא זו שמאפשרת לנו להציב בדיוק את אותו נעלם חיובי \( a \) בשתי המשוואות, והיא זו שמבטיחה שחיבור המשוואות אלגברית יבטל את המתיחות \( T \) בצורה חלקה וללא טעויות בסימנים.
+            </div>
+        </div>
+    </div>
+
+    <!-- סעיף ג -->
+    <div class="section-card" id="sectionC">
+        <h2 class="text-2xl font-bold text-primary mb-4">סעיף ג' - חישוב מקדם החיכוך הקינטי</h2>
+        
+        <div class="mb-4">
+            <h3 class="font-bold text-slate-700 text-lg mb-1">א. הצבה ופתרון:</h3>
+            <p class="text-slate-600 mb-4">הדרך האלגנטית ביותר לפתור מערכת כזו היא חיבור המשוואות, מה שיגרום לכוח המתיחות \( T \) "להתבטל":</p>
+            
+            <div class="equation-row">
+                <div class="equation-label">(1)</div>
+                <div class="equation-content">\( \displaystyle T - m_1g\sin\alpha - \mu_k m_1g\cos\alpha = m_1a \)</div>
+            </div>
+            <div class="equation-row">
+                <div class="equation-label">(2)</div>
+                <div class="equation-content">\( \displaystyle m_2g\sin\alpha - T - \mu_k m_2g\cos\alpha = m_2a \)</div>
+            </div>
+            
+            <hr class="my-4 border-slate-300 w-1/2 mx-auto">
+            
+            <!-- Pure math block without Hebrew is fine as \[ \] -->
+            <div class="math-scroll text-center">
+                \[ m_2g\sin\alpha - m_1g\sin\alpha - \mu_k m_1g\cos\alpha - \mu_k m_2g\cos\alpha = m_1a + m_2a \]
+            </div>
+            
+            <p class="text-slate-600 my-4">נוציא גורמים משותפים:</p>
+            <div class="math-scroll text-center">
+                \[ g\sin\alpha(m_2 - m_1) - \mu_k g\cos\alpha(m_1 + m_2) = a(m_1 + m_2) \]
+            </div>
+            
+            <p class="text-slate-600 my-4">כעת נציב את כל הערכים המספריים שידועים לנו מנתוני השאלה:</p>
+            <div class="math-scroll text-center">
+                \[ 10 \cdot 0.6 \cdot (4 - 1) - \mu_k \cdot 10 \cdot 0.8 \cdot (1 + 4) = 2 \cdot (1 + 4) \]
+                \[ 6 \cdot 3 - \mu_k \cdot 8 \cdot 5 = 2 \cdot 5 \]
+                \[ 18 - 40\mu_k = 10 \]
+                \[ 8 = 40\mu_k \]
+                \[ \mu_k = \frac{8}{40} = 0.2 \]
+            </div>
+            <div class="final-answer">
+                מקדם החיכוך הקינטי הוא: \( \mu_k = 0.2 \)
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <div class="shrink-0 mt-1">
+                <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div>
+                <strong class="text-amber-700 block mb-1">הערת מורה - למה חיברנו משוואות?</strong> 
+                שימו לב לטריק האלגברי של חיבור משוואות (1) ו-(2). המתיחות בחוט (\(T\)) היא "כוח פנימי" בתוך המערכת שלנו. היא מושכת גוף אחד קדימה וגוף שני אחורה (ביחס לכיוון התנועה המערכתי שבחרנו). 
+                <br><br>
+                כאשר אנו מחברים את משוואות הכוחות של שני הגופים, הכוחות הפנימיים האלו מקבלים סימנים מנוגדים ומבטלים זה את זה (\(+T\) ו-\(-T\)). אנו נשארים במשוואה רק עם ה"כוחות החיצוניים" נטו שמאיצים או בולמים את המערכת כולה, ועם המסה הכוללת של המערכת באגף הימני. זוהי שיטה מצוינת, מהירה, וחשוב להבין את ההיגיון הפיזיקלי מאחוריה ולא רק לבצע אותה כפעולה טכנית.
+            </div>
+        </div>
+    </div>
+
+    <!-- סעיף ד -->
+    <div class="section-card" id="sectionD">
+        <h2 class="text-2xl font-bold text-primary mb-4">סעיף ד' - חישוב תאוצה במצב חדש</h2>
+        
+        <div class="mb-4">
+            <h3 class="font-bold text-slate-700 text-lg mb-1">ד. בניית משוואות ופתרון:</h3>
+            
+            <p class="text-slate-600 mb-2">ברגע שהמערכת מקבלת מהירות התחלתית, כיוון התנועה משתנה ולכן <strong>כיווני כוחות החיכוך מתהפכים</strong>. נבנה משוואות כוחות חדשות. גם כאן נקבע למערכת כולה את הכיוון החיובי בהתאם לכיוון התנועה החדש שלה.</p>
+
+            <div class="equation-row mt-4">
+                <div class="equation-label">עבור \( m_1 \): (3)</div>
+                <div class="equation-content">\( \displaystyle m_1g\sin\alpha - T - f_{k1} = m_1 a' \)</div>
+            </div>
+            
+            <div class="equation-row">
+                <div class="equation-label">עבור \( m_2 \): (4)</div>
+                <div class="equation-content">\( \displaystyle T - m_2g\sin\alpha - f_{k2} = m_2 a' \)</div>
+            </div>
+
+            <p class="text-slate-600 my-4">נחשב את ערכי כוחות החיכוך:</p>
+            <div class="math-scroll text-center">
+                \[ f_{k1} = \mu_k m_1 g \cos\alpha = 0.2 \cdot 1 \cdot 10 \cdot 0.8 = 1.6 \text{ N} \]
+                \[ f_{k2} = \mu_k m_2 g \cos\alpha = 0.2 \cdot 4 \cdot 10 \cdot 0.8 = 6.4 \text{ N} \]
+            </div>
+
+            <p class="text-slate-600 my-4">נחבר את משוואות (3) ו-(4) כדי לבטל את \( T \):</p>
+            <div class="math-scroll text-center">
+                \[ m_1g\sin\alpha - f_{k1} - m_2g\sin\alpha - f_{k2} = a'(m_1 + m_2) \]
+                \[ (1 \cdot 10 \cdot 0.6) - 1.6 - (4 \cdot 10 \cdot 0.6) - 6.4 = a'(1 + 4) \]
+                \[ 6 - 1.6 - 24 - 6.4 = 5a' \]
+                \[ -26 = 5a' \]
+                \[ a' = -5.2 \text{ m/s}^2 \]
+            </div>
+
+            <p class="text-slate-600 mt-4 mb-2"><strong>משמעות התוצאה:</strong> קיבלנו תאוצה בסימן מינוס. מכיוון שהגדרנו את הכיוון החיובי ככיוון המהירות (התנועה החדשה של המערכת), המשמעות היא שווקטור התאוצה מנוגד לווקטור המהירות ולכן <strong>גודל המהירות יורד</strong>. (חשוב להדגיש: גודל המהירות יורד לא בגלל שהתאוצה היא שלילית, אלא בגלל שהתאוצה מנוגדת לכיוון התנועה).</p>
+            
+            <div class="final-answer">
+                <strong>תשובה סופית:</strong><br>
+                גודל התאוצה של \( m_1 \) הוא: \( 5.2 \text{ m/s}^2 \).<br>
+                כיוון התאוצה של \( m_1 \): במעלה המישור המשופע הימני.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <div class="shrink-0 mt-1">
+                <svg class="w-6 h-6 text-amber-500" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+            </div>
+            <div>
+                <strong class="text-amber-700 block mb-1">הערת מורה - חיכוך קינטי ותאוצה מנוגדת למהירות:</strong> 
+                סעיף זה מדגים שני עקרונות פיזיקליים שנוטים לבלבל תלמידים. 
+                <br><br>
+                <strong>הראשון:</strong> כוח החיכוך הקינטי מתנגד <u>תמיד</u> לכיוון ההחלקה היחסית (המהירות), ולא לכוח הכובד שמושך את המערכת! לכן, ברגע שהמהירות התהפכה (בגלל שדחפו את הגופים), כיווני החיכוך התהפכו מייד והתנגדו לתנועה החדשה, למרות ש-\(m_2\) עדיין מושך חזק יותר את המערכת.
+                <br><br>
+                <strong>השני:</strong> למה קיבלנו מינוס ומה משמעותו? קבענו את הכיוון החיובי יחד עם כיוון המהירות ההתחלתית. תאוצה בעלת סימן מינוס (\(a' < 0\)) במקרה זה אומרת שווקטור התאוצה מנוגד לווקטור המהירות. כאן המקום להדגיש עקרון ברזל: <strong>גודל המהירות יורד <u>לא</u> בגלל שהתאוצה היא שלילית, אלא אך ורק בגלל שהתאוצה <u>מנוגדת לכיוון התנועה</u>!</strong> גודל המהירות ימשיך לרדת עד שהמערכת תיעצר רגעית (ולאחר מכן, מכיוון ש-\(m_2\) "מנצח" במשיכה, המערכת תשנה שוב כיוון ותתחיל להאיץ בחזרה למטה).
+            </div>
+        </div>
+    </div>
+
+    </div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    <span class="block font-bold mb-1">תמונת השאלה המקורית</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה';
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const year = modified.getFullYear();
+                const month = modified.getMonth() + 1;
+                const day = modified.getDate();
+                const seed = (year * 372) + (month * 31) + day + 157;
+                const codeNum = (seed * 73) % 46656;
+                const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
