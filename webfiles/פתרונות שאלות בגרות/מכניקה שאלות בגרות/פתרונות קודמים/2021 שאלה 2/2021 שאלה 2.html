@@ -1,0 +1,757 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2021 שאלון 5 יח"ל, שאלה 2</title>
+    
+    <!-- טעינת פונטים -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;700;800&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+    
+    <!-- טעינת Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- הגדרות צבעים וסגנונות מותאמים -->
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Heebo', 'sans-serif'],
+                        heading: ['Rubik', 'sans-serif'],
+                    },
+                    colors: {
+                        physics: {
+                            50: '#f0fdfa',
+                            100: '#ccfbf1',
+                            500: '#14b8a6',
+                            700: '#0f766e',
+                            900: '#134e4a',
+                        },
+                        accent: {
+                            light: '#fef3c7',
+                            DEFAULT: '#f59e0b',
+                            dark: '#b45309',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+
+    <!-- עיצובים נוספים (Custom CSS) -->
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        h1, h2, h3, h4 {
+            font-family: "Rubik", sans-serif;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .step-container {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.6rem;
+            padding: 0.9rem;
+            margin-top: 0.8rem;
+            margin-bottom: 0;
+        }
+
+        .step-title {
+            font-weight: 700;
+            color: #1e3a8a;
+            margin-bottom: 0.5rem;
+            font-size: 1.05rem;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+            direction: ltr;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            border-right: 5px solid var(--green-500);
+            padding: 1rem 1.25rem;
+            border-radius: 0.5rem 0 0 0.5rem;
+            margin-top: 1rem;
+            font-weight: 700;
+            color: #166534;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+
+    <!-- טעינת MathJax -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                renderActions: {
+                    addMenu: []
+                }
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+</head>
+<body>
+
+    <main class="page-shell">
+        
+        <!-- כותרת ראשית -->
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-900 mb-2">פתרון בגרות בפיזיקה</h1>
+            <h2 class="text-xl md:text-2xl text-slate-600">מכניקה 2021, שאלון 5 יח"ל - שאלה 2</h2>
+            <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+                <span class="version-label">עודכן:</span>
+                <span id="versionUpdatedAt">--- --:--:--</span>
+            </div>
+        </header>
+
+        <!-- תמונת השאלה (כלל ברזל) -->
+        <section class="section-card border-t-4 border-slate-300">
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <div style="display: none;" class="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg mt-4 w-full text-center">
+                התמונה <strong>question-image.png</strong> לא נמצאה בנתיב. אנא ודאו שהתמונה קיימת באותה תיקייה של קובץ ה-HTML.
+            </div>
+            <p class="text-sm text-slate-500 mt-2 text-center">מערכת גופים מחוברים (מכונת אטווד)</p>
+        </section>
+
+        <!-- פתיח מורה -->
+        <div class="bg-physics-50 border border-physics-100 rounded-xl p-6 mb-8 text-lg">
+            <p>שלום תלמידים יקרים! 👋</p>
+            <p>לפנינו שאלת דינמיקה קלאסית העוסקת במערכת של שני גופים המחוברים באמצעות חוט דרך גלגלת. בשאלה זו נתרגל ניתוח כוחות מדויק במצב מנוחה (סטטיקה) ובמצב תנועה (דינמיקה). נלמד כיצד לבנות משוואות כוחות לכל גוף בנפרד, וכיצד למצוא תאוצה ומתיחות בצורה שלבית וברורה. קדימה, בואו נתחיל!</p>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- סעיף א' -->
+        <!-- ========================================== -->
+        <div class="section-card" id="section-a">
+            <h3 class="section-header">סעיף א': תרשימי כוחות (FBD)</h3>
+            
+            <div class="step-container">
+                <div class="step-title">1. מה נתון?</div>
+                <p>מערכת הגופים נמצאת במצב מנוחה (המהירות והתאוצה שוות לאפס). נתון קריטי מתוך גוף השאלה: "במצב זה גוף B צמוד לרצפה <strong>ולא מפעיל עליה כוח</strong>". מכאן נובע, על פי החוק השלישי של ניוטון, שגם הרצפה לא מפעילה כוח נורמלי על גוף B. כלומר, הנורמל \( N = 0 \). כוח הכובד פועל כלפי מטה, והמתיחויות בחוטים פועלות לאורך החוטים הרלוונטיים.</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">2. מה מחפשים?</div>
+                <p>לשרטט תרשים כוחות חופשי (FBD) עבור גוף B ועבור הגלגלת, כולל רישום שמות הכוחות.</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">3. נוסחאות בשימוש (לצורך הניתוח המושגי)</div>
+                <div class="flex flex-wrap items-center">
+                    <span class="formula-badge">\( \Sigma\vec{F} = 0 \)</span> (החוק הראשון של ניוטון - התמדה/מנוחה)
+                    <span class="formula-badge">\( F = mg \)</span> (כוח הכובד)
+                </div>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">4. פתרון ושרטוט</div>
+                <p class="mb-4"><strong>תת סעיף (1) - גוף B:</strong> על גוף B פועלים שני כוחות בלבד. כוח הכובד \( m_B g \) כלפי מטה, וכוח המתיחות של החוט \( S_1 \), שנסמנו כ- \( T_1 \), כלפי מעלה. כזכור, אין כוח נורמלי.</p>
+                <p class="mb-4"><strong>תת סעיף (2) - הגלגלת:</strong> הגלגלת מוחזקת על ידי החוט \( S_2 \) מלמעלה (מתיחות \( T_2 \)). מהצדדים, החוט \( S_1 \) מפעיל עליה שני כוחות מתיחות כלפי מטה (משני עברי הגלגלת). נסמן כוחות אלו ב- \( T_1 \). אנו מזניחים את מסת הגלגלת ולכן אין לה כוח כובד משמעותי.</p>
+                
+                <!-- שרטוטי SVG -->
+                <div class="grid grid-cols-1 md:grid-cols-2 gap-8 my-6">
+                    <!-- תרשים גוף B -->
+                    <div class="flex flex-col items-center p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <h4 class="font-bold text-center mb-2">תרשים כוחות - גוף B</h4>
+                        <img src="image-1.B.png" alt="תרשים כוחות - גוף B" width="200" height="250" class="object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                        <div style="display: none;" class="text-center text-red-500 bg-red-50 p-4 rounded-lg border border-red-200 w-full">
+                            התמונה image-1.B.png לא נמצאה בנתיב המקומי.
+                        </div>
+                    </div>
+
+                    <!-- תרשים גלגלת -->
+                    <div class="flex flex-col items-center p-4 bg-slate-50 rounded-lg border border-slate-200">
+                        <h4 class="font-bold text-center mb-2">תרשים כוחות - גלגלת</h4>
+                        <img src="image-1.G.png" alt="תרשים כוחות - גלגלת" width="200" height="250" class="object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                        <div style="display: none;" class="text-center text-red-500 bg-red-50 p-4 rounded-lg border border-red-200 w-full">
+                            התמונה image-1.G.png לא נמצאה בנתיב המקומי.
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                שימו לב! 🚨 בדרך כלל, גוף המונח על רצפה מרגיש כוח נורמלי ממנה. עם זאת, השאלה הדגישה במפורש שהגוף "לא מפעיל עליה כוח". זהו רמז עבה שנועד לומר לנו שהחוט מתוח בדיוק במידה הנדרשת כדי לשאת את כל משקלו של גוף B, כך שהמשטח אינו צריך להפעיל כוח נוסף כדי לתמוך בו. במצב זה הגוף מוגדר על סף ניתוק.
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- סעיף ב' -->
+        <!-- ========================================== -->
+        <div class="section-card" id="section-b">
+            <h3 class="section-header">סעיף ב': מתיחות החוט במצב מנוחה</h3>
+            
+            <div class="step-container">
+                <div class="step-title">1. מה נתון? קביעת צירים חכמה</div>
+                <p>המערכת במנוחה, ולכן התאוצה של כל רכיבי המערכת היא אפס (\( a = 0 \)). למרות שהמערכת במנוחה, <strong>מומלץ לקבוע את כיוון הציר החיובי בהתאם לכיוון שאליו תנוע המערכת אם תשוחרר</strong>. מכיוון שהגוף A כבד יותר (\(m_A > m_B\), כפי שמופיע בהמשך), גוף A צפוי לרדת וגוף B צפוי לעלות. לכן, עבור גוף B נקבע את הכיוון <strong>מעלה</strong> ככיוון החיובי, ועבור גוף A היינו קובעים את הכיוון מטה כחיובי. בחירה זו שומרת על עקביות לקראת סעיפי הדינמיקה.</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">2. מה מחפשים?</div>
+                <p>לבטא את כוח המתיחות בחוט \( S_2 \) (אותו סימנו כ- \( T_2 \)) באמצעות נתוני השאלה בלבד.</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">3. נוסחאות בשימוש</div>
+                <div class="flex flex-wrap items-center">
+                    <span class="formula-badge">\( \Sigma\vec{F} = 0 \)</span> (החוק הראשון של ניוטון - התמדה/מנוחה)
+                </div>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">4. הצבה ופתרון</div>
+            <p>נרשום את משוואות הכוחות עבור גוף B ועבור הגלגלת.</p>
+            <div class="math-scroll">
+                <p>עבור גוף B (ציר חיובי מוגדר כלפי <strong>מעלה</strong>, ככיוון התנועה הצפוי):</p>
+                \[ \Sigma F_y = T_1 - m_B g = 0 \]
+                \[ T_1 = m_B g \]
+                <p>עבור הגלגלת (מסתה זניחה, כוחות אנכיים בלבד):</p>
+                \[ \Sigma F_y = T_2 - 2T_1 = 0 \]
+                \[ T_2 - 2T_1 = 0 \]
+                \[ T_2 = 2T_1 \]
+            </div>
+            <p>כעת, נציב את הביטוי שמצאנו עבור \( T_1 \) לתוך המשוואה של \( T_2 \):</p>
+            <div class="math-scroll">
+                \[ T_2 = 2 \cdot (m_B g) \]
+            </div>
+            
+            <div class="final-answer">
+                הביטוי למתיחות בחוט \( S_2 \) הוא: \( T_2 = 2 m_B g \)
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            חוק ברזל בפיזיקה! בניתוח מערכות מחוברות, במקום לקבוע "למעלה זה תמיד חיובי", קבעו ציר תנועה "מפותל" שעוקב אחרי החוט. לכל גוף יש ציר משלו, וכיוונו החיובי הוא כיוון התנועה (או התנועה הצפויה) של המערכת. התרגלתם לזה כאן במצב סטטי - זה ישתלם לכם בענק במצבים הדינמיים!
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- סעיף ג' -->
+    <!-- ========================================== -->
+    <div class="section-card" id="section-c">
+        <h3 class="section-header">סעיף ג': ניתוח המערכת לאחר שחרור</h3>
+        
+        <div class="step-container">
+            <div class="step-title">1. מה נתון?</div>
+            <p>כעת משחררים את גוף A. נתון כי \( m_A > m_B \). מכיוון שגוף A כבד יותר ואין כוח חיצוני שמחזיק אותו, הוא יתחיל לרדת, וגוף B יתחיל לעלות.</p>
+        </div>
+
+        <div class="step-container">
+            <div class="step-title">2. מה מחפשים?</div>
+            <p>לקבוע ולהשוות בין גדלים פיזיקליים של גוף A וגוף B במהלך התנועה: (1) גודל התאוצה. (2) גודל הכוח השקול. (3) גודל כוח המתיחות הפועל עליהם.</p>
+        </div>
+
+        <div class="step-container">
+            <div class="step-title">3. נוסחאות ועקרונות בשימוש</div>
+            <div class="flex flex-wrap items-center">
+                <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span> (החוק השני של ניוטון)
+                <span class="formula-badge">חוט אידיאלי \(\Rightarrow |a_A|=|a_B|, T_A=T_B\)</span>
+            </div>
+        </div>
+
+        <div class="step-container">
+            <div class="step-title">4. פתרון ונימוקים</div>
+            
+            <p class="font-bold text-lg mt-4 text-physics-700">תת-סעיף (1): גודל התאוצה של גוף A ביחס לתאוצת גוף B</p>
+            <p>שני הגופים מחוברים באמצעות אותו חוט אשר אורכו קבוע (חוט בלתי נמתח). לכן, על כל מטר שגוף A יורד, גוף B חייב לעלות בדיוק מטר אחד. מכאן שגודל המהירות וגודל התאוצה שלהם שווים בכל רגע נתון (\( |a_A| = |a_B| \)).</p>
+            <div class="final-answer">קביעה: גודל התאוצה של גוף A <strong>שווה ל-</strong> גודל תאוצת גוף B.</div>
+
+            <p class="font-bold text-lg mt-6 text-physics-700">תת-סעיף (2): גודל הכוח השקול על גוף A ביחס לגוף B</p>
+            <p>על פי החוק השני של ניוטון, גודל הכוח השקול שווה למכפלת המסה בגודל התאוצה (\( \Sigma F = m \cdot a \)). בסעיף הקודם הסקנו שהתאוצות שוות בגודלן (\( a_A = a_B \)). מכיוון שנתון לנו כי המסה של A גדולה יותר (\( m_A > m_B \)), נקבל שבהכרח מכפלת המסה בתאוצה עבור גוף A תהיה גדולה יותר.</p>
+            <div class="final-answer">קביעה: גודל הכוח השקול על גוף A <strong>גדול מ-</strong> גודל הכוח השקול על גוף B.</div>
+
+            <p class="font-bold text-lg mt-6 text-physics-700">תת-סעיף (3): גודל כוח המתיחות על גוף A ביחס לגוף B</p>
+            <p>מכיוון שמדובר בחוט אידיאלי (חסר מסה) העובר דרך גלגלת אידיאלית (חסרת מסה וחיכוך), כוח המתיחות מתפשט באופן אחיד לאורך כל החוט. לכן, החוט מושך את גוף A כלפי מעלה באותו כוח בדיוק שבו הוא מושך את גוף B כלפי מעלה. כלומר \( T_A = T_B = T_1 \).</p>
+            <div class="final-answer">קביעה: גודל כוח המתיחות על גוף A <strong>שווה ל-</strong> גודל כוח המתיחות על גוף B.</div>
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- סעיף ד' -->
+    <!-- ========================================== -->
+    <div class="section-card" id="section-d">
+        <h3 class="section-header">סעיף ד': ביטוי לתאוצת המערכת</h3>
+        
+        <div class="step-container">
+            <div class="step-title">1. מה נתון?</div>
+            <p>המערכת משוחררת ומתחילה לנוע. נסמן את גודל התאוצה המשותפת באות \( a \). כפי שהסברנו בסעיף ב', נקבע מערכת צירים לכל גוף בנפרד, בהתאם לכיוון התנועה שלו: עבור גוף A נגדיר את הכיוון מטה כחיובי, ועבור גוף B נגדיר את הכיוון מעלה כחיובי. בצורה זו, התאוצה \( a \) תהיה בעלת סימן חיובי במשוואות של שניהם.</p>
+        </div>
+
+        <div class="step-container">
+            <div class="step-title">2. מה מחפשים?</div>
+            <p>לפתח ביטוי עבור גודל התאוצה \( a \) באמצעות הפרמטרים \( m_A, m_B, g \).</p>
+        </div>
+
+        <div class="step-container">
+            <div class="step-title">3. נוסחאות בשימוש</div>
+            <div class="flex flex-wrap items-center">
+                <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+                <span class="formula-badge">\( F = mg \)</span>
+            </div>
+        </div>
+
+        <div class="step-container">
+            <div class="step-title">4. פתרון הדרגתי</div>
+            <p>נבנה משוואת כוחות עבור כל גוף בנפרד לאורך ציר התנועה שלו.</p>
+            
+            <div class="math-scroll">
+                <p><strong>משוואה (1) - גוף A:</strong> תנועתו מטה (הכיוון החיובי). הכוחות הם הכובד (חיובי) והמתיחות (שלילי).</p>
+                \[ m_A g - T_1 = m_A a \]
+            </div>
+            
+            <div class="math-scroll">
+                <p><strong>משוואה (2) - גוף B:</strong> תנועתו מעלה (הכיוון החיובי). הכוחות הם המתיחות (חיובי) והכובד (שלילי).</p>
+                \[ T_1 - m_B g = m_B a \]
+            </div>
+
+            <p>כעת, כדי להיפטר מהנעלם \( T_1 \) ולמצוא את התאוצה \( a \), נחבר את שתי המשוואות בצורה אלגברית (אגף שמאל לאגף שמאל, אגף ימין לאגף ימין):</p>
+            
+            <div class="math-scroll">
+                \[ (m_A g - T_1) + (T_1 - m_B g) = m_A a + m_B a \]
+            </div>
+            
+            <p>המתיחות \( T_1 \) מצטמצמת:</p>
+            
+            <div class="math-scroll">
+                \[ m_A g - m_B g = a(m_A + m_B) \]
+            </div>
+            
+            <p>נוציא גורם משותף בצד שמאל ונחלקה כדי לבודד את התאוצה \( a \):</p>
+
+            <div class="math-scroll">
+                \[ g(m_A - m_B) = a(m_A + m_B) \]
+                \[ a = g \frac{m_A - m_B}{m_A + m_B} \]
+            </div>
+            
+            <div class="final-answer">
+                הביטוי לתאוצת המערכת הוא: \( a = g \cdot \frac{m_A - m_B}{m_A + m_B} \)
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            טיפ חשיבה: האם מותר להסתכל על שני הגופים כ"מערכת אחת"? התשובה היא כן, וזה נכון לחלוטין מבחינה פיזיקלית! אם מבקשים מאיתנו לחשב <strong>רק את התאוצה</strong>, זו דרך מעולה, קלה ומהירה לפתרון (התאוצה שווה לשקול הכוחות החיצוניים חלקי המסה הכוללת). <strong>אבל</strong>, חשוב לזכור: אם בהמשך השאלה נשאל גם על הכוחות הפנימיים במערכת (כמו המתיחות בחוט, שזה בדיוק מה שקורה אצלנו בסעיף ו'), נהיה חייבים בסופו של דבר לכתוב את המשוואות לכל גוף בנפרד. לכן, במקרים כאלה הגישה המערכתית לא באמת חוסכת לנו עבודה.
+        </div>
+    </div>
+
+    <!-- ========================================== -->
+    <!-- סעיף ה' -->
+        <!-- ========================================== -->
+        <div class="section-card" id="section-e">
+            <h3 class="section-header">סעיף ה': חישוב מפורש של התאוצה</h3>
+            
+            <div class="step-container">
+                <div class="step-title">1. מה נתון? (שלב 0)</div>
+                <p>ניתנים לנו ערכים מספריים: \( m_A = 3 \text{ kg} \), \( m_B = 2 \text{ kg} \). המסות נתונות כבר ביחידות תקניות (ק"ג) לכן אין צורך בהמרה. תאוצת הכובד היא \( g = 10 \text{ m/s}^2 \).</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">2. מה מחפשים?</div>
+                <p>לחשב את גודל התאוצה של גוף A ואת כיוונה.</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">3. נוסחאות בשימוש</div>
+                <p>נשתמש בביטוי שפיתחנו בסעיף ד':</p>
+                <div class="flex flex-wrap items-center">
+                    <span class="formula-badge">\( a = g \cdot \frac{m_A - m_B}{m_A + m_B} \)</span>
+                </div>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">4. הצבה ופתרון</div>
+                <p>נציב את הערכים הנתונים לתוך המשוואה שקיבלנו:</p>
+                
+                <div class="math-scroll">
+                    \[ a = 10 \cdot \frac{3 - 2}{3 + 2} \]
+                    \[ a = 10 \cdot \frac{1}{5} \]
+                    \[ a = 2 \text{ m/s}^2 \]
+                </div>
+                
+                <p>כיוון התנועה: כיוון שגוף A הוא הגוף המאסיבי יותר, הוא ייפול מטה בזמן שגוף B עולה מעלה.</p>
+                
+                <div class="final-answer">
+                    גודל התאוצה של גוף A הוא \( 2 \text{ m/s}^2 \) וכיוונה כלפי מטה.
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                בקרת איכות (Sanity Check): האם התוצאה הגיונית? אנו מצפים שהתאוצה של המערכת תהיה קטנה מתאוצת הנפילה החופשית (10 מטר לשנייה בריבוע), מכיוון שגוף B "מעכב" את הנפילה של גוף A. התוצאה 2 קטנה מ-10, ולכן עברנו את מבחן ההיגיון!
+            </div>
+        </div>
+
+        <!-- ========================================== -->
+        <!-- סעיף ו' -->
+        <!-- ========================================== -->
+        <div class="section-card" id="section-f">
+            <h3 class="section-header">סעיף ו': מתיחות בחוט S2 בזמן התנועה</h3>
+            
+            <div class="step-container">
+                <div class="step-title">1. מה נתון?</div>
+                <p>המערכת נמצאת בתנועה מואצת. גודל התאוצה של הגופים הוא \( a = 2 \text{ m/s}^2 \). הגלגלת נשארת במנוחה לאורך כל התהליך (לא זזה אנכית).</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">2. מה מחפשים?</div>
+                <p>לחשב את גודל הכוח הפועל בחוט \( S_2 \) (כלומר את המתיחות \( T_2 \)) כאשר גוף A נופל.</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">3. נוסחאות בשימוש</div>
+                <div class="flex flex-wrap items-center">
+                    <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+                </div>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">4. פתרון בשלבים</div>
+                <p>ראשית, עלינו למצוא את המתיחות בחוט \( S_1 \) בזמן התנועה. נוכל להשתמש באחת המשוואות שבנינו בסעיף ד'. נבחר במשוואה של גוף B (כי שם המתיחות חיובית ונוח יותר לבודד אותה):</p>
+                
+                <div class="math-scroll">
+                    \[ T_1 - m_B g = m_B a \]
+                    \[ T_1 = m_B g + m_B a = m_B(g + a) \]
+                </div>
+                
+                <p>נציב את הנתונים (\( m_B = 2, g = 10, a = 2 \)):</p>
+                
+                <div class="math-scroll">
+                    \[ T_1 = 2 \cdot (10 + 2) \]
+                    \[ T_1 = 2 \cdot 12 = 24 \text{ N} \]
+                </div>
+
+                <p>כעת נתבונן שוב בגלגלת. מכיוון שהגלגלת מוחזקת היטב לתקרה ואינה מאיצה (נמצאת בשיווי משקל), שקול הכוחות עליה חייב להיות אפס, ממש כמו בסעיף ב':</p>
+                
+                <div class="math-scroll">
+                    \[ \Sigma F_y = T_2 - 2T_1 = 0 \implies T_2 = 2T_1 \]
+                </div>
+                
+                <p>נציב את הערך החדש של \( T_1 \) שמצאנו:</p>
+                
+                <div class="math-scroll">
+                    \[ T_2 = 2 \cdot 24 = 48 \text{ N} \]
+                </div>
+                
+                <div class="final-answer">
+                    גודל המתיחות בחוט \( S_2 \) בזמן נפילת גוף A הוא: \( T_2 = 48 \text{ N} \)
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                שאלה למחשבה: בסעיף ב' אמרנו ש- \( T_2 = 2 m_B g \), כלומר אם \( m_B = 2 \), אז בזמן מנוחה \( T_2 = 40 \text{ N} \). מדוע בזמן תנועה המתיחות גדלה ל-48 ניוטון?
+                <br><br>
+                התשובה פשוטה: בזמן מנוחה, החוט היה צריך להחזיק רק את משקלו של B (20 ניוטון). אבל בזמן התנועה, החוט צריך לא רק להחזיק את B נגד כוח המשיכה, אלא גם למשוך אותו למעלה ו<strong>להאיץ</strong> אותו! כדי להאיץ גוף נגד כיוון הכובד נדרש כוח גדול יותר ממשקלו, ולכן המתיחות \( T_1 \) גדלה, ובהתאם לכך גם המתיחות \( T_2 \).
+            </div>
+        </div>
+
+    </main>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div style="display: none;" class="bg-red-50 border border-red-200 text-red-600 p-4 rounded-lg w-full text-center">
+                    התמונה <strong>question-image.png</strong> לא נמצאה בנתיב. אנא ודאו שהתמונה קיימת באותה תיקייה של קובץ ה-HTML.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה';
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const year = modified.getFullYear();
+                const month = modified.getMonth() + 1;
+                const day = modified.getDate();
+                const seed = (year * 372) + (month * 31) + day + 157;
+                const codeNum = (seed * 73) % 46656;
+                const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
