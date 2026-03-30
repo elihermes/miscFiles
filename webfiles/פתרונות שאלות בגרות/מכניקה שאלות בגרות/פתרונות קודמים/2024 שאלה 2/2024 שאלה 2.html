@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות פיזיקה מכניקה 2024 - שאלה 2</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for rendering equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            },
+            chtml: {
+                scale: 1.1
+            }
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+        
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+        
+        .section-card {
+            background-color: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+        
+        .step-title {
+            font-weight: 700;
+            color: #1d4ed8;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        
+        .formula-badge {
+            display: inline-block;
+            background-color: var(--blue-50);
+            border: 1px solid #bfdbfe;
+            color: #1e40af;
+            padding: 0.25rem 0.8rem;
+            border-radius: 0.5rem;
+            font-size: 1rem;
+            margin: 0.25rem;
+            direction: ltr;
+            font-weight: 700;
+        }
+        
+        .final-answer {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 500;
+            margin-top: 1rem;
+            color: #166534;
+        }
+        
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            font-size: 0.95rem;
+            color: #166534;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+        
+        .math-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+            padding: 0.25rem 0;
+        }
+
+        .math-scroll mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+        
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-shell">
+
+    <!-- Header Section -->
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - מכניקה 2024, שאלה 2</h1>
+        <p class="text-lg text-slate-600 mb-6 max-w-3xl mx-auto">
+            שלום תלמידים יקרים! לפנינו שאלה קלאסית העוסקת בחוק השני של ניוטון, ניתוח כוחות וניתוח גרפי של תוצאות ניסוי. נעבור על כל סעיף צעד אחר צעד, נבין את ההיגיון הפיזיקלי, ונשתמש אך ורק בנוסחאות המופיעות בדף הנוסחאות הרשמי. בהצלחה!
+        </p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+
+    </header>
+
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            לא ניתן לטעון את תמונת השאלה (question-image.png). אנא ודאו שהקובץ נמצא באותה תיקייה.
+        </div>
+    </section>
+
+    <main>
+        
+        <!-- סעיף א -->
+        <div class="section-card" id="section-a">
+            <h2 class="section-header">סעיף א': תרשים כוחות</h2>
+            
+            <div class="mb-4">
+                <h3 class="step-title">1. מה נתון:</h3>
+                <p>מערכת ובה תיבה בעלת מסה \( m \) מונחת על משטח אופקי מחוספס. התיבה קשורה בחוט העובר דרך גלגלת, ותלמידה מושכת את הקצה השני של החוט כלפי מטה בכוח \( F \). נתון כי מקדם החיכוך הקינטי הוא \( \mu \).</p>
+                <p class="text-sm text-slate-500 mt-1">שלב 0 (המרת יחידות): אין נתונים מספריים בסעיף זה, המערכת תתואר באמצעות פרמטרים.</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">2. מה מחפשים:</h3>
+                <p>לשרטט תרשים כוחות (FBD) הפועלים על התיבה, לרשום את שם כל כוח ולציין איזה גוף מפעיל אותו.</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">3. נוסחאות בשימוש:</h3>
+                <p>בשלב זה אנו מסתמכים על היכרות עם הכוחות הבסיסיים במכניקה (כבידה, נורמל, מתיחות, חיכוך) ועל החוק השלישי של ניוטון להבנת "מי מפעיל את הכוח".</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">4. פתרון:</h3>
+                <p>נשרטט את התיבה כנקודה (על פי מודל החלקיק) ונצייר את וקטורי הכוחות היוצאים ממרכזה. מאחר והתלמידה מושכת את החוט בכוח \( F \), ובהנחה שמדובר בחוט אידיאלי, המתיחות לאורך החוט שווה ל-\( F \). נסמן את כוח המתיחות כ-\( T \), כאשר גודלו שווה לכוח \( F \).</p>
+                
+                <div class="svg-container flex flex-col items-center my-6">
+                    <img
+                        src="image-1.png"
+                        alt="תרשים כוחות הפועלים על התיבה"
+                        width="400"
+                        height="300"
+                        class="w-full max-w-md h-auto bg-white border rounded-lg shadow-sm"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                    />
+                    <div style="display: none;" class="bg-blue-50 text-blue-800 p-4 rounded-lg border border-blue-200 text-center w-full max-w-md mt-3">
+                        לא ניתן לטעון את התרשים (image-1.png). אנא ודאו שהקובץ נמצא באותה תיקייה.
+                    </div>
+                </div>
+                
+                <div class="final-answer w-full">
+                    <p class="font-bold mb-2">רשימת הכוחות והגופים המפעילים אותם:</p>
+                    <ul class="list-disc list-inside space-y-1">
+                        <li>\( W = mg \) (כוח הכובד) – מופעל על ידי <span class="text-blue-600 font-bold">כדור הארץ</span> (כלפי מטה).</li>
+                        <li>\( N \) (כוח נורמלי) – מופעל על ידי <span class="text-blue-600 font-bold">המשטח האופקי</span> (כלפי מעלה, במאונך למשטח).</li>
+                        <li>\( T \) (מתיחות) – מופעל על ידי <span class="text-blue-600 font-bold">החוט</span> (ימינה, במקביל למשטח). הערה: גודלו שווה ל-\( F \).</li>
+                        <li>\( f_k \) (כוח חיכוך קינטי) – מופעל על ידי <span class="text-blue-600 font-bold">המשטח האופקי</span> (שמאלה, נגד כיוון התנועה).</li>
+                    </ul>
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 טיפ מורה:</strong> זכרו תמיד שתרשים כוחות מתייחס לגוף <em>אחד</em> בלבד. אנו שואלים את עצמנו: "מי נוגע בתיבה?" המשטח (נותן לנו נורמל וחיכוך) והחוט (נותן מתיחות). בנוסף יש כוח ממרחק שהוא כוח הכובד. לעולם אל תרשמו "התלמידה" כמי שמפעילה את הכוח הישיר על התיבה, התלמידה מושכת את החוט, והחוט מפעיל את הכוח על התיבה!
+            </div>
+        </div>
+
+        <!-- סעיף ב -->
+        <div class="section-card" id="section-b">
+            <h2 class="section-header">סעיף ב': פיתוח ביטוי לתאוצה</h2>
+            
+            <div class="mb-4">
+                <h3 class="step-title">1. מה נתון:</h3>
+                <p>הכוחות שפועלים על המסה \( m \) כפי שזיהינו בסעיף א'. התיבה מאיצה לאורך ציר ה-x.</p>
+                <p class="text-sm text-slate-500 mt-1">אנו מגדירים כיוון חיובי לציר x ימינה (כיוון תנועת התיבה), וציר y חיובי כלפי מעלה. תאוצת הכובד \( g = 10 \, m/s^2 \) תישאר כפרמטר \( g \) כנדרש.</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">2. מה מחפשים:</h3>
+                <p>ביטוי תאורטי עבור גודל התאוצה של התיבה, \( a \), כפונקציה של הכוח \( F \). כלומר, המשוואה צריכה להיראות בצורה \( a = \dots \) ולהכיל רק את הפרמטרים \( m, \mu, g, F \).</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">3. נוסחאות בשימוש:</h3>
+                <div class="flex flex-wrap gap-2 my-2">
+                    <span class="formula-badge">\(\text{slope} = \frac{\Delta y}{\Delta x} = \frac{\Delta a}{\Delta F}\)</span> (נוסחה לחישוב שיפוע מתמטי)
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">4. פתרון:</h3>
+                <p>נפעיל את החוק השני של ניוטון על כל ציר בנפרד.</p>
+                
+                <p class="font-semibold mt-4">בציר ה-y (אנכי):</p>
+                <p>התיבה אינה מאיצה בכיוון האנכי, לכן שקול הכוחות מתאפס (\( a_y = 0 \)):</p>
+                <div class="math-scroll">
+                    \[ \Sigma F_y = m a_y \quad \Rightarrow \quad N - mg = 0 \]
+                    \[ N = mg \]
+                </div>
+                
+                <p class="font-semibold mt-4">חישוב כוח החיכוך הקינטי:</p>
+                <p>כעת נציב את גודל הכוח הנורמלי בנוסחת החיכוך (נציב \( \mu_k = \mu \) לפי הנתון בשאלה):</p>
+                <div class="math-scroll">
+                    \[ f_k = \mu N \quad \Rightarrow \quad f_k = \mu m g \]
+                </div>
+
+                <p class="font-semibold mt-4">בציר ה-x (אופקי):</p>
+                <p>התיבה מאיצה בכיוון משיכת החוט. הכוח שמושך את התיבה קדימה הוא כוח המתיחות של החוט, נסמנו כ-\( T \). הכוח שמתנגד לתנועה הוא כוח החיכוך הקינטי \( f_k \). על פי החוק השני של ניוטון:</p>
+                <div class="math-scroll">
+                    \[ \Sigma F_x = m a_x \quad \Rightarrow \quad T - f_k = m a \]
+                </div>
+                
+                <div class="bg-blue-50 border-r-4 border-blue-500 p-3 my-4 rounded-l">
+                    <p class="font-bold text-blue-800 text-sm mb-1">הקשר בין המתיחות \( T \) לכוח המשיכה \( F \):</p>
+                    <ul class="list-decimal list-inside text-sm text-blue-900 space-y-1">
+                        <li>התלמידה מושכת את קצה החוט בכוח שגודלו \( F \). על פי <strong>החוק השלישי של ניוטון</strong> (פעולה ותגובה), החוט מפעיל על התלמידה כוח מתיחות השווה בגודלו ל-\( F \). לכן המתיחות בקצה החוט היא \( F \).</li>
+                        <li>מכיוון שמדובר ב<strong>חוט אידיאלי</strong> (חסר מסה) העובר דרך גלגלת אידיאלית (חסרת חיכוך ומסה), כוח המתיחות אחיד ושווה לאורכו של כל החוט.</li>
+                        <li>לכן, מתיחות החוט המושכת את התיבה בקצה השני שווה גם היא ל-\( F \), כלומר: \( T = F \).</li>
+                    </ul>
+                </div>
+
+                <p>כעת, לאחר שהבנו את הקשר, נציב \( F \) במקום \( T \) במשוואה שלנו:</p>
+                <div class="math-scroll">
+                    \[ F - f_k = m a \]
+                </div>
+                <p>נציב את הביטוי שמצאנו עבור \( f_k \):</p>
+                <div class="math-scroll">
+                    \[ F - \mu m g = m a \]
+                </div>
+                <p>נבודד את התאוצה \( a \) על ידי חלוקת שני אגפי המשוואה במסה \( m \):</p>
+                <div class="math-scroll">
+                    \[ a = \frac{F - \mu m g}{m} = \frac{F}{m} - \frac{\mu m g}{m} \]
+                </div>
+
+                <div class="final-answer">
+                    \[ a(F) = \frac{1}{m} \cdot F - \mu g \]
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 טיפ מורה:</strong> שימו לב לצורה הסופית של המשוואה שקיבלנו: \( a = (\frac{1}{m})F - \mu g \). זוהי בעצם משוואה של קו ישר מהצורה \( y = kx + b \)!
+                <br>כאן: המשתנה התלוי שלנו הוא \( a \) (ציר y בגרף), המשתנה הבלתי תלוי הוא \( F \) (ציר x בגרף), שיפוע הגרף יהיה \( \frac{1}{m} \), ונקודת החיתוך עם הציר האנכי תהיה \( -\mu g \). הבנה זו תעזור לנו מאוד בסעיפים הבאים!
+            </div>
+        </div>
+
+        <!-- סעיף ג -->
+        <div class="section-card" id="section-c">
+            <h2 class="section-header">סעיף ג': שרטוט גרף פיזור וקו מגמה</h2>
+            
+            <div class="mb-4">
+                <h3 class="step-title">1. מה נתון:</h3>
+                <p>טבלת המדידות מתוך השאלה:</p>
+                <div class="overflow-x-auto my-4">
+                    <table class="min-w-full bg-white border border-slate-300 shadow-sm text-center">
+                        <thead class="bg-slate-100">
+                            <tr>
+                                <th class="py-2 border-b border-l border-slate-300">\( F \, (N) \)</th>
+                                <td class="py-2 border-b border-l border-slate-300 font-semibold">3.5</td>
+                                <td class="py-2 border-b border-l border-slate-300 font-semibold">4.0</td>
+                                <td class="py-2 border-b border-l border-slate-300 font-semibold">4.5</td>
+                                <td class="py-2 border-b border-l border-slate-300 font-semibold">5.0</td>
+                                <td class="py-2 border-b font-semibold">5.5</td>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <th class="py-2 border-b border-l border-slate-300 bg-slate-100">\( a \, (m/s^2) \)</th>
+                                <td class="py-2 border-b border-l border-slate-300">1.9</td>
+                                <td class="py-2 border-b border-l border-slate-300">2.7</td>
+                                <td class="py-2 border-b border-l border-slate-300">3.4</td>
+                                <td class="py-2 border-b border-l border-slate-300">4.2</td>
+                                <td class="py-2 border-b">5.0</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">2. מה מחפשים:</h3>
+                <p>(1) לשרטט גרף פיזור של התאוצה \( a \) כפונקציה של הכוח \( F \).<br>(2) להוסיף קו מגמה (הישר המתאים ביותר).</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">3. פתרון ושרטוט:</h3>
+                <p>על פי הכלל במדעים, "y כפונקציה של x" אומר שהתאוצה \( a \) תהיה על ציר ה-y, והכוח \( F \) יהיה על ציר ה-x. נסמן את הנקודות במערכת צירים ולאחר מכן נעביר ישר מגמה שעובר קרוב ככל האפשר לכל הנקודות.</p>
+                
+                <div class="svg-container flex justify-center my-6">
+                    <img
+                        src="image-3.png"
+                        alt="גרף תאוצה כתלות בכוח"
+                        width="600"
+                        height="450"
+                        class="w-full max-w-2xl h-auto bg-white border rounded-lg shadow-sm"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                    />
+                    <div style="display: none;" class="bg-blue-50 text-blue-800 p-4 rounded-lg border border-blue-200 text-center w-full max-w-2xl mt-3">
+                        לא ניתן לטעון את הגרף (image-3.png). אנא ודאו שהקובץ נמצא באותה תיקייה.
+                    </div>
+                </div>
+                
+                <div class="final-answer">
+                    הגרף מוצג למעלה. קו המגמה עובר בקירוב טוב דרך כל הנקודות המצוירות, ומעיד על קשר לינארי כפי שפיתחנו בסעיף הקודם. שים לב שהקו אינו עובר בראשית הצירים!
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 טיפ מורה:</strong> בבגרות, חשוב מאוד לא סתם לחבר נקודות ב"זיגזג"! קו מגמה נועד לייצג את החוקיות הפיזיקלית, ולכן אנו מעבירים קו ישר אחד שמנסה לעבור "באמצע" ענן הנקודות. הנקודות שלנו כאן מסודרות כמעט באופן מושלם על ישר, כפי שמצופה בניסוי אידאלי. הקפידו תמיד לרשום יחידות על הצירים!
+            </div>
+        </div>
+
+        <!-- סעיף ד -->
+        <div class="section-card" id="section-d">
+            <h2 class="section-header">סעיף ד': חישוב מסה ומקדם חיכוך מהגרף</h2>
+            
+            <div class="mb-4">
+                <h3 class="step-title">1. מה נתון:</h3>
+                <p>המשוואה התיאורטית מסעיף ב': \( a = \frac{1}{m}F - \mu g \).</p>
+                <p>נחשב את שיפוע קו המגמה ששרטטנו. <strong>הערה חשובה:</strong> טעות נפוצה היא לבחור אוטומטית שתי נקודות מהטבלה. עלינו לבחור שתי נקודות שמונחות <strong>בדיוק על קו המגמה</strong> (אם נסתכל היטב על הגרף ששרטטנו, נראה שהנקודה האחרונה (5.5, 5.0) נמצאת מעט מעל הקו ולא ממש עליו!). נבחר נקודות מהקו עצמו שניתן לקרוא אותן מהגרף בדיוק סביר:</p>
+                <p>נקודה 1: \( (F_1 = 3.5 \, N, \, a_1 = 1.9 \, m/s^2) \) (נקודה ראשונה שיושבת בול על הקו)</p>
+                <p>נקודה 2: \( (F_2 = 5.0 \, N, \, a_2 = 4.2 \, m/s^2) \) (נקודה על קו המגמה. שימו לב שאנו קוראים 4.2 ולא ערך ברמת מאיות כמו 4.21, כי זה מה שניתן לקרוא מגרף משורטט)</p>
+                <p class="text-sm text-slate-500 mt-1">אנו זוכרים כי תאוצת הכובד היא \( g = 10 \, m/s^2 \).</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">2. מה מחפשים:</h3>
+                <p>(1) לחשב את מסת התיבה \( m \).</p>
+                <p>(2) לחשב את מקדם החיכוך הקינטי \( \mu \) בין התיבה למשטח.</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">3. נוסחאות בשימוש:</h3>
+                <div class="flex flex-wrap gap-2 my-2">
+                    <span class="formula-badge">\(\text{slope} = \frac{\Delta y}{\Delta x} = \frac{\Delta a}{\Delta F}\)</span> (נוסחה לחישוב שיפוע מתמטי)
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">4. פתרון - תת סעיף (1) חישוב המסה:</h3>
+                <p>נשווה בין המשוואה התיאורטית למשוואת הישר המתמטית \( y = kx + b \):</p>
+                <div class="math-scroll">
+                    \[ y \leftrightarrow a \]
+                    \[ x \leftrightarrow F \]
+                </div>
+                <div class="math-scroll flex items-center justify-center gap-2" dir="rtl">
+                    <span class="font-semibold">שיפוע =</span><span dir="ltr">\( \frac{1}{m} \)</span>
+                </div>
+                <p>נחשב את שיפוע הגרף מהנקודות שעל קו המגמה:</p>
+                <div class="math-scroll">
+                    \[ \frac{\Delta a}{\Delta F} = \frac{4.2 - 1.9}{5.0 - 3.5} = \frac{2.3}{1.5} \approx 1.533 \, \left[\frac{m/s^2}{N}\right] \]
+                </div>
+                <p>כעת, נשווה את השיפוע התיאורטי לשיפוע שחישבנו ונחלץ את המסה:</p>
+                <div class="math-scroll">
+                    \[ \frac{1}{m} = 1.533 \quad \Rightarrow \quad m = \frac{1}{1.533} \approx 0.652 \, kg \]
+                </div>
+                
+                <div class="final-answer">
+                    (1) מסת התיבה היא: \( m = 0.652 \, kg \)
+                </div>
+
+                <h3 class="step-title mt-6">4. פתרון - תת סעיף (2) חישוב מקדם החיכוך:</h3>
+                <p>נחזור להשוואה שלנו מול המשוואה התיאורטית. האיבר החופשי (נקודת חיתוך עם ציר y) שווה תיאורטית ל- \( -\mu g \).</p>
+                <p>דרך נוחה ומדויקת יותר למצוא את \( \mu \) מבלי להסתמך על קריאה ויזואלית של החיתוך, היא להציב את אחת מנקודות קו המגמה ואת המסה שמצאנו לתוך המשוואה המלאה:</p>
+                <div class="math-scroll">
+                    \[ a = \frac{1}{m}F - \mu g \]
+                </div>
+                <p>נציב את הנקודה \( (F = 3.5, a = 1.9) \), את השיפוע \( 1.533 \), ואת \( g=10 \):</p>
+                <div class="math-scroll">
+                    \[ 1.9 = 1.533 \cdot 3.5 - \mu \cdot 10 \]
+                    \[ 1.9 = 5.365 - 10\mu \]
+                    \[ 10\mu = 5.365 - 1.9 = 3.465 \]
+                    \[ \mu = \frac{3.465}{10} = 0.3465 \approx 0.347 \]
+                </div>
+
+                <div class="final-answer">
+                    (2) מקדם החיכוך הקינטי הוא: \( \mu \approx 0.347 \) (כ- \( 0.35 \))
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 טיפ מורה:</strong> שימו לב לסימונים! השתמשנו במילה <strong>\(\text{slope}\)</strong> לתיאור השיפוע ולא באות \( m \), כדי למנוע בלבול מוחלט עם מסת התיבה שגם היא מסומנת ב-\( m \). 
+                <br><br>
+                זיהוי מעולה של טעות נפוצה! תלמידים נוטים לבחור אוטומטית את הנקודה הראשונה והאחרונה בטבלה. בבגרות, חובה לחשב שיפוע משתי נקודות שמונחות <strong>פיזית על הישר ששרטטתם</strong>. כמו שראינו, הנקודה (5.5, 5.0) חורגת מעט מהקו שהעברנו, ולכן עדיף לא להשתמש בה ישירות. כמו כן, זכרו שאנו מוגבלים לדיוק הקריאה שלנו מהגרף (לקרוא 4.2 זה הגיוני, 4.21 זה בלתי אפשרי בשרטוט ידני).
+            </div>
+        </div>
+
+        <!-- סעיף ה -->
+        <div class="section-card" id="section-e">
+            <h2 class="section-header">סעיף ה': שינוי הכוח המופעל</h2>
+            
+            <div class="mb-4">
+                <h3 class="step-title">1. מה נתון:</h3>
+                <p>התלמידה מחליפה את המערכת ומושכת את החוט בכוח חלש יותר: \( F = 1.5 \, N \).</p>
+                <p>מהסעיף הקודם אנו יודעים שהמסה היא \( m \approx 0.652 \, kg \) ומקדם החיכוך הקינטי הוא \( \mu \approx 0.347 \).</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">2. מה מחפשים:</h3>
+                <p>לקבוע מה תהיה תאוצת התיבה במקרה זה, ולהסביר את הקביעה פיזיקלית.</p>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">3. נוסחאות בשימוש:</h3>
+                <div class="flex flex-wrap gap-2 my-2">
+                    <span class="formula-badge">\(f_s \le \mu_s N\)</span> (כוח חיכוך סטטי מקסימלי)
+                    <span class="formula-badge">\(\Sigma\vec{F} = 0\)</span> (תנאי להתמדה/מנוחה)
+                </div>
+            </div>
+
+            <div class="mb-4">
+                <h3 class="step-title">4. פתרון:</h3>
+                <p>כדי שגוף יתחיל לנוע על משטח מחוספס, הכוח המושך צריך להיות גדול מכוח החיכוך הסטטי המקסימלי (\( f_{s,max} = \mu_s N \)). למרות שאין לנו את מקדם החיכוך הסטטי \( \mu_s \), אנו יודעים עובדה חשובה: מקדם חיכוך סטטי <strong>תמיד</strong> גדול או שווה למקדם חיכוך קינטי (\( \mu_s \ge \mu_k \)).</p>
+                <p>נחשב קודם כל את כוח החיכוך הקינטי שכבר פעל במערכת כאשר הגוף נע (מתוך נתוני סעיף ד'):</p>
+                <div class="math-scroll">
+                    \[ f_k = \mu N = \mu m g = 0.347 \cdot 0.652 \cdot 10 \approx 2.26 \, N \]
+                </div>
+                <p>כוח המשיכה החדש של התלמידה הוא \( F = 1.5 \, N \). נשווה אותו לכוח החיכוך הקינטי:</p>
+                <div class="math-scroll">
+                    \[ F = 1.5 \, N \quad < \quad f_k = 2.26 \, N \]
+                </div>
+                <p>מכיוון שהכוח המופעל (\( 1.5 \, N \)) קטן משמעותית אפילו מכוח החיכוך הקינטי (ששווה 2.26 ניוטון), הוא בוודאי קטן מכוח החיכוך הסטטי המקסימלי הדרוש להתחלת תנועה (שהוא גדול מ-2.26 ניוטון). המשמעות היא שהכוח המושך אינו מספיק כדי "לשבור" את אחיזת החיכוך בין התיבה למשטח.</p>
+                <p>התיבה תישאר במנוחה, וכוח החיכוך הסטטי שיפעל עליה יתאים את עצמו לכוח המושך ויהיה בדיוק שווה לו (\( f_s = 1.5 \, N \)). לכן שקול הכוחות הוא אפס.</p>
+
+                <div class="final-answer">
+                    תאוצת התיבה תהיה אפס: \( a = 0 \, m/s^2 \).<br>
+                    <strong>הסבר:</strong> הכוח שהתלמידה מפעילה (\( 1.5 \, N \)) קטן מכוח החיכוך הקינטי (שהוא \( \approx 2.26 \, N \)), ולכן בהכרח קטן מכוח החיכוך הסטטי המקסימלי. הגוף לא יתחיל לנוע ויישאר במנוחה.
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 טיפ מורה:</strong> אפשר היה לענות על סעיף זה בקלות גם באמצעות התבוננות בגרף (סעיף ג'). נקודת החיתוך של קו המגמה עם ציר x מראה מהו הכוח המינימלי הדרוש כדי שתתקבל תאוצה גדולה מאפס. מהגרף רואים שנקודת החיתוך נמצאת בין 2 ל-2.5 ניוטון. כוח של 1.5 ניוטון נמצא בחלק השלילי של התאוצה אילו הקו היה ממשיך, אך במציאות המשמעות היא פשוט שהגוף נח במקומו ולכן התאוצה היא בדיוק 0.
+            </div>
+        </div>
+
+    </main>
+
+    </div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img
+                    src="question-image.png"
+                    alt="תמונת השאלה המקורית"
+                    class="max-w-full h-auto rounded-lg"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                >
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    לא ניתן לטעון את תמונת השאלה (question-image.png). אנא ודאו שהקובץ נמצא באותה תיקייה.
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה';
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const year = modified.getFullYear();
+                const month = modified.getMonth() + 1;
+                const day = modified.getDate();
+                const seed = (year * 372) + (month * 31) + day + 157;
+                const codeNum = (seed * 73) % 46656;
+                const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+
+</body>
+</html>
