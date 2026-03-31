@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות פיזיקה - מכניקה 1993 שאלה 4</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html { overflow-x: clip; }
+        body { overflow-x: clip; }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #334155;
+            margin-top: 1.25rem;
+            margin-bottom: 0.4rem;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0.5rem 0 0 0.5rem;
+            font-weight: 600;
+            color: #166534;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .svg-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 0 auto;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 8px;
+            padding: 1rem;
+        }
+
+        .mathjax-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .mathjax-scroll mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open { display: flex; }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title { min-width: 0; flex: 1; font-weight: 700; color: #1f2937; }
+        .question-modal-close { flex-shrink: 0; }
+        body.modal-open { overflow: hidden; }
+
+        @media (max-width: 640px) {
+            .mathjax-scroll mjx-container[display="true"] { font-size: 0.9em; }
+            .page-shell { padding-bottom: 8.5rem; }
+            .question-modal-header { flex-wrap: wrap; }
+            .question-modal-title { width: 100%; text-align: right; font-size: 1rem; order: 2; }
+            .question-modal-close { order: 1; }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn { right: 1.5rem; bottom: 1.5rem; }
+            .page-shell { padding: 1.5rem; padding-bottom: 7rem; }
+        }
+    </style>
+</head>
+<body>
+<div class="page-shell">
+
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - מכניקה 1993 שאלון 4</h1>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <div class="section-card">
+        <h3 class="section-header">סעיף א': מציאת וקטור המהירות בנקודה C</h3>
+        
+        <div class="step-title">1. מה נתון:</div>
+        <p>הגוף משוחרר ממנוחה בנקודה A, לכן מהירותו ההתחלתית היא \( v_A = 0 \). המסילה חלקה לחלוטין (אין כוחות לא משמרים שמבצעים עבודה). נגדיר את מישור הייחוס לאנרגיה פוטנציאלית כובדית בנקודה הנמוכה ביותר במסלול, נקודה B (\( h_B = 0 \)).<br>
+        לפיכך, הגובה בנקודה A הוא הרדיוס של המסילה הגדולה: \( h_A = R \).<br>
+        נקודה C נמצאת בקצה הקוטר האופקי של המסילה המעגלית הקטנה, לכן גובהה ביחס ל-B הוא הרדיוס של המעגל הקטן: \( h_C = r \).</p>
+
+        <div class="step-title">2. מה מחפשים:</div>
+        <p>את גודלו וכיוונו של וקטור המהירות בנקודה C, כלומר את \( v_C \).</p>
+
+        <div class="step-title">3. נוסחאות בשימוש:</div>
+        <div>
+            <span class="formula-badge">\( U_G = mgh \)</span> (אנרגיה פוטנציאלית כובדית)<br>
+            <span class="formula-badge">\( E_k = \frac{1}{2}mv^2 \)</span> (אנרגיה קינטית)<br>
+            <span class="formula-badge">\( W_{\text{nc}} = \Delta E \)</span> (משפט עבודה-אנרגיה) - מכיוון שאין כוחות שאינם משמרים העושים עבודה, מתקיים חוק שימור אנרגיה מכנית.<br>
+            <span class="formula-badge">כיוון המהירות</span> (עיקרון קינמטי) - בתנועה מעגלית, וקטור המהירות בכל רגע נתון תמיד משיק למסלול התנועה (נשתמש בעיקרון זה למציאת כיוונו של הווקטור).
+        </div>
+
+        <div class="step-title">4. הצבה ופתרון:</div>
+        <p>מכיוון שהמסילה חלקה, עבודת הכוחות הלא משמרים (רק הנורמל פועל ככוח לא משמר, ועבודתו אפס כי הוא תמיד מאונך לכיוון התנועה) היא אפס. לכן, מתקיים שימור אנרגיה מכנית בין הנקודות A ו-C:</p>
+        <div class="mathjax-scroll">
+            \[ E_A = E_C \]
+            \[ mgh_A + \frac{1}{2}mv_A^2 = mgh_C + \frac{1}{2}mv_C^2 \]
+        </div>
+        <p>נציב את הנתונים שלנו:</p>
+        <div class="mathjax-scroll">
+            \[ mgR + 0 = mgr + \frac{1}{2}mv_C^2 \]
+        </div>
+        <p>נצמצם במסה \( m \) ונסדר את המשוואה למציאת המהירות:</p>
+        <div class="mathjax-scroll">
+            \[ gR - gr = \frac{1}{2}v_C^2 \]
+            \[ v_C^2 = 2g(R - r) \]
+            \[ v_C = \sqrt{2g(R - r)} \]
+        </div>
+        <p>כיוון המהירות בנקודה C: על פי העיקרון הקינמטי, כיוון המהירות תמיד משיק למסלול. מכיוון שהגוף מגיע מלמטה ועולה לאורך המעגל, ונקודה C נמצאת בדיוק בקצה הקוטר האופקי, המשיק למעגל בנקודה זו הוא מאונך לחלוטין (אנכי). לכן כיוון המהירות הוא כלפי מעלה.</p>
+        
+        <div class="final-answer">
+            גודל המהירות בנקודה C הוא \( \sqrt{2g(R-r)} \).<br>
+            כיוון המהירות הוא משיק למסילה כלפי מעלה.
+        </div>
+
+        <div class="teacher-highlight">
+            חשוב תמיד לבחור נקודת ייחוס (0 של האנרגיה הפוטנציאלית) שתקל עלינו בחישובים. בדרך כלל, הנקודה הנמוכה ביותר במערכת (נקודה B) היא הבחירה האידאלית! שימו לב שהגודל מבוטא רק באמצעות פרמטרים נתונים \( R \), \( r \) וקבוע הכובד \( g \).
+        </div>
+    </div>
+
+    <!-- סעיף ב -->
+    <div class="section-card">
+        <h3 class="section-header">סעיף ב': תאוצה רדיאלית ומשיקית בנקודה C</h3>
+        
+        <div class="step-title">1. מה נתון:</div>
+        <p>מהסעיף הקודם אנו יודעים את ריבוע המהירות בנקודה C: \( v_C^2 = 2g(R - r) \). רדיוס מסלול התנועה הנוכחי (המעגל הקטן) הוא \( r \).<br>
+        הכוחות הפועלים על הגוף בנקודה C הם: כוח הכבידה (\( mg \)) הפועל אנכית כלפי מטה, והכוח הנורמלי (\( N \)) הפועל אופקית שמאלה, אל עבר מרכז המעגל \( O' \).</p>
+
+        <div class="svg-container flex justify-center my-4">
+            <img src="image-2.png" alt="דיאגרמת כוחות בנקודה C" style="width:100%;height:100%;object-fit:contain;"/>
+        </div>
+
+        <div class="step-title">2. מה מחפשים:</div>
+        <p>את התאוצה הרדיאלית \( a_R \) (תת-סעיף 1) ואת התאוצה המשיקית \( a_T \) (תת-סעיף 2) בנקודה זו.</p>
+
+        <div class="step-title">3. נוסחאות בשימוש:</div>
+        <div>
+            <span class="formula-badge">\( a_R = \frac{v^2}{r} \)</span> (תאוצה רדיאלית)
+            <span class="formula-badge">\( \Sigma \vec{F} = m \vec{a} \)</span> (החוק השני של ניוטון)
+        </div>
+
+        <div class="step-title">4. הצבה ופתרון:</div>
+        <p><strong>חלק (1) - תאוצה רדיאלית:</strong><br>
+        נציב את ביטוי המהירות שמצאנו אל תוך נוסחת התאוצה הרדיאלית:</p>
+        <div class="mathjax-scroll">
+            \[ a_R = \frac{v_C^2}{r} = \frac{2g(R - r)}{r} \]
+        </div>
+        <p>תאוצה זו מכוונת תמיד אל עבר מרכז המעגל, שזה במקרה שלנו אופקית ושמאלה (לכיוון נקודה \( O' \)).</p>
+        
+        <p><strong>חלק (2) - תאוצה משיקית:</strong><br>
+        הציר המשיקי בנקודה C הוא הציר האנכי (כיוון המהירות). נפעיל את החוק השני של ניוטון בציר זה.<br>
+        נסמן את הכיוון מטה ככיוון החיובי. הכוח היחיד שפועל בציר זה הוא כוח הכבידה \( mg \):</p>
+        <div class="mathjax-scroll">
+            \[ \Sigma F_T = m a_T \]
+            \[ mg = m a_T \]
+            \[ a_T = g \]
+        </div>
+        <p>התאוצה היא בגודל תאוצת הכובד \( g \), וכיוונה כלפי מטה (בניגוד לכיוון המהירות, לכן גודל המהירות קטן בנקודה זו).</p>
+        
+        <div class="final-answer">
+            (1) התאוצה הרדיאלית היא \( \frac{2g(R-r)}{r} \) אופקית שמאלה (למרכז המעגל).<br>
+            (2) התאוצה המשיקית היא \( g \) כלפי מטה.
+        </div>
+
+        <div class="teacher-highlight">
+            תאוצה של גוף בתנועה מעגלית מורכבת תמיד משני רכיבים: תאוצה רדיאלית ש"אחראית" רק על שינוי <b>כיוון</b> המהירות, ותאוצה משיקית ש"אחראית" על שינוי <b>גודל</b> המהירות. בנקודה C הכוח הנורמלי אחראי בלעדית לתאוצה הרדיאלית, וכוח הכבידה אחראי בלעדית לתאוצה המשיקית!
+        </div>
+    </div>
+
+    <!-- סעיף ג -->
+    <div class="section-card">
+        <h3 class="section-header">סעיף ג': תנאי לאי-ניתוק מהמסילה</h3>
+        
+        <div class="step-title">1. מה נתון:</div>
+        <p>כדי שהגוף לא ינותק מהמסילה המעגלית, הוא חייב להשלים את הלולאה. הנקודה המאתגרת ביותר להשלמת הלולאה היא הנקודה הגבוהה ביותר במסלול (נסמנה באות D). גובה הנקודה D ביחס לנקודה B הוא \( h_D = 2r \).<br>
+        תנאי לאי-ניתוק הוא שהגוף יפעיל כוח לחיצה על המסילה, כלומר הכוח הנורמלי בנקודה D חייב להיות גדול או שווה לאפס: \( N_D \ge 0 \).</p>
+
+        <div class="svg-container flex justify-center my-4">
+            <img src="image-3.png" alt="דיאגרמת כוחות בנקודה D" style="width:100%;height:100%;object-fit:contain;"/>
+        </div>
+
+        <div class="step-title">2. מה מחפשים:</div>
+        <p>את היחס המינימלי \( R/r \) המבטיח שהגוף לא יתנתק בנקודה D.</p>
+
+        <div class="step-title">3. נוסחאות בשימוש:</div>
+        <div>
+            <span class="formula-badge">\( \Sigma F_R = m a_R \)</span> (החוק השני בציר רדיאלי)<br>
+            <span class="formula-badge">\( a_R = \frac{v^2}{r} \)</span> (תאוצה רדיאלית)<br>
+            <span class="formula-badge">\( W_{\text{nc}} = \Delta E \)</span> (משפט עבודה-אנרגיה) - כאשר עבודת הכוחות שאינם משמרים היא אפס, מתקיים חוק שימור אנרגיה מכנית.
+        </div>
+
+        <div class="step-title">4. הצבה ופתרון:</div>
+        <p>ננתח את הכוחות בנקודה D (שיא הלולאה) בציר הרדיאלי הפונה כלפי מרכז המעגל מטה. גם הנורמל וגם משיכת כדור הארץ פועלים מטה:</p>
+        <div class="mathjax-scroll">
+            \[ \Sigma F_R = N_D + mg = m \frac{v_D^2}{r} \]
+        </div>
+        <p>במצב הגבולי (סף ניתוק), הגוף כמעט לא לוחץ על המסילה, כלומר \( N_D \to 0 \). נציב זאת כדי למצוא את המהירות המינימלית הנדרשת בנקודה D:</p>
+        <div class="mathjax-scroll">
+            \[ 0 + mg = m \frac{v_{D_{\text{min}}}^2}{r} \]
+            \[ v_{D_{\text{min}}}^2 = gr \]
+        </div>
+        <p>כעת, נפעיל שוב את חוק שימור האנרגיה בין נקודת ההתחלה A לבין הנקודה D:</p>
+        <div class="mathjax-scroll">
+            \[ E_A = E_D \]
+            \[ mgR + 0 = mg(2r) + \frac{1}{2}mv_{D_{\text{min}}}^2 \]
+        </div>
+        <p>נציב את הביטוי לריבוע המהירות המינימלית שמצאנו (\( v_{D_{\text{min}}}^2 = gr \)):</p>
+        <div class="mathjax-scroll">
+            \[ mgR = 2mgr + \frac{1}{2}m(gr) \]
+            \[ mgR = 2.5mgr \]
+        </div>
+        <p>נחלק את שני אגפי המשוואה בביטוי החיובי \( mgr \) ונקבל:</p>
+        <div class="mathjax-scroll">
+            \[ R = 2.5r \implies \frac{R}{r} = 2.5 \]
+        </div>
+        
+        <div class="final-answer">
+            היחס המינימלי הנדרש כדי שהגוף לא ינתק הוא \( \frac{R}{r} = 2.5 \).
+        </div>
+
+        <div class="teacher-highlight">
+            הטעות הנפוצה ביותר בסעיפים כאלו היא להניח שהמהירות בשיא הלולאה היא אפס. זכרו! בשיא המסלול המעגלי, הגוף חייב לנוע במהירות מסוימת כדי לייצר את התאוצה הרדיאלית הנדרשת לתנועה מעגלית. אם המהירות שם תהיה אפס, הגוף פשוט ייפול בקו ישר למטה ולא ישלים מעגל.
+        </div>
+    </div>
+
+    <!-- סעיף ד -->
+    <div class="section-card">
+        <h3 class="section-header">סעיף ד': כיוון הכוח השקול לאורך הקשת AB</h3>
+        
+        <div class="step-title">1. מה נתון:</div>
+        <p>הגוף מחליק לאורך קטע המסילה AB, שהוא מעגל ברדיוס R. המהירות ההתחלתית ב-A היא אפס, וגודלה הולך וגדל עד לנקודה B.</p>
+
+        <div class="svg-container flex justify-center my-4">
+            <img src="image-4.png" alt="דיאגרמת כוחות לאורך קשת AB" style="width:100%;height:100%;object-fit:contain;"/>
+        </div>
+
+        <div class="step-title">2. מה מחפשים:</div>
+        <p>להסביר מדוע וקטור הכוח השקול הפועל על הגוף (מנקודה A, רגע אחרי השחרור, ועד לנקודה B) לא יכול להיות בכיוון המשיק למסילה.</p>
+
+        <div class="step-title">3. נוסחאות בשימוש:</div>
+        <div>
+            <span class="formula-badge">\( a_R = \frac{v^2}{R} \)</span> (הכרח התאוצה הרדיאלית)
+            <span class="formula-badge">\( \Sigma \vec{F} = m \vec{a_R} + m \vec{a_T} \)</span>
+        </div>
+
+        <div class="step-title">4. הצבה ופתרון:</div>
+        <p>הכוח השקול על הגוף הוא הסכום הווקטורי של כוח הכבידה (\( mg \)) והכוח הנורמלי (\( N \)).<br>
+        הגוף נע לאורך מסלול עקום (קשת של מעגל). בתנועה לאורך מסלול עקום, כיוון וקטור המהירות משתנה מרגע לרגע. מקינמטיקה אנו יודעים ששינוי בכיוון המהירות מחייב קיומה של תאוצה רדיאלית, שגודלה עומד ביחס ישר לריבוע המהירות: \( a_R = v^2/R \).<br>
+        התאוצה הרדיאלית מכוונת תמיד פנימה אל מרכז המעגל (בניצב לכיוון המשיק). לכן, לפי החוק השני של ניוטון (\( \Sigma F = ma \)), חייב לפעול על הגוף כוח שקול שיש לו <b>רכיב רדיאלי השונה מאפס</b>. </p>
+        <p>מכיוון שהכוח השקול מכיל רכיב רדיאלי (המאונך למשיק), הווקטור השלם של הכוח השקול אינו יכול להיות מכוון אך ורק לאורך קו המשיק.</p>
+
+        <div class="final-answer">
+            גוף הנע במסלול עקום חייב להיות נתון לתאוצה רדיאלית (המשנה את כיוון תנועתו). לפי חוקי ניוטון, הדבר מחייב שהכוח השקול יכלול רכיב רדיאלי השונה מאפס, ולכן אינו יכול להיות משיק טהור למסילה.
+        </div>
+
+        <div class="teacher-highlight">
+            שאלה קלאסית של הבנה מושגית. אם הכוח השקול על גוף הוא במדויק בכיוון מהירותו (בכיוון המשיק), הגוף ינוע בקו ישר (יאיץ או יאט, אבל לא יעקם את מסלולו). עצם העובדה שהמסלול מעוקם, מוכיחה שיש משיכה הצידה מקו התנועה!
+        </div>
+    </div>
+
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) { versionStamp.title = 'עודכן לאחרונה'; }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+            versionUpdatedAt.textContent = dateCode + ' ' + hours + ':' + minutes + ':' + seconds;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+        questionModal.addEventListener('click', function (event) {
+            if (event.target === questionModal) { closeQuestionModal(); }
+        });
+        document.addEventListener('keydown', function (event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) { closeQuestionModal(); }
+        });
+    });
+</script>
+</body>
+</html>
