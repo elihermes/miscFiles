@@ -1,0 +1,467 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מחוון הערכה עצמית - פיזיקה</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- תמיכה ב-MathJax לפי בקשת אלי -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Rubik', 'sans-serif'],
+                    },
+                    colors: {
+                        brand: {
+                            50: '#f0f9ff',
+                            100: '#e0f2fe',
+                            500: '#0ea5e9',
+                            600: '#0284c7',
+                            900: '#0c4a6e',
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #f8fafc;
+            -webkit-tap-highlight-color: transparent;
+        }
+        
+        .score-level-btn {
+            transition: all 0.2s ease;
+        }
+        
+        .score-level-btn.selected {
+            transform: scale(1.02);
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+        }
+
+        /* צבעים מותאמים לפי רמות */
+        .btn-level-0.selected { background-color: #fee2e2; border-color: #ef4444; color: #991b1b; }
+        .btn-level-1.selected { background-color: #ffedd5; border-color: #f97316; color: #9a3412; }
+        .btn-level-2.selected { background-color: #fef08a; border-color: #eab308; color: #854d0e; }
+        .btn-level-3.selected { background-color: #dcfce3; border-color: #22c55e; color: #166534; }
+        .btn-level-4.selected { background-color: #dbeafe; border-color: #3b82f6; color: #1e40af; }
+
+        .sticky-footer {
+            box-shadow: 0 -4px 15px rgba(0,0,0,0.05);
+        }
+    </style>
+</head>
+<body class="text-slate-800 pb-32">
+
+    <!-- Header -->
+    <header class="bg-brand-900 text-white py-8 px-4 shadow-md rounded-b-3xl">
+        <div class="max-w-4xl mx-auto">
+            <h1 class="text-3xl md:text-4xl font-bold mb-2">מחוון הערכה עצמית</h1>
+            <h2 class="text-xl text-brand-100 opacity-90">פיזיקה - מכניקה 1990 (שאלה 3)</h2>
+            <p class="mt-4 text-sm md:text-base text-brand-50 max-w-2xl leading-relaxed">
+                קראו את הפתרון שלכם, ועברו סעיף-סעיף. לכל קריטריון, בחרו את הרמה שמשקפת בצורה הכי מדויקת את מה שכתבתם במבחן. הציון יחושב אוטומטית בהתאם למשקל כל קריטריון.
+            </p>
+            
+            <div class="mt-6 max-w-sm">
+                <label for="student-name" class="block text-sm font-medium text-brand-100 mb-1">שם התלמיד/ה (יופיע בדוח ההדפסה):</label>
+                <input type="text" id="student-name" placeholder="הקלידו שם מלא כאן..." class="w-full bg-white/10 border border-brand-100/30 text-white placeholder-brand-100/50 text-base rounded-xl focus:ring-white focus:border-white block p-3 outline-none transition-colors">
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl mx-auto px-4 mt-8" id="app-container">
+        <!-- JS will inject sections here -->
+    </main>
+
+    <!-- Sticky Footer (Results & Actions) -->
+    <div class="fixed bottom-0 left-0 right-0 bg-white border-t border-slate-200 sticky-footer z-50">
+        <div class="max-w-4xl mx-auto px-4 py-4">
+            <div class="flex flex-col md:flex-row justify-between items-center gap-4">
+                
+                <!-- Scores summary -->
+                <div class="flex gap-4 sm:gap-8 w-full md:w-auto justify-center">
+                    <div class="text-center">
+                        <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider">סעיף א'</div>
+                        <div class="text-xl font-bold text-brand-600"><span id="score-A">0</span>/100</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider">סעיף ב'</div>
+                        <div class="text-xl font-bold text-brand-600"><span id="score-B">0</span>/100</div>
+                    </div>
+                    <div class="text-center">
+                        <div class="text-xs text-slate-500 font-semibold uppercase tracking-wider">סעיף ג'</div>
+                        <div class="text-xl font-bold text-brand-600"><span id="score-C">0</span>/100</div>
+                    </div>
+                </div>
+                
+                <!-- Final Score & Actions -->
+                <div class="flex items-center gap-4 w-full md:w-auto justify-between md:justify-end border-t md:border-t-0 pt-3 md:pt-0 border-slate-100">
+                    <div class="flex flex-col items-center gap-2">
+                        <button onclick="resetAll()" class="text-sm text-slate-500 hover:text-slate-800 underline decoration-slate-300 underline-offset-4">
+                            איפוס מחוון
+                        </button>
+                    </div>
+                    
+                    <button onclick="printToPDF()" class="flex items-center gap-2 bg-slate-800 hover:bg-slate-900 text-white px-4 py-2.5 rounded-xl text-sm font-semibold transition-colors shadow-sm focus:ring-2 focus:ring-slate-400 focus:outline-none">
+                        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+                        הדפס ל-PDF
+                    </button>
+
+                    <div class="text-left bg-brand-50 px-5 py-2 rounded-xl border border-brand-100 mr-2">
+                        <div class="text-xs text-brand-600 font-bold uppercase tracking-wider">ציון ממוצע</div>
+                        <div class="text-2xl font-black text-brand-900"><span id="score-total">0</span><span class="text-base font-medium text-brand-700 ml-1">%</span></div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Data Structure for the Rubric
+        const rubricData = [
+            {
+                id: 'A',
+                title: "סעיף א': מתיחות החוט בנקודה C",
+                criteria: [
+                    { id: 'A1', name: "כתיבת נתונים", weight: 10, type: "scale", desc: "חילוץ ורישום מסודר של הנתונים מהשאלה (m, R, vA, g)." },
+                    { id: 'A2', name: "נוסחאות ועקרונות בשימוש", weight: 10, type: "scale", desc: "ציון: חוק שימור אנרגיה, חוק שני של ניוטון, ותאוצה רדיאלית." },
+                    { id: 'A3', name: "תרשים כוחות חופשי (FBD)", weight: 20, type: "scale", desc: "שרטוט מדויק בנקודה C: כוח הכובד (מטה) ומתיחות (ימינה/למרכז)." },
+                    { id: 'A4', name: "יישום חוק שימור אנרגיה", weight: 25, type: "scale", desc: "קביעת גובה ייחוס, בניית משוואה EA=EC וחישוב המהירות (v²=65)." },
+                    { id: 'A5', name: "יישום משוואת כוח רדיאלי", weight: 25, type: "scale", desc: "בניית משוואת כוחות לרדיוס (T=ma) ומציאת המתיחות (24.375 N)." },
+                    { id: 'A6', name: "יחידות מידה בתוצאה", weight: 10, type: "binary", desc: "רישום יחידת הכוח (N) בתשובה הסופית." }
+                ]
+            },
+            {
+                id: 'B',
+                title: "סעיף ב': תאוצת הגוף בנקודה B",
+                criteria: [
+                    { id: 'B1', name: "הגדרת גובה נכון", weight: 10, type: "binary", desc: "זיהוי וציון שהגובה החדש בנקודה B הוא 2R." },
+                    { id: 'B2', name: "נוסחאות ועקרונות", weight: 10, type: "scale", desc: "ציון שימור אנרגיה ונוסחת תאוצה רדיאלית." },
+                    { id: 'B3', name: "תרשים כוחות (FBD)", weight: 15, type: "scale", desc: "שרטוט בנקודה B: גם כוח הכובד וגם המתיחות מסורטטים כלפי מטה." },
+                    { id: 'B4', name: "יישום שימור אנרגיה", weight: 25, type: "scale", desc: "בניית משוואה EA=EB, הצבת הגובה הנכון וחישוב המהירות בשיא." },
+                    { id: 'B5', name: "חישוב תאוצה וכיוון", weight: 30, type: "scale", desc: "חישוב גודל התאוצה (a=v²/R) וציון מפורש שכיוונה כלפי מטה." },
+                    { id: 'B6', name: "יחידות מידה", weight: 10, type: "binary", desc: "רישום יחידת התאוצה (m/s²) בתשובה הסופית." }
+                ]
+            },
+            {
+                id: 'C',
+                title: "סעיף ג': המסלול לאחר קריעת החוט",
+                criteria: [
+                    { id: 'C1', name: "סרטוט המסלול", weight: 30, type: "binary", desc: "סרטוט קו ישר ואנכי היורד מנקודה D כלפי מטה (עד הקרקע)." },
+                    { id: 'C2', name: "אזכור עקרונות רלוונטיים", weight: 10, type: "scale", desc: "התייחסות לחוקי ניוטון וכיוון וקטור מהירות משיקי." },
+                    { id: 'C3', name: "זיהוי כיוון המהירות ההתחלתית", weight: 20, type: "binary", desc: "זיהוי חד-משמעי שברגע הקריעה המהירות מכוונת אנכית כלפי מטה." },
+                    { id: 'C4', name: "זיהוי הכוחות והתאוצה", weight: 20, type: "scale", desc: "הבנה שלאחר הקריעה פועל רק כוח הכובד, לכן התאוצה היא g מטה." },
+                    { id: 'C5', name: "מסקנה (חיבור לוגי)", weight: 20, type: "scale", desc: "סיכום שכיוון שהמהירות והתאוצה על אותו קו פעולה - התנועה בקו ישר (זריקה מטה)." }
+                ]
+            }
+        ];
+
+        // Level Descriptions
+        const scaleLabels = {
+            0: { title: "0", desc: "לא בוצע / שגוי" },
+            1: { title: "1", desc: "ביצוע חלקי מאוד" },
+            2: { title: "2", desc: "חלקי (כ-50%)" },
+            3: { title: "3", desc: "כמעט מושלם" },
+            4: { title: "4", desc: "מלא ומדויק" }
+        };
+
+        const binaryLabels = {
+            0: { title: "0", desc: "לא בוצע / שגוי" },
+            4: { title: "4", desc: "נכון ומלא" }
+        };
+
+        // State to hold user selections
+        let userScores = {};
+
+        function renderApp() {
+            const container = document.getElementById('app-container');
+            container.innerHTML = '';
+
+            rubricData.forEach(section => {
+                const sectionEl = document.createElement('section');
+                sectionEl.className = 'bg-white rounded-2xl shadow-sm border border-slate-200 mb-8 overflow-hidden';
+                
+                // Section Header
+                const header = document.createElement('div');
+                header.className = 'bg-slate-50 border-b border-slate-200 px-6 py-4 flex justify-between items-center';
+                header.innerHTML = `
+                    <h3 class="text-xl font-bold text-slate-800">${section.title}</h3>
+                    <div class="text-sm font-semibold text-brand-600 bg-brand-50 px-3 py-1 rounded-full border border-brand-100">
+                        משקל הסעיף: 100%
+                    </div>
+                `;
+                sectionEl.appendChild(header);
+
+                // Criteria List
+                const criteriaList = document.createElement('div');
+                criteriaList.className = 'p-6 flex flex-col gap-6';
+
+                section.criteria.forEach((crit, critIndex) => {
+                    const isScale = crit.type === 'scale';
+                    const levels = isScale ? [0, 1, 2, 3, 4] : [0, 4];
+                    const labels = isScale ? scaleLabels : binaryLabels;
+
+                    const critEl = document.createElement('div');
+                    critEl.className = 'crit-container border-b border-slate-100 pb-6 last:border-0 last:pb-0';
+                    
+                    let buttonsHTML = '';
+                    levels.forEach(level => {
+                        const isBinary = !isScale;
+                        // CSS adjustments for binary buttons to make them take half width
+                        const btnClass = isBinary ? 'w-1/2' : 'flex-1';
+                        
+                        buttonsHTML += `
+                            <button 
+                                onclick="selectScore('${section.id}', '${crit.id}', ${level})"
+                                id="btn-${crit.id}-${level}"
+                                class="score-level-btn btn-level-${level} ${btnClass} flex flex-col items-center justify-center py-2 px-1 border-2 border-slate-200 bg-white text-slate-500 rounded-xl hover:bg-slate-50 focus:outline-none"
+                            >
+                                <span class="text-lg font-black mb-1">${labels[level].title}</span>
+                                <span class="text-[10px] md:text-xs text-center px-1 leading-tight">${labels[level].desc}</span>
+                            </button>
+                        `;
+                    });
+
+                    // יצירת שם הקובץ הדינמי לפי סעיף וקריטריון (למשל: m-1-2.png)
+                    const sectionNum = section.id === 'A' ? 1 : (section.id === 'B' ? 2 : 3);
+                    const critNum = critIndex + 1;
+                    const imageSrc = `m-${sectionNum}-${critNum}.png`;
+
+                    critEl.innerHTML = `
+                        <div class="flex justify-between items-start mb-3">
+                            <div>
+                                <h4 class="text-base font-bold text-slate-800">${crit.name}</h4>
+                                <p class="text-sm text-slate-500 mt-1">${crit.desc}</p>
+                            </div>
+                            <span class="inline-flex items-center justify-center bg-slate-100 text-slate-600 text-xs font-bold px-2 py-1 rounded border border-slate-200 min-w-[3rem] shrink-0 mr-3">
+                                ${crit.weight}%
+                            </span>
+                        </div>
+                        <div id="example-${crit.id}" class="mb-4 p-4 bg-brand-50 border border-brand-100 rounded-xl">
+                            <p class="text-sm font-bold text-brand-900 mb-2">כך נראית תשובה ברמה 4 (100%):</p>
+                            <img src="${imageSrc}" alt="דוגמה לציון מלא - ${crit.name}" class="max-w-full h-auto rounded-lg shadow-sm border border-brand-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                            <div style="display:none;" class="text-sm text-red-600 bg-red-50 p-3 rounded-lg border border-red-200">
+                                שגיאה: לא נמצאה תמונה בשם <strong dir="ltr">${imageSrc}</strong> באותה תיקייה.
+                            </div>
+                        </div>
+                        <div class="flex gap-2 w-full mt-2">
+                            ${buttonsHTML}
+                        </div>
+                    `;
+                    criteriaList.appendChild(critEl);
+                });
+
+                sectionEl.appendChild(criteriaList);
+                container.appendChild(sectionEl);
+            });
+        }
+
+        function selectScore(sectionId, critId, level) {
+            if (!userScores[sectionId]) userScores[sectionId] = {};
+            userScores[sectionId][critId] = level;
+
+            const critData = rubricData.find(s => s.id === sectionId).criteria.find(c => c.id === critId);
+            const levels = critData.type === 'scale' ? [0, 1, 2, 3, 4] : [0, 4];
+            
+            levels.forEach(l => {
+                const btn = document.getElementById(`btn-${critId}-${l}`);
+                if(btn) {
+                    btn.classList.remove('selected');
+                    btn.classList.replace('text-slate-800', 'text-slate-500');
+                    btn.style.borderColor = ''; 
+                }
+            });
+
+            const selectedBtn = document.getElementById(`btn-${critId}-${level}`);
+            if(selectedBtn) {
+                selectedBtn.classList.add('selected');
+            }
+
+            calculateTotals();
+        }
+
+        function calculateTotals() {
+            let sumTotal = 0;
+            let sectionsCount = rubricData.length;
+
+            rubricData.forEach(section => {
+                let sectionScore = 0;
+                
+                section.criteria.forEach(crit => {
+                    const selectedLevel = (userScores[section.id] && userScores[section.id][crit.id]) !== undefined 
+                                          ? userScores[section.id][crit.id] 
+                                          : 0; 
+                    
+                    const critPoints = (selectedLevel / 4) * crit.weight;
+                    sectionScore += critPoints;
+                });
+
+                document.getElementById(`score-${section.id}`).textContent = Math.round(sectionScore);
+                sumTotal += sectionScore;
+            });
+
+            const averageScore = Math.round(sumTotal / sectionsCount);
+            document.getElementById('score-total').textContent = averageScore;
+        }
+
+        function resetAll() {
+            if(confirm("האם לאפס את כל הנתונים ולהתחיל מחדש?")) {
+                userScores = {};
+                document.querySelectorAll('.score-level-btn').forEach(btn => {
+                    btn.classList.remove('selected');
+                });
+                calculateTotals();
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+            }
+        }
+
+        // פונקציית הדפסה עם CSS מכווץ במיוחד כדי להיכנס לעמוד אחד/שניים
+        function printToPDF() {
+            const studentNameInput = document.getElementById('student-name').value.trim();
+            const studentName = studentNameInput !== '' ? studentNameInput : 'ללא שם';
+            
+            let printHTML = `
+            <!DOCTYPE html>
+            <html lang="he" dir="rtl">
+            <head>
+                <meta charset="UTF-8">
+                <title>דוח מחוון הערכה - ${studentName}</title>
+                <style>
+                    /* הגדרות קומפקטיות במיוחד להדפסה */
+                    @page { margin: 1cm; } /* מקטין את שולי דף ה-A4 הפיזי */
+                    body { font-family: 'Rubik', sans-serif; padding: 0; margin: 0; color: #1e293b; line-height: 1.3; }
+                    .header { text-align: center; margin-bottom: 1rem; padding-bottom: 0.5rem; border-bottom: 2px solid #e2e8f0; }
+                    .header h1 { color: #0f172a; margin-bottom: 0.25rem; font-size: 20px; }
+                    .header p { margin: 0.1rem 0; color: #475569; font-size: 14px; }
+                    .student-name { font-size: 16px; font-weight: bold; color: #0284c7; }
+                    
+                    .section { margin-bottom: 1rem; page-break-inside: avoid; }
+                    .section h2 { color: #0c4a6e; font-size: 15px; background-color: #f1f5f9; padding: 0.3rem 0.5rem; border-radius: 6px; margin-bottom: 0.5rem; margin-top: 0; }
+                    
+                    table { width: 100%; border-collapse: collapse; margin-bottom: 0.25rem; font-size: 12px; }
+                    th, td { border: 1px solid #cbd5e1; padding: 0.35rem 0.5rem; text-align: right; }
+                    th { background-color: #f8fafc; font-weight: bold; color: #334155; }
+                    
+                    .score-row { font-weight: bold; background-color: #f0f9ff; }
+                    .score-row td { padding: 0.4rem 0.5rem; font-size: 13px; }
+                    
+                    .final-score { margin-top: 1rem; text-align: center; padding: 0.75rem; background-color: #f0fdf4; border: 2px solid #bbf7d0; border-radius: 8px; font-size: 18px; font-weight: bold; color: #166534; page-break-inside: avoid; }
+                    .footer { margin-top: 1rem; text-align: center; color: #94a3b8; font-size: 10px; border-top: 1px solid #e2e8f0; padding-top: 0.5rem; }
+                    
+                    @media print {
+                        body { -webkit-print-color-adjust: exact; print-color-adjust: exact; }
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="header">
+                    <h1>דוח הערכה עצמית - פיזיקה</h1>
+                    <p>נושא: <strong>מכניקה 1990 (שאלה 3)</strong></p>
+                    <p class="student-name">שם התלמיד/ה: ${studentName}</p>
+                </div>
+            `;
+
+            let totalSum = 0;
+
+            rubricData.forEach(section => {
+                let sectionScore = 0;
+                printHTML += `
+                <div class="section">
+                    <h2>${section.title}</h2>
+                    <table>
+                        <thead>
+                            <tr>
+                                <th width="35%">קריטריון</th>
+                                <th width="10%">משקל</th>
+                                <th width="40%">הרמה שנבחרה</th>
+                                <th width="15%">ניקוד</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                `;
+                
+                section.criteria.forEach(crit => {
+                    const selectedLevel = (userScores[section.id] && userScores[section.id][crit.id]) !== undefined 
+                                          ? userScores[section.id][crit.id] : 0;
+                    
+                    const points = (selectedLevel / 4) * crit.weight;
+                    sectionScore += points;
+                    
+                    const isScale = crit.type === 'scale';
+                    const labels = isScale ? scaleLabels : binaryLabels;
+                    const levelDesc = labels[selectedLevel].title + " - " + labels[selectedLevel].desc;
+
+                    printHTML += `
+                            <tr>
+                                <td>${crit.name}</td>
+                                <td>${crit.weight}%</td>
+                                <td>${levelDesc}</td>
+                                <td dir="ltr" style="text-align: right;">${points.toFixed(1)} / ${crit.weight}</td>
+                            </tr>
+                    `;
+                });
+
+                totalSum += sectionScore;
+                
+                printHTML += `
+                            <tr class="score-row">
+                                <td colspan="3">סה"כ לסעיף זה:</td>
+                                <td dir="ltr" style="text-align: right;">${Math.round(sectionScore)} / 100</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+                `;
+            });
+
+            const finalAverage = Math.round(totalSum / rubricData.length);
+            
+            printHTML += `
+                <div class="final-score">
+                    ציון סופי משוקלל (ממוצע): ${finalAverage}%
+                </div>
+                <div class="footer">
+                    הופק באמצעות המחוון האינטראקטיבי | פיזיקאלי
+                </div>
+            </body>
+            </html>
+            `;
+
+            const printIframe = document.createElement('iframe');
+            printIframe.style.position = 'absolute';
+            printIframe.style.width = '0';
+            printIframe.style.height = '0';
+            printIframe.style.border = 'none';
+            printIframe.style.visibility = 'hidden';
+            document.body.appendChild(printIframe);
+
+            const iframeDoc = printIframe.contentWindow.document;
+            iframeDoc.open();
+            iframeDoc.write(printHTML);
+            iframeDoc.close();
+
+            setTimeout(() => {
+                printIframe.contentWindow.focus();
+                printIframe.contentWindow.print();
+                
+                setTimeout(() => {
+                    document.body.removeChild(printIframe);
+                }, 2000);
+            }, 250);
+        }
+
+        document.addEventListener('DOMContentLoaded', () => {
+            renderApp();
+            calculateTotals();
+        });
+    </script>
+</body>
+</html>

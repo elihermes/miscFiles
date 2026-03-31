@@ -249,6 +249,17 @@
             text-decoration: underline;
         }
 
+        .aux-link {
+            color: #0f766e;
+            font-weight: 700;
+            text-decoration: none;
+            margin-right: 0.8rem;
+        }
+
+        .aux-link:hover {
+            text-decoration: underline;
+        }
+
         .meta-pill {
             display: inline-block;
             padding: 0.15rem 0.55rem;
@@ -450,6 +461,7 @@
         let solutions = [...staticSolutions];
         let topicCatalog = [];
         let skillCatalog = [];
+        let rubricPathByQuestionFolder = new Map();
         const selectedTopics = new Set();
         const selectedSkills = new Set();
         let sortByRecent = false;
@@ -632,6 +644,12 @@
             return parts.slice(0, -1).join("/");
         }
 
+        function getQuestionFolder(path) {
+            const normalized = normalizeRelativeQuestionPath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            return parts.find((part) => folderNamePattern.test(part)) || "";
+        }
+
         function pickHtmlInSolutionFolder(folderPath, htmlFiles) {
             const files = [...htmlFiles].sort((a, b) => a.localeCompare(b, "he", { numeric: true }));
             if (!files.length) {
@@ -658,6 +676,7 @@
         async function discoverQuestionPaths() {
             const discovered = new Set();
             const folders = new Map();
+            rubricPathByQuestionFolder = new Map();
 
             function ensureFolder(folderPath) {
                 if (!folders.has(folderPath)) {
@@ -685,6 +704,15 @@
 
                 if (fileName.toLowerCase().endsWith(".html") && !DISCOVERY_EXCLUDED_FILES.has(fileName)) {
                     entry.htmlFiles.add(fileName);
+
+                    const questionFolder = getQuestionFolder(relativePath);
+                    const isRubric = questionFolder
+                        && folderPath !== questionFolder
+                        && (/מחוון/.test(folderPath) || /^מחוון/i.test(fileName));
+
+                    if (isRubric && !rubricPathByQuestionFolder.has(questionFolder)) {
+                        rubricPathByQuestionFolder.set(questionFolder, `${folderPath}/${fileName}`);
+                    }
                 }
             }
 
@@ -871,11 +899,14 @@
                 const skillTags = Array.isArray(entry.skills) ? entry.skills : [];
                 const needsTagging = topicTags.length === 0;
                 const addedAtTs = parseAddedAtToTimestamp(entry.addedAt);
+                const questionFolder = getQuestionFolder(entry.path);
+                const rubricPath = questionFolder ? rubricPathByQuestionFolder.get(questionFolder) : "";
                 return {
                     year: parsed.year,
                     question: parsed.question,
                     title: entry.title,
                     href: `./${entry.path}`,
+                    rubricHref: rubricPath ? `./${rubricPath}` : "",
                     tags: ["מכניקה", "בגרות", ...topicTags],
                     topicTags,
                     skillTags,
@@ -1064,6 +1095,9 @@
                     }).join(" ");
                     const skillsHtml = (item.skillTags || []).map((s) => `<span class="meta-pill skill">${s}</span>`).join(" ");
                     const pendingTag = item.needsTagging ? '<span class="meta-pill pending">נדרש תיוג</span>' : "";
+                    const rubricLinkHtml = item.rubricHref
+                        ? `<a class="aux-link" href="${item.rubricHref}">מחוון</a>`
+                        : "";
 
                     card.innerHTML = `
                         <div>
@@ -1071,7 +1105,10 @@
                             <div class="thumb-fallback">אין תמונה מקדימה</div>
                         </div>
                         <div>
-                            <a class="solution-link" href="${item.href}">${item.title}</a>
+                            <div>
+                                <a class="solution-link" href="${item.href}">${item.title}</a>
+                                ${rubricLinkHtml}
+                            </div>
                             <div class="mt-2 text-sm text-slate-600">שנה: <strong>${item.year}</strong> | שאלה: <strong>${item.question}</strong></div>
                             <div class="mt-2">${pendingTag} ${tagsHtml}</div>
                             <div class="mt-2 text-sm text-slate-600">מיומנויות: ${skillsHtml || '<span class="meta-pill">ללא תיוג</span>'}</div>
