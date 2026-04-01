@@ -1,0 +1,677 @@
+<!DOCTYPE html>
+<html dir="rtl" lang="he">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה: מכניקה 2001 שאלה 4</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- Three.js for 3D Simulation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+    
+    <!-- MathJax for rendering Physics equations -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --blue-50: #eff6ff;
+            --blue-100: #dbeafe;
+            --blue-200: #bfdbfe;
+            --blue-500: #3b82f6;
+            --blue-700: #1d4ed8;
+            --slate-50: #f8fafc;
+            --slate-200: #e2e8f0;
+            --slate-600: #475569;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --bg-card: #ffffff;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--slate-50);
+            color: #334155;
+            line-height: 1.65;
+        }
+        
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            color: #1e3a8a;
+            font-size: 1.4rem;
+            font-weight: 700;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #0f172a;
+            margin-top: 1.25rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .formula-badge {
+            display: inline-block;
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-weight: 700;
+            margin: 0.25rem 0;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            padding: 1rem;
+            border-radius: 0.5rem 0 0 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0.5rem 0 0 0.5rem;
+            color: #166534;
+        }
+
+        .version-stamp {
+            font-size: 0.78rem;
+            color: var(--slate-600);
+            margin-bottom: 0.85rem;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            background: #ffffff;
+            border: 1px solid var(--blue-200);
+            border-radius: 999px;
+            padding: 0.2rem 0.65rem;
+            letter-spacing: 0.2px;
+        }
+
+        .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+            margin-left: 0;
+        }
+
+        .svg-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 2rem auto;
+            background: #ffffff;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 45;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.4rem;
+            padding: 0.7rem 0.95rem;
+            border-radius: 999px;
+            border: 1px solid var(--blue-200);
+            background: #ffffff;
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.12);
+            transition: transform 0.15s ease, background 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.45);
+            backdrop-filter: blur(2px);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 60;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            width: min(1000px, 100%);
+            max-height: 90vh;
+            overflow: auto;
+            background: #ffffff;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-200);
+            box-shadow: 0 10px 30px rgba(2, 6, 23, 0.2);
+            padding: 0.85rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-bottom: 0.75rem;
+            gap: 1rem;
+        }
+
+        .question-modal-title {
+            margin: 0;
+            color: #0f172a;
+            font-weight: 700;
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x;
+        }
+
+        .math-block {
+            direction: ltr;
+            margin: 1rem 0;
+            padding: 0.35rem 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        .page-shell {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1rem;
+        }
+
+        @media (min-width: 768px) {
+            .page-shell {
+                padding: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<main class="page-shell">
+
+    <!-- Header Section -->
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - מכניקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600 mb-4">שנת 2001, שאלה 4: תנועה מעגלית ואנרגיה</h2>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- Question Image -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <p class="text-lg text-slate-700 mb-6">תלמידים יקרים, לפנינו שאלה קלאסית המשלבת מספר נושאים מרכזיים במכניקה: שימור אנרגיה, תנועה מעגלית וחוקי ניוטון. נעבוד שלב אחר שלב, נחלץ נתונים, נקפיד על יחידות מידה תקניות (MKS) ונשרטט תרשימי כוחות היכן שצריך. בואו נתחיל!</p>
+
+    <!-- Section A -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף א': חישוב גודל המהירות בנקודה B</h3>
+        
+        <div class="step-title">🔹 א. מה נתון:</div>
+        <p>נרכז את הנתונים ההתחלתיים של המערכת. נשים לב שהמסה, הגבהים והרדיוס נתונים ביחידות תקניות, לכן אין צורך בהמרת יחידות (שלב 0 מבוצע). תאוצת הכובד נקבעת תמיד כ- \( g = 10 \text{ m/s}^2 \).</p>
+        <ul class="list-disc list-inside ml-4 mb-4 text-slate-700">
+            <li>מסה כוללת של הנערים: \( m = 200 \text{ kg} \)</li>
+            <li>גובה התחלתי בנקודה A: \( h_A = 46 \text{ m} \)</li>
+            <li>גובה בנקודה B (הנקודה הנמוכה ביותר): \( h_B = 1 \text{ m} \)</li>
+            <li>מהירות התחלתית בנקודה A (שוחררו ממנוחה): \( v_A = 0 \text{ m/s} \)</li>
+        </ul>
+
+        <div class="step-title">🔹 ב. מה מחפשים:</div>
+        <p>אנו מחפשים את גודל מהירות הנערים כאשר הם חולפים בנקודה B (נסמן כ- \( v_B \)).</p>
+
+        <div class="step-title">🔹 ג. נוסחאות בשימוש:</div>
+        <p>במהלך התנועה, פועלים על הנערים כוח הכובד (כוח משמר) וכוחות המתיחות משני החוטים. עלינו לדייק כאן היטב בתלת-ממד: הנערים מחוברים לשני חוטים, ולכל כוח מתיחות \( \vec{T} \) של כל חוט יש שני רכיבים מרחביים. רכיב אחד הוא רדיאלי המכוון פנימה אל עבר ציר הסיבוב, ורכיב שני הוא אופקי (ימינה או שמאלה) המאונך למישור מעגל התנועה. מכיוון שווקטור המהירות \( \vec{v} \) של הנערים נמצא תמיד במישור התנועה האנכי ומשיק למסלול, גם הרכיב הרדיאלי וגם הרכיב האופקי של המתיחות מאונכים לווקטור ההעתק בכל רגע נתון (\( \vec{T} \perp \vec{v} \)). לכן, העבודה הכוללת שמבצעים שני החוטים היא בהכרח אפס (\( W_{nc} = 0 \)), והאנרגיה המכנית במערכת נשמרת לחלוטין.</p>
+        
+        <p class="mt-2 font-semibold text-blue-700">התרשים התלת-ממדי הבא ממחיש זאת היטב:</p>
+        
+        <p class="mt-2 font-semibold text-blue-700">סובבו את המודל הבא כדי לראות את הזוויות במרחב (ניתן לגרור עם העכבר או מגע):</p>
+        <div class="relative w-full max-w-2xl mx-auto my-6 border border-slate-200 rounded-xl overflow-hidden shadow-inner bg-slate-50">
+            <!-- Interactivity Badge -->
+            <div class="absolute top-3 right-3 bg-white/80 backdrop-blur text-blue-700 text-xs font-bold px-3 py-1 rounded-full border border-blue-200 shadow-sm z-10 flex items-center gap-1 pointer-events-none">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 15l-2 5L9 9l11 4-5 2zm0 0l5 5M7.188 2.239l.777 2.897M5.136 7.965l-2.898-.777M13.95 4.05l-2.122 2.122m-5.657 5.656l-2.12 2.122" /></svg>
+                גררו כדי לסובב
+            </div>
+            
+            <!-- 3D Canvas Container -->
+            <div id="three-container" style="width: 100%; height: 350px; cursor: grab;"></div>
+            
+            <!-- Legend -->
+            <div class="bg-white border-t border-slate-200 p-3 flex flex-wrap gap-3 justify-center text-sm font-medium pointer-events-none" dir="rtl">
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-emerald-500"></span> מהירות משיקית (v)</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-red-500"></span> מתיחות חוט (T)</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-amber-500"></span> רכיב רדיאלי</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-full bg-purple-500"></span> רכיב אופקי</span>
+                <span class="flex items-center gap-1"><span class="w-3 h-3 rounded-sm bg-blue-200 opacity-80 border border-blue-400"></span> מישור התנועה</span>
+            </div>
+        </div>
+
+        <p>נשתמש בנוסחאות מדף הנוסחאות:</p>
+        <div class="flex flex-wrap gap-2 my-2">
+            <span class="formula-badge">\( E_k = \frac{1}{2}mv^2 \)</span>
+            <span class="formula-badge">\( U_G = mgh \)</span>
+            <span class="formula-badge">\( E_A = E_B \)</span> (חוק שימור אנרגיה מכנית)
+        </div>
+
+        <div class="step-title">🔹 ד. הצבה ופתרון:</div>
+        <p>נשווה את האנרגיה המכנית הכוללת בנקודה A לאנרגיה בנקודה B:</p>
+        <div class="math-block">
+            \[ U_{G,A} + E_{k,A} = U_{G,B} + E_{k,B} \]
+            \[ mgh_A + 0 = mgh_B + \frac{1}{2}mv_B^2 \]
+        </div>
+        <p>נחלק את המשוואה במסה \( m \) (המסה מצטמצמת, מה שמראה שהמהירות אינה תלויה במספר הנערים!):</p>
+        <div class="math-block">
+            \[ gh_A = gh_B + \frac{1}{2}v_B^2 \]
+            \[ 10 \cdot 46 = 10 \cdot 1 + \frac{1}{2} \cdot v_B^2 \]
+            \[ 460 = 10 + \frac{v_B^2}{2} \]
+            \[ 450 = \frac{v_B^2}{2} \]
+            \[ v_B^2 = 900 \]
+            \[ v_B = \sqrt{900} = 30 \text{ m/s} \]
+        </div>
+        
+        <div class="final-answer">
+            גודל המהירות של הנערים בנקודה B הוא \( v_B = 30 \text{ m/s} \).
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> תלמידים יקרים, הדיוק המרחבי שביצענו כאן הוא קריטי! בשאלות רבות אנו מתייחסים ל"חוט" כגוף אחד שטוח, אך כאן מדובר במתקן עם שני חוטים מופרדים. ההבנה שכל רכיב בנפרד (גם הרדיאלי וגם האופקי) ניצב למישור התנועה המשיקי, היא זו שמבטיחה לנו במאה אחוז שעבודת החוטים מתאפסת ומאפשרת שימוש בטוח בחוק שימור אנרגיה. מבחינה מספרית: המהירות שקיבלנו שווה ל-108 קמ"ש, וזה הגיוני לחלוטין בנפילה חופשית (כמעט) מגובה של 45 מטרים נטו. בנוסף, המסה מצטמצמת, מה שמראה שהמהירות בסוף המסלול אינה תלויה במספר הנערים שיושבים במתקן!
+        </div>
+    </section>
+
+    <!-- Section B -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף ב': התאוצה הצנטריפטלית בנקודה B</h3>
+        
+        <div class="step-title">🔹 א. מה נתון:</div>
+        <p>ניקח את הנתון שחישבנו מסעיף א', ונוסיף את הרדיוס הנתון בשאלה (שוב, ביחידות תקניות MKS):</p>
+        <ul class="list-disc list-inside ml-4 mb-4 text-slate-700">
+            <li>רדיוס המסלול המעגלי: \( r = 50 \text{ m} \) (בשאלות רבות מסומן גם כ- \( R \))</li>
+            <li>מהירות משיקית בנקודה B: \( v_B = 30 \text{ m/s} \)</li>
+        </ul>
+
+        <div class="step-title">🔹 ב. מה מחפשים:</div>
+        <p>אנו מחפשים את גודל התאוצה הצנטריפטלית (תאוצה רדיאלית) ברגע שהנערים חולפים בנקודה B.</p>
+
+        <div class="step-title">🔹 ג. נוסחאות בשימוש:</div>
+        <p>נשתמש בנוסחה הישירה לתאוצה רדיאלית בתנועה מעגלית מתוך דף הנוסחאות:</p>
+        <div class="flex flex-wrap gap-2 my-2">
+            <span class="formula-badge">\( a_R = \frac{v^2}{r} \)</span>
+        </div>
+
+        <div class="step-title">🔹 ד. הצבה ופתרון:</div>
+        <p>נציב את הנתונים ישירות אל תוך הנוסחה:</p>
+        <div class="math-block">
+            \[ a_R = \frac{30^2}{50} \]
+            \[ a_R = \frac{900}{50} \]
+            \[ a_R = 18 \text{ m/s}^2 \]
+        </div>
+        
+        <div class="final-answer">
+            התאוצה הצנטריפטלית של הנערים בנקודה B היא \( a_R = 18 \text{ m/s}^2 \) (וכיוונה אל מרכז המעגל העליון, כלומר כלפי מעלה).
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> שימו לב: התאוצה כאן גדולה כמעט פי 2 מתאוצת הנפילה החופשית (g). המשמעות היא שהנערים מרגישים כוח עצום כלפי מעלה ברגע המעבר בנקודה הנמוכה ביותר. נקודה חשובה נוספת: בנקודה B (הנמוכה ביותר), גודל המהירות מקסימלי ולכן אינו משתנה באותו רגע, כך שהתאוצה המשיקית היא אפס. כל התאוצה בנקודה זו היא רדיאלית בלבד.
+        </div>
+    </section>
+
+    <!-- Section C -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף ג': שקול הכוחות שהחוטים מפעילים בנקודה B</h3>
+        
+        <div class="step-title">🔹 א. מה נתון:</div>
+        <ul class="list-disc list-inside ml-4 mb-4 text-slate-700">
+            <li>מסת הנערים: \( m = 200 \text{ kg} \)</li>
+            <li>תאוצה רדיאלית כלפי מעלה בנקודה B: \( a_R = 18 \text{ m/s}^2 \) (חושב בסעיף ב')</li>
+            <li>תאוצת הכובד: \( g = 10 \text{ m/s}^2 \)</li>
+        </ul>
+
+        <div class="step-title">🔹 ב. מה מחפשים:</div>
+        <p>את גודל הכוח השקול שמפעילים החוטים על הנערים בנקודה B. מכיוון שאין כאן חוט אחד אלא מספר חוטים, נסמן את סך כל כוחות המתיחות (שקול המתיחויות) באותיות \( \Sigma T \).</p>
+
+        <div class="step-title">🔹 ג. נוסחאות בשימוש:</div>
+        <div class="flex flex-wrap gap-2 my-2">
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span> (החוק השני של ניוטון)
+            <span class="formula-badge">\( F = mg \)</span> (כוח הכובד)
+        </div>
+
+        <div class="step-title">🔹 ד. הצבה ופתרון (כולל תרשים כוחות FBD):</div>
+        <p>לפני שנציב במשוואה, חובה לשרטט תרשים כוחות (FBD) עבור הנערים בנקודה B. נבחר ציר \( y \) חיובי כלפי מעלה (לכיוון מרכז המעגל).</p>
+        
+        <div class="svg-container">
+            <img src="image-3.png" alt="תרשים כוחות בנקודה B" class="w-full h-auto rounded" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <div class="hidden text-red-500 font-bold p-2 text-center text-sm">
+                התמונה image-3.png לא נמצאה באותה תיקייה.
+            </div>
+        </div>
+
+        <p>נרשום את משוואת החוק השני של ניוטון בציר הרדיאלי (ציר y בשרטוט). מכיוון שהגוף בתנועה מעגלית, התאוצה פונה למרכז, ולכן השקול חייב להיות חיובי כלפי מעלה.</p>
+        <div class="math-block">
+            \[ \Sigma F_y = m \cdot a_R \]
+            \[ \Sigma T - mg = m \cdot a_R \]
+        </div>
+        <p>נבודד את שקול המתיחויות \( \Sigma T \) ונציב נתונים:</p>
+        <div class="math-block">
+            \[ \Sigma T = mg + m \cdot a_R \]
+            \[ \Sigma T = m(g + a_R) \]
+            \[ \Sigma T = 200 \cdot (10 + 18) \]
+            \[ \Sigma T = 200 \cdot 28 = 5600 \text{ N} \]
+        </div>
+        
+        <div class="final-answer">
+            גודל הכוח השקול שהחוטים מפעילים על הנערים בנקודה B הוא \( \Sigma T = 5600 \text{ N} \).
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> תלמידים, זוכרים שבסעיף א' דיברנו על כך שלשני החוטים יש רכיבים אופקיים? שימו לב לסוד קטן: בגלל הסימטריה המושלמת של המתקן, הרכיב האופקי של החוט הימני והרכיב האופקי של החוט השמאלי מבטלים זה את זה בדיוק! לכן, כאשר שואלים אותנו מהו "שקול הכוחות" שהחוטים מפעילים, הכוח השקול הזה פועל אך ורק בכיוון הרדיאלי כלפי מעלה. זו בדיוק הסיבה שקראנו לו כאן \( \Sigma T \) ולא סתם \( T \) - כדי להדגיש בפניכם שמדובר בסכום וקטורי של כוחות המתיחות משני החוטים גם יחד, המתנגד למשקל ומספק את התאוצה הצנטריפטלית הדרושה!
+        </div>
+    </section>
+
+    <!-- Section D -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף ד': כיוון וקטור התאוצה בנקודה M</h3>
+        
+        <div class="step-title">🔹 א. מה נתון:</div>
+        <ul class="list-disc list-inside ml-4 mb-4 text-slate-700">
+            <li>נקודה M נמצאת על מסלול התנועה ABC, בין נקודת השחרור A לנקודה הנמוכה B.</li>
+            <li>הנערים בתנועה כלפי מטה לאורך הקשת (גודל המהירות שלהם גדל).</li>
+            <li>נתונה "שושנת כיוונים" עם 8 חצים אפשריים (I עד VIII).</li>
+        </ul>
+
+        <div class="step-title">🔹 ב. מה מחפשים:</div>
+        <p>לזהות איזה מבין הכיוונים I-VIII מייצג נכונה את כיוון וקטור התאוצה הכוללת (שקול התאוצות) של הנערים בנקודה M.</p>
+
+        <div class="step-title">🔹 ג. נוסחאות בשימוש (קונספטואלי):</div>
+        <p>על פי החוק השני של ניוטון, כיוון התאוצה השקולה של הגוף זהה תמיד לכיוון הכוח השקול הפועל עליו:</p>
+        <div class="flex flex-wrap gap-2 my-2">
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+        </div>
+
+        <div class="step-title">🔹 ד. הצבה ופתרון (ניתוח וקטורי של הכוחות):</div>
+        <p>נבחן את הכוחות הפועלים על הגוף (הנערים והקרון) בנקודה M:</p>
+        <ol class="list-decimal list-inside ml-4 mb-4 text-slate-700 space-y-2">
+            <li><strong>כוחות נורמל (\( N \)):</strong> פועלים על הגוף שני כוחות נורמל מהמתקן, שכיוונם המשותף הוא רדיאלי – כלפי מרכז המעגל. בשרטוט, כיוון זה מתאים לחץ <strong>II</strong>.</li>
+            <li><strong>כוח הכובד (\( mg \)):</strong> פועל תמיד אנכית כלפי מטה. בשרטוט, כיוון זה מתאים לחץ <strong>IV</strong>.</li>
+        </ol>
+        
+        <div class="svg-container" style="max-width: 500px;">
+            <img src="image-4.png" alt="תרשים כוחות וכיוון תאוצה בנקודה M" class="w-full h-auto rounded" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <div class="hidden text-red-500 font-bold p-2 text-center text-sm">
+                התמונה image-4.png לא נמצאה באותה תיקייה.
+            </div>
+        </div>
+
+        <p>הכוח השקול (\( \Sigma\vec{F} \)) הוא למעשה הסכום הווקטורי של כוחות הנורמל (למרכז) וכוח הכובד (למטה). מכיוון שיש לנו רכיב כוח אחד המכוון כלפי מרכז המעגל (כיוון II) ורכיב נוסף המכוון כלפי מטה (כיוון IV), הווקטור השקול בהכרח יימצא <strong>ביניהם</strong>.</p>
+        <p>לכן, כיוון הכוח השקול (וכתוצאה מכך, כיוון התאוצה השקולה) לא יכול להיות אך ורק כלפי המרכז וגם לא אך ורק כלפי מטה, אלא חייב להיות כיוון שמשלב את שניהם. הכיוון היחיד שממוקם ביניהם ומוצג בתרשים הוא <strong>כיוון III</strong>.</p>
+
+        <div class="final-answer">
+            הכיוון היכול לתאר את התאוצה הכוללת בנקודה M הוא <strong>כיוון III</strong>.
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> זהו הסבר מצוין וישיר המסתמך נטו על כוחות! תלמידים לפעמים מסתבכים עם פירוק לתאוצה משיקית ורדיאלית, אך מבט על החוק השני של ניוטון עושה סדר: "תגידו לי לאן פועל הכוח השקול - ואגיד לכם לאן התאוצה". מכיוון שיש כוח למרכז וכוח למטה, האלכסון ביניהם הוא הכיוון הנכון.
+        </div>
+    </section>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="bg-slate-50 p-3 rounded-xl border border-slate-200 flex justify-center items-center">
+                <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה';
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const year = String(modified.getFullYear()).slice(-2);
+                const month = pad(modified.getMonth() + 1);
+                const day = pad(modified.getDate());
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+                versionUpdatedAt.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+
+    <!-- Three.js Initialization and Simulation Logic -->
+    <script>
+        window.addEventListener('load', function() {
+            const container = document.getElementById('three-container');
+            if(!container) return;
+            
+            const scene = new THREE.Scene();
+            scene.background = new THREE.Color(0xf8fafc);
+            
+            // Camera setup
+            const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 1, 1000);
+            camera.position.set(50, 25, 70); 
+            
+            const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+            renderer.setSize(container.clientWidth, container.clientHeight);
+            container.appendChild(renderer.domElement);
+            
+            const controls = new THREE.OrbitControls(camera, renderer.domElement);
+            controls.enableDamping = true;
+            controls.dampingFactor = 0.05;
+            controls.target.set(0, -5, 0);
+            controls.autoRotate = true; 
+            controls.autoRotateSpeed = 1.5;
+
+            // Lights
+            const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+            scene.add(ambientLight);
+            const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+            dirLight.position.set(20, 50, 30);
+            scene.add(dirLight);
+
+            // Pivot Bar
+            const pivotGeo = new THREE.CylinderGeometry(1.5, 1.5, 40, 16);
+            pivotGeo.rotateZ(Math.PI / 2);
+            const pivotMat = new THREE.MeshLambertMaterial({ color: 0x475569 });
+            const pivot = new THREE.Mesh(pivotGeo, pivotMat);
+            pivot.position.set(0, 20, 0);
+            scene.add(pivot);
+
+            // Mass
+            const origin = new THREE.Vector3(0, -20, 0);
+            const massGeo = new THREE.SphereGeometry(3.5, 32, 32);
+            const massMat = new THREE.MeshLambertMaterial({ color: 0x1e3a8a });
+            const mass = new THREE.Mesh(massGeo, massMat);
+            mass.position.copy(origin);
+            scene.add(mass);
+
+            // Ropes
+            const ropeMat = new THREE.LineBasicMaterial({ color: 0x94a3b8, linewidth: 2 });
+            const rope1Geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(-15, 20, 0), origin]);
+            const rope2Geo = new THREE.BufferGeometry().setFromPoints([new THREE.Vector3(15, 20, 0), origin]);
+            scene.add(new THREE.Line(rope1Geo, ropeMat));
+            scene.add(new THREE.Line(rope2Geo, ropeMat));
+
+            // Trajectory (YZ Plane Arc)
+            const trajGeo = new THREE.TorusGeometry(40, 0.3, 8, 64, Math.PI);
+            trajGeo.rotateY(Math.PI / 2);
+            const trajMat = new THREE.MeshBasicMaterial({ color: 0x94a3b8, transparent: true, opacity: 0.4 });
+            const traj = new THREE.Mesh(trajGeo, trajMat);
+            traj.position.set(0, 20, 0);
+            traj.rotation.z = Math.PI; // Point downwards
+            scene.add(traj);
+
+            // Plane of motion (YZ plane visualizer)
+            const planeGeo = new THREE.PlaneGeometry(80, 80);
+            const planeMat = new THREE.MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.1, side: THREE.DoubleSide, depthWrite: false });
+            const plane = new THREE.Mesh(planeGeo, planeMat);
+            plane.rotation.y = Math.PI / 2;
+            scene.add(plane);
+
+            // Vectors
+            // 1. Velocity (Green, +Z)
+            const dirV = new THREE.Vector3(0, 0, 1);
+            scene.add(new THREE.ArrowHelper(dirV, origin, 25, 0x10b981, 4, 3));
+            
+            // 2. Tension Right (Red)
+            const dirT2 = new THREE.Vector3(15, 40, 0).normalize();
+            scene.add(new THREE.ArrowHelper(dirT2, origin, 22, 0xef4444, 4, 3));
+
+            // 3. Radial Component (Orange, +Y)
+            const dirRad = new THREE.Vector3(0, 1, 0);
+            scene.add(new THREE.ArrowHelper(dirRad, origin, 18, 0xf59e0b, 4, 3));
+
+            // 4. Horizontal Component (Purple, +X)
+            const dirHoriz = new THREE.Vector3(1, 0, 0);
+            scene.add(new THREE.ArrowHelper(dirHoriz, origin, 12, 0x8b5cf6, 4, 3));
+
+            // Right Angle Visualizers
+            const angleMat = new THREE.LineBasicMaterial({ color: 0x475569 });
+            
+            // Angle between Velocity (Z) and Radial (Y)
+            const angleZY = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(0, -16, 0),
+                new THREE.Vector3(0, -16, 4),
+                new THREE.Vector3(0, -20, 4)
+            ]);
+            scene.add(new THREE.Line(angleZY, angleMat));
+
+            // Angle between Velocity (Z) and Horizontal (X)
+            const angleZX = new THREE.BufferGeometry().setFromPoints([
+                new THREE.Vector3(4, -20, 0),
+                new THREE.Vector3(4, -20, 4),
+                new THREE.Vector3(0, -20, 4)
+            ]);
+            scene.add(new THREE.Line(angleZX, angleMat));
+
+            // Interaction Event - stop auto rotate on drag
+            controls.addEventListener('start', function(){
+                controls.autoRotate = false;
+            });
+
+            // Handle Resize
+            window.addEventListener('resize', function() {
+                if(!container) return;
+                camera.aspect = container.clientWidth / container.clientHeight;
+                camera.updateProjectionMatrix();
+                renderer.setSize(container.clientWidth, container.clientHeight);
+            });
+
+            // Animation Loop
+            function animate() {
+                requestAnimationFrame(animate);
+                controls.update();
+                renderer.render(scene, camera);
+            }
+            animate();
+        });
+    </script>
+</main>
+</body>
+</html>
