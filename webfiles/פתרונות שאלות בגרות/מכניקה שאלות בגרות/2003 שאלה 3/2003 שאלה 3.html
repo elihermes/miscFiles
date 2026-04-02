@@ -1,0 +1,567 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2003, שאלה 3</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.6rem;
+            padding: 0.9rem;
+            margin-top: 0.8rem;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מודרך: מכניקה 2003, שאלה 3</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">שאלון בגרות 5 יח"ל</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך ומוסבר, צעד-אחר-צעד, כולל ניתוח כוחות ושיקולי אנרגיה.</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300 p-2 md:p-4">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto object-contain rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א' -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א' - זיהוי מפעילי הכוחות</h3>
+
+        <p><strong>מה נתון:</strong> משקולת שמסתה \( m \) תלויה במנוחה על חוט באורך \( l \). על המשקולת פועלים שני כוחות: כוח כלפי מעלה שסומן ב-\( T \), וכוח כלפי מטה שסומן ב-\( mg \).</p>
+        <p><strong>מה מחפשים:</strong> לזהות אילו גופים מפעילים את הכוח \( T \) ואת הכוח \( mg \) על המשקולת.</p>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות מהדף:</strong><br>
+            <p class="text-sm text-slate-600 mt-1">בסעיף זה אין שימוש בנוסחאות חישוביות מדף הנוסחאות, אלא בהבנה קונספטואלית של מושג הכוח. כל כוח בפיזיקה הוא אינטראקציה בין שני גופים.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="font-bold mb-2">פתרון צעד-אחר-צעד:</h4>
+            <p>כאשר אנו מזהים כוחות, אנו מחפשים איזה גוף מפעיל אותם. הכוח \( T \) הוא כוח מתיחות (Tension) המופעל במקום המגע הפיזי עם המשקולת. הגוף שנוגע במשקולת ומושך אותה כלפי מעלה הוא <strong>החוט</strong>. הכוח \( mg \) מייצג את כוח הכובד (גרביטציה) הפועל על המשקולת ממרחק. הגוף שמייצר את שדה הכבידה ומושך את המשקולת כלפי מטה אל מרכזו הוא <strong>כדור הארץ</strong>.</p>
+            <p class="mt-3 font-bold text-green-700 bg-green-50 p-2 rounded text-center">
+                מסקנה: הכוח \( T \) מופעל על ידי החוט. הכוח \( mg \) מופעל על ידי כדור הארץ.
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong>
+            זכרו את כלל האצבע: כדי למצוא מי מפעיל כוח, שאלו את עצמכם "מי נוגע בגוף?" (עבור כוחות מגע כמו חוט, קפיץ או משטח) או "מי המסה העצומה שמושכת את הגוף?" (עבור כוחות שדה כמו כוח הכובד). כוח אף פעם לא מופיע "מעצמו".
+        </div>
+    </section>
+
+    <!-- סעיף ב' -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב' - החוק השלישי של ניוטון</h3>
+
+        <p><strong>מה נתון:</strong> תלמיד טוען כי הכוחות \( T \) ו-\( mg \) הפועלים על המשקולת הם זוג כוחות של פעולה ותגובה, בהתאם לחוק השלישי של ניוטון.</p>
+        <p><strong>מה מחפשים:</strong> להכריע האם טענת התלמיד נכונה ולנמק מדוע.</p>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">החוק השלישי של ניוטון</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="font-bold mb-2">פתרון צעד-אחר-צעד:</h4>
+            <p>על פי החוק השלישי של ניוטון, זוג כוחות של פעולה ותגובה <strong>חייב לפעול על שני גופים שונים</strong>. במקרה שלנו, גם המתיחות \( T \) וגם כוח הכובד \( mg \) פועלים שניהם על <strong>אותו גוף</strong> בדיוק - על המשקולת! לכן הם אינם יכולים להיות זוג פעולה ותגובה.</p>
+            <p class="mt-2">אם נרצה לדעת מי הם בני הזוג האמיתיים של הכוחות האלו, נחשוב כך: כדור הארץ מושך את המשקולת למטה (כוח \( mg \)), ולכן "כוח התגובה" שלו הוא כוח שהמשקולת מפעילה על כדור הארץ ומושכת אותו למעלה! בדומה, החוט מושך את המשקולת למעלה (כוח \( T \)), ולכן "כוח התגובה" שלו הוא הכוח שהמשקולת מפעילה על החוט ומושכת אותו למטה.</p>
+            <p class="mt-3 font-bold text-green-700 bg-green-50 p-2 rounded text-center">
+                מסקנה: טענת התלמיד אינה נכונה. הכוחות \( T \) ו-\( mg \) פועלים על אותו גוף, בעוד שזוג כוחות פעולה ותגובה על פי החוק השלישי של ניוטון חייב לפעול על שני גופים שונים.
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong>
+            זוהי מלכודת קלאסית בבגרויות! העובדה ששני כוחות פועלים בכיוונים מנוגדים והם שווים בגודלם (בגלל שהגוף במנוחה ולכן לפי החוק הראשון של ניוטון שקול הכוחות מתאפס, \( \Sigma F = 0 \)), לא הופכת אותם לזוג פעולה ותגובה. תמיד בדקו על אילו גופים מופעלים הכוחות.
+        </div>
+    </section>
+
+    <!-- סעיף ג' -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג' - מתיחות בנקודת הקיצון</h3>
+
+        <p><strong>מה נתון:</strong> המשקולת משוחררת מזווית \( \alpha_0 \) מבלי שהיא נדחפת, ולכן היא נעה כמו מטוטלת. אנו מתבוננים על המשקולת בדיוק ברגע שבו היא מגיעה לנקודות הקיצון של התנועה שלה (\( \alpha = \pm \alpha_0 \)). המרחק מנקודת התלייה קבוע ושווה לאורך החוט \( l \).</p>
+        <p><strong>מה מחפשים:</strong> למצוא ביטוי אלגברי עבור המתיחות בחוט \( T \) בנקודת הקיצון, המבוסס אך ורק על המשתנים \( m, g, \alpha_0 \).</p>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( \Sigma \vec{F} = m \vec{a} \)</span>
+            <span class="formula-badge">\( a_R = \frac{v^2}{r} \)</span>
+            <span class="formula-badge">\( F_G = mg \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="font-bold mb-2">פתרון צעד-אחר-צעד:</h4>
+            <p>כאשר המטוטלת מגיעה לנקודת הקיצון של מסלולה, היא משנה את כיוון תנועתה ולכן נעצרת להרף עין. משמעות הדבר היא שגודל המהירות שלה באותו רגע הוא אפס (\( v = 0 \)). לפי נוסחת התאוצה הרדיאלית שבדף הנוסחאות, אם נציב את המהירות ונזכור שרדיוס התנועה \( r \) הוא אורך החוט \( l \), נקבל:</p>
+            <div class="math-scroll text-center" dir="ltr">
+                \[ a_R = \frac{v^2}{l} = \frac{0^2}{l} = 0 \]
+            </div>
+            <p>כלומר, בנקודת הקיצון אין תאוצה לכיוון מרכז התנועה (הציר הרדיאלי). כעת, נשרטט תרשים כוחות (FBD) המציג את הכוחות הפועלים על המשקולת בנקודה זו:</p>
+            
+            <div class="flex justify-center my-4 p-2 bg-white rounded">
+                <img src="image-3.png" alt="תרשים כוחות נקודת קיצון" class="max-w-full h-auto object-contain max-h-96 border border-slate-100 rounded" />
+            </div>
+            
+            <p>נבחר מערכת צירים המותאמת לתנועה המעגלית: ציר רדיאלי (R) הפונה אל מרכז המעגל (נקודת התלייה), וציר משיקי המאונך לו. הכוח \( T \) נמצא במלואו על הציר הרדיאלי הפונה למרכז. את כוח הכובד \( mg \) נפרק לשני רכיבים לפי הזווית \( \alpha_0 \) (שנשמרת בין כוח הכובד להמשך הציר הרדיאלי עקב זוויות מתאימות/מתחלפות):</p>
+            <ul class="list-disc list-inside mb-4 mr-4 space-y-1">
+                <li>רכיב משיקי: \( mg \sin\alpha_0 \) (אחראי על התאוצה המשיקית, אך לא רלוונטי לחישוב \( T \)).</li>
+                <li>רכיב רדיאלי: \( mg \cos\alpha_0 \) הפונה <strong>החוצה</strong> ממרכז המעגל.</li>
+            </ul>
+            <p>כעת נכתוב את החוק השני של ניוטון עבור הציר הרדיאלי בלבד. כאמור, בחרנו את הכיוון החיובי כלפי מרכז המעגל (כיוון התאוצה הרדיאלית תמיד), ולכן \( T \) מקבל סימן חיובי ורכיב הכובד מקבל סימן שלילי:</p>
+            <div class="math-scroll text-center" dir="ltr">
+                \[ \Sigma F_R = m a_R \]
+                \[ T - mg \cos\alpha_0 = m \cdot 0 \]
+                \[ T - mg \cos\alpha_0 = 0 \]
+            </div>
+            <p>נעביר אגפים ונקבל את הביטוי עבור המתיחות:</p>
+            
+            <p class="mt-3 font-bold text-green-700 bg-green-50 p-2 rounded text-center">
+                מסקנה: \( T = mg \cos\alpha_0 \)
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong>
+            שימו לב למלכודת נפוצה: תלמידים נוטים לחשוב שאם הגוף נע במעגל אז תמיד יש איבר של \( \frac{mv^2}{R} \) במשחיות הכוחות. זה נכון באופן כללי, אבל בנקודת הקיצון ספציפית המהירות מתאפסת לרגע! לכן בציר הרדיאלי יש שיווי משקל רגעי והתאוצה הרדיאלית היא אפס. (הגוף כמובן לא נשאר במקום, כי בציר המשיקי התאוצה *אינה* אפס, ולכן הוא מיד צובר מהירות).
+        </div>
+    </section>
+
+    <!-- סעיף ד' -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד' - מתיחות בנקודה הנמוכה ביותר</h3>
+
+        <p><strong>מה נתון:</strong> כעת המשקולת מגיעה לנקודה הנמוכה ביותר במסלולה (בזווית אלפא שווה לאפס ביחס לאנך). היא צברה מהירות במהלך הירידה שלה. המרחק מנקודת התלייה עדיין שווה לאורך החוט \( l \).</p>
+        <p><strong>מה מחפשים:</strong> לבטא את המתיחות בחוט \( T \) בנקודה הנמוכה ביותר באמצעות \( m, g, \alpha_0 \) בלבד.</p>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( \Sigma \vec{F} = m \vec{a} \)</span>
+            <span class="formula-badge">\( a_R = \frac{v^2}{r} \)</span>
+            <span class="formula-badge">\( W_{nc} = \Delta E \)</span>
+            <span class="formula-badge">\( E_k = \frac{1}{2}mv^2 \)</span>
+            <span class="formula-badge">\( U_G = mgh \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="font-bold mb-2">פתרון צעד-אחר-צעד:</h4>
+            <p>כדי למצוא את הכוחות בנקודה הנמוכה בעזרת החוק השני של ניוטון לתנועה מעגלית, אנו חייבים קודם כל לדעת מהי המהירות של המשקולת בנקודה זו. למציאת מהירות המשתנה כתלות במיקום, הכלי החזק ביותר שלנו הוא חוק שימור אנרגיה.</p>
+            
+            <div class="font-bold text-slate-800 mt-4 mb-2 bg-slate-100 p-1 px-3 rounded inline-block">שלב 1: מציאת המהירות באמצעות שימור אנרגיה</div>
+            <p>הכוחות הפועלים על המשקולת לאורך תנועתה הם כוח הכובד (כוח משמר) וכוח המתיחות \( T \). מכיוון שכוח המתיחות פועל תמיד בכיוון רדיאלי והמהירות היא תמיד בכיוון משיקי (מאונך לרדיוס), המתיחות אינה מבצעת עבודה (\( W_T = 0 \)). מאחר שאין עבודת כוחות לא-משמרים, האנרגיה המכנית במערכת נשמרת.</p>
+            <p>נגדיר את מישור הייחוס לאנרגיה כובדית (\( h=0 \)) בנקודה הנמוכה ביותר במסלול. כעת, עלינו למצוא מה היה הגובה \( h \) של המשקולת בנקודת הקיצון ההתחלתית שממנה שוחררה במנוחה. נביט בתרשים הגיאומטרי:</p>
+            
+            <div class="flex justify-center my-4 p-2 bg-white rounded">
+                <img src="image-4.png" alt="תרשים אנרגיה וכוחות בנקודה הנמוכה" class="max-w-full h-auto object-contain max-h-96 border border-slate-100 rounded" />
+            </div>
+            
+            <p>מהשרטוט ניתן לראות שאורך החוט השלם \( l \) שווה לסכום של ההיטל של אורך החוט בנקודת הקיצון (\( l \cos\alpha_0 \)) ועוד הגובה \( h \). לכן:</p>
+            <div class="math-scroll text-center" dir="ltr">
+                \[ l = l \cos\alpha_0 + h \quad \Rightarrow \quad h = l - l \cos\alpha_0 = l(1 - \cos\alpha_0) \]
+            </div>
+            <p>נרשום את משוואת שימור האנרגיה מנקודת הקיצון ההתחלתית (מצב 1, שם מהירותה אפס) אל הנקודה הנמוכה ביותר (מצב 2, שם גובהה אפס):</p>
+            <div class="math-scroll text-center" dir="ltr">
+                \[ E_1 = E_2 \]
+                \[ U_{G1} + E_{k1} = U_{G2} + E_{k2} \]
+                \[ mgh + 0 = 0 + \frac{1}{2}mv^2 \]
+            </div>
+            <p>נציב את הביטוי עבור \( h \) שמצאנו:</p>
+            <div class="math-scroll text-center" dir="ltr">
+                \[ mgl(1 - \cos\alpha_0) = \frac{1}{2}mv^2 \]
+            </div>
+            <p>נצמצם את המסה \( m \) משני האגפים ונכפול ב-2 כדי לבודד את \( v^2 \) (המהירות בריבוע), שכן נזדקק לה עבור נוסחת התאוצה הרדיאלית בשלב הבא:</p>
+            <div class="math-scroll text-center border border-blue-200 bg-blue-50 py-2 my-2 rounded" dir="ltr">
+                \[ v^2 = 2gl(1 - \cos\alpha_0) \]
+            </div>
+            
+            <div class="font-bold text-slate-800 mt-6 mb-2 bg-slate-100 p-1 px-3 rounded inline-block">שלב 2: ניתוח כוחות בנקודה הנמוכה ביותר</div>
+            <p>כעת, המשקולת נעה במהירות בנקודה הנמוכה ביותר. נבחר שוב ציר רדיאלי (R) הפונה אל מרכז המעגל (כלפי מעלה במקרה זה). הכוחות הפועלים בציר זה הם המתיחות \( T \) הפועלת למעלה, וכוח הכובד \( mg \) הפועל למטה. נרשום את החוק השני של ניוטון בציר הרדיאלי:</p>
+            <div class="math-scroll text-center" dir="ltr">
+                \[ \Sigma F_R = m a_R \]
+                \[ T - mg = m \frac{v^2}{l} \]
+            </div>
+            <p>נעביר את \( mg \) לאגף הימני:</p>
+            <div class="math-scroll text-center" dir="ltr">
+                \[ T = mg + \frac{mv^2}{l} \]
+            </div>
+            <p>כעת נציב את הביטוי עבור \( v^2 \) שמצאנו בשלב האנרגיה אל תוך המשוואה של הכוחות:</p>
+            <div class="math-scroll text-center" dir="ltr">
+                \[ T = mg + \frac{m \cdot 2gl(1 - \cos\alpha_0)}{l} \]
+            </div>
+            <p>נשים לב שאורך החוט \( l \) מצטמצם במונה ובמכנה. נסדר את המשוואה ונפתח סוגריים כדי לקבל את התשובה הסופית:</p>
+            <div class="math-scroll text-center" dir="ltr">
+                \[ T = mg + 2mg(1 - \cos\alpha_0) \]
+                \[ T = mg + 2mg - 2mg\cos\alpha_0 \]
+                \[ T = 3mg - 2mg\cos\alpha_0 \]
+                \[ T = mg(3 - 2\cos\alpha_0) \]
+            </div>
+            
+            <p class="mt-3 font-bold text-green-700 bg-green-50 p-2 rounded text-center">
+                מסקנה: \( T = mg(3 - 2\cos\alpha_0) \)
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong>
+            שימו לב לקשר היפה בין הסעיפים! בנקודה הנמוכה ביותר, המתיחות היא תמיד הגדולה ביותר במסלול התנועה. למה? מתיחות החוט חייבת גם להתגבר על כוח הכובד במלואו (ולכן המחובר הראשון \( +mg \)), וגם לספק את הכוח הנדרש כדי לייצר תאוצה למרכז המעגל כדי "לסובב" את המשקולת במסלולה (האיבר המגיע מ-\( \frac{mv^2}{R} \)). הציבו \( \alpha_0 = 90^\circ \) (שחרור מגובה התלייה, \( \cos(90^\circ)=0 \)) ותראו שהמתיחות למטה מגיעה לפי 3 ממשקל הגוף!
+        </div>
+    </section>
+
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="w-full h-auto object-contain rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
