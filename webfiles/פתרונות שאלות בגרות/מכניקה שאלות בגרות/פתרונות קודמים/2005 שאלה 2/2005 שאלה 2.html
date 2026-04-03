@@ -1,0 +1,714 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מוסבר: בגרות מכניקה 2005 שאלה 2</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות פיזיקה: מכניקה 2005 - שאלה 2</h1>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            id="mainQuestionImage"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display:none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">תמונת השאלה (question-image.png) לא נמצאה. אנא ודא כי הקובץ נמצא באותה תיקייה.</div>
+    </section>
+
+    <main>
+
+        <section class="section-card" id="part-a">
+            <h3 class="section-header">סעיף א': מהירות המשקולת בנקודה הנמוכה ביותר</h3>
+
+            <div class="info-grid md:grid-cols-2">
+                <div class="info-panel">
+                    <div class="step-title"><span>🔍</span> א. מה נתון:</div>
+                    <p>אורך החוט הוא \( l = 1\text{ m} \). הזווית המקסימלית עם האנך היא \( \theta_{max} = 60^\circ \). מסת המשקולת היא \( m = 100\text{ gr} \).</p>
+                    <p><strong>נתון עקיף חשוב:</strong> מכיוון שזוהי הזווית המקסימלית (נקודת הקיצון של התנועה), המשקולת נעצרת שם רגעית, ולכן גודל מהירותה בנקודה זו שווה לאפס (\( v_A = 0 \)).</p>
+                    <p><strong>שלב 0 - המרת יחידות (MKS):</strong> נמיר את המסה לקילוגרמים: \( m = \frac{100}{1000} = 0.1\text{ kg} \). בנוסף נגדיר את תאוצת הנפילה החופשית המקובלת \( g = 10\text{ m/s}^2 \).</p>
+                    <p class="mb-0">נגדיר את רמת הייחוס לאנרגיה כובדית (\( h=0 \)) בנקודה הנמוכה ביותר של המסלול (נקודה B).</p>
+                </div>
+
+                <div class="info-panel">
+                    <div class="step-title"><span>🎯</span> ב. מה מחפשים:</div>
+                    <p class="mb-0">את גודל מהירות המשקולת בנקודה B, נסמן כ- \( v_B \).</p>
+                </div>
+            </div>
+
+            <div class="mt-2 mb-4">
+                <strong>📏 ג. נוסחאות או עקרונות בשימוש:</strong><br>
+                <span class="formula-badge">\( E_k = \frac{1}{2}mv^2 \)</span>
+                <span class="formula-badge">\( U_G = mgh \)</span>
+                חוק שימור אנרגיה מכנית: כיוון שפועלים רק כוח הכובד (משמר) וכוח המתיחות (שאינו מבצע עבודה), האנרגיה המכנית נשמרת \( E_A = E_B \).
+            </div>
+
+            <div class="step-box math-scroll">
+                <h4 class="step-title"><span>✍️</span> ד. הצבה ופתרון:</h4>
+                <p>תחילה, נחשב את הגובה ההתחלתי \( h_A \) בנקודה A ביחס לנקודה B. מתוך גיאומטריה של משולש ישר זווית הנוצר עם האנך לתקרה:</p>
+
+                <div class="visual-frame">
+                    <img src="image-1.png" alt="תרשים חישוב גובה h_A" class="max-w-sm w-full h-auto border border-slate-200 rounded-lg bg-white shadow-sm" />
+                </div>
+
+                \[ h_A = l - l\cos(60^\circ) = l(1 - \cos 60^\circ) \]
+                \[ h_A = 1 \cdot (1 - 0.5) = 0.5\text{ m} \]
+                <p>כעת, נרשום את חוק שימור האנרגיה בין נקודה A (שבה המשקולת במנוחה רגעית, \( v_A=0 \)) לנקודה B:</p>
+                \[ E_A = E_B \]
+                \[ U_{G(A)} + E_{k(A)} = U_{G(B)} + E_{k(B)} \]
+                \[ mgh_A + 0 = 0 + \frac{1}{2}mv_B^2 \]
+                <p>נצמצם את המסה \( m \) (שהיא שונה מאפס) משני אגפי המשוואה ונבודד את המהירות:</p>
+                \[ gh_A = \frac{1}{2}v_B^2 \implies v_B = \sqrt{2gh_A} \]
+                \[ v_B = \sqrt{2 \cdot 10 \cdot 0.5} = \sqrt{10} \approx 3.16\text{ m/s} \]
+                <div class="final-answer">
+                    גודל המהירות בנקודה B הוא: \( v_B = \sqrt{10} \approx 3.16\text{ m/s} \)
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 טיפ מורה:</strong> מומלץ לבחור את הנקודה הנמוכה ביותר במסלול כנקודת הייחוס לאנרגיה כובדית (\( h=0 \)). גישה זו מאפסת את האיבר במשוואה ויכולה למנוע התעסקות עם מספרים שליליים. בנוסף, שימו לב שגודל המהירות אינו תלוי במסת המשקולת.
+            </div>
+        </section>
+
+        <section class="section-card" id="part-b">
+            <h3 class="section-header">סעיף ב': תפקיד הרכיבים של הכוח השקול</h3>
+
+            <div class="info-grid md:grid-cols-2">
+                <div class="info-panel">
+                    <div class="step-title"><span>🔍</span> א. מה נתון:</div>
+                    <p class="mb-0">הכוח השקול מפורק לשני רכיבים: רכיב רדיאלי (בכיוון הרדיוס/החוט) ורכיב משיקי (משיק למסלול התנועה).</p>
+                </div>
+
+                <div class="info-panel">
+                    <div class="step-title"><span>🎯</span> ב. מה מחפשים:</div>
+                    <p class="mb-0">איזה מן הרכיבים גורם לשינוי בגודל המהירות, ואיזה רכיב גורם לשינוי בכיוון המהירות.</p>
+                </div>
+            </div>
+
+            <div class="mt-2 mb-4">
+                <strong>📏 ג. נוסחאות או עקרונות בשימוש:</strong><br>
+                <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+                <span class="formula-badge">\( a_R = \frac{v^2}{r} \)</span>
+                על פי החוק השני של ניוטון, כיוון התאוצה הוא ככיוון הכוח השקול. כוח שפועל במאונך לוקטור המהירות משנה רק את כיוונו, וכוח שפועל במקביל לוקטור המהירות משנה את גודלו.
+            </div>
+
+            <div class="step-box">
+                <h4 class="step-title"><span>✍️</span> ד. הצבה ופתרון:</h4>
+                <p>על פי קינמטיקה של תנועה מעגלית לא קצובה:</p>
+                <ul class="list-disc list-inside space-y-2 mt-2">
+                    <li><strong>הרכיב הרדיאלי (\( \Sigma F_R \)):</strong> פועל במאונך לוקטור המהירות המשיקית. לכן הוא אינו יכול לבצע עבודה ולשנות את האנרגיה הקינטית (גודל המהירות). תפקידו הוא למשוך את הגוף למרכז הסיבוב ובכך <strong>לגרום לשינוי בכיוון המהירות</strong> של המשקולת.</li>
+                    <li><strong>הרכיב המשיקי (\( \Sigma F_T \)):</strong> פועל לאורך ציר התנועה הרגעי (מקביל או אנטי-מקביל לוקטור המהירות). כוח זה מבצע עבודה וגורם לתאוצה משיקית (\( a_T = \frac{dv}{dt} \)), ולכן הוא <strong>גורם לשינוי בגודל המהירות</strong>.</li>
+                </ul>
+                <div class="final-answer">
+                    הרכיב המשיקי גורם לשינוי בגודל המהירות.<br>
+                    הרכיב הרדיאלי גורם לשינוי בכיוון המהירות.
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 טיפ מורה:</strong> כדי לזכור זאת, דמיינו שאתם נוהגים ברכב: דוושת הגז והברקס הם ה"כוח המשיקי" (משנים את ספידומטר - גודל המהירות), וההגה הוא ה"כוח הרדיאלי" (משנה רק לאן האוטו פונה, מבלי לשנות בהכרח את המספר בספידומטר).
+            </div>
+        </section>
+
+        <section class="section-card" id="part-c">
+            <h3 class="section-header">סעיף ג': כיוון התאוצה בעזרת שושנת הכיוונים</h3>
+
+            <div class="info-grid md:grid-cols-2">
+                <div class="info-panel">
+                    <div class="step-title"><span>🔍</span> א. מה נתון:</div>
+                    <p class="mb-0">המשקולת משוחררת ממנוחה בנקודה A ונועה ימינה. מוצגת שושנת כיוונים עם 8 חצים. הזווית בין חץ 7 (אופקי שמאלה) לחץ 8 (אלכסון מעלה) היא \( 60^\circ \).</p>
+                </div>
+
+                <div class="info-panel">
+                    <div class="step-title"><span>🎯</span> ב. מה מחפשים:</div>
+                    <p class="mb-0">את מספר החץ המייצג את כיוון התאוצה הכוללת: (1) בנקודה A. (2) בנקודה B.</p>
+                </div>
+            </div>
+
+            <div class="mt-2 mb-4">
+                <strong>📏 ג. נוסחאות או עקרונות בשימוש:</strong><br>
+                וקטור התאוצה הכוללת הוא סכום וקטורי של התאוצה הרדיאלית והתאוצה המשיקית:
+                <span class="formula-badge">\( \vec{a} = \vec{a}_R + \vec{a}_T \)</span>. כיוונו ככיוון הכוח השקול.
+            </div>
+
+            <div class="step-box">
+                <h4 class="step-title"><span>✍️</span> ד. הצבה ופתרון:</h4>
+
+                <div class="visual-frame">
+                    <img src="image-3.png" alt="תרשים כוחות בנקודות A ו-B" class="max-w-md w-full h-auto border border-slate-200 rounded-lg bg-white shadow-sm" />
+                </div>
+
+                <p><strong>1) ניתוח בנקודה A:</strong><br>
+                בנקודה A, המשקולת נמצאת במנוחה רגעית, ולכן גודל מהירותה הוא אפס (\( v_A = 0 \)). מכאן נובע שהתאוצה הרדיאלית שווה לאפס: \( a_R = \frac{v_A^2}{l} = 0 \).
+                התאוצה היחידה שפועלת היא התאוצה המשיקית (\( a_T \)). כיוון המשיק מאונך לחוט.
+                מכיוון שהחוט יוצר זווית של \( 60^\circ \) עם האנך, הוא יוצר זווית של \( 30^\circ \) עם האופק. המשיק (המאונך לו) ייצור זווית של \( 90^\circ - 30^\circ = 60^\circ \) עם האופק. מכיוון שהגוף מתחיל לנוע מטה וימינה, התאוצה מצביעה מטה וימינה בזווית של \( 60^\circ \) מתחת לאופק.
+                בשושנת הכיוונים, חץ 3 מייצג את האופק ימינה. מכיוון שחץ 2 ממוקם בסימטריה (על פי הנתון על חץ 8) ב-\( 60^\circ \) מעל האופק, אזי חץ 4, שנמצא סימטרית למטה, מייצג זווית של \( 60^\circ \) מתחת לאופק.
+                לכן כיוון התאוצה זהה לכיוון <strong>חץ מספר 4</strong>.</p>
+
+                <p class="mt-4"><strong>2) ניתוח בנקודה B:</strong><br>
+                בנקודה הנמוכה ביותר B, כל הכוחות הפועלים על המשקולת (כוח הכובד מטה וכוח המתיחות מעלה) הם אנכיים בלבד. מכיוון שהציר המשיקי בנקודה זו הוא אופקי לחלוטין, אין שום רכיב כוח שפועל בכיוון המשיק למסלול (\( \Sigma F_T = 0 \)). לכן, על פי החוק השני של ניוטון, התאוצה המשיקית מתאפסת (\( a_T = 0 \)).
+                התאוצה היחידה שקיימת היא התאוצה הרדיאלית המכוונת למרכז מעגל הסיבוב, כלומר למעלה (לכיוון התקרה).
+                בשושנת הכיוונים, חץ הפונה ישירות מעלה הוא <strong>חץ מספר 1</strong>.</p>
+
+                <div class="final-answer">
+                    (1) בנקודה A התאוצה בכיוון: חץ 4.<br>
+                    (2) בנקודה B התאוצה בכיוון: חץ 1.
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 טיפ מורה:</strong> טעות נפוצה היא לחשוב שאם הגוף רגעית במנוחה (בנקודה A), אז התאוצה שלו אפס. חשוב לדייק: המהירות אכן אפס, אבל הכוח המשיקי (רכיב הכובד) הוא מקסימלי בנקודה זו, ולכן יש תאוצה. לעומת זאת, בנקודה B, למרות שגודל המהירות הוא מקסימלי, אין שום כוח שפועל לאורך המשיק, ולכן אין תאוצה משיקית כלל.
+            </div>
+        </section>
+
+        <section class="section-card" id="part-d">
+            <h3 class="section-header">סעיף ד': גודל התאוצה בנקודות A ו-B</h3>
+
+            <div class="info-grid md:grid-cols-2">
+                <div class="info-panel">
+                    <div class="step-title"><span>🔍</span> א. מה נתון:</div>
+                    <p class="mb-0">כל הנתונים מהסעיפים הקודמים נכונים גם כאן. זכרו כי בנקודה A: \( v_A = 0 \) ובנקודה B מצאנו \( v_B = \sqrt{10}\text{ m/s} \). אורך החוט \( l = 1\text{ m} \).</p>
+                </div>
+
+                <div class="info-panel">
+                    <div class="step-title"><span>🎯</span> ב. מה מחפשים:</div>
+                    <p class="mb-0">לחשב את <strong>גודל</strong> התאוצה הכוללת (השקולה) בנקודה A ובנקודה B.</p>
+                </div>
+            </div>
+
+            <div class="mt-2 mb-4">
+                <strong>📏 ג. נוסחאות או עקרונות בשימוש:</strong><br>
+                <span class="formula-badge">\( a = \sqrt{a_R^2 + a_T^2} \)</span>
+                <span class="formula-badge">\( \Sigma F_T = m a_T \implies a_T = g\sin\theta \)</span>
+                <span class="formula-badge">\( a_R = \frac{v^2}{l} \)</span>
+            </div>
+
+            <div class="step-box math-scroll">
+                <h4 class="step-title"><span>✍️</span> ד. הצבה ופתרון:</h4>
+
+                <p><strong>1) גודל התאוצה בנקודה A:</strong><br>
+                ראינו ש-\( a_R = 0 \). הכוח המשיקי היחיד הפועל הוא רכיב כוח הכובד לאורך המשיק (כוח המתיחות פועל רק בציר הרדיאלי ולא תורם לציר המשיקי):</p>
+                \[ \Sigma F_T = m g \sin(60^\circ) \]
+                \[ m a_T = m g \sin(60^\circ) \]
+                <p>נצמצם את המסה ונציב \( g=10 \):</p>
+                \[ a_A = a_T = g \sin(60^\circ) = 10 \cdot \frac{\sqrt{3}}{2} = 5\sqrt{3} \approx 8.66\text{ m/s}^2 \]
+
+                <p class="mt-4"><strong>2) גודל התאוצה בנקודה B:</strong><br>
+                כפי שהוסבר, \( a_T = 0 \), ולכן התאוצה היא רדיאלית בלבד. נציב את גודל המהירות שמצאנו בסעיף א':</p>
+                \[ a_B = a_R = \frac{v_B^2}{l} = \frac{(\sqrt{10})^2}{1} = \frac{10}{1} = 10\text{ m/s}^2 \]
+
+                <div class="final-answer">
+                    (1) גודל התאוצה בנקודה A הוא: \( a_A = 5\sqrt{3} \approx 8.66\text{ m/s}^2 \)<br>
+                    (2) גודל התאוצה בנקודה B הוא: \( a_B = 10\text{ m/s}^2 \)
+                </div>
+            </div>
+        </section>
+
+        <section class="section-card" id="part-e">
+            <h3 class="section-header">סעיף ה': מתיחות החוט בזווית של 30 מעלות</h3>
+
+            <div class="info-grid md:grid-cols-2">
+                <div class="info-panel">
+                    <div class="step-title"><span>🔍</span> א. מה נתון:</div>
+                    <p class="mb-0">המשקולת נמצאת בזווית \( \theta = 30^\circ \) עם האנך. נקרא לנקודה זו נקודה D. אנו משתמשים בכל הנתונים הקודמים, כולל \( m = 0.1\text{ kg} \).</p>
+                </div>
+
+                <div class="info-panel">
+                    <div class="step-title"><span>🎯</span> ב. מה מחפשים:</div>
+                    <p class="mb-0">את כוח המתיחות המופעל על ידי החוט, אותו נסמן באות \( T \).</p>
+                </div>
+            </div>
+
+            <div class="mt-2 mb-4">
+                <strong>📏 ג. נוסחאות או עקרונות בשימוש:</strong><br>
+                <span class="formula-badge">\( \Sigma F_R = m a_R \)</span>
+                <span class="formula-badge">\( a_R = \frac{v^2}{l} \)</span>
+                חוק שימור אנרגיה למציאת המהירות: <span class="formula-badge">\( E_A = E_D \)</span>.
+            </div>
+
+            <div class="step-box math-scroll">
+                <h4 class="step-title"><span>✍️</span> ד. הצבה ופתרון:</h4>
+
+                <div class="visual-frame">
+                    <div>
+                        <img src="image-5.png" alt="תרשים כוחות בנקודה D" class="max-w-sm w-full h-auto border border-slate-200 rounded-lg bg-white shadow-sm mx-auto" />
+                        <p class="text-sm text-slate-500 mt-2 text-center w-full" style="display: none;">תרשים גוף חופשי (FBD) בנקודה D</p>
+                    </div>
+                </div>
+
+                <p>כדי למצוא את המתיחות, עלינו לדעת את גודל המהירות (\( v_D \)) בנקודה זו. נחשב תחילה את הגובה \( h_D \) ביחס לנקודה התחתונה B:</p>
+                \[ h_D = l - l\cos(30^\circ) = 1 \cdot \left(1 - \frac{\sqrt{3}}{2}\right) \approx 0.134\text{ m} \]
+                <p>נשתמש בחוק שימור האנרגיה בין נקודה A לנקודה D. האנרגיה בנקודה A ידועה לנו: \( E_A = mgh_A = 0.1 \cdot 10 \cdot 0.5 = 0.5\text{ J} \).</p>
+                \[ E_A = E_D = U_{G(D)} + E_{k(D)} \]
+                \[ 0.5 = mgh_D + \frac{1}{2}mv_D^2 \]
+                \[ 0.5 = 0.1 \cdot 10 \cdot \left(1 - \frac{\sqrt{3}}{2}\right) + \frac{1}{2} \cdot 0.1 \cdot v_D^2 \]
+                \[ 0.5 = 1 - \frac{\sqrt{3}}{2} + 0.05v_D^2 \]
+                <p>נעביר אגפים ונבודד את \( v_D^2 \):</p>
+                \[ 0.05v_D^2 = 0.5 - 1 + \frac{\sqrt{3}}{2} = \frac{\sqrt{3}}{2} - 0.5 \]
+                \[ v_D^2 = \frac{\frac{\sqrt{3}}{2} - 0.5}{0.05} = 20\left(\frac{\sqrt{3}}{2} - 0.5\right) = 10\sqrt{3} - 10 \approx 7.32\text{ (m/s)}^2 \]
+
+                <p class="mt-4">כעת נרשום את משוואת הכוחות בציר הרדיאלי (נקבע את הכיוון למרכז המעגל כחיובי, מכיוון שזוהי התאוצה הרדיאלית \( a_R \)):</p>
+                \[ \Sigma F_R = m a_R \]
+                <p>הכוחות בציר הרדיאלי הם: מתיחות \( T \) פנימה, ורכיב משקל \( mg\cos(30^\circ) \) החוצה:</p>
+                \[ T - mg\cos(30^\circ) = m \frac{v_D^2}{l} \]
+                <p>נבודד את \( T \) ונציב את הערכים שחישבנו:</p>
+                \[ T = mg\cos(30^\circ) + m \frac{v_D^2}{l} \]
+                \[ T = 0.1 \cdot 10 \cdot \frac{\sqrt{3}}{2} + 0.1 \cdot \frac{10\sqrt{3} - 10}{1} \]
+                \[ T = \frac{\sqrt{3}}{2} + \sqrt{3} - 1 = 1.5\sqrt{3} - 1 \approx 1.598\text{ N} \]
+
+                <div class="final-answer">
+                    כוח המתיחות בחוט כאשר הזווית היא \( 30^\circ \) הינו: \( T = 1.5\sqrt{3} - 1 \approx 1.598\text{ N} \)
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 טיפ מורה:</strong> תלמידים נוטים לחשוב שהמתיחות שווה לרכיב המשקל (\( T = mg\cos\theta \)). קשר זה מתאים למצב בו שקול הכוחות הוא אפס והגוף אינו משנה את מהירותו (שיווי משקל). כאשר הגוף נע במסלול מעגלי, המתיחות צריכה להיות גדולה יותר מרכיב המשקל, משום שעליה לספק גם את הכוח הרדיאלי (הצנטריפטלי, \( \frac{mv^2}{l} \)) שמשאיר את המשקולת במסלול המעגלי.
+            </div>
+        </section>
+
+        <section class="section-card" id="part-f">
+            <h3 class="section-header">סעיף ו': העבודה שמבצע כוח המתיחות</h3>
+
+            <div class="info-grid md:grid-cols-2">
+                <div class="info-panel">
+                    <div class="step-title"><span>🔍</span> א. מה נתון:</div>
+                    <p class="mb-0">המשקולת נעה במסלול קשתי מנקודה A לנקודה B תחת השפעת כוח הכובד וכוח המתיחות מהחוט.</p>
+                </div>
+
+                <div class="info-panel">
+                    <div class="step-title"><span>🎯</span> ב. מה מחפשים:</div>
+                    <p class="mb-0">את ערך העבודה שעושה כוח המתיחות בחוט במהלך התנועה מ-A ל-B, בתוספת נימוק.</p>
+                </div>
+            </div>
+
+            <div class="mt-2 mb-4">
+                <strong>📏 ג. נוסחאות או עקרונות בשימוש:</strong><br>
+                <span class="formula-badge">\( W = F \cdot \Delta x \cdot \cos\alpha \)</span>
+                (או בניסוח אינפיניטסימלי: <span class="formula-badge">\( W = \int \vec{F} \cdot d\vec{r} \)</span>) <br>
+                עבודה של כוח המאונך לכיוון התנועה שווה לאפס.
+            </div>
+
+            <div class="step-box">
+                <h4 class="step-title"><span>✍️</span> ד. הצבה ופתרון:</h4>
+                <p>לאורך כל מהלך תנועת המשקולת, כוח המתיחות בחוט (\( T \)) פועל לאורך החוט (בציר הרדיאלי), כלומר במאונך למסלול התנועה הרגעי (הציר המשיקי, שהוא כיוון וקטור המהירות). </p>
+                <p>מכיוון שהזווית בין כוח המתיחות לבין וקטור ההעתק הרגעי היא זווית ישרה (\( 90^\circ \)), והקוסינוס של הזווית הזו מתאפס (\( \cos(90^\circ) = 0 \)), העבודה הכוללת שמבצע הכוח היא אפס.</p>
+
+                <div class="final-answer">
+                    עבודת כוח המתיחות שווה ל- \( 0\text{ J} \).<br>
+                    נימוק: הכוח פועל בניצב לכיוון התנועה (ההעתק) בכל רגע ורגע.
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <strong>💡 טיפ מורה:</strong> זהו עיקרון חשוב בפיזיקה שכדאי לזכור: כוח שפועל במאונך לכיוון תנועת הגוף אינו משנה את האנרגיה הקינטית שלו, ולכן עבודתו היא אפס. למשל, כוח הנורמל כאשר גוף מחליק על משטח - אינו מבצע עבודה מאותה סיבה. (דרך אגב, בכיתה י"ב תכירו כוח נוסף שמתנהג בדיוק כך - הכוח המגנטי!)
+            </div>
+        </section>
+    </main>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                class="max-w-full h-auto rounded-lg"
+                id="modalImg"
+                src="question-image.png"
+                alt="תמונת השאלה"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display:none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">תמונת השאלה (question-image.png) לא נמצאה. אנא ודא כי הקובץ נמצא באותה תיקייה.</div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+</body>
+</html>
