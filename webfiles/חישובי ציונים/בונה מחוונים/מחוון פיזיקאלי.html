@@ -1,0 +1,718 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<title>פיזיקאלי - המחוון הדיגיטלי</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<style>
+  :root { --bg:#fff; --fg:#111; --muted:#666; --brand:#1e88e5; --ok:#2e7d32; --warn:#f9a825; --err:#c62828; --line:#e6e6e6; }
+  html,body{margin:0;padding:0;background:var(--bg);color:var(--fg);font-family: "Rubik","Noto Sans Hebrew","Segoe UI","Arial",sans-serif;}
+  header{padding:16px 20px;border-bottom:1px solid var(--line);background:#fafafa}
+  h1{margin:0 0 4px 0;font-size:22px}
+  .sub{color:var(--muted);font-size:13px}
+  main{padding:18px;max-width:1100px;margin:auto}
+  .card{border:1px solid var(--line);border-radius:12px;padding:14px;margin-bottom:12px;background:#fff;box-shadow:0 1px 2px rgba(0,0,0,.04)}
+  .row{display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+  label{font-size:13px;color:#333}
+  input[type="text"], textarea{padding:8px 10px;border:1px solid #d0d0d0;border-radius:8px;font-size:14px;background:#fff}
+  input[type="number"], select{padding:8px 10px;border:1px solid #d0d0d0;border-radius:8px;font-size:14px;background:#fff;min-width:100px}
+  select{min-width:160px}
+  .section-title{font-weight:600;margin-bottom:8px}
+  .crit{display:grid;grid-template-columns:1.2fr 1fr 0.9fr;gap:8px;align-items:center;margin:6px 0}
+  .crit > div:first-child{font-size:13px}
+  .crit select{min-width:120px}
+  .grid{display:grid;gap:10px}
+  .rubric{border-top:1px dashed #e0e0e0;margin-top:8px;padding-top:8px}
+  .score{font-weight:700}
+  .pill{display:inline-block;padding:2px 8px;border-radius:999px;background:#eef6ff;color:#0d47a1;font-size:12px}
+  .total{font-size:16px}
+  .muted{color:var(--muted)}
+  .footer{display:grid;grid-template-columns:1fr 1fr 1fr 1.2fr;align-items:center;gap:10px}
+  button{cursor:pointer;background:var(--brand);border:none;color:#fff;padding:10px 14px;border-radius:10px;font-size:14px}
+  button.secondary{background:#eceff1;color:#263238}
+  button.tiny-btn{padding:6px 10px;font-size:12px;border-radius:8px}
+  .help{font-size:12px;color:#555}
+  .divider{height:1px;background:#eee;margin:10px 0}
+  
+  /* --- סגנון עבור מחוון שברים --- */
+  .crit-fraction { display: grid; grid-template-columns: 1.2fr 1fr 0.9fr; gap: 8px; align-items: center; margin: 6px 0; }
+  .crit-fraction > div:first-child { font-size: 13px; }
+  .crit-fraction input[type="number"] { width: 50px; padding: 6px 8px; font-size: 13px; -moz-appearance: textfield; }
+  .crit-fraction input::-webkit-outer-spin-button, .crit-fraction input::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+  .crit-fraction label { font-size: 12px; color: #555; }
+  
+  /* Print summary styles */
+  #printView{display:none}
+  #printView .title{font-weight:700;font-size:18px;margin-bottom:6px}
+  #printView .meta{font-size:13px;margin-bottom:8px}
+  #printView table{width:100%;border-collapse:collapse;font-size:12px}
+  /* תיקון: הוספת !important כדי לכפות יישור עליון בהדפסה */
+  #printView th, #printView td{border:1px solid #cfcfcf;padding:6px 8px;vertical-align:top !important}
+  #printView th{background:#f5f7fa}
+  #printView h3{margin:10px 0 6px;font-size:14px}
+  .tiny{font-size:11px;color:#444}
+  @media (max-width: 800px) {
+    .footer{grid-template-columns: 1fr 1fr; gap: 14px;}
+  }
+  @media print{
+    /* הסתר את הטופס הראשי בעת הדפסה */
+    #formView{display:none !important}
+    /* הצג את תצוגת ההדפסה (רלוונטי רק אם לא משתמשים ב-iframe) */
+    #printView{display:block !important}
+    @page{size:A4;margin:14mm}
+  }
+</style>
+</head>
+<body>
+<header>
+  <!-- כותרת ראשית מעודכנת -->
+  <h1>פיזיקאלי - המחוון הדיגיטלי שלך לבדיקת שאלות בפיזיקה!</h1>
+  <!-- כותרת משנה מעודכנת -->
+  <div class="sub">עד 10 סעיפים | בחירת סוג מחוון לכל סעיף | חישוב אחוזים וניקוד | הדפסה לתקציר בעמוד אחד</div>
+  <!-- חותמת זמן של הגירסה -->
+  <div class="sub" style="color: var(--ok); font-weight: 500; margin-top: 4px;">
+    גירסה: 2025-11-12 14:18 (IST)
+  </div>
+</header>
+
+<main id="formView">
+  <!-- שדה כותרת חופשית שהוחזר -->
+  <div class="card">
+    <div class="row">
+      <label for="freeText">כותרת חופשית (שם תלמיד / כיתה / מספר שאלה / הערות):</label>
+      <input id="freeText" type="text" placeholder="לדוגמה: שם תלמיד: ____ | כיתה: יא-3 | שאלה: 2" style="flex:1; min-width:320px">
+    </div>
+  </div>
+
+  <div class="card">
+    <div class="row">
+      <!-- תווית מעודכנת -->
+      <label for="numItems">מס׳ סעיפים בשאלה (עד 10):</label>
+      <!-- בחירה מעודכנת ל-10, עם ברירת מחדל 5 -->
+      <select id="numItems">
+        <option value="1">1</option><option value="2">2</option><option value="3">3</option>
+        <option value="4">4</option><option value="5" selected>5</option><option value="6">6</option>
+        <option value="7">7</option><option value="8">8</option><option value="9">9</option><option value="10">10</option>
+      </select>
+      <button id="build">בנה/י טופס</button>
+      <span class="help">שלב 1: בחר/י כמה סעיפים יש ולחץ/י "בנה/י טופס".</span>
+    </div>
+  </div>
+
+  <div id="itemsContainer"></div>
+
+  <div class="card footer">
+      <div>
+        <div class="total"><span class="pill">סיכום כולל</span></div>
+        <div class="muted">מחשבים אחוז כולל וניקוד לפי משקל כל סעיף</div>
+      </div>
+      
+      <div>
+        <label>סה״כ נקודות במבחן (לנוחות):</label>
+        <input type="number" id="examTotalPoints" value="100" min="1" step="0.5" style="max-width:120px">
+      </div>
+      
+      <div style="display:flex; flex-direction:column; gap: 5px;">
+        <div>
+          <label>בונוס / קנס (נק'):</label>
+          <input type="number" id="bonusPts" value="0" step="0.5" style="max-width:120px">
+        </div>
+        <div>
+          <label>הערת בונוס/קנס:</label>
+          <input type="text" id="bonusNote" placeholder="לדוג': יצירתיות, איחור..." style="width:100%; max-width:200px;">
+        </div>
+      </div>
+      <div>
+        <div class="total">אחוז כולל: <span id="overallPct">0%</span></div>
+        <div class="total" style="font-weight:800; color:var(--brand)">ניקוד כולל: <span id="overallPts">0</span> / <span id="overallMax">0</span></div>
+        <div class="row" style="margin-top:10px;">
+            <button id="exportJSON" class="secondary tiny-btn">ייצוא (JSON)</button>
+            <button id="print" class="tiny-btn">הדפס / PDF</button>
+            <button id="nextStudent" class="secondary tiny-btn" style="background-color: #ff9800; color: #111;">תלמיד הבא</button>
+        </div>
+      </div>
+  </div>
+  
+  <!-- תיקון: אלמנט להצגת שגיאות הדפסה -->
+  <div id="printError" style="color:var(--err); font-weight:bold; margin-top:10px; display:none; text-align:center;"></div>
+</main>
+
+<!-- זוהי תבנית ההדפסה הנסתרת, היא נשארת ריקה עד שלוחצים הדפס -->
+<main id="printView">
+  <div class="title">תקציר בדיקה – מחוונים</div>
+  <div class="meta" id="printMeta"></div>
+  <div id="printTableWrap"></div>
+  <div class="divider" style="margin:8px 0"></div>
+  <div id="printTotals" class="meta"></div>
+  <div class="tiny">נוצר באמצעות פיזיקאלי - המחוון הדיגיטלי</div>
+</main>
+
+<script>
+const RUBRICS = {
+  // --- מחוון "ניתוח כוחות" ---
+  "forces": { 
+    name: "ניתוח כוחות",
+    inputType: "fraction", 
+    crits: [
+      { label: "זיהוי הכוחות", weight: 33.3 },
+      { label: "זיהוי הכיוון", weight: 33.3 },
+      { label: "זיהוי הגורם המפעיל", weight: 33.4 }
+    ]
+  },
+  // --- מחוון "חישובי מרובה" ---
+  "calc_multi": {
+    name: "חישובי מרובה",
+    inputType: "fraction",
+    crits: [
+      { label: "רישום נתונים", weight: 10 },
+      { label: "רישום נוסחה", weight: 10 },
+      { label: "הצבה נכונה", weight: 20 },
+      { label: "פתרון נכון", weight: 30 },
+      /* שינוי: טקסט מקוצר */
+      { label: "הסברים מספקים", weight: 10 },
+      { label: "תוצאה נכונה", weight: 10 },
+      { label: "יחידות מידה", weight: 10 }
+    ]
+  },
+  // --- מחוון "שאלה+הסבר" ---
+  "q_plus_exp": {
+    name: "שאלה+הסבר",
+    inputType: "levels",
+    crits: [
+      { label: "תשובה נכונה", weight: 30, levels:[
+          {t:"(0/30) - תשובה שגויה או אין נימוק כלל", v:0},
+          {t:"(30/30) - תשובה נכונה", v:30}
+      ]},
+      { label: "נימוק נכון", weight: 70, levels:[
+          {t:"(0/70) - נימוק שגוי או לא קיים", v:0},
+          {t:"(20/70) - נימוק חסר מהותית", v:20},
+          {t:"(35/70) - נימוק נכון חלקית", v:35},
+          {t:"(50/70) - נימוק כמעט מלא", v:50},
+          {t:"(70/70) - נימוק מלא", v:70}
+      ]}
+    ]
+  },
+  // --- מחוונים קיימים ---
+  "calc": { 
+    name: "חישובי",
+    inputType: "levels", 
+    crits: [
+      { label: "רישום נתונים", weight: 10, levels:[{t:"חסר/שגוי",v:0},{t:"חלקי",v:5},{t:"מלא",v:10}] },
+      { label: "רישום נוסחה", weight: 10, levels:[{t:"חסר/שגוי",v:0},{t:"חלקי",v:5},{t:"מלא",v:10}] },
+      { label: "הצבה נכונה", weight: 20, levels:[{t:"חסר/שגוי",v:0},{t:"חלקי",v:10},{t:"מלא",v:20}] },
+      { label: "פתרון נכון", weight: 30, levels:[{t:"חסר/שגוי",v:0},{t:"חלקי",v:15},{t:"מלא",v:30}] },
+      /* שינוי: טקסט מקוצר */
+      { label: "הסברים מספקים", weight: 10, levels:[{t:"חסר/שגוי",v:0},{t:"חלקי",v:5},{t:"מלא",v:10}] },
+      { label: "תוצאה נכונה", weight: 10, levels:[{t:"חסר/שגוי",v:0},{t:"חלקי",v:5},{t:"מלא",v:10}] },
+      { label: "יחידות מידה", weight: 10, levels:[{t:"חסר/שגוי",v:0},{t:"חלקי",v:5},{t:"מלא",v:10}] }
+    ]
+  },
+  "reason": {
+    name: "נימוק פיזיקלי",
+    inputType: "levels",
+    crits: [
+      { label: "תשובה", weight: 20, levels:[{t:"שגוי/חסר",v:0},{t:"חלקי",v:10},{t:"נכון וברור",v:20}] },
+      { label: "עיקרון פיזיקלי", weight: 30, levels:[{t:"חסר/לא רלוונטי",v:0},{t:"חלקי/רמז",v:15},{t:"מלא",v:30}] },
+      { label: "קישור העיקרון למקרה", weight: 40, levels:[{t:"לא מוסבר",v:0},{t:"קישור חלקי/כללי",v:20},{t:"טוב",v:30},{t:"מלא ומשכנע",v:40}] },
+      { label: "ניסוח ברור", weight: 10, levels:[{t:"בלבול/טעויות",v:0},{t:"בסיסי",v:5},{t:"ברור",v:10}] }
+    ]
+  },
+  "concept": {
+    name: "איכותי / הבנה מושגית",
+    inputType: "levels",
+    crits: [
+      { label: "תשובה נכונה", weight: 20, levels:[{t:"שגוי",v:0},{t:"חלקי/לא מדויק",v:10},{t:"נכון",v:20}] },
+      { label: "זיהוי העיקרון", weight: 25, levels:[{t:"חסר",v:0},{t:"חלקי",v:15},{t:"מלא",v:25}] },
+      { label: "הסבר לוגי מקשר", weight: 35, levels:[{t:"לא מוסבר",v:0},{t:"חלקי",v:20},{t:"טוב",v:30},{t:"מלא",v:35}] },
+      { label: "מינוח ושפה פיזיקלית", weight: 20, levels:[{t:"טעויות מהותיות",v:0},{t:"בסיסי",v:10},{t:"מדויק",v:20}] }
+    ]
+  },
+  "graph": {
+    name: "שרטוט גרף", 
+    inputType: "levels",
+    crits: [
+      { label: "בחירת צירים נכונים", weight: 13, levels:[{t:"שגוי",v:0},{t:"חלקי/סביר",v:7},{t:"נכון",v:13}] },
+      { label: "כיוון הציר האופקי (X←→)", weight: 7, levels:[{t:"שגוי",v:0},{t:"לא ברור",v:4},{t:"נכון וברור",v:7}] },
+      { label: "יחידות על הצירים", weight: 10, levels:[{t:"חסר",v:0},{t:"חלקי",v:5},{t:"מלא",v:10}] },
+      { label: "טווח וסקאלה", weight: 15, levels:[{t:"לא מתאים/לא עקבי",v:0},{t:"סביר",v:10},{t:"מצוין",v:15}] },
+      { label: "שרטוט נקודות/עקומה", weight: 18, levels:[{t:"שגוי",v:0},{t:"חלקי/לא מדויק",v:10},{t:"מדויק",v:18}] },
+      { label: "קו מגמה", weight: 15, levels:[{t:"חסר/לא מתאים",v:0},{t:"מתאים אך לא מדויק",v:10},{t:"מדויק ובר־הסבר",v:15}] },
+      { label: "כותרת + שמות צירים", weight: 10, levels:[{t:"חסר/לא מדויק",v:0},{t:"חלקי",v:5},{t:"מלא",v:10}] },
+      { label: "מסקנה מן הגרף", weight: 12, levels:[{t:"חסר/שגוי",v:0},{t:"כללי/חלקי",v:7},{t:"נכון וברור",v:12}] }
+    ]
+  }
+};
+
+const TYPE_OPTIONS = [
+  {value:"calc", text:"חישובי"},
+  {value:"calc_multi", text:"חישובי מרובה"}, 
+  {value:"forces", text:"ניתוח כוחות"}, 
+  {value:"reason", text:"נימוק פיזיקלי"},
+  {value:"concept", text:"איכותי / הבנה מושגית"},
+  {value:"graph", text:"שרטוט גרף"}, 
+  {value:"q_plus_exp", text:"שאלה+הסבר"} 
+];
+
+const itemsContainer = document.getElementById('itemsContainer');
+const numSel = document.getElementById('numItems');
+const buildBtn = document.getElementById('build');
+const overallPctEl = document.getElementById('overallPct');
+const overallPtsEl = document.getElementById('overallPts');
+const overallMaxEl = document.getElementById('overallMax');
+const examTotalPointsEl = document.getElementById('examTotalPoints');
+const bonusPtsEl = document.getElementById('bonusPts');
+const bonusNoteEl = document.getElementById('bonusNote');
+
+function makeItem(index){
+  const card = document.createElement('div'); card.className="card";
+  card.dataset.index = index;
+  
+  // --- שינוי: הוספת שדה קלט למספר/שם סעיף ---
+  card.innerHTML = `
+    <div class="row">
+      <div class="section-title">
+         <label>סעיף:</label>
+         <input type="text" class="itemLabel" value="${index+1}" style="width:40px; padding: 4px 6px; font-weight: bold;">
+      </div>
+      <!-- שינוי: כותרת וטקסט placeholder -->
+      <label>הערות:</label>
+      <input type="text" class="desc" placeholder="לדוגמא: חסרות יחידות מידה" style="min-width:240px">
+    </div>
+    <div class="row" style="margin-top:8px">
+      <label>סוג מחוון:</label>
+      <select class="type">${TYPE_OPTIONS.map(o=>`<option value="${o.value}">${o.text}</option>`).join('')}</select>
+      <label>משקל סעיף (נק׳):</label>
+      <input type="number" class="weight" value="10" min="0" step="0.5">
+      <button class="fullMarkBtn secondary tiny-btn" style="background:#dcedc8;color:#33691e;">ניקוד מלא</button>
+      <!-- הוספת כפתור איפוס -->
+      <button class="resetItemBtn secondary tiny-btn" style="background:#ffecb3;color:#4e342e;">איפוס</button>
+      <span class="pill">אחוז בסעיף: <span class="itemPct">0%</span></span>
+      <span class="pill">ניקוד: <span class="itemPts">0</span></span>
+    </div>
+    <div class="rubric grid"></div>
+  `;
+  const typeSel = card.querySelector('.type');
+  const rubricBox = card.querySelector('.rubric');
+  const weightEl = card.querySelector('.weight');
+  const itemPct = card.querySelector('.itemPct');
+  const itemPts = card.querySelector('.itemPts');
+  const fullMarkBtn = card.querySelector('.fullMarkBtn');
+  // הוספת רפרנס לכפתור החדש
+  const resetItemBtn = card.querySelector('.resetItemBtn');
+
+  function renderRubric(){
+    const t = typeSel.value;
+    if (!RUBRICS[t]) return; 
+    const rb = RUBRICS[t];
+    rubricBox.innerHTML = ''; 
+
+    if (rb.inputType === "fraction") {
+        rb.crits.forEach((c,ci)=>{
+          const wrap = document.createElement('div'); 
+          wrap.className="crit-fraction";
+          wrap.dataset.weight = c.weight; 
+          
+          wrap.innerHTML = `
+            <div><b>${c.label}</b> <span class="muted">(${c.weight}%)</span></div>
+            <div>
+              <label>התקבל:</label> <input type="number" class="fractionGot" value="0" min="0" step="0.1">
+              <label>מתוך:</label> <input type="number" class="fractionMax" value="1" min="0.1" step="0.1">
+            </div>
+            <div class="score">0.0%</div>
+          `;
+          
+          wrap.querySelector('.fractionGot').addEventListener('input', recompute);
+          wrap.querySelector('.fractionMax').addEventListener('input', recompute);
+          rubricBox.appendChild(wrap);
+        });
+    } else {
+        rb.crits.forEach((c,ci)=>{
+          const wrap = document.createElement('div'); wrap.className="crit";
+          const critText = document.createElement('div'); critText.innerHTML = `<b>${c.label}</b> <span class="muted">(${c.weight}%)</span>`;
+          const levelSel = document.createElement('select'); levelSel.className='level';
+          levelSel.dataset.weight = c.weight;
+          c.levels.forEach(l=>{
+            const opt = document.createElement('option');
+            opt.value = l.v;
+            opt.textContent = `${l.t} – ${l.v}/${c.weight}`;
+            levelSel.appendChild(opt);
+          });
+          levelSel.addEventListener('change', recompute);
+          const got = document.createElement('div'); got.className='score'; got.textContent = `0/${c.weight}`;
+          wrap.appendChild(critText); wrap.appendChild(levelSel); wrap.appendChild(got);
+          rubricBox.appendChild(wrap);
+        });
+    }
+    recompute();
+  }
+
+  function recompute(){
+    let sumGot = 0, sumMax = 0;
+    const t = typeSel.value;
+    if (!RUBRICS[t]) return; 
+    const rb = RUBRICS[t];
+
+    if (rb.inputType === "fraction") {
+        rubricBox.querySelectorAll('.crit-fraction').forEach(sel => {
+            const w = parseFloat(sel.dataset.weight); 
+            const got = parseFloat(sel.querySelector('.fractionGot').value || 0);
+            const max = parseFloat(sel.querySelector('.fractionMax').value || 1);
+            
+            const critPct = (max > 0) ? (got / max) : 0; 
+            
+            sumGot += (critPct * w); 
+            sumMax += w; 
+            
+            sel.querySelector('.score').textContent = `${(critPct * 100).toFixed(1)}% (${got}/${max})`;
+        });
+    } else { // inputType === "levels"
+        rubricBox.querySelectorAll('.level').forEach(sel=>{
+          const w = parseFloat(sel.dataset.weight); 
+          const v = parseFloat(sel.value||0); 
+          sumGot += v; 
+          sumMax += w; 
+          sel.parentElement.querySelector('.score').textContent = `${v}/${w}`;
+        });
+    }
+
+    const pct = (sumMax > 0)? (sumGot / sumMax * 100) : 0;
+    
+    itemPct.textContent = pct.toFixed(1)+'%';
+    const weight = parseFloat(weightEl.value||0); 
+    const pts = weight * pct / 100;
+    itemPts.textContent = pts.toFixed(2);
+    updateTotals();
+  }
+  
+  function setFullMark() {
+      const t = typeSel.value;
+      if (!RUBRICS[t]) return; 
+      const rb = RUBRICS[t];
+
+      if (rb.inputType === "fraction") {
+          rubricBox.querySelectorAll('.crit-fraction').forEach(sel => {
+              const maxEl = sel.querySelector('.fractionMax');
+              const gotEl = sel.querySelector('.fractionGot');
+              gotEl.value = maxEl.value; 
+          });
+      } else {
+          rubricBox.querySelectorAll('.level').forEach(sel => {
+              let maxVal = -Infinity;
+              let maxIndex = 0;
+              const options = sel.options;
+              for (let i = 0; i < options.length; i++) {
+                  const v = parseFloat(options[i].value);
+                  if (v > maxVal) {
+                      maxVal = v;
+                      maxIndex = i;
+                  }
+              }
+              sel.selectedIndex = maxIndex;
+          });
+      }
+      recompute(); 
+  }
+
+  // --- פונקציה חדשה לאיפוס סעיף בודד ---
+  function resetItem() {
+      const t = typeSel.value;
+      if (!RUBRICS[t]) return; 
+      const rb = RUBRICS[t];
+
+      if (rb.inputType === "fraction") {
+          // אפס רק את שדה "התקבל"
+          rubricBox.querySelectorAll('.crit-fraction').forEach(sel => {
+              sel.querySelector('.fractionGot').value = 0;
+          });
+      } else { // inputType === "levels"
+          // אפס לבחירה הראשונה (שהיא 0)
+          rubricBox.querySelectorAll('.level').forEach(sel => {
+              sel.selectedIndex = 0;
+          });
+      }
+      recompute(); // חשב מחדש
+  }
+
+  typeSel.addEventListener('change', renderRubric);
+  weightEl.addEventListener('input', ()=>{ recompute(); });
+  fullMarkBtn.addEventListener('click', setFullMark); 
+  // הוספת מאזין לכפתור החדש
+  resetItemBtn.addEventListener('click', resetItem);
+  
+  renderRubric();
+  return card;
+}
+
+function build(){
+  itemsContainer.innerHTML='';
+  // --- שינוי: מגבלה מעודכנת ל-10 ---
+  const n = Math.min(10, Math.max(1, parseInt(numSel.value||1)));
+  for(let i=0;i<n;i++){ itemsContainer.appendChild(makeItem(i)); }
+  updateTotals();
+}
+
+function updateTotals(){
+  let totalPts = 0, maxPts = 0;
+  itemsContainer.querySelectorAll('.card').forEach(card=>{
+    const w = parseFloat(card.querySelector('.weight').value||0);
+    maxPts += w;
+    const itemPts = parseFloat(card.querySelector('.itemPts').textContent||0);
+    totalPts += itemPts;
+  });
+  
+  const bonus = parseFloat(bonusPtsEl.value || 0);
+  const finalPts = totalPts + bonus;
+
+  const overallPct = (maxPts>0)? (finalPts/maxPts*100):0;
+  overallPctEl.textContent = overallPct.toFixed(1)+'%';
+  overallPtsEl.textContent = finalPts.toFixed(2);
+  overallMaxEl.textContent = maxPts.toFixed(2);
+}
+
+/* export JSON */
+document.getElementById('exportJSON').addEventListener('click', ()=>{
+  const data = collectData();
+  const blob = new Blob([JSON.stringify(data, null, 2)], {type:'application/json'});
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = 'grading_results.json';
+  a.click();
+});
+
+// --- פונקציית הדפסה משודרגת (עם window.open) ---
+document.getElementById('print').addEventListener('click', ()=>{
+  // נקה שגיאות קודמות
+  const errEl = document.getElementById('printError');
+  if (errEl) errEl.style.display = 'none';
+
+  try {
+    const data = collectData();
+    const freeText = (data.freeText ? data.freeText + " | " : "") + 
+      `סה״כ נק׳ במבחן: ${data.examTotal} | סעיפים: ${data.items.length}`;
+
+    const typeMap = {
+        "calc":"חישובי", 
+        "calc_multi":"חישובי מרובה", 
+        "reason":"נימוק",
+        "concept":"איכותי",
+        "graph":"שרטוט גרף", 
+        "forces":"ניתוח כוחות", 
+        "q_plus_exp":"שאלה+הסבר"
+    };
+
+    let tableHtml = `<table><thead><tr>
+        <th style="width:6%">#</th>
+        <th style="width:18%">סוג סעיף</th>
+        <th style="width:16%">הערות</th>
+        <th style="width:10%">משקל (נק׳)</th>
+        <th style="width:10%">אחוז בסעיף</th>
+        <th style="width:10%">ניקוד</th>
+        <th style="width:30%">פירוט תתי־סעיפים</th>
+      </tr></thead><tbody>`;
+      
+    data.items.forEach((it,i)=>{
+      const pct = calcPct(it.crits, it.type);
+      const pts = (it.weight||0) * pct / 100;
+      const typeText = typeMap[it.type] || it.type;
+      
+      let critsHtml = "";
+      const rb = RUBRICS[it.type];
+      
+      if (rb && rb.inputType === 'fraction') {
+          critsHtml = it.crits.map(c => 
+              `${escapeHtml(c.label)}: ${escapeHtml(String(c.selected))}/${escapeHtml(String(c.max))}`
+          ).join("<br>");
+      } else {
+          critsHtml = it.crits.map(c => 
+              `${escapeHtml(c.label)}: ${escapeHtml(String(c.selected))}/${escapeHtml(String(c.weight))}`
+          ).join("<br>");
+      }
+
+      tableHtml += `<tr>
+        <td>${escapeHtml(it.label || (i+1))}</td>
+        <td>${escapeHtml(typeText)}</td>
+        <td>${escapeHtml(it.desc||"")}</td>
+        <td>${(it.weight||0).toFixed(2)}</td>
+        <td>${pct.toFixed(1)}%</td>
+        <td>${pts.toFixed(2)}</td>
+        <td class="tiny">${critsHtml}</td>
+      </tr>`;
+    });
+    tableHtml += `</tbody></table>`;
+
+    let bonusText = "";
+    if (data.bonusPts !== 0) {
+        bonusText = ` &nbsp; | &nbsp; <b>בונוס/קנס: ${data.bonusPts.toFixed(2)} נק'</b> (${escapeHtml(data.bonusNote || "ללא פירוט")})`;
+    }
+    const totalsHtml = `אחוז כולל: <b>${overallPctEl.textContent}</b> &nbsp; | &nbsp; 
+      ניקוד כולל: <b>${overallPtsEl.textContent}</b> מתוך <b>${overallMaxEl.textContent}</b>${bonusText}`;
+
+    // --- בדיקה אם אלמנט העיצוב קיים ---
+    const styleEl = document.querySelector('style');
+    const styles = styleEl ? styleEl.textContent : '';
+
+    const printHtml = `
+      <html>
+        <head>
+          <title>תקציר בדיקה</title>
+          <style>${styles}</style>
+          <style>body{margin:0;padding:12px;background:#fff;}</style>
+        </head>
+        <body dir="rtl">
+          <main id="printView">
+            <div class="title">תקציר בדיקה – מחוונים</div>
+            <div class="meta">${escapeHtml(freeText)}</div>
+            <div>${tableHtml}</div>
+            <div class="divider" style="margin:8px 0"></div>
+            <div class="meta">${totalsHtml}</div>
+            <div class="tiny" style="margin-top:10px;">נוצר באמצעות פיזיקאלי - המחוון הדיגיטלי</div>
+          </main>
+        </body>
+      </html>
+    `;
+    
+    // --- שינוי: שימוש ב-window.open במקום iframe ---
+    const printWindow = window.open('', '_blank');
+    if (!printWindow) {
+        // This will happen if pop-ups are blocked
+        throw new Error("פתיחת חלון ההדפסה נכשלה. ייתכן שחוסם פופ-אפים מנע זאת.");
+    }
+    
+    printWindow.document.open();
+    printWindow.document.write(printHtml);
+    printWindow.document.close();
+    
+    setTimeout(() => {
+        printWindow.focus();
+        printWindow.print();
+        // Don't close immediately, some browsers need time
+        setTimeout(() => { printWindow.close(); }, 500);
+    }, 250); // Give the window time to render
+
+  } catch (err) {
+      console.error("Print function failed:", err);
+      if (errEl) {
+          errEl.textContent = 'שגיאת הדפסה: ' + err.message;
+          errEl.style.display = 'block';
+      }
+  }
+});
+
+
+// --- פונקציית איפוס - עודכנה ---
+function resetForNextStudent() {
+    bonusPtsEl.value = 0;
+    bonusNoteEl.value = '';
+
+    document.querySelectorAll('#itemsContainer .card').forEach(card => {
+        card.querySelector('.desc').value = '';
+        // אל תאפס את תווית הסעיף (itemLabel), היא צריכה להישאר
+
+        // אפס מחוונים רגילים
+        const levelSelects = card.querySelectorAll('.crit .level');
+        levelSelects.forEach(levelSelect => {
+            levelSelect.selectedIndex = 0; 
+        });
+        
+        // --- אפס רק "התקבל" במחווני שברים ---
+        const fractionCrits = card.querySelectorAll('.crit-fraction');
+        fractionCrits.forEach(critEl => {
+            critEl.querySelector('.fractionGot').value = 0;
+            // שדה "מתוך" נשמר
+        });
+        
+        // הפעל חישוב מחדש
+        if(levelSelects.length > 0) {
+             levelSelects[0].dispatchEvent(new Event('change'));
+        } else if (fractionCrits.length > 0) {
+             fractionCrits[0].querySelector('.fractionGot').dispatchEvent(new Event('input'));
+        }
+    });
+    
+    if (document.querySelectorAll('#itemsContainer .card').length === 0) {
+         updateTotals();
+    }
+    
+    updateTotals();
+    window.scrollTo(0, 0);
+}
+
+function collectData(){
+  const data = [];
+  document.querySelectorAll('#itemsContainer .card').forEach((card,idx)=>{
+    // --- שינוי: איסוף התווית המותאמת אישית ---
+    const label = card.querySelector('.itemLabel').value;
+    const desc = card.querySelector('.desc').value;
+    const type = card.querySelector('.type').value;
+    const weight = parseFloat(card.querySelector('.weight').value||0);
+    const crits = [];
+    
+    const rb = RUBRICS[type];
+    if (rb && rb.inputType === 'fraction') {
+        card.querySelectorAll('.crit-fraction').forEach((c)=>{
+          crits.push({
+            label: c.querySelector('b').textContent,
+            selected: parseFloat(c.querySelector('.fractionGot').value || 0),
+            max: parseFloat(c.querySelector('.fractionMax').value || 1),
+            weight: parseFloat(c.dataset.weight || 0)
+          });
+        });
+    } else {
+        card.querySelectorAll('.crit').forEach((c)=>{
+          crits.push({
+            label: c.querySelector('b').textContent,
+            selected: parseFloat(c.querySelector('.level').value||0),
+            weight: parseFloat(c.querySelector('.level').dataset.weight||0)
+          });
+        });
+    }
+
+    data.push({index: idx+1, label, desc, type, weight, crits});
+  });
+  return {
+    freeText: document.getElementById('freeText').value,
+    examTotal: parseFloat(examTotalPointsEl.value||0),
+    bonusPts: parseFloat(bonusPtsEl.value || 0), 
+    bonusNote: bonusNoteEl.value, 
+    items: data
+  };
+}
+
+function calcPct(crits, type){
+  let got=0, max=0;
+  if (!crits) return 0;
+  const rb = RUBRICS[type];
+
+  if (rb && rb.inputType === 'fraction') {
+      crits.forEach(c => {
+          const critPct = (c.max > 0) ? (c.selected / c.max) : 0;
+          got += (critPct * c.weight);
+          max += c.weight;
+      });
+  } else {
+      crits.forEach(c=>{ 
+          got += c.selected; 
+          max += c.weight; 
+      });
+  }
+  
+  return max > 0 ? (got / max * 100) : 0;
+}
+
+function escapeHtml(s){
+  if (s === null || s === undefined) return "";
+  return String(s).replace(/[&<>"']/g, m => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));
+}
+
+// --- שינוי: הוספת מאזין לשינוי בתיבת הבחירה ---
+document.getElementById('build').addEventListener('click', build);
+document.getElementById('numItems').addEventListener('change', build); // <-- שורה חדשה
+document.getElementById('nextStudent').addEventListener('click', resetForNextStudent); 
+bonusPtsEl.addEventListener('input', updateTotals); 
+bonusNoteEl.addEventListener('input', updateTotals); // הוספת מאזין להערת בונוס
+
+// initial
+build();
+</script>
+</body>
+</html>

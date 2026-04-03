@@ -79,6 +79,69 @@
             margin-bottom: 0.9rem;
         }
 
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
         .formula-badge {
             background-color: var(--blue-50);
             color: #1e40af;
@@ -86,7 +149,7 @@
             border-radius: 0.5rem;
             display: inline-block;
             padding: 0.25rem 0.8rem;
-            margin: 0.25rem 0;
+            margin: 0.25rem 0.25rem 0.25rem 0;
             font-weight: 700;
             direction: ltr;
         }
@@ -101,11 +164,12 @@
         }
 
         .step-box {
-            background: #f8fafc;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
             border: 1px solid var(--slate-200);
-            border-radius: 0.6rem;
-            padding: 0.9rem;
+            border-radius: 0.85rem;
+            padding: 1rem;
             margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
         }
 
         .chart-wrapper {
@@ -293,6 +357,7 @@ STANDARD NOTES FOR FUTURE REUSE
 1. Keep question image filename as: question-image.png
 2. Keep floating button text and icon exactly as in this file.
 3. For each section: What is given -> What to find -> Formula -> Step-by-step solution -> Teacher note.
+3.1 Preferred layout: place "מה נתון" and "מה מחפשים" inside .info-grid using two .info-panel blocks side by side on wide screens.
 4. Keep formulas inside .math-container or .overflow-x-auto dir="ltr".
 5. If a section has a graph, use Chart.js only if needed.
 6. Do not remove Esc/modal-close behavior.
@@ -303,6 +368,7 @@ STANDARD NOTES FOR FUTURE REUSE
 11. The question block must stay a .section-card with border-t-4; do not introduce new card classes.
 12. Section hierarchy: use <h3 class="section-header"> only (no extra number spans); sub-headings are <h4>. Keep aria-label on the version stamp.
 13. Formula chips: use .formula-badge inline; if the math is long, place it in .math-container/.math-scroll dir="ltr" instead of growing the chip.
+13.1 For long explanations, prefer .content-paragraph and split the reasoning into short visual blocks.
 14. Formula chip shape is fixed: rounded rectangle only (border-radius: 0.5rem). Never use pill/circle style (9999px).
 15. Modal/button IDs are locked: openQuestionModalBtn, questionModal, closeQuestionModalBtn; keep the eye icon SVG + text exactly.
 16. Header lock: keep the stamp inside <header class="text-center mb-8">, directly under the title block and above the inline question image.
@@ -329,6 +395,7 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
 - Do not place a "נוסח השאלה" heading above the inline image block.
 - Use only .section-card for the question image and each part; avoid inventing card variants.
 - Stick to the section checklist (נתון → מחפשים → נוסחאות → step-box → הערת מורה).
+- Prefer the updated visual rhythm: .info-grid + .info-panel for נתון/מחפשים, .step-title for the main box heading, optional .step-label for internal stages, and .final-answer for the conclusion line.
 - Formula chips stay inline; for large math use .math-container dir="ltr" instead of widening the chip.
 - Formula chips must remain rounded rectangles (0.5rem) and not pill/circle chips.
 - Keep IDs openQuestionModalBtn, questionModal, closeQuestionModalBtn and the eye SVG/icon as-is.
@@ -350,6 +417,14 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
         <!-- חותמת זו נועדה להציג זמן עדכון קריא בלבד, ולא מספר גרסה פנימי. -->
     </header>
 
+    <!-- אופציונלי: כרטיס פתיחה קצר שממקם את השאלה בתוך הרעיון הפיזיקלי -->
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">[מבט כללי על השאלה]</h3>
+        <p class="content-paragraph">[פתיח קצר: מה הסיפור הפיזיקלי של השאלה, ואיך נכון לגשת אליה.]</p>
+        <p class="content-paragraph">[אפשר להסביר כאן מהו סדר העבודה: ניתוח כוחות, אנרגיה, גרפים, פירוק לצירים וכדומה.]</p>
+        <p class="content-paragraph mb-0">[סיום קצר שמסמן לתלמיד מהו הרעיון המרכזי.]</p>
+    </section>
+
     <!-- תמונת השאלה המקורית: תמיד מתחת לכותרת -->
     <section class="section-card border-t-4 border-slate-300">
         <img
@@ -368,8 +443,10 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
     <section class="section-card" id="part-a">
         <h3 class="section-header">סעיף א'</h3>
 
-        <p><strong>מה נתון:</strong> [פרטי הנתונים הפיזיקליים]</p>
-        <p><strong>מה מחפשים:</strong> [מה צריך למצוא]</p>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> [פרטי הנתונים הפיזיקליים]</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> [מה צריך למצוא]</div>
+        </div>
 
         <div class="mt-2">
             <strong>נוסחאות מהדף:</strong><br>
@@ -378,12 +455,13 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
         </div>
 
         <div class="step-box">
-            <h4 class="font-bold mb-2">פתרון צעד-אחר-צעד:</h4>
-            <p>[הסבר מילולי קצר]</p>
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <div class="step-label">שלב 1: [כותרת קצרה לשלב אם צריך]</div>
+            <p class="content-paragraph">[הסבר מילולי קצר]</p>
             <div class="math-container text-center" dir="ltr">
                 \[ a = \frac{v - v_0}{t} \]
             </div>
-            <p class="mt-2 font-bold text-green-700">מסקנה: [תוצאה סופית + יחידות]</p>
+            <p class="final-answer">מסקנה: [תוצאה סופית + יחידות]</p>
         </div>
 
         <div class="teacher-highlight">
@@ -395,21 +473,27 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
     <!-- סעיף נוסף לדוגמה -->
     <section class="section-card" id="part-b">
         <h3 class="section-header">סעיף ב'</h3>
-        <p><strong>מה נתון:</strong> [...]</p>
-        <p><strong>מה מחפשים:</strong> [...]</p>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> [...]</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> [...]</div>
+        </div>
         <div class="step-box">
-            <h4 class="font-bold mb-2">חישוב:</h4>
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">[כאן אפשר לתת הקדמה קצרה לחישוב לפני המשוואות.]</p>
             <div class="overflow-x-auto text-center" dir="ltr">
                 \[ x = x_0 + v_0 t + \frac{1}{2}at^2 \]
             </div>
+            <p class="final-answer">מסקנה: [...]</p>
         </div>
     </section>
 
     <!-- אופציונלי: גרף -->
     <section class="section-card" id="part-graph">
         <h3 class="section-header">המחשה גרפית (אופציונלי)</h3>
+        <div class="visual-frame">
         <div class="chart-wrapper">
             <canvas id="mainChart"></canvas>
+        </div>
         </div>
     </section>
 </div>
