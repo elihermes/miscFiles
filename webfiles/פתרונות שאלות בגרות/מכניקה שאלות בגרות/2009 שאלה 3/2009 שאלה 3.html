@@ -1,0 +1,772 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2009 שאלה 3</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+            margin: 0;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            margin: 1.5rem 0;
+            direction: ltr;
+        }
+
+        th, td {
+            border: 1px solid #cbd5e1;
+            padding: 0.75rem;
+            text-align: center;
+        }
+
+        th {
+            background-color: #f1f5f9;
+            font-weight: 600;
+            color: #334155;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f8fafc;
+        }
+
+        .table-rtl {
+            direction: rtl;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מוסבר - פיזיקה 5 יח"ל</h1>
+            <h2 class="text-xl md:text-2xl text-slate-600">מכניקה 2009, שאלה 3 (מטוטלת קונית)</h2>
+            <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+                <span class="version-label">עודכן:</span>
+                <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+            </div>
+        </header>
+
+        <section class="section-card border-t-4 border-slate-300">
+            <img src="question-image.png" alt="תמונת השאלה המקורית" id="mainQuestionImage" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+                תמונת השאלה (question-image.png) לא נמצאה בנתיב. אנא ודא שהתמונה נמצאת באותה תיקייה של קובץ זה.
+            </div>
+        </section>
+
+        <section class="section-card border-t-4 border-slate-300 bg-slate-50">
+            <p class="content-paragraph mb-0">שלום תלמידים יקרים! לפנינו שאלה קלאסית העוסקת בתנועה מעגלית אופקית (מטוטלת קונית). נפרק את השאלה שלב אחר שלב ונסביר כל מהלך פיזיקלי ומתמטי. בהצלחה!</p>
+        </section>
+
+        <main>
+            <section class="section-card" id="part-a">
+                <h3 class="section-header">סעיף א' - תרשים כוחות ופיתוח פונקציה</h3>
+
+                <div class="info-grid md:grid-cols-2">
+                    <div class="info-panel">
+                        <div class="step-title">א. מה נתון:</div>
+                        <p class="mb-0">כדור קטן בעל מסה \( m \), קשור לחוט שאורכו \( L \). הכדור מסתובב בתנועה מעגלית אופקית (רדיוס המסלול הוא \( r \)). תדירות הסיבוב היא \( f \), והזווית שיוצר החוט עם האנך היא \( \alpha \). תאוצת הכובד היא \( g=10 \text{ m/s}^2 \).</p>
+                    </div>
+
+                    <div class="info-panel">
+                        <div class="step-title">ב. מה מחפשים:</div>
+                        <p class="mb-0">לשרטט תרשים של הכוחות הפועלים על הכדור, ולפתח ביטוי מתמטי המתאר את הקשר בין הקוסינוס של הזווית \( \cos\alpha \) לבין הביטוי \( \frac{1}{f^2} \).</p>
+                    </div>
+                </div>
+
+                <div class="mt-2 mb-4">
+                    <strong>ג. נוסחאות ועקרונות בשימוש:</strong><br>
+                    <p class="content-paragraph mb-2">אנו נשתמש בחוק השני של ניוטון: <span class="formula-badge">\(\Sigma\vec{F}=m\vec{a}\)</span>. כיוון שיש תנועה מעגלית קצובה, התאוצה הרדיאלית ניתנת על ידי: <span class="formula-badge">\(a_R = \omega^2 r\)</span>. הקשר בין המהירות הזוויתית לתדירות הוא: <span class="formula-badge">\(\omega = 2\pi f\)</span>.</p>
+                </div>
+
+                <div class="step-box">
+                    <h4 class="step-title">ד. הצבה ופתרון:</h4>
+                    <p class="content-paragraph">ראשית, נשרטט תרשים גוף חופשי (FBD). נגדיר את מערכת הצירים: ציר ה-\( y \) (האנכי) מוגדר כחיובי כלפי מעלה. ציר ה-\( x \) (האופקי, הרדיאלי) מוגדר כחיובי לכיוון מרכז המעגל.</p>
+
+                    <div class="visual-frame">
+                        <img src="image-1.png" alt="תרשים גוף חופשי (FBD) של הכדור" style="width: 390px; height: 390px; object-fit: contain;" />
+                    </div>
+
+                    <p class="content-paragraph">על הכדור פועלים שני כוחות: כוח הכובד מטה (מגמתו שלילית בציר שלנו) וכוח המתיחות \( T \) שפועל לאורך החוט, בזווית \( \alpha \) ביחס לציר האנכי. נפרק את כוח המתיחות לרכיבים ונרשום את משוואות הכוחות לכל ציר בנפרד:</p>
+                    <p class="content-paragraph"><strong>בציר ה-\( y \) (האנכי):</strong> אין תנועה ולכן אין תאוצה (\( a_y = 0 \)). סכום הכוחות שווה לאפס.</p>
+                    <div class="math-scroll">
+                        \[ \Sigma F_y = m \cdot a_y \]
+                        \[ T \cos\alpha - mg = 0 \quad \Rightarrow \quad T \cos\alpha = mg \]
+                    </div>
+
+                    <p class="content-paragraph"><strong>בציר ה-\( x \) (האופקי הרדיאלי):</strong> הכדור מבצע תנועה מעגלית, לכן סכום הכוחות שווה למסה כפול התאוצה הרדיאלית.</p>
+                    <div class="math-scroll">
+                        \[ \Sigma F_x = m \cdot a_R \]
+                        \[ T \sin\alpha = m \cdot \omega^2 r \]
+                    </div>
+
+                    <p class="content-paragraph">מהגיאומטריה של המערכת (משולש ישר זווית שהחוט הוא היתר שלו), רדיוס המעגל \( r \) קשור לאורך החוט על ידי: \( r = L \sin\alpha \). בנוסף, נציב את הקשר של המהירות הזוויתית לתדירות \( \omega = 2\pi f \):</p>
+                    <div class="math-scroll">
+                        \[ T \sin\alpha = m \cdot (2\pi f)^2 \cdot (L \sin\alpha) \]
+                        \[ T \sin\alpha = m \cdot 4\pi^2 f^2 L \sin\alpha \]
+                    </div>
+
+                    <p class="content-paragraph">נצמצם ב-\( \sin\alpha \) (מותר לנו כי \( \alpha \neq 0 \) כאשר יש תנועה מעגלית), ונקבל את הביטוי למתיחות:</p>
+                    <div class="math-scroll">
+                        \[ T = 4\pi^2 m f^2 L \]
+                    </div>
+
+                    <p class="content-paragraph">כעת, נחזור למשוואת ציר ה-\( y \) (\( T \cos\alpha = mg \)) ונציב בה את הביטוי שמצאנו ל-\( T \):</p>
+                    <div class="math-scroll">
+                        \[ (4\pi^2 m f^2 L) \cos\alpha = mg \]
+                    </div>
+
+                    <p class="content-paragraph">נחלק את שני האגפים במסה \( m \), ונעביר אגפים כדי לבודד את הפונקציה המבוקשת:</p>
+                    <div class="math-scroll">
+                        \[ \cos\alpha = \frac{g}{4\pi^2 f^2 L} \]
+                        \[ \cos\alpha = \left( \frac{g}{4\pi^2 L} \right) \cdot \frac{1}{f^2} \]
+                    </div>
+
+                    <div class="final-answer">
+                        הפונקציה המתארת את הקשר היא:
+                        <br>
+                        \( \cos\alpha = \left( \frac{g}{4\pi^2 L} \right) \cdot \frac{1}{f^2} \)
+                    </div>
+                </div>
+
+                <div class="teacher-highlight">
+                    שימו לב שלמרות ששאלת המערכת נראית מסובכת, הפרדה קפדנית לשני צירים - אנכי ואופקי - פותרת את הבעיה בצורה חלקה. כוח המתיחות עושה כאן "תפקיד כפול": הרכיב האנכי שלו מאזן את משקל הכדור, והרכיב האופקי שלו הוא זה שמספק את הכוח הצנטריפטלי שדרוש כדי לגרום לכדור להסתובב במעגל. כדאי מאוד להגדיר צירים באופן מפורש לפני שניגשים למשוואות! כאן למשל, בחרנו את הכיוון החיובי כלפי מעלה, ולכן כוח הכובד מופיע כמינוס במשוואת הכוחות.
+                </div>
+            </section>
+
+            <section class="section-card" id="part-b">
+                <h3 class="section-header">סעיף ב' - השלמת הטבלה וסרטוט גרף</h3>
+
+                <div class="info-grid md:grid-cols-2">
+                    <div class="info-panel">
+                        <div class="step-title">א. מה נתון:</div>
+                        <p class="mb-0">טבלת נתונים עם ערכי התדירות \( f \) (ביחידות של Hz) וערכי הזווית \( \alpha \) (במעלות).</p>
+                    </div>
+
+                    <div class="info-panel">
+                        <div class="step-title">ב. מה מחפשים:</div>
+                        <p class="mb-0">לחשב ולהשלים את שתי השורות התחתונות בטבלה עבור הערכים \( \frac{1}{f^2} \) ו- \( \cos\alpha \) (מעוגל ל-2 ספרות אחרי הנקודה), ולאחר מכן לסרטט גרף המציג את \( \cos\alpha \) כפונקציה של \( \frac{1}{f^2} \).</p>
+                    </div>
+                </div>
+
+                <div class="mt-2 mb-4">
+                    <strong>ג. נוסחאות ועקרונות בשימוש:</strong><br>
+                    <p class="content-paragraph mb-2">חישוב אלגברי וטריגונומטרי פשוט במחשבון. חובה לוודא שהמחשבון מכוון למעלות (Degrees)!</p>
+                </div>
+
+                <div class="step-box">
+                    <h4 class="step-title">ד. הצבה ופתרון:</h4>
+                    <p class="content-paragraph">נדגים את החישוב עבור המדידה הראשונה (עמודה 1 מימין):</p>
+                    <div class="math-scroll">
+                        \[ f = 0.42 \text{ Hz} \quad \Rightarrow \quad \frac{1}{f^2} = \frac{1}{0.42^2} \approx 5.67 \text{ s}^2 \]
+                        \[ \alpha = 18^\circ \quad \Rightarrow \quad \cos(18^\circ) \approx 0.95 \]
+                    </div>
+
+                    <p class="content-paragraph">נבצע פעולה דומה עבור שאר העמודות ונמלא את הטבלה:</p>
+
+                    <div class="overflow-x-auto">
+                        <table class="table-rtl">
+                            <thead>
+                                <tr>
+                                    <th>מדידה</th>
+                                    <th>1</th>
+                                    <th>2</th>
+                                    <th>3</th>
+                                    <th>4</th>
+                                    <th>5</th>
+                                    <th>6</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <td class="font-bold">\( f \text{ (Hz)} \)</td>
+                                    <td>0.42</td>
+                                    <td>0.45</td>
+                                    <td>0.5</td>
+                                    <td>0.6</td>
+                                    <td>0.7</td>
+                                    <td>1</td>
+                                </tr>
+                                <tr>
+                                    <td class="font-bold">\( \alpha^\circ \)</td>
+                                    <td>18</td>
+                                    <td>32</td>
+                                    <td>45</td>
+                                    <td>63</td>
+                                    <td>70</td>
+                                    <td>80</td>
+                                </tr>
+                                <tr class="bg-blue-50">
+                                    <td class="font-bold text-blue-700">\( \frac{1}{f^2} \text{ (s}^2\text{)} \)</td>
+                                    <td>5.67</td>
+                                    <td>4.94</td>
+                                    <td>4.00</td>
+                                    <td>2.78</td>
+                                    <td>2.04</td>
+                                    <td>1.00</td>
+                                </tr>
+                                <tr class="bg-blue-50">
+                                    <td class="font-bold text-blue-700">\( \cos\alpha \)</td>
+                                    <td>0.95</td>
+                                    <td>0.85</td>
+                                    <td>0.71</td>
+                                    <td>0.45</td>
+                                    <td>0.34</td>
+                                    <td>0.17</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <p class="content-paragraph">כעת נסרטט את הגרף. ציר ה-\( x \) יהיה \( \frac{1}{f^2} \) וציר ה-\( y \) יהיה \( \cos\alpha \). אנו מצפים לקבל קו ישר העובר קרוב לראשית הצירים, כיוון שהפונקציה שפיתחנו בסעיף א' היא מהצורה \( y = m \cdot x \).</p>
+
+                    <div class="visual-frame" dir="ltr">
+                        <svg width="600" height="400" viewBox="0 0 600 400" xmlns="http://www.w3.org/2000/svg" class="bg-white rounded border border-slate-200">
+                            <g stroke="#e2e8f0" stroke-width="1">
+                                <line x1="100" y1="50" x2="100" y2="330" />
+                                <line x1="180" y1="50" x2="180" y2="330" />
+                                <line x1="260" y1="50" x2="260" y2="330" />
+                                <line x1="340" y1="50" x2="340" y2="330" />
+                                <line x1="420" y1="50" x2="420" y2="330" />
+                                <line x1="500" y1="50" x2="500" y2="330" />
+                                <line x1="580" y1="50" x2="580" y2="330" />
+                                <line x1="100" y1="50" x2="580" y2="50" />
+                                <line x1="100" y1="106" x2="580" y2="106" />
+                                <line x1="100" y1="162" x2="580" y2="162" />
+                                <line x1="100" y1="218" x2="580" y2="218" />
+                                <line x1="100" y1="274" x2="580" y2="274" />
+                            </g>
+
+                            <line x1="100" y1="330" x2="580" y2="330" stroke="#000" stroke-width="2" />
+                            <line x1="100" y1="330" x2="100" y2="30" stroke="#000" stroke-width="2" />
+
+                            <g font-family="sans-serif" font-size="12" text-anchor="middle" fill="#000">
+                                <text x="100" y="350">0</text>
+                                <text x="180" y="350">1</text>
+                                <text x="260" y="350">2</text>
+                                <text x="340" y="350">3</text>
+                                <text x="420" y="350">4</text>
+                                <text x="500" y="350">5</text>
+                                <text x="580" y="350">6</text>
+                                <text x="340" y="380" font-weight="bold" font-size="16">1/f² [s²]</text>
+                            </g>
+
+                            <g font-family="sans-serif" font-size="12" text-anchor="end" fill="#000">
+                                <text x="90" y="334">0.0</text>
+                                <text x="90" y="278">0.2</text>
+                                <text x="90" y="222">0.4</text>
+                                <text x="90" y="166">0.6</text>
+                                <text x="90" y="110">0.8</text>
+                                <text x="90" y="54">1.0</text>
+                                <text x="40" y="180" font-weight="bold" font-size="16" transform="rotate(-90 40 180)">cos(α)</text>
+                            </g>
+
+                            <circle cx="553.6" cy="64" r="4" fill="#dc2626" />
+                            <circle cx="495.2" cy="92" r="4" fill="#dc2626" />
+                            <circle cx="420.0" cy="131.2" r="4" fill="#dc2626" />
+                            <circle cx="322.4" cy="204" r="4" fill="#dc2626" />
+                            <circle cx="263.2" cy="234.8" r="4" fill="#dc2626" />
+                            <circle cx="180.0" cy="282.4" r="4" fill="#dc2626" />
+
+                            <line x1="100" y1="330" x2="560" y2="53" stroke="#2563eb" stroke-width="2" />
+                        </svg>
+                    </div>
+
+                    <div class="final-answer">
+                        ראו את הטבלה המלאה ואת הגרף הליניארי המוצגים מעלה.
+                    </div>
+                </div>
+
+                <div class="teacher-highlight">
+                    מדוע יצרנו עמודות חדשות בטבלה ולא שרטטנו פשוט זווית כנגד תדירות? בפיזיקה אנו שואפים ליצור גרפים ליניאריים (קו ישר) כי קל מאוד למצוא להם שיפוע ולהסיק ממנו מסקנות. כיוון שהמשוואה שמצאנו בסעיף א' מראה קשר ישר בין \( \cos\alpha \) לבין \( \frac{1}{f^2} \), אלו הערכים שעלינו לחשב ולצייר כדי לקבל את הקו הישר הרצוי. חשוב לזכור ולנסות להקפיד על רישום יחידות מידה על צירי הגרף - היחידה של ציר ה-\( x \) כאן היא \( s^2 \) (ההופכי של הרץ בריבוע).
+                </div>
+            </section>
+
+            <section class="section-card" id="part-c">
+                <h3 class="section-header">סעיף ג' - חישוב אורך החוט בעזרת הגרף</h3>
+
+                <div class="info-grid md:grid-cols-2">
+                    <div class="info-panel">
+                        <div class="step-title">א. מה נתון:</div>
+                        <p class="mb-0">המשוואה שפיתחנו בסעיף א': \( \cos\alpha = \left( \frac{g}{4\pi^2 L} \right) \cdot \frac{1}{f^2} \), והגרף המסורטט מסעיף ב'. תאוצת הכובד נלקחת כ- \( g = 10 \text{ m/s}^2 \).</p>
+                    </div>
+
+                    <div class="info-panel">
+                        <div class="step-title">ב. מה מחפשים:</div>
+                        <p class="mb-0">את אורך החוט \( L \) (במטרים) מתוך שיפוע הגרף.</p>
+                    </div>
+                </div>
+
+                <div class="mt-2 mb-4">
+                    <strong>ג. נוסחאות ועקרונות בשימוש:</strong><br>
+                    <p class="content-paragraph mb-2">נוסחת שיפוע של קו ישר: <span class="formula-badge">\(m = \frac{\Delta y}{\Delta x}\)</span>. בנוסף, השוואת השיפוע התיאורטי מהנוסחה לשיפוע הגרפי.</p>
+                </div>
+
+                <div class="step-box">
+                    <h4 class="step-title">ד. הצבה ופתרון:</h4>
+                    <p class="content-paragraph">תחילה נחשב את שיפוע הקו שיצרנו בגרף (Trendline). נבחר שתי נקודות הנמצאות *בדיוק על קו המגמה* שסרטטנו. נבחר את הראשית \( (0,0) \) ונקודה נוספת שמונחת היטב על הישר, למשל \( (4.94, 0.85) \):</p>
+
+                    <div class="math-scroll">
+                        \[ \text{Slope} = \frac{\Delta (\cos\alpha)}{\Delta (1/f^2)} = \frac{0.85 - 0}{4.94 - 0} \approx 0.172 \text{ s}^{-2} \]
+                    </div>
+
+                    <p class="content-paragraph">כעת נסתכל על המשוואה התיאורטית מסעיף א'. היא מתאימה למבנה של משוואת ישר \( y = A \cdot x \), כאשר:</p>
+                    <ul class="list-disc list-inside mb-4 mr-4 text-slate-600">
+                        <li>ציר \( y \) הוא \( \cos\alpha \)</li>
+                        <li>ציר \( x \) הוא \( \frac{1}{f^2} \)</li>
+                        <li>השיפוע (A) הוא המקדם: \( \frac{g}{4\pi^2 L} \)</li>
+                    </ul>
+
+                    <p class="content-paragraph">נשווה את השיפוע התיאורטי לשיפוע שחישבנו מהגרף, ונחלץ את אורך החוט \( L \):</p>
+                    <div class="math-scroll">
+                        \[ 0.172 = \frac{g}{4\pi^2 L} \]
+                    </div>
+
+                    <p class="content-paragraph">נציב את \( g = 10 \) ונזכור כי לעיתים בבגרות משתמשים בקירוב \( \pi^2 \approx 10 \), אך לשם דיוק מרבי נציב במחשבון את הערך המלא של פאי:</p>
+                    <div class="math-scroll">
+                        \[ L = \frac{10}{4 \cdot \pi^2 \cdot 0.172} \]
+                        \[ L = \frac{10}{6.79} \approx 1.47 \text{ m} \]
+                    </div>
+
+                    <div class="final-answer">
+                        אורך החוט הוא כ- \( 1.47 \text{ m} \).
+                    </div>
+                </div>
+
+                <div class="teacher-highlight">
+                    המלצה חשובה במעבדה וניתוח נתונים: השתדלו שלא לחשב שיפוע בעזרת נקודת נתונים אקראית מהטבלה, אלא אם ראיתם שהיא יושבת במדויק על קו המגמה שסרטטתם. לעיתים קיימת נטייה לקחת את הנקודה הרחוקה ביותר (למשל \( 5.67, 0.95 \)), אך במקרה שלנו היא סוטה מעט מהקו. לעומתה, בחרנו את הנקודה \( (4.94, 0.85) \) משום שבשרטוט שלנו היא יושבת "בול" על הישר. מומלץ לחשב את השיפוע \(\Delta y / \Delta x \) בעזרת שתי נקודות מהישר עצמו.
+                </div>
+            </section>
+
+            <section class="section-card" id="part-d">
+                <h3 class="section-header">סעיף ד' - התדירות המינימלית לתנועה מעגלית</h3>
+
+                <div class="info-grid md:grid-cols-2">
+                    <div class="info-panel">
+                        <div class="step-title">א. מה נתון:</div>
+                        <p class="mb-0">אנו מבינים מהגרף ומהמשוואה שככל שהתדירות קטנה (כלומר \( \frac{1}{f^2} \) גדל), הזווית \( \alpha \) קטנה ו- \( \cos\alpha \) מתקרב ל-1.</p>
+                    </div>
+
+                    <div class="info-panel">
+                        <div class="step-title">ב. מה מחפשים:</div>
+                        <p class="mb-0">למצוא על פי הגרף מהי התדירות המינימלית שבה הכדור יוכל לנוע בתנועה מעגלית (כלומר שהחוט עדיין יסטה ממצבו האנכי).</p>
+                    </div>
+                </div>
+
+                <div class="mt-2 mb-4">
+                    <strong>ג. נוסחאות ועקרונות בשימוש:</strong><br>
+                    <p class="content-paragraph mb-2">תנאי גבול לתנועה מעגלית של מטוטלת קונית: הזווית חייבת להיות גדולה מאפס. כלומר: <span class="formula-badge">\(\alpha > 0^\circ \Rightarrow \cos\alpha < 1\)</span>.</p>
+                </div>
+
+                <div class="step-box">
+                    <h4 class="step-title">ד. הצבה ופתרון:</h4>
+                    <p class="content-paragraph">על פי הגרף, ערך ה-\( y \) (שהוא \( \cos\alpha \)) המקסימלי האפשרי מבחינה פיזיקלית הוא 1 (מצב בו החוט אנכי לחלוטין). מצב זה קורה בתדירות המינימלית ביותר, נסמן אותה ב-\( f_{min} \).</p>
+                    <p class="content-paragraph">נציב במשוואת השיפוע שלנו את ערך הגבול \( \cos\alpha = 1 \):</p>
+
+                    <div class="math-scroll">
+                        \[ 1 = \text{Slope} \cdot \frac{1}{f_{min}^2} \]
+                        \[ 1 = 0.172 \cdot \frac{1}{f_{min}^2} \]
+                        \[ f_{min}^2 = 0.172 \]
+                        \[ f_{min} = \sqrt{0.172} \approx 0.415 \text{ Hz} \]
+                    </div>
+
+                    <p class="content-paragraph">אפשר גם להציב ישירות מהמשוואה שפיתחנו בסעיף א':</p>
+                    <div class="math-scroll">
+                        \[ 1 = \frac{g}{4\pi^2 L} \cdot \frac{1}{f_{min}^2} \]
+                        \[ f_{min} = \frac{1}{2\pi} \sqrt{\frac{g}{L}} = \frac{1}{2\pi} \sqrt{\frac{10}{1.47}} \approx 0.415 \text{ Hz} \]
+                    </div>
+
+                    <div class="final-answer">
+                        התדירות המינימלית הדרושה לתנועה מעגלית היא כ- \( 0.415 \text{ Hz} \).
+                    </div>
+                </div>
+
+                <div class="teacher-highlight">
+                    מעניין לחשוב - מה קורה כשהמנוע מסתובב לאט יותר מתדירות זו? במקרה כזה, הכוח הצנטריפטלי הנדרש כה קטן, עד שהרכיב האופקי של המתיחות אינו יכול להיווצר מבלי להפר את משוואת ציר ה-\( y \). התוצאה הפיזיקלית היא שהכדור פשוט נשאר תלוי אנכית (\( \alpha = 0 \)) ומסתובב סביב צירו שלו ללא כל רדיוס תנועה מעגלית.
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img class="max-w-full h-auto rounded-lg" id="modalImg" src="question-image.png" alt="תמונת השאלה" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">תמונת השאלה (question-image.png) לא נמצאה בנתיב. אנא ודא שהתמונה נמצאת באותה תיקייה של קובץ זה.</div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה';
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const year = String(modified.getFullYear()).slice(-2);
+                const month = pad(modified.getMonth() + 1);
+                const day = pad(modified.getDate());
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+                versionUpdatedAt.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>
