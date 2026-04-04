@@ -1,0 +1,806 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה: מכניקה 2018 שאלה 3</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: 'Rubik', 'Segoe UI', Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+<div class="page-shell">
+
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה: מכניקה 2018 שאלה 3</h1>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div style="display: none;" class="bg-red-100 text-red-700 p-4 rounded-lg mt-3 border border-red-200 text-center">
+            תמונת השאלה (question-image.png) לא נמצאה בתיקייה.
+        </div>
+    </section>
+
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <p class="content-paragraph mb-0 text-lg text-slate-600 max-w-3xl mx-auto text-center">
+            ברוכים הבאים לפתרון המלא והמוסבר לשאלה מתוך בגרות במכניקה. נעבור יחד צעד-אחר-צעד, נסביר כל שלב פיזיקלי, ונשתמש אך ורק בכלים המותרים מדף הנוסחאות. בהצלחה!
+        </p>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף א': קביעת תרשים הכוחות בנקודה B</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <div class="step-title">
+                    <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">1</span>
+                    מה נתון:
+                </div>
+                <p class="text-slate-700">הגולש נמצא בנקודה B, הממוקמת על הקשת המעגלית הראשונה (AC). מרכז הקשת המעגלית הזו נמצא מתחת למסלול (כפי שמסומן בקו המקווקו). קטע זה הינו ללא חיכוך. הכוחות הפועלים על הגולש הם כוח הכובד (כלפי מטה) והכוח הנורמלי מהמשטח.</p>
+            </div>
+
+            <div class="info-panel">
+                <div class="step-title">
+                    <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">2</span>
+                    מה מחפשים:
+                </div>
+                <p class="text-slate-700">לזהות איזה מבין ארבעת האיורים (1, 2, 3 או 4) מייצג נכונה את כיווני וגודלי הכוחות בנקודה זו ולנמק.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <div class="step-title">
+                <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">3</span>
+                נוסחאות ועקרונות בשימוש:
+            </div>
+            <div class="math-scroll">
+                <span class="formula-badge">\[ \Sigma F_R = m \cdot a_R \]</span> (החוק השני של ניוטון בציר הרדיאלי)<br>
+                <span class="formula-badge">\[ a_R = \frac{v^2}{R} \]</span> (תאוצה רדיאלית בתנועה מעגלית)
+            </div>
+            <p class="text-slate-700 mt-2">כוח הנורמל פועל תמיד במאונך למשטח ודוחף החוצה ממנו. בתנועה מעגלית, שקול הכוחות בציר הרדיאלי חייב להיות מכוון אל מרכז המעגל.</p>
+        </div>
+
+        <div class="step-box">
+            <div class="step-title">
+                <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">4</span>
+                הצבה ופתרון:
+            </div>
+            <p class="text-slate-700 mb-2">ראשית, נבחן את <strong>כיוון</strong> הכוחות:</p>
+            <p class="text-slate-700 mb-2">בנקודה B, המשיק למסלול משופע כלפי מטה וימינה. המשטח נמצא "מתחת" לגולש, ולכן הכוח הנורמלי חייב להיות מאונך למשיק ולהצביע <strong>למעלה וימינה</strong>. כוח הכובד מצביע תמיד אנכית מטה. גם איור 1 וגם איור 2 מציגים את הכיוונים הללו נכונה (איורים 3 ו-4 נפסלים).</p>
+
+            <p class="text-slate-700 mb-2 mt-4">שנית, נבחן את <strong>גודל</strong> הכוחות:</p>
+            <p class="text-slate-700 mb-2">מרכז המעגל נמצא מתחת למסלול. נגדיר ציר רדיאלי החיובי לכיוון מרכז המעגל (למטה ושמאלה). הרכיב הרדיאלי של כוח הכובד הוא \( mg \cdot \cos\alpha \) (כאשר \( \alpha \) היא זווית השיפוע ביחס לאופק). משוואת הכוחות בציר הרדיאלי היא:</p>
+            <div class="math-scroll text-lg mb-2">
+                \[ mg \cos\alpha - N = m \frac{v^2}{R} \]
+                \[ N = mg \cos\alpha - m \frac{v^2}{R} \]
+            </div>
+            <p class="text-slate-700 mb-2">מכיוון ש- \( \cos\alpha \le 1 \) והביטוי \( m \frac{v^2}{R} \) חיובי, אנו מסיקים בהכרח כי: \( N < mg \cos\alpha < mg \).</p>
+            <p class="text-slate-700 mb-2">כלומר, וקטור הכוח הנורמלי חייב להיות <strong>קצר יותר</strong> מווקטור כוח הכובד.</p>
+            <ul class="list-disc list-inside text-slate-700 mb-2 space-y-1">
+                <li>באיור 2, מוצג \( N \) כגדול בהרבה מ-\( mg \). במצב כזה (הוא בטוח גדול מהרכיב הרדיאלי של \( mg \)), הכוח הרדיאלי השקול היה מצביע החוצה מהמעגל, והגולש היה מתנתק מהמסלול.</li>
+                <li>באיור 1, הרכיב הרדיאלי של כוח הכובד גדול מהנורמל (וקטור \( N \) קצר מ-\( mg \)), מה שמבטיח שקול כוחות רדיאלי הפונה למרכז המעגל ושומר את הגולש על המסלול.</li>
+            </ul>
+
+            <div class="final-answer">
+                האיור המייצג נכון את הכוחות הוא איור מספר 1.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> הבחנה מצוינת! הרבה תלמידים נופלים כאן ובוחנים רק את כיוון החצים. בתנועה עקומה (מעגלית), לגודל היחסי של החצים יש משמעות קריטית. אם אתם נמצאים על גבעה (מסלול קמור), אתם "ממריאים" ולכן המשטח מפעיל עליכם פחות כוח – ה-\( N \) קטן מ-\( mg \). לעומת זאת בואדי (מסלול קעור, כמו בסעיף ד'), אתם "נמעכים" אל המסלול ולכן ה-\( N \) גדול מ-\( mg \).
+        </div>
+    </section>
+
+    <!-- סעיף ב(1) -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף ב(1): רכיב משיקי לתאוצה בנקודה D</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <div class="step-title">
+                    <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">1</span>
+                    מה נתון:
+                </div>
+                <p class="text-slate-700">נקודה D ממוקמת על הקטע המעגלי CG. מסופק לנו כי גם בקטע זה החיכוך ניתן להזנחה. המסלול בנקודה D משופע כלפי מטה.</p>
+            </div>
+
+            <div class="info-panel">
+                <div class="step-title">
+                    <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">2</span>
+                    מה מחפשים:
+                </div>
+                <p class="text-slate-700">לקבוע האם יש לתאוצת הגולש רכיב משיקי (בכיוון התנועה) בנקודה D, ולנמק.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <div class="step-title">
+                <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">3</span>
+                נוסחאות בשימוש:
+            </div>
+            <div class="math-scroll">
+                <span class="formula-badge">\[ \Sigma F = m \cdot a \]</span> (החוק השני של ניוטון)
+            </div>
+            <p class="text-slate-700">לפי החוק השני של ניוטון, אם קיים שקול כוחות שאינו אפס בציר המשיקי, תהיה תאוצה בציר זה.</p>
+        </div>
+
+        <div class="step-box">
+            <div class="step-title">
+                <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">4</span>
+                הצבה ופתרון:
+            </div>
+            <p class="text-slate-700 mb-2">הכוחות הפועלים על הגולש בנקודה D הם הכוח הנורמלי המאונך למסלול (שאין לו רכיב משיקי), וכוח הכובד המכוון אנכית מטה.</p>
+            <p class="text-slate-700 mb-2">מכיוון שהמסלול בנקודה D מצוי בשיפוע, לכוח הכובד יש שני רכיבים: רכיב רדיאלי (המאונך למסלול) ורכיב משיקי (המקביל למסלול). מכיוון שאין כוח חיכוך שיאזן את הרכיב המשיקי של כוח הכובד, שקול הכוחות בציר המשיק אינו אפס.</p>
+
+            <div class="final-answer">
+                כן, בנקודה D יש לתאוצת הגולש רכיב משיקי, הנובע מהרכיב המשיקי של כוח הכובד המאיץ אותו מטה לאורך המסלול.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> תאוצה משיקית גורמת לשינוי ב<b>גודל</b> המהירות של הגוף, ואילו תאוצה רדיאלית (צנטריפטלית) גורמת לשינוי ב<b>כיוון</b> המהירות. הגולש מחליק מנקודה C ל-E ויורד בגובה, לכן ברור שגודל מהירותו הולך וגדל (האנרגיה הפוטנציאלית מומרת לקינטית). שינוי זה מעיד ישירות על קיום תאוצה משיקית!
+        </div>
+    </section>
+
+    <!-- סעיף ב(2) -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף ב(2): שרטוט וקטור התאוצה הכוללת בנקודה D</h3>
+
+        <div class="info-grid">
+            <div class="info-panel">
+                <div class="step-title">
+                    <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">1</span>
+                    מה נתון:
+                </div>
+                <p class="text-slate-700">אנו נדרשים להעתיק את הקטע המעגלי CG ולשרטט חץ המתאר את כיוון התאוצה הכוללת של הגולש בנקודה D.</p>
+            </div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-title">
+                <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">4</span>
+                פתרון גרפי (תרשים):
+            </div>
+            <p class="text-slate-700 mb-4">התאוצה הכוללת מורכבת מחיבור וקטורי של התאוצה הרדיאלית \( \vec{a}_R \) (המכוונת למרכז המעגל, למעלה וימינה במקרה זה) והתאוצה המשיקית \( \vec{a}_T \) (המכוונת במורד המשיק למסלול, למטה וימינה). סכום הווקטורים ייתן וקטור שמכוון פנימה אל תוך הקשת, ונוטה קדימה עם כיוון התנועה.</p>
+
+            <div class="visual-frame">
+                <div class="flex justify-center w-full">
+                    <img src="image-2.png" alt="תרשים וקטור התאוצה הכוללת בנקודה D" style="max-width:400px;height:auto;" class="bg-white rounded border border-slate-200" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                    <div style="display:none;width:400px;height:250px;" class="bg-white rounded border border-slate-200 items-center justify-center text-slate-400">תמונה לא נמצאה</div>
+                </div>
+            </div>
+
+            <div class="final-answer">
+                החץ המייצג את התאוצה הכוללת (באדום) מצביע פנימה לעבר מרכז המסלול ונוטה קדימה ימינה (החיבור הווקטורי של הרכיב המשיקי והרדיאלי).
+            </div>
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף ג': חישוב גודל המהירות בנקודה E</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <div class="step-title">
+                    <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">1</span>
+                    מה נתון:
+                </div>
+                <ul class="list-disc list-inside text-slate-700">
+                    <li>מסת הגולש: \( m = 80 \text{ kg} \).</li>
+                    <li>רדיוס הקשתות: \( R = 60 \text{ m} \).</li>
+                    <li>גובה הנקודה A: מתוך השרטוט ניתן לראות כי הגובה של נקודה A מהקרקע מסומן באות R, כלומר \( h_A = 60 \text{ m} \).</li>
+                    <li>גובה הנקודה E: \( h_1 = 32 \text{ m} \).</li>
+                    <li>הגולש מתחיל ממנוחה, כלומר מהירות התחלתית \( v_A = 0 \text{ m/s} \).</li>
+                    <li>אין חיכוך בקטע זה, ולכן אין עבודת כוחות לא משמרים (\( W_{nc} = 0 \)). מותר להניח ש- \( g = 10 \text{ m/s}^2 \).</li>
+                </ul>
+            </div>
+
+            <div class="info-panel">
+                <div class="step-title">
+                    <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">2</span>
+                    מה מחפשים:
+                </div>
+                <p class="text-slate-700">את גודל המהירות של הגולש כאשר הוא חולף בנקודה הנמוכה ביותר E, כלומר \( v_E \).</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <div class="step-title">
+                <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">3</span>
+                נוסחאות בשימוש:
+            </div>
+            <div class="math-scroll">
+                <span class="formula-badge">\[ W_{nc} = \Delta E_k + \Delta U_G \]</span> (משפט עבודה-אנרגיה, ומכיוון שאין עבודת כוחות לא משמרים, מתקיים חוק שימור אנרגיה מכנית: \( E_A = E_E \))<br>
+                <span class="formula-badge">\[ U_G = m \cdot g \cdot h \]</span> (אנרגיה פוטנציאלית כובדית)<br>
+                <span class="formula-badge">\[ E_k = \frac{1}{2} \cdot m \cdot v^2 \]</span> (אנרגיה קינטית)
+            </div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-title">
+                <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">4</span>
+                הצבה ופתרון:
+            </div>
+            <p class="text-slate-700 mb-2">נשווה את האנרגיה המכנית הכוללת בנקודה A לאנרגיה בנקודה E:</p>
+            <div class="math-scroll text-lg my-2">
+                \[ E_A = E_E \]
+                \[ m \cdot g \cdot h_A + \frac{1}{2} \cdot m \cdot v_A^2 = m \cdot g \cdot h_1 + \frac{1}{2} \cdot m \cdot v_E^2 \]
+            </div>
+            <p class="text-slate-700 mb-2">נציב את הנתונים הידועים. המהירות ההתחלתית היא אפס ולכן האנרגיה הקינטית ב-A מתאפסת. כמו כן, נחלק את שני אגפי המשוואה במסה \( m \) (שהיא גודל חיובי משותף):</p>
+            <div class="math-scroll text-lg my-2">
+                \[ g \cdot h_A = g \cdot h_1 + \frac{1}{2} \cdot v_E^2 \]
+                \[ 10 \cdot 60 = 10 \cdot 32 + \frac{1}{2} \cdot v_E^2 \]
+                \[ 600 = 320 + \frac{1}{2} \cdot v_E^2 \]
+                \[ 280 = \frac{1}{2} \cdot v_E^2 \]
+            </div>
+            <p class="text-slate-700 mb-2">נכפול ב-2 ונוציא שורש:</p>
+            <div class="math-scroll text-lg my-2">
+                \[ v_E^2 = 560 \]
+                \[ v_E = \sqrt{560} \approx 23.66 \text{ m/s} \]
+            </div>
+
+            <div class="final-answer">
+                גודל המהירות של הגולש בנקודה E הוא: \( v_E \approx 23.66 \text{ m/s} \)
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> שימו לב לעוצמה של שימור אנרגיה! לא היינו צריכים להתחשב בצורה המדויקת של המסלול העקום, מכיוון שכוח הכובד הוא כוח משמר והעבודה שלו תלויה אך ורק בהפרש הגבהים התחלתי וסופי.
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף ד': הכוח שהגולש מפעיל על המסלול בנקודה E</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <div class="step-title">
+                    <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">1</span>
+                    מה נתון:
+                </div>
+                <p class="text-slate-700">אנו נמצאים בנקודה E, שהיא הנקודה הנמוכה ביותר בקשת המעגלית. בנקודה זו מהירות הגולש בריבוע היא \( v_E^2 = 560 \text{ m}^2/\text{s}^2 \) (כפי שחישבנו בסעיף הקודם). רדיוס העקמומיות הוא \( R = 60 \text{ m} \).</p>
+            </div>
+
+            <div class="info-panel">
+                <div class="step-title">
+                    <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">2</span>
+                    מה מחפשים:
+                </div>
+                <p class="text-slate-700">את גודל וכיוון הכוח שהגולש מפעיל <strong>על המסלול</strong>. לפי החוק השלישי של ניוטון, כוח זה שווה בגודלו והפוך בכיוונו לכוח הנורמלי (\( N \)) שהמסלול מפעיל <strong>על הגולש</strong>.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <div class="step-title">
+                <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">3</span>
+                נוסחאות ועקרונות בשימוש:
+            </div>
+            <div class="math-scroll">
+                <span class="formula-badge">\[ \Sigma F = m \cdot a_R \]</span> (החוק השני של ניוטון בציר הרדיאלי)<br>
+                <span class="formula-badge">\[ a_R = \frac{v^2}{R} \]</span> (תאוצה רדיאלית בתנועה מעגלית)
+            </div>
+            <p class="text-slate-700 mt-2"><strong>החוק השלישי של ניוטון (חוק פעולה ותגובה):</strong> כאשר גוף אחד מפעיל כוח על גוף שני, הגוף השני מפעיל על הגוף הראשון כוח השווה לו בגודלו ומנוגד לו בכיוונו (\( \vec{F}_{12} = -\vec{F}_{21} \)). אנו נשתמש בעקרון זה כדי למצוא את הכוח שהגולש מפעיל על המסלול מתוך חישוב הכוח הנורמלי שהמסלול מפעיל על הגולש.</p>
+        </div>
+
+        <div class="step-box">
+            <div class="step-title">
+                <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">4</span>
+                הצבה ופתרון:
+            </div>
+            <p class="text-slate-700 mb-4">בנקודה E (הנקודה הנמוכה במסלול), מרכז המעגל נמצא בדיוק מעל הגולש. נבחר ציר אנכי חיובי כלפי מעלה (לכיוון מרכז המעגל). הכוחות הפועלים על הגולש הם: הכוח הנורמלי \( N \) (כלפי מעלה) וכוח הכובד \( mg \) (כלפי מטה).</p>
+
+            <div class="visual-frame">
+                <div class="flex flex-col md:flex-row items-center gap-8 w-full">
+                    <img src="image-4.png" alt="דיאגרמת כוחות על הגולש בנקודה E" style="max-width:200px;height:auto;" class="bg-white rounded border border-slate-200 shrink-0" onerror="this.style.display='none';this.nextElementSibling.style.display='flex'">
+                    <div style="display:none;width:200px;height:250px;" class="bg-white rounded border border-slate-200 flex items-center justify-center text-slate-400 shrink-0">תמונה לא נמצאה</div>
+
+                    <div class="flex-grow">
+                        <p class="text-slate-700 mb-2">נרשום את משוואת הכוחות (החוק השני של ניוטון):</p>
+                        <div class="math-scroll text-lg mb-4">
+                            \[ \Sigma F_y = m \cdot a_R \]
+                            \[ N - m \cdot g = m \cdot \frac{v_E^2}{R} \]
+                        </div>
+                        <p class="text-slate-700 mb-2">נבודד את הכוח הנורמלי N ונציב את הנתונים:</p>
+                        <div class="math-scroll text-lg">
+                            \[ N = m \cdot g + m \cdot \frac{v_E^2}{R} \]
+                            \[ N = 80 \cdot 10 + 80 \cdot \frac{560}{60} \]
+                            \[ N = 800 + 80 \cdot \frac{56}{6} = 800 + 80 \cdot \frac{28}{3} \]
+                            \[ N = 800 + \frac{2240}{3} = 800 + 746.67 \approx 1546.67 \text{ N} \]
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p class="text-slate-700 mb-2">לפי החוק השלישי של ניוטון (חוק פעולה ותגובה), המסלול מפעיל על הגולש כוח נורמלי N כלפי מעלה. הגולש, מצידו, מפעיל על המסלול כוח השווה בגודלו ומנוגד בכיוונו (כלומר, כלפי מטה).</p>
+
+            <div class="final-answer">
+                הכוח שהגולש מפעיל על המסלול בנקודה E הוא בגודל \( 1546.67 \text{ N} \), וכיוונו <strong>כלפי מטה</strong>.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> שאלה זו מדגימה מדוע אנו מרגישים "כבדים יותר" בתחתית של לופ ברכבת הרים או בנדנדה. המסלול צריך לספק לא רק כוח שיאזן את כוח הכובד שלנו, אלא תוספת כוח (המהווה את הכוח הצנטריפטלי) שתפקידה לעקם את המסלול שלנו כלפי מעלה. לכן \( N > mg \) בנקודה זו. שימו לב שענינו על "הכוח שהגולש מפעיל על המסלול" ולכן הקפדנו לציין שכיוונו כלפי מטה!
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף ה': האם הגולש מגיע לנקודה L?</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <div class="step-title">
+                    <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">1</span>
+                    מה נתון ושלב 0 (המרת יחידות):
+                </div>
+                <ul class="list-disc list-inside text-slate-700 mb-2">
+                    <li>הגובה של נקודה L מהקרקע: \( h_2 = 36 \text{ m} \).</li>
+                    <li>עבודת כוח החיכוך (מרגע תחילתו בנקודה G ועד העצירה): \( 20 \text{ kJ} \).</li>
+                </ul>
+                <p class="text-slate-700 font-bold bg-yellow-100 inline-block px-2 py-1 rounded">המרת יחידות (MKS):</p>
+                <p class="text-slate-700">קילו-ג'אול (kJ) אינה יחידה תקנית, נמיר לג'אול. העבודה של כוח חיכוך קינטי מנוגדת לכיוון התנועה, לכן היא שלילית בחישובי האנרגיה:<br>
+                \( W_f = -20 \text{ kJ} = -20,000 \text{ J} \).</p>
+            </div>
+
+            <div class="info-panel">
+                <div class="step-title">
+                    <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">2</span>
+                    מה מחפשים:
+                </div>
+                <p class="text-slate-700">אנו צריכים לקבוע האם הגולש מגיע אל הנקודה L או נעצר לפניה, ולהוכיח זאת בחישוב.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <div class="step-title">
+                <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">3</span>
+                נוסחאות בשימוש:
+            </div>
+            <div class="math-scroll">
+                <span class="formula-badge">\[ W_{nc} = E_{final} - E_{initial} \]</span> (משפט עבודה ואנרגיה כוללת)
+            </div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-title">
+                <span class="bg-blue-100 text-blue-800 w-8 h-8 rounded-full flex items-center justify-center font-bold">4</span>
+                הצבה ופתרון:
+            </div>
+            <p class="text-slate-700 mb-2">ראשית, נחשב את האנרגיה המכנית ההתחלתית של המערכת בנקודה A:</p>
+            <div class="math-scroll text-lg mb-4">
+                \[ E_A = m \cdot g \cdot h_A + \frac{1}{2} \cdot m \cdot v_A^2 \]
+                \[ E_A = 80 \cdot 10 \cdot 60 + 0 = 48,000 \text{ J} \]
+            </div>
+
+            <p class="text-slate-700 mb-2">מכיוון שאין חיכוך מנקודה A ועד לנקודה G, האנרגיה המכנית נשמרת עד לנקודה זו. כשהגולש ממשיך מנקודה G ועד שהוא נעצר (נסמן נקודה זו ב-S, מלשון Stop), כוח החיכוך מבצע עבודה של \( -20,000 \text{ J} \). נחשב את האנרגיה בנקודת העצירה S:</p>
+            <div class="math-scroll text-lg mb-4">
+                \[ W_f = E_S - E_A \]
+                \[ -20,000 = E_S - 48,000 \]
+                \[ E_S = 48,000 - 20,000 = 28,000 \text{ J} \]
+            </div>
+
+            <p class="text-slate-700 mb-2">בנקודת העצירה המהירות היא אפס, ולכן כל האנרגיה המכנית היא אנרגיה פוטנציאלית כובדית. נמצא את הגובה המקסימלי שהגולש יגיע אליו (\( h_S \)):</p>
+            <div class="math-scroll text-lg mb-4">
+                \[ E_S = m \cdot g \cdot h_S \]
+                \[ 28,000 = 80 \cdot 10 \cdot h_S \]
+                \[ 28,000 = 800 \cdot h_S \]
+                \[ h_S = \frac{28,000}{800} = 35 \text{ m} \]
+            </div>
+
+            <p class="text-slate-700 mb-2">חישבנו כי הגולש נעצר לחלוטין כאשר הוא מגיע לגובה של 35 מטרים. היות ונקודה L נמצאת בגובה \( h_2 = 36 \text{ m} \), ברור שהגולש יאבד את כל האנרגיה הקינטית שלו לפני שיצליח לטפס לגובה הנדרש.</p>
+
+            <div class="final-answer">
+                הגולש אינו מגיע לנקודה L. הוא נעצר בגובה 35 מטר, המהווה גובה נמוך מזה של נקודה L (שהוא 36 מטר).
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> תמיד זכרו שכוח החיכוך הקינטי גורם ל"אובדן" אנרגיה מכנית (היא מומרת לאנרגיית חום). לכן עבודתו תמיד שלילית. אם הגולש היה צריך להגיע בדיוק לנקודה L ולעצור שם, הוא היה זקוק לאנרגיה של \( 80 \cdot 10 \cdot 36 = 28,800 \text{ J} \). היות ונותרו לו רק \( 28,000 \text{ J} \), הוא לא יכול להגיע לשם!
+        </div>
+    </section>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img src="question-image.png" alt="תמונת השאלה" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div style="display: none;" class="bg-red-100 text-red-700 p-4 rounded-lg border border-red-200 text-center w-full">
+                תמונת השאלה (question-image.png) לא נמצאה בתיקייה.
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
