@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Birthday Wordle</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @keyframes fadeInDown {
+            0% { opacity: 0; transform: translateY(-20px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+        .animate-fade-in-down {
+            animation: fadeInDown 0.3s ease-out forwards;
+        }
+    </style>
+</head>
+<body class="bg-slate-900 text-slate-100 font-sans selection:bg-green-500/30 min-h-screen">
+    
+    <!-- Toast Notification Container -->
+    <div id="toast-container" class="fixed top-6 left-1/2 -translate-x-1/2 z-50 pointer-events-none flex flex-col items-center"></div>
+
+    <div class="flex flex-col items-center justify-between min-h-screen pt-8 pb-4 px-4 w-full max-w-2xl mx-auto">
+        
+        <!-- Header -->
+        <header class="w-full flex items-center justify-between pb-4 border-b border-slate-700 mb-8">
+            <h1 class="text-2xl font-bold tracking-widest text-white">
+                WORDLE <span id="level-indicator" class="text-xs text-green-500 align-top"></span>
+            </h1>
+            <div id="remaining-indicator" class="text-slate-400 text-sm font-bold"></div>
+        </header>
+
+        <!-- Game Grid -->
+        <div id="grid-container" class="flex flex-col gap-2 mb-8"></div>
+
+        <!-- Keyboard -->
+        <div id="keyboard-container" class="w-full flex flex-col gap-2 mt-auto pb-4"></div>
+
+    </div>
+
+    <!-- Modal Overlay -->
+    <div id="modal-overlay" class="hidden absolute inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-50">
+        <div id="modal-content" class="bg-slate-800 border border-slate-600 p-8 rounded-2xl shadow-2xl flex flex-col items-center text-center max-w-sm w-full">
+            <!-- Modal content injected via JS -->
+        </div>
+    </div>
+
+    <script>
+        // --- GAME DATA & STATE ---
+        const WORD_SEQUENCE = [
+            "CUBES", "CAKES", "GREEN", "GIFTS", "AVITAL", "SPIOLED", 
+            "CHOOCLATE", "AUTISM", "RENEE", "BIRTHDAY", "APRIL", "SLEEP", "COOL"
+        ];
+
+        let sequenceIndex = 0;
+        let targetWord = WORD_SEQUENCE[0];
+        let guesses = [];
+        let currentGuess = '';
+        let gameStatus = 'playing'; // 'playing', 'won', 'lost', 'completed'
+
+        // --- DOM ELEMENTS ---
+        const toastContainer = document.getElementById('toast-container');
+        const levelIndicator = document.getElementById('level-indicator');
+        const remainingIndicator = document.getElementById('remaining-indicator');
+        const gridContainer = document.getElementById('grid-container');
+        const keyboardContainer = document.getElementById('keyboard-container');
+        const modalOverlay = document.getElementById('modal-overlay');
+        const modalContent = document.getElementById('modal-content');
+
+        // --- ICONS (Inline SVG) ---
+        const icons = {
+            delete: `<svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 5H9l-7 7 7 7h11a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2Z"></path><line x1="18" y1="9" x2="12" y2="15"></line><line x1="12" y1="9" x2="18" y2="15"></line></svg>`,
+            play: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>`,
+            rotate: `<svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path><path d="M3 3v5h5"></path></svg>`,
+            check: `<svg xmlns="http://www.w3.org/2000/svg" width="64" height="64" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-green-500 mb-4"><path d="M12 22c5.523 0 10-4.477 10-10S17.523 2 12 2 2 6.477 2 12s4.477 10 10 10z"></path><path d="m9 12 2 2 4-4"></path></svg>`
+        };
+
+        // --- LOGIC ---
+        function showToast(message) {
+            const toast = document.createElement('div');
+            toast.className = 'bg-slate-100 text-slate-900 font-bold px-6 py-3 rounded shadow-xl animate-fade-in-down mb-2';
+            toast.textContent = message;
+            toastContainer.appendChild(toast);
+            
+            setTimeout(() => {
+                toast.remove();
+            }, 2500);
+        }
+
+        function evaluateGuess(guess, target) {
+            const wordLength = target.length;
+            const result = Array(wordLength).fill('gray');
+            const targetChars = target.split('');
+            const guessChars = guess.split('');
+
+            // First pass: correct letter & position (green)
+            for (let i = 0; i < wordLength; i++) {
+                if (guessChars[i] === targetChars[i]) {
+                    result[i] = 'green';
+                    targetChars[i] = null;
+                    guessChars[i] = null;
+                }
+            }
+
+            // Second pass: correct letter, wrong position (yellow)
+            for (let i = 0; i < wordLength; i++) {
+                if (guessChars[i] !== null && targetChars.includes(guessChars[i])) {
+                    result[i] = 'yellow';
+                    targetChars[targetChars.indexOf(guessChars[i])] = null;
+                }
+            }
+            return result;
+        }
+
+        function getKeyboardStatus() {
+            const status = {};
+            guesses.forEach(guess => {
+                const evaluation = evaluateGuess(guess, targetWord);
+                guess.split('').forEach((letter, i) => {
+                    const color = evaluation[i];
+                    if (!status[letter] || (color === 'green' && status[letter] !== 'green')) {
+                        status[letter] = color;
+                    } else if (color === 'yellow' && status[letter] !== 'green') {
+                        status[letter] = 'yellow';
+                    } else if (color === 'gray' && !status[letter]) {
+                        status[letter] = 'gray';
+                    }
+                });
+            });
+            return status;
+        }
+
+        function handleKeyPress(key) {
+            if (gameStatus !== 'playing') return;
+
+            const wordLength = targetWord.length;
+
+            if (key === 'Enter') {
+                if (currentGuess.length !== wordLength) {
+                    showToast('Not enough letters');
+                    return;
+                }
+                
+                guesses.push(currentGuess);
+                const prevGuess = currentGuess;
+                currentGuess = '';
+
+                if (prevGuess === targetWord) {
+                    gameStatus = 'won';
+                    showToast('Impressive!');
+                } else if (guesses.length === 6) {
+                    gameStatus = 'lost';
+                }
+            } else if (key === 'Backspace') {
+                currentGuess = currentGuess.slice(0, -1);
+            } else {
+                if (currentGuess.length < wordLength && /^[A-Z]$/.test(key)) {
+                    currentGuess += key;
+                }
+            }
+            updateUI();
+        }
+
+        // Global physical keyboard listener
+        window.addEventListener('keydown', (e) => {
+            if (e.ctrlKey || e.metaKey || e.altKey || gameStatus !== 'playing') return;
+            
+            const key = e.key;
+            if (key === 'Enter') {
+                handleKeyPress('Enter');
+            } else if (key === 'Backspace') {
+                handleKeyPress('Backspace');
+            } else {
+                const upperKey = key.toUpperCase();
+                if (/^[A-Z]$/.test(upperKey) && upperKey.length === 1) {
+                    handleKeyPress(upperKey);
+                }
+            }
+        });
+
+        // Navigation Handlers
+        window.handleNextLevel = () => {
+            if (sequenceIndex < WORD_SEQUENCE.length - 1) {
+                sequenceIndex++;
+                targetWord = WORD_SEQUENCE[sequenceIndex];
+                guesses = [];
+                currentGuess = '';
+                gameStatus = 'playing';
+            } else {
+                gameStatus = 'completed';
+            }
+            updateUI();
+        };
+
+        window.handleTryAgain = () => {
+            guesses = [];
+            currentGuess = '';
+            gameStatus = 'playing';
+            updateUI();
+        };
+
+        window.handlePlayAgain = () => {
+            sequenceIndex = 0;
+            targetWord = WORD_SEQUENCE[0];
+            guesses = [];
+            currentGuess = '';
+            gameStatus = 'playing';
+            updateUI();
+        };
+
+        // --- RENDERING ---
+        function updateUI() {
+            const wordLength = targetWord.length;
+            
+            // Header
+            levelIndicator.textContent = `LEVEL ${sequenceIndex + 1}/${WORD_SEQUENCE.length}`;
+            remainingIndicator.textContent = `${WORD_SEQUENCE.length - sequenceIndex - 1} Remaining`;
+
+            // Grid Layout Classes
+            const boxSizeClass = wordLength > 7 ? 'w-8 h-8 sm:w-10 sm:h-10 text-xl' :
+                                 wordLength > 5 ? 'w-10 h-10 sm:w-12 sm:h-12 text-2xl' :
+                                 'w-14 h-14 sm:w-16 sm:h-16 text-3xl';
+
+            // Build Grid HTML
+            let gridHTML = '';
+            const emptyRows = Math.max(0, 6 - guesses.length);
+
+            // 1. Previous Guesses
+            guesses.forEach(guess => {
+                const evaluation = evaluateGuess(guess, targetWord);
+                gridHTML += `<div class="flex gap-1 sm:gap-2 justify-center">`;
+                guess.split('').forEach((letter, j) => {
+                    const color = evaluation[j];
+                    const bgColorClass = 
+                        color === 'green' ? 'bg-green-500 border-green-500' : 
+                        color === 'yellow' ? 'bg-yellow-500 border-yellow-500' : 
+                        'bg-slate-700 border-slate-700';
+                    gridHTML += `<div class="${boxSizeClass} flex items-center justify-center font-bold text-white uppercase border-2 ${bgColorClass} transition-all duration-500">${letter}</div>`;
+                });
+                gridHTML += `</div>`;
+            });
+
+            // 2. Current Guess Row
+            if (gameStatus === 'playing' && guesses.length < 6) {
+                gridHTML += `<div class="flex gap-1 sm:gap-2 justify-center">`;
+                for (let i = 0; i < wordLength; i++) {
+                    const letter = currentGuess[i] || '';
+                    const isCurrent = letter !== '';
+                    const borderClass = isCurrent ? 'border-slate-400 scale-105' : 'border-slate-700';
+                    gridHTML += `<div class="${boxSizeClass} flex items-center justify-center font-bold text-white uppercase border-2 ${borderClass} transition-all">${letter}</div>`;
+                }
+                gridHTML += `</div>`;
+            }
+
+            // 3. Empty Rows
+            const rowsToDraw = emptyRows - (gameStatus === 'playing' ? 1 : 0);
+            for (let i = 0; i < rowsToDraw; i++) {
+                gridHTML += `<div class="flex gap-1 sm:gap-2 justify-center">`;
+                for (let j = 0; j < wordLength; j++) {
+                    gridHTML += `<div class="${boxSizeClass} border-2 border-slate-700"></div>`;
+                }
+                gridHTML += `</div>`;
+            }
+            gridContainer.innerHTML = gridHTML;
+
+            // Keyboard Layout
+            const keyboardStatus = getKeyboardStatus();
+            const keyboardRows = ['QWERTYUIOP', 'ASDFGHJKL', 'ZXCVBNM'];
+            let kbHTML = '';
+
+            keyboardRows.forEach((row, i) => {
+                kbHTML += `<div class="flex justify-center gap-1 sm:gap-2">`;
+                
+                if (i === 2) {
+                    kbHTML += `<button onclick="handleKeyPress('Enter')" class="flex-1.5 px-2 py-4 sm:py-5 text-xs sm:text-sm font-bold bg-slate-600 hover:bg-slate-500 text-white rounded uppercase">ENTER</button>`;
+                }
+                
+                row.split('').forEach(key => {
+                    const status = keyboardStatus[key];
+                    const keyBgClass = 
+                        status === 'green' ? 'bg-green-500 hover:bg-green-600' :
+                        status === 'yellow' ? 'bg-yellow-500 hover:bg-yellow-600' :
+                        status === 'gray' ? 'bg-slate-800 text-slate-500 hover:bg-slate-700' :
+                        'bg-slate-600 hover:bg-slate-500';
+                    
+                    kbHTML += `<button onclick="handleKeyPress('${key}')" class="flex-1 min-w-[28px] sm:min-w-[40px] py-4 sm:py-5 text-sm sm:text-base font-bold rounded uppercase transition-colors ${keyBgClass} text-white">${key}</button>`;
+                });
+
+                if (i === 2) {
+                    kbHTML += `<button onclick="handleKeyPress('Backspace')" class="flex-1.5 flex items-center justify-center px-3 py-4 sm:py-5 bg-slate-600 hover:bg-slate-500 text-white rounded">${icons.delete}</button>`;
+                }
+                kbHTML += `</div>`;
+            });
+            keyboardContainer.innerHTML = kbHTML;
+
+            // Modals
+            if (gameStatus !== 'playing') {
+                modalOverlay.classList.remove('hidden');
+                let modalHTML = '';
+
+                if (gameStatus === 'completed') {
+                    modalHTML = `
+                        <div class="text-6xl mb-4">🎉</div>
+                        <h2 class="text-3xl font-bold text-white mb-2">Happy Birthday!</h2>
+                        <p class="text-slate-300 mb-6">You've completed all the words, Avital!</p>
+                        <button onclick="handlePlayAgain()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+                            ${icons.rotate} Play Again
+                        </button>
+                    `;
+                } else if (gameStatus === 'won') {
+                    modalHTML = `
+                        ${icons.check}
+                        <h2 class="text-3xl font-bold text-white mb-2">You Got It!</h2>
+                        <p class="text-slate-300 mb-6">Guessed in ${guesses.length} ${guesses.length === 1 ? 'try' : 'tries'}.</p>
+                        <button onclick="handleNextLevel()" class="w-full bg-green-500 hover:bg-green-600 text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+                            ${icons.play} Next Word
+                        </button>
+                    `;
+                } else {
+                    modalHTML = `
+                        <div class="w-16 h-16 rounded-full bg-red-500/20 flex items-center justify-center mb-4">
+                            <span class="text-red-500 text-3xl font-bold">X</span>
+                        </div>
+                        <h2 class="text-3xl font-bold text-white mb-2">Game Over</h2>
+                        <p class="text-slate-300 mb-2">The word was:</p>
+                        <p class="text-2xl font-bold text-green-500 tracking-widest mb-6">${targetWord}</p>
+                        <button onclick="handleTryAgain()" class="w-full bg-slate-700 hover:bg-slate-600 text-white font-bold py-3 px-4 rounded-lg transition-colors flex items-center justify-center gap-2">
+                            ${icons.rotate} Try Again
+                        </button>
+                    `;
+                }
+                modalContent.innerHTML = modalHTML;
+            } else {
+                modalOverlay.classList.add('hidden');
+            }
+        }
+
+        // Init
+        updateUI();
+
+    </script>
+</body>
+</html>
