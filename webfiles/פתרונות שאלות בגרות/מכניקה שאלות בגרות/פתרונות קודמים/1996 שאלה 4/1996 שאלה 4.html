@@ -1,0 +1,642 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מוסבר בפיזיקה - בגרות מכניקה 1996 שאלה 4</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        @media (min-width: 768px) {
+            .info-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+            overflow-x: auto;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+
+        /* SVG FBD Styling */
+        svg.fbd-svg {
+            display: block;
+            margin: 0 auto;
+            max-width: 100%;
+            height: auto;
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מכניקה 1996, שאלה 4</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך, צעד-אחר-צעד (ללא שימוש בקינמטיקה של תנועה הרמונית)</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">מבט כללי על השאלה</h3>
+        
+        <div class="bg-blue-100 border-r-4 border-blue-500 text-blue-900 p-4 rounded mb-5 shadow-sm">
+            <strong>הערה חשובה:</strong> אנו נפתור שאלה זו ללא שימוש בפיזיקה של תנועה הרמונית פשוטה. מכיוון שנושא התנועה ההרמונית יוצא וחוזר ממיקוד הבגרות בשנים האחרונות, חשוב ומועיל לדעת שניתן לפתור את השאלה במלואה גם עם שיקולים אלטרנטיביים של שימור אנרגיה מכנית ושימור תנע.
+        </div>
+
+        <p class="content-paragraph">בשאלה זו אנו מנתחים מערכת המשלבת תנועה של גוף התלוי על קפיץ אנכי יחד עם התנגשות. השילוב דורש מאיתנו לדעת מתי ליישם את שיקולי האנרגיה המכנית (כולל אנרגיה אלסטית של הקפיץ ואנרגיית גובה), ומתי לעבור לשימוש בחוק שימור התנע בעת ההתנגשות הקצרה.</p>
+        <p class="content-paragraph">סדר העבודה שלנו יכלול: מציאת נקודת שיווי המשקל באמצעות ניתוח כוחות (החוק הראשון של ניוטון), חישוב המהירות לפני ההתנגשות בעזרת חוק שימור האנרגיה תוך בחירה חכמה של מישור הייחוס, וניתוח התוצאות לאחר ההתנגשות לפי חוק שימור התנע והחוק השני של ניוטון.</p>
+        <p class="content-paragraph mb-0">זכרו: שימוש נכון בחוק שימור האנרגיה המכנית מחייב הגדרה ברורה של מישור הייחוס ושל מצבי ההתחלה והסוף, כולל חישוב מדויק של התארכות הקפיץ בכל אחד מהמצבים.</p>
+    </section>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> קפיץ בעל קבוע כוח \( k \) (מסה זניחה) מחובר לתקרה. מחובר אליו לוח עץ שמסתו \( M \). המערכת נמצאת במצב שיווי-משקל שבו הקפיץ מתוח בשיעור \( d \) מעבר לאורכו הרפוי. כל הנתונים מבוטאים במערכת יחידות MKS.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> ביטוי עבור התארכות הקפיץ בשיווי משקל \( d \) באמצעות הנתונים \( M \) ו-\( k \) (ותאוצת הכובד \( g \)).
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma\vec{F} = 0 \)</span> (חוק ראשון של ניוטון לשיווי משקל)
+            <span class="formula-badge">\( W = mg \)</span> (כוח הכבידה)
+            <span class="formula-badge">\( F_{sp} = k\Delta l \)</span> (חוק הוק לכוח אלסטי)
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            
+            <p class="content-paragraph">נבחר ציר התייחסות אנכי \( y \) שכיוונו החיובי פונה כלפי מעלה. נשרטט תרשים כוחות (FBD) עבור לוח העץ במצב שיווי משקל בו מהירותו ותאוצתו מתאפסות לחלוטין.</p>
+            
+            <div class="visual-frame">
+                <img src="image-1.png" alt="תרשים כוחות עבור לוח העץ בשיווי משקל" width="200" height="250" style="max-width:200px; height:auto; display:block; margin:0 auto;" />
+            </div>
+
+            <p class="content-paragraph">על הלוח פועלים שני כוחות על ציר ה-\( y \): כוח הקפיץ כלפי מעלה (חיובי) השווה ל-\( kd \), וכוח הכבידה כלפי מטה (שלילי) השווה ל-\( Mg \). מכיוון שהמערכת במצב שיווי-משקל שקול הכוחות מתאפס.</p>
+
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_y = kd - Mg = 0 \]
+                \[ kd = Mg \]
+            </div>
+
+            <p class="final-answer">מסקנה: \( d = \frac{Mg}{k} \)</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 הערת מורה:</strong>
+            נקודת שיווי-המשקל (הנקודה שבה \( \Sigma F = 0 \)) תשמש אותנו גם כמישור ייחוס נוח לחישובי אנרגיה בהמשך, שכן קל למדוד ממנה גבהים והתארכויות.
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> הלוח שוחרר ממנוחה מנקודה הנמצאת במרחק \( A \) מתחת לנקודת שיווי-המשקל, והחל להתנודד. בהמשך, כאשר הלוח חולף דרך נקודת שיווי-המשקל בדרכו מטה, פוגע בו קליע שמסתו \( m \) ומהירותו \( v \) אנכית כלפי מעלה, ויוצא במהירות \( u \) כלפי מעלה. משך ההתנגשות קצר מאוד, ומיד אחריה הלוח נעצר באופן קבוע (מהירותו ותאוצתו מתאפסות).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> ביטוי להפחת בגודל מהירות הקליע כתוצאה מהפגיעה בלוח, כלומר לחשב את ההפרש \( v - u \), באמצעות הפרמטרים \( k, M, m, A \).
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( E_k = \frac{1}{2}mv^2 \)</span>
+            <span class="formula-badge">\( E_p = mgh \)</span>
+            <span class="formula-badge">\( E_{sp} = \frac{1}{2}k(\Delta l)^2 \)</span>
+            <span class="formula-badge">\( \Sigma p_i = \Sigma p_f \)</span> (חוק שימור התנע)
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            
+            <div class="step-label">שלב 1: מציאת מהירות הלוח לפני הפגיעה בעזרת שימור אנרגיה</div>
+            <p class="content-paragraph">כוחות לא משמרים (כמו התנגדות אוויר) אינם פועלים על המערכת לפני ההתנגשות, ולכן האנרגיה המכנית נשמרת. נגדיר את נקודת שיווי-המשקל כמישור הייחוס לגובה (\( h=0 \)).</p>
+            <p class="content-paragraph">נבחן שני מצבים במהלך התנועה של הלוח \( M \):</p>
+            <ul class="list-disc list-inside mb-4 mr-4 text-slate-700">
+                <li><strong>מצב 1 (נקודת השחרור):</strong> הלוח משוחרר ממנוחה בנקודה הנמצאת במרחק \( A \) מתחת לשיווי המשקל. לכן, גובהו ההתחלתי הוא שלילי: \( h_1 = -A \), ומהירותו \( V_1 = 0 \). בנקודה זו הקפיץ מתוח מאוד – התארכותו הכוללת מעבר לאורך הרפוי היא התארכות שיווי-המשקל \( d \) ועוד המרחק \( A \), כלומר \( \Delta l_1 = d + A \).</li>
+                <li><strong>מצב 2 (מעבר בשיווי-המשקל):</strong> הלוח חולף דרך המרכז. הגובה שלו כעת הוא \( h_2 = 0 \), וגודל מהירותו נסמן כ-\( V_M \). התארכות הקפיץ הכוללת חזרה להיות בדיוק \( \Delta l_2 = d \).</li>
+            </ul>
+            <p class="content-paragraph">נשווה את האנרגיה המכנית הכוללת בשני המצבים (\( E_1 = E_2 \)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ Mgh_1 + \frac{1}{2}k(\Delta l_1)^2 + \frac{1}{2}M V_1^2 = Mgh_2 + \frac{1}{2}k(\Delta l_2)^2 + \frac{1}{2}M V_M^2 \]
+                \[ Mg(-A) + \frac{1}{2}k(d + A)^2 + 0 = 0 + \frac{1}{2}kd^2 + \frac{1}{2}M V_M^2 \]
+            </div>
+            <p class="content-paragraph">נפתח את הסוגריים של האנרגיה האלסטית באגף שמאל:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ -MgA + \frac{1}{2}k(d^2 + 2dA + A^2) = \frac{1}{2}kd^2 + \frac{1}{2}M V_M^2 \]
+                \[ -MgA + \frac{1}{2}kd^2 + kdA + \frac{1}{2}kA^2 = \frac{1}{2}kd^2 + \frac{1}{2}M V_M^2 \]
+            </div>
+            <p class="content-paragraph">נזכור את מסקנתנו מסעיף א' לפיה \( kd = Mg \). לפיכך, המכפלה \( kdA \) שווה בדיוק ל-\( MgA \). נציב זאת ונצמצם את האיבר \( \frac{1}{2}kd^2 \) משני האגפים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ -MgA + MgA + \frac{1}{2}kA^2 = \frac{1}{2}M V_M^2 \]
+            </div>
+            <p class="content-paragraph">האיברים של אנרגיית הכובד מתבטלים לחלוטין! נשארנו עם משוואה פשוטה המקשרת בין האנרגיה האלסטית הנוספת לאנרגיה הקינטית המקסימלית:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \frac{1}{2}kA^2 = \frac{1}{2}M V_M^2 \]
+                \[ V_M = A\sqrt{\frac{k}{M}} \]
+            </div>
+
+            <div class="step-label">שלב 2: ניתוח ההתנגשות באמצעות חוק שימור התנע</div>
+            <p class="content-paragraph">מכיוון שמשך ההתנגשות "קצר מאוד", כוחות חיצוניים (כמו כוח הכבידה וכוח הקפיץ) אינם מספיקים להפעיל מתקף משמעותי, וניתן להניח שחל שימור תנע בציר האנכי בין הרגע שלפני הפגיעה לרגע שאחריה.</p>
+            <p class="content-paragraph">לפי בחירת הצירים שלנו (חיובי למעלה), מהירות הלוח לפני הפגיעה היא שלילית \( V_{Mi} = -A\sqrt{\frac{k}{M}} \). מנגד, מהירות הקליע לפני הפגיעה היא חיובית \( v \). לאחר הפגיעה מהירות הלוח היא אפס (\( V_{Mf}=0 \)) ומהירות הקליע היא \( u \). נציב במשוואת שימור התנע:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ m v + M \left( -A\sqrt{\frac{k}{M}} \right) = m u + M \cdot 0 \]
+            </div>
+            <p class="content-paragraph">כדי לפשט, נכניס את \( M \) אל תוך השורש, ואז נעביר את מהירויות הקליע לאותו אגף:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ m v - A\sqrt{M^2 \frac{k}{M}} = m u \]
+                \[ m v - A\sqrt{Mk} = m u \]
+                \[ m v - m u = A\sqrt{Mk} \]
+                \[ m(v - u) = A\sqrt{Mk} \]
+            </div>
+
+            <p class="final-answer">מסקנה: \( v - u = \frac{A\sqrt{Mk}}{m} \)</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 הערת מורה:</strong>
+            זוהי המחשה יפהפייה לאופן שבו בחירת מישור ייחוס חכמה בנקודת שיווי-המשקל מאפשרת לפתור בעיות מורכבות ללא שימוש בנוסחאות של תנועה הרמונית. שימו לב כיצד עבודת כוח הכבידה התקזזה במדויק עם עבודת החלק הקבוע של כוח הקפיץ!
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> כעת מתוארת סיטואציה שונה, שבה לוח העץ נמצא במרחק כלשהו \( x \) מנקודת שיווי-המשקל (\( x \neq 0 \)), והקליע פוגע בו ועובר דרכו באותו אופן בדיוק.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> הסבר מדוע במקרה החדש הזה, לוח העץ לא יוכל להישאר בעצירה קבועה לאחר התנגשות הקליע.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span> (החוק השני של ניוטון)
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הסבר מבוסס חוקי ניוטון:</h4>
+            
+            <p class="content-paragraph">כדי להגדיר מצב של "עצירה קבועה" (מנוחה מוחלטת שלא משתנה עם הזמן), חייבים להתקיים שני תנאים במקביל: גם מהירות הגוף צריכה להתאפס (\( v = 0 \)), וגם תאוצתו צריכה להתאפס (\( a = 0 \)).</p>
+            <p class="content-paragraph">על פי החוק השני של ניוטון, התאוצה מתאפסת אך ורק אם שקול הכוחות הפועל על הגוף מתאפס (\( \Sigma\vec{F} = 0 \)). נבדוק מהו שקול הכוחות כאשר הלוח נעצר רגעית במרחק \( x \) מעל נקודת שיווי המשקל.</p>
+            <p class="content-paragraph">במיקום זה התארכות הקפיץ היא כעת \( \Delta l = d - x \). נרשום את סכום הכוחות הפועלים על הלוח באותו הרגע (כוח הקפיץ כלפי מעלה וכוח הכבידה כלפי מטה):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F = k(d-x) - Mg = kd - kx - Mg \]
+            </div>
+            <p class="content-paragraph">על פי מה שהוכחנו בסעיף א', אנו יודעים כי במצב מנוחה התחלתי התקיים \( kd = Mg \). נציב זאת כדי לפשט את המשוואה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F = Mg - kx - Mg = -kx \]
+            </div>
+            <p class="content-paragraph">מאחר שנתון במפורש שהלוח נמצא מחוץ לנקודת שיווי-המשקל (\( x \neq 0 \)), מובטח לנו ששקול הכוחות שונה מאפס (\( \Sigma F \neq 0 \)).</p>
+            
+            <div class="final-answer" style="flex-direction: column; align-items: start; text-align: right;">
+                <span class="block">גם אם הפגיעה של הקליע תאפס את מהירות הלוח לחלקיק שנייה מיד לאחר ההתנגשות (\( v=0 \)), המצאות הלוח מחוץ לנקודת שיווי-המשקל מבטיחה ששקול הכוחות הפועל עליו אינו אפס.</span>
+                <span class="block mt-2">הכוח השקול הזה יעניק ללוח תאוצה מיידית, גודל מהירותו יגדל חזרה מיד לאחר מכן, והוא ימשיך בתנועה. לכן, מצב של עצירה קבועה אינו אפשרי במקרה זה.</span>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 הערת מורה:</strong>
+            זוהי הבחנה קלאסית שמבלבלת תלמידים רבים! הרי כשאנו זורקים כדור לאוויר, בשיא הגובה מהירותו מתאפסת, האם הוא נעצר בעצירה קבועה? ודאי שלא, כי כוח הכבידה ממשיך לפעול עליו ומאיץ אותו מטה. בדומה, עצירה קבועה של גוף מחובר לקפיץ יכולה להתרחש אך ורק בשילוב נדיר: שבו מהירות הגוף מתאפסת בדיוק היכן ששקול הכוחות עליו הוא לחלוטין אפס (בנקודת שיווי-המשקל).
+        </div>
+    </section>
+
+</div>
+
+<!-- כפתור "הצג שאלה" צף ומודל (Modal) -->
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
