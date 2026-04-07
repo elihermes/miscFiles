@@ -1,0 +1,764 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2024, שאלה 4</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            width: 100%;
+            overflow-x: auto;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.5rem auto;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - מכניקה 2024</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">שאלה 4</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך, צעד-אחר-צעד</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א': זיהוי הגרפים</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong><br>
+                ישנן שתי תיבות, תיבה \(A\) ותיבה \(B\), הנעות זו לקראת זו על משטח אופקי חסר חיכוך. הכיוון החיובי נקבע ימינה. על פי תרשים 1, תיבה \(A\) נמצאת משמאל ונע ימינה, ותיבה \(B\) נמצאת מימין ונע שמאלה. מוצגים שני גרפים (1 ו-2) המתארים מהירות כפונקציה של הזמן.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong><br>
+                עלינו לקבוע איזה מן הגרפים, 1 או 2, מייצג את מהירותה של תיבה \(B\), ולהסביר את הקביעה.
+            </div>
+        </div>
+
+        <div class="mt-4 mb-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            אנו משתמשים בעקרון הקינמטי של <span class="formula-badge">כיוון וסימן המהירות</span>. מהירות חיובית משמעותה תנועה בכיוון החיובי של הציר, ומהירות שלילית משמעותה תנועה בכיוון המנוגד לציר.
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">
+                על פי תרשים 1, הכיוון החיובי מוגדר ימינה. תיבה \(A\) נעה ימינה, ולכן מהירותה ההתחלתית חייבת להיות חיובית. תיבה \(B\) נעה שמאלה (לפני ההתנגשות), ולכן מהירותה ההתחלתית חייבת להיות שלילית. 
+                נסתכל על הגרפים בזמן \(t=0\):<br>
+                גרף 1 מתחיל בערך של \(v = 3 \text{ m/s}\), כלומר ערך חיובי. <br>
+                גרף 2 מתחיל בערך של \(v = -1.5 \text{ m/s}\), כלומר ערך שלילי.
+            </p>
+            <p class="final-answer">לכן, גרף 2 מייצג את מהירותה של תיבה \(B\).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה 💡</strong><br>
+            הבנת מערכת הצירים היא המפתח לחלק גדול מבעיות הקינמטיקה. תמיד בדקו לאן מוגדר החץ החיובי של ציר המקום. סימן המהירות מספר לנו אך ורק על כיוון התנועה ביחס לאותו ציר, ולא שום דבר על כמה "מהר" הגוף נע.
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': חישוב מסת תיבה B</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong><br>
+                מסת תיבה \(A\) היא \(m_A = 0.14 \text{ kg}\). מתוך הגרפים אנו יכולים לחלץ את המהירויות לפני ואחרי ההתנגשות.<br>
+                עבור תיבה \(A\) (גרף 1): מהירות התחלתית היא \(v_{Ai} = 3 \text{ m/s}\), ומהירות סופית (לאחר ההתנגשות, החל מ-\(t=10 \text{ ms}\)) היא \(v_{Af} = 1 \text{ m/s}\).<br>
+                עבור תיבה \(B\) (גרף 2): מהירות התחלתית היא \(v_{Bi} = -1.5 \text{ m/s}\), ומהירות סופית היא \(v_{Bf} = 5.5 \text{ m/s}\). אין צורך בהמרת יחידות המהירות כיוון שהן נתונות ביחידות MKS תקניות (מטר לשנייה).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong><br>
+                אנו מחפשים את מסת תיבה \(B\), המסומנת כ-\(m_B\).
+            </div>
+        </div>
+
+        <div class="visual-frame">
+            <svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Surface -->
+                <line x1="20" y1="150" x2="380" y2="150" stroke="#475569" stroke-width="2" />
+                
+                <!-- Box A -->
+                <rect x="80" y="90" width="80" height="60" fill="#eff6ff" stroke="#3b82f6" stroke-width="3" />
+                <text x="120" y="135" font-family="Arial" font-size="20" text-anchor="middle" font-weight="bold" fill="#1e3a8a">A</text>
+                
+                <!-- Box B -->
+                <rect x="240" y="90" width="80" height="60" fill="#f0fdf4" stroke="#22c55e" stroke-width="3" />
+                <text x="280" y="135" font-family="Arial" font-size="20" text-anchor="middle" font-weight="bold" fill="#14532d">B</text>
+                
+                <!-- Velocity Vectors (Initial) -->
+                <!-- v_A -->
+                <circle cx="120" cy="70" r="3" fill="#ef4444" />
+                <line x1="120" y1="70" x2="170" y2="70" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)" />
+                <text x="145" y="55" font-family="Times New Roman, serif" font-style="italic" font-size="18" text-anchor="middle" fill="#ef4444">
+                    v<tspan font-size="12" dy="5">A</tspan>
+                </text>
+                
+                <!-- v_B -->
+                <circle cx="280" cy="70" r="3" fill="#ef4444" />
+                <line x1="280" y1="70" x2="230" y2="70" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-red)" />
+                <text x="255" y="55" font-family="Times New Roman, serif" font-style="italic" font-size="18" text-anchor="middle" fill="#ef4444">
+                    v<tspan font-size="12" dy="5">B</tspan>
+                </text>
+
+                <!-- Arrows definitions -->
+                <defs>
+                    <marker id="arrow-red" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+
+        <div class="mt-4 mb-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            נשתמש בחוק <span class="formula-badge">שימור התנע הקווי</span>. מכיוון שהמשטח הוא אופקי וחסר חיכוך, שקול הכוחות החיצוניים הפועלים על מערכת שתי התיבות בציר האופקי שווה לאפס (\(\Sigma F_x = 0\)). כוח הכובד והכוח הנורמלי מתקזזים בציר האנכי. לכן התנע של המערכת נשמר לאורך ציר התנועה:<br>
+            <span class="formula-badge">\( \vec{p} = m\vec{v} \)</span>
+            <span class="formula-badge">\( m_A\vec{v}_A + m_B\vec{v}_B = m_A\vec{u}_A + m_B\vec{u}_B \)</span><br>
+            <span class="text-sm text-slate-500">(כאשר u מייצג מהירות סופית על פי דף הנוסחאות).</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">נציב את הנתונים לתוך משוואת שימור התנע בציר ה-\(x\), תוך הקפדה על סימני המהירויות:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[
+                \begin{aligned}
+                m_A \cdot v_{Ai} + m_B \cdot v_{Bi} &= m_A \cdot v_{Af} + m_B \cdot v_{Bf} \\
+                0.14 \cdot 3 + m_B \cdot (-1.5) &= 0.14 \cdot 1 + m_B \cdot 5.5 \\
+                0.42 - 1.5 m_B &= 0.14 + 5.5 m_B
+                \end{aligned}
+                \]
+            </div>
+            <p class="content-paragraph mt-3">נעביר אגפים, נרכז את איברי \(m_B\) בצד אחד ואת המספרים בצד שני:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[
+                \begin{aligned}
+                0.42 - 0.14 &= 5.5 m_B + 1.5 m_B \\
+                0.28 &= 7 m_B \\
+                m_B &= \frac{0.28}{7} = 0.04 \text{ kg}
+                \end{aligned}
+                \]
+            </div>
+            <p class="final-answer">מסת תיבה \(B\) היא: \(m_B = 0.04 \text{ kg}\).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה 💡</strong><br>
+            שימו לב כיצד הצבנו את המהירות השלילית \((-1.5)\) בתוך המשוואה! לעולם אל תשכחו את סימני המהירויות, התנע הוא גודל וקטורי ולכיוונים יש משמעות קריטית בפתרון. בנוסף, חשוב להסביר מדוע התנע נשמר - תמיד ציינו שאין כוחות חיצוניים בציר האופקי.
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': המתקף על תיבה A</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong><br>
+                אנו יודעים את מסת תיבה \(A\) שהיא \(0.14 \text{ kg}\), ואת מהירויותיה לפני ההתנגשות \(v_{Ai} = 3 \text{ m/s}\) ואחריה \(v_{Af} = 1 \text{ m/s}\).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong><br>
+                אנו מחפשים את המתקף (גודל וכיוון) שהפעילה תיבה \(B\) על תיבה \(A\).
+            </div>
+        </div>
+
+        <div class="mt-4 mb-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            על פי משפט <span class="formula-badge">מתקף-תנע</span>, המתקף השקול שפועל על גוף שווה לשינוי בתנע שלו. מכיוון שהכוח היחיד שפועל על תיבה \(A\) בציר האופקי הוא הכוח מתיבה \(B\), מתקף כוח זה שווה לשינוי בתנע של \(A\):<br>
+            <span class="formula-badge">\( \vec{J}_{net} = \Delta\vec{p} \)</span>
+            <span class="formula-badge">\( \Delta\vec{p} = m\vec{v}_f - m\vec{v}_i \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">נחשב את השינוי בתנע של תיבה \(A\), שייצג את המתקף \(\vec{J}_A\):</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[
+                \begin{aligned}
+                J_A &= m_A \cdot v_{Af} - m_A \cdot v_{Ai} \\
+                J_A &= m_A \cdot (v_{Af} - v_{Ai}) \\
+                J_A &= 0.14 \cdot (1 - 3) \\
+                J_A &= 0.14 \cdot (-2) = -0.28 \text{ N} \cdot \text{s}
+                \end{aligned}
+                \]
+            </div>
+            <p class="content-paragraph mt-3">הסימן השלילי מצביע על כך שווקטור המתקף פועל בכיוון המנוגד לכיוון החיובי (כלומר, שמאלה).</p>
+            <p class="final-answer">גודל המתקף הוא \(0.28 \text{ N} \cdot \text{s}\), וכיוונו שמאלה (נגד הכיוון החיובי).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה 💡</strong><br>
+            האם התשובה הגיונית? בודאי! תיבה \(B\) מגיעה מימין ומתנגשת בתיבה \(A\). ברור שהכוח שהיא מפעילה על \(A\) (ולכן גם המתקף) יהיה דוחף שמאלה. תמיד כדאי לעשות בדיקת "היגיון פיזיקלי" בסוף החישוב.
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': כוח ממוצע על תיבה A</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון (שלב המרת היחידות - חובה!):</strong><br>
+                חישבנו בסעיף הקודם כי המתקף על תיבה \(A\) הוא \(J_A = -0.28 \text{ N}\cdot\text{s}\). מתוך הגרף, אנו יכולים לראות את משך זמן ההתנגשות. ההתנגשות (שינוי המהירות) מתחילה ב-\(t_1 = 5 \text{ ms}\) ומסתיימת ב-\(t_2 = 10 \text{ ms}\).
+                לכן, פרק הזמן של ההתנגשות הוא \(\Delta t = 10 - 5 = 5 \text{ ms}\).<br>
+                <strong>המרה ל-MKS:</strong> מילישניות אינן תקניות. חובה להמיר לשניות:<br>
+                \(\Delta t = 5 \text{ ms} = 5 \times 10^{-3} \text{ s} = 0.005 \text{ s}\).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong><br>
+                אנו מחפשים את הכוח הממוצע (גודל וכיוון) שהפעילה תיבה \(B\) על תיבה \(A\) במהלך ההתנגשות.
+            </div>
+        </div>
+
+        <div class="mt-4 mb-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            לפי הגדרת <span class="formula-badge">מתקף של כוח קבוע (או ממוצע)</span>:<br>
+            <span class="formula-badge">\( \vec{J} = \vec{\bar{F}} \cdot \Delta t \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">נחלץ את הכוח הממוצע \(\bar{F}_A\) מהמשוואה:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[
+                \begin{aligned}
+                \bar{F}_A &= \frac{J_A}{\Delta t} \\
+                \bar{F}_A &= \frac{-0.28}{5 \times 10^{-3}} \\
+                \bar{F}_A &= -56 \text{ N}
+                \end{aligned}
+                \]
+            </div>
+            <p class="content-paragraph mt-3">שוב, הסימן השלילי מציין את הכיוון.</p>
+            <p class="final-answer">גודל הכוח הממוצע הוא \(56 \text{ N}\), וכיוונו שמאלה.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה 💡</strong><br>
+            ניתן היה לפתור סעיף זה גם בדרך קינמטית הממחישה את הקשר ההדוק לחוק השני של ניוטון! מאחר והגרף בזמן ההתנגשות הוא קו ישר, שיפועו קבוע ולכן התאוצה קבועה. <br>
+            נחשב את התאוצה של תיבה A (לפי שיפוע הגרף): \( a = \frac{\Delta v}{\Delta t} = \frac{1 - 3}{0.005} = -400 \text{ m/s}^2 \).<br>
+            כעת נציב בחוק השני של ניוטון: \( \Sigma F = m \cdot a = 0.14 \cdot (-400) = -56 \text{ N} \).<br>
+            אותה תוצאה בדיוק! משפט מתקף-תנע (\(F \cdot \Delta t = m \cdot \Delta v\)) הוא למעשה דרך אלגנטית ומקוצרת לכתוב את החוק השני של ניוטון יחד עם הגדרת התאוצה.
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה': דיון של תלמידים (שאלת הבנה)</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong><br>
+                תלמיד א' טוען: "על התיבה בעלת המסה הגדולה יותר פעל מתקף גדול יותר".<br>
+                תלמיד ב' טוען: "על שתי התיבות פעל מתקף שווה בגודלו, ללא קשר למסת התיבות".
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong><br>
+                לקבוע מי מבין שני התלמידים צודק, ולהסביר את התשובה.
+            </div>
+        </div>
+
+        <div class="visual-frame">
+            <svg width="400" height="200" viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg">
+                <!-- Surface -->
+                <line x1="20" y1="150" x2="380" y2="150" stroke="#475569" stroke-width="2" />
+                
+                <!-- Box A and Box B Touching -->
+                <rect x="70" y="80" width="130" height="70" fill="#eff6ff" stroke="#3b82f6" stroke-width="3" />
+                <text x="135" y="140" font-family="Arial" font-size="24" text-anchor="middle" font-weight="bold" fill="#1e3a8a">A</text>
+                
+                <rect x="200" y="80" width="130" height="70" fill="#f0fdf4" stroke="#22c55e" stroke-width="3" />
+                <text x="265" y="140" font-family="Arial" font-size="24" text-anchor="middle" font-weight="bold" fill="#14532d">B</text>
+                
+                <!-- Internal Forces Action-Reaction -->
+                <!-- Force of B on A (points left) -->
+                <circle cx="170" cy="110" r="3" fill="#8b5cf6" />
+                <line x1="170" y1="110" x2="90" y2="110" stroke="#8b5cf6" stroke-width="4" marker-end="url(#arrow-purple)" />
+                <text x="130" y="98" font-family="Times New Roman, serif" font-style="italic" font-size="18" text-anchor="middle" fill="#8b5cf6">
+                    F<tspan font-size="12" dy="5">BA</tspan>
+                </text>
+                
+                <!-- Force of A on B (points right) -->
+                <circle cx="230" cy="110" r="3" fill="#f97316" />
+                <line x1="230" y1="110" x2="310" y2="110" stroke="#f97316" stroke-width="4" marker-end="url(#arrow-orange)" />
+                <text x="270" y="98" font-family="Times New Roman, serif" font-style="italic" font-size="18" text-anchor="middle" fill="#f97316">
+                    F<tspan font-size="12" dy="5">AB</tspan>
+                </text>
+
+                <!-- Arrows definitions -->
+                <defs>
+                    <marker id="arrow-purple" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6" />
+                    </marker>
+                    <marker id="arrow-orange" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#f97316" />
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+
+        <div class="mt-4 mb-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            הפתרון לסעיף זה נשען על <span class="formula-badge">החוק השלישי של ניוטון</span> (חוק הפעולה והתגובה), ועל הגדרת המתקף. על פי החוק השלישי של ניוטון, הכוח שגוף א' מפעיל על גוף ב' שווה בגודלו ומנוגד בכיוונו לכוח שגוף ב' מפעיל על גוף א': \(\vec{F}_{AB} = -\vec{F}_{BA}\).
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">
+                בזמן ההתנגשות, שתי התיבות נוגעות זו בזו למשך בדיוק אותו פרק זמן \(\Delta t\). לפי החוק השלישי של ניוטון, בכל רגע ורגע הכוח שמפעילה \(B\) על \(A\) שווה בגודלו והפוך בכיוונו לכוח שמפעילה \(A\) על \(B\).
+                מכיוון שהכוחות שווים בגודלם לאורך כל זמן ההתנגשות, ופרק הזמן משותף, גם האינטגרל של הכוח על פני הזמן (שהוא המתקף) יהיה שווה בגודלו והפוך בכיוונו:
+            </p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[
+                \begin{aligned}
+                \vec{J}_A &= \vec{\bar{F}}_{BA} \Delta t \\
+                \vec{J}_B &= \vec{\bar{F}}_{AB} \Delta t \\
+                \vec{J}_A &= -\vec{J}_B \implies |\vec{J}_A| = |\vec{J}_B|
+                \end{aligned}
+                \]
+            </div>
+            <p class="content-paragraph mt-3">לכן, המתקפים שווים בגודלם תמיד, ללא שום קשר למסת הגופים המתנגשים.</p>
+            <p class="final-answer">תלמיד ב' הוא הצודק. לפי החוק השלישי של ניוטון, הכוחות הפנימיים שווים בגודלם, ומכיוון שזמן הפעולה זהה, גם המתקפים שווים בגודלם ללא תלות במסה.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה 💡</strong><br>
+            זהו אחד מהמסיחים הנפוצים ביותר בפיזיקה! האינטואיציה היומיומית שלנו אומרת ש"גוף גדול מכה חזק יותר". אך בפיזיקה, הכוח הוא הדדי. המסה הגדולה יותר לא קובעת כוח גדול יותר, אלא גורמת לכך שאותו כוח בדיוק יגרום לגוף הכבד לשינוי מהירות (תאוצה) קטן יותר בהשוואה לגוף הקל. שימו לב: המתקף שווה, השינוי בתנע שווה, אבל השינוי במהירות שונה לחלוטין (כפי שראינו בגרפים, מהירות \(B\) השתנתה בהרבה יותר ממהירות \(A\) משום שמסתה קטנה יותר).
+        </div>
+    </section>
+
+</div>
+
+<!-- כפתור צף להצגת השאלה -->
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<!-- מודל השאלה -->
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        if(openQuestionModalBtn) openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        if(closeQuestionModalBtn) closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        if(questionModal) {
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
