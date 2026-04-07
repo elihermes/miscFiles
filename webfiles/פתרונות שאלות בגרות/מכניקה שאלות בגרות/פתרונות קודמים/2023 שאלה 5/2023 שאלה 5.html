@@ -1,0 +1,775 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2023, שאלה 5</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+            display: flex;
+            flex-direction: column;
+            gap: 0.5rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - מכניקה 2023</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">שאלה 5: אנרגיה, תנע ומתקף</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך, צעד-אחר-צעד</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א' (1) -->
+    <section class="section-card" id="part-a1">
+        <h3 class="section-header">סעיף א' (1) - שימור אנרגיה מכנית</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> גוף משוחרר ממנוחה במורד מישור משופע <strong>חלק</strong>. לאחר מכן נע על משטח אופקי <strong>מחוספס</strong> ונעצר. מזניחים התנגדות אוויר.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לקבוע ולנמק האם האנרגיה המכנית של הגוף נשמרת בכל אחד משני קטעי התנועה (המשופע והאופקי).</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mb-0">משפט עבודה-אנרגיה <span class="formula-badge">\(W_{nc} = \Delta E\)</span>. אנרגיה מכנית נשמרת כאשר עבודת הכוחות הלא-משמרים שווה לאפס.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">ניתוח ופתרון:</h4>
+            <p class="content-paragraph"><strong>קטע 1 - המישור המשופע:</strong> הכוחות הפועלים על הגוף הם כוח הכובד מטה (כוח משמר) והכוח הנורמלי המאונך למשטח. מכיוון שהמישור חלק, אין כוח חיכוך. הכוח הנורמלי מאונך תמיד לכיוון ההעתק, ולכן אינו מבצע עבודה (\(W_N = 0\)). סך עבודת הכוחות הלא משמרים היא אפס, ולכן <strong>האנרגיה המכנית נשמרת</strong>.</p>
+            <p class="content-paragraph"><strong>קטע 2 - המשטח האופקי:</strong> הכוחות הפועלים הם כוח הכובד, הכוח הנורמלי, וכוח חיכוך קינטי הפועל נגד כיוון התנועה. כוח החיכוך הוא כוח לא משמר המבצע עבודה שלילית (הזווית בין הכוח להעתק היא 180 מעלות). מכיוון ש- \(W_{nc} < 0\), ישנו קיטון באנרגיה המכנית הכוללת, ולכן <strong>האנרגיה המכנית אינה נשמרת</strong>.</p>
+            
+            <div class="final-answer">
+                <span>במישור המשופע: האנרגיה המכנית נשמרת.</span>
+                <span>במשטח האופקי: האנרגיה המכנית אינה נשמרת (קטנה).</span>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong>
+            זכרו: כוח נורמלי לא מבצע עבודה כשהוא מאונך לכיוון התנועה. במישור המשופע, למרות שיש כוח לא משמר (הנורמלי), העבודה שלו היא אפס, ולכן עקרון שימור האנרגיה עדיין מתקיים!
+        </div>
+    </section>
+
+    <!-- סעיף א' (2) -->
+    <section class="section-card" id="part-a2">
+        <h3 class="section-header">סעיף א' (2) - שימור תנע</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> אותה מערכת גופים וכוחות כמו בסעיף א(1).</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לקבוע ולנמק האם תנע הגוף נשמר בכל אחד משני קטעי התנועה.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mb-0">משפט מתקף-תנע <span class="formula-badge">\(\vec{J} = \Delta\vec{p}\)</span> והחוק השני של ניוטון <span class="formula-badge">\(\Sigma\vec{F} = m\vec{a}\)</span>. תנע של מערכת נשמר רק אם שקול הכוחות החיצוניים הפועלים עליה שווה לאפס.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">ניתוח ופתרון:</h4>
+            <p class="content-paragraph"><strong>קטע 1 - המישור המשופע:</strong> רכיב כוח הכובד המקביל למישור (\(mg \sin\alpha\)) אינו מאוזן על ידי שום כוח אחר. לכן, פועל על הגוף שקול כוחות שאינו אפס, המקנה לו תאוצה (גודל המהירות גדל). מכיוון שיש כוח שקול, יש מתקף, ולכן <strong>התנע אינו נשמר</strong>.</p>
+            <p class="content-paragraph"><strong>קטע 2 - המשטח האופקי:</strong> בציר האופקי פועל כוח חיכוך קינטי בלבד (נגד כיוון התנועה). שקול הכוחות אינו אפס, הגוף חווה תאוצה שלילית ביחס לכיוון תנועתו (גודל המהירות קטן עד לעצירה). מאחר ששקול הכוחות אינו אפס, <strong>התנע אינו נשמר</strong>.</p>
+
+            <div class="final-answer">
+                <span>מסקנה: בשני קטעי התנועה (המשופע והאופקי) תנע הגוף אינו נשמר.</span>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong>
+            תנע הוא וקטור! כדי שתנע יישמר, גם הגודל (המהירות) וגם הכיוון חייבים להישאר קבועים. ברגע שיש כוח שקול כלשהו הפועל על הגוף, מהירותו משתנה (בגודל או בכיוון), והתנע משתנה בהתאם.
+        </div>
+    </section>
+
+    <!-- סעיף ב' -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב' - חישוב מקדם החיכוך</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong><br>
+                מסת גוף א': <span class="formula-badge">\(m_A = 0.4 \text{ kg}\)</span><br>
+                גובה התחלתי: <span class="formula-badge">\(h = 0.6 \text{ m}\)</span><br>
+                מרחק עצירה אופקי: <span class="formula-badge">\(x_A = 1.5 \text{ m}\)</span><br>
+                מהירות התחלתית וסופית הן אפס. תאוצת הכובד <span class="formula-badge">\(g = 10 \text{ m/s}^2\)</span>. (MKS).
+            </div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> את מקדם החיכוך הקינטי <span class="formula-badge">\(\mu_k\)</span> בין המשטח האופקי לגוף.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(W_{nc} = \Delta E\)</span>
+            <span class="formula-badge">\(U_G = mgh\)</span>
+            <span class="formula-badge">\(W = F \cdot \Delta x \cdot \cos\alpha\)</span>
+            <span class="formula-badge">\(f_k = \mu_k N\)</span>
+            <span class="formula-badge">\(\Sigma\vec{F} = m\vec{a}\)</span>
+        </div>
+
+        <!-- תרשים כוחות FBD -->
+        <div class="visual-frame">
+            <div class="flex flex-col items-center">
+                <h4 class="text-sm font-bold text-slate-500 mb-2">תרשים כוחות (FBD) - קטע אופקי</h4>
+                <svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                    <defs>
+                        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155" />
+                        </marker>
+                        <marker id="arrow-v" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#22c55e" />
+                        </marker>
+                    </defs>
+                    <!-- Surface -->
+                    <line x1="20" y1="150" x2="280" y2="150" stroke="#94a3b8" stroke-width="4" stroke-linecap="round"/>
+                    <!-- Object -->
+                    <rect x="130" y="110" width="40" height="40" fill="#cbd5e1" stroke="#475569" stroke-width="2" rx="4"/>
+                    <!-- Gravity -->
+                    <line x1="150" y1="150" x2="150" y2="190" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+                    <text x="160" y="185" font-family="Arial" font-size="14" fill="#334155">mg</text>
+                    <!-- Normal -->
+                    <line x1="150" y1="110" x2="150" y2="60" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+                    <text x="160" y="70" font-family="Arial" font-size="14" fill="#334155">N</text>
+                    <!-- Friction -->
+                    <line x1="130" y1="130" x2="80" y2="130" stroke="#334155" stroke-width="2" marker-end="url(#arrow)"/>
+                    <text x="70" y="120" font-family="Arial" font-size="14" fill="#334155">f_k</text>
+                    <!-- Velocity Vector (Ghost) -->
+                    <line x1="170" y1="130" x2="220" y2="130" stroke="#22c55e" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow-v)"/>
+                    <text x="210" y="120" font-family="Arial" font-size="14" fill="#22c55e">v</text>
+                </svg>
+            </div>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נשווה את האנרגיה המכנית במצב ההתחלתי (בגובה h) לאנרגיה המכנית במצב הסופי (עצירה, גובה אפס).</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_i = m_A g h \quad \text{,} \quad E_f = 0 \]
+            </div>
+            
+            <p class="content-paragraph mt-4">הכוח הלא משמר היחיד המבצע עבודה הוא כוח החיכוך. מכיוון שאין תאוצה בציר האנכי במסלול האופקי (\(a_y = 0\)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_y = m a_y = 0 \Rightarrow N - m_A g = 0 \Rightarrow N = m_A g \]
+                \[ f_k = \mu_k N = \mu_k m_A g \]
+            </div>
+            
+            <p class="content-paragraph mt-4">עבודת כוח החיכוך (זווית 180 מעלות לכיוון התנועה):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ W_{nc} = W_f = -f_k \cdot x_A = -\mu_k m_A g x_A \]
+            </div>
+            
+            <p class="content-paragraph mt-4">נציב במשפט עבודה-אנרגיה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ W_{nc} = E_f - E_i \]
+                \[ -\mu_k m_A g x_A = 0 - m_A g h \]
+            </div>
+            
+            <p class="content-paragraph mt-4">נצמצם את המסה \(m_A\) ותאוצת הכובד \(g\) משני אגפי המשוואה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \mu_k x_A = h \Rightarrow \mu_k = \frac{h}{x_A} \]
+            </div>
+            
+            <p class="content-paragraph mt-4">נציב את הנתונים המספריים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \mu_k = \frac{0.6}{1.5} = 0.4 \]
+            </div>
+
+            <div class="final-answer">
+                <span>מסקנה: מקדם החיכוך הקינטי הוא: \( \mu_k = 0.4 \)</span>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong>
+            שימו לב למסקנה המדהימה שהגענו אליה בביטוי האלגברי: המסה של הגוף התבטלה! המשמעות היא שמרחק העצירה תלוי רק בגובה ההתחלתי ובמקדם החיכוך, ולא תלוי כלל במסת הגוף. תובנה זו תעזור לנו מאוד בסעיף הבא.
+        </div>
+    </section>
+
+    <!-- סעיף ג' -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג' - השוואת מרחקי עצירה</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> משחררים גוף B שמסתו <span class="formula-badge">\(m_B = 1.2 \text{ kg}\)</span> (גדולה ממסת גוף A). מקדם החיכוך זהה. הגובה ההתחלתי <span class="formula-badge">\(h\)</span> זהה.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לקבוע האם המרחק <span class="formula-badge">\(x_B\)</span> שגוף B עובר עד לעצירה גדול, שווה או קטן מ- <span class="formula-badge">\(x_A\)</span> ולנמק.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mb-0">הקשר האלגברי שפיתחנו בסעיף הקודם: <span class="formula-badge">\(x = \frac{h}{\mu_k}\)</span></p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">ניתוח ופתרון:</h4>
+            <p class="content-paragraph">בסעיף ב' ראינו שניתן לבטא את מרחק העצירה על ידי הנוסחה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ x = \frac{h}{\mu_k} \]
+            </div>
+            <p class="content-paragraph">מנוסחה זו ניתן לראות כי מרחק העצירה אינו תלוי במסת הגוף \(m\). מאחר שגוף B משוחרר מאותו גובה התחלתי \(h\), ונע על משטח בעל אותו מקדם חיכוך \(\mu_k\), הוא יעבור בדיוק את אותו המרחק עד שייעצר, למרות שמסתו גדולה יותר.</p>
+
+            <div class="final-answer">
+                <span>מסקנה: המרחק \(x_B\) שווה למרחק \(x_A\).</span>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong>
+            האינטואיציה שלנו לפעמים מטעה. אנו חושבים שגוף כבד יותר "קשה יותר לעצירה". זה נכון שיש לו יותר אנרגיה קינטית, אך מצד שני, הכוח הנורמלי שלו גדול יותר, ולכן כוח החיכוך שפועל עליו ובולם אותו גדול בדיוק באותו היחס! ההשפעות מקזזות זו את זו.
+        </div>
+    </section>
+
+    <!-- סעיף ד' -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד' - מתקף בהתנגשות אלסטית</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong><br>
+                מסת גוף A: <span class="formula-badge">\(m_A = 0.4 \text{ kg}\)</span> (<span class="formula-badge">\(v_{A1} = 0\)</span>).<br>
+                מסת גוף B: <span class="formula-badge">\(m_B = 1.2 \text{ kg}\)</span>.<br>
+                מהירות גוף B רגע לפני: <span class="formula-badge">\(v_{B1} = +4 \text{ m/s}\)</span> (ימינה, ציר חיובי).<br>
+                סוג התנגשות: אלסטית לחלוטין (חזיתית - חד ממדית).
+            </div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> את המתקף <span class="formula-badge">\(\vec{J}_B\)</span> (גודל וכיוון) שפעל על גוף B במהלך ההתנגשות.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(m_A v_{A1} + m_B v_{B1} = m_A u_A + m_B u_B\)</span>
+            <span class="formula-badge">\(v_{A1} - v_{B1} = -(u_A - u_B)\)</span>
+            <span class="formula-badge">\(\vec{J} = \Delta\vec{p}\)</span>
+            <span class="formula-badge">\(\vec{p} = m\vec{v}\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <div class="step-label">שלב 1: מציאת המהירויות לאחר ההתנגשות</div>
+            <p class="content-paragraph">נשתמש בחוק שימור התנע (ציר חיובי ימינה):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 0.4 \cdot 0 + 1.2 \cdot 4 = 0.4 \cdot u_A + 1.2 \cdot u_B \]
+                \[ 4.8 = 0.4 u_A + 1.2 u_B \]
+            </div>
+            <p class="content-paragraph">נחלק ב-0.4 כדי לפשט:</p>
+            <div class="flex justify-center items-center gap-4 overflow-x-auto" dir="ltr">
+                <div class="math-block">\[ 12 = u_A + 3u_B \]</div>
+                <div dir="rtl" class="text-slate-600 whitespace-nowrap font-medium">--- (משוואה 1)</div>
+            </div>
+            
+            <p class="content-paragraph mt-4">נשתמש במשוואת המהירויות היחסיות להתנגשות אלסטית:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 0 - 4 = -(u_A - u_B) \]
+            </div>
+            <div class="flex justify-center items-center gap-4 overflow-x-auto" dir="ltr">
+                <div class="math-block">\[ -4 = -u_A + u_B \Rightarrow u_A = u_B + 4 \]</div>
+                <div dir="rtl" class="text-slate-600 whitespace-nowrap font-medium">--- (משוואה 2)</div>
+            </div>
+            
+            <p class="content-paragraph mt-4">נציב את משוואה 2 לתוך משוואה 1:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 12 = (u_B + 4) + 3u_B \]
+                \[ 12 = 4u_B + 4 \]
+                \[ 8 = 4u_B \Rightarrow u_B = 2 \text{ m/s} \]
+            </div>
+            
+            <div class="step-label mt-4">שלב 2: חישוב המתקף</div>
+            <p class="content-paragraph">מהירות גוף B לאחר ההתנגשות היא 2 מטר לשנייה ימינה. כעת נחשב את המתקף על גוף B על ידי שינוי התנע שלו:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \vec{J}_B = \Delta\vec{p}_B = m_B u_B - m_B v_{B1} \]
+                \[ J_B = 1.2 \cdot (2 - 4) = 1.2 \cdot (-2) = -2.4 \text{ N}\cdot\text{s} \]
+            </div>
+            <p class="content-paragraph">הסימן השלילי מציין שהמתקף פועל נגד הכיוון החיובי שבחרנו (שמאלה).</p>
+
+            <div class="final-answer">
+                <span>מסקנה: גודל המתקף שפעל על גוף B הוא \( 2.4 \text{ N}\cdot\text{s} \)</span>
+                <span>כיוון המתקף הוא שמאלה (נגד כיוון התנועה המקורי של הגוף).</span>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong>
+            הקפדה על מערכת צירים היא קריטית בבעיות תנע ומתקף! הגדרנו את כיוון ימינה כחיובי בתחילת הבעיה. התוצאה השלילית שקיבלנו עבור המתקף תואמת את חוק הפעולה והתגובה של ניוטון (גוף B הפעיל כוח ימינה על A, ולכן A הפעיל כוח שמאלה על B).
+        </div>
+    </section>
+
+    <!-- סעיף ה' -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה' - השוואת מתקף בשיפועים שונים</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong><br>
+                הגוף משוחרר מאותו גובה <span class="formula-badge">\(h\)</span> בשני מקרים על מישור משופע <strong>חלק</strong>.<br>
+                מקרה 1: זווית שיפוע <span class="formula-badge">\(\alpha\)</span>. גודל המתקף על הגוף <span class="formula-badge">\(J_1\)</span>.<br>
+                מקרה 2: זווית <span class="formula-badge">\(\beta > \alpha\)</span>. גודל המתקף על הגוף <span class="formula-badge">\(J_2\)</span>.
+            </div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> איזה ביטוי נכון מבין האפשרויות (השוואה בין \(J_1\) ל-\(J_2\)) ולנמק.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\Sigma\vec{J} = \Delta\vec{p}\)</span>
+            <span class="formula-badge">\(\vec{p} = m\vec{v}\)</span>
+            <span class="formula-badge">\(E_k + U_g = \text{const}\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">ניתוח ופתרון:</h4>
+            <p class="content-paragraph">השאלה מבקשת להשוות את <strong>המתקף הכולל</strong> שפעל על הגוף. לפי משפט מתקף-תנע, המתקף הכולל שווה לשינוי בתנע של הגוף:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ J = |\Delta\vec{p}| = m|v_f - v_i| \]
+            </div>
+            
+            <p class="content-paragraph mt-4">מכיוון שהגוף משוחרר ממנוחה (\(v_i = 0\)), גודל המתקף תלוי אך ורק בגודל המהירות הסופית שלו בתחתית המדרון:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ J = mv_f \]
+            </div>
+
+            <p class="content-paragraph mt-4">כדי למצוא את המהירות הסופית, נשתמש בחוק שימור אנרגיה מכנית (מכיוון שהמישור חלק ואין עבודת כוחות לא משמרים):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ mgh = \frac{1}{2}mv_f^2 \Rightarrow v_f = \sqrt{2gh} \]
+            </div>
+            
+            <p class="content-paragraph mt-4">אנו רואים שגודל המהירות בתחתית המישור תלוי <strong>רק</strong> בגובה ההתחלתי \(h\), ואינו תלוי בזווית השיפוע של המישור. מכיוון שבשני המקרים הגוף משוחרר מאותו גובה \(h\), הוא יגיע לתחתית באותה מהירות סופית \(v_f\).</p>
+            
+            <p class="content-paragraph mt-4">מכיוון שהמהירות הסופית זהה, והמסה זהה, השינוי בתנע (בגודלו) זהה לחלוטין בשני המקרים.</p>
+
+            <div class="final-answer">
+                <span>מסקנה: הביטוי הנכון הוא ביטוי מספר 2: \( J_1 = J_2 \)</span>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong>
+            היינו יכולים לפתור את הסעיף הזה גם "בדרך הארוכה" דרך קינמטיקה ודינמיקה – לחשב את שקול הכוחות לאורך המדרון ואת זמן התנועה, ואז להכפיל כוח בזמן (\(J = \Sigma F \cdot \Delta t\)). זה היה עובד וברור שהיינו מגיעים בדיוק לאותה התוצאה, אבל זה דורש אלגברה הרבה יותר מורכבת. היופי בפיזיקה הוא שלפעמים 'מבט על' דרך עקרונות שימור (אנרגיה ומתקף-תנע) עוקף את כל המתמטיקה המסורבלת ונותן לנו תשובה אלגנטית, קצרה וחד-משמעית.
+        </div>
+    </section>
+
+</div>
+
+<!-- Floating Question Button -->
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<!-- Question Modal -->
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
