@@ -1,0 +1,820 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2018 שאלה 4</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - מכניקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מטוטלת בליסטית - שנת 2018, שאלה 4</h2>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">מבט כללי על השאלה</h3>
+        <p class="content-paragraph">שלום תלמידים יקרים! השאלה שלפנינו עוסקת במטוטלת בליסטית - מתקן קלאסי ששימש בעבר למדידת מהירות של קליעים.</p>
+        <p class="content-paragraph mb-0">השאלה משלבת שני עקרונות פיזיקליים חשובים: חוק שימור התנע (הפועל בזמן ההתנגשות) וחוק שימור האנרגיה המכנית (הפועל בדרך כלל בזמן עליית המטוטלת לאחר ההתנגשות). בואו נפתור יחד, שלב אחר שלב!</p>
+    </section>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א'</h3>
+        <p class="content-paragraph">קבע אם התנע והאנרגיה המכנית נשמרים בפרק הזמן שבין תחילת ההתנגשות (רגע הפגיעה) ועד לעצירת הקליע בתוך הגוף. הסבר.</p>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> קליע מסתו \( m_1 \), גוף (בול עץ) מסתו \( m_2 \). הקליע חודר לגוף ונעצר בתוכו תוך פרק זמן קצר מאוד. שלב זה נקרא "התנגשות פלסטית" (או התנגשות לא אלסטית לחלוטין). כיוון שתהליך החדירה קצר ביותר, אנו מניחים שהגוף (הבול) עדיין לא הספיק לזוז ממקומו או לעלות למעלה, ולכן החוט נשאר אנכי לאורך כל ההתנגשות.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> האם נשמר התנע הקווי (האופקי)? האם נשמרת האנרגיה המכנית במערכת (קליע + גוף)?
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\Sigma\vec{F} = m\vec{a}\)</span>
+            <span class="formula-badge">\( \vec{p} = m\vec{v} \)</span>
+            <span class="formula-badge">עבודת כוחות לא-משמרים = \(\Delta E_{k}\) (או \(\Delta E_{mechanical}\))</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">ניתוח כוחות (פתרון צעד-אחר-צעד):</h4>
+            <p class="content-paragraph">
+                חוק שימור התנע קובע שאם שקול הכוחות החיצוניים על מערכת (בציר מסוים) שווה לאפס, אזי התנע הכולל של המערכת באותו ציר נשמר.
+            </p>
+            
+            <div class="flex flex-col lg:flex-row items-center gap-6 my-4">
+                <div class="flex-1">
+                    <p class="content-paragraph">
+                        <strong>תרשים כוחות (FBD) במהלך ההתנגשות:</strong><br>
+                        נסתכל על המערכת הכוללת (קליע + גוף). בזמן הקצר של ההתנגשות, הכוחות החיצוניים היחידים הפועלים על המערכת הם:<br>
+                        1. כוח הכובד (כלפי מטה) - מסומן ב-\( (m_1+m_2)g \).<br>
+                        2. מתיחות החוט (כלפי מעלה, לאורך החוט האנכי) - מסומנת ב-\( T \).<br>
+                        כוחות אלו מאזנים זה את זה בציר האנכי (\( \Sigma F_y = 0 \)).
+                    </p>
+                    <p class="content-paragraph mb-0">
+                        בציר האופקי (\( x \)), <strong>אין כוחות חיצוניים</strong> הפועלים על המערכת. כוחות החיכוך בין הקליע לגוף הם כוחות פנימיים למערכת המבטלים זה את זה (לפי החוק השלישי של ניוטון: פעולה ותגובה). מכיוון ששקול הכוחות בציר האופקי הוא אפס (\( \Sigma F_x = 0 \)), <strong>התנע נשמר</strong>.
+                    </p>
+                </div>
+                <div class="visual-frame lg:w-1/2 flex-shrink-0 bg-slate-50">
+                    <svg width="200" height="250" viewBox="0 0 200 250" xmlns="http://www.w3.org/2000/svg" class="max-w-full h-auto">
+                        <!-- תקרה וחוט -->
+                        <line x1="70" y1="20" x2="130" y2="20" stroke="#333" stroke-width="4" />
+                        <line x1="80" y1="20" x2="70" y2="10" stroke="#333" stroke-width="2" />
+                        <line x1="100" y1="20" x2="90" y2="10" stroke="#333" stroke-width="2" />
+                        <line x1="120" y1="20" x2="110" y2="10" stroke="#333" stroke-width="2" />
+                        <line x1="100" y1="20" x2="100" y2="120" stroke="#64748b" stroke-width="2" stroke-dasharray="4" />
+                        
+                        <!-- בלוק -->
+                        <rect x="70" y="120" width="60" height="40" fill="#cbd5e1" stroke="#475569" stroke-width="2" />
+                        <text x="100" y="145" font-family="Arial" font-size="14" font-weight="bold" fill="#333" text-anchor="middle">m1+m2</text>
+                        
+                        <!-- כוחות -->
+                        <!-- T -->
+                        <line x1="100" y1="120" x2="100" y2="60" stroke="#ef4444" stroke-width="3" />
+                        <polygon points="96,65 104,65 100,55" fill="#ef4444" />
+                        <text x="115" y="80" font-family="Arial" font-size="16" fill="#ef4444" font-style="italic">T</text>
+                        
+                        <!-- mg -->
+                        <line x1="100" y1="160" x2="100" y2="220" stroke="#ef4444" stroke-width="3" />
+                        <polygon points="96,215 104,215 100,225" fill="#ef4444" />
+                        <text x="135" y="210" font-family="Arial" font-size="16" fill="#ef4444" font-style="italic">(m1+m2)g</text>
+                        
+                        <text x="100" y="245" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">תרשים גוף חופשי - רגע ההתנגשות</text>
+                    </svg>
+                </div>
+            </div>
+
+            <p class="content-paragraph">
+                לגבי האנרגיה המכנית: הקליע חודר לתוך העץ, פעולה המלווה בחיכוך משמעותי, עיוות (דפורמציה) ויצירת חום. כוח החיכוך בין הקליע לעץ הוא כוח <strong>לא-משמר</strong> המבצע עבודה שלילית. לפי המשפט \( W_{nc} = \Delta E_{mechanical} \), מכיוון שיש עבודה של כוחות לא משמרים, האנרגיה המכנית פוחתת (חלקה הופך לאנרגיית חום). לכן, <strong>האנרגיה המכנית אינה נשמרת</strong>.
+            </p>
+
+            <div class="final-answer">
+                מסקנה:<br>
+                התנע נשמר (שקול כוחות חיצוניים באופק אפס).<br>
+                האנרגיה המכנית אינה נשמרת (מושקעת עבודה על ידי כוחות חיכוך לא-משמרים - התנגשות פלסטית).
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 הערת מורה:</strong>
+            חשוב לזכור עיקרון זה בהתנגשויות! בהתנגשות פלסטית (כאשר הגופים נצמדים זה לזה), התנע בדרך כלל נשמר (כל עוד אין כוחות חיצוניים המופעלים על המערכת באותו ציר), אבל האנרגיה הקינטית (ובמקרה זה, המכנית) לרוב אינה נשמרת, כי חלק מהאנרגיה "הולך לאיבוד" והופך לחום ולשינוי צורה פנימי.
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב'</h3>
+        <p class="content-paragraph">קבע אם התנע והאנרגיה המכנית נשמרים בפרק הזמן שבין תחילת תנועת הגוף (רגע לאחר ההתנגשות בנקודה A) ועד לעצירתו הרגעית בנקודה B. הסבר.</p>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> כעת המערכת היא הגוף המאוחד (קליע + בול עץ) הנע לאורך קשת מעגלית מנקודה A (התחתית) לנקודה B (שיא הגובה).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> האם נשמר התנע? האם נשמרת האנרגיה המכנית בתנועה מ-A ל-B?
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">עבודה של כוח קבוע: \(W = F \cdot \Delta x \cdot \cos\theta\)</span>
+            <span class="formula-badge">עבודת כוחות לא-משמרים = \(\Delta E_{mechanical}\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">ניתוח כוחות ואנרגיה (פתרון צעד-אחר-צעד):</h4>
+            
+            <div class="flex flex-col lg:flex-row items-center gap-6 my-4">
+                <div class="flex-1">
+                    <p class="content-paragraph">
+                        <strong>תרשים כוחות (FBD) במהלך העלייה בקשת:</strong><br>
+                        בזמן העלייה מ-A ל-B, פועלים על המערכת שני כוחות חיצונים:<br>
+                        1. כוח הכובד מטה (\( Mg \)).<br>
+                        2. מתיחות החוט אל מרכז המעגל (\( T \)).
+                    </p>
+                    <p class="content-paragraph mb-0">
+                        שקול הכוחות אינו אפס! יש כוח רדיאלי (הגורם לתנועה המעגלית ולשינוי כיוון המהירות) וכן רכיב משיקי של כוח הכובד הגורם לכך שגודל המהירות קטן ככל שהמטוטלת עולה. מכיוון ששקול הכוחות החיצוניים אינו אפס (\( \Sigma \vec{F} \neq 0 \)), <strong>התנע אינו נשמר</strong> (הוא משתנה גם בגודלו וגם בכיוונו).
+                    </p>
+                </div>
+                <div class="visual-frame lg:w-1/2 flex-shrink-0 bg-slate-50">
+                    <svg width="250" height="250" viewBox="0 0 250 250" xmlns="http://www.w3.org/2000/svg" class="max-w-full h-auto">
+                        <!-- תקרה וחוט -->
+                        <line x1="80" y1="20" x2="140" y2="20" stroke="#333" stroke-width="4" />
+                        <!-- ציר ישר -->
+                        <line x1="110" y1="20" x2="110" y2="160" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4" />
+                        <!-- חוט בזווית -->
+                        <!-- חישוב: אורך 140, זווית בערך 30 מעלות שמאלה -->
+                        <line x1="110" y1="20" x2="50" y2="140" stroke="#64748b" stroke-width="2" />
+                        
+                        <!-- בלוק -->
+                        <rect x="25" y="130" width="40" height="30" transform="rotate(25, 50, 140)" fill="#cbd5e1" stroke="#475569" stroke-width="2" />
+                        
+                        <!-- וקטור מהירות (משיק) -->
+                        <line x1="45" y1="135" x2="10" y2="100" stroke="#3b82f6" stroke-width="2" stroke-dasharray="2" />
+                        <polygon points="12,105 8,98 16,98" transform="rotate(-45, 10, 100)" fill="#3b82f6" />
+                        <text x="15" y="90" font-family="Arial" font-size="14" fill="#3b82f6" font-style="italic">v</text>
+
+                        <!-- כוחות -->
+                        <!-- T -->
+                        <line x1="50" y1="140" x2="80" y2="80" stroke="#ef4444" stroke-width="3" />
+                        <polygon points="76,82 82,76 84,86" transform="rotate(-63, 80, 80)" fill="#ef4444" />
+                        <text x="85" y="70" font-family="Arial" font-size="16" fill="#ef4444" font-style="italic">T</text>
+                        
+                        <!-- mg -->
+                        <line x1="50" y1="140" x2="50" y2="200" stroke="#ef4444" stroke-width="3" />
+                        <polygon points="46,195 54,195 50,205" fill="#ef4444" />
+                        <text x="60" y="195" font-family="Arial" font-size="16" fill="#ef4444" font-style="italic">Mg</text>
+                        
+                        <!-- זווית -->
+                        <text x="85" y="145" font-family="Arial" font-size="12" fill="#ef4444" transform="rotate(25, 85, 145)">90° בין T ל-v</text>
+                        <path d="M 50 140 Q 65 145 60 120" fill="none" stroke="#ef4444" stroke-width="1" />
+
+                        <text x="125" y="235" font-family="Arial" font-size="12" fill="#64748b" text-anchor="middle">תרשים גוף חופשי - תנועה בקשת</text>
+                    </svg>
+                </div>
+            </div>
+
+            <p class="content-paragraph">
+                לגבי האנרגיה המכנית: יש לבדוק אילו כוחות מבצעים עבודה. כוח הכובד הוא כוח משמר. כוח המתיחות \( T \) הוא כוח לא-משמר, אבל נשים לב שהוא מכוון לאורך החוט, ולכן בתנועה מעגלית הוא פועל בניצב (\( 90^\circ \)) לוקטור המהירות \( \vec{v} \) המשיק לקשת התנועה. מכיוון שהכוח ניצב לכיוון ההתקדמות, הזווית בנוסחת העבודה היא \( \theta = 90^\circ \) ולכן \( \cos(90^\circ) = 0 \). כוח המתיחות במקרה זה <strong>אינו מבצע עבודה</strong> (\( W_T = 0 \)).<br>
+                מכיוון שאין כוחות לא-משמרים המבצעים עבודה, האנרגיה המכנית הכוללת של המערכת <strong>נשמרת</strong>, ומתרחשת המרה מאנרגיה קינטית לאנרגיה פוטנציאלית כובדית.
+            </p>
+
+            <div class="final-answer">
+                מסקנה:<br>
+                התנע אינו נשמר (יש שקול כוחות חיצוניים: כובד ומתיחות).<br>
+                האנרגיה המכנית נשמרת (כוח המתיחות הלא-משמר ניצב לתנועה ולכן אינו מבצע עבודה).
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>⚠️ מומלץ לשים לב:</strong>
+            תלמידים נוטים לעיתים לחשוב שברגע שיש חוט - מופעל חיכוך או שיש איבוד אנרגיה. מומלץ לבדוק את כיוון הכוח ביחס לכיוון התנועה. מתיחות במטוטלת (כמו גם הכוח הנורמלי בתנועה על משטח חלק) לרוב אינה מבצעת עבודה, משום שהיא מאונכת לכיוון ההתקדמות!
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג'</h3>
+        <p class="content-paragraph">חשב את האנרגיה הקינטית של המערכת, מיד לאחר שהגוף (עם הקליע בתוכו) התחיל את תנועתו בנקודה A.</p>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> אנו נעבוד בדיוק של 3 ספרות מהותיות.<br>
+                מסת הקליע: \( m_1 = 0.015 \text{ kg} \)<br>
+                מסת הגוף: \( m_2 = 4.985 \text{ kg} \)<br>
+                המסה הכוללת (\( M \)): \( M = m_1 + m_2 = 5.00 \text{ kg} \)<br>
+                אורך החוט: \( l = 0.600 \text{ m} \)<br>
+                זווית הסטייה המרבית בנקודה B: \( \theta = 12.0^\circ \)<br>
+                \( g = 10 \text{ m/s}^2 \).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> אנרגיה קינטית בנקודה A מיד לאחר ההתנגשות: \( E_{k,A} \).
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">חוק שימור אנרגיה: \(E_{A} = E_{B}\)</span>
+            <span class="formula-badge">\(E_{k} = \frac{1}{2}mv^2\)</span>
+            <span class="formula-badge">\(U_{G} = mgh\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב (פתרון צעד-אחר-צעד):</h4>
+            <p class="content-paragraph">
+                כפי שהוכחנו בסעיף ב', האנרגיה המכנית נשמרת בין נקודה A לנקודה B.<br>
+                נקבע את מישור הייחוס לאנרגיה פוטנציאלית כובדית בגובה הנמוך ביותר (נקודה A), כלומר: \( h_A = 0 \), ולכן \( U_{g,A} = 0 \).<br>
+                בנקודה B (שיא הגובה), המערכת נעצרת רגעית. כלומר גודל המהירות מתאפס: \( v_B = 0 \), ולכן האנרגיה הקינטית ב-B היא אפס (\( E_{k,B} = 0 \)).<br>
+                לפי חוק שימור האנרגיה המכנית:
+            </p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{A} = E_{B} \]
+                \[ E_{k,A} + U_{g,A} = E_{k,B} + U_{g,B} \]
+                \[ E_{k,A} + 0 = 0 + U_{g,B} \]
+                \[ E_{k,A} = M \cdot g \cdot h_B \]
+            </div>
+
+            <p class="content-paragraph mt-4">
+                כעת, עלינו למצוא את הגובה \( h_B \). מגיאומטריה של מטוטלת, הגובה שאליו מגיעה המסה ביחס לנקודה התחתונה מבוטא על ידי ההפרש בין אורך החוט (\( l \)) לבין ההיטל של החוט על הציר האנכי (\( l \cos\theta \)):
+            </p>
+
+            <div class="math-container text-center" dir="ltr">
+                \[ h_B = l - l \cdot \cos\theta = l \cdot (1 - \cos\theta) \]
+                \[ h_B = 0.6 \cdot (1 - \cos 12^\circ) \approx 0.0131 \text{ m} \]
+            </div>
+
+            <p class="content-paragraph mt-4">
+                נציב חזרה כדי למצוא את האנרגיה הקינטית (נשתמש במסה הכוללת \( M = 5 \text{ kg} \)):
+            </p>
+
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{k,A} = M \cdot g \cdot h_B \]
+                \[ E_{k,A} = 5 \cdot 10 \cdot 0.0131 \approx 0.656 \text{ J} \]
+            </div>
+
+            <div class="final-answer">
+                מסקנה:<br>
+                \[ E_{k,A} = 0.656 \text{ J} \]
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>📐 הערת מורה:</strong>
+            הנוסחה לגובה של מטוטלת \( h = l(1-\cos\theta) \) אינה מופיעה בדף הנוסחאות, ולכן חובה לפתח אותה בעזרת טריגונומטריה כפי שעשינו כאן, ואין לרשום אותה ישירות כנתון. עם זאת, מכיוון שהיא מופיעה כמעט בכל שאלת מטוטלת, כדאי מאוד לזכור אותה בעל פה - כך תדעו מראש לאיזו תוצאה עליכם להגיע בחישוב, ותוכלו לוודא שלא טעיתם בדרך הפיתוח!
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד'</h3>
+        <p class="content-paragraph">חשב את \( v_0 \), מהירות הקליע ברגע פגיעתו בגוף.</p>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                האנרגיה הקינטית מיד לאחר ההתנגשות כפי שחישבנו: \( E_{k,A} \approx 0.656 \text{ J} \).<br>
+                המסה הכוללת \( M = 5.00 \text{ kg} \).<br>
+                מסת הקליע בלבד: \( m_1 = 0.015 \text{ kg} \).<br>
+                מסת הגוף: \( m_2 = 4.985 \text{ kg} \) (במנוחה בהתחלה, מהירותו 0).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> את המהירות ההתחלתית של הקליע, \( v_0 \).
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(E_{k} = \frac{1}{2}mv^2\)</span>
+            <span class="formula-badge">שימור תנע אופקי: \( m_A \vec{v}_A + m_B \vec{v}_B = m_A \vec{u}_A + m_B \vec{u}_B \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב (פתרון צעד-אחר-צעד):</h4>
+            <div class="step-label">שלב 1: מציאת המהירות המשותפת מיד לאחר הפגיעה</div>
+            <p class="content-paragraph">
+                תחילה, עלינו למצוא את המהירות של המערכת המשותפת בנקודה A (מיד לאחר ההתנגשות), נקרא לה \( u \). נעשה זאת מתוך האנרגיה הקינטית:
+            </p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{k,A} = \frac{1}{2} M u^2 \]
+                \[ 0.656 = \frac{1}{2} \cdot 5 \cdot u^2 \]
+                \[ 0.656 = 2.5 \cdot u^2 \]
+                \[ u^2 = \frac{0.656}{2.5} = 0.2624 \]
+                \[ u = \sqrt{0.2624} \approx 0.512 \text{ m/s} \]
+            </div>
+
+            <div class="step-label mt-4">שלב 2: חוק שימור התנע</div>
+            <p class="content-paragraph">
+                נשתמש בחוק שימור התנע (שהוכחנו בסעיף א' שמתקיים לאורך ציר האופק במהלך ההתנגשות).<br>
+                לפני ההתנגשות: התנע הוא רק של הקליע (\( m_1 \cdot v_0 \)), שכן הגוף במנוחה.<br>
+                אחרי ההתנגשות: התנע הוא של המערכת המשותפת (\( M \cdot u \)).
+            </p>
+
+            <div class="math-container text-center" dir="ltr">
+                \[ m_1 \cdot v_0 + m_2 \cdot 0 = (m_1 + m_2) \cdot u \]
+                \[ 0.015 \cdot v_0 = 5 \cdot 0.512 \]
+                \[ 0.015 \cdot v_0 = 2.56 \]
+                \[ v_0 = \frac{2.56}{0.015} \approx 171 \text{ m/s} \]
+            </div>
+
+            <div class="final-answer">
+                מסקנה:<br>
+                \[ v_0 = 171 \text{ m/s} \]
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>🎯 הערת מורה:</strong>
+            שימו לב כיצד "הלכנו אחורה בזמן". התחלנו מהסוף (זווית מקסימלית) כדי למצוא את המהירות מיד אחרי ההתנגשות, ומשם חזרנו עוד אחורה לרגע שלפני ההתנגשות כדי למצוא את מהירות הקליע. זהו דפוס חשיבה נפוץ ושימושי בשאלות רבות בסגנון "המטוטלת הבליסטית".
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה'</h3>
+        <p class="content-paragraph">חשב את האנרגיה המכנית ש"אבדה" בגלל החיכוך (האנרגיה שהומרה לחום / עיוות פנימי בהתנגשות).</p>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> מהירות הקליע ההתחלתית: \( v_0 = 171 \text{ m/s} \).<br>
+                אנרגיית המערכת המשותפת לאחר ההתנגשות: \( E_{k,A} = 0.656 \text{ J} \).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> את ההפרש בין האנרגיה ההתחלתית במערכת (של הקליע בלבד) לבין האנרגיה המכנית מיד לאחר ההתנגשות. הפרש זה מסמן כ-\( \Delta E \) (גודל האנרגיה שאבדה).
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\Delta E = E_{initial} - E_{final}\)</span>
+            <span class="formula-badge">\(E_{k} = \frac{1}{2}mv^2\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב (פתרון צעד-אחר-צעד):</h4>
+            <p class="content-paragraph">
+                נחשב תחילה את האנרגיה הקינטית ההתחלתית של המערכת בטרם הפגיעה. אנרגיה זו שייכת לקליע בלבד:
+            </p>
+
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{initial} = \frac{1}{2} m_1 v_0^2 \]
+                \[ E_{initial} = \frac{1}{2} \cdot 0.015 \cdot 171^2 \]
+                \[ E_{initial} = 0.0075 \cdot 29241 \approx 219 \text{ J} \]
+            </div>
+
+            <p class="content-paragraph mt-4">
+                נחסיר מהאנרגיה ההתחלתית את האנרגיה שנותרה למערכת מיד לאחר ההתנגשות (שחישבנו בסעיף ג'):
+            </p>
+
+            <div class="math-container text-center" dir="ltr">
+                \[ \Delta E_{lost} = E_{initial} - E_{k,A} \]
+                \[ \Delta E_{lost} = 219 - 0.656 \approx 218 \text{ J} \]
+            </div>
+
+            <div class="final-answer">
+                מסקנה:<br>
+                האנרגיה המכנית שאבדה בגלל החיכוך היא \( 218 \text{ J} \).
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>🔥 הערת מורה:</strong>
+            תראו איזה מדהים זה! התחלנו עם כ-219 ג'אול של אנרגיה, ורק קצת יותר מחצי ג'אול (0.656) שרד לאחר ההתנגשות כדי להניע את הבול. רוב מוחלט של האנרגיה הקינטית (מעל 99%) הפכה לחום ולאנרגיה פנימית בשבריר השנייה שהקליע חדר לעץ. זוהי המחשה מצוינת לכך ששימור תנע לא מבטיח בהכרח שימור אנרגיה.
+        </div>
+    </section>
+</div>
+
+<!-- כפתור צף להצגת השאלה המקורית -->
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<!-- מודל (Modal) תמונת השאלה -->
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
