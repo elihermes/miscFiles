@@ -1,0 +1,739 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מודרך בפיזיקה - מכניקה 2000 שאלה 3</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 1.5rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מכניקה 2000 שאלה 3</h2>
+        <p class="mt-3 text-slate-500">בשאלה זו אנו מתמודדים עם תנועת גוף על משטח משופע תוך ניתוח שיקולי עבודה ואנרגיה המבוססים על קריאת נתונים מטבלה ותרגומם לגרף פיזור.</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית: תמיד מתחת לכותרת -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א' -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א': הוכחת הקשר הליניארי</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="content-paragraph mt-1">גוף (נערה וגלגליות) נע על משטח אופקי ולאחר מכן עולה על משטח משופע חלק. זווית השיפוע היא \(\alpha\). ראשית ציר ה-\(x\) האופקי נקבעה בדיוק בנקודת תחילת המשטח המשופע. לא פועלים כוחות חיכוך במערכת (ניתן להזניח חיכוך על הנערה ועל הגלגליות). הנתונים מוצגים ביחידות בינלאומיות תקניות (MKS) ולכן בשלב זה אין צורך לבצע המרת יחידות.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="content-paragraph mt-1">עלינו לספק הוכחה תאורטית (ללא שימוש בנתוני הטבלה המספריים) לכך שהפונקציה המתארת את האנרגיה הקינטית של הנערה \(E_k\) כתלות במיקום האופקי שלה \(x\) היא פונקציה קווית (ליניארית) המקיימת את הצורה המתמטית הידועה \(y = mx + b\).</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph text-sm mb-1 mt-1">כאשר הגוף (הנערה) נע על המשטח, פועלים עליו שני כוחות בלבד: כוח הכובד (שהוא כוח משמר) והכוח הנורמלי (שהוא כוח לא משמר). מכיוון שהכוח הנורמלי פועל תמיד במאונך לכיוון התנועה, הוא אינו מבצע כל עבודה (\(W_N = 0\)). מכאן, שהכוח היחיד שמבצע עבודה במערכת הוא כוח הכובד. בהיעדר עבודת כוחות לא משמרים (כיוון שאין חיכוך), מתקיים עקרון פיזיקלי מרכזי - <strong>חוק שימור האנרגיה המכנית</strong>:</p>
+            <span class="formula-badge">\( E_{k} + U_{G} = E_{tot} = \text{const} \)</span><br>
+            
+            <p class="content-paragraph text-sm mb-1 mt-2">הנוסחה לאנרגיה פוטנציאלית כובדית מתוך דף הנוסחאות היא:</p>
+            <span class="formula-badge">\( U_{G} = mgh \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נבחר את רמת הייחוס לאנרגיה הפוטנציאלית הכובדית להיות בנקודת תחילת השיפוע. כלומר, בנקודה שבה המיקום האופקי הוא \(x=0\), גם הגובה מעל רמת הייחוס הוא \(h=0\).</p>
+            <p class="content-paragraph">נסמן את האנרגיה הקינטית של הנערה בדיוק בתחילת השיפוע כ-\(E_{k0}\). לכן, האנרגיה המכנית הכוללת של המערכת בהתחלה היא פשוט \(E_{tot} = E_{k0} + 0 = E_{k0}\).</p>
+            <p class="content-paragraph">מכיוון שהאנרגיה הכוללת נשמרת, בכל נקודה על המשטח המשופע סכום האנרגיה הקינטית והפוטנציאלית חייב להיות שווה לאנרגיה ההתחלתית:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{k} + mgh = E_{k0} \]
+            </div>
+            <p class="content-paragraph">נבודד מהמשוואה את האנרגיה הקינטית \(E_k\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{k} = E_{k0} - mgh \]
+            </div>
+            <p class="content-paragraph">כעת נשתמש בקשר מתמטי (מתוך הנספח המתמטי). מתוך התבוננות בגיאומטריית המשטח המשופע, ניתן להבחין במשולש ישר זווית שבו הניצב מול הזווית \(\alpha\) הוא הגובה \(h\), והניצב שליד הזווית הוא המיקום האופקי \(x\). הקשר הטריגונומטרי הוא:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \tan(\alpha) = \frac{h}{x} \implies h = x \cdot \tan(\alpha) \]
+            </div>
+            <p class="content-paragraph">נציב קשר מתמטי זה לתוך משוואת האנרגיה הפיזיקלית שקיבלנו:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{k}(x) = E_{k0} - mg(x \cdot \tan(\alpha)) \]
+            </div>
+            <p class="content-paragraph">נסדר את המשוואה כדי לראות בבירור את הקשר בין המשתנים. נקבל:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{k}(x) = -(mg \cdot \tan(\alpha)) \cdot x + E_{k0} \]
+            </div>
+            
+            <p class="final-answer">מסקנה: התקבלה משוואה התואמת בדיוק למבנה הכללי של פונקציית קו ישר \(y = mx + b\), כאשר המשתנה התלוי שלנו הוא \(E_{k}\), המשתנה הבלתי תלוי הוא המיקום \(x\), שיפוע הגרף (שהוא שלילי וקבוע) הוא \(-mg\tan(\alpha)\), ונקודת החיתוך עם הציר האנכי היא הקבוע \(E_{k0}\). הוכחנו בהצלחה שהקשר הוא ליניארי.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong><br>
+            שימו לב! כוח הכובד פועל כלפי מטה (בכיוון מנוגד לציר ה-\(y\)), ולכן כאשר הנערה עולה בשיפוע, גודל מהירותה קטן (כי קיים רכיב של משקלה במורד המדרון המייצר תאוצה נגד כיוון מהירותה). בפתרונות בגרות, תאוצת הכובד מוגדרת תמיד כגודל חיובי \(g = 10 \text{ m/s}^2\). הסימן השלילי במשוואה שפיתחנו נובע מעליית הגובה ולא מסימן ה-\(g\) עצמו.
+        </div>
+    </section>
+
+    <!-- סעיף ב' -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': סרטוט גרף פיזור וקו מגמה</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="content-paragraph mt-1">טבלת נתונים עם שלוש מדידות המקשרות בין המיקום האופקי \(x\) של הנערה (נמדד במטרים) לבין האנרגיה הקינטית שלה \(E_k\) (נמדדת בג'ולים). הנקודות הן: \((0.4, 260)\), \((0.8, 200)\), ו- \((1.2, 140)\). היחידות הן יחידות MKS תקניות ולכן אין צורך בהמרת יחידות נוספת.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="content-paragraph mt-1">סרטוט גרף במערכת צירים המציג את האנרגיה הקינטית \(E_k\) כפונקציה של המיקום האופקי \(x\) (משתנה תלוי בציר האנכי, משתנה בלתי תלוי בציר האופקי) על סמך נתוני הטבלה.</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph text-sm mb-1 mt-1">אין שימוש בנוסחאות פיזיקליות בסעיף זה. הפתרון נשען על מיומנות מעבדתית נדרשת של עיבוד נתונים והצגתם הגרפית (בניית גרף פיזור והעברת קו מגמה מתוך נתונים ניסיוניים).</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">שלבי שרטוט הגרף (צעד-אחר-צעד):</h4>
+            <p class="content-paragraph">1. <strong>קביעת צירים:</strong> נציב את המשתנה הבלתי-תלוי (המיקום \(x\)) על הציר האופקי, ואת המשתנה התלוי (האנרגיה הקינטית \(E_k\)) על הציר האנכי.</p>
+            <p class="content-paragraph">2. <strong>קנה מידה:</strong> נחלק כל ציר לשנתות שוות במרווחים קבועים כדי לכסות את כל טווח הנתונים שבטבלה בצורה ברורה על גבי הנייר.</p>
+            <p class="content-paragraph">3. <strong>סימון נקודות:</strong> נסמן את שלוש הנקודות הנתונות במערכת הצירים: \((0.4, 260)\), \((0.8, 200)\), \((1.2, 140)\).</p>
+            <p class="content-paragraph">4. <strong>קו מגמה (Best-fit line):</strong> נעביר קו ישר אחד בעזרת סרגל שעובר קרוב ככל הניתן לכל הנקודות. במקרה שלפנינו (נתונים "אידיאליים" של שאלת בגרות), הקו עובר בדיוק דרך כל שלוש הנקודות, אך נמתח אותו גם אל מעבר להן כדי לראות את המגמה הכללית.</p>
+            
+            <p class="final-answer">מסקנה: הגרף המשורטט (למטה) מציג את הירידה הליניארית ההדרגתית של האנרגיה הקינטית ככל שהמיקום האופקי של הנערה הולך וגדל במעלה השיפוע.</p>
+        </div>
+
+        <div class="visual-frame">
+            <h4 class="step-title text-center text-slate-700 w-full mb-4">גרף אנרגיה קינטית כפונקציה של מיקום אופקי</h4>
+            <svg width="100%" height="360" viewBox="0 0 520 360" xmlns="http://www.w3.org/2000/svg" class="max-w-xl mx-auto">
+                <!-- Grid -->
+                <g stroke="#e2e8f0" stroke-width="1">
+                    <line x1="80" y1="40" x2="480" y2="40" />
+                    <line x1="80" y1="110" x2="480" y2="110" />
+                    <line x1="80" y1="180" x2="480" y2="180" />
+                    <line x1="80" y1="250" x2="480" y2="250" />
+                    <line x1="80" y1="320" x2="480" y2="320" />
+                    
+                    <line x1="80" y1="40" x2="80" y2="320" />
+                    <line x1="146.6" y1="40" x2="146.6" y2="320" />
+                    <line x1="213.3" y1="40" x2="213.3" y2="320" />
+                    <line x1="280" y1="40" x2="280" y2="320" />
+                    <line x1="346.6" y1="40" x2="346.6" y2="320" />
+                    <line x1="413.3" y1="40" x2="413.3" y2="320" />
+                    <line x1="480" y1="40" x2="480" y2="320" />
+                </g>
+
+                <!-- Axes -->
+                <line x1="80" y1="320" x2="500" y2="320" stroke="black" stroke-width="2" marker-end="url(#arrowBlack)"/>
+                <line x1="80" y1="320" x2="80" y2="20" stroke="black" stroke-width="2" marker-end="url(#arrowBlack)"/>
+
+                <!-- Axis Labels -->
+                <text x="470" y="350" font-family="sans-serif" font-size="14" font-weight="bold">x [m]</text>
+                <text x="20" y="30" font-family="sans-serif" font-size="14" font-weight="bold">Ek [J]</text>
+
+                <!-- Tick Labels Y -->
+                <text x="45" y="325" font-family="sans-serif" font-size="12">0</text>
+                <text x="45" y="255" font-family="sans-serif" font-size="12">100</text>
+                <text x="45" y="185" font-family="sans-serif" font-size="12">200</text>
+                <text x="45" y="115" font-family="sans-serif" font-size="12">300</text>
+                <text x="45" y="45" font-family="sans-serif" font-size="12">400</text>
+
+                <!-- Tick Labels X -->
+                <text x="135" y="340" font-family="sans-serif" font-size="12">0.4</text>
+                <text x="202" y="340" font-family="sans-serif" font-size="12">0.8</text>
+                <text x="269" y="340" font-family="sans-serif" font-size="12">1.2</text>
+                <text x="335" y="340" font-family="sans-serif" font-size="12">1.6</text>
+                <text x="402" y="340" font-family="sans-serif" font-size="12">2.0</text>
+
+                <!-- Data Points -->
+                <circle cx="146.6" cy="138" r="4" fill="#dc2626" />
+                <circle cx="213.3" cy="180" r="4" fill="#dc2626" />
+                <circle cx="280" cy="222" r="4" fill="#dc2626" />
+
+                <!-- Trendline (from x=0 to x=2.133) -->
+                <line x1="80" y1="96" x2="435.5" y2="320" stroke="#2563eb" stroke-width="2.5" />
+                
+                <defs>
+                    <marker id="arrowBlack" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="black"/>
+                    </marker>
+                </defs>
+            </svg>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong><br>
+            בבחינת הבגרות, הקפידו תמיד על חמישה כללי ברזל בעת שרטוט גרף במחברת הבחינה: 1. כותרת מתאימה למערכת. 2. שמות הצירים כולל יחידות מידה תקינות בסוגריים מרובעים. 3. חלוקת שנתות שווה והגיונית (סולם ברור). 4. סרטוט "קו מגמה" רציף וישר בעזרת סרגל שעובר קרוב ככל הניתן לכלל נקודות המדידה (ולא מתיחת קווים שבורים ב"זיגזג" מנקודה לנקודה). 5. גודל הגרף חייב להיות לפחות חצי עמוד במחברת הבחינה.
+        </div>
+    </section>
+
+    <!-- סעיף ג' -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': האנרגיה הקינטית בהתחלה</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="content-paragraph mt-1">ברשותנו הגרף שסרטטנו זה עתה בסעיף ב', המייצג את קו המגמה של המדידות. עלינו לבחור שתי נקודות נוחות המונחות על קו המגמה בלבד. מכיוון שראינו כי בנתוני השאלה הספציפית הזו כל נקודות המדידה יושבות בדיוק מושלם על קו המגמה שהעברנו, נוכל להשתמש בהן באופן חריג, למשל: \((0.4, 260)\) ו-\((0.8, 200)\).</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="content-paragraph mt-1">עלינו למצוא את הערך של האנרגיה הקינטית בנקודת ההתחלה של המשטח המשופע, כלומר עלינו לחשב את \(E_k\) כאשר המיקום האופקי הוא \(x = 0\).</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph text-sm mb-1 mt-1">אין שימוש בנוסחאות פיזיקליות חדשות בסעיף זה. הפתרון מבוסס לחלוטין על מיומנויות מתמטיות של גיאומטריה אנליטית - קריאת שיפוע ומציאת משוואת ישר מתוך הגרף.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נשתמש בנוסחה המתמטית למציאת שיפוע קו ישר על פי שתי נקודות, ונציב את שתי הנקודות שבחרנו מקו המגמה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ m = \frac{y_2 - y_1}{x_2 - x_1} = \frac{200 - 260}{0.8 - 0.4} = \frac{-60}{0.4} = -150 \text{ J/m} \]
+            </div>
+            <p class="content-paragraph">כעת, ניעזר בנוסחה הכללית למשוואת ישר (\(y - y_1 = m(x - x_1)\)), ונציב את השיפוע שמצאנו (\(m = -150\)) יחד עם אחת הנקודות \((0.8, 200)\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{k}(x) - 200 = -150 \cdot (x - 0.8) \]
+            </div>
+            <p class="content-paragraph">נפתח את הסוגריים ונסדר את המשוואה לבידוד הפונקציה \(E_{k}(x)\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{k}(x) = -150x + 120 + 200 \]
+                \[ E_{k}(x) = -150x + 320 \]
+            </div>
+            <p class="content-paragraph">על מנת למצוא את האנרגיה הקינטית בנקודת ההתחלה, נציב במשוואת קו המגמה את ערך המיקום ההתחלתי \(x = 0\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{k}(0) = -150 \cdot 0 + 320 = 320 \text{ J} \]
+            </div>
+            
+            <p class="final-answer">מסקנה: האנרגיה הקינטית ההתחלתית של הנערה בתחילת המשטח המשופע היא \(E_{k0} = 320 \text{ J}\).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong><br>
+            כלל ברזל במעבדה ובשאלות עם גרפים: כאשר מחשבים שיפוע, <strong>חובה תמיד</strong> לבחור שתי נקודות שמונחות על <strong>קו המגמה</strong> עצמו (רצוי רחוקות זו מזו), ולא "לשלוף" נקודות מתוך טבלת המדידות. מותר להשתמש בנקודות מהטבלה <strong>רק</strong> אם וידאתם שהן מונחות בדיוק מוחלט על קו המגמה שסרטטתם (כפי שקורה בנתונים ה"אידיאליים" של השאלה הזו).<br>
+            בנוסף, מבחינה ויזואלית, מצאנו הרגע את נקודת החיתוך של הישר עם הציר האנכי. שרטוט מדויק עם סרגל במחברת מאפשר פשוט להמשיך את הקו אחורנית ו"לקרוא" את הערך 320 ישירות מן הציר כבקרת איכות מצוינת לחישוב!
+        </div>
+    </section>
+
+    <!-- סעיף ד' -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': הגעה לנקודה A</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="content-paragraph mt-1">גילינו את משוואת התנועה האנרגטית המלאה של המערכת: \(E_{k}(x) = -150x + 320\). לפי נתוני התרשים בתחילת השאלה, הנקודה שנקראת A ממוקמת במיקום האופקי המסוים \(x = 1.6 \text{ m}\).</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="content-paragraph mt-1">האם הנערה אכן מצליחה להעפיל עד לנקודה A הנמצאת על המשטח המשופע? ויש לנמק היטב את הקביעה.</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph text-sm mb-1 mt-1">הנוסחה הרשמית לאנרגיה קינטית (מתוך דף הנוסחאות):</p>
+            <span class="formula-badge">\( E_{k} = \frac{1}{2}mv^2 \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב והצבה:</h4>
+            <p class="content-paragraph">התנאי הפיזיקלי לכך שגוף יגיע לנקודה מסוימת ולא יעצר בדרך, הוא שמהירותו עדיין גדולה מאפס בעת ההגעה. מתוך הנוסחה לאנרגיה קינטית (\(E_{k} = \frac{1}{2}mv^2\)), אנו מסיקים לוגית כי תמיד מתקיים התנאי המתמטי \( E_{k} \ge 0 \) (כיוון שמסה היא חיובית ומהירות בריבוע היא חיובית או אפס). לכן, אם נציב את מיקום הנקודה A במשוואה ונקבל אנרגיה קינטית חיובית תאורטית, פירוש הדבר שלנערה יש עדיין מהירות והיא אכן מגיעה ליעד.</p>
+            <p class="content-paragraph">נבדוק מהי האנרגיה הקינטית התאורטית הצפויה במיקום האופקי \(x = 1.6 \text{ m}\) על ידי הצבה ישירה במשוואת הישר שלנו:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{k}(1.6) = -150 \cdot (1.6) + 320 \]
+                \[ E_{k}(1.6) = -240 + 320 = 80 \text{ J} \]
+            </div>
+            <p class="content-paragraph">הערך שקיבלנו שווה ל-\(80 \text{ J}\). מכיוון שתוצאה זו אכן גדולה מאפס, אנו מבינים שנותרה לנערה אנרגיה קינטית בנקודה זו.</p>
+            
+            <p class="final-answer">מסקנה: מכיוון שהאנרגיה הקינטית שחושבה עבור \(x = 1.6 \text{ m}\) היא חיובית (\(80 \text{ J} > 0\)), הנערה בהחלט מצליחה להגיע לנקודה A, ויש לה מספיק מהירות כדי אף לחלוף על פניה ולהמשיך לטפס עוד במעלה המדרון.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong><br>
+            שאלות בגרות מסוג "האם הגוף מגיע לנקודה..." דורשות בעצם לבדוק את המצב האנרגטי של המערכת באותה נקודת יעד. אם האנרגיה הקינטית מחושבת להיות שלילית תאורטית (כלומר מתחת לאפס) לפני ההגעה ליעד, המשמעות הפיזיקלית היא שנקודת השיא והעצירה של התנועה נמוכה מהיעד ולכן הגוף לא יגיע אליו. במקרה זה גילינו שנקודת היעד קודמת לנקודת השיא.
+        </div>
+    </section>
+
+    <!-- סעיף ה' -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה': מיקום העצירה</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="content-paragraph mt-1">משוואת התנועה האנרגטית המוכרת לנו: \(E_{k}(x) = -150x + 320\). נתון כי בשלב מסוים הנערה, שעולה על המדרון, מאבדת את כל מהירותה ונעצרת רגעית על גבי המשטח המשופע.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="content-paragraph mt-1">עלינו למצוא מהו הערך המדויק של \(x\) (המיקום האופקי) בו מתרחשת העצירה הרגעית, וכן להסביר כיצד ניתן לקבוע זאת מתוך הגרף שסרטטנו.</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph text-sm mb-1 mt-1">אין שימוש בנוסחאות פיזיקליות חדשות מהדף בסעיף זה. הפתרון נשען על ההגדרה הקינמטית של מצב עצירה רגעית.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">על פי ההגדרה, בנקודת העצירה הרגעית (שהיא נקודת שיא הגובה בתנועה), גודל המהירות של הנערה יורד בדיוק לאפס (\(v=0\)). מכאן נובעת המסקנה המתמטית שאם המהירות מתאפסת, גם האנרגיה הקינטית בנקודה זו חייבת להיות אפס (\( E_{k} = 0 \)).</p>
+            <p class="content-paragraph">על מנת לחשב את המיקום, ניקח את משוואת הישר שלנו ונציב לתוכה את תנאי העצירה הזה – כלומר נדרוש שהאנרגיה הקינטית תהיה שווה לאפס:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 0 = -150x + 320 \]
+            </div>
+            <p class="content-paragraph">נעביר את האיבר המכיל את \(x\) אגף, כך שנקבל משוואה חיובית:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 150x = 320 \]
+            </div>
+            <p class="content-paragraph">נבודד את המיקום האופקי \(x\) באמצעות חלוקה פשוטה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ x = \frac{320}{150} = \frac{32}{15} \approx 2.133 \text{ m} \]
+            </div>
+            <p class="content-paragraph">ההסבר הגרפי הוא פשוט: בגרף המתאר את \(E_k\) כפונקציה של \(x\), נקודת העצירה שבה ערך הפונקציה (ערך ה-\(y\)) הוא אפס מהווה בדיוק את <strong>נקודת החיתוך של קו המגמה עם הציר האופקי</strong> (נקודת חיתוך ציר ה-\(x\)).</p>
+            
+            <p class="final-answer">מסקנה: הערך של \(x\) המתאים לנקודה בה הנערה נעצרת הוא \(x \approx 2.133 \text{ m}\). ערך זה משתקף ונקבע בגרף בבירור כנקודת חיתוך הפונקציה (הישר) עם ציר ה-\(x\) האופקי.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong><br>
+            כדאי לזכור שזוהי עצירה "רגעית" בלבד. מיד לאחר שהנערה מאבדת את כל האנרגיה הקינטית שלה (שהומרה במלואה לאנרגיה פוטנציאלית כובדית), היא תתחיל להאיץ חזרה מטה לכיוון תחילת השיפוע. למרות שהמהירות בשיא היא אפס, התאוצה בשיא (כמו בכל שאר שלבי התנועה על המדרון) אינה אפס - רכיב כוח הכובד עדיין מושך אותה במורד.
+        </div>
+    </section>
+</div>
+
+<!-- Floating Action Button for Question Modal -->
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<!-- Modal Background -->
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
