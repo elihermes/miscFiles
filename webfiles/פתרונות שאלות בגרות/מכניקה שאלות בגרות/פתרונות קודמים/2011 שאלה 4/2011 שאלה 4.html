@@ -1,0 +1,941 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2011 שאלה 4</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            min-height: 360px;
+            width: 100%;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מכניקה 2011, שאלה 4 - עבודה ואנרגיה</h2>
+        <p class="mt-3 text-slate-500 max-w-3xl mx-auto">
+            ברוכים הבאים לפתרון המודרך! בשאלה זו נעסוק בתנועת גוף על מסילה הכוללת קטעים חלקים וקטע בעל חיכוך. נשתמש בעקרונות של עבודה ואנרגיה כדי לנתח את התנועה, ונראה כיצד נתונים מניסוי יכולים לעזור לנו להבין את הפיזיקה שמאחורי התופעה. בהצלחה!
+        </p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="block w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א (1) -->
+    <section class="section-card" id="part-a1">
+        <h3 class="section-header">סעיף א' (1)</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> גוף משוחרר ממנוחה מנקודה A, בגובה <span class="formula-badge">\(H_A\)</span> מעל הקרקע. המסילה מורכבת מקטעים AB ו-CD שהם חלקים (ללא חיכוך), וקטע אופקי BC שיש בו חיכוך.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> הסבר מדוע שינוי הגובה <span class="formula-badge">\(H_A\)</span> משפיע על גודל המהירות <span class="formula-badge">\(v_D\)</span> בנקודה D.
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong> אנו נשתמש במשפט עבודה ואנרגיה. הנוסחה מדף הנוסחאות קובעת כי עבודת שקול הכוחות הלא-משמרים שווה לשינוי באנרגיה המכנית הכוללת של המערכת.<br>
+            <span class="formula-badge">\( W_{nc} = \Delta E \)</span>
+            <span class="formula-badge">\( E_k = \frac{1}{2}mv^2 \)</span>
+            <span class="formula-badge">\( U_G = mgh \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            
+            <p class="content-paragraph">האנרגיה המכנית ההתחלתית בנקודה A (שבה המהירות אפס) היא אנרגיה פוטנציאלית בלבד:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_A = m \cdot g \cdot H_A \]
+            </div>
+            
+            <p class="content-paragraph">האנרגיה המכנית הסופית בנקודה D מורכבת מאנרגיה פוטנציאלית וקינטית:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_D = m \cdot g \cdot H_D + \frac{1}{2} m v_D^2 \]
+            </div>
+            
+            <p class="content-paragraph">הכוח הלא-משמר היחיד שמבצע עבודה במערכת הוא כוח החיכוך הקינטי בקטע BC. נסמן את העבודה שלו ב- <span class="formula-badge">\( W_f \)</span>. מכיוון שאורך הקטע BC ומקדם החיכוך קבועים, עבודת החיכוך היא גודל קבוע ו-<strong>שלילי</strong>. נציב במשפט עבודה-אנרגיה ונבודד את \( v_D^2 \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_D - E_A = W_f \]
+                \[ \left( m g H_D + \frac{1}{2} m v_D^2 \right) - m g H_A = W_f \]
+                \[ \frac{1}{2} m v_D^2 = m g H_A - m g H_D + W_f \]
+                \[ v_D^2 = 2g H_A - 2g H_D + \frac{2 W_f}{m} \]
+                \[ v_D^2 = 2g \cdot H_A + \left( \frac{2 W_f}{m} - 2g H_D \right) \]
+            </div>
+            
+            <p class="content-paragraph">מהמשוואה הסופית ניתן לראות בבירור תבנית של קו ישר, התואמת למשוואה המתמטית המוכרת \( y = mx + b \). נבצע הקבלה בין המשתנים בפיזיקה למתמטיקה:</p>
+            <ul class="list-disc list-inside mr-4 mb-4 text-slate-700">
+                <li><span class="formula-badge">\( y \)</span> (הציר האנכי) הוא ריבוע המהירות <strong>\( v_D^2 \)</strong>.</li>
+                <li><span class="formula-badge">\( x \)</span> (הציר האופקי) הוא גובה השחרור <strong>\( H_A \)</strong>.</li>
+                <li><span class="formula-badge">\( m \)</span> (השיפוע) הוא הקבוע <strong>\( 2g \)</strong>.</li>
+                <li><span class="formula-badge">\( b \)</span> (נקודת החיתוך עם הציר האנכי) הוא אוסף הקבועים שבתוך הסוגריים: <strong>\( \left( \frac{2 W_f}{m} - 2g H_D \right) \)</strong>.</li>
+            </ul>
+            
+            <p class="final-answer">
+                מסקנה: ככל שנגדיל את הגובה ההתחלתי \( H_A \), האנרגיה ההתחלתית של המערכת תהיה גדולה יותר. מכיוון שאובדן האנרגיה עקב החיכוך ( \( W_f \) ) נשאר קבוע, תישאר לגוף יותר אנרגיה בנקודה D, ולכן מהירותו \( v_D \) תהיה גדולה יותר.
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong>
+            תחשבו על אנרגיה כמו על כסף בבנק. \( H_A \) מגדיר כמה כסף יש לכם בתחילת המסע. החיכוך בקטע BC הוא "מס עבר חצייה" קבוע שאתם חייבים לשלם. המהירות \( v_D \) היא הכסף שנשאר לכם בסוף. אם תתחילו עם יותר כסף, ותשלמו את אותו המס הקבוע, בהכרח תסיימו עם יותר כסף!
+        </div>
+    </section>
+
+    <!-- סעיף א (2) -->
+    <section class="section-card" id="part-a2">
+        <h3 class="section-header">סעיף א' (2)</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> הגוף משוחרר מגובה <span class="formula-badge">\(H_A\)</span> השווה בדיוק לגובה של נקודה D מעל הקרקע. כלומר: <span class="formula-badge">\(H_A = H_D\)</span>.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> לקבוע האם הגוף יצליח להגיע לנקודה D, ולנמק את הקביעה.
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong> נשתמש שוב במשפט עבודה-אנרגיה ונבדוק את דרישות המינימום כדי להגיע לנקודה D.<br>
+            <span class="formula-badge">\( W_{nc} = \Delta E \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            
+            <p class="content-paragraph">כדי שהגוף יגיע לנקודה D אפילו במהירות אפסית (<span class="formula-badge">\( v_D = 0 \)</span>), האנרגיה המכנית המינימלית שעליו להיות בעל בנקודה זו שווה לאנרגיה הפוטנציאלית בגובה D:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{D,\text{min}} = m g H_D \]
+            </div>
+            
+            <p class="content-paragraph">במקרה שלנו, נתון כי <span class="formula-badge">\( H_A = H_D \)</span>, ולכן האנרגיה ההתחלתית של הגוף היא:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_A = m g H_A = m g H_D \]
+            </div>
+            
+            <p class="content-paragraph">בדרך אל הנקודה D, הגוף עובר בקטע BC ופועל עליו כוח חיכוך נגד כיוון התנועה, שמבצע עבודה שלילית (<span class="formula-badge">\( W_f < 0 \)</span>). נציב זאת במשוואה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{\mathrm{arr}} = E_A + W_f = m g H_D + W_f \]
+            </div>
+            
+            <p class="content-paragraph">מכיוון שהעבודה <span class="formula-badge">\( W_f \)</span> היא שלילית, מתקיים ש- <span class="formula-badge">\( E_{\mathrm{arr}} < m g H_D \)</span>. כלומר, האנרגיה שתישאר לגוף תהיה קטנה מהאנרגיה הדרושה רק כדי להתקיים בגובה של נקודה D.</p>
+            
+            <p class="final-answer">
+                מסקנה: הגוף <strong>לא יגיע</strong> לנקודה D. עקב עבודת החיכוך השלילית בקטע BC, המערכת מאבדת אנרגיה מכנית. מכיוון שהגוף התחיל עם כמות אנרגיה המדויקת המספיקה רק להגעה לגובה \( H_D \) (ללא חיכוך), כל אובדן אנרגיה בדרך יגרום לכך שהוא יעצר לפני שיגיע לגובה זה.
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong>
+            זה כמו מגלשת הרים. אם אתם מתחילים מגובה של 10 מטרים, ויש חיכוך במסילה, לעולם לא תוכלו להגיע בחזרה לגובה של 10 מטרים בעלייה הבאה בלי שמנוע יעזור לכם. החיכוך גורם להמרה של אנרגיה מכנית לאנרגיית חום.
+        </div>
+    </section>
+
+    <!-- סעיף ב (1) -->
+    <section class="section-card" id="part-b1">
+        <h3 class="section-header">סעיף ב' (1)</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> טבלת תוצאות הניסוי של התלמידה, המכילה ערכים של גובה התחלתי <span class="formula-badge">\(H_A\)</span> במטרים, ומהירות בנקודה D <span class="formula-badge">\(v_D\)</span> במטרים לשנייה. כל היחידות נתונות במערכת MKS (ק"ג, מטר, שניות) ולכן אין צורך בהמרה.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> להעתיק את הטבלה, לחשב את ערכי ריבוע המהירויות <span class="formula-badge">\(v_D^2\)</span>, ולהוסיף אותם כשורה שלישית.
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong> אין כאן צורך בנוסחה חדשה מדף הנוסחאות. זהו חישוב מתמטי ישיר של ריבוע המהירות, תוך הקפדה על יחידות עקביות לאורך כל הטבלה.
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב צעד-אחר-צעד:</h4>
+            
+            <p class="content-paragraph">נבצע את החישוב עבור כל עמודה:</p>
+            <ul class="list-disc list-inside mr-4 mb-4 text-slate-700">
+                <li>עבור <span class="formula-badge">\(1.45\)</span> נקבל: \(1.45^2 = 2.1025 \approx 2.10\)</li>
+                <li>עבור <span class="formula-badge">\(2.00\)</span> נקבל: \(2.00^2 = 4.00\)</li>
+                <li>עבור <span class="formula-badge">\(2.50\)</span> נקבל: \(2.50^2 = 6.25\)</li>
+                <li>עבור <span class="formula-badge">\(2.80\)</span> נקבל: \(2.80^2 = 7.84\)</li>
+                <li>עבור <span class="formula-badge">\(3.75\)</span> נקבל: \(3.75^2 = 14.0625 \approx 14.06\)</li>
+            </ul>
+
+            <div class="overflow-x-auto w-full mb-2 mt-4 dir-ltr">
+                <table class="w-full text-center border-collapse border border-slate-300">
+                    <thead>
+                        <tr class="bg-slate-100">
+                            <th class="border border-slate-300 p-2 font-bold text-lg">1.2</th>
+                            <th class="border border-slate-300 p-2 font-bold text-lg">0.9</th>
+                            <th class="border border-slate-300 p-2 font-bold text-lg">0.8</th>
+                            <th class="border border-slate-300 p-2 font-bold text-lg">0.7</th>
+                            <th class="border border-slate-300 p-2 font-bold text-lg">0.6</th>
+                            <th class="border border-slate-300 p-2 font-bold bg-blue-50 text-blue-800 text-lg" dir="ltr">H<sub>A</sub> (m)</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr>
+                            <td class="border border-slate-300 p-2">3.75</td>
+                            <td class="border border-slate-300 p-2">2.80</td>
+                            <td class="border border-slate-300 p-2">2.50</td>
+                            <td class="border border-slate-300 p-2">2.00</td>
+                            <td class="border border-slate-300 p-2">1.45</td>
+                            <td class="border border-slate-300 p-2 font-bold bg-blue-50 text-blue-800" dir="ltr">v<sub>D</sub> (\(\frac{m}{s}\))</td>
+                        </tr>
+                        <tr class="bg-green-50 font-semibold">
+                            <td class="border border-slate-300 p-2 text-green-700">14.06</td>
+                            <td class="border border-slate-300 p-2 text-green-700">7.84</td>
+                            <td class="border border-slate-300 p-2 text-green-700">6.25</td>
+                            <td class="border border-slate-300 p-2 text-green-700">4.00</td>
+                            <td class="border border-slate-300 p-2 text-green-700">2.10</td>
+                            <td class="border border-slate-300 p-2 font-bold bg-green-100 text-green-800" dir="ltr">v<sub>D</sub><sup>2</sup> (\(\frac{m^2}{s^2}\))</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            
+            <p class="final-answer">
+                מסקנה: הטבלה הושלמה כנדרש עם ערכי ריבוע המהירות.
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong>
+            בפיזיקה, הפעולות המתמטיות חלות גם על המספרים וגם על היחידות! אם מעלים מהירות שביחידות מטר/שנייה בריבוע, יחידות התוצאה יהיו בהכרח מטר רבוע חלקי שנייה רבועה. זהו סימן זיהוי מצוין לבדוק שלא טעיתם בדרך.
+        </div>
+    </section>
+
+    <!-- סעיף ב (2) -->
+    <section class="section-card" id="part-b2">
+        <h3 class="section-header">סעיף ב' (2)</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> הטבלה מסעיף ב'(1) הכוללת את ערכי <span class="formula-badge">\(H_A\)</span> כמשתנה הבלתי-תלוי (ציר X), וערכי <span class="formula-badge">\(v_D^2\)</span> כמשתנה התלוי (ציר Y).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> לסרטט גרף המציג את <span class="formula-badge">\(v_D^2\)</span> כפונקציה של <span class="formula-badge">\(H_A\)</span>.
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong> עיקרון כללי בעיבוד נתונים ניסיוניים: כאשר בודקים קשר ליניארי בין שני גדלים, מציגים את הנתונים בגרף ומעבירים קו מגמה ישר העובר קרוב ככל האפשר לנקודות המדידה.
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הסרטוט הגרפי:</h4>
+            
+            <p class="content-paragraph">לפניכם הגרף שצויר על סמך נתוני הטבלה. הנקודות מייצגות את מדידות התלמידה, והקו הכחול מייצג את קו המגמה (הקו שמייצג את החוקיות הפיזיקלית בצורה הטובה ביותר).</p>
+
+            <div class="visual-frame">
+                <div class="w-full max-w-xl mx-auto" dir="ltr">
+                    <!-- SVG Graph -->
+                    <svg viewBox="0 0 500 400" class="w-full h-auto">
+                        <!-- Background Grid -->
+                        <g stroke="#e2e8f0" stroke-width="1" stroke-dasharray="4,4">
+                            <!-- Verticals -->
+                            <line x1="50" y1="50" x2="50" y2="350"/>
+                            <line x1="130" y1="50" x2="130" y2="350"/>
+                            <line x1="210" y1="50" x2="210" y2="350"/>
+                            <line x1="290" y1="50" x2="290" y2="350"/>
+                            <line x1="370" y1="50" x2="370" y2="350"/>
+                            <line x1="450" y1="50" x2="450" y2="350"/>
+                            <!-- Horizontals -->
+                            <line x1="50" y1="350" x2="450" y2="350"/>
+                            <line x1="50" y1="275" x2="450" y2="275"/>
+                            <line x1="50" y1="200" x2="450" y2="200"/>
+                            <line x1="50" y1="125" x2="450" y2="125"/>
+                            <line x1="50" y1="50" x2="450" y2="50"/>
+                        </g>
+
+                        <!-- Axes -->
+                        <g stroke="#0f172a" stroke-width="2">
+                            <line x1="50" y1="350" x2="480" y2="350"/> <!-- X axis -->
+                            <line x1="50" y1="350" x2="50" y2="30"/>  <!-- Y axis -->
+                            <!-- Arrows -->
+                            <polygon points="480,350 470,345 470,355" fill="#0f172a" stroke="none" />
+                            <polygon points="50,30 45,40 55,40" fill="#0f172a" stroke="none" />
+                        </g>
+
+                        <!-- Axis Labels -->
+                        <text x="470" y="380" font-family="Arial" font-size="14" font-weight="bold" fill="#0f172a" text-anchor="middle">H<tspan baseline-shift="sub" font-size="0.75em">A</tspan> (m)</text>
+                        <text x="10" y="40" font-family="Arial" font-size="14" font-weight="bold" fill="#0f172a" transform="rotate(-90 20,40)">v<tspan baseline-shift="sub" font-size="0.75em">D</tspan><tspan baseline-shift="super" font-size="0.75em">2</tspan> (m<tspan baseline-shift="super" font-size="0.75em">2</tspan>/s<tspan baseline-shift="super" font-size="0.75em">2</tspan>)</text>
+
+                        <!-- X ticks and numbers -->
+                        <g font-family="Arial" font-size="12" fill="#475569" text-anchor="middle">
+                            <text x="50" y="370">0</text>
+                            <text x="130" y="370">0.3</text>
+                            <text x="210" y="370">0.6</text>
+                            <text x="290" y="370">0.9</text>
+                            <text x="370" y="370">1.2</text>
+                            <text x="450" y="370">1.5</text>
+                        </g>
+
+                        <!-- Y ticks and numbers -->
+                        <g font-family="Arial" font-size="12" fill="#475569" text-anchor="end">
+                            <text x="40" y="355">0</text>
+                            <text x="40" y="280">4</text>
+                            <text x="40" y="205">8</text>
+                            <text x="40" y="130">12</text>
+                            <text x="40" y="55">16</text>
+                        </g>
+
+                        <!-- Trendline (y = 20x - 10) -->
+                        <clipPath id="graphClip">
+                            <rect x="50" y="30" width="430" height="320" />
+                        </clipPath>
+                        <line x1="183.3" y1="350" x2="396.6" y2="50" stroke="#3b82f6" stroke-width="3" clip-path="url(#graphClip)" />
+
+                        <!-- Mark x-intercept -->
+                        <circle cx="183.3" cy="350" r="5" fill="none" stroke="#ef4444" stroke-width="2" />
+                        <text x="183.3" y="330" font-family="Arial" font-size="12" font-weight="bold" fill="#ef4444" text-anchor="middle">H<tspan baseline-shift="sub" font-size="0.75em">A</tspan> = 0.5</text>
+
+                        <!-- Data Points -->
+                        <circle cx="210" cy="310.6" r="4" fill="#dc2626" />
+                        <circle cx="236.7" cy="275" r="4" fill="#dc2626" />
+                        <circle cx="263.3" cy="232.8" r="4" fill="#dc2626" />
+                        <circle cx="290" cy="203" r="4" fill="#dc2626" />
+                        <circle cx="370" cy="86.4" r="4" fill="#dc2626" />
+                    </svg>
+                </div>
+            </div>
+            
+            <p class="final-answer">
+                הגרף הושלם בהצלחה עם נקודות המדידה וקו מגמה ליניארי.
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong>
+            כשמשרטטים גרף מנתוני ניסוי (גרף אמפירי), אף פעם לא מחברים את הנקודות כמו בחוברת ציור לילדים! אנחנו יודעים מהפיזיקה (מסעיף א') שהקשר צריך להיות ישר. לכן, מותחים קו מגמה ישר שעובר "באמצע" הנקודות. הנקודות לא ישבו בדיוק על הקו בגלל שגיאות מדידה טבעיות בניסוי, וזה בסדר גמור!
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> הגרף ששורטט בסעיף הקודם, המציג את הקשר הליניארי בין ריבוע המהירות בנקודה D לבין גובה השחרור בנקודה A.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> את הגובה המינימלי שממנו יש לשחרר את הגוף כדי שיגיע (בדיוק) לנקודה D, בתוספת הסבר.
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong> עיקרון כללי: כדי שגוף יגיע בדיוק לנקודה מסוימת, מהירותו באותה נקודה מתאפסת. בגרף, נקודת החיתוך עם ציר ה-X מייצגת מצב שבו המשתנה שעל הציר האנכי שווה לאפס.
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב צעד-אחר-צעד:</h4>
+            
+            <p class="content-paragraph">ניגש לגרף שסרטטנו. נחפש את הערך בציר ה-X (<span class="formula-badge">\(H_A\)</span>) עבורו ערך ה-Y (<span class="formula-badge">\(v_D^2\)</span>) הוא 0.</p>
+            <p class="content-paragraph">כדי להיות מדויקים, נמצא את משוואת הישר של קו המגמה. נבחר שתי נקודות מהטבלה שנמצאות היטב על המגמה, למשל הנקודה (0.7, 4.00) והנקודה (1.2, 14.06). נחשב את השיפוע:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ m_{\text{slope}} = \frac{\Delta y}{\Delta x} = \frac{14.06 - 4.00}{1.2 - 0.7} = \frac{10.06}{0.5} = 20.12 \approx 20 \]
+            </div>
+            
+            <p class="content-paragraph">(הערה: השיפוע התיאורטי מהמשוואה שלנו בסעיף א' הוא <span class="formula-badge">\(2g = 20\)</span>, מה שמאשר שהניסוי מדויק מאוד!).<br>
+            נמצא את משוואת הישר, מתוך הנחה של שיפוע 20 ועובר דרך (0.7, 4.00):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ y - y_1 = m(x - x_1) \]
+                \[ v_D^2 - 4 = 20(H_A - 0.7) \]
+                \[ v_D^2 = 20H_A - 14 + 4 \]
+                \[ v_D^2 = 20H_A - 10 \]
+            </div>
+            
+            <p class="content-paragraph">כעת, נציב את התנאי שלנו <span class="formula-badge">\( v_D^2 = 0 \)</span> כדי למצוא את הגובה המינימלי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 0 = 20H_A - 10 \]
+                \[ 10 = 20H_A \]
+                \[ H_{A_{min}} = \frac{10}{20} = 0.5 \text{ m} \]
+            </div>
+            
+            <p class="content-paragraph">(כפי שאפשר לראות, גם בחיתוך הישיר בגרף קיבלנו ערך זהה, שסומן בעיגול אדום בגרף).</p>
+            
+            <p class="final-answer">
+                מסקנה: הגובה המינימלי הדרוש להגעה לנקודה D הוא \( 0.5 \text{ m} \).<br>
+                הסבר: במצב מינימלי זה, כל האנרגיה שהגוף צובר בירידה מתבזבזת על עבודת החיכוך ועל טיפוס חזרה לגובה D, כך שלא נותרת לו אנרגיה קינטית בנקודה D והמהירות שם מתאפסת בדיוק.
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong>
+            קריאה נכונה של נקודות חיתוך בגרף היא כלי עצמתי בפיזיקה. שימו לב שאם משרטטים את הגרף בצורה מדויקת ולפי הכללים, אפשר להסיק את המספר הנדרש ישירות מתוך הגרף עצמו (קריאת הערך בנקודת החיתוך עם הציר האופקי - המייצגת את המצב שבו גודל המהירות בנקודה D שווה לאפס).
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> אנו מקבלים כעת נתונים מספריים חדשים עבור מערכת הניסוי:<br>
+                גובה שחרור התחלתי: <span class="formula-badge">\( H_A = 1.1 \text{ m} \)</span>.<br>
+                גובה נקודה D מן הקרקע: <span class="formula-badge">\( H_D = 0.3 \text{ m} \)</span>.<br>
+                מסת הגוף: <span class="formula-badge">\( M = 0.2 \text{ kg} \)</span>.<br>
+                תאוצת הכובד: קבוע <span class="formula-badge">\( g = 10 \frac{m}{s^2} \)</span>.<br>
+                (היחידות כבר במערכת MKS ולכן אין צורך בהמרה).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> לחשב את עבודת כוח החיכוך שפעל על הגוף בקטע BC. נסמן אותה כ- <span class="formula-badge">\( W_f \)</span>.
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( W_{nc} = \Delta E \)</span>
+            <span class="formula-badge">\( E_k = \frac{1}{2}mv^2 \)</span>
+            <span class="formula-badge">\( U_G = mgh \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב צעד-אחר-צעד:</h4>
+            
+            <p class="content-paragraph font-semibold text-center mt-4">תרשים כוחות (FBD) עבור הגוף בתנועתו על הקטע המחוספס BC:</p>
+            <div class="visual-frame">
+                <div class="w-full max-w-sm mx-auto" dir="ltr">
+                    <svg viewBox="0 0 300 250" class="w-full h-auto">
+                        <!-- Z-Index 1: Background & Ground -->
+                        <line x1="20" y1="200" x2="280" y2="200" stroke="#64748b" stroke-width="4" />
+                        <path d="M40 200 L30 210 M60 200 L50 210 M80 200 L70 210 M100 200 L90 210 M120 200 L110 210 M140 200 L130 210 M160 200 L150 210 M180 200 L170 210 M200 200 L190 210 M220 200 L210 210 M240 200 L230 210 M260 200 L250 210 M280 200 L270 210" stroke="#94a3b8" stroke-width="1.5" />
+                        
+                        <!-- Axis (top right) -->
+                        <g stroke="#94a3b8" stroke-width="1.5">
+                            <line x1="260" y1="60" x2="280" y2="60" />
+                            <line x1="260" y1="60" x2="260" y2="40" />
+                            <polygon points="285,60 275,57 275,63" fill="#94a3b8" stroke="none" />
+                            <polygon points="260,35 257,45 263,45" fill="#94a3b8" stroke="none" />
+                            <text x="285" y="75" font-family="Arial" font-size="12" fill="#94a3b8">x</text>
+                            <text x="245" y="45" font-family="Arial" font-size="12" fill="#94a3b8">y</text>
+                        </g>
+
+                        <!-- Z-Index 2: Body and Body Label -->
+                        <rect x="110" y="140" width="80" height="60" fill="#bae6fd" stroke="#0284c7" stroke-width="2" rx="4" />
+                        <!-- Name of the body at the bottom, spaced away from borders and vectors -->
+                        <text x="150" y="184" font-family="Arial" font-size="16" font-weight="bold" fill="#0369a1" text-anchor="middle">M</text>
+
+                        <!-- Z-Index 3: Anchor points inside the body -->
+                        <circle cx="150" cy="170" r="4" fill="#0f172a" />
+                        
+                        <!-- Z-Index 4: Vectors (Arrows and Texts) -->
+                        <!-- Gravity force -->
+                        <!-- Starts from anchor, goes down -->
+                        <line x1="150" y1="170" x2="150" y2="235" stroke="#ef4444" stroke-width="3" />
+                        <polygon points="150,240 145,230 155,230" fill="#ef4444" stroke="none" />
+                        <!-- Text >15px away from the arrow tip and line -->
+                        <text x="176" y="218" font-family="Arial" font-size="16" font-weight="bold" fill="#ef4444">F<tspan baseline-shift="sub" font-size="0.75em">g</tspan></text>
+
+                        <!-- Normal force -->
+                        <!-- Starts from anchor, goes up -->
+                        <line x1="150" y1="170" x2="150" y2="85" stroke="#22c55e" stroke-width="3" />
+                        <polygon points="150,80 145,90 155,90" fill="#22c55e" stroke="none" />
+                        <!-- Text >15px away -->
+                        <text x="176" y="104" font-family="Arial" font-size="16" font-weight="bold" fill="#22c55e">F<tspan baseline-shift="sub" font-size="0.75em">N</tspan></text>
+
+                        <!-- Friction force (f_k) -->
+                        <!-- Starts from anchor, goes left -->
+                        <line x1="150" y1="170" x2="65" y2="170" stroke="#ea580c" stroke-width="3" />
+                        <polygon points="60,170 70,165 70,175" fill="#ea580c" stroke="none" />
+                        <!-- Text >15px away, using tspan for subscript -->
+                        <text x="38" y="146" font-family="Arial" font-size="16" font-weight="bold" fill="#ea580c">f<tspan baseline-shift="sub" font-size="0.75em">k</tspan></text>
+
+                        <!-- Velocity indicator (v) - starting from a separate anchor inside the body to avoid overlap -->
+                        <circle cx="170" cy="150" r="3" fill="#3b82f6" />
+                        <line x1="170" y1="150" x2="235" y2="150" stroke="#3b82f6" stroke-width="2" stroke-dasharray="5,5" />
+                        <polygon points="240,150 230,145 230,155" fill="#3b82f6" stroke="none" />
+                        <!-- Text >15px away -->
+                        <text x="220" y="126" font-family="Arial" font-size="16" font-weight="bold" fill="#3b82f6" font-style="italic">v</text>
+                    </svg>
+                </div>
+            </div>
+            <p class="text-center text-sm text-slate-500 mb-6">ציר ה-y חיובי כלפי מעלה. בציר ה-y אין תנועה ולכן \(\Sigma F_y = 0 \Rightarrow F_N - F_g = 0\).</p>
+
+            <p class="content-paragraph">ראשית, עלינו למצוא את המהירות בנקודה D עבור שחרור מגובה של 1.1 מטר. נשתמש במשוואת קו המגמה שמצאנו מתוך נתוני הניסוי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ v_D^2 = 20H_A - 10 \]
+                \[ v_D^2 = 20 \cdot 1.1 - 10 = 22 - 10 = 12 \text{ } (\frac{m}{s})^2 \]
+            </div>
+            
+            <p class="content-paragraph">כעת, נחשב את האנרגיה המכנית הכוללת של המערכת בנקודת ההתחלה A. בנקודה זו הגוף במנוחה, לכן האנרגיה היא פוטנציאלית כובדית בלבד:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_A = M \cdot g \cdot H_A = 0.2 \cdot 10 \cdot 1.1 = 2.2 \text{ J} \]
+            </div>
+            
+            <p class="content-paragraph">נחשב את האנרגיה המכנית הכוללת בנקודת הסיום D. בנקודה זו לגוף יש גם גובה וגם מהירות:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_D = M \cdot g \cdot H_D + \frac{1}{2} M v_D^2 \]
+                \[ E_D = (0.2 \cdot 10 \cdot 0.3) + \left( \frac{1}{2} \cdot 0.2 \cdot 12 \right) \]
+                \[ E_D = 0.6 + 1.2 = 1.8 \text{ J} \]
+            </div>
+            
+            <p class="content-paragraph">על פי משפט עבודה-אנרגיה, ההפרש בין האנרגיה בסוף לאנרגיה בהתחלה שווה לעבודת הכוח הלא-משמר היחיד הפועל במערכת (כוח החיכוך מקטין את גודל המהירות בקטע BC):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ W_f = E_D - E_A \]
+                \[ W_f = 1.8 \text{ J} - 2.2 \text{ J} = -0.4 \text{ J} \]
+            </div>
+            
+            <p class="final-answer">
+                מסקנה: עבודת כוח החיכוך שפעל על הגוף בתנועתו במסילה היא \( -0.4 \text{ J} \) (ג'אול).
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong>
+            שימו לב לסימן המינוס! קיבלנו שעבודת החיכוך היא שלילית. זוהי בדיקת שפיות (Sanity Check) מעולה בבחינה: כוח חיכוך קינטי פועל תמיד בניגוד לכיוון ההעתק של הגוף, הזווית ביניהם היא \(180^\circ\) (\(\cos180^\circ = -1\)), ולכן עבודת החיכוך חייבת להיות תמיד שלילית, כי היא 'שואבת' אנרגיה מכנית מהמערכת וממירה אותה לחום. 
+        </div>
+    </section>
+
+</div>
+
+<!-- Floating Question Button -->
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<!-- Question Modal -->
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="block w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        if (openQuestionModalBtn) openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        if (closeQuestionModalBtn) closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        if (questionModal) {
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+        }
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
