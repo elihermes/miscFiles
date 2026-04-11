@@ -1,0 +1,529 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>טבלת כיסוי שאלות מכניקה</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-page: #edf4ff;
+            --bg-card: rgba(255, 255, 255, 0.9);
+            --text-main: #24364d;
+            --text-soft: #5e748d;
+            --slate-100: #f7fafc;
+            --slate-200: #dbe7f3;
+            --slate-300: #c3d3e5;
+            --slate-500: #64748b;
+            --blue-900: #173a63;
+            --blue-700: #2459a6;
+            --blue-100: #d9e9ff;
+            --blue-50: #eef6ff;
+            --green-50: #effcf4;
+            --green-500: #22c55e;
+            --green-700: #15803d;
+            --green-900: #0f5132;
+            --gray-50: #f8fafc;
+            --gray-200: #e5e7eb;
+            --gray-500: #7b8794;
+            --shadow-soft: 0 20px 45px rgba(36, 89, 166, 0.10);
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background:
+                radial-gradient(circle at top right, rgba(36, 89, 166, 0.14), transparent 28%),
+                radial-gradient(circle at top left, rgba(34, 197, 94, 0.10), transparent 24%),
+                linear-gradient(180deg, #f4f9ff 0%, var(--bg-page) 42%, #eef5fb 100%);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.42) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.42) 1px, transparent 1px);
+            background-size: 44px 44px;
+            mask-image: linear-gradient(180deg, rgba(0,0,0,0.35), transparent 80%);
+        }
+
+        .page-shell {
+            max-width: 1180px;
+            margin: 0 auto;
+            padding: 1.25rem;
+            padding-bottom: 4rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(195, 211, 229, 0.95);
+            border-radius: 1.15rem;
+            padding: 1.35rem;
+            margin-bottom: 1.1rem;
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(12px);
+        }
+
+        .section-header {
+            font-size: 1.3rem;
+            font-weight: 700;
+            color: var(--blue-900);
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.6rem;
+            margin-bottom: 1rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 0.9rem;
+            color: var(--text-soft);
+        }
+
+        .hero-card {
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 18% 18%, rgba(34, 197, 94, 0.16), transparent 22%),
+                radial-gradient(circle at 82% 12%, rgba(37, 99, 235, 0.18), transparent 28%),
+                linear-gradient(135deg, rgba(255,255,255,0.94) 0%, rgba(239,246,255,0.96) 55%, rgba(255,255,255,0.92) 100%);
+        }
+
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            left: -8%;
+            right: -8%;
+            bottom: -55px;
+            height: 120px;
+            background: linear-gradient(90deg, rgba(36, 89, 166, 0.10), rgba(34, 197, 94, 0.12));
+            filter: blur(28px);
+            pointer-events: none;
+        }
+
+        .legend-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .legend-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.45rem 0.85rem;
+            border-radius: 9999px;
+            border: 1px solid var(--slate-200);
+            background: rgba(255, 255, 255, 0.88);
+            font-size: 0.92rem;
+            box-shadow: 0 10px 24px rgba(36, 89, 166, 0.06);
+        }
+
+        .chip-dot {
+            width: 0.85rem;
+            height: 0.85rem;
+            border-radius: 9999px;
+            flex-shrink: 0;
+        }
+
+        .chip-dot.success {
+            background: var(--green-500);
+        }
+
+        .chip-dot.missing {
+            background: var(--gray-200);
+            border: 1px solid #cbd5e1;
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(3, minmax(0, 1fr));
+            gap: 0.9rem;
+            margin-top: 1.2rem;
+        }
+
+        .summary-tile {
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(195, 211, 229, 0.95);
+            border-radius: 1rem;
+            padding: 1rem 1.1rem;
+            box-shadow: 0 14px 28px rgba(36, 89, 166, 0.08);
+        }
+
+        .summary-label {
+            font-size: 0.9rem;
+            color: var(--text-soft);
+            margin-bottom: 0.35rem;
+        }
+
+        .summary-value {
+            font-size: 2rem;
+            line-height: 1;
+            font-weight: 800;
+            color: var(--blue-900);
+        }
+
+        .table-wrap {
+            overflow-x: auto;
+            border: 1px solid rgba(195, 211, 229, 0.95);
+            border-radius: 1rem;
+            background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(248,250,252,0.9));
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+            padding: 0.45rem;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 760px;
+        }
+
+        th,
+        td {
+            padding: 0.95rem 0.75rem;
+            border-bottom: 1px solid var(--slate-200);
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        th {
+            background: linear-gradient(180deg, #f9fbff, #eef5fd);
+            color: var(--slate-500);
+            font-size: 0.92rem;
+            font-weight: 700;
+            white-space: nowrap;
+            position: sticky;
+            top: 0;
+            z-index: 1;
+        }
+
+        td.year-cell {
+            text-align: right;
+            font-weight: 700;
+            color: #0f172a;
+            white-space: nowrap;
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
+            min-width: 150px;
+        }
+
+        tbody tr {
+            transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(239, 246, 255, 0.6);
+        }
+
+        tr:last-child td {
+            border-bottom: 0;
+        }
+
+        .status-cell {
+            font-size: 1.1rem;
+            font-weight: 700;
+        }
+
+        .status-present {
+            background: linear-gradient(180deg, #f5fff8, #ecfbf1);
+            color: var(--green-700);
+        }
+
+        .status-missing {
+            background: linear-gradient(180deg, #fbfcfd, #f3f6f8);
+            color: var(--gray-500);
+        }
+
+        .status-badge {
+            width: 2.2rem;
+            height: 2.2rem;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin: 0 auto;
+            font-size: 1.1rem;
+            font-weight: 800;
+        }
+
+        .status-badge.present {
+            background: linear-gradient(180deg, #22c55e, #16a34a);
+            color: #ffffff;
+            box-shadow: 0 10px 20px rgba(34, 197, 94, 0.22);
+        }
+
+        .status-link {
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .status-link:focus-visible {
+            outline: 3px solid rgba(36, 89, 166, 0.28);
+            outline-offset: 4px;
+            border-radius: 9999px;
+        }
+
+        .status-badge.missing {
+            background: #e9eef4;
+            color: #7b8794;
+        }
+
+        .year-subtext {
+            display: block;
+            font-size: 0.78rem;
+            color: var(--text-soft);
+            font-weight: 500;
+            margin-top: 0.1rem;
+        }
+
+        .note-box {
+            background: linear-gradient(135deg, #eff6ff, #f6fbff);
+            border: 1px solid #bfdbfe;
+            border-radius: 0.9rem;
+            padding: 0.95rem 1rem;
+            color: #1e3a8a;
+            font-size: 0.95rem;
+        }
+
+        .status-text {
+            min-height: 1.4rem;
+            font-size: 0.95rem;
+            color: #475569;
+            margin-bottom: 0.9rem;
+        }
+
+        @media (max-width: 640px) {
+            .page-shell {
+                padding: 0.75rem;
+            }
+
+            .section-card {
+                padding: 1rem;
+            }
+
+            .summary-grid {
+                grid-template-columns: 1fr;
+            }
+
+            th,
+            td {
+                padding: 0.75rem 0.55rem;
+            }
+
+            .summary-value {
+                font-size: 1.7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <section class="section-card hero-card">
+            <header class="text-center md:text-right mb-2 relative">
+                <div class="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/80 px-3 py-1 text-sm font-semibold text-blue-700 shadow-sm">
+                    <span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500"></span>
+                    מאגר פתרונות במכניקה
+                </div>
+                <h1 class="text-3xl md:text-5xl font-bold text-blue-900 mt-4 mb-2">מפת הכיסוי של מאגר השאלות</h1>
+                <h2 class="text-lg md:text-2xl text-slate-600">מבט אחד על כל השנים, כל השאלות, ואילו פתרונות כבר זמינים במאגר</h2>
+                <p class="mt-4 text-slate-600 max-w-3xl md:max-w-none">הדף מציג בצורה חזותית אילו שאלות כבר קיימות במאגר הפתרונות, עם פיצול מובנה ל-2016 הרגילה ולשאלון השני של 2016.</p>
+            </header>
+
+            <div class="summary-grid">
+                <div class="summary-tile">
+                    <div class="summary-label">שורות בטבלה</div>
+                    <div id="summaryRows" class="summary-value">--</div>
+                </div>
+                <div class="summary-tile">
+                    <div class="summary-label">שאלות עם פתרון</div>
+                    <div id="summaryCovered" class="summary-value">--</div>
+                </div>
+                <div class="summary-tile">
+                    <div class="summary-label">אחוז כיסוי במאגר</div>
+                    <div id="summaryPercent" class="summary-value">--</div>
+                </div>
+            </div>
+        </section>
+
+        <section class="section-card">
+            <h3 class="section-header">פירוש הטבלה</h3>
+            <p class="content-paragraph">כל שורה מייצגת שנה. עבור 2016 מוצגות שתי שורות נפרדות: שאלון רגיל ושאלון שני.</p>
+            <div class="legend-row">
+                <div class="legend-chip"><span class="chip-dot success"></span><span>יש פתרון במאגר</span></div>
+                <div class="legend-chip"><span class="chip-dot missing"></span><span>עדיין אין פתרון במאגר</span></div>
+            </div>
+            <div class="note-box mt-4">
+                לחיצה על סימון ה-✓ הירוק פותחת ישירות את הפתרון של אותה שאלה. עבור 2016 תמצאו שורה נפרדת לשאלון הרגיל ושורה נוספת לשאלון השני.
+            </div>
+        </section>
+
+        <section class="section-card">
+            <h3 class="section-header">טבלת הכיסוי</h3>
+            <p id="statusText" class="status-text">טוען נתונים...</p>
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>שנה</th>
+                            <th>שאלה 1</th>
+                            <th>שאלה 2</th>
+                            <th>שאלה 3</th>
+                            <th>שאלה 4</th>
+                            <th>שאלה 5</th>
+                            <th>שאלה 6</th>
+                        </tr>
+                    </thead>
+                    <tbody id="coverageBody">
+                        <tr>
+                            <td colspan="7" class="text-slate-500">טוען...</td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </div>
+
+    <script>
+        const coverageBody = document.getElementById("coverageBody");
+        const statusText = document.getElementById("statusText");
+        const summaryRows = document.getElementById("summaryRows");
+        const summaryCovered = document.getElementById("summaryCovered");
+        const summaryPercent = document.getElementById("summaryPercent");
+        const QUESTION_COUNT = 6;
+
+        function formatNumber(value) {
+            return Number(value).toLocaleString("he-IL");
+        }
+
+        function parseQuestionId(id) {
+            const match = String(id || "").match(/^(\d{4})-(\d+)(?:\.(\d+))?$/);
+            if (!match) {
+                return null;
+            }
+
+            return {
+                year: Number(match[1]),
+                questionNumber: Number(match[2]),
+                variant: match[3] ? Number(match[3]) : 0
+            };
+        }
+
+        function ensureRow(rowMap, rowKey, rowData) {
+            if (!rowMap.has(rowKey)) {
+                rowMap.set(rowKey, {
+                    ...rowData,
+                    questions: new Array(QUESTION_COUNT).fill(null)
+                });
+            }
+            return rowMap.get(rowKey);
+        }
+
+        function buildRows(questions) {
+            const rowMap = new Map();
+
+            questions.forEach((question) => {
+                const parsed = parseQuestionId(question.id);
+                if (!parsed || parsed.questionNumber < 1 || parsed.questionNumber > QUESTION_COUNT) {
+                    return;
+                }
+
+                const isSecondary2016 = parsed.year === 2016 && parsed.variant > 0;
+                const rowKey = isSecondary2016 ? `${parsed.year}-secondary` : `${parsed.year}-primary`;
+                const label = isSecondary2016 ? `${parsed.year} (שאלון 2)` : String(parsed.year);
+                const row = ensureRow(rowMap, rowKey, {
+                    year: parsed.year,
+                    orderVariant: isSecondary2016 ? 1 : 0,
+                    label
+                });
+
+                row.questions[parsed.questionNumber - 1] = {
+                    exists: true,
+                    path: question.path || ""
+                };
+            });
+
+            const rows = Array.from(rowMap.values()).sort((a, b) => {
+                if (a.year !== b.year) {
+                    return a.year - b.year;
+                }
+                return a.orderVariant - b.orderVariant;
+            });
+
+            return rows;
+        }
+
+        function renderTable(rows) {
+            if (!rows.length) {
+                coverageBody.innerHTML = '<tr><td colspan="7" class="text-slate-500">לא נמצאו שאלות להצגה.</td></tr>';
+                statusText.textContent = 'עדיין אין נתונים להצגה.';
+                summaryRows.textContent = '0';
+                summaryCovered.textContent = '0';
+                summaryPercent.textContent = '0%';
+                return;
+            }
+
+            const coveredCount = rows.reduce((sum, row) => {
+                return sum + row.questions.filter((entry) => entry && entry.exists).length;
+            }, 0);
+            const totalSlots = rows.length * QUESTION_COUNT;
+            const percent = totalSlots ? Math.round((coveredCount / totalSlots) * 100) : 0;
+
+            coverageBody.innerHTML = rows.map((row) => {
+                const cells = row.questions.map((entry) => {
+                    if (entry && entry.exists && entry.path) {
+                        return `<td class="status-cell status-present"><a class="status-link" href="./${entry.path}" aria-label="פתח פתרון"><span class="status-badge present" aria-hidden="true">✓</span></a></td>`;
+                    }
+                    return '<td class="status-cell status-missing"><span class="status-badge missing" aria-label="חסר">−</span></td>';
+                }).join('');
+
+                const yearLabel = row.orderVariant === 1
+                    ? `${row.year}<span class="year-subtext">שאלון 2</span>`
+                    : `${row.year}<span class="year-subtext">שאלון רגיל</span>`;
+
+                return `
+                    <tr>
+                        <td class="year-cell">${yearLabel}</td>
+                        ${cells}
+                    </tr>
+                `;
+            }).join('');
+
+            statusText.textContent = `מוצגות ${rows.length} שורות בטבלה. לחיצה על ✓ ירוק פותחת את הפתרון.`;
+            summaryRows.textContent = formatNumber(rows.length);
+            summaryCovered.textContent = formatNumber(coveredCount);
+            summaryPercent.textContent = `${percent}%`;
+        }
+
+        async function loadCoverage() {
+            try {
+                const response = await fetch('./question-topics.json', { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error('load-failed');
+                }
+
+                const data = await response.json();
+                const questions = Array.isArray(data.questions) ? data.questions : [];
+                const rows = buildRows(questions);
+                renderTable(rows);
+            } catch (error) {
+                coverageBody.innerHTML = '<tr><td colspan="7" class="text-red-700">לא ניתן לטעון כרגע את מאגר הפתרונות.</td></tr>';
+                statusText.textContent = 'אירעה תקלה בטעינת הנתונים. אפשר לנסות לרענן את הדף.';
+                console.error(error);
+            }
+        }
+
+        loadCoverage();
+    </script>
+</body>
+</html>
