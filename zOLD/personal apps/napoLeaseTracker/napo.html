@@ -119,6 +119,9 @@
 
       <h2 class="section-title">היסטוריית קריאות</h2>
       <div id="historyHint" class="hint">יש להתחבר כדי לראות את הקריאות מהענן.</div>
+      <div class="chart-box">
+        <canvas id="kmChart" height="120"></canvas>
+      </div>
       <div class="table-wrap">
         <table>
           <thead>
@@ -134,9 +137,6 @@
             <tr><td colspan="5" class="muted">אין נתונים להצגה</td></tr>
           </tbody>
         </table>
-      </div>
-      <div class="chart-box">
-        <canvas id="kmChart" height="120"></canvas>
       </div>
     </div>
 
@@ -312,6 +312,34 @@
     $('result').innerHTML = html;
   }
 
+  function renderComputedResult(km, readingDate, sourceText = ''){
+    const { days, perDay, allowed, difference, percent, projected3Years, allowed3Years, projectedOverage, fine } = computeProjection(km, readingDate);
+
+    const statusBadge = difference > 0
+      ? `<span class="badge bad">חריגה</span>`
+      : `<span class="badge ok">בתוך המכסה</span>`;
+    const statusTileClass = difference > 0 ? 'tile-bad' : 'tile-ok';
+
+    const html = `
+      <div class="result-grid">
+        ${statTile('ימים שחלפו מאז תחילת המניין', format(days))}
+        ${statTile('מכסה יומית (פשטני, 365 ימים)', `${format(perDay,2)} ק"מ/יום`)}
+        ${statTile('מכסה מותרת עד היום', `${format(allowed,0)} ק"מ`)}
+        ${statTile('קריאת מד שהוזנה', `${format(km,0)} ק"מ`)}
+        ${statTile('סטטוס מול המותר עד כה', statusBadge, statusTileClass)}
+        ${statTile('פער מול המותר עד כה', `${format(difference,0)} ק"מ`)}
+        ${statTile('ניצול המכסה עד היום', `${format(percent,1)}%`)}
+        ${statTile('תחזית ל‑3 שנים בקצב הנוכחי', `${format(projected3Years,0)} ק"מ`)}
+        ${statTile('מכסה מותרת ל‑3 שנים', `${format(allowed3Years,0)} ק"מ`)}
+        ${statTile('חריגה חזויה (אם הקצב יימשך)', `${format(projectedOverage,0)} ק"מ`)}
+        ${statTile('קנס משוער (עלות×מע"מ)', `₪${format(fine,0)}`)}
+      </div>
+      ${sourceText ? `<div class="hint">${sourceText}</div>` : ''}
+    `;
+
+    $('result').innerHTML = html;
+  }
+
   async function saveReadingToCloud(payload){
     if(!currentUser){
       throw new Error('not-authenticated');
@@ -460,6 +488,7 @@
     if(readings.length === 0){
       $('historyBody').innerHTML = '<tr><td colspan="5" class="muted">אין קריאות שמורות עדיין</td></tr>';
       renderChart([]);
+      renderAllowanceOnly();
       return;
     }
 
@@ -482,6 +511,14 @@
 
     $('historyBody').innerHTML = html;
     renderChart(readings);
+
+    const latest = readings[0];
+    if(latest){
+      const latestKm = Number(latest.readingKm || 0);
+      const latestDate = toDate(latest.readingDateIso);
+      $('km').value = String(Math.round(latestKm));
+      renderComputedResult(latestKm, latestDate, `מוצג לפי הקריאה האחרונה: ${fmtDate(latest.readingDateIso)}`);
+    }
   }
 
   function startReadingsListener(){
@@ -500,7 +537,7 @@
     setHistoryHint('טוען קריאות מהענן...');
     const q = query(
       collection(db, 'users', currentUser.uid, 'leaseReadings'),
-      orderBy('readingDateIso', 'asc')
+      orderBy('readingDateIso', 'desc')
     );
 
     readingsUnsubscribe = onSnapshot(q, (snap) => {
@@ -608,29 +645,9 @@
     }
 
     const today = new Date();
-    const { days, perDay, allowed, difference, percent, projected3Years, allowed3Years, projectedOverage, fine } = computeProjection(km, today);
+    const { days, allowed, difference, percent, projected3Years, projectedOverage, fine } = computeProjection(km, today);
 
-    const statusBadge = difference > 0
-      ? `<span class="badge bad">חריגה</span>`
-      : `<span class="badge ok">בתוך המכסה</span>`;
-    const statusTileClass = difference > 0 ? 'tile-bad' : 'tile-ok';
-
-    const html = `
-      <div class="result-grid">
-        ${statTile('ימים שחלפו מאז תחילת המניין', format(days))}
-        ${statTile('מכסה יומית (פשטני, 365 ימים)', `${format(perDay,2)} ק"מ/יום`)}
-        ${statTile('מכסה מותרת עד היום', `${format(allowed,0)} ק"מ`)}
-        ${statTile('קריאת מד שהוזנה', `${format(km,0)} ק"מ`)}
-        ${statTile('סטטוס מול המותר עד כה', statusBadge, statusTileClass)}
-        ${statTile('פער מול המותר עד כה', `${format(difference,0)} ק"מ`)}
-        ${statTile('ניצול המכסה עד היום', `${format(percent,1)}%`)}
-        ${statTile('תחזית ל‑3 שנים בקצב הנוכחי', `${format(projected3Years,0)} ק"מ`)}
-        ${statTile('מכסה מותרת ל‑3 שנים', `${format(allowed3Years,0)} ק"מ`)}
-        ${statTile('חריגה חזויה (אם הקצב יימשך)', `${format(projectedOverage,0)} ק"מ`)}
-        ${statTile('קנס משוער (עלות×מע"מ)', `₪${format(fine,0)}`)}
-      </div>
-    `;
-    $('result').innerHTML = html;
+    renderComputedResult(km, today);
 
     if(!currentUser){
       setSaveStatus('לא נשמר: צריך להתחבר עם Google כדי לשמור בענן.', true);
@@ -715,6 +732,7 @@
           readingsUnsubscribe = null;
         }
         clearHistoryUi();
+        renderAllowanceOnly();
         setHistoryHint('יש להתחבר כדי לראות את הקריאות מהענן.');
       }
     });
