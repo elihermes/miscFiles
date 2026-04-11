@@ -1,0 +1,862 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - חשמל 2022, שאלה 4</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Optional: Chart.js (remove if not needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            min-height: 360px;
+            width: 100%;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מודרך: ציקלוטרון</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">בגרות פיזיקה, חשמל 2022 - שאלה 4</h2>
+        <p class="mt-3 text-slate-500">פתרון מלא, צעד-אחר-צעד, כולל הסברים פדגוגיים וניתוח כוחות לתלמידי 5 יח"ל.</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א(1) -->
+    <section class="section-card" id="part-a1">
+        <h3 class="section-header">סעיף א'(1): צורת המסלול</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-1 space-y-1">
+                    <li>מערכת ציקלוטרון הכוללת שני אזורים בצורת חצי עיגול (M, N) וביניהם אזור מלבני C.</li>
+                    <li>באזורים M ו-N יש שדה מגנטי קבוע המכוון לתוך הדף.</li>
+                    <li>באזור C יש שדה חשמלי המקביל לכיוון התנועה ומהפך את כיוונו.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1">
+                    להסביר מדוע התנועה בחצאי העיגול היא מעגלית, ומדוע הרדיוס גדל מסיבוב לסיבוב.
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( F_B = qvB\sin\alpha \)</span>
+            <span class="formula-badge">\( \Sigma F = ma \)</span>
+            <span class="formula-badge">\( a_r = \frac{v^2}{r} \)</span>
+            <span class="formula-badge">משפט עבודה-אנרגיה</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            
+            <div class="step-label">שלב 1: התנועה במערכת המגנטית</div>
+            <p class="content-paragraph">באזורים M ו-N פועל על החלקיק כוח מגנטי. מכיוון שהשדה המגנטי ניצב למהירות החלקיק (\( \alpha = 90^\circ \)), הכוח המגנטי פועל תמיד בניצב לכיוון המהירות. כוח שניצב תמיד למהירות אינו מבצע עבודה, אינו משנה את גודל המהירות, ומהווה כוח צנטריפטלי טהור. לכן התנועה היא בהכרח מעגלית קצובה.</p>
+            <p class="content-paragraph">נפתח את הביטוי לרדיוס המסלול מתוך החוק השני של ניוטון:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_R = m \cdot a_R \implies qvB = m \cdot \frac{v^2}{R} \implies R = \frac{mv}{qB} \]
+            </div>
+
+            <div class="step-label">שלב 2: הגדלת הרדיוס באזור ההאצה</div>
+            <p class="content-paragraph">בכל פעם שהחלקיק עובר באזור המלבני C, השדה החשמלי מבצע עליו עבודה חיובית המגדילה את האנרגיה הקינטית שלו. כתוצאה מכך, גודל המהירות \( v \) גדל ממעבר למעבר. על פי המשוואה שפיתחנו, המסה \( m \), המטען \( q \) והשדה המגנטי \( B \) קבועים. לכן, הגדלת המהירות \( v \) גוררת בהכרח את הגדלת רדיוס הסיבוב \( R \).</p>
+
+            <p class="final-answer">
+                מסקנה: המסלול מעגלי משום שהכוח המגנטי משמש ככוח צנטריפטלי. הרדיוס גדל מסיבוב לסיבוב משום שהשדה החשמלי מגדיל את המהירות, והרדיוס נמצא ביחס ישר למהירות.
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> זכרו את הכלל - שדה מגנטי משנה רק כיוון (מנווט), שדה חשמלי משנה גם גודל (מאיץ)! זוהי תמצית ההבנה של עיקרון הפעולה של הציקלוטרון.
+        </div>
+    </section>
+
+    <!-- סעיף א(2) -->
+    <section class="section-card" id="part-a2">
+        <h3 class="section-header">סעיף א'(2): כיוון התנועה</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-1 space-y-1">
+                    <li>כעת נתון כי החלקיק הנע במערכת הוא <strong>פרוטון</strong>.</li>
+                    <li>מטען הפרוטון הוא חיובי (\( +q \)).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1">
+                    לקבוע את כיוון התנועה של הפרוטון במערכת (עם או נגד כיוון השעון).
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">כלל יד ימין למטען חיובי (כוח לורנץ)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            
+            <p class="content-paragraph">כדי לקבוע את כיוון התנועה הכללי, נסתכל על הפרוטון כאשר הוא נמצא באזור M (האזור השמאלי). כדי שהפרוטון יבצע תנועה מעגלית שמרכזה נמצא לימינו (לכיוון אזור ההאצה C), הכוח הרדיאלי הפועל עליו (הכוח המגנטי \( \vec{F}_B \)) חייב להיות מכוון ימינה.</p>
+            
+            <div class="visual-frame">
+                <svg width="300" height="200" viewBox="0 0 300 200" xmlns="http://www.w3.org/2000/svg">
+                    <g stroke="#94a3b8" stroke-width="2">
+                        <path d="M 40 40 L 50 50 M 50 40 L 40 50" />
+                        <path d="M 100 40 L 110 50 M 110 40 L 100 50" />
+                        <path d="M 40 100 L 50 110 M 50 100 L 40 110" />
+                        <path d="M 100 100 L 110 110 M 110 100 L 100 110" />
+                        <path d="M 40 160 L 50 170 M 50 160 L 40 170" />
+                        <path d="M 100 160 L 110 170 M 110 160 L 100 170" />
+                    </g>
+                    <text x="20" y="30" font-family="Arial" font-size="14" fill="#64748b">Region M</text>
+                    <circle cx="60" cy="100" r="6" fill="#ef4444" />
+                    <text x="70" y="95" font-family="Arial" font-size="14" font-weight="bold" fill="#ef4444">+q</text>
+                    <path d="M 60 90 L 60 40" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrowhead-v)" />
+                    <text x="45" y="60" font-family="Arial" font-size="16" font-weight="bold" fill="#3b82f6">v</text>
+                    <path d="M 70 100 L 140 100" stroke="#22c55e" stroke-width="3" marker-end="url(#arrowhead-f)" />
+                    <text x="100" y="90" font-family="Arial" font-size="16" font-weight="bold" fill="#22c55e">F_B</text>
+                    <path d="M 60 100 Q 60 180 150 180" fill="none" stroke="#64748b" stroke-width="2" stroke-dasharray="5,5" />
+                    <defs>
+                        <marker id="arrowhead-v" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6" />
+                        </marker>
+                        <marker id="arrowhead-f" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#22c55e" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+
+            <p class="content-paragraph">כעת נפעיל את <strong>כלל יד ימין למטען חיובי</strong>: נכוון את האצבעות (השדה המגנטי) לתוך הדף. נכוון את כף היד (הכוח המגנטי) כך שתדחוף ימינה. במצב זה, האגודל שלנו (המהירות) חייב לפנות כלפי מטה. מכיוון שהחלקיק נע מטה בחלקו השמאלי של המסלול המעגלי, הרי שהוא מקיף את המרכז נגד כיוון השעון.</p>
+
+            <p class="final-answer">
+                מסקנה: כיוון התנועה של הפרוטון הוא נגד כיוון השעון.
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> חשוב לזכור שכלל יד ימין (כפי שהפעלנו אותו כאן) נכון ומוגדר עבור מטען חיובי. אם היה מדובר באלקטרון (מטען שלילי), כיוון הכוח המגנטי שהיינו מקבלים היה הפוך, ולכן היינו מקבלים תנועה עם כיוון השעון!
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': זמני התנועה בחצאי העיגול</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-1 space-y-1">
+                    <li>הפרוטון מבצע חצאי מעגלים באזורים M ו-N.</li>
+                    <li>המהירות באזור N גדולה יותר מהמהירות באזור M (בהתאמה, גם הרדיוס גדול יותר).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1">להוכיח שזמן התנועה בחצי העיגול M שווה לזמן התנועה בחצי העיגול N.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma F = ma \)</span>
+            <span class="formula-badge">\( F_B = qvB\sin\alpha \)</span>
+            <span class="formula-badge">\( v = \frac{2\pi r}{T} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נתחיל מבידוד זמן המחזור (הזמן הדרוש להקפה מלאה אחת) מהנוסחה הקינמטית של תנועה מעגלית:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ T = \frac{2\pi R}{v} \]
+            </div>
+            <p class="content-paragraph">נציב את הביטוי לרדיוס \( R = \frac{mv}{qB} \) שפיתחנו בסעיף הקודם בתוך המשוואה של זמן המחזור:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ T = \frac{2\pi}{v} \cdot \left( \frac{mv}{qB} \right) \]
+            </div>
+            <p class="content-paragraph">נשים לב שגודל המהירות \( v \) מצטמצם מהמונה והמכנה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ T = \frac{2\pi m}{qB} \]
+            </div>
+            <p class="content-paragraph">זמן השהייה בכל חצי עיגול (נסמנו \( t \)) הוא בדיוק מחצית מזמן המחזור המלא:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ t = \frac{T}{2} = \frac{\pi m}{qB} \]
+            </div>
+            <p class="content-paragraph">ניתן לראות בבירור שהביטוי לזמן התנועה \( t \) תלוי אך ורק בקבועים (המסה \( m \), המטען \( q \) ועוצמת השדה המגנטי \( B \)). הביטוי אינו תלוי במהירות החלקיק \( v \) וגם לא ברדיוס המסלול \( R \). לכן, אף על פי שבאזור N הפרוטון נע מהר יותר ועובר דרך ארוכה יותר (רדיוס גדול יותר), שני האפקטים הללו מבטלים זה את זה, והזמן נשאר זהה לזמן באזור M.</p>
+            
+            <p class="final-answer">הזמן לחצי הקפה פותח לביטוי \( t = \frac{\pi m}{qB} \) אשר אינו תלוי במהירות או ברדיוס. לכן הזמנים שווים. מ.ש.ל.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> תכונה מפתיעה זו של הציקלוטרון (אי-תלות זמן המחזור במהירות) היא הבסיס לפעולתו! בזכותה ניתן להשתמש במקור מתח חילופין בתדירות קבועה כדי להפוך את כיוון השדה החשמלי באזור C בדיוק ברגע הנכון בכל פעם שהפרוטון מגיע למרווח.
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': חישוב גודל השדה המגנטי</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-1 space-y-1">
+                    <li>מתוך הגרף, הזמן שבו המהירות נשארת קבועה (זמן השהייה באזור M) מ-\( t=0 \) עד \( t = 7 \cdot 10^{-9} \text{ s} \).</li>
+                    <li>זמן שהייה: \( t_M = 7 \cdot 10^{-9} \text{ s} \).</li>
+                    <li>מסת הפרוטון (מדף נוסחאות): \( m_p = 1.67 \cdot 10^{-27} \text{ kg} \).</li>
+                    <li>מטען הפרוטון (מדף נוסחאות): \( q = 1.6 \cdot 10^{-19} \text{ C} \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1">את גודל השדה המגנטי \( B \).</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">הוצאת נתונים מגרף קולו</span>
+            <span class="formula-badge">הסתמכות על הפיתוח מסעיף ב'</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נשתמש במשוואה שפיתחנו בסעיף ב' עבור זמן השהייה בחצי מעגל, ונבודד מתוכה אלגברית את גודל השדה המגנטי \( B \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ t = \frac{\pi m}{qB} \implies B = \frac{\pi m}{q t} \]
+            </div>
+            <p class="content-paragraph">נציב את הנתונים המומרים ליחידות MKS (קילוגרמים, קולונים, שניות):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ B = \frac{\pi \cdot 1.67 \cdot 10^{-27}}{1.6 \cdot 10^{-19} \cdot 7 \cdot 10^{-9}} \]
+            </div>
+            <p class="content-paragraph">נבצע את החישוב:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ B = \frac{5.246 \cdot 10^{-27}}{11.2 \cdot 10^{-28}} \approx 4.68 \text{ T} \]
+            </div>
+            
+            <p class="final-answer">גודל השדה המגנטי הוא: \( B = 4.68 \text{ T} \)</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> סכנה בגרפים! שימו לב היטב לכותרות הצירים בגרפים בבגרות. הציר האופקי כופל את המספרים ב-\( 10^{-9} \) והציר האנכי מכפיל ב-\( 10^5 \). שכחה של חזקות אלו היא הטעות הנפוצה ביותר בסעיף זה!
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': חישוב גודל השדה החשמלי</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-1 space-y-1">
+                    <li>זמן כניסה לאזור C: \( t_1 = 7 \cdot 10^{-9} \text{ s} \).</li>
+                    <li>מהירות כניסה: \( v_1 = 2 \cdot 10^5 \text{ m/s} \).</li>
+                    <li>זמן יציאה: \( t_2 = 10 \cdot 10^{-9} \text{ s} \).</li>
+                    <li>מהירות יציאה: \( v_2 = 2.4 \cdot 10^5 \text{ m/s} \).</li>
+                    <li>פרק הזמן: \( \Delta t = 3 \cdot 10^{-9} \text{ s} \).</li>
+                    <li>השינוי במהירות: \( \Delta v = 0.4 \cdot 10^5 \text{ m/s} \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1">את גודל השדה החשמלי \( E \) המאיץ את הפרוטון באזור C.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( a = \frac{\Delta v}{\Delta t} \)</span>
+            <span class="formula-badge">\( \Sigma F = ma \)</span>
+            <span class="formula-badge">\( \vec{E} = \frac{\vec{F}}{q} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">בשלב הראשון, נחשב את תאוצת הפרוטון בהיותו באזור השדה החשמלי. מתוך גרף המהירות-זמן ניתן לראות שהשיפוע קבוע, ולכן התאוצה קבועה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ a = \frac{\Delta v}{\Delta t} = \frac{0.4 \cdot 10^5}{3 \cdot 10^{-9}} \approx 1.333 \cdot 10^{13} \text{ m/s}^2 \]
+            </div>
+
+            <div class="visual-frame">
+                <svg width="250" height="120" viewBox="0 0 250 120" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M 40 30 L 210 30" stroke="#fca5a5" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead-e)" />
+                    <path d="M 40 90 L 210 90" stroke="#fca5a5" stroke-width="2" stroke-dasharray="5,5" marker-end="url(#arrowhead-e)" />
+                    <text x="210" y="25" font-family="Arial" font-size="14" fill="#ef4444">E</text>
+                    <circle cx="80" cy="60" r="8" fill="#ef4444" />
+                    <text x="75" y="65" font-family="Arial" font-size="16" font-weight="bold" fill="#ffffff">+</text>
+                    <path d="M 90 60 L 150 60" stroke="#22c55e" stroke-width="3" marker-end="url(#arrowhead-f)" />
+                    <text x="110" y="50" font-family="Arial" font-size="14" font-weight="bold" fill="#22c55e">F_E</text>
+                    <path d="M 90 75 L 130 75" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowhead-v)" />
+                    <text x="105" y="95" font-family="Arial" font-size="14" font-weight="bold" fill="#3b82f6">v</text>
+                    <defs>
+                        <marker id="arrowhead-e" markerWidth="8" markerHeight="6" refX="7" refY="3" orient="auto">
+                            <polygon points="0 0, 8 3, 0 6" fill="#fca5a5" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+
+            <p class="content-paragraph">הכוח היחיד הפועל על החלקיק באזור המלבני (כאשר מזניחים את כוח הכובד שהוא זניח לחלוטין ברמת החלקיקים) הוא הכוח החשמלי. נשתמש בחוק השני של ניוטון:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F = qE = ma \implies E = \frac{ma}{q} \]
+            </div>
+            <p class="content-paragraph">נציב את הנתונים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E = \frac{1.67 \cdot 10^{-27} \cdot 1.333 \cdot 10^{13}}{1.6 \cdot 10^{-19}} \]
+            </div>
+            <p class="content-paragraph">נחשב:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E \approx 139,166 \text{ N/C} \approx 1.39 \cdot 10^5 \text{ N/C} \]
+            </div>
+            
+            <p class="final-answer">גודל השדה החשמלי הוא: \( E = 1.39 \cdot 10^5 \text{ N/C} \)</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> תאוצה קבועה בגרף מהירות-זמן מתבטאת בקו ישר (שיפוע קבוע). הדבר תואם למודל הפיזיקלי שלנו - השדה החשמלי קבוע, ולכן הכוח קבוע והתאוצה קבועה! עקביות בין הגרף לתיאוריה היא סימן מצוין שאתם בכיוון הנכון.
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה': חישוב הכוח הרדיאלי בכניסה הראשונה</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-1 space-y-1">
+                    <li>מהירות החלקיק בכניסה ל-M (\(t=0\)): \( v_1 = 2 \cdot 10^5 \text{ m/s} \).</li>
+                    <li>השדה המגנטי (מסעיף ג'): \( B = 4.68 \text{ T} \).</li>
+                    <li>מטען הפרוטון: \( q = 1.6 \cdot 10^{-19} \text{ C} \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1">את גודל הכוח הרדיאלי \( F_1 \) שפועל על הפרוטון בכניסתו לחצי העיגול M.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( F_B = qvB\sin\alpha \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">הכוח הרדיאלי הפועל על החלקיק בחצי העיגול הוא הכוח המגנטי. כיוון התנועה ניצב לכיוון השדה המגנטי, לכן הזווית \( \alpha = 90^\circ \) ו-\( \sin(90^\circ) = 1 \).</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ F_1 = q \cdot v_1 \cdot B \]
+            </div>
+            <p class="content-paragraph">נציב את הערכים הידועים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ F_1 = 1.6 \cdot 10^{-19} \cdot 2 \cdot 10^5 \cdot 4.68 \]
+            </div>
+            <p class="content-paragraph">נבצע את החישוב הסופי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ F_1 = 1.498 \cdot 10^{-13} \text{ N} \approx 1.5 \cdot 10^{-13} \text{ N} \]
+            </div>
+            
+            <p class="final-answer">גודל הכוח הרדיאלי הוא: \( F_1 = 1.5 \cdot 10^{-13} \text{ N} \)</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> תלמידים נוטים לעתים לנסות לחשב את הכוח הרדיאלי דרך הנוסחה הקינמטית \( \Sigma F = \frac{mv^2}{R} \). למרות שזה נכון פיזיקלית, תזדקקו קודם לחשב את הרדיוס R בנפרד! שימוש ישיר בחוק כוח לורנץ \( F = qvB \) מקצר את הדרך ומונע שגיאות חישוב מיותרות.
+        </div>
+    </section>
+
+    <!-- סעיף ו -->
+    <section class="section-card" id="part-f">
+        <h3 class="section-header">סעיף ו': השוואת הכוח הרדיאלי בכניסות השונות</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-1 space-y-1">
+                    <li>\( F_1 \) הוא הכוח בכניסה הראשונה לאזור M.</li>
+                    <li>\( F_2 \) הוא הכוח בכניסה <strong>בפעם הבאה</strong>.</li>
+                    <li>במעבר בין שתי הכניסות, הפרוטון הואץ פעמיים באזור C.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1">לקבוע האם \( F_1 \) גדול מ- \( F_2 \), קטן ממנו, או שווה לו, ולנמק.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( F_B = qvB\sin\alpha \)</span>
+            <span class="formula-badge">משפט עבודה-אנרגיה</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">כפי שלמדנו בסעיפים הקודמים, בכל פעם שהפרוטון עובר באזור המלבני C, השדה החשמלי מבצע עליו עבודה חיובית והאנרגיה הקינטית שלו גדלה (משפט עבודה ואנרגיה). כתוצאה מכך, גודל מהירותו עולה.</p>
+            <p class="content-paragraph">כאשר הפרוטון יחזור לאזור M בפעם הבאה, הוא כבר הואץ, ולכן מהירותו החדשה \( v_2 \) תהיה גדולה ממהירותו ההתחלתית \( v_1 \) (\( v_2 > v_1 \)).</p>
+            <p class="content-paragraph">הכוח הרדיאלי הפועל עליו מוגדר על ידי נוסחת כוח לורנץ \( F = qvB \). מכיוון שמטען הפרוטון \( q \) והשדה המגנטי \( B \) הם קבועים, הכוח המגנטי נמצא ביחס ישר לגודל המהירות.</p>
+            <p class="content-paragraph">מכיוון שהמהירות גדלה, בהכרח גם הכוח המגנטי המופעל עליו גדל. לכן, נקבל כי \( F_2 > F_1 \).</p>
+            
+            <p class="final-answer">
+                קביעה: \( F_1 \) קטן מ-\( F_2 \). <br>
+                נימוק: הכוח יחסי למהירות (\( F = qvB \)), והמהירות גדלה עקב ההאצה באזור C.
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> זהו סעיף הבנה קלאסי. לא נדרש כאן חישוב מספרי מסובך, אלא הבנה עמוקה של התלות בין משתנים. מומלץ תמיד לכתוב את הנוסחה המקשרת (\( F=qvB \)) ולהראות למעריך הבחינה בבירור איזה משתנה השתנה ואיזה נשאר קבוע!
+        </div>
+    </section>
+
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
