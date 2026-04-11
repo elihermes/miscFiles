@@ -401,9 +401,268 @@
         const summaryCovered = document.getElementById("summaryCovered");
         const summaryPercent = document.getElementById("summaryPercent");
         const QUESTION_COUNT = 6;
+        const folderNamePattern = /^(\d{4})\s+שאלה\s+(.+)$/;
+        const MECHANICS_FOLDER_REPO_PATH = "webfiles/פתרונות שאלות בגרות/מכניקה שאלות בגרות";
+        const DISCOVERY_EXCLUDED_FILES = new Set([
+            "question-topics.json",
+            "תפריט ראשי מכניקה.html",
+            "ניהול נושאי שאלות מכניקה.html",
+            "טבלת כיסוי שאלות מכניקה.html"
+        ]);
 
         function formatNumber(value) {
             return Number(value).toLocaleString("he-IL");
+        }
+
+        function isLocalhost() {
+            return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        }
+
+        function normalizeSlashes(path) {
+            return String(path || "").replace(/\\/g, "/").replace(/^\/+/, "");
+        }
+
+        function normalizeRelativeQuestionPath(path) {
+            let normalized = normalizeSlashes(path);
+            if (normalized.startsWith("./")) {
+                normalized = normalized.slice(2);
+            }
+            const mechanicsRootWithSlash = `${MECHANICS_FOLDER_REPO_PATH}/`;
+            const directIdx = normalized.indexOf(mechanicsRootWithSlash);
+            if (directIdx >= 0) {
+                normalized = normalized.slice(directIdx + mechanicsRootWithSlash.length);
+                return normalized;
+            }
+            const folderName = "מכניקה שאלות בגרות";
+            const folderWithSlash = `${folderName}/`;
+            const folderIdx = normalized.indexOf(folderWithSlash);
+            if (folderIdx >= 0) {
+                normalized = normalized.slice(folderIdx + folderWithSlash.length);
+            }
+            return normalized;
+        }
+
+        function parseFromFolderName(folderName) {
+            const match = String(folderName || "").match(folderNamePattern);
+            if (!match) {
+                return null;
+            }
+            return {
+                year: Number(match[1]),
+                question: match[2],
+                title: folderName
+            };
+        }
+
+        function extractTitleFromPath(path) {
+            const normalized = normalizeRelativeQuestionPath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            const questionFolder = parts.find((part) => folderNamePattern.test(part));
+            if (questionFolder) {
+                return questionFolder;
+            }
+            return parts.length >= 2 ? parts[parts.length - 2] : "";
+        }
+
+        function idBaseFromTitle(title) {
+            const parsed = parseFromFolderName(title);
+            if (parsed) {
+                return `${parsed.year}-${String(parsed.question).replace(/\s+/g, "-")}`;
+            }
+            return String(title || "").replace(/\s+/g, "-");
+        }
+
+        function getRepoContextFromLocation() {
+            const hostMatch = window.location.hostname.match(/^([^.]+)\.github\.io$/);
+            if (!hostMatch) {
+                return null;
+            }
+            const pathParts = window.location.pathname.split("/").filter(Boolean);
+            if (!pathParts.length) {
+                return null;
+            }
+            return { owner: hostMatch[1], repo: pathParts[0] };
+        }
+
+        function getFileName(path) {
+            const normalized = normalizeRelativeQuestionPath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            return parts.length ? parts[parts.length - 1] : "";
+        }
+
+        function getFolderPath(path) {
+            const normalized = normalizeRelativeQuestionPath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            if (parts.length <= 1) {
+                return "";
+            }
+            return parts.slice(0, -1).join("/");
+        }
+
+        function pickHtmlInSolutionFolder(folderPath, htmlFiles) {
+            const files = [...htmlFiles].sort((a, b) => a.localeCompare(b, "he", { numeric: true }));
+            if (!files.length) {
+                return "";
+            }
+
+            const folderName = folderPath.split("/").filter(Boolean).pop() || "";
+            const exactFolderMatch = `${folderName}.html`;
+            if (files.includes(exactFolderMatch)) {
+                return exactFolderMatch;
+            }
+
+            const parsed = parseFromFolderName(folderName);
+            if (parsed) {
+                const startsWithYear = files.find((file) => file.startsWith(String(parsed.year)));
+                if (startsWithYear) {
+                    return startsWithYear;
+                }
+            }
+
+            return files[0];
+        }
+
+        async function discoverQuestionPaths() {
+            const discovered = new Set();
+            const folders = new Map();
+
+            function ensureFolder(folderPath) {
+                if (!folders.has(folderPath)) {
+                    folders.set(folderPath, {
+                        hasQuestionImage: false,
+                        htmlFiles: new Set()
+                    });
+                }
+                return folders.get(folderPath);
+            }
+
+            function collectNodePath(nodePath) {
+                const relativePath = normalizeRelativeQuestionPath(nodePath);
+                const fileName = getFileName(relativePath);
+                const folderPath = getFolderPath(relativePath);
+                if (!fileName || !folderPath) {
+                    return;
+                }
+
+                const entry = ensureFolder(folderPath);
+                if (fileName.toLowerCase() === "question-image.png") {
+                    entry.hasQuestionImage = true;
+                    return;
+                }
+
+                if (fileName.toLowerCase().endsWith(".html") && !DISCOVERY_EXCLUDED_FILES.has(fileName)) {
+                    entry.htmlFiles.add(fileName);
+                }
+            }
+
+            function finalizeDiscoveredPaths() {
+                folders.forEach((entry, folderPath) => {
+                    if (!entry.hasQuestionImage || entry.htmlFiles.size === 0) {
+                        return;
+                    }
+
+                    const htmlFile = pickHtmlInSolutionFolder(folderPath, entry.htmlFiles);
+                    if (!htmlFile) {
+                        return;
+                    }
+
+                    discovered.add(`${folderPath}/${htmlFile}`);
+                });
+            }
+
+            if (isLocalhost()) {
+                const response = await fetch("/api/local-tree", { cache: "no-store" });
+                if (!response.ok) {
+                    throw new Error("local-tree-unavailable");
+                }
+
+                const data = await response.json();
+                const tree = Array.isArray(data.tree) ? data.tree : [];
+                tree.forEach((node) => {
+                    if (!node || node.type !== "blob" || typeof node.path !== "string") {
+                        return;
+                    }
+                    if (!node.path.startsWith(`${MECHANICS_FOLDER_REPO_PATH}/`)) {
+                        return;
+                    }
+                    collectNodePath(node.path);
+                });
+
+                finalizeDiscoveredPaths();
+                return [...discovered];
+            }
+
+            const ctx = getRepoContextFromLocation();
+            if (!ctx) {
+                return [];
+            }
+
+            const treeUrl = `https://api.github.com/repos/${ctx.owner}/${ctx.repo}/git/trees/HEAD?recursive=1`;
+            const response = await fetch(treeUrl, { cache: "no-store" });
+            if (!response.ok) {
+                throw new Error("github-tree-unavailable");
+            }
+
+            const data = await response.json();
+            const tree = Array.isArray(data.tree) ? data.tree : [];
+            tree.forEach((node) => {
+                if (!node || node.type !== "blob" || typeof node.path !== "string") {
+                    return;
+                }
+                if (!node.path.startsWith(`${MECHANICS_FOLDER_REPO_PATH}/`)) {
+                    return;
+                }
+                collectNodePath(node.path);
+            });
+
+            finalizeDiscoveredPaths();
+            return [...discovered];
+        }
+
+        function mergeQuestionsWithDiscovered(rawQuestions, discoveredPaths) {
+            const questions = Array.isArray(rawQuestions) ? rawQuestions.map((q) => ({ ...q })) : [];
+
+            const byPath = new Map();
+            const byId = new Map();
+            const byTitle = new Map();
+
+            questions.forEach((question) => {
+                const normalizedPath = normalizeRelativeQuestionPath(question.path);
+                question.path = normalizedPath;
+                byPath.set(normalizedPath, question);
+                if (question.id) {
+                    byId.set(question.id, question);
+                }
+                if (question.title && !byTitle.has(question.title)) {
+                    byTitle.set(question.title, question);
+                }
+            });
+
+            discoveredPaths.forEach((path) => {
+                const normalizedPath = normalizeRelativeQuestionPath(path);
+                if (byPath.has(normalizedPath)) {
+                    return;
+                }
+
+                const title = extractTitleFromPath(normalizedPath) || normalizedPath;
+                const inferredId = idBaseFromTitle(title);
+                const byExistingId = byId.get(inferredId);
+                if (byExistingId) {
+                    byPath.delete(normalizeRelativeQuestionPath(byExistingId.path));
+                    byExistingId.path = normalizedPath;
+                    byPath.set(normalizedPath, byExistingId);
+                    return;
+                }
+
+                const byExistingTitle = byTitle.get(title);
+                if (byExistingTitle) {
+                    byPath.delete(normalizeRelativeQuestionPath(byExistingTitle.path));
+                    byExistingTitle.path = normalizedPath;
+                    byPath.set(normalizedPath, byExistingTitle);
+                }
+            });
+
+            return questions;
         }
 
         function parseQuestionId(id) {
@@ -513,7 +772,8 @@
                 }
 
                 const data = await response.json();
-                const questions = Array.isArray(data.questions) ? data.questions : [];
+                const discoveredPaths = await discoverQuestionPaths();
+                const questions = mergeQuestionsWithDiscovered(data.questions, discoveredPaths);
                 const rows = buildRows(questions);
                 renderTable(rows);
             } catch (error) {

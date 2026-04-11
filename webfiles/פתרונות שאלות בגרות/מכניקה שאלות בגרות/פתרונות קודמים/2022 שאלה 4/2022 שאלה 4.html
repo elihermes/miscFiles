@@ -1,0 +1,834 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2022, שאלה 4</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            min-height: 360px;
+            width: 100%;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מכניקה 2022, שאלה 4</h2>
+        <p class="mt-3 text-slate-500">שלום לכולם! בואו נפתור יחד את שאלה 4 מתוך בגרות מכניקה 2022. זוהי שאלה קלאסית ומצוינת המשלבת דינמיקה ושיקולי עבודה ואנרגיה. אנחנו נעבוד שלב אחר שלב, בצורה מסודרת ומובנית.</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א' -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> הגוף נע לאורך הקטע BC, שהוא קטע אופקי ובעל חיכוך. המסה של הגוף היא \( m \), ומקדם החיכוך הקינטי הוא \( \mu \). הגוף נמצא בתנועה ימינה (מנקודה B לנקודה C).</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לסרטט תרשים כוחות (FBD) הפועלים על הגוף בעת תנועתו בקטע BC ולרשום את שמו של כל כוח.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="content-paragraph">נשתמש בעקרונות בסיסיים של דינמיקה - זיהוי כוחות המגע וכוחות השדה הפועלים על הגוף.</span><br>
+            <span class="formula-badge">\(W = mg\)</span> כוח הכבידה.<br>
+            <span class="formula-badge">\(N\)</span> כוח נורמלי ממשטח המגע.<br>
+            <span class="formula-badge">\(f_k\)</span> כוח חיכוך קינטי המתנגד לכיוון התנועה.
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">הגוף נע ימינה על משטח אופקי. הכוחות הפועלים עליו בציר האנכי הם כוח הכבידה כלפי מטה והכוח הנורמלי כלפי מעלה. בציר האופקי פועל רק כוח החיכוך הקינטי, שכיוונו מנוגד לכיוון התנועה, כלומר שמאלה.</p>
+            
+            <div class="visual-frame overflow-x-auto">
+                <!-- תמונת תרשים כוחות -->
+                <img src="image-1.png" alt="תרשים כוחות פועלים על גוף על משטח אופקי מחוספס" style="width: 400px; height: 260px; object-fit: contain;" class="block" />
+            </div>
+
+            <div class="final-answer">
+                תרשים הכוחות כולל 3 כוחות: כוח כבידה \( mg \) כלפי מטה, כוח נורמלי \( N \) כלפי מעלה, וכוח חיכוך קינטי \( f_k \) שמאלה.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            שימו לב! כאשר מבקשים מכם לרשום את שם הכוח, חובה לכתוב במפורש במילים (למשל: "כוח נורמלי") ולא רק את האות (\( N \)). בנוסף, זכרו שכוח החיכוך הקינטי תמיד מתנגד לכיוון התנועה של הגוף ביחס למשטח.
+        </div>
+    </section>
+
+    <!-- סעיף ב' -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב'</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> הגוף יורד מגובה \( h_0 \), עובר את הקטע המחוספס שאורכו \( l \), מתנגש בקיר באופן אלסטי (כלומר אין איבוד אנרגיה בהתנגשות עצמה), חוזר את הקטע המחוספס שוב (מרחק \( l \) נוסף), ועולה לגובה \( h_1 \). מקדם החיכוך הוא \( \mu \).</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לפתח ביטוי לעבודת כוח החיכוך במהלך כל תנועת הגוף, מ-\( h_0 \) ועד \( h_1 \), באמצעות הפרמטרים \( m, l, \mu \).</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(W = F_x \Delta x = F \cos\theta \Delta s\)</span> (נוסחת העבודה)<br>
+            <span class="formula-badge">\(f_k = \mu_k N\)</span> (נוסחת כוח חיכוך קינטי)<br>
+            <span class="formula-badge">\(\Sigma F_y = 0\)</span> (החוק הראשון של ניוטון בציר האנכי, כי אין תאוצה בציר זה).
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">
+                תחילה, נמצא את גודל כוח החיכוך על ידי כתיבת משוואת כוחות בציר ה-\( y \) (נקבע ציר \( y \) חיובי כלפי מעלה, ולכן התאוצה בציר זה היא 0):
+            </p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_y = N - mg = 0 \implies N = mg \]
+            </div>
+            <p class="content-paragraph">נציב בנוסחת החיכוך:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ f_k = \mu N = \mu m g \]
+            </div>
+            <p class="content-paragraph">
+                כוח החיכוך פועל רק בקטע BC. הגוף עובר את הקטע הזה הלוך ושוב, כלומר המרחק הכולל שעליו פועל החיכוך הוא \( \Delta s = 2l \).<br>
+                בכל רגע נתון, כוח החיכוך מנוגד לכיוון ההעתק של הגוף באותו רגע, ולכן הזווית בין וקטור הכוח לווקטור ההעתק היא תמיד \( 180^\circ \). נציב בנוסחת העבודה:
+            </p>
+            <div class="math-container text-center" dir="ltr">
+                \[ W_f = f_k \cdot \Delta s \cdot \cos(180^\circ) \]
+                \[ W_f = (\mu m g) \cdot (2l) \cdot (-1) \]
+            </div>
+            
+            <div class="final-answer">
+                \( W_f = -2\mu m g l \)
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            כוח חיכוך הוא "כוח לא משמר". העבודה שלו תלויה בדרך שעובר הגוף ולא רק בנקודת ההתחלה והסיום. מכיוון שהוא תמיד מתנגד לתנועה, העבודה שלו תמיד תהיה שלילית ותגרום להקטנת האנרגיה המכנית של המערכת.
+        </div>
+    </section>
+
+    <!-- סעיף ג' -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג'</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> הגוף ממשיך לנוע הלוך ושוב. נתון כי \( h_n \) הוא הגובה שאליו מגיע הגוף לאחר שמדדו את הגובה \( n \) פעמים. מדידה 1 היתה ב-\( h_1 \) (אחרי מעבר הלוך ושוב אחד). מכאן ש-\( n \) מייצג את מספר הפעמים שהגוף השלים מחזור של "הלוך-חזור" על המשטח המחוספס. בכל מחזור כזה, הגוף עובר מרחק של \( 2l \) על הקטע המחוספס.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> ביטוי של הגובה \( h_n \) כפונקציה של \( n \), באמצעות הפרמטרים \( h_0, l, \mu \).</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="content-paragraph">משפט עבודה ואנרגיה: עבודת הכוחות הלא משמרים שווה לשינוי באנרגיה המכנית.</span><br>
+            <span class="formula-badge">\(W_{nc} = \Delta E = E_f - E_i\)</span><br>
+            <span class="content-paragraph">אנרגיה פוטנציאלית כובדית:</span>
+            <span class="formula-badge">\(U_G = mgh\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">
+                נקבע את מישור הייחוס לאנרגיה פוטנציאלית כובדית (\( h=0 \)) בגובה המסילה האופקית BC.<br>
+                האנרגיה ההתחלתית של הגוף במנוחה בגובה \( h_0 \) היא:
+            </p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_0 = mgh_0 \]
+            </div>
+            <p class="content-paragraph">האנרגיה המכנית לאחר \( n \) פעמים של הלוך ושוב (כאשר הוא מגיע לשיא הגובה ונעצר רגעית) היא:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_n = mgh_n \]
+            </div>
+            <p class="content-paragraph">העבודה של כוח החיכוך במהלך \( n \) מחזורי "הלוך-חזור". בכל מחזור הוא עובר מרחק \( 2l \), לכן המרחק הכולל הוא \( 2nl \).</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ W_f = -f_k \cdot (2nl) = -\mu m g \cdot 2nl \]
+            </div>
+            <p class="content-paragraph">נפעיל את משפט עבודה-אנרגיה מהמצב ההתחלתי ועד למצב שלאחר \( n \) מחזורים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_n - E_0 = W_f \]
+                \[ mgh_n - mgh_0 = -2\mu m g l n \]
+            </div>
+            <p class="content-paragraph">נחלק את שני אגפי המשוואה ב-\( mg \) (מותר כי מסת הגוף אינה אפס ותאוצת הכובד \( g \) אינה אפס):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ h_n - h_0 = -2\mu l n \]
+            </div>
+            <p class="content-paragraph">נעביר את \( h_0 \) אגף כדי לבודד את \( h_n \):</p>
+            
+            <div class="final-answer">
+                \( h_n = h_0 - 2\mu l \cdot n \)
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            הביטו בתוצאה שקיבלנו! היא נראית כמו משוואת ישר מהצורה \( y = mx + b \), כאשר \( y \) הוא \( h_n \), ה-\( x \) שלנו הוא \( n \), נקודת החיתוך עם הציר האנכי (\( b \)) היא \( h_0 \), והשיפוע של הישר (\( m \)) הוא הקבוע השלילי \( -2\mu l \). הבנה זו תעזור לנו מאוד בסעיף הבא!
+        </div>
+    </section>
+
+    <!-- סעיף ד' -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד'</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> טבלת מדידות המקשרת בין \( n \) (מספר המדידה) לבין \( h_n \) (הגובה במטרים).</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> (1) לסרטט דיאגרמת פיזור (נקודות) של \( h_n \) כפונקציה של \( n \).<br>(2) להוסיף קו מגמה (הישר המתאים ביותר).</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>עקרונות בשימוש:</strong><br>
+            <span class="content-paragraph">עקרונות בניית גרף בפיזיקה: כותרות צירים, יחידות מידה, פיזור אחיד של שנתות, העברת "קו המגמה" הטוב ביותר בין הנקודות כך שישקף את המגמה הליניארית שגילינו בסעיף הקודם.</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">
+                נסרטט מערכת צירים. ציר אופקי (\( x \)) יהיה \( n \) (ללא יחידות), וציר אנכי (\( y \)) יהיה \( h_n \) ביחידות של מטרים (m).<br>
+                הנקודות הן: (1, 1.30), (2, 1.12), (3, 0.88), (4, 0.73), (5, 0.53).
+            </p>
+            
+            <div class="visual-frame overflow-x-auto">
+                <!-- SVG של הגרף -->
+                <svg width="500" height="350" viewBox="0 0 500 350" xmlns="http://www.w3.org/2000/svg" style="background-color: white; border-radius: 8px;">
+                    <!-- כותרת הגרף -->
+                    <text x="250" y="30" font-family="sans-serif" font-size="16" font-weight="bold" fill="#1e293b" text-anchor="middle" direction="rtl">
+                        הגובה h<tspan baseline-shift="sub" font-size="0.75em">n</tspan> כפונקציה של מספר המדידה n
+                    </text>
+                    
+                    <!-- גריד (רשת) -->
+                    <g stroke="#f1f5f9" stroke-width="1">
+                        <line x1="60" y1="50" x2="480" y2="50"/> <!-- 1.5 -->
+                        <line x1="60" y1="100" x2="480" y2="100"/> <!-- 1.2 -->
+                        <line x1="60" y1="150" x2="480" y2="150"/> <!-- 0.9 -->
+                        <line x1="60" y1="200" x2="480" y2="200"/> <!-- 0.6 -->
+                        <line x1="60" y1="250" x2="480" y2="250"/> <!-- 0.3 -->
+                        
+                        <line x1="130" y1="50" x2="130" y2="300"/> <!-- 1 -->
+                        <line x1="200" y1="50" x2="200" y2="300"/> <!-- 2 -->
+                        <line x1="270" y1="50" x2="270" y2="300"/> <!-- 3 -->
+                        <line x1="340" y1="50" x2="340" y2="300"/> <!-- 4 -->
+                        <line x1="410" y1="50" x2="410" y2="300"/> <!-- 5 -->
+                    </g>
+
+                    <!-- צירים -->
+                    <line x1="60" y1="300" x2="480" y2="300" stroke="#0f172a" stroke-width="2" marker-end="url(#arrow-axis)"/>
+                    <line x1="60" y1="300" x2="60" y2="40" stroke="#0f172a" stroke-width="2" marker-end="url(#arrow-axis)"/>
+                    
+                    <!-- כותרות צירים -->
+                    <text x="270" y="340" font-family="sans-serif" font-size="14" fill="#0f172a" text-anchor="middle" direction="rtl">מספר המדידה n</text>
+                    <text x="20" y="170" font-family="sans-serif" font-size="14" fill="#0f172a" transform="rotate(-90 20 170)" text-anchor="middle" direction="ltr">
+                        h<tspan baseline-shift="sub" font-size="0.75em">n</tspan> (m)
+                    </text>
+
+                    <!-- שנתות ציר Y -->
+                    <!-- מיפוי: y=0 זה 300, y=1.5 זה 50. טווח 1.5 תופס 250 פיקסלים. יחס: 166.6 פיקסלים ל-1 יחידה. -->
+                    <text x="50" y="305" font-family="sans-serif" font-size="12" fill="#475569" text-anchor="end">0.0</text>
+                    <text x="50" y="255" font-family="sans-serif" font-size="12" fill="#475569" text-anchor="end">0.3</text>
+                    <text x="50" y="205" font-family="sans-serif" font-size="12" fill="#475569" text-anchor="end">0.6</text>
+                    <text x="50" y="155" font-family="sans-serif" font-size="12" fill="#475569" text-anchor="end">0.9</text>
+                    <text x="50" y="105" font-family="sans-serif" font-size="12" fill="#475569" text-anchor="end">1.2</text>
+                    <text x="50" y="55" font-family="sans-serif" font-size="12" fill="#475569" text-anchor="end">1.5</text>
+
+                    <!-- שנתות ציר X -->
+                    <!-- מיפוי: x=0 זה 60. מרווח של 70 פיקסלים לכל n -->
+                    <text x="130" y="320" font-family="sans-serif" font-size="12" fill="#475569" text-anchor="middle">1</text>
+                    <text x="200" y="320" font-family="sans-serif" font-size="12" fill="#475569" text-anchor="middle">2</text>
+                    <text x="270" y="320" font-family="sans-serif" font-size="12" fill="#475569" text-anchor="middle">3</text>
+                    <text x="340" y="320" font-family="sans-serif" font-size="12" fill="#475569" text-anchor="middle">4</text>
+                    <text x="410" y="320" font-family="sans-serif" font-size="12" fill="#475569" text-anchor="middle">5</text>
+
+                    <!-- נקודות הנתונים -->
+                    <!-- n=1, h=1.30 -> x=130, y=300 - (1.30 * 166.66) = 300 - 216.6 = 83.4 -->
+                    <circle cx="130" cy="83.4" r="4" fill="#2563eb"/>
+                    <!-- n=2, h=1.12 -> x=200, y=300 - (1.12 * 166.66) = 300 - 186.6 = 113.4 -->
+                    <circle cx="200" cy="113.4" r="4" fill="#2563eb"/>
+                    <!-- n=3, h=0.88 -> x=270, y=300 - (0.88 * 166.66) = 300 - 146.6 = 153.4 -->
+                    <circle cx="270" cy="153.4" r="4" fill="#2563eb"/>
+                    <!-- n=4, h=0.73 -> x=340, y=300 - (0.73 * 166.66) = 300 - 121.6 = 178.4 -->
+                    <circle cx="340" cy="178.4" r="4" fill="#2563eb"/>
+                    <!-- n=5, h=0.53 -> x=410, y=300 - (0.53 * 166.66) = 300 - 88.3 = 211.7 -->
+                    <circle cx="410" cy="211.7" r="4" fill="#2563eb"/>
+
+                    <!-- קו מגמה (Trendline) -->
+                    <!-- קו המגמה מועבר על פי שיקול דעת כך שיעבור קרוב ככל האפשר לכל הנקודות -->
+                    <line x1="60" y1="51.5" x2="480" y2="244.5" stroke="#dc2626" stroke-width="2" stroke-dasharray="4,4"/>
+
+                    <defs>
+                        <marker id="arrow-axis" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#0f172a"/>
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+
+            <div class="final-answer">
+                הגרף שורטט בהצלחה עם נקודות הנתונים (בכחול) וקו המגמה הליניארי (באדום מקווקו) העובר ביניהן.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            בבחינת הבגרות, אל תחברו את הנקודות ב"זיגזג"! קו מגמה נועד לייצג את החוקיות הפיזיקלית שמצאנו בסעיף ג' (שהיא משוואת ישר). הקו צריך לעבור קרוב ככל האפשר לכל הנקודות, כשיש איזון בין הנקודות שמעליו לאלו שמתחתיו.
+        </div>
+    </section>
+
+    <!-- סעיף ה' -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה'</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> אורך קטע החיכוך הוא \( l = 0.25\text{ m} \). עלינו להיעזר בגרף ששרטטנו.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> (1) את הגובה ההתחלתי \( h_0 \).<br>(2) את מקדם החיכוך \( \mu \).</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="content-paragraph">השוואת משוואת הישר הפיזיקלית למשוואת הישר המתמטית. מהנוסחה שפיתחנו בסעיף ג':</span><br>
+            <span class="formula-badge">\( h_n = (-2\mu l) \cdot n + h_0 \)</span><br>
+            <span class="formula-badge">\( y = m_{slope} \cdot x + b \)</span><br>
+            <span class="content-paragraph">
+                מכאן נסיק שתי מסקנות:<br>
+                1. נקודת החיתוך עם הציר האנכי (\( b \)) שווה ל-\( h_0 \).<br>
+                2. שיפוע הגרף (\( m_{slope} \)) שווה ל- \( -2\mu l \).
+            </span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">
+                נחשב תחילה את שיפוע הגרף בעזרת שתי נקודות שיושבות ממש על קו המגמה שסרטטנו. במקרה זה, נקודות הקצה מהטבלה עבור \( n=1 \) ועבור \( n=5 \) יושבות בדיוק על הקו המייצג, והן רחוקות מספיק זו מזו כדי להקטין שגיאות קריאה. לכן נוח להשתמש בערכיהן: \( (1, 1.30) \) ו-\( (5, 0.53) \):
+            </p>
+            <div class="math-container text-center" dir="ltr">
+                \[ m_{slope} = \frac{\Delta y}{\Delta x} = \frac{0.53 - 1.30}{5 - 1} = \frac{-0.77}{4} = -0.1925 \text{ m} \]
+            </div>
+            
+            <div class="step-label">שלב 1: מציאת \( h_0 \)</div>
+            <p class="content-paragraph">
+                נציב נקודה מקו המגמה, למשל \( (1, 1.30) \), במשוואת הישר שלנו כדי למצוא את החיתוך \( b \) (שהוא למעשה \( h_0 \)):
+            </p>
+            <div class="math-container text-center" dir="ltr">
+                \[ y = m_{slope} \cdot x + b \]
+                \[ 1.30 = -0.1925 \cdot 1 + h_0 \]
+                \[ h_0 = 1.30 + 0.1925 = 1.4925 \text{ m} \]
+            </div>
+            <p class="content-paragraph">(תשובה קבילה בבגרות תנוע סביב \( 1.48 \) עד \( 1.50 \)).</p>
+
+            <div class="step-label">שלב 2: מציאת \( \mu \)</div>
+            <p class="content-paragraph">
+                נשווה את הביטוי הפיזיקלי של השיפוע לערך שחישבנו:
+            </p>
+            <div class="math-container text-center" dir="ltr">
+                \[ -2\mu l = -0.1925 \]
+            </div>
+            <p class="content-paragraph">נציב את הנתון \( l = 0.25\text{ m} \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ -2 \cdot \mu \cdot 0.25 = -0.1925 \]
+                \[ -0.5 \mu = -0.1925 \]
+                \[ \mu = \frac{-0.1925}{-0.5} = 0.385 \]
+            </div>
+            
+            <div class="final-answer">
+                (1) הגובה ההתחלתי: \( h_0 \approx 1.49\text{ m} \)<br>
+                (2) מקדם החיכוך: \( \mu \approx 0.385 \)
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            ככלל בחישוב שיפוע מגרף, חובה לקחת <strong>נקודות שנמצאות על קו המגמה שסרטטתם</strong>, ולא באופן עיוור את נקודות המדידה מהטבלה (כי הניסוי מכיל שגיאות והנקודות לעיתים קרובות סוטות מהקו). בנוסף, מומלץ תמיד לבחור שתי נקודות שרחוקות ככל האפשר זו מזו, כדי למזער את חוסר הדיוק שבקריאת הנתונים מהגרף. כאן התמזל מזלנו ושתי נקודות הקיצון מהטבלה נמצאות בול על הקו!
+        </div>
+    </section>
+
+    <!-- סעיף ו' -->
+    <section class="section-card" id="part-f">
+        <h3 class="section-header">סעיף ו'</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> בניסוי נוסף ציפו את הקיר בחומר מסוים. שחררו שוב מגובה \( h_0 \). כעת נמדד גובה חזרה \( h'_1 \), ונמצא כי הוא <strong>קטן</strong> מהערך \( h_1 \) שנמדד בניסוי המקורי.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לקבוע האם עבודת הכוח הנורמלי שהקיר מפעיל על הגוף במהלך ההתנגשות בניסוי הנוסף הייתה חיובית, שלילית, או שווה לאפס. ולנמק.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="content-paragraph">משפט עבודה ואנרגיה:</span>
+            <span class="formula-badge">\(W_{nc} = \Delta E\)</span><br>
+            <span class="content-paragraph">הפעם קיימים שני כוחות לא משמרים שעושים עבודה: כוח החיכוך, והכוח הנורמלי של הקיר במהלך ההתנגשות בחומר המצפה אותו.</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">
+                נשווה בין שני הניסויים על סמך משפט עבודה-אנרגיה.<br>
+                בניסוי הראשון (התנגשות אלסטית ללא ציפוי):
+            </p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_1 - E_0 = W_f \]
+            </div>
+            <p class="content-paragraph">בניסוי השני (עם ציפוי הקיר):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E'_1 - E_0 = W_f + W_{wall} \]
+            </div>
+            <p class="content-paragraph">
+                הגוף יורד מאותו גובה \( h_0 \), ולכן האנרגיה ההתחלתית \( E_0 \) זהה בשני המקרים. הגוף עובר את אותו מרחק בדיוק על הקטע המחוספס (הלוך ושוב מקצה לקצה), ולכן עבודת כוח החיכוך \( W_f \) זהה בשני המקרים.<br>
+                נתון לנו ש-\( h'_1 < h_1 \). מכיוון ש-\( E = mgh \), נובע מכך ש-\( E'_1 < E_1 \).<br>
+                כלומר, בניסוי השני, האנרגיה המכנית הסופית קטנה יותר. לאן "נעלמה" אנרגיה נוספת זו? היא אבדה עקב עבודת הכוח הנורמלי של הקיר המצופה במהלך ההתנגשות (שכעת אינה אלסטית).<br>
+                מתמטית:
+            </p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E'_1 < E_1 \implies (E_0 + W_f + W_{wall}) < (E_0 + W_f) \implies W_{wall} < 0 \]
+            </div>
+            
+            <div class="final-answer">
+                עבודת הכוח הנורמלי שהקיר מפעיל על הגוף היא שלילית.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            הסבר נוסף ופיזיקלי אינטואיטיבי יותר: כשהגוף פוגע בחומר המצפה את הקיר, הוא מועך (מכווץ) אותו. בשלב זה הכוח הנורמלי מהקיר מנוגד לכיוון ההתקדמות של הגוף (לתוך הקיר) ולכן עושה עבודה שלילית. כשהחומר מתרחב חזרה ודוחף את הגוף, הכוח פועל בכיוון התנועה (עבודה חיובית). מכיוון שההתנגשות אינה אלסטית (אבדה אנרגיה למערכת, כפי שמראה הגובה הנמוך יותר), העבודה השלילית בכיבוש החומר גדולה בערכה המוחלט מהעבודה החיובית בהחזרתו, וסך הכל מתקבלת עבודה שלילית.
+        </div>
+    </section>
+
+</div>
+
+<!-- כפתור צף להצגת השאלה -->
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<!-- מודל להצגת תמונת השאלה -->
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
