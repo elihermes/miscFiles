@@ -1,0 +1,748 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2023, שאלה 4</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            width: 100%;
+            overflow: hidden;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מכניקה 2023, שאלה 4</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך, צעד-אחר-צעד</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- Section A.1 -->
+    <section class="section-card" id="part-a1">
+        <h3 class="section-header">סעיף א' (1)</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> הכדור (מסה \(m\)) חולף בנקודה \(C\), שהיא הנקודה הגבוהה ביותר במסילה המעגלית האנכית. תאוצת הכובד היא \(g = 10 \text{ m/s}^2\).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> שרטוט של תרשים הכוחות (FBD) הפועלים על הכדור בנקודה \(C\), ציון שם הכוח ומי הגוף שמפעיל אותו.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="content-paragraph inline-block mt-1">זיהוי כוחות מרחוק (כבידה) וכוחות מגע (נורמל מהמסילה).</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">בנקודה \(C\) הפועלים על הכדור שני כוחות בלבד, שניהם כלפי מטה:</p>
+            <ul class="list-disc list-inside mb-4 content-paragraph">
+                <li><strong>כוח הכובד (\(mg\)):</strong> פועל כלפי מטה (לכיוון מרכז כדור הארץ). מופעל על ידי כדור הארץ.</li>
+                <li><strong>הכוח הנורמלי (\(N_C\)):</strong> פועל כלפי מטה (בניצב למשטח המסילה, לכיוון מרכז המעגל \(O\)). מופעל על ידי המסילה.</li>
+            </ul>
+
+            <div class="visual-frame">
+                <img src="image-1.png" alt="תרשים כוחות בנקודה C" style="width: 200px; height: 250px; object-fit: contain;" class="block border border-slate-200 rounded-lg bg-slate-50" />
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            טעות נפוצה היא לחשוב שהמסילה לוחצת "למעלה" בכל מצב. בנקודה העליונה של לולאה, הגוף נמצא *מתחת* למסילה, ולכן משטח המסילה דוחף את הגוף הרחק ממנה - כלומר למטה!
+        </div>
+    </section>
+
+    <!-- Section A.2 -->
+    <section class="section-card" id="part-a2">
+        <h3 class="section-header">סעיף א' (2)</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> הכדור משוחרר ממנוחה מנקודה \(P\) בגובה \(h\). רדיוס המעגל הוא \(R\). המסילה חלקה ולכן אין עבודת חיכוך.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> לבטא את גודל הכוח \(N_C\) כפונקציה של הגובה \(h\) (בעזרת הפרמטרים \(R, m, g\)).
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( U_G = mgh \)</span>
+            <span class="formula-badge">\( E_k = \frac{1}{2}mv^2 \)</span>
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+            <span class="formula-badge">\( a_R = \frac{v^2}{R} \)</span>
+            <p class="content-paragraph text-sm mt-2">עקרון מנחה: חוק שימור אנרגיה מכנית (הכוח הנורמלי אינו מבצע עבודה כי הוא מאונך לכיוון התנועה, ואין חיכוך).</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            
+            <p class="content-paragraph">שלב 1: נמצא את ריבוע המהירות של הכדור בנקודה \(C\) בעזרת שימור אנרגיה. נגדיר את מישור הייחוס לאנרגיה כובדית בקרקע (\(h=0\)). גובה הנקודה \(C\) הוא \(2R\).</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_P = E_C \]
+                \[ mgh = mg(2R) + \frac{1}{2}mv_C^2 \]
+            </div>
+            <p class="content-paragraph">נצמצם את המסה \(m\) ונחלץ את \(v_C^2\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ gh - 2gR = \frac{1}{2}v_C^2 \]
+                \[ v_C^2 = 2g(h - 2R) \]
+            </div>
+            
+            <p class="content-paragraph mt-4">שלב 2: נרשום את משוואת החוק השני של ניוטון בציר הרדיאלי בנקודה \(C\). נבחר כיוון חיובי כלפי מטה, אל מרכז המעגל:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_R = ma_R \]
+                \[ N_C + mg = m\frac{v_C^2}{R} \]
+            </div>
+            
+            <p class="content-paragraph mt-4">שלב 3: נציב את הביטוי שמצאנו עבור \(v_C^2\) לתוך משוואת הכוחות ונבודד את \(N_C\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ N_C + mg = m \frac{2g(h - 2R)}{R} \]
+                \[ N_C = \frac{2mg}{R}(h - 2R) - mg \]
+                \[ N_C = \frac{2mg}{R}h - 4mg - mg \]
+            </div>
+
+            <p class="final-answer">מסקנה: \( N_C(h) = \left(\frac{2mg}{R}\right)h - 5mg \)</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            סידור המשוואה בצורה של \(y = Ax + B\) עוזר מאוד לסעיפים הבאים. המשתנה הבלתי תלוי שלנו (כמו \(x\)) הוא \(h\), והפונקציה (כמו \(y\)) היא \(N_C\). לכן, שיפוע הגרף התיאורטי צפוי להיות \(\frac{2mg}{R}\) ונקודת החיתוך תהיה \(-5mg\).
+        </div>
+    </section>
+
+    <!-- Section B -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> טבלת ערכים של גובה השחרור \(h\) (במטרים) לעומת הכוח הנורמלי הנמדד \(N_C\) (בניוטונים):
+                <div class="overflow-x-auto mt-3">
+                    <table class="border-collapse border border-slate-400 text-center w-full">
+                        <tr class="bg-slate-100">
+                            <th class="border border-slate-400 px-3 py-1 font-semibold">\(h (m)\)</th>
+                            <td class="border border-slate-400 px-3 py-1">0.6</td>
+                            <td class="border border-slate-400 px-3 py-1">0.8</td>
+                            <td class="border border-slate-400 px-3 py-1">1.0</td>
+                            <td class="border border-slate-400 px-3 py-1">1.2</td>
+                            <td class="border border-slate-400 px-3 py-1">1.4</td>
+                        </tr>
+                        <tr>
+                            <th class="bg-slate-100 border border-slate-400 px-3 py-1 font-semibold">\(N_C (N)\)</th>
+                            <td class="border border-slate-400 px-3 py-1">0.20</td>
+                            <td class="border border-slate-400 px-3 py-1">0.55</td>
+                            <td class="border border-slate-400 px-3 py-1">0.75</td>
+                            <td class="border border-slate-400 px-3 py-1">0.95</td>
+                            <td class="border border-slate-400 px-3 py-1">1.20</td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> (1) שרטוט דיאגרמת פיזור. (2) הוספת קו מגמה לדיאגרמה.
+            </div>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נשרטט את הנקודות על מערכת צירים. ציר אופקי (X) ייצג את \(h\) ביחידות מטר, וציר אנכי (Y) ייצג את \(N_C\) ביחידות ניוטון. קו המגמה יועבר כך שיהיה קרוב ככל האפשר לכל הנקודות.</p>
+            
+            <div class="visual-frame overflow-x-auto">
+                <img src="image-2.png" alt="גרף פיזור עם קו מגמה" style="width: 600px; height: 400px; max-width: 100%; object-fit: contain; flex: 0 0 auto;" class="block" />
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            קו המגמה מעביר מיצוע (רגרסיה ליניארית) של נקודות המדידה כדי לבטל שגיאות ניסוי. לעולם אל תחברו נקודות בקו שבור ("זיגזג")! ניתן לראות שהנקודה (0.8, 0.55) מעט סוטה מהקו, וזה תקין לחלוטין בניסוי מעבדתי.
+        </div>
+    </section>
+
+    <!-- Section C -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> קו המגמה מהסעיף הקודם, והמשוואה התיאורטית שמצאנו בסעיף א(2): \( N_C = \frac{2mg}{R}h - 5mg \).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> לחשב את רדיוס המעגל \(R\) ואת מסת הכדור \(m\).
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="content-paragraph inline-block mt-1 block">עקרון השוואת מקדמים בין משוואת קו ישר מתמטי \(y = Ax + B\) למשוואה הפיזיקלית.</span><br>
+            <span class="formula-badge">\( A = \frac{\Delta y}{\Delta x} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">תחילה, נמצא את המשוואה המתמטית של קו המגמה. נבחר שתי נקודות נוחות <strong>שנמצאות על קו המגמה ששרטטנו</strong> (ולא בהכרח מהטבלה). למשל, נראה שהקו עובר קרוב מאוד לנקודות \((1.0, 0.73)\) ולנקודה \((1.5, 1.33)\).</p>
+            <p class="content-paragraph">חישוב השיפוע (\(A\)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ A = \frac{1.33 - 0.73}{1.5 - 1.0} = \frac{0.60}{0.50} = 1.2 \, \frac{\text{N}}{\text{m}} \]
+            </div>
+            
+            <p class="content-paragraph mt-4">מציאת נקודת החיתוך (\(B\)) על ידי הצבת אחת הנקודות במשוואה \(y = 1.2x + B\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 0.73 = 1.2 \cdot 1.0 + B \implies B = 0.73 - 1.2 = -0.47 \, \text{N} \]
+            </div>
+
+            <p class="content-paragraph mt-4">כעת, נשווה למודל הפיזיקלי \(N_C(h) = \left(\frac{2mg}{R}\right)h - 5mg\) לבין משוואת הישר \(y = Ax + B\), ונקבל את הקשרים: \( A = \frac{2mg}{R} \) ו- \( B = -5mg \).</p>
+
+            <div class="step-label">1. מציאת המסה \(m\) (בעזרת נקודת החיתוך)</div>
+            <div class="math-container text-center" dir="ltr">
+                \[ -5mg = -0.47 \]
+                \[ 5 \cdot m \cdot 10 = 0.47 \]
+                \[ 50m = 0.47 \implies m = \frac{0.47}{50} = 0.0094 \, \text{kg} = 9.4 \, \text{g} \]
+            </div>
+
+            <div class="step-label mt-4">2. מציאת הרדיוס \(R\) (בעזרת השיפוע)</div>
+            <div class="math-container text-center" dir="ltr">
+                \[ \frac{2mg}{R} = 1.2 \]
+                \[ \frac{2 \cdot 0.094}{R} = 1.2 \]
+                \[ R = \frac{0.188}{1.2} \approx 0.1567 \, \text{m} = 15.67 \, \text{cm} \]
+            </div>
+
+            <p class="final-answer">מסקנה: מסת הכדור \( m = 9.4 \text{ g} \) ורדיוס המעגל \( R \approx 15.67 \text{ cm} \).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה - קריטי לבגרות!</strong>
+            תלמידים שייקחו לצורך חישוב השיפוע נקודות מהטבלה שלא נמצאות בדיוק על קו המגמה <strong>יאבדו ניקוד!</strong> מותר להשתמש בנקודות מתוך הטבלה אך ורק אם הן יושבות ממש על הקו. לכן, ההמלצה החמה והבטוחה ביותר היא תמיד לבחור שתי נקודות קריאות ישירות מתוך קו המגמה ששרטטתם.
+        </div>
+    </section>
+
+    <!-- Section D -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> כדי שהנורה תידלק, החיישן זקוק לכוח מינימלי של \( N_{C,\min} = 0.6 \text{ N} \).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> קביעה מתוך הגרף או חישוב הגובה המינימלי \(h_{\min}\) שממנו יש לשחרר את הכדור.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="content-paragraph inline-block mt-1 block">הצבת ערכים במשוואת קו המגמה (או קריאה ישירה מגרף).</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">נציב את ערך הכוח הנדרש במשוואת הקו ונחלץ את הגובה המתאים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ N_{C,\min} = 1.2 \cdot h_{\min} - 0.47 \]
+                \[ 0.6 = 1.2 \cdot h_{\min} - 0.47 \]
+                \[ 1.07 = 1.2 \cdot h_{\min} \]
+                \[ h_{\min} = \frac{1.07}{1.2} \approx 0.892 \, \text{m} \]
+            </div>
+
+            <p class="final-answer">מסקנה: יש לשחרר את הכדור מגובה התחלתי של לפחות \( h_{\min} \approx 0.892 \text{ m} \).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            שיטה חלופית (וקלה יותר לעיתים במבחן) היא פשוט לגשת לגרף ששרטטתם, לחפש את הערך \(y=0.6\), להעביר קו אופקי עד למפגש עם קו המגמה, ולרדת אנכית לקריאת הערך המתאים בציר ה-X. הערך הגרפי גם הוא אמור להיות קרוב מאוד ל-0.9 מטר.
+        </div>
+    </section>
+
+    <!-- Section E -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> \(h_1\) הוא ערך ה-X בנקודת החיתוך של קו המגמה עם הציר האופקי. משמעות הדבר היא שבגובה שחרור \(h_1\), הכוח הנורמלי מתאפס (\(N_C = 0\)).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> האם גודל מהירות הכדור בנקודה C שווה לאפס? אם לא, חשבו את המהירות בנקודה זו.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+            <span class="formula-badge">\( a_R = \frac{v^2}{R} \)</span>
+            <p class="content-paragraph text-sm mt-2">עקרון: במצב של סף ניתוק ממסילה, הכוח הנורמלי מתאפס (\(N = 0\)).</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">תחילה נבדוק האם המהירות מתאפסת כשהכוח הנורמלי מתאפס. נחזור למשוואת הכוחות מהחוק השני של ניוטון עבור הנקודה C (הנקודה העליונה):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ N_C + mg = m\frac{v_C^2}{R} \]
+            </div>
+            <p class="content-paragraph mt-4">נציב את התנאי נתון כי \(N_C = 0\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 0 + mg = m\frac{v_C^2}{R} \]
+            </div>
+            <p class="content-paragraph mt-4">נצמצם במסה \(m\) ונראה כי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ g = \frac{v_C^2}{R} \]
+            </div>
+            <p class="content-paragraph mt-4">מכאן נובע בבירור כי <strong>המהירות אינה אפס!</strong> ההסבר הפיזיקלי לכך הוא שכדי להיות בתנועה מעגלית נדרשת תאוצה רדיאלית. במצב זה, כוח הכובד לבדו מספק בדיוק את התאוצה הדרושה לתנועה במעגל בנקודה זו.</p>
+            
+            <p class="content-paragraph mt-4">כעת, נחשב את גודל המהירות:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ v_C^2 = gR \]
+                \[ v_C = \sqrt{gR} \]
+            </div>
+            <p class="content-paragraph mt-4">נציב את הנתונים שמצאנו (\(g = 10 \text{ m/s}^2, R \approx 0.1567 \text{ m}\)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ v_C = \sqrt{10 \cdot 0.1567} = \sqrt{1.567} \approx 1.25 \, \text{m/s} \]
+            </div>
+
+            <p class="final-answer">מסקנה: המהירות אינה שווה לאפס. גודל המהירות הוא \( v_C \approx 1.25 \text{ m/s} \).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה - מילות קסם ומצבי סף:</strong>
+            בשאלות בגרות בפיזיקה, ישנן "מילות קסם" שמתארות מצב קיצון ובעצם מסתירות בתוכן נתון מספרי שלא מופיע במספרים! <br>
+            ביטויים כמו <strong>"סף ניתוק"</strong> או <strong>"מהירות מינימלית להשלמת מעגל"</strong> תמיד ירמזו לנו להציב \(\boldsymbol{N=0}\) (או מתיחות אפס בחוט). <br>
+            באופן דומה, ביטויים כמו <strong>"סף תנועה"</strong> או <strong>"רגע לפני החלקה"</strong> ירמזו לנו להציב חיכוך סטטי מקסימלי \(\boldsymbol{f_s = f_{s,\max}}\). <br>
+            תמיד תהיו עירניים לביטויים האלה בשאלה, הם בדרך כלל המפתח העיקרי למציאת הנעלם החסר!
+        </div>
+    </section>
+
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
