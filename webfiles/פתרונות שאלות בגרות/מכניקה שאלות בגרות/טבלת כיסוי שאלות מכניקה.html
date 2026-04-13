@@ -303,6 +303,37 @@
             margin-bottom: 0.9rem;
         }
 
+        .hover-preview {
+            position: fixed;
+            z-index: 200;
+            display: none;
+            pointer-events: none;
+            background: #ffffff;
+            border: 1px solid var(--slate-300);
+            border-radius: 0.75rem;
+            box-shadow: 0 16px 38px rgba(15, 23, 42, 0.22);
+            padding: 0.5rem;
+            max-width: min(68vw, 900px);
+            max-height: min(82vh, 900px);
+        }
+
+        .hover-preview img {
+            display: block;
+            max-width: min(66vw, 860px);
+            max-height: min(78vh, 860px);
+            width: auto;
+            height: auto;
+            border-radius: 0.5rem;
+            border: 1px solid var(--slate-200);
+            background: #f8fafc;
+        }
+
+        @media (max-width: 900px) {
+            .hover-preview {
+                display: none !important;
+            }
+        }
+
         @media (max-width: 640px) {
             .page-shell {
                 padding: 0.75rem;
@@ -394,6 +425,10 @@
         </section>
     </div>
 
+    <div id="hoverPreview" class="hover-preview" aria-hidden="true">
+        <img id="hoverPreviewImg" alt="תצוגה מוגדלת של השאלה">
+    </div>
+
     <script>
         const coverageBody = document.getElementById("coverageBody");
         const statusText = document.getElementById("statusText");
@@ -401,6 +436,9 @@
         const summaryCovered = document.getElementById("summaryCovered");
         const summaryPercent = document.getElementById("summaryPercent");
         const QUESTION_COUNT = 6;
+        const hoverPreview = document.getElementById("hoverPreview");
+        const hoverPreviewImg = document.getElementById("hoverPreviewImg");
+        let previewActive = false;
         const folderNamePattern = /^(\d{4})\s+שאלה\s+(.+)$/;
         const MECHANICS_FOLDER_REPO_PATH = "webfiles/פתרונות שאלות בגרות/מכניקה שאלות בגרות";
         const DISCOVERY_EXCLUDED_FILES = new Set([
@@ -409,6 +447,57 @@
             "ניהול נושאי שאלות מכניקה.html",
             "טבלת כיסוי שאלות מכניקה.html"
         ]);
+
+        function movePreview(event) {
+            if (!previewActive) {
+                return;
+            }
+            const margin = 18;
+            const rect = hoverPreview.getBoundingClientRect();
+            const vw = window.innerWidth;
+            const vh = window.innerHeight;
+            let x = event.clientX + margin;
+            let y = event.clientY + margin;
+            if (x + rect.width > vw - 8) {
+                x = event.clientX - rect.width - margin;
+            }
+            if (y + rect.height > vh - 8) {
+                y = event.clientY - rect.height - margin;
+            }
+            x = Math.max(8, x);
+            y = Math.max(8, y);
+            hoverPreview.style.left = `${x}px`;
+            hoverPreview.style.top = `${y}px`;
+        }
+
+        function hidePreview() {
+            previewActive = false;
+            hoverPreview.style.display = "none";
+        }
+
+        function attachStatusLinkPreviewHandlers() {
+            const links = coverageBody.querySelectorAll(".status-link");
+            links.forEach((link) => {
+                const href = link.getAttribute("href") || "";
+                const lastSlash = href.lastIndexOf("/");
+                if (lastSlash < 0) {
+                    return;
+                }
+                const imgSrc = href.slice(0, lastSlash) + "/question-image.png";
+
+                link.addEventListener("mouseenter", (event) => {
+                    if (window.matchMedia("(max-width: 900px)").matches) {
+                        return;
+                    }
+                    hoverPreviewImg.src = imgSrc;
+                    hoverPreview.style.display = "block";
+                    previewActive = true;
+                    movePreview(event);
+                });
+                link.addEventListener("mousemove", movePreview);
+                link.addEventListener("mouseleave", hidePreview);
+            });
+        }
 
         function formatNumber(value) {
             return Number(value).toLocaleString("he-IL");
@@ -776,6 +865,7 @@
                 const questions = mergeQuestionsWithDiscovered(data.questions, discoveredPaths);
                 const rows = buildRows(questions);
                 renderTable(rows);
+                attachStatusLinkPreviewHandlers();
             } catch (error) {
                 coverageBody.innerHTML = '<tr><td colspan="7" class="text-red-700">לא ניתן לטעון כרגע את מאגר הפתרונות.</td></tr>';
                 statusText.textContent = 'אירעה תקלה בטעינת הנתונים. אפשר לנסות לרענן את הדף.';
