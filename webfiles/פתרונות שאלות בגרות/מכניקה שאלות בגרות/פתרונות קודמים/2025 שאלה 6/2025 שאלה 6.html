@@ -1,0 +1,854 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - 2025 שאלה 6</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            min-height: 360px;
+            width: 100%;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מוסבר: בגרות בפיזיקה 2025, שאלה 6 (כבידה)</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">פיזיקה 5 יח"ל | שאלון 2025 | שאלה 6</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך ופדגוגי, צעד-אחר-צעד, לניתוח תנועת לוויינים</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">מבט כללי על השאלה</h3>
+        <p class="content-paragraph">שלום תלמידים יקרים! הגענו לשאלת הכבידה והאסטרופיזיקה. בשאלה זו ננתח תנועת לוויינים במסלולים אליפטיים ומעגליים סביב כדור הארץ, תוך שימוש בחוקי ניוטון, שימור אנרגיה ועבודה.</p>
+        <p class="content-paragraph mb-0">בואו נעבור על זה שלב אחר שלב, בצורה מסודרת וברורה.</p>
+    </section>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א' - השוואת מהירויות במסלול אליפטי</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <ul class="list-disc list-inside mt-2 space-y-1 text-slate-700">
+                    <li>הלוויין נע במסלול אליפטי סביב כדור הארץ.</li>
+                    <li>מסת הלוויין: \(m = 14 \text{ kg}\).</li>
+                    <li>נקודות A ו-B הן שתי נקודות שונות על המסלול האליפטי.</li>
+                    <li>מהתרשים ניתן לראות בבירור כי המרחק ממרכז כדור הארץ לנקודה A גדול מהמרחק לנקודה B (\(r_A > r_B\)).</li>
+                    <li>פועל רק כוח הכבידה של כדור הארץ.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                <p class="mt-2 text-slate-700">לקבוע האם גודל המהירות של הלוויין בנקודה A גדול, קטן או שווה לגודל מהירותו בנקודה B, ולנמק.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(E_k = \frac{1}{2}mv^2\)</span>
+            <span class="formula-badge">\(U_G = -\frac{GMm}{r}\)</span>
+            <span class="text-sm font-bold text-slate-700 ml-1 inline-block">עיקרון: חוק שימור אנרגיה מכנית (כוח הכבידה הוא כוח משמר)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">
+                נבחן את האנרגיה הפוטנציאלית הכובדית המוגדרת על ידי הנוסחה \(U_G = -\frac{GMm}{r}\). 
+                מכיוון שיש סימן מינוס בנוסחה, ככל שהמרחק \(r\) גדול יותר, השבר \(\frac{GMm}{r}\) קטן יותר בערכו המוחלט, ולכן הערך של \(U_G\) (שהוא שלילי) הופך להיות <strong>פחות שלילי</strong>, כלומר <strong>גדול יותר</strong> מתמטית.
+            </p>
+            <p class="content-paragraph">
+                מרחק הלוויין בנקודה A ממרכז כדור הארץ גדול ממרחקו בנקודה B (\(r_A > r_B\)). לכן, האנרגיה הפוטנציאלית בנקודה A גדולה מזו שבנקודה B (\(U_{G,A} > U_{G,B}\)).
+            </p>
+            <p class="content-paragraph">
+                על פי חוק שימור האנרגיה המכנית (\(E_k + U_G = \text{const}\)), האנרגיה הכוללת נשמרת. מכיוון שהאנרגיה הפוטנציאלית ב-A גדולה יותר, האנרגיה הקינטית ב-A חייבת להיות קטנה יותר כדי שהסכום יישאר קבוע (\(E_{k,A} < E_{k,B}\)). אנרגיה קינטית תלויה ישירות בגודל המהירות בריבוע, ומכאן שגודל המהירות ב-A קטן מזה שב-B.
+            </p>
+
+            <div class="visual-frame">
+                <!-- SVG תרשים למסלול האליפטי - מוקפד לפי חוקי קריאות -->
+                <svg viewBox="0 0 500 250" class="w-full max-w-lg h-auto mx-auto border border-slate-200 rounded-lg bg-white p-4 shadow-sm" aria-label="תרשים כוחות ומהירות במסלול אליפטי">
+                    <defs>
+                        <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                            <path d="M0,0 L0,6 L9,3 z" fill="#10b981" />
+                        </marker>
+                        <marker id="arrow-orange" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                            <path d="M0,0 L0,6 L9,3 z" fill="#f59e0b" />
+                        </marker>
+                    </defs>
+
+                    <!-- 1. שכבת המסלולים (תחתונה) -->
+                    <ellipse cx="250" cy="125" rx="200" ry="90" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="8,4" />
+
+                    <!-- 2. שכבת גופים -->
+                    <!-- כדור הארץ -->
+                    <circle cx="350" cy="125" r="25" fill="#3b82f6" stroke="#1e3a8a" stroke-width="2" />
+                    <!-- לוויין נקודה A -->
+                    <circle cx="80" cy="78" r="10" fill="#cbd5e1" stroke="#475569" stroke-width="2" />
+                    <!-- לוויין נקודה B -->
+                    <circle cx="410" cy="179" r="10" fill="#cbd5e1" stroke="#475569" stroke-width="2" />
+
+                    <!-- 3. שכבת טקסטים - שמות גופים בתחתית -->
+                    <text x="350" y="170" fill="#334155" font-size="12" font-weight="bold" text-anchor="middle">Earth</text>
+                    <text x="80" y="110" fill="#334155" font-size="14" font-weight="bold" text-anchor="middle">A</text>
+                    <text x="410" y="215" fill="#334155" font-size="14" font-weight="bold" text-anchor="middle">B</text>
+
+                    <!-- 4. שכבת נקודות אחיזה (מעל הגופים) -->
+                    <circle cx="80" cy="78" r="3" fill="#1e293b" />
+                    <circle cx="410" cy="179" r="3" fill="#1e293b" />
+
+                    <!-- 5. שכבת וקטורים (יוצאים מנקודות האחיזה) -->
+                    <!-- וקטורים בנקודה A -->
+                    <path d="M 80 78 L 110 40" stroke="#10b981" stroke-width="3" marker-end="url(#arrow-green)" />
+                    <path d="M 80 78 L 140 88" stroke="#f59e0b" stroke-width="2" marker-end="url(#arrow-orange)" />
+                    
+                    <!-- וקטורים בנקודה B -->
+                    <path d="M 410 179 L 450 140" stroke="#10b981" stroke-width="4" marker-end="url(#arrow-green)" />
+                    <path d="M 410 179 L 360 134" stroke="#f59e0b" stroke-width="4" marker-end="url(#arrow-orange)" />
+
+                    <!-- 6. שכבת טקסטים לוקטורים (מרחקי ביטחון מינימום 15px, כתיב תקני tspan) -->
+                    <text x="120" y="35" font-size="16" fill="#10b981" font-weight="bold" text-anchor="start">v<tspan baseline-shift="sub" font-size="0.75em">A</tspan></text>
+                    <text x="145" y="110" font-size="14" fill="#f59e0b" font-weight="bold" text-anchor="start">F<tspan baseline-shift="sub" font-size="0.75em">g</tspan></text>
+
+                    <text x="465" y="135" font-size="16" fill="#10b981" font-weight="bold" text-anchor="start">v<tspan baseline-shift="sub" font-size="0.75em">B</tspan></text>
+                    <text x="345" y="155" font-size="14" fill="#f59e0b" font-weight="bold" text-anchor="end">F<tspan baseline-shift="sub" font-size="0.75em">g</tspan></text>
+                </svg>
+            </div>
+
+            <p class="final-answer">תשובה סופית: גודל המהירות בנקודה A <strong>קטן</strong> מגודל המהירות בנקודה B.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong>
+            שימו לב למלכודת נפוצה! האנרגיה הפוטנציאלית \(U_G\) היא גודל <strong>שלילי</strong>. כאשר הרדיוס \(r\) גדל, הערך עולה מתמטית (מתקרב לאפס). לכן בנקודה רחוקה יותר (כמו A) האנרגיה הפוטנציאלית גדולה יותר (ופחות שלילית), ובהתאמה האנרגיה הקינטית קטנה יותר!
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב' - עבודת כוח הכבידה</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <p class="mt-2 text-slate-700">הלוויין נע מנקודה A (הנקודה המרוחקת, מהירות נמוכה) לנקודה B (הנקודה הקרובה, מהירות גבוהה). כוח הכבידה הוא הכוח היחיד שפועל עליו.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                <p class="mt-2 text-slate-700">לקבוע האם עבודת כוח הכבידה במעבר מ-A ל-B היא חיובית, שלילית או אפס, ולנמק.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <!-- המילה 'כוללת' נכתבה הפוך ('תללוכ') כדי לתקן את רינדור ה-LTR של מתג'אקס ולהציג עברית תקינה לקורא -->
+            <span class="formula-badge">\(W_{\text{תללוכ}} = \Delta E_k\)</span>
+            <span class="text-sm font-bold text-slate-700 ml-1 inline-block">עיקרון: משפט עבודה-אנרגיה</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">
+                הוכחנו בסעיף א' שגודל המהירות בנקודה B גדול מגודל המהירות בנקודה A (\(v_B > v_A\)).<br>
+                לכן, האנרגיה הקינטית של הלוויין גדלה במהלך תנועתו מ-A ל-B.
+            </p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Delta E_k = E_{k,B} - E_{k,A} > 0 \]
+            </div>
+            <p class="content-paragraph mt-4">
+                לפי משפט עבודה ואנרגיה, עבודת שקול הכוחות שווה לשינוי באנרגיה הקינטית. מאחר שכוח הכבידה הוא הכוח היחיד הפועל על הלוויין (ולכן הוא הכוח הכולל):
+            </p>
+            <div class="math-container text-center" dir="ltr">
+                \[ W_G = \Delta E_k > 0 \]
+            </div>
+            <p class="content-paragraph mt-4">
+                מכאן שהעבודה המתבצעת על ידי כוח הכבידה היא חיובית.
+            </p>
+            <p class="final-answer">תשובה סופית: העבודה שמבצע כוח הכבידה מ-A ל-B היא <strong>חיובית</strong>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הסבר אינטואיטיבי:</strong>
+            אפשר לחשוב על זה גם דרך הגדרת העבודה \(W = F \cdot \Delta x \cdot \cos(\alpha)\). כאשר הלוויין נע מ-A ל-B, הוא מתקרב לכדור הארץ. כוח הכבידה פועל לכיוון כדור הארץ, וגם וקטור ההעתק מכיל רכיב משמעותי לכיוון כדור הארץ. כלומר, הזווית בין כוח הכבידה לכיוון התנועה (בחלק זה של המסלול) היא זווית חדה (\(\alpha < 90^\circ\)), ולכן העבודה חיובית. כוח הכבידה "עוזר" ללוויין להאיץ (גודל המהירות גדל). ממש כמו חפץ שנופל!
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג' - חישוב רדיוס מסלול מעגלי</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <ul class="list-disc list-inside mt-2 space-y-1 text-slate-700">
+                    <li>לוויין שני בעל מסה זהה \(m = 14 \text{ kg}\) במסלול מעגלי.</li>
+                    <li>זמן המחזור: \(T = 100 \text{ min} = 6000 \text{ s}\).</li>
+                    <li>קבוע הגרביטציה: \(G = 6.67 \cdot 10^{-11} \frac{\text{N}\cdot\text{m}^2}{\text{kg}^2}\).</li>
+                    <li>מסת כדור הארץ: \(M_E = 5.974 \cdot 10^{24} \text{ kg}\).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                <p class="mt-2 text-slate-700">את רדיוס מסלולו של הלוויין \(r\) (המרחק ממרכז כדור הארץ).</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\Sigma\vec{F} = m\vec{a}\)</span>
+            <span class="formula-badge">\(F = G\frac{m_1 m_2}{r^2}\)</span>
+            <span class="formula-badge">\(a_R = \omega^2 r\)</span>
+            <span class="formula-badge">\(\omega = \frac{2\pi}{T}\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">נרשום את משוואת הכוחות עבור הלוויין בציר הרדיאלי הפונה למרכז כדור הארץ:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_R = m a_R \]
+                \[ G\frac{M_E m}{r^2} = m \cdot (\omega^2 r) \]
+            </div>
+            <p class="content-paragraph mt-4">מסת הלוויין \(m\) מצטמצמת. נציב את הביטוי למהירות הזוויתית \(\omega = \frac{2\pi}{T}\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ G\frac{M_E}{r^2} = \left(\frac{2\pi}{T}\right)^2 r \]
+                \[ G\frac{M_E}{r^2} = \frac{4\pi^2}{T^2} r \]
+            </div>
+            <p class="content-paragraph mt-4">נבודד את \(r^3\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ r^3 = \frac{G \cdot M_E \cdot T^2}{4\pi^2} \]
+            </div>
+            <p class="content-paragraph mt-4">כעת נציב את הערכים המספריים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ r^3 = \frac{6.67 \cdot 10^{-11} \cdot 5.974 \cdot 10^{24} \cdot (6000)^2}{4 \cdot \pi^2} \]
+                \[ r^3 = \frac{3.9846 \cdot 10^{14} \cdot 3.6 \cdot 10^7}{39.478} \]
+                \[ r^3 = \frac{1.434 \cdot 10^{22}}{39.478} \approx 3.633 \cdot 10^{20} \]
+            </div>
+            <p class="content-paragraph mt-4">נוציא שורש שלישי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ r = \sqrt[3]{3.633 \cdot 10^{20}} \approx 7.135 \cdot 10^6 \text{ m} \]
+            </div>
+            <p class="final-answer">תשובה סופית: רדיוס המסלול המעגלי של הלוויין הוא \(r = 7.135 \cdot 10^6 \text{ m}\).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה - דרך חלופית (ואלגנטית!) לפתרון:</strong>
+            ניתן לפתור סעיף זה גם באמצעות <strong>החוק השלישי של קפלר</strong>! מכיוון שגם הלוויין וגם הירח מקיפים את אותו גוף (כדור הארץ), היחס \(\frac{r^3}{T^2}\) קבוע עבור שניהם. 
+            מתוך טבלת הנתונים בדף הנוסחאות (עמ' 8) לוקחים את נתוני הירח: \(T_m = 27.3 \text{ days}\) ו-\(r_m = 3.84 \cdot 10^8 \text{ m}\). 
+            ממירים את הזמנים לאותן יחידות (למשל, דקות או שניות), מציבים במשוואה \(\left( \frac{\overline{r}_s}{\overline{r}_m} \right)^3 = \left( \frac{T_s}{T_m} \right)^2\) ומקבלים תוצאה כמעט זהה (\(\approx 7.15 \cdot 10^6 \text{ m}\)). ההבדל הקטן נובע מנתונים מעוגלים בדף הנוסחאות. משרד החינוך מקבל את שתי הדרכים!
+            <br><br>
+            <strong>ועוד דגש חשוב:</strong> שימו לב שהשאלה ביקשה את "רדיוס מסלולו" ולא "גובהו מעל פני כדור הארץ". הרדיוס נמדד תמיד ממרכז כוכב הלכת, ולכן אין צורך לחסר את רדיוס כדור הארץ מהתוצאה.
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד' - עבודה דרושה לשינוי מסלול</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <ul class="list-disc list-inside mt-2 space-y-1 text-slate-700">
+                    <li>מסת הלוויין נותרה \(m = 14 \text{ kg}\).</li>
+                    <li>הרדיוס ההתחלתי שחישבנו: \(r_1 = 7.135 \cdot 10^6 \text{ m}\).</li>
+                    <li>הלוויין מועבר למסלול הגבוה ב-1,000 ק"מ. נמיר יחידות: \(\Delta h = 10^6 \text{ m}\).</li>
+                    <li>הרדיוס החדש יהיה: \(r_2 = r_1 + \Delta h = 8.135 \cdot 10^6 \text{ m}\).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                <p class="mt-2 text-slate-700">את העבודה הדרושה להעברת הלוויין ממסלול \(r_1\) למסלול \(r_2\) (העבודה שיבצע גורם חיצוני כגון מנועי הלוויין).</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <!-- הפיכת הטקסט נועדה לפתור את בעיית הכיווניות (LTR) של מתג'אקס -->
+            <span class="formula-badge">\(W_{\text{םירמשמ אל}} = \Delta E\)</span>
+            <span class="formula-badge">\(E = -\frac{GMm}{2r}\)</span> <span class="text-sm font-bold text-slate-700 ml-1 inline-block">(אנרגייה של לוויין במסלול מעגלי - כוללת)</span>
+            <p class="content-paragraph mt-2 text-sm text-slate-600">
+                * שימו לב: הנוסחה לעיל מופיעה בדף הנוסחאות תחת הכותרת המדויקת "אנרגייה של לוויין במסלול מעגלי (פוטנציאלית, קינטית וכוללת)" - והיא מייצגת את האנרגיה ה<strong>כוללת</strong> הייחודית למסלול מעגלי בלבד.
+            </p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">נחשב תחילה את המכפלה \(GM_E m\) שתשמש אותנו בשני החישובים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ GM_E m = 6.67 \cdot 10^{-11} \cdot 5.974 \cdot 10^{24} \cdot 14 \approx 5.578 \cdot 10^{15} \text{ J}\cdot\text{m} \]
+            </div>
+            <p class="content-paragraph mt-4">האנרגיה הכוללת במסלול ההתחלתי \(r_1\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_1 = -\frac{GM_E m}{2r_1} = -\frac{5.578 \cdot 10^{15}}{2 \cdot 7.135 \cdot 10^6} = -3.909 \cdot 10^8 \text{ J} \]
+            </div>
+            <p class="content-paragraph mt-4">האנרגיה הכוללת במסלול החדש \(r_2\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_2 = -\frac{GM_E m}{2r_2} = -\frac{5.578 \cdot 10^{15}}{2 \cdot 8.135 \cdot 10^6} = -3.428 \cdot 10^8 \text{ J} \]
+            </div>
+            <p class="content-paragraph mt-4">העבודה הדרושה היא השינוי באנרגיה הכוללת:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ W = E_2 - E_1 \]
+                \[ W = -3.428 \cdot 10^8 - (-3.909 \cdot 10^8) \]
+                \[ W = 0.481 \cdot 10^8 \text{ J} = 4.81 \cdot 10^7 \text{ J} \]
+            </div>
+
+            <div class="visual-frame">
+                <!-- SVG תרשים מסלולים מעגליים - מוקפד לפי חוקי קריאות -->
+                <svg viewBox="0 0 300 300" class="w-full max-w-sm h-auto mx-auto border border-slate-200 rounded-lg bg-white p-4 shadow-sm" aria-label="תרשים מעבר בין מסלולים מעגליים">
+                    <defs>
+                        <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="8" refY="3" orient="auto" markerUnits="strokeWidth">
+                            <path d="M0,0 L0,6 L9,3 z" fill="#f43f5e" />
+                        </marker>
+                    </defs>
+
+                    <!-- 1. שכבת מסלולים/קווים (תחתונה) -->
+                    <!-- מסלול r1 -->
+                    <circle cx="150" cy="150" r="70" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4" />
+                    <!-- מסלול r2 -->
+                    <circle cx="150" cy="150" r="110" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4" />
+                    
+                    <!-- קווי עזר לרדיוסים -->
+                    <path d="M 150 150 L 150 80" stroke="#cbd5e1" stroke-width="1.5" />
+                    <path d="M 150 150 L 260 150" stroke="#cbd5e1" stroke-width="1.5" />
+
+                    <!-- 2. שכבת גופים -->
+                    <!-- כדור הארץ -->
+                    <circle cx="150" cy="150" r="20" fill="#3b82f6" stroke="#1e3a8a" stroke-width="2"/>
+                    <!-- לוויין במסלול 1 -->
+                    <circle cx="150" cy="80" r="8" fill="#cbd5e1" stroke="#475569" stroke-width="2" />
+                    <!-- לוויין במסלול 2 -->
+                    <circle cx="260" cy="150" r="8" fill="#cbd5e1" stroke="#475569" stroke-width="2" />
+
+                    <!-- 3. שכבת טקסטים - שמות גופים בתחתית או במרווח בטוח -->
+                    <!-- Earth text. 150+20=170. clearance=20 -->
+                    <text x="150" y="190" fill="#334155" font-size="12" font-weight="bold" text-anchor="middle">Earth</text>
+                    
+                    <!-- m1 text (satellite 1). 80+8=88. text=110. clearance=22 -->
+                    <text x="150" y="110" fill="#334155" font-size="12" font-weight="bold" text-anchor="middle">m</text>
+                    <!-- m2 text (satellite 2). 150+8=158. text=180. clearance=22 -->
+                    <text x="260" y="180" fill="#334155" font-size="12" font-weight="bold" text-anchor="middle">m</text>
+
+                    <!-- קווים לרדיוס - טקסט במרווח תקין -->
+                    <!-- r1. line at x=150. text at x=130. clearance=20 -->
+                    <text x="130" y="115" fill="#475569" font-size="14" font-weight="bold" text-anchor="end">r<tspan baseline-shift="sub" font-size="0.75em">1</tspan></text>
+                    <!-- r2. line at y=150. text at y=130. clearance=20 -->
+                    <text x="205" y="130" fill="#475569" font-size="14" font-weight="bold" text-anchor="middle">r<tspan baseline-shift="sub" font-size="0.75em">2</tspan></text>
+
+                    <!-- 4. שכבת נקודות אחיזה (מעל הגופים) -->
+                    <circle cx="150" cy="80" r="2.5" fill="#1e293b" />
+                    <circle cx="260" cy="150" r="2.5" fill="#1e293b" />
+
+                    <!-- 5. שכבת וקטורים (חצים) -->
+                    <!-- חץ המראה את המעבר (מתחיל מנקודת האחיזה של m1) -->
+                    <path d="M 150 80 Q 220 80 256 142" fill="none" stroke="#f43f5e" stroke-width="3" marker-end="url(#arrow-red)"/>
+
+                    <!-- 6. טקסטים של וקטורים -->
+                    <!-- טקסט המעבר. החץ עובר בערך ב-220,95. הטקסט ב-240,70. מרווח תקין -->
+                    <text x="240" y="70" font-size="14" fill="#f43f5e" font-weight="bold" text-anchor="middle">ΔE = W</text>
+                </svg>
+            </div>
+
+            <p class="final-answer">תשובה סופית: העבודה הדרושה להעברת הלוויין היא \(W \approx 4.81 \cdot 10^7 \text{ J}\).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הערת מורה:</strong>
+            שגיאה נפוצה של תלמידים היא לחשב רק את השינוי באנרגיה הפוטנציאלית (\(\Delta U_G\)). אולם, כשאנו מעבירים לוויין ממסלול מעגלי אחד לשני, גם מהירותו משתנה (במסלול גבוה יותר, מהירותו קטנה יותר). שימוש בנוסחת האנרגיה <strong>הכוללת</strong> חוסך מאיתנו את הצורך לחשב בנפרד את האנרגיה הקינטית לפני ואחרי!
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה' - זמן מחזור במסלול החדש</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <ul class="list-disc list-inside mt-2 space-y-1 text-slate-700">
+                    <li>הלוויין הועבר ממסלול ברדיוס \(r_1\) למסלול בעל רדיוס גדול יותר (\(r_2 > r_1\)).</li>
+                    <li>זמן המחזור במסלול הראשון (הנמוך) הוא \(T_1 = 100 \text{ min}\).</li>
+                    <li>הלוויין סובב סביב אותו גוף מרכזי (כדור הארץ) בשני המקרים.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                <p class="mt-2 text-slate-700">לקבוע האם זמן המחזור החדש (\(T_2\)) יהיה שווה ל-100 דקות, קצר יותר או ארוך יותר, ולנמק.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\left( \frac{\overline{r}_1}{\overline{r}_2} \right)^3 = \left( \frac{T_1}{T_2} \right)^2\)</span> 
+            <span class="text-sm font-bold text-slate-700 ml-1 inline-block">(החוק השלישי של קפלר)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">
+                מכיוון שהלוויין מקיף את אותו גוף מרכזי (כדור הארץ) בשני המסלולים, אנו יכולים להשתמש ב<strong>חוק השלישי של קפלר</strong> (בדיוק כפי שהוא מופיע בדף הנוסחאות). חוק זה קובע שהיחס בין מעוקב רדיוס המסלול לריבוע זמן המחזור נשאר קבוע עבור כל המסלולים סביב אותו כוכב.
+            </p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \left( \frac{\overline{r}_2}{\overline{r}_1} \right)^3 = \left( \frac{T_2}{T_1} \right)^2 \]
+            </div>
+            <p class="content-paragraph mt-4">
+                מתוך הקשר המתמטי הזה, אנו יכולים ללמוד בבירור על היחס הישר (פרופורציה עולה) שבין הרדיוס לזמן המחזור. 
+                נתון לנו שהרדיוס החדש גדול מהרדיוס הישן (\(r_2 > r_1\)). כלומר, היחס בין הרדיוסים מקיים \(\frac{\overline{r}_2}{\overline{r}_1} > 1\).
+            </p>
+            <p class="content-paragraph">
+                אם צד שמאל של המשוואה (יחס הרדיוסים בשלישית) גדול מ-1, הרי שבהכרח גם צד ימין (יחס זמני המחזור בריבוע) חייב להיות גדול מ-1 כדי לשמור על השוויון (\(\frac{T_2}{T_1} > 1\)). 
+            </p>
+            <p class="content-paragraph">
+                המשמעות היא שזמן המחזור במסלול החדש והרחב יותר (\(T_2\)) חייב להיות גדול מזמן המחזור ההתחלתי (\(T_1\)).
+            </p>
+            <p class="final-answer">תשובה סופית: זמן המחזור במסלול האחר יהיה <strong>ארוך יותר</strong> מ-100 דקות.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>הסבר אינטואיטיבי:</strong>
+            אפשר להבין זאת מתוך שני גורמים המשתלבים יחד: ראשית, במסלול רחוק יותר כוח הכבידה חלש יותר, מה שאומר שהלוויין נדרש למהירות נמוכה יותר כדי להישאר במסלול מעגלי. שנית, המרחק שהוא צריך לעבור (היקף המעגל) גדול בהרבה. גם לנסוע לאט יותר וגם לעבור מרחק ארוך יותר? בוודאי שייקח לו יותר זמן לסיים הקפה!
+        </div>
+    </section>
+
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
