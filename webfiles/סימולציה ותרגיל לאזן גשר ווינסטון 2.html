@@ -1,0 +1,462 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>גשר וינסטון - סימולציה אינטראקטיבית</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script type="text/javascript" id="MathJax-script" async
+        src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js">
+    </script>
+    <style>
+        body { background-color: #f8fafc; font-family: system-ui, -apple-system, sans-serif; }
+        canvas { background-color: white; border-radius: 8px; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1); }
+        input { border: 1px solid #cbd5e1; padding: 0.5rem; border-radius: 0.375rem; width: 100%; text-align: center; }
+        input:focus { outline: none; border-color: #3b82f6; box-shadow: 0 0 0 2px #bfdbfe; }
+        select { border: 1px solid #cbd5e1; padding: 0.5rem; border-radius: 0.375rem; background-color: white; }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+    <div class="max-w-5xl mx-auto bg-white p-6 rounded-xl shadow-lg border border-gray-100">
+        <header class="text-center mb-6">
+            <h1 class="text-3xl font-bold text-slate-800 mb-3">גשר וינסטון - סימולציית איזון</h1>
+            <p class="text-slate-600 text-lg">שנה את ערכי הנגדים כדי לראות כיצד הגשר יוצא מאיזון, או השתמש בכלי האיזון האוטומטי.</p>
+        </header>
+
+        <button onclick="generateExercise()" class="bg-indigo-600 hover:bg-indigo-700 text-white font-bold py-3 px-6 rounded-lg w-full mb-8 shadow-md transition-colors text-lg">
+            🎲 הגרל תרגיל חדש
+        </button>
+
+        <!-- סטטוס באנר דינמי -->
+        <div id="status_banner" class="mb-8 p-4 rounded-lg text-center font-bold text-xl transition-colors duration-300">
+            <!-- התוכן יוזרק דרך JS -->
+        </div>
+        
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-12">
+            <!-- אזור הסימולציה (Canvas) -->
+            <div class="flex flex-col items-center bg-slate-50 p-4 rounded-lg border border-slate-200 shadow-inner">
+                <canvas id="bridgeCanvas" width="500" height="400" class="max-w-full h-auto bg-transparent shadow-none"></canvas>
+                <div class="mt-4 text-sm text-slate-500 w-full text-center">
+                    * בהנחה שלגלוונומטר (G) התנגדות אידיאלית (אינסופית) ולכן אינו משפיע על הזרם בענפים.
+                </div>
+            </div>
+
+            <!-- אזור השליטה והתוצאות -->
+            <div class="bg-white p-6 rounded-lg border border-slate-200 shadow-sm flex flex-col">
+                <div>
+                    <h2 class="text-xl font-bold text-slate-700 mb-4 border-b pb-2">הזן נתוני מעגל:</h2>
+                    
+                    <div class="grid grid-cols-2 gap-6 mb-6">
+                        <div class="flex flex-col gap-1">
+                            <label class="text-sm font-semibold text-slate-600">מתח מקור ($V$)</label>
+                            <input type="number" id="v_in" value="12" step="0.1" oninput="calculateState()">
+                        </div>
+                    </div>
+
+                    <div class="grid grid-cols-4 gap-4 mb-8">
+                        <div id="wrap_r1" class="flex flex-col gap-1 transition-all">
+                            <label class="text-sm font-semibold text-indigo-600">$R_1$ ($\Omega$)</label>
+                            <input type="number" id="r1" value="10" oninput="calculateState()" class="disabled:bg-slate-100 disabled:text-slate-400 disabled:border-slate-200">
+                        </div>
+                        <div id="wrap_r2" class="flex flex-col gap-1 transition-all">
+                            <label class="text-sm font-semibold text-indigo-600">$R_2$ ($\Omega$)</label>
+                            <input type="number" id="r2" value="20" oninput="calculateState()" class="disabled:bg-slate-100 disabled:text-slate-400 disabled:border-slate-200">
+                        </div>
+                        <div id="wrap_r3" class="flex flex-col gap-1 transition-all">
+                            <label class="text-sm font-semibold text-emerald-600">$R_3$ ($\Omega$)</label>
+                            <input type="number" id="r3" value="30" oninput="calculateState()" class="disabled:bg-slate-100 disabled:text-slate-400 disabled:border-slate-200">
+                        </div>
+                        <div id="wrap_r4" class="flex flex-col gap-1 transition-all">
+                            <label class="text-sm font-semibold text-emerald-600">$R_4$ ($\Omega$)</label>
+                            <input type="number" id="r4" value="50" oninput="calculateState()" class="disabled:bg-slate-100 disabled:text-slate-400 disabled:border-slate-200">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- אזור המשימה (מוסתר כברירת מחדל) -->
+                <div id="task_area" class="bg-blue-50 p-5 rounded-lg border border-blue-200 mb-6 hidden">
+                    <h3 class="font-bold text-blue-800 mb-2 flex items-center text-lg">
+                        <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 10V3L4 14h7v7l9-11h-7z"></path></svg>
+                        משימת איזון
+                    </h3>
+                    <p id="task_instruction" class="text-blue-900 mb-4 text-base"></p>
+                    <button id="btn_solve" onclick="solveForMe()" class="bg-orange-500 hover:bg-orange-600 text-white font-bold py-2 px-4 rounded transition-colors shadow-sm text-sm">
+                        אזן בשבילי את המעגל
+                    </button>
+                </div>
+
+                <!-- נתוני מתח ותוצאות -->
+                <div class="mt-auto p-4 bg-slate-50 rounded-lg border border-slate-200">
+                    <h3 class="text-lg font-bold text-slate-800 mb-3">מדידות:</h3>
+                    <div class="space-y-2 text-sm">
+                        <p class="flex justify-between items-center">
+                            <span class="text-slate-600">מתח בצומת C ($V_C$):</span>
+                            <span class="font-mono font-bold"><span id="res_vc">--</span> V</span>
+                        </p>
+                        <p class="flex justify-between items-center">
+                            <span class="text-slate-600">מתח בצומת D ($V_D$):</span>
+                            <span class="font-mono font-bold"><span id="res_vd">--</span> V</span>
+                        </p>
+                        <div class="border-t border-slate-300 my-2 pt-2"></div>
+                        <p class="flex justify-between items-center text-base">
+                            <span class="text-slate-800 font-bold">הפרש מתחים ב-G ($|V_C - V_D|$):</span>
+                            <span class="font-mono font-bold" id="res_diff_wrapper"><span id="res_diff">--</span> V</span>
+                        </p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- מדריך לימודי מקיף -->
+        <div class="mt-8">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center bg-slate-100 p-4 rounded-lg">מדריך לימודי: איך עובד האיזון בגשר וינסטון?</h2>
+            
+            <div class="space-y-8 text-slate-700 leading-relaxed text-lg">
+                <!-- פרק 1 -->
+                <section class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="text-xl font-bold text-blue-700 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 w-8 h-8 inline-flex justify-center items-center rounded-full mr-3 ml-3">1</span>
+                        הפרש פוטנציאלים וגלוונומטר
+                    </h3>
+                    <p class="mb-3">
+                        במרכז המעגל יש לנו גלוונומטר המחבר בין צומת C לצומת D. זרם יזרום דרך הגלוונומטר <strong>אך ורק אם יש הפרש מתחים</strong> בין שתי הנקודות הללו.
+                    </p>
+                    <p>
+                        כאשר ההתנגדויות בענפים לא מתאימות, נוצר מצב בו $V_C \neq V_D$. במצב כזה אנו אומרים שהגשר <strong>לא מאוזן</strong>, והמחוג יסטה ימינה או שמאלה בהתאם לכיוון הזרם. אולם, כאשר משחקים עם ערכי הנגדים ומגיעים למצב בו $V_C = V_D$, הפרש הפוטנציאלים מתאפס, המחוג מורה על הָאֶמְצַע, והגשר מוגדר כ<strong>מאוזן</strong>.
+                    </p>
+                </section>
+
+                <!-- פרק 2 -->
+                <section class="bg-white p-6 rounded-xl border border-slate-200 shadow-sm">
+                    <h3 class="text-xl font-bold text-blue-700 mb-4 flex items-center">
+                        <span class="bg-blue-100 text-blue-800 w-8 h-8 inline-flex justify-center items-center rounded-full mr-3 ml-3">2</span>
+                        התנאי המתמטי לאיזון הגשר
+                    </h3>
+                    <p class="mb-4">
+                        אפשר להתייחס לכל צד של הגשר כמחלק מתח עצמאי (בהנחה שאין זרם ש"בורח" לאמצע). 
+                    </p>
+                    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
+                        <div class="bg-slate-50 p-4 rounded-lg">
+                            <div class="font-semibold text-slate-800 mb-2">ענף עליון (צומת C):</div>
+                            $$V_C = V \cdot \frac{R_3}{R_1 + R_3}$$
+                        </div>
+                        <div class="bg-slate-50 p-4 rounded-lg">
+                            <div class="font-semibold text-slate-800 mb-2">ענף תחתון (צומת D):</div>
+                            $$V_D = V \cdot \frac{R_4}{R_2 + R_4}$$
+                        </div>
+                    </div>
+                    <p class="mb-3">במצב מאוזן, אנו דורשים ש- $V_C = V_D$. אם נשווה את שתי המשוואות ונצמצם את $V$ (מתח המקור לא משפיע על האיזון!), נקבל לאחר כפל בהצלבה את יחס הזהב של גשר וינסטון:</p>
+                    
+                    <div class="bg-blue-50 border-r-4 border-blue-500 p-5 rounded-l-lg my-6 text-center text-2xl font-bold">
+                        $$\frac{R_1}{R_2} = \frac{R_3}{R_4}$$
+                    </div>
+                    <p>
+                        משוואה זו מאפשרת לנו למצוא כל נגד חסר, אם שלושת האחרים ידועים לנו. נסו את "כלי האיזון האוטומטי" למעלה ותראו כיצד המערכת משתמשת בנוסחה זו כדי להשלים את הנגד החסר למצב מאוזן!
+                    </p>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('bridgeCanvas');
+        const ctx = canvas.getContext('2d');
+        let currentTarget = null;
+
+        function drawResistor(x1, y1, x2, y2, label, color) {
+            const midX = (x1 + x2) / 2;
+            const midY = (y1 + y2) / 2;
+            ctx.beginPath();
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2;
+            ctx.moveTo(x1, y1);
+            
+            const dx = x2 - x1;
+            const dy = y2 - y1;
+            const len = Math.sqrt(dx*dx + dy*dy);
+            const unitX = dx / len;
+            const unitY = dy / len;
+            
+            const p1x = x1 + unitX * (len/2 - 25);
+            const p1y = y1 + unitY * (len/2 - 25);
+            const p2x = x1 + unitX * (len/2 + 25);
+            const p2y = y1 + unitY * (len/2 + 25);
+            
+            ctx.lineTo(p1x, p1y);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = 3;
+            const perpX = -unitY * 8;
+            const perpY = unitX * 8;
+            
+            // Draw zigzag
+            for(let i=0; i<5; i++) {
+                const side = (i % 2 === 0) ? 1 : -1;
+                ctx.lineTo(p1x + unitX * (i * 10 + 5) + side * perpX, p1y + unitY * (i * 10 + 5) + side * perpY);
+            }
+            ctx.lineTo(p2x, p2y);
+            
+            // Finish wire
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2;
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+
+            // Label
+            ctx.fillStyle = color;
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText(label, midX + perpX * 3.5, midY + perpY * 3.5);
+        }
+
+        function drawGalvanometer(x1, y1, x2, y2, isBalanced, vc, vd) {
+            const midX = (x1 + x2) / 2;
+            const midY = (y1 + y2) / 2;
+            const radius = 25;
+
+            // Wire
+            ctx.beginPath();
+            ctx.strokeStyle = '#334155';
+            ctx.lineWidth = 2;
+            ctx.moveTo(x1, y1);
+            ctx.lineTo(midX, midY - radius);
+            ctx.moveTo(midX, midY + radius);
+            ctx.lineTo(x2, y2);
+            ctx.stroke();
+
+            // Outer Circle
+            ctx.beginPath();
+            ctx.arc(midX, midY, radius, 0, Math.PI * 2);
+            ctx.fillStyle = '#f8fafc';
+            ctx.fill();
+            ctx.strokeStyle = isBalanced ? '#10b981' : '#ef4444'; // Green if balanced, red if not
+            ctx.lineWidth = 3;
+            ctx.stroke();
+
+            // Scale ticks
+            ctx.beginPath();
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 1;
+            ctx.moveTo(midX - 12, midY - 6); ctx.lineTo(midX - 15, midY - 12);
+            ctx.moveTo(midX, midY - 15); ctx.lineTo(midX, midY - 20); // Center tick (0)
+            ctx.moveTo(midX + 12, midY - 6); ctx.lineTo(midX + 15, midY - 12);
+            ctx.stroke();
+
+            // Calculate Needle Angle
+            let diff = vc - vd;
+            // Limit deflection visually
+            let deflection = diff * 5; 
+            if (deflection > 45) deflection = 45;
+            if (deflection < -45) deflection = -45;
+            
+            let angle = (deflection * Math.PI) / 180;
+
+            // Draw Needle with rotation
+            ctx.save();
+            ctx.translate(midX, midY + 10); // Pivot point
+            ctx.rotate(angle);
+            
+            ctx.beginPath();
+            ctx.strokeStyle = isBalanced ? '#10b981' : '#ef4444';
+            ctx.lineWidth = 2;
+            ctx.moveTo(0, 0);
+            ctx.lineTo(0, -25); // Needle length
+            ctx.stroke();
+            
+            // Center pin
+            ctx.beginPath();
+            ctx.arc(0, 0, 3, 0, Math.PI * 2);
+            ctx.fillStyle = isBalanced ? '#10b981' : '#ef4444';
+            ctx.fill();
+            ctx.restore();
+
+            // Label "G"
+            ctx.fillStyle = '#1e293b';
+            ctx.font = 'bold 16px Arial';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+            ctx.fillText('G', midX, midY + 10);
+        }
+
+        function drawCircuit(isBalanced, vc, vd) {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            const A = {x: 80, y: 200};
+            const C = {x: 220, y: 70};
+            const D = {x: 220, y: 330};
+            const B = {x: 360, y: 200};
+            const SourcePos = {x: 450, y: 200};
+
+            // Main circuit wires
+            ctx.beginPath();
+            ctx.strokeStyle = '#94a3b8';
+            ctx.lineWidth = 2;
+            ctx.moveTo(A.x, A.y); ctx.lineTo(30, A.y); ctx.lineTo(30, 380); ctx.lineTo(SourcePos.x, 380); ctx.lineTo(SourcePos.x, 220);
+            ctx.moveTo(B.x, B.y); ctx.lineTo(SourcePos.x, B.y);
+            ctx.stroke();
+
+            // Power Source
+            ctx.beginPath();
+            ctx.moveTo(SourcePos.x - 15, 200); ctx.lineTo(SourcePos.x + 15, 200);
+            ctx.moveTo(SourcePos.x - 8, 220);  ctx.lineTo(SourcePos.x + 8, 220);
+            ctx.lineWidth = 3;
+            ctx.strokeStyle = '#1e293b';
+            ctx.stroke();
+            ctx.fillStyle = 'black'; 
+            ctx.font = 'bold 16px Arial'; 
+            ctx.textAlign = 'center';
+            ctx.fillText("V", SourcePos.x + 25, 215);
+
+            // Resistors
+            drawResistor(A.x, A.y, C.x, C.y, "R1", "#4f46e5");
+            drawResistor(A.x, A.y, D.x, D.y, "R2", "#4f46e5");
+            drawResistor(C.x, C.y, B.x, B.y, "R3", "#059669");
+            drawResistor(D.x, D.y, B.x, B.y, "R4", "#059669");
+
+            // Galvanometer
+            drawGalvanometer(C.x, C.y, D.x, D.y, isBalanced, vc, vd);
+
+            // Nodes
+            const nodes = [{p:A, l:"A"}, {p:B, l:"B"}, {p:C, l:"C"}, {p:D, l:"D"}];
+            nodes.forEach(n => {
+                ctx.beginPath(); ctx.arc(n.p.x, n.p.y, 5, 0, Math.PI*2);
+                ctx.fillStyle = '#1e293b'; ctx.fill();
+                let labelY = n.p.y - 12;
+                if(n.l === "D") labelY = n.p.y + 20;
+                ctx.fillStyle = '#475569';
+                ctx.font = 'bold 16px Arial';
+                ctx.fillText(n.l, n.p.x, labelY);
+            });
+        }
+
+        function calculateState() {
+            const V = parseFloat(document.getElementById('v_in').value) || 0;
+            const r1 = parseFloat(document.getElementById('r1').value) || 0.0001;
+            const r2 = parseFloat(document.getElementById('r2').value) || 0.0001;
+            const r3 = parseFloat(document.getElementById('r3').value) || 0.0001;
+            const r4 = parseFloat(document.getElementById('r4').value) || 0.0001;
+
+            // חישובי מחלק מתח (בהנחת גלוונומטר אידיאלי)
+            const vc = V * (r3 / (r1 + r3));
+            const vd = V * (r4 / (r2 + r4));
+            
+            const diff = Math.abs(vc - vd);
+            const isBalanced = diff < 0.001; // סף רגישות
+
+            // עדכון חיוויי הסטטוס
+            const banner = document.getElementById('status_banner');
+            const diffWrapper = document.getElementById('res_diff_wrapper');
+            const btnSolve = document.getElementById('btn_solve');
+            
+            if (isBalanced) {
+                banner.className = "mb-8 p-4 rounded-lg text-center font-bold text-xl bg-emerald-100 text-emerald-800 border-2 border-emerald-300 shadow-sm transition-all";
+                if (currentTarget) {
+                    banner.innerHTML = "✅ כל הכבוד! הצלחת לאזן את המעגל!";
+                    if (btnSolve) btnSolve.classList.add('hidden');
+                } else {
+                    banner.innerHTML = "✅ המעגל מאוזן באופן מושלם! (זרם בגלוונומטר: 0A)";
+                }
+                diffWrapper.className = "font-mono font-bold text-emerald-600 bg-white px-3 py-1 rounded border border-emerald-200 shadow-sm";
+            } else {
+                banner.className = "mb-8 p-4 rounded-lg text-center font-bold text-xl bg-red-100 text-red-800 border-2 border-red-300 shadow-sm transition-all";
+                if (currentTarget) {
+                    banner.innerHTML = "⚠️ המעגל אינו מאוזן. עליך להתאים את הנגד!";
+                    if (btnSolve) btnSolve.classList.remove('hidden');
+                } else {
+                    banner.innerHTML = "⚠️ המעגל אינו מאוזן (קיים הפרש מתחים)";
+                }
+                diffWrapper.className = "font-mono font-bold text-red-600 bg-white px-3 py-1 rounded border border-red-200 shadow-sm";
+            }
+
+            // הצגת תוצאות מספריות
+            document.getElementById('res_vc').innerText = vc.toFixed(3);
+            document.getElementById('res_vd').innerText = vd.toFixed(3);
+            document.getElementById('res_diff').innerText = diff.toFixed(3);
+            
+            drawCircuit(isBalanced, vc, vd);
+        }
+
+        function generateExercise() {
+            // יצירת ערכים שיניבו פתרון אלגנטי למשימה (ללא שברים מסובכים)
+            const ratios = [0.5, 1, 1.5, 2, 3, 4, 5];
+            const rValues = [10, 20, 30, 40, 50, 60, 100];
+            
+            const r1Base = rValues[Math.floor(Math.random() * rValues.length)];
+            const r3Base = rValues[Math.floor(Math.random() * rValues.length)];
+            const k = ratios[Math.floor(Math.random() * ratios.length)];
+            
+            const vals = {
+                r1: r1Base,
+                r2: r1Base * k,
+                r3: r3Base,
+                r4: r3Base * k
+            };
+            
+            // בחירת נגד אחד אקראי שיהיה הנעלם שעליו התלמיד ייבחן
+            const targets = ['r1', 'r2', 'r3', 'r4'];
+            currentTarget = targets[Math.floor(Math.random() * targets.length)];
+            
+            targets.forEach(t => {
+                const inputEl = document.getElementById(t);
+                const wrapEl = document.getElementById('wrap_' + t);
+                
+                if (t === currentTarget) {
+                    // שחרור הנעילה לנגד המטרה
+                    inputEl.disabled = false;
+                    // נשים לו ערך שגוי בכוונה כדי שהמעגל יתחיל ממצב לא מאוזן
+                    let wrongValue = vals[t] + 15;
+                    if (wrongValue === vals[t]) wrongValue += 10;
+                    inputEl.value = wrongValue;
+                    
+                    // הדגשת הנגד שצריך לערוך (כחול)
+                    wrapEl.classList.add('ring-4', 'ring-blue-400', 'bg-blue-100', 'p-2', 'rounded-lg');
+                } else {
+                    // נעילת הנגדים הידועים באפור
+                    inputEl.disabled = true;
+                    inputEl.value = vals[t];
+                    wrapEl.classList.remove('ring-4', 'ring-blue-400', 'bg-blue-100', 'p-2', 'rounded-lg');
+                }
+            });
+            
+            // הצגת אזור המשימה למשתמש
+            document.getElementById('task_area').classList.remove('hidden');
+            const targetName = currentTarget.toUpperCase();
+            document.getElementById('task_instruction').innerHTML = `נעלנו 3 נגדים במעגל.<br>עליך לחשב ולהזין את הערך המדויק של <strong>נגד ${targetName}</strong> כדי שהגלוונומטר יראה 0A (מצב מאוזן).`;
+            
+            // חישוב מחדש להצגת מצב התחלתי שגוי (יצבע באדום)
+            calculateState();
+        }
+
+        function solveForMe() {
+            if (!currentTarget) return;
+            
+            const r1 = parseFloat(document.getElementById('r1').value) || 1;
+            const r2 = parseFloat(document.getElementById('r2').value) || 1;
+            const r3 = parseFloat(document.getElementById('r3').value) || 1;
+            const r4 = parseFloat(document.getElementById('r4').value) || 1;
+            
+            let ans = 0;
+            // חישוב עפ"י משוואת האיזון: R1/R2 = R3/R4
+            if (currentTarget === 'r1') ans = (r3 * r2) / r4;
+            if (currentTarget === 'r2') ans = (r4 * r1) / r3;
+            if (currentTarget === 'r3') ans = (r1 * r4) / r2;
+            if (currentTarget === 'r4') ans = (r3 * r2) / r1;
+            
+            document.getElementById(currentTarget).value = ans;
+            
+            // הפעל חישוב מחדש אחרי הצבת התשובה הנכונה
+            calculateState();
+        }
+
+        // ריצה ראשונה
+        window.onload = function() {
+            calculateState();
+        };
+    </script>
+</body>
+</html>

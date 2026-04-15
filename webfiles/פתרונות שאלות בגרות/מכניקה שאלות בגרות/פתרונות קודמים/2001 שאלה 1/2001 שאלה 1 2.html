@@ -1,0 +1,742 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון פדגוגי מוסבר - פיזיקה 5 יח"ל</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax Configuration -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                renderActions: { addMenu: [] }
+            }
+        };
+    </script>
+    <script src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Chart.js -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        * {
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        h1 {
+            color: #1e3a8a;
+        }
+
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-top: 0;
+            margin-bottom: 0.9rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        /* סגנונות למבנה הפדגוגי */
+        .step-box,
+        .step-block {
+            margin-bottom: 15px;
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.6rem;
+            padding: 0.9rem;
+        }
+
+        .step-title {
+            font-weight: bold;
+            color: #1e3a8a;
+            margin-bottom: 5px;
+            display: inline-block;
+        }
+
+        /* חוק ברזל: עיצוב נוסחאות מדף הנוסחאות */
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 9999px;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        /* חוק ברזל: הערת מורה */
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        /* רספונסיביות למשוואות ארוכות */
+        .math-scroll {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 10px 0;
+            margin: 10px 0;
+        }
+
+        .math-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+        .math-scroll::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
+        }
+
+        /* עיצוב גרפיקה ו-SVG */
+        .visual-container {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 20px;
+            justify-content: center;
+            margin: 30px 0;
+            padding: 20px;
+            background-color: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 8px;
+        }
+
+        .svg-wrapper {
+            background: white;
+            border-radius: 8px;
+            padding: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+            max-width: 100%;
+            overflow-x: auto;
+        }
+
+        .graph-container {
+            position: relative;
+            width: 100%;
+            max-width: 700px;
+            margin: 30px auto;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid var(--slate-200);
+            min-height: 360px;
+        }
+
+        .graph-container canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .graph-container {
+                min-height: 340px;
+                padding: 12px;
+            }
+
+            .graph-container canvas {
+                height: 280px !important;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מלא ומודרך: בגרות במכניקה</h1>
+        <p class="text-xl md:text-2xl text-slate-600">שנת 2001, שאלה 1</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה של קובץ ה-HTML.</span>
+        </div>
+    </section>
+
+    <section class="section-card">
+    <!-- שלב 0 - הקדמה ויזואלית ופיתוח תאוצה -->
+    <div class="visual-container">
+        <div class="svg-wrapper">
+            <!-- SVG: תרשים מערכת ו-FBD -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="26.131 72.872 429.241 331.087" width="429.241px" height="331.087px">
+                    <line x1="449.372" y1="79.959" x2="449.372" y2="391.959" stroke="#475569" stroke-width="2" style="stroke-width: 2;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)"/>
+                    <polygon points="444.372 391.959 454.372 391.959 449.372 403.959" fill="#475569" style="stroke-width: 1;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)"/>
+                    <line x1="443.372" y1="79.959" x2="455.372" y2="79.959" stroke="#475569" stroke-width="2" style="stroke-width: 2;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)"/>
+                    <text x="437.5" y="84.5" font-family="Arial" font-size="14" fill="#475569" text-anchor="end" direction="rtl" unicode-bidi="plaintext" style="white-space: pre; stroke-width: 1; font-size: 14px;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)"><tspan direction="ltr" unicode-bidi="embed">y=0</tspan><tspan> (ראשית)</tspan></text>
+                    <text x="406.723" y="400.845" font-family="Arial" font-size="14" fill="#475569" text-anchor="middle" style="white-space: pre; stroke-width: 1; font-size: 14px;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)">+y (מטרים)</text>
+                    <rect x="68.131" y="80.85" width="130" height="312" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2" style="stroke-width: 2;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)"/>
+                    <line x1="26.131" y1="392.85" x2="256.131" y2="392.85" stroke="#1f2937" stroke-width="4" style="stroke-width: 4;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)"/>
+                    <text x="110" y="180" font-family="Arial" font-size="18" fill="#64748b" text-anchor="middle" transform="matrix(0, -1, 1, 0, -61.86865234375, 336.8497009277344)" style="white-space: pre; stroke-width: 1; font-size: 18px;">בניין</text>
+                    <rect x="207.405" y="83.539" width="140" height="162" fill="#f8fafc" stroke="#cbd5e1" stroke-width="1" rx="8" style="stroke-width: 1;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)"/>
+                    <text x="277.405" y="107.539" font-family="Arial" font-size="14" font-weight="bold" fill="#1e40af" text-anchor="middle" style="white-space: pre; stroke-width: 1; font-size: 14px;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)">תרשים כוחות (FBD)</text>
+                    <circle cx="277.405" cy="147.539" r="12" fill="#3b82f6" style="stroke-width: 1;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)"/>
+                    <line x1="277.405" y1="159.539" x2="277.405" y2="209.539" stroke="#dc2626" stroke-width="3" style="stroke-width: 3;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)"/>
+                    <polygon points="272.405 204.539 282.405 204.539 277.405 215.539" fill="#dc2626" style="stroke-width: 1;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)"/>
+                    <text x="277.405" y="235.539" text-anchor="middle" font-family="Arial" font-size="20" font-weight="bold" fill="#dc2626" stroke="#f8fafc" stroke-width="3" paint-order="stroke" style="white-space: pre; stroke-width: 3; font-size: 20px;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)">W = mg</text>
+                    <line x1="244.405" y1="151.539" x2="244.405" y2="191.539" stroke="#059669" stroke-width="2" stroke-dasharray="4" style="stroke-width: 2;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)"/>
+                    <polygon points="239.405 186.539 249.405 186.539 244.405 197.539" fill="#059669" style="stroke-width: 1;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)"/>
+                    <text x="226.405" y="177.539" font-family="Arial" font-size="16" font-weight="bold" fill="#059669" style="white-space: pre; stroke-width: 1; font-size: 16px;" transform="matrix(1, 0, 0, 1, 0, 1.4210854715202004e-14)">a</text>
+                </svg>
+        </div>
+    </div>
+
+    <div class="teacher-highlight">
+        <div class="math-scroll">
+            <p><strong>פיתוח התאוצה מתוך תרשים הכוחות (FBD):</strong><br>
+            על פי החוק השני של ניוטון בדף הנוסחאות $\Sigma F = ma$.<br>
+            הכוח היחיד שפועל על הגופים (באוויר, בהזנחת התנגדות האוויר) הוא כוח הכובד $W=mg$.<br>
+            נבחר ציר $y$ חיובי <strong>כלפי מטה</strong>. לכן משוואת הכוחות היא:<br>
+            $$ \Sigma F_y = m \cdot a_y \implies mg = m \cdot a_y \implies a_y = g $$
+            תאוצת הכובד היא תמיד $g = 10 \text{ m/s}^2$ (גודל חיובי). מכיוון שכיוון התאוצה הוא כלפי מטה (לכיוון כדור הארץ) וציר ה-$y$ שבחרנו הוא גם כלפי מטה, התאוצה של שני הכדורים תהיה <strong>$a = +10 \text{ m/s}^2$</strong>. גודל מהירותם גדל ככל שהם נופלים.
+            </p>
+        </div>
+    </div>
+    </section>
+
+    <!-- סעיף א(1) -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף א'(1): מיקום כדור א' כפונקציה של הזמן</h3>
+        
+        <div class="step-block">
+            <span class="step-title">מה נתון:</span>
+            <span>
+                כדור א' משוחרר ממנוחה בזמן $t=0$ מראש הבניין. <br>
+                <strong>שלב המרת יחידות (MKS):</strong> אין צורך בהמרה כי הנתונים באים ביחידות תקניות. <br>
+                ראשית הצירים בראש הבניין: $x_0 = 0 \text{ m}$. <br>
+                משוחרר ממנוחה: $v_0 = 0 \text{ m/s}$. <br>
+                תאוצה: $a = 10 \text{ m/s}^2$.
+            </span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">מה מחפשים:</span>
+            <span>פונקציית מקום-זמן של כדור א', כלומר ביטוי המקשר בין המיקום $y_A$ לזמן $t$.</span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">נוסחאות מהדף:</span><br>
+            <div class="formula-badge">
+                \( \displaystyle x = x_0 + v_0 t + \dfrac{1}{2} a t^2 \)
+            </div>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">הצבה ופתרון:</span>
+            <div class="math-scroll">
+                נציב את הנתונים בנוסחה (נשתמש באות $y$ במקום $x$ כדי לציין ציר אנכי):
+                $$ y_A(t) = 0 + 0 \cdot t + \frac{1}{2} \cdot 10 \cdot t^2 $$
+                $$ y_A(t) = 5t^2 \quad \text{[m]} $$
+            </div>
+        </div>
+    </section>
+
+    <!-- סעיף א(2) -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף א'(2): מיקום כדור ב' כפונקציה של הזמן</h3>
+        
+        <div class="step-block">
+            <span class="step-title">מה נתון (חשיפה מדורגת):</span>
+            <span>
+                כעת נתון שכדור ב' נזרק כלפי מטה מראש הבניין, שנייה אחת לאחר כדור א', במהירות התחלתית של $14 \text{ m/s}$.<br>
+                זמן התחלתי ביחס לשעון המערכת: $t_0 = 1 \text{ s}$. <br>
+                מהירות התחלתית: $v_0 = 14 \text{ m/s}$ (חיובית, כי כיוונה כלפי מטה ככיוון הציר). <br>
+                מיקום התחלתי: $x_0 = 0 \text{ m}$. <br>
+                תאוצה זהה: $a = 10 \text{ m/s}^2$. (היחידות כולן ב-MKS).
+            </span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">מה מחפשים:</span>
+            <span>פונקציית מקום-זמן של כדור ב', $y_B(t)$, עבור זמנים $t \ge 1 \text{ s}$.</span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">נוסחאות מהדף:</span><br>
+            <div class="formula-badge">
+                \( \displaystyle x = x_0 + v_0 t + \dfrac{1}{2} a t^2 \)
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <p>
+                בדף הנוסחאות, המשתנה $t$ מייצג למעשה את פרק הזמן שעבר מתחילת התנועה ($\Delta t$). מכיוון שכדור ב' מתחיל לנוע רק בשנייה $t=1$, זמן התנועה שלו קצר בשנייה אחת מזמן המערכת. לכן, אנו נציב בנוסחה במקום $t$ את הביטוי $(t-1)$.
+            </p>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">הצבה ופתרון:</span>
+            <div class="math-scroll">
+                $$ y_B(t) = 0 + 14 \cdot (t - 1) + \frac{1}{2} \cdot 10 \cdot (t - 1)^2 $$
+                נפתח סוגריים:
+                $$ y_B(t) = 14t - 14 + 5(t^2 - 2t + 1) $$
+                $$ y_B(t) = 14t - 14 + 5t^2 - 10t + 5 $$
+                ונקבל את הפונקציה הסופית (תקפה עבור $t \ge 1$):
+                $$ y_B(t) = 5t^2 + 4t - 9 \quad \text{[m]} $$
+            </div>
+        </div>
+    </section>
+
+    <!-- סעיף א(3) -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף א'(3): רגע הפגישה של הכדורים</h3>
+        
+        <div class="step-block">
+            <span class="step-title">מה נתון:</span>
+            <span>הפונקציות שמצאנו: $y_A(t) = 5t^2$ ו- $y_B(t) = 5t^2 + 4t - 9$.</span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">מה מחפשים:</span>
+            <span>את רגע הזמן $t$ שבו שני הכדורים נמצאים באותו מיקום (גובה).</span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">נוסחאות מהדף:</span><br>
+            <span>אין נוסחה ספציפית למפגש. העיקרון הפיזיקלי קובע שמפגש מתרחש כאשר:</span><br>
+            <div class="formula-badge" style="background-color: #fef08a; color: #854d0e; border-color: #fde047;">
+                y_A(t) = y_B(t)
+            </div>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">הצבה ופתרון:</span>
+            <div class="math-scroll">
+                נשווה את שתי הפונקציות:
+                $$ 5t^2 = 5t^2 + 4t - 9 $$
+                נחסר $5t^2$ משני אגפי המשוואה:
+                $$ 0 = 4t - 9 $$
+                $$ 4t = 9 \implies t = \frac{9}{4} = 2.25 \text{ s} $$
+                הכדורים ייפגשו כעבור 2.25 שניות מרגע שחרור כדור א'.
+            </div>
+        </div>
+    </section>
+
+    <!-- סעיף ב(1) -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף ב'(1): מהירות כדור א' ברגע זריקת כדור ב'</h3>
+        
+        <div class="step-block">
+            <span class="step-title">מה נתון:</span>
+            <span>עבור כדור א': $v_0 = 0 \text{ m/s}$, $a = 10 \text{ m/s}^2$. הזמן המבוקש הוא הרגע שבו נזרק כדור ב', כלומר $t = 1 \text{ s}$.</span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">מה מחפשים:</span>
+            <span>את מהירות כדור א' ברגע זה, $v_A(1)$.</span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">נוסחאות מהדף:</span><br>
+            <div class="formula-badge">
+                \( \displaystyle v = v_0 + a t \)
+            </div>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">הצבה ופתרון:</span>
+            <div class="math-scroll">
+                $$ v_A(t=1) = 0 + 10 \cdot 1 = 10 \text{ m/s} $$
+                כלומר, לאחר שנייה אחת, גודל מהירותו של כדור א' הוא 10 מטר לשנייה וכיוונו מטה.
+            </div>
+        </div>
+    </section>
+
+    <!-- סעיף ב(2) -->
+    <section class="section-card">
+        <h3 class="section-header">סעיף ב'(2): מה היה קורה אם כדור ב' היה נזרק במהירות של 10 מ"ש?</h3>
+        
+        <div class="step-block">
+            <span class="step-title">מה נתון (חשיפה מדורגת):</span>
+            <span>מהירות הזריקה של כדור ב' שונתה ל- $v_{0B} = 10 \text{ m/s}$ (במקום 14). הוא עדיין נזרק ברגע $t=1 \text{ s}$.</span>
+        </div>
+
+        <div class="step-block">
+            <span class="step-title">מה מחפשים:</span>
+            <span>קביעה האם הכדורים ייפגשו במצב זה, והסבר פיזיקלי.</span>
+        </div>
+
+        <div class="teacher-highlight">
+            <p>
+                <strong>ניתוח פיזיקלי קונספטואלי:</strong> <br>
+                בסעיף הקודם חישבנו שברגע $t=1 \text{ s}$, לכדור א' יש כבר מהירות של $10 \text{ m/s}$ כלפי מטה. <br>
+                אם ברגע זה בדיוק, כדור ב' מתחיל את תנועתו גם הוא במהירות של $10 \text{ m/s}$ כלפי מטה, הרי שבאותו רגע בדיוק <strong>שני הכדורים נעים באותה המהירות</strong>. <br>
+                בנוסף, מרגע זה ואילך, לשני הכדורים יש אותה תאוצה בדיוק ($a = 10 \text{ m/s}^2$). מכיוון שיש להם אותה מהירות התחלתית (ביחס לרגע $t=1$) ואותה תאוצה, קצב השינוי של המיקום שלהם זהה לחלוטין. מכיוון שכדור א' כבר נמצא נמוך יותר מכדור ב' ברגע זה, הפער המרחבי ביניהם יישמר קבוע לאורך כל הנפילה, והם <strong>לא ייפגשו לעולם</strong>.
+            </p>
+        </div>
+        
+        <div class="step-block">
+            <span class="step-title">הוכחה מתמטית (כהשלמה):</span>
+            <div class="math-scroll">
+                נבנה פונקציית מיקום חדשה לכדור ב':
+                $$ y_{B,new}(t) = 0 + 10(t-1) + \frac{1}{2} \cdot 10 \cdot (t-1)^2 = 10t - 10 + 5(t^2 - 2t + 1) = 5t^2 - 5 $$
+                ננסה למצוא נקודת מפגש:
+                $$ y_A(t) = y_{B,new}(t) \implies 5t^2 = 5t^2 - 5 \implies 0 = -5 $$
+                קיבלנו פסוק שקר! אין פתרון למשוואה, מה שמוכיח מתמטית שהם לעולם לא ייפגשו.
+            </div>
+        </div>
+    </section>
+
+    <!-- תצוגה גרפית מורחבת (Chart.js) -->
+    <section class="section-card" id="part-graph">
+        <h3 class="section-header">המחשה גרפית (אופציונלי)</h3>
+        <p>כדי להמחיש את הפתרון, נשרטט את גרף המקום-זמן של שני הכדורים. נקודת החיתוך מייצגת את רגע המפגש.</p>
+        <div class="graph-container">
+            <canvas id="kinematicsChart"></canvas>
+        </div>
+    </section>
+
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="flex items-center justify-between mb-3">
+            <h3 id="questionModalTitle" class="text-lg font-bold text-slate-800">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg"
+                 onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-8 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold text-lg mb-2">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה של קובץ ה-HTML.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה: ' + document.lastModified;
+        }
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+            versionUpdatedAt.textContent = `${pad(modified.getDate())}.${pad(modified.getMonth() + 1)}.${String(modified.getFullYear()).slice(-2)} ${pad(modified.getHours())}:${pad(modified.getMinutes())}:${pad(modified.getSeconds())}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+
+        // יצירת מערכי נתונים לגרף לפי הפונקציות שמצאנו
+        const dataA = [];
+        const dataB = [];
+
+        // חישוב נתונים בטווח זמנים 0 עד 3 שניות
+        for (let t = 0; t <= 3; t += 0.1) {
+            // כדור א': y = 5t^2
+            dataA.push({ x: t, y: 5 * Math.pow(t, 2) });
+
+            // כדור ב': y = 5t^2 + 4t - 9 (רק עבור t >= 1)
+            if (t >= 1) {
+                dataB.push({ x: t, y: 5 * Math.pow(t, 2) + 4 * t - 9 });
+            }
+        }
+
+        const ctx = document.getElementById('kinematicsChart').getContext('2d');
+        const isMobile = window.matchMedia('(max-width: 640px)').matches;
+
+        // Chart.js Rules Strictness: scatter, showLine: true, linear scale, zero lines
+        new Chart(ctx, {
+            type: 'scatter',
+            data: {
+                datasets: [
+                    {
+                        label: "כדור א' (ממנוחה)",
+                        data: dataA,
+                        borderColor: '#3b82f6',
+                        backgroundColor: '#3b82f6',
+                        showLine: true,
+                        borderWidth: 2,
+                        pointRadius: 0
+                    },
+                    {
+                        label: "כדור ב' (נזרק ב-14 מ'\\ש')",
+                        data: dataB,
+                        borderColor: '#dc2626',
+                        backgroundColor: '#dc2626',
+                        showLine: true,
+                        borderWidth: 2,
+                        pointRadius: 0
+                    },
+                    {
+                        label: 'נקודת מפגש (2.25s, 25.3m)',
+                        data: [{ x: 2.25, y: 25.3125 }],
+                        backgroundColor: '#16a34a',
+                        borderColor: '#15803d',
+                        pointRadius: isMobile ? 4 : 6,
+                        pointStyle: 'circle'
+                    }
+                ]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                layout: {
+                    padding: {
+                        top: isMobile ? 6 : 10,
+                        left: isMobile ? 4 : 8,
+                        right: isMobile ? 4 : 8,
+                        bottom: isMobile ? 2 : 6
+                    }
+                },
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'גרף מקום-זמן: y(t)',
+                        font: { size: isMobile ? 13 : 16, family: 'Arial' },
+                        padding: { bottom: isMobile ? 6 : 10 }
+                    },
+                    legend: {
+                        position: isMobile ? 'bottom' : 'top',
+                        labels: {
+                            font: { family: 'Arial', size: isMobile ? 11 : 13 },
+                            boxWidth: isMobile ? 14 : 24,
+                            boxHeight: isMobile ? 8 : 12,
+                            padding: isMobile ? 8 : 12,
+                            usePointStyle: false
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        title: {
+                            display: true,
+                            text: 'זמן (שניות)',
+                            font: { size: isMobile ? 12 : 14, weight: 'bold' }
+                        },
+                        min: 0,
+                        max: 3,
+                        ticks: {
+                            font: { size: isMobile ? 11 : 12 },
+                            maxRotation: 0,
+                            autoSkip: true
+                        },
+                        grid: {
+                            color: (context) => context.tick.value === 0 ? '#000000' : '#e5e7eb',
+                            lineWidth: (context) => context.tick.value === 0 ? 2 : 1
+                        }
+                    },
+                    y: {
+                        title: {
+                            display: !isMobile,
+                            text: 'מקום y (מטרים)',
+                            font: { size: 14, weight: 'bold' }
+                        },
+                        reverse: true,
+                        min: 0,
+                        max: 45,
+                        ticks: {
+                            font: { size: isMobile ? 11 : 12 }
+                        },
+                        grid: {
+                            color: (context) => context.tick.value === 0 ? '#000000' : '#e5e7eb',
+                            lineWidth: (context) => context.tick.value === 0 ? 2 : 1
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

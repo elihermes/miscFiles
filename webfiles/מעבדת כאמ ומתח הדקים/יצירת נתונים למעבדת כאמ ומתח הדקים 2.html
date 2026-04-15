@@ -1,0 +1,398 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מעבדה וירטואלית: כא"מ ומתח הדקים</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .hidden { display: none; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(5px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen p-4 md:p-8">
+
+    <div class="max-w-3xl mx-auto bg-white rounded-xl shadow-lg p-6 md:p-8">
+        <h1 class="text-2xl md:text-3xl font-bold text-blue-700 mb-6 text-center">ניסוי: מדידת כא"מ והתנגדות פנימית</h1>
+        
+        <div class="bg-blue-50 border-r-4 border-blue-500 p-4 mb-6 text-gray-700">
+            <p>שלום! הזינו את שמכם המלא כדי לקבל את נתוני המעבדה הייחודיים שלכם.</p>
+            <p class="text-sm mt-2 text-gray-500">שימו לב: הקפדתם על כתיב זהה תניב תמיד את אותם הנתונים.</p>
+        </div>
+
+        <!-- אזור קלט -->
+        <div class="flex flex-col md:flex-row gap-4 mb-8 justify-center items-center">
+            <input type="text" id="studentName" placeholder="שם התלמיד/ה" 
+                   class="border border-gray-300 rounded-lg px-4 py-2 w-full md:w-64 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+            <button onclick="generateExperiment()" 
+                    class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg transition duration-200 w-full md:w-auto">
+                חולל נתונים
+            </button>
+        </div>
+
+        <!-- אזור תוצאות (מוסתר בהתחלה) -->
+        <div id="resultsArea" class="hidden">
+            <div class="flex flex-col md:flex-row justify-between items-start md:items-center mb-4 gap-4">
+                <h2 class="text-2xl font-semibold text-gray-800">טבלת תוצאות</h2>
+                <!-- קוד הזיהוי -->
+                <div class="bg-gray-200 text-gray-800 px-3 py-1 rounded font-mono text-sm shadow-inner break-all" 
+                     id="checksumDisplay">
+                    <!-- Checksum יופיע כאן -->
+                </div>
+            </div>
+            
+            <p class="mb-4 text-gray-600 text-sm">העתיקו את קוד הזיהוי ואת הטבלה לדוח המעבדה שלכם.</p>
+
+            <div class="overflow-x-auto shadow-sm rounded-lg mb-6">
+                <table class="w-full text-center border-collapse border border-gray-300">
+                    <thead>
+                        <tr class="bg-gray-100">
+                            <th class="border border-gray-300 px-2 py-2 md:px-4">מספר מדידה</th>
+                            <th class="border border-gray-300 px-2 py-2 md:px-4">הוראת האמפרמטר I [A]</th>
+                            <th class="border border-gray-300 px-2 py-2 md:px-4">הוראת הוולטמטר V [V]</th>
+                        </tr>
+                    </thead>
+                    <tbody id="dataTableBody">
+                        <!-- הנתונים יוכנסו לכאן באמצעות JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="flex justify-end mt-6">
+                <button onclick="downloadCSV()" 
+                        class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg transition duration-200 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                        <path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" />
+                    </svg>
+                    הורד כ-CSV
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal ניתוח: פאנל מורה (סודי) -->
+    <div id="analysis-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-[60] p-4 fade-in">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl flex flex-col max-h-[95vh] border-t-8 border-purple-600">
+            <div class="p-4 border-b flex justify-between items-center bg-purple-50 rounded-t-lg">
+                <h3 class="text-xl font-bold text-purple-900 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    פאנל מורה סודי - ניתוח גרפים
+                </h3>
+                <button onclick="closeAnalysisModal()" class="text-gray-500 hover:text-red-500 text-3xl font-bold leading-none px-2">&times;</button>
+            </div>
+            
+            <div class="p-4 overflow-y-auto flex-grow flex flex-col md:flex-row gap-6 bg-gray-100">
+                <div class="w-full md:w-1/3 flex flex-col gap-4">
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <h4 class="font-bold text-blue-800 mb-2 border-b pb-1">נתוני אמת (שהוגרלו):</h4>
+                        <p class="mb-1">כא"מ (ε): <span id="trueEmfDisplay" class="font-mono text-blue-600 font-bold"></span></p>
+                        <p>התנגדות פנימית (r): <span id="trueRDisplay" class="font-mono text-blue-600 font-bold"></span></p>
+                    </div>
+                    <div class="bg-white border border-gray-200 rounded-lg p-4 shadow-sm">
+                        <h4 class="font-bold text-green-800 mb-2 border-b pb-1">התלמיד אמור לקבל:</h4>
+                        <p class="mb-1">נקודת חיתוך (כא"מ): <span id="expectedEmf" class="font-mono font-bold"></span></p>
+                        <p>שיפוע (מינוס r): <span id="expectedR" class="font-mono font-bold"></span></p>
+                    </div>
+                </div>
+
+                <div class="w-full md:w-2/3 bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col">
+                    <h4 class="font-bold text-purple-800 mb-2 border-b pb-1 text-center">משוואת קו המגמה (לפי הנתונים המורעשים)</h4>
+                    <div id="trendlineEquation" class="text-lg font-mono bg-purple-50 p-2 rounded border border-purple-200 mb-3 text-center text-purple-900 font-bold" dir="ltr"></div>
+                    <div class="relative flex-grow min-h-[300px] w-full">
+                        <canvas id="teacherChart"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t bg-gray-50 flex justify-end rounded-b-xl">
+                <button onclick="closeAnalysisModal()" class="bg-gray-500 text-white px-6 py-2 rounded shadow hover:bg-gray-600 transition">סגור תצוגה</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- מודול מנוע האקראיות (PRNG) ---
+        function xmur3(str) {
+            for(var i = 0, h = 1779033703 ^ str.length; i < str.length; i++) {
+                h = Math.imul(h ^ str.charCodeAt(i), 3432918353);
+                h = h << 13 | h >>> 19;
+            }
+            return function() {
+                h = Math.imul(h ^ (h >>> 16), 2246822507);
+                h = Math.imul(h ^ (h >>> 13), 3266489909);
+                return (h ^= h >>> 16) >>> 0;
+            }
+        }
+
+        function mulberry32(a) {
+            return function() {
+              var t = a += 0x6D2B79F5;
+              t = Math.imul(t ^ t >>> 15, t | 1);
+              t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+              return ((t ^ t >>> 14) >>> 0) / 4294967296;
+            }
+        }
+
+        let currentExperimentData = []; 
+        let currentChart = null; // משתנה לשמירת הגרף
+        let currentTrueValues = { emf: 0, r: 0 }; // שמירת נתוני האמת למורה
+
+        // --- מודול הניסוי בפיזיקה ---
+        function generateExperiment() {
+            const studentName = document.getElementById('studentName').value.trim();
+            if (!studentName) {
+                alert("אנא הזן שם תלמיד כדי להמשיך.");
+                return;
+            }
+
+            let trueEMF, trueR_internal, checksum;
+            const R_voltmeter = 1000; 
+
+            // בדיקה אם המורה הזין קוד זיהוי (Checksum) במקום שם תלמיד
+            const checksumRegex = /^REF-(\d{3})-(\d{3})$/i;
+            const match = studentName.match(checksumRegex);
+
+            if (match) {
+                // המורה הזין קוד - שחזור השגיאות השיטתיות ישירות מהקוד
+                trueEMF = parseInt(match[1]) / 100;
+                trueR_internal = parseInt(match[2]) / 100;
+                checksum = studentName.toUpperCase(); // שמירה על הקוד המקורי
+            } else {
+                // תלמיד הזין שם - הגרלת השגיאות השיטתיות על בסיס השם
+                const nameSeedFunc = xmur3(studentName);
+                const nameRandom = mulberry32(nameSeedFunc());
+                const nameRandInRange = (min, max) => min + nameRandom() * (max - min);
+
+                trueEMF = nameRandInRange(1.45, 1.55); 
+                trueR_internal = nameRandInRange(0.4, 0.7); 
+                
+                // בניית קוד הזיהוי
+                const emfCode = Math.round(trueEMF * 100).toString().padStart(3, '0');
+                const rCode = Math.round(trueR_internal * 100).toString().padStart(3, '0');
+                checksum = `REF-${emfCode}-${rCode}`;
+            }
+
+            // יצירת מנוע אקראיות *חדש* מבוסס אך ורק על קוד ה-Checksum!
+            // זה מבטיח שהשגיאות האקראיות (הרעש) יהיו זהות בדיוק בין אם 
+            // התלמיד הזין את שמו ובין אם המורה הזין את הקוד.
+            const noiseSeedFunc = xmur3(checksum);
+            const noiseRandom = mulberry32(noiseSeedFunc());
+            const noiseRandInRange = (min, max) => min + noiseRandom() * (max - min);
+            
+            currentExperimentData = [];
+
+            // 2. יצירת הנתונים לטבלה
+            const v1_theoretical = trueEMF * (R_voltmeter / (R_voltmeter + trueR_internal));
+            const v1_measured = v1_theoretical * (1 + noiseRandInRange(-0.04, 0.04));
+            
+            currentExperimentData.push({
+                measurement: 1,
+                current: "0.00",
+                voltage: v1_measured.toFixed(2)
+            });
+
+            let currentStepBase = 0.15;
+            
+            for (let i = 2; i <= 7; i++) {
+                let selectedCurrent = (i - 1) * currentStepBase * (1 + noiseRandInRange(-0.05, 0.05));
+                let v_theoretical = (trueEMF - selectedCurrent * trueR_internal) / (1 + trueR_internal / R_voltmeter);
+                let v_measured = v_theoretical * (1 + noiseRandInRange(-0.04, 0.04));
+
+                currentExperimentData.push({
+                    measurement: i,
+                    current: selectedCurrent.toFixed(2),
+                    voltage: v_measured.toFixed(2)
+                });
+            }
+
+            // 4. עדכון ממשק המשתמש (טבלה)
+            document.getElementById('checksumDisplay').innerText = `קוד זיהוי: ${checksum}`;
+            
+            const tbody = document.getElementById('dataTableBody');
+            tbody.innerHTML = ''; 
+            
+            currentExperimentData.forEach(row => {
+                const tr = document.createElement('tr');
+                tr.className = "hover:bg-gray-50 transition-colors";
+                tr.innerHTML = `
+                    <td class="border border-gray-300 px-2 py-2 md:px-4">${row.measurement}</td>
+                    <td class="border border-gray-300 px-2 py-2 md:px-4">${row.current}</td>
+                    <td class="border border-gray-300 px-2 py-2 md:px-4 text-blue-800 font-semibold" dir="ltr">${row.voltage}</td>
+                `;
+                tbody.appendChild(tr);
+            });
+
+            document.getElementById('resultsArea').classList.remove('hidden');
+
+            // 5. שמירת נתוני האמת למקרה שהמורה יפתח את פאנל הסוד
+            currentTrueValues.emf = trueEMF;
+            currentTrueValues.r = trueR_internal;
+        }
+
+        // --- מודול מורה: חישוב רגרסיה ושרטוט במודל סודי ---
+        function showAnalysisModal() {
+            if(currentExperimentData.length === 0) {
+                alert("יש להפיק נתונים עבור התלמיד לפני הצגת פאנל המורה!");
+                return;
+            }
+
+            // הצגת נתוני האמת
+            document.getElementById('trueEmfDisplay').innerText = currentTrueValues.emf.toFixed(3) + ' V';
+            document.getElementById('trueRDisplay').innerText = currentTrueValues.r.toFixed(3) + ' Ω';
+
+            // חישוב רגרסיה לינארית (קו מגמה) לפי הנתונים המורעשים
+            const regression = calculateLinearRegression(currentExperimentData);
+            
+            const m = regression.slope.toFixed(3);
+            const b = regression.intercept.toFixed(3);
+            
+            document.getElementById('trendlineEquation').innerText = `V = ${m} * I + ${b}`;
+            document.getElementById('expectedEmf').innerText = `${b} V`;
+            document.getElementById('expectedR').innerText = `${Math.abs(m)} Ω`;
+
+            // שרטוט הגרף
+            drawChart(regression);
+
+            // הצגת המודל
+            document.getElementById('analysis-modal').classList.remove('hidden');
+        }
+
+        function closeAnalysisModal() {
+            document.getElementById('analysis-modal').classList.add('hidden');
+        }
+
+        function calculateLinearRegression(data) {
+            let n = data.length;
+            let sumX = 0, sumY = 0, sumXY = 0, sumXX = 0;
+            
+            for (let pt of data) {
+                let x = parseFloat(pt.current);
+                let y = parseFloat(pt.voltage);
+                sumX += x;
+                sumY += y;
+                sumXY += x * y;
+                sumXX += x * x;
+            }
+            
+            let slope = (n * sumXY - sumX * sumY) / (n * sumXX - sumX * sumX);
+            let intercept = (sumY - slope * sumX) / n;
+            
+            return { slope, intercept };
+        }
+
+        function drawChart(regression) {
+            const ctx = document.getElementById('teacherChart').getContext('2d');
+            
+            // הכנת נתוני הנקודות
+            const scatterData = currentExperimentData.map(d => ({
+                x: parseFloat(d.current),
+                y: parseFloat(d.voltage)
+            }));
+
+            // מציאת ערך הזרם המקסימלי כדי למתוח את קו המגמה לאורך כל הגרף
+            const maxI = Math.max(...scatterData.map(d => d.x)) * 1.1;
+
+            // הכנת נתוני קו המגמה
+            const lineData = [
+                { x: 0, y: regression.intercept },
+                { x: maxI, y: regression.slope * maxI + regression.intercept }
+            ];
+
+            // אם כבר קיים גרף, נהרוס אותו לפני ציור מחדש
+            if (currentChart) {
+                currentChart.destroy();
+            }
+
+            currentChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'מדידות (עם שגיאה אקראית)',
+                        data: scatterData,
+                        backgroundColor: 'rgba(37, 99, 235, 1)', // כחול
+                        pointRadius: 5
+                    }, {
+                        type: 'line',
+                        label: 'קו מגמה (רגרסיה לינארית)',
+                        data: lineData,
+                        borderColor: 'rgba(220, 38, 38, 0.8)', // אדום
+                        borderWidth: 2,
+                        fill: false,
+                        pointRadius: 0
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: { display: true, text: 'זרם I [A]' },
+                            min: 0
+                        },
+                        y: {
+                            title: { display: true, text: 'מתח V [V]' }
+                        }
+                    },
+                    plugins: {
+                        tooltip: { rtl: true },
+                        legend: { rtl: true, position: 'top' }
+                    }
+                }
+            });
+        }
+
+        // --- מודול הורדת נתונים ---
+        function downloadCSV() {
+            if (currentExperimentData.length === 0) return;
+            
+            const studentName = document.getElementById('studentName').value.trim();
+            // חילוץ קוד הזיהוי נטו מתוך טקסט התצוגה
+            const checksumFull = document.getElementById('checksumDisplay').innerText;
+            const checksum = checksumFull.replace('קוד זיהוי:', '').trim();
+
+            let csvContent = "data:text/csv;charset=utf-8,\uFEFF"; 
+            
+            // הוספת השם וקוד הזיהוי לראש הקובץ
+            csvContent += `שם התלמיד:,${studentName}\n`;
+            csvContent += `קוד זיהוי מורה:,${checksum}\n\n`;
+            
+            csvContent += "מספר מדידה,הוראת אמפרמטר I [A],הוראת וולטמטר V [V]\n";
+            
+            currentExperimentData.forEach(row => {
+                csvContent += `${row.measurement},${row.current},${row.voltage}\n`;
+            });
+
+            const encodedUri = encodeURI(csvContent);
+            const link = document.createElement("a");
+            const safeFileName = studentName.replace(/[^a-z0-9א-ת]/gi, '_');
+            
+            link.setAttribute("href", encodedUri);
+            link.setAttribute("download", `מעבדה_כאם_ומתח_הדקים_${safeFileName || 'נתונים'}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+
+        // --- האזנה לקיצור מקלדת (מצב מורה סודי) ---
+        document.addEventListener('keydown', function(event) {
+            // זיהוי קיצור המקשים Alt+G או Option+G או Ctrl+G או Cmd+G
+            // תומך גם באות 'ע' למקרה שהמקלדת במצב עברית.
+            if ((event.altKey || event.ctrlKey || event.metaKey) && (event.code === 'KeyG' || event.key === 'g' || event.key === 'G' || event.key === 'ע')) {
+                event.preventDefault();
+                showAnalysisModal();
+            }
+        });
+    </script>
+</body>
+</html>

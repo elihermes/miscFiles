@@ -1,0 +1,653 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות פיזיקה - מכניקה 2023, שאלה 1</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for rendering Physics formulas -->
+    <script>
+        MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                renderActions: {
+                    addMenu: []
+                }
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .step-container {
+            margin-bottom: 1.5rem;
+        }
+
+        .step-title {
+            font-weight: 700;
+            color: #334155;
+            display: inline-block;
+            border-bottom: 2px solid var(--slate-200);
+            padding: 0.25rem 0.75rem;
+            border-radius: 0;
+            font-size: 0.875rem;
+            margin-bottom: 0.5rem;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background: var(--green-50);
+            border: 2px solid var(--green-500);
+            padding: 1rem;
+            border-radius: 0.75rem;
+            font-weight: 700;
+            text-align: center;
+            font-size: 1.03rem;
+            color: #166534;
+            margin-top: 1rem;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .svg-container {
+            width: 100%;
+            max-width: 400px;
+            margin: 1.5rem auto;
+            background-color: #f8fafc;
+            border: 1px dashed #cbd5e1;
+            border-radius: 0.5rem;
+            padding: 1rem;
+        }
+
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+    <div class="page-shell">
+        
+        <header class="text-center mb-8">
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות במכניקה</h1>
+            <h2 class="text-xl md:text-2xl text-slate-600">קיץ 2023, שאלה 1 - קינמטיקה ודינמיקה על מישור משופע</h2>
+            
+            <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+                <span class="version-label">עודכן:</span>
+                <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+            </div>
+        </header>
+
+        <section class="section-card border-t-4 border-slate-300">
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+                תמונת השאלה לא נטענה. אנא ודאו שקובץ question-image.png נמצא בתיקייה.
+            </div>
+        </section>
+
+        <div class="bg-slate-100 p-4 rounded-lg mb-8 text-slate-700 leading-relaxed border border-slate-200">
+            <strong>מבוא לפתרון:</strong> בשאלה זו אנו מנתחים תנועה של גוף על מישור משופע בשני ניסויים שונים. מפתח לפתרון הוא הבנת הקשר בין הייצוג הגרפי (גרף מהירות-זמן) לבין המציאות הפיזיקלית (כיוון התנועה והתאוצה). בשלבים הראשונים אנו מתעלמים מחיכוך, ובסעיף האחרון נוסיף אותו למערכת כדי לראות כיצד הוא משפיע על תאוצת הגוף.
+        </div>
+
+        <!-- ==================== SECTION A ==================== -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף א': קביעת הכיוון החיובי של הציר</h3>
+            
+            <div class="step-container">
+                <div class="step-title">1. מה נתון</div>
+                <p>מתוך תיאור הניסויים והגרפים:<br>
+                בניסוי 1 (גרף א'), הגוף נדחף במעלה המישור, והמהירות ההתחלתית בגרף (בזמן \( t=0 \)) היא חיובית ושווה ל- \( v_1 = 1.0 \text{ m/s} \).<br>
+                בניסוי 2 (גרף ב'), הגוף נדחף במורד המישור, והמהירות ההתחלתית בגרף היא שלילית ושווה ל- \( v_2 = -0.5 \text{ m/s} \).</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">2. מה מחפשים</div>
+                <p>לקבוע ולנמק האם הכיוון החיובי של ציר המקום נקבע במעלה המישור המשופע או במורדו.</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">3. נוסחאות ועקרונות בשימוש</div>
+                <p>אין צורך בנוסחה מתמטית, אלא בהבנה קינמטית: סימן המהירות (\( + \) או \( - \)) מעיד על כיוון התנועה ביחס לציר הייחוס שנבחר.</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">4. ניתוח ופתרון</div>
+                <p>נבחן את ניסוי 1 המתואר על ידי "גרף א'". אנו יודעים כי הגוף נדחף מכיוון הנקודה K כלפי מעלה המישור. בגרף א', המהירות בזמן אפס היא חיובית (\( +1.0 \text{ m/s} \)). מכיוון שהגוף נע בפועל למעלה, והמהירות שלו מיוצגת בגרף כערך חיובי, אנו מסיקים כי הכיוון החיובי של ציר התנועה הוגדר כך שהוא מצביע למעלה המישור המשופע. הדבר תואם גם את ניסוי 2, בו הגוף נדחף למטה, ואכן בגרף ב' המהירות ההתחלתית שלו היא שלילית.</p>
+                
+                <!-- SVG Illustration -->
+                <div class="svg-container">
+                    <img src="image1.png" alt="תרשים סעיף א" class="w-full h-auto" onerror="this.style.display='none';" />
+                </div>
+
+                <div class="final-answer">
+                    הכיוון החיובי נקבע במעלה המישור המשופע.
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                תמיד כדאי לאמת את המסקנה שלנו עם כל הנתונים. בדקנו את גרף א' (תנועה למעלה = מהירות חיובית). עכשיו נוודא עם גרף ב': הגוף נדחף למטה (נגד הכיוון החיובי שקבענו), ולכן אנו מצפים למהירות התחלתית שלילית. הסתכלות בגרף ב' אכן מראה \( v_0 = -0.5 \text{ m/s} \), מה שמאשר סופית את קביעתנו.
+            </div>
+        </div>
+
+        <!-- ==================== SECTION B ==================== -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ב': מרחק מהנקודה הגבוהה ביותר לנקודה K</h3>
+            
+            <div class="step-container">
+                <div class="step-title">1. מה נתון</div>
+                <p>אנו דנים בניסוי 1 (גרף א').<br>
+                זמן הגעה לנקודה הגבוהה ביותר: מתוך הגרף, ברגע בו המהירות מתאפסת \( v=0 \), הגוף עוצר רגעית בשיא הגובה. זה קורה בזמן \( t_1 = 0.2 \text{ s} \).<br>
+                זמן הגעה לנקודה K (תחתית המישור): נתון כי \( t_2 = 0.5 \text{ s} \).<br>
+                מהירות בזמן \( t_2 = 0.5 \text{ s} \): מתוך גרף א', ניתן לראות כי \( v(0.5) = -1.5 \text{ m/s} \).</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">2. מה מחפשים</div>
+                <p>את המרחק שעבר הגוף בין שיא הגובה (בזמן \( t=0.2\text{s} \)) לבין הנקודה K (בזמן \( t=0.5\text{s} \)).</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">3. נוסחאות בשימוש</div>
+                <p>אנו יכולים לחשב את ההעתק בשתי דרכים: או באמצעות שטח כלוא מתחת לגרף מהירות-זמן, או בעזרת נוסחת מקום-זמן עבור תנועה שוות-תאוצה:</p>
+                <div class="formula-badge">\[ x = x_0 + v_0 t + \frac{1}{2} a t^2 \]</div>
+                <p>בנוסף, נזדקק לנוסחת מציאת שיפוע הגרף כדי למצוא את התאוצה:</p>
+                <div class="formula-badge">\[ a = \frac{\Delta v}{\Delta t} \]</div>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">4. הצבה ופתרון</div>
+                <p>תחילה, נחשב את תאוצת הגוף. ניקח שתי נקודות נוחות על גרף א': \( (0, 1.0) \) ו- \( (0.2, 0) \).</p>
+                \[ a = \frac{0 - 1.0}{0.2 - 0} = -5 \text{ m/s}^2 \]
+                <p>התאוצה שלילית, כפי שניתן לצפות, מכיוון שרכיב כוח הכובד פועל במורד המישור (נגד הכיוון החיובי).<br>
+                כעת, נחשב את ההעתק בקטע הזמן שבין \( t_1=0.2\text{s} \) ל- \( t_2=0.5\text{s} \). נשתמש בחישוב השטח הכלוא בין גרף הפונקציה לבין ציר הזמן. שטח זה הוא משולש:</p>
+                \[ \Delta x = \text{Area} = \frac{\text{base} \cdot \text{height}}{2} = \frac{(0.5 - 0.2) \cdot (-1.5)}{2} \]
+                \[ \Delta x = \frac{0.3 \cdot (-1.5)}{2} = -0.225 \text{ m} \]
+                <p>ההעתק הוא שלילי כיוון שהגוף נע במורד המישור. מכיוון שביקשו מאיתנו "מרחק" (גודל סקלרי חיובי), ניקח את הערך המוחלט:</p>
+                \[ d = |\Delta x| = |-0.225| = 0.225 \text{ m} \]
+                
+                <div class="final-answer">
+                    המרחק בין הנקודה הגבוהה ביותר לבין הנקודה K הוא \( 0.225 \text{ m} \).
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                שימו לב להבדל בין "העתק" (Displacement) ל"מרחק" (Distance). בגרף מהירות-זמן, שטח מתחת לציר הזמן נותן העתק שלילי (הגוף מתקדם בכיוון השלילי של הציר). המרחק הוא תמיד גודל חיובי שמייצג "כמה מטרים הלכנו בפועל" על פני הקרקע.
+            </div>
+        </div>
+
+        <!-- ==================== SECTION C ==================== -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ג': חישוב המרחק AK</h3>
+            
+            <div class="step-container">
+                <div class="step-title">1. מה נתון</div>
+                <p>ניסוי 1 התחיל בנקודה A בזמן \( t=0 \).<br>
+                הגוף סיים את תנועתו בנקודה K בזמן \( t=0.5 \text{ s} \).<br>
+                תאוצת הגוף חושבה קודם והיא \( a = -5 \text{ m/s}^2 \).<br>
+                מהירות התחלתית (נקודה A): \( v_0 = 1.0 \text{ m/s} \).</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">2. מה מחפשים</div>
+                <p>את המרחק בין הנקודה A (נקודת ההתחלה) לנקודה K (נקודת הסיום בניסוי 1).</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">3. נוסחאות בשימוש</div>
+                <p>נשתמש בנוסחת מקום-זמן כדי למצוא את מיקום הגוף בנקודה K יחסית לנקודה A.</p>
+                <div class="formula-badge">\[ x = x_0 + v_0 t + \frac{1}{2} a t^2 \]</div>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">4. הצבה ופתרון</div>
+                <p>נציב את מערכת הצירים שלנו כך שהנקודה A תהיה ראשית הצירים (כלומר \( x_0 = x_A = 0 \)).<br>
+                נציב את הנתונים לנוסחה עבור הזמן שבו הגוף הגיע לנקודה K (\( t = 0.5\text{s} \)):</p>
+                \[ x_K = 0 + 1.0 \cdot 0.5 + \frac{1}{2} \cdot (-5) \cdot (0.5)^2 \]
+                \[ x_K = 0.5 - 2.5 \cdot 0.25 \]
+                \[ x_K = 0.5 - 0.625 = -0.125 \text{ m} \]
+                <p>המיקום של K ביחס ל-A הוא \( -0.125\text{m} \). המשמעות היא שהנקודה K נמצאת "למטה" מנקודה A על המישור במרחק של 0.125 מטרים. נזכור כי המרחק הוא גודל חיובי:</p>
+                \[ d_{AK} = |-0.125| = 0.125 \text{ m} \]
+                
+                <div class="final-answer">
+                    המרחק AK הוא \( 0.125 \text{ m} \).
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                דרך נוספת לפתרון היא באמצעות סכימת השטחים בגרף. השטח המשולש החיובי (עלייה) הוא מ- \( t=0 \) עד \( t=0.2 \) שנותן \( 0.1 \text{ m} \). השטח השלילי (ירידה ל-K) שחישבנו בסעיף הקודם הוא \( -0.225 \text{ m} \). ההעתק הכולל הוא סכומם: \( 0.1 + (-0.225) = -0.125 \text{ m} \). התוצאה זהה לחלוטין!
+            </div>
+        </div>
+
+        <!-- ==================== SECTION D ==================== -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ד': חישוב המרחק AB</h3>
+            
+            <div class="step-container">
+                <div class="step-title">1. מה נתון</div>
+                <p>מניסוי 2 (גרף ב'):<br>
+                זמן התחלה בנקודה B: \( t=0 \).<br>
+                מהירות התחלתית בנקודה B: \( v_{0_B} = -0.5 \text{ m/s} \).<br>
+                זמן הגעה לנקודה K: \( t_{end} = 0.62 \text{ s} \).<br>
+                תאוצת הגוף נשארה זהה (השיפועים של גרף א' וגרף ב' מקבילים), ולכן \( a = -5 \text{ m/s}^2 \).<br>
+                מסעיף ג' אנו יודעים שהמרחק בין A ל-K הוא \( 0.125\text{m} \).</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">2. מה מחפשים</div>
+                <p>את המרחק ההתחלתי שבין נקודה A לנקודה B.</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">3. נוסחאות בשימוש</div>
+                <p>שוב, נשתמש בנוסחת הקינמטיקה למקום כפונקציה של הזמן, אך הפעם נציב את הנקודה K כראשית הצירים לטובת נוחות החישוב.</p>
+                <div class="formula-badge">\[ x = x_0 + v_0 t + \frac{1}{2} a t^2 \]</div>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">4. הצבה ופתרון</div>
+                <p>ראשית, נגדיר את מערכת הצירים כך שהנקודה K נמצאת ב- \( x_K = 0 \). מכיוון שהכיוון החיובי הוא למעלה המישור, הנקודה A (שנמצאת מעל K) ממוקמת ב- \( x_A = +0.125 \text{ m} \).<br>
+                כעת ננתח את תנועת הגוף מנקודה B. הוא מתחיל במיקום \( x_B \) לא ידוע, ומוסר לנו כי בזמן \( t=0.62\text{s} \) הוא מגיע לנקודה K (כלומר המיקום הסופי שלו הוא אפס).</p>
+                \[ x(0.62) = x_B + v_{0_B} \cdot 0.62 + \frac{1}{2} a (0.62)^2 \]
+                \[ 0 = x_B + (-0.5) \cdot 0.62 + 0.5 \cdot (-5) \cdot (0.62)^2 \]
+                \[ 0 = x_B - 0.31 - 2.5 \cdot (0.3844) \]
+                \[ 0 = x_B - 0.31 - 0.961 \]
+                \[ 0 = x_B - 1.271 \implies x_B = 1.271 \text{ m} \]
+                <p>קיבלנו שמיקום הנקודה B ביחס ל-K הוא \( 1.271 \text{ m} \) במעלה המישור.<br>
+                כדי למצוא את המרחק AB, נחסר את מיקום הנקודה A ממיקום הנקודה B:</p>
+                \[ d_{AB} = x_B - x_A = 1.271 - 0.125 = 1.146 \text{ m} \]
+                
+                <div class="final-answer">
+                    המרחק בין הנקודה A לנקודה B הוא \( 1.146 \text{ m} \).
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                בחירת ראשית הצירים (נקודת האפס) היא כלי רב עוצמה בידיים שלכם. בסעיף ג' בחרנו את A כראשית כי התנועה התחילה שם. בסעיף ד', מכיוון שאנו מקשרים תנועה שמתחילה ב-B ומסתיימת ב-K, בחרנו את K כראשית. בחירה נכונה של \( x=0 \) מונעת טעויות של סימני מינוס בהמשך הדרך!
+            </div>
+        </div>
+
+        <!-- ==================== SECTION E ==================== -->
+        <div class="section-card">
+            <h3 class="section-header">סעיף ה': הוספת חיכוך למערכת</h3>
+            
+            <div class="step-container">
+                <div class="step-title">1. מה נתון</div>
+                <p>כעת המשטח אינו חלק, כלומר קיים כוח חיכוך קינטי \( f_k \) הפועל תמיד בניגוד לכיוון התנועה הרגעי של הגוף.<br>
+                תאוצת הכובד פועלת תמיד כלפי מטה, ורכיבה המקביל למישור (\( mg \sin\alpha \)) פועל תמיד במורד המישור (נגד הכיוון החיובי).</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">2. מה מחפשים</div>
+                <p>לבחור איזה מארבעת הגרפים המוצעים (א, ב, ג, ד) מתאר נכון את מהירות הגוף בשני הניסויים תחת השפעת חיכוך, ולנמק.</p>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">3. נוסחאות בשימוש</div>
+                <p>נשתמש בחוק השני של ניוטון כדי למצוא ביטוי לתאוצה, ובנוסחת החיכוך הקינטי:</p>
+                <div class="formula-badge">\[ \Sigma F = ma \]</div>
+                <div class="formula-badge">\[ f_k = \mu_k N \]</div>
+            </div>
+
+            <div class="step-container">
+                <div class="step-title">4. ניתוח, פתרון ותרשים כוחות (FBD)</div>
+                <p>ננתח את שני מצבי התנועה האפשריים על המישור, ונבנה עבורם משוואות כוחות. נקפיד לזכור שהכיוון החיובי (\( +x \)) הוגדר במעלה המישור.</p>
+                
+                <p class="font-bold mt-4">מצב 1: הגוף נע במעלה המישור (ניסוי 1 בהתחלה)</p>
+                <p>כאשר הגוף נע למעלה, כוח החיכוך \( f_k \) פועל למטה (בכיוון השלילי), וכך גם רכיב כוח הכובד.</p>
+                
+                <div class="flex flex-col md:flex-row items-center justify-around">
+                    <div class="w-full md:w-1/2">
+                        \[ \Sigma F_x = -mg \sin\alpha - f_k = m a_{up} \]
+                        \[ a_{up} = \frac{-mg \sin\alpha - \mu_k N}{m} \]
+                        <p>התאוצה כאן היא שלילית וגדולה בערכה המוחלט מאשר ללא חיכוך. המשמעות הקינמטית בגרף: שיפוע הגרף בזמן עלייה יהיה חיובי-שלילי ותלול מאוד (תלול יותר מהמצב ההתחלתי).</p>
+                    </div>
+                    <!-- FBD UP SVG -->
+                    <div class="w-full md:w-1/2 svg-container">
+                                                <img src="image-2.png" alt="תרשים כוחות מצב 1" class="w-full h-auto" onerror="this.style.display='none';" />
+                    </div>
+                </div>
+
+                <p class="font-bold mt-4">מצב 2: הגוף נע במורד המישור (ניסוי 1 לאחר העצירה, וניסוי 2 כולו)</p>
+                <p>כאשר הגוף נע למטה, כוח החיכוך משנה את כיוונו ופועל כלפי מעלה (הכיוון החיובי). רכיב הכובד נשאר פועל למטה.</p>
+
+                <div class="flex flex-col md:flex-row items-center justify-around">
+                    <div class="w-full md:w-1/2">
+                        \[ \Sigma F_x = -mg \sin\alpha + f_k = m a_{down} \]
+                        \[ a_{down} = \frac{-mg \sin\alpha + \mu_k N}{m} \]
+                        <p>התאוצה כאן היא עדיין שלילית (בהנחה שהגוף מאיץ למטה), אך קטנה יותר בערכה המוחלט מאשר ללא חיכוך. המשמעות הקינמטית בגרף: שיפוע הגרף בזמן ירידה יהיה מתון יותר.</p>
+                    </div>
+                    <!-- FBD DOWN SVG -->
+                    <div class="w-full md:w-1/2 svg-container">
+                        <img src="image-3.png" alt="תרשים כוחות מצב 2" class="w-full h-auto" onerror="this.style.display='none';" />
+                    </div>
+                </div>
+
+                <p class="mt-4">מסקנה: אנו מחפשים גרף שבו בזמן העלייה (\( v > 0 \)) גודל התאוצה מקסימלי, כלומר השיפוע <strong>תלול מאוד</strong> (שלילי חזק). בזמן הירידה (\( v < 0 \)), החיכוך מתנגד לכבידה ולכן גודל התאוצה קטן יותר, כלומר השיפוע <strong>מתון יותר</strong>. בנוסף, קו ניסוי 2 (שבו הגוף נע רק למטה) חייב להיות <strong>מקביל</strong> לחלק היורד של תנועת הגוף בניסוי 1.</p>
+                <ul class="list-disc list-inside mt-2 mb-4 space-y-1">
+                    <li><strong>תרשים א':</strong> מתאר תאוצה קבועה לאורך כל הדרך, מתאים למשטח חלק (ללא חיכוך).</li>
+                    <li><strong>תרשים ג':</strong> מתאר מצב שבו השיפוע בעלייה מתון והשיפוע בירידה תלול - הפוך לגמרי מהמציאות הפיזיקלית שניתחנו.</li>
+                    <li><strong>תרשים ד':</strong> חלקי הירידה בשני הניסויים אינם בעלי אותו שיפוע (הקווים למטה אינם מקבילים), ולכן זה שגוי.</li>
+                    <li><strong>תרשים ב':</strong> מראה בבירור ירידה תלולה של המהירות בזמן העלייה (\(v>0\)), ושינוי לשיפוע מתון יותר ברגע שהמהירות הופכת לשלילית. כמו כן, הישר של ניסוי 2 מקביל לחלק היורד של ניסוי 1.</li>
+                </ul>
+
+                <div class="final-answer">
+                    הגרף הנכון הוא תרשים ב'.
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                מעולה שעליתם על זה! בבחינה חשוב להסתכל מקרוב על הגרפים ולאמת אותם מול המשוואות. בתרשים ב' רואים היטב איך "שיפוע המהירות" (התאוצה) תלול כאשר גם הכובד וגם החיכוך בולמים את הגוף במעלה המדרון, ולעומת זאת התאוצה "מתמתנת" כשהחיכוך עוזר לבלום את הנפילה של הגוף במורד המדרון. עבודה יפה!
+            </div>
+        </div>
+
+    </div>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    <span class="block font-bold mb-1">תמונת השאלה המקורית</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה: ' + document.lastModified;
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+                const day = pad(modified.getDate());
+                const month = pad(modified.getMonth() + 1);
+                const year = String(modified.getFullYear()).slice(-2);
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

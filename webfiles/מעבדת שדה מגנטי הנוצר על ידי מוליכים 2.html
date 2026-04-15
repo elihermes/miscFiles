@@ -1,0 +1,755 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>מעבדת שדות מגנטיים</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- KaTeX for Math rendering -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/katex.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/katex@0.16.8/dist/contrib/auto-render.min.js"></script>
+
+    <style>
+        body {
+            margin: 0;
+            overflow: hidden;
+            background-color: #f8fafc;
+            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+            touch-action: none; /* מניעת גלילת דף מיותרת בנייד */
+        }
+        #canvas-container {
+            width: 100vw;
+            height: 100vh;
+            display: block;
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.85);
+            backdrop-filter: blur(8px);
+            border: 1px solid rgba(0, 0, 0, 0.1);
+            color: #1e293b;
+        }
+        /* Custom range slider */
+        input[type=range] {
+            -webkit-appearance: none;
+            appearance: none;
+            width: 100%;
+            background: transparent;
+        }
+        input[type=range]::-webkit-slider-thumb {
+            -webkit-appearance: none;
+            appearance: none;
+            height: 16px;
+            width: 16px;
+            border-radius: 50%;
+            background: #3b82f6;
+            cursor: pointer;
+            margin-top: -6px;
+        }
+        input[type=range]::-webkit-slider-runnable-track {
+            width: 100%;
+            height: 4px;
+            cursor: pointer;
+            background: #cbd5e1;
+            border-radius: 2px;
+        }
+        
+        /* Tabs styling */
+        .tab-btn {
+            transition: all 0.2s;
+        }
+        .tab-btn.active {
+            background-color: #3b82f6;
+            color: white;
+            font-weight: bold;
+            box-shadow: 0 4px 6px -1px rgba(59, 130, 246, 0.3);
+        }
+        .tab-btn:not(.active) {
+            background-color: #f1f5f9;
+            color: #475569;
+        }
+        .tab-btn:not(.active):hover {
+            background-color: #e2e8f0;
+        }
+        
+        /* גלילה מותאמת לתוכן הפאנל */
+        #panel-content::-webkit-scrollbar {
+            width: 6px;
+        }
+        #panel-content::-webkit-scrollbar-track {
+            background: transparent;
+        }
+        #panel-content::-webkit-scrollbar-thumb {
+            background-color: #cbd5e1;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- פאנל שליטה ראשי - מעודכן למובייל -->
+    <div class="absolute top-2 right-2 left-2 sm:left-auto sm:top-4 sm:right-4 glass-panel p-4 sm:p-5 rounded-xl shadow-2xl sm:w-[340px] z-10 flex flex-col transition-all duration-300 max-h-[85vh] sm:max-h-[95vh]">
+        
+        <!-- כותרת מותאמת עם כפתור מזעור -->
+        <div class="flex justify-between items-center mb-3 border-b border-slate-200 pb-2" id="panel-header">
+            <h1 class="text-lg sm:text-xl font-bold text-blue-800">מעבדת מגנטיות</h1>
+            <button id="toggle-panel-btn" class="bg-blue-100 text-blue-800 hover:bg-blue-200 px-3 py-1 rounded-lg text-sm font-bold transition-colors shadow-sm cursor-pointer">
+                הסתר ▼
+            </button>
+        </div>
+
+        <!-- תוכן הפאנל -->
+        <div id="panel-content" class="flex flex-col gap-3 sm:gap-4 overflow-y-auto" style="display: flex;">
+            
+            <!-- בחירת מצב -->
+            <div class="flex bg-slate-100 p-1 rounded-lg gap-1">
+                <button onclick="setMode('wire')" id="tab-wire" class="tab-btn flex-1 py-1.5 text-sm rounded-md active">תיל ישר</button>
+                <button onclick="setMode('coil')" id="tab-coil" class="tab-btn flex-1 py-1.5 text-sm rounded-md">כריכה</button>
+                <button onclick="setMode('solenoid')" id="tab-solenoid" class="tab-btn flex-1 py-1.5 text-sm rounded-md">סילונית</button>
+            </div>
+
+            <!-- הגדרות משותפות -->
+            <div class="space-y-2 bg-blue-50/50 p-3 rounded-lg border border-blue-100">
+                <div class="flex justify-between items-center">
+                    <label for="current-slider" class="text-sm font-semibold">עוצמת הזרם (I)</label>
+                    <span id="current-value" class="text-sm font-bold text-blue-600">5</span>
+                </div>
+                <input type="range" id="current-slider" min="0" max="10" value="5">
+                
+                <div class="pt-2">
+                    <button id="direction-btn" class="w-full py-1.5 bg-blue-600 hover:bg-blue-500 text-white transition-colors rounded font-bold flex items-center justify-center gap-2 text-sm">
+                        <span id="dir-text">למעלה</span>
+                        <span id="dir-icon">⬆️</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- 1. אזור תיל ישר -->
+            <div id="ui-wire" class="space-y-3">
+                <div class="bg-slate-100/50 p-3 rounded-lg border border-slate-200">
+                    <p class="text-xs text-slate-600 leading-relaxed mb-2">
+                        <strong class="text-slate-800">כלל יד ימין:</strong> האגודל מצביע בכיוון הזרם (כתום), והאצבעות מתעגלות מסביב לתיל ומראות את כיוון קווי השדה המגנטי (כחול).
+                    </p>
+                    <div class="bg-white p-2 rounded border border-slate-200 text-center shadow-sm">
+                        <span class="text-[11px] font-bold text-slate-700">במרחק r מתיל ישר וארוך:</span>
+                        <div dir="ltr" class="text-[15px] mt-1 text-blue-800 font-semibold">
+                            $$B = \frac{\mu_0 I}{2\pi r}$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 2. אזור כריכה מעגלית -->
+            <div id="ui-coil" class="space-y-3 hidden">
+                <div class="space-y-1">
+                    <div class="flex justify-between items-center">
+                        <label class="text-sm font-medium">מספר כריכות (N)</label>
+                        <span id="coil-turns-val" class="text-sm font-bold text-blue-600">3</span>
+                    </div>
+                    <input type="range" id="coil-turns-slider" min="1" max="10" value="3">
+                </div>
+                
+                <div class="bg-slate-100/50 p-3 rounded-lg border border-slate-200">
+                    <p class="text-xs text-slate-600 leading-relaxed mb-2">
+                        <strong class="text-slate-800">כלל יד ימין:</strong> עטוף את הכריכה עם האצבעות בכיוון הזרם. האגודל יצביע לכיוון השדה במרכז.
+                    </p>
+                    <div class="bg-white p-2 rounded border border-slate-200 text-center shadow-sm">
+                        <span class="text-[11px] font-bold text-slate-700">במרכז סליל דק (N כריכות):</span>
+                        <div dir="ltr" class="text-[15px] mt-1 text-blue-800 font-semibold">
+                            $$B = \frac{\mu_0 N I}{2R}$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- 3. אזור סילונית -->
+            <div id="ui-solenoid" class="space-y-3 hidden">
+                <div class="space-y-1">
+                    <div class="flex justify-between items-center">
+                        <label class="text-sm font-medium">צפיפות ליפופים (N/L)</label>
+                        <span id="solenoid-turns-val" class="text-sm font-bold text-blue-600">15</span>
+                    </div>
+                    <input type="range" id="solenoid-turns-slider" min="5" max="30" value="15">
+                </div>
+
+                <div class="bg-slate-100/50 p-3 rounded-lg border border-slate-200">
+                    <p class="text-xs text-slate-600 leading-relaxed mb-2">
+                        <strong class="text-slate-800">שדה סילונית:</strong> בפנים השדה כמעט אחיד וקווי המקביל לציר. בחוץ הוא מתפזר בדומה למגנט מוט.
+                    </p>
+                    <div class="bg-white p-2 rounded border border-slate-200 text-center shadow-sm">
+                        <span class="text-[11px] font-bold text-slate-700">בתוך סילונית אידיאלית:</span>
+                        <div dir="ltr" class="text-[15px] mt-1 text-blue-800 font-semibold">
+                            $$B = \mu_0 \frac{N}{L} I$$
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+        </div> <!-- End of panel-content -->
+    </div>
+
+    <!-- Container for Three.js -->
+    <div id="canvas-container"></div>
+
+    <!-- Three.js Libraries -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <script>
+        // --- משתני מערכת גלובליים ---
+        let currentMode = 'wire'; 
+        let currentMagnitude = 5;
+        let currentDirection = 1; 
+        
+        let coilTurns = 3;
+        let solenoidTurns = 15;
+        const COIL_RADIUS = 10;
+        const SOLENOID_RADIUS = 6;
+        const SOLENOID_LENGTH = 30;
+
+        let sceneObjects = [];
+        let animatedArrows = []; 
+        let currentArrows = [];
+
+        // --- ניהול תצוגת הפאנל במובייל (הסתרה/הצגה) ---
+        const toggleBtn = document.getElementById('toggle-panel-btn');
+        const panelContent = document.getElementById('panel-content');
+        let isPanelOpen = true;
+
+        function togglePanel() {
+            isPanelOpen = !isPanelOpen;
+            if(isPanelOpen) {
+                panelContent.style.display = 'flex';
+                toggleBtn.innerText = 'הסתר ▼';
+                toggleBtn.classList.replace('bg-blue-600', 'bg-blue-100');
+                toggleBtn.classList.replace('text-white', 'text-blue-800');
+            } else {
+                panelContent.style.display = 'none';
+                toggleBtn.innerText = 'הגדרות ▲';
+                toggleBtn.classList.replace('bg-blue-100', 'bg-blue-600');
+                toggleBtn.classList.replace('text-blue-800', 'text-white');
+            }
+        }
+
+        toggleBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            togglePanel();
+        });
+
+
+        // --- הגדרות Three.js בסיסיות ---
+        const container = document.getElementById('canvas-container');
+        const scene = new THREE.Scene();
+        scene.fog = new THREE.FogExp2(0xf8fafc, 0.015);
+
+        const camera = new THREE.PerspectiveCamera(45, window.innerWidth / window.innerHeight, 0.1, 1000);
+        
+        const renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
+        renderer.setClearColor(0xf8fafc, 1);
+        renderer.setSize(window.innerWidth, window.innerHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+
+        // סגירת הפאנל אוטומטית במובייל ברגע שמתחילים לשחק עם המודל
+        controls.addEventListener('start', () => {
+            if (window.innerWidth < 640 && isPanelOpen) {
+                togglePanel();
+            }
+        });
+
+        scene.add(new THREE.AmbientLight(0xffffff, 0.6));
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.6);
+        dirLight.position.set(10, 30, 20);
+        scene.add(dirLight);
+
+        const gridHelper = new THREE.GridHelper(60, 60, 0x94a3b8, 0xe2e8f0);
+        gridHelper.position.y = -15;
+        scene.add(gridHelper);
+
+        // --- טקסטורות ויצירת אובייקטים משותפים ---
+        function createArrowTailTexture() {
+            const size = 128;
+            const canvas = document.createElement('canvas');
+            canvas.width = size;
+            canvas.height = size;
+            const ctx = canvas.getContext('2d');
+            ctx.fillStyle = '#3b82f6';
+            ctx.beginPath(); ctx.arc(size/2, size/2, size/2, 0, Math.PI * 2); ctx.fill();
+            ctx.strokeStyle = '#111827'; ctx.lineWidth = 16; ctx.lineCap = 'round';
+            const padding = 30;
+            ctx.beginPath(); ctx.moveTo(padding, padding); ctx.lineTo(size-padding, size-padding);
+            ctx.moveTo(size-padding, padding); ctx.lineTo(padding, size-padding); ctx.stroke();
+            return new THREE.CanvasTexture(canvas);
+        }
+        const arrowTailTex = createArrowTailTexture();
+
+        function createComplexArrow(color = 0x3b82f6) {
+            const group = new THREE.Group();
+            const body = new THREE.Mesh(
+                new THREE.CylinderGeometry(0.3, 0.3, 1.2, 16).rotateX(Math.PI/2), 
+                new THREE.MeshBasicMaterial({ color: color })
+            );
+            const tip = new THREE.Mesh(
+                new THREE.ConeGeometry(0.5, 0.8, 16).rotateX(Math.PI/2), 
+                new THREE.MeshBasicMaterial({ color: 0x111827 })
+            );
+            tip.position.z = 1.0;
+            
+            const dot = new THREE.Mesh(
+                new THREE.SphereGeometry(0.12, 16, 16),
+                new THREE.MeshBasicMaterial({ color: 0xffffff }) 
+            );
+            dot.position.z = 1.4;
+
+            const tail = new THREE.Mesh(
+                new THREE.CircleGeometry(0.3, 16), 
+                new THREE.MeshBasicMaterial({ map: arrowTailTex })
+            );
+            tail.position.z = -0.61; tail.rotation.y = Math.PI;
+            
+            group.add(body, tip, dot, tail);
+            return group;
+        }
+
+        function createDirectionTexture(type) {
+            const canvas = document.createElement('canvas');
+            canvas.width = 128;
+            canvas.height = 128;
+            const ctx = canvas.getContext('2d');
+
+            ctx.beginPath();
+            ctx.arc(64, 64, 56, 0, 2 * Math.PI);
+            ctx.fillStyle = '#f97316'; 
+            ctx.fill();
+            ctx.lineWidth = 8;
+            ctx.strokeStyle = '#ffffff';
+            ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.strokeStyle = '#ffffff';
+            ctx.lineWidth = 12;
+            ctx.lineCap = 'round';
+
+            if (type === 'in') {
+                ctx.beginPath();
+                ctx.moveTo(40, 40); ctx.lineTo(88, 88);
+                ctx.moveTo(88, 40); ctx.lineTo(40, 88);
+                ctx.stroke();
+            } else {
+                ctx.beginPath();
+                ctx.arc(64, 64, 14, 0, 2 * Math.PI);
+                ctx.fill();
+            }
+            return new THREE.CanvasTexture(canvas);
+        }
+        
+        const texCurrentIn = createDirectionTexture('in');
+        const texCurrentOut = createDirectionTexture('out');
+        // חומרים לדיסקיות שטוחות (Meshes)
+        const matCurrentInDisk = new THREE.MeshBasicMaterial({ map: texCurrentIn, transparent: true, side: THREE.DoubleSide });
+        const matCurrentOutDisk = new THREE.MeshBasicMaterial({ map: texCurrentOut, transparent: true, side: THREE.DoubleSide });
+
+        const copperMaterial = new THREE.MeshStandardMaterial({ color: 0xb87333, metalness: 0.7, roughness: 0.3 });
+
+        function clearScene() {
+            sceneObjects.forEach(obj => scene.remove(obj));
+            sceneObjects = [];
+            animatedArrows = [];
+            currentArrows = [];
+        }
+
+        // =========================================================
+        // מודל 1: תיל ישר (Wire)
+        // =========================================================
+        function buildWire() {
+            camera.position.set(25, 15, 25);
+            controls.target.set(0, 0, 0);
+
+            const wire = new THREE.Mesh(new THREE.CylinderGeometry(0.8, 0.8, 40, 32), copperMaterial);
+            scene.add(wire);
+            sceneObjects.push(wire);
+
+            // סמלי X ונקודה בקצוות התיל - עכשיו כדיסקיות שטוחות על ציר ה-XZ
+            if (currentMagnitude > 0) {
+                const diskGeo = new THREE.CircleGeometry(2.5, 32);
+                
+                const topDisk = new THREE.Mesh(diskGeo, currentDirection === 1 ? matCurrentOutDisk : matCurrentInDisk);
+                topDisk.position.set(0, 20.01, 0); 
+                topDisk.rotation.x = Math.PI / 2; // שוכב אופקית על קצה התיל
+                scene.add(topDisk);
+                sceneObjects.push(topDisk);
+
+                const bottomDisk = new THREE.Mesh(diskGeo, currentDirection === 1 ? matCurrentInDisk : matCurrentOutDisk);
+                bottomDisk.position.set(0, -20.01, 0); 
+                bottomDisk.rotation.x = Math.PI / 2; // שוכב אופקית על קצה התיל
+                scene.add(bottomDisk);
+                sceneObjects.push(bottomDisk);
+            }
+
+            if (currentMagnitude > 0) {
+                const arrowMat = new THREE.MeshBasicMaterial({ color: 0xf97316 });
+                for (let i = -15; i <= 15; i += 7) {
+                    const arrow = new THREE.Mesh(new THREE.ConeGeometry(1.2, 3, 16), arrowMat);
+                    arrow.position.y = i;
+                    if (currentDirection === -1) arrow.rotation.x = Math.PI;
+                    scene.add(arrow);
+                    sceneObjects.push(arrow);
+                    currentArrows.push({ mesh: arrow, mode: 'wire' });
+                }
+
+                const numRings = Math.ceil(currentMagnitude / 2);
+                const planes = [-10, 0, 10];
+                
+                planes.forEach(py => {
+                    for (let i = 1; i <= numRings; i++) {
+                        const r = i * 4;
+                        const ring = new THREE.Mesh(
+                            new THREE.TorusGeometry(r, 0.05, 8, 64).rotateX(Math.PI/2),
+                            new THREE.MeshBasicMaterial({ color: 0x3b82f6, transparent: true, opacity: 0.5 - i*0.08 })
+                        );
+                        ring.position.y = py;
+                        scene.add(ring);
+                        sceneObjects.push(ring);
+
+                        for (let j = 0; j < 4; j++) {
+                            const arrow = createComplexArrow();
+                            scene.add(arrow);
+                            sceneObjects.push(arrow);
+                            animatedArrows.push({
+                                mesh: arrow, mode: 'wire', r: r, py: py, angle: (j * Math.PI / 2)
+                            });
+                        }
+                    }
+                });
+            }
+        }
+
+        // =========================================================
+        // מודל 2: כריכה מעגלית (Coil)
+        // =========================================================
+        function buildCoil() {
+            camera.position.set(20, 25, 25);
+            controls.target.set(0, 0, 0);
+
+            const startY = -(coilTurns - 1) * 0.45;
+            
+            for (let i = 0; i < coilTurns; i++) {
+                const torus = new THREE.Mesh(new THREE.TorusGeometry(COIL_RADIUS, 0.4, 16, 64).rotateX(Math.PI/2), copperMaterial);
+                torus.position.y = startY + (i * 0.9);
+                scene.add(torus);
+                sceneObjects.push(torus);
+            }
+
+            if (currentMagnitude > 0) {
+                const arrowMat = new THREE.MeshBasicMaterial({ color: 0xf97316 });
+                for (let t = 0; t < coilTurns; t++) {
+                    const py = startY + (t * 0.9);
+                    for (let i = 0; i < 6; i++) {
+                        const arrow = new THREE.Mesh(new THREE.ConeGeometry(0.5, 1.5, 16).rotateX(Math.PI/2), arrowMat);
+                        scene.add(arrow);
+                        sceneObjects.push(arrow);
+                        currentArrows.push({ mesh: arrow, mode: 'coil', py: py, angle: (i/6)*Math.PI*2 + (t*0.5) });
+                    }
+                }
+
+                const effectiveStrength = currentMagnitude * coilTurns;
+                const distances = [];
+                if (effectiveStrength > 0) distances.push(3);
+                if (effectiveStrength > 10) distances.push(6.5);
+                if (effectiveStrength > 20) distances.push(9.5);
+
+                const angles = [0, Math.PI/2, Math.PI, 3*Math.PI/2];
+
+                const centerPoints = [new THREE.Vector3(0, -25, 0), new THREE.Vector3(0, 25, 0)];
+                const centerCurve = new THREE.LineCurve3(centerPoints[0], centerPoints[1]);
+                addMagneticPath(centerCurve, true);
+
+                distances.forEach(d => {
+                    angles.forEach(phi => {
+                        const points = [];
+                        const stretchY = 1.5 + (d * 0.2); 
+                        for (let i = 0; i <= 64; i++) {
+                            const alpha = (i / 64) * Math.PI * 2;
+                            const cx = COIL_RADIUS - d * Math.cos(alpha);
+                            const cy = d * stretchY * Math.sin(alpha);
+                            points.push(new THREE.Vector3(cx * Math.cos(phi), cy, cx * -Math.sin(phi)));
+                        }
+                        const curve = new THREE.CatmullRomCurve3(points, true);
+                        addMagneticPath(curve, false);
+                    });
+                });
+            }
+        }
+
+        // =========================================================
+        // מודל 3: סילונית (Solenoid)
+        // =========================================================
+        function buildSolenoid() {
+            camera.position.set(0, 20, 45); 
+            controls.target.set(0, 0, 0);
+
+            class HelixCurve extends THREE.Curve {
+                constructor(radius, turns, length) {
+                    super();
+                    this.radius = radius;
+                    this.turns = turns;
+                    this.length = length;
+                }
+                getPoint(t, optionalTarget = new THREE.Vector3()) {
+                    const x = (t - 0.5) * this.length;
+                    const angle = t * Math.PI * 2 * this.turns;
+                    const y = Math.cos(angle) * this.radius;
+                    const z = Math.sin(angle) * this.radius;
+                    return optionalTarget.set(x, y, z);
+                }
+            }
+
+            const helixCurve = new HelixCurve(SOLENOID_RADIUS, solenoidTurns, SOLENOID_LENGTH);
+            const tubeGeo = new THREE.TubeGeometry(helixCurve, solenoidTurns * 16, 0.3, 8, false);
+            const solenoid = new THREE.Mesh(tubeGeo, copperMaterial);
+            scene.add(solenoid);
+            sceneObjects.push(solenoid);
+
+            if (currentMagnitude > 0) {
+                const arrowGeo = new THREE.ConeGeometry(0.6, 1.8, 16).rotateX(Math.PI/2);
+                const arrowMat = new THREE.MeshBasicMaterial({ color: 0xf97316 });
+                const numCurrentArrows = Math.floor(solenoidTurns * 2);
+                
+                for (let i = 0; i < numCurrentArrows; i++) {
+                    const arrow = new THREE.Mesh(arrowGeo, arrowMat);
+                    scene.add(arrow);
+                    sceneObjects.push(arrow);
+                    currentArrows.push({ mesh: arrow, mode: 'solenoid', t: i/numCurrentArrows, curve: helixCurve });
+                }
+
+                const numInnerLines = currentMagnitude > 3 ? 9 : (currentMagnitude > 0 ? 5 : 0);
+                const innerOffsets = numInnerLines === 9 ? [
+                    [0,0], [2.5,2.5], [2.5,-2.5], [-2.5,2.5], [-2.5,-2.5],
+                    [3.5,0], [-3.5,0], [0,3.5], [0,-3.5]
+                ] : (numInnerLines === 5 ? [
+                    [0,0], [2,2], [2,-2], [-2,2], [-2,-2]
+                ] : [[0,0]]);
+
+                innerOffsets.forEach(off => {
+                    const pt1 = new THREE.Vector3(-SOLENOID_LENGTH*0.8, off[0], off[1]);
+                    const pt2 = new THREE.Vector3(SOLENOID_LENGTH*0.8, off[0], off[1]);
+                    const curve = new THREE.LineCurve3(pt1, pt2);
+                    addMagneticPath(curve, true, true);
+                });
+
+                if (currentMagnitude > 2) {
+                    const outerAngles = [0, Math.PI/4, Math.PI/2, 3*Math.PI/4, Math.PI, 5*Math.PI/4, 3*Math.PI/2, 7*Math.PI/4];
+                    outerAngles.forEach(phi => {
+                        const points = [];
+                        const segments = 64;
+                        for (let i = 0; i <= segments; i++) {
+                            const alpha = (i / segments) * Math.PI; 
+                            const x = Math.cos(alpha) * (SOLENOID_LENGTH*0.6);
+                            const r = SOLENOID_RADIUS + (Math.sin(alpha) * 14); 
+                            const y = r * Math.cos(phi);
+                            const z = r * Math.sin(phi);
+                            points.push(new THREE.Vector3(x, y, z));
+                        }
+                        const curve = new THREE.CatmullRomCurve3(points, false);
+                        addMagneticPath(curve, false, false);
+                    });
+                    
+                    if (currentMagnitude > 6) {
+                        const farAngles = [0, Math.PI/2, Math.PI, 3*Math.PI/2];
+                        farAngles.forEach(phi => {
+                            const points = [];
+                            for (let i = 0; i <= 64; i++) {
+                                const alpha = (i / 64) * Math.PI;
+                                const x = Math.cos(alpha) * (SOLENOID_LENGTH*0.7);
+                                const r = SOLENOID_RADIUS + (Math.sin(alpha) * 22); 
+                                const y = r * Math.cos(phi);
+                                const z = r * Math.sin(phi);
+                                points.push(new THREE.Vector3(x, y, z));
+                            }
+                            const curve = new THREE.CatmullRomCurve3(points, false);
+                            addMagneticPath(curve, false, false);
+                        });
+                    }
+                }
+            }
+        }
+
+        function addMagneticPath(curve, isCenter, isSolenoid = false) {
+            const tubeMat = new THREE.MeshBasicMaterial({ 
+                color: 0x3b82f6, transparent: true, opacity: isCenter ? 0.6 : 0.2 
+            });
+            const tubeMesh = new THREE.Mesh(new THREE.TubeGeometry(curve, 64, 0.04, 8, curve.closed), tubeMat);
+            scene.add(tubeMesh);
+            sceneObjects.push(tubeMesh);
+
+            const numArrows = isCenter ? (isSolenoid ? 2 : 3) : 4;
+            for (let i = 0; i < numArrows; i++) {
+                const arrow = createComplexArrow();
+                if(isCenter) arrow.scale.set(1.3, 1.3, 1.3);
+                scene.add(arrow);
+                sceneObjects.push(arrow);
+                animatedArrows.push({
+                    mesh: arrow, mode: 'path', curve: curve, t: i / numArrows
+                });
+            }
+        }
+
+        function setMode(mode) {
+            currentMode = mode;
+            
+            ['wire', 'coil', 'solenoid'].forEach(m => {
+                const btn = document.getElementById(`tab-${m}`);
+                if (m === mode) {
+                    btn.classList.add('active');
+                } else {
+                    btn.classList.remove('active');
+                }
+            });
+
+            document.getElementById('ui-wire').style.display = mode === 'wire' ? 'block' : 'none';
+            document.getElementById('ui-coil').style.display = mode === 'coil' ? 'block' : 'none';
+            document.getElementById('ui-solenoid').style.display = mode === 'solenoid' ? 'block' : 'none';
+
+            updateDirectionUI();
+            rebuildScene();
+        }
+
+        function updateDirectionUI() {
+            const btn = document.getElementById('direction-btn');
+            const text = document.getElementById('dir-text');
+            const icon = document.getElementById('dir-icon');
+
+            if (currentMode === 'wire') {
+                text.innerText = currentDirection === 1 ? 'זרם למעלה' : 'זרם למטה';
+                icon.innerText = currentDirection === 1 ? '⬆️' : '⬇️';
+            } else {
+                text.innerText = currentDirection === 1 ? 'נגד כיוון השעון' : 'עם כיוון השעון';
+                icon.innerText = currentDirection === 1 ? '🔄' : '🔁';
+            }
+
+            if (currentDirection === 1) {
+                btn.classList.replace('bg-red-600', 'bg-blue-600');
+                btn.classList.replace('hover:bg-red-500', 'hover:bg-blue-500');
+            } else {
+                btn.classList.replace('bg-blue-600', 'bg-red-600');
+                btn.classList.replace('hover:bg-blue-500', 'hover:bg-red-500');
+            }
+        }
+
+        function rebuildScene() {
+            clearScene();
+            if (currentMode === 'wire') buildWire();
+            else if (currentMode === 'coil') buildCoil();
+            else if (currentMode === 'solenoid') buildSolenoid();
+        }
+
+        document.getElementById('current-slider').addEventListener('input', (e) => {
+            currentMagnitude = parseInt(e.target.value);
+            document.getElementById('current-value').innerText = currentMagnitude;
+            rebuildScene();
+        });
+
+        document.getElementById('coil-turns-slider').addEventListener('input', (e) => {
+            coilTurns = parseInt(e.target.value);
+            document.getElementById('coil-turns-val').innerText = coilTurns;
+            if (currentMode === 'coil') rebuildScene();
+        });
+
+        document.getElementById('solenoid-turns-slider').addEventListener('input', (e) => {
+            solenoidTurns = parseInt(e.target.value);
+            document.getElementById('solenoid-turns-val').innerText = solenoidTurns;
+            if (currentMode === 'solenoid') rebuildScene();
+        });
+
+        document.getElementById('direction-btn').addEventListener('click', () => {
+            currentDirection *= -1;
+            updateDirectionUI();
+            rebuildScene();
+        });
+
+        window.addEventListener('resize', () => {
+            camera.aspect = window.innerWidth / window.innerHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(window.innerWidth, window.innerHeight);
+        });
+
+        const clock = new THREE.Clock();
+
+        function animate() {
+            requestAnimationFrame(animate);
+            const delta = clock.getDelta();
+
+            if (currentMagnitude > 0) {
+                currentArrows.forEach(arr => {
+                    if (arr.mode === 'wire') {
+                        const speed = currentMagnitude * 2 * currentDirection;
+                        arr.mesh.position.y += speed * delta;
+                        if (currentDirection === 1 && arr.mesh.position.y > 20) arr.mesh.position.y = -20;
+                        if (currentDirection === -1 && arr.mesh.position.y < -20) arr.mesh.position.y = 20;
+                    } 
+                    else if (arr.mode === 'coil') {
+                        const speed = currentMagnitude * 0.3 * currentDirection;
+                        arr.angle += speed * delta;
+                        arr.mesh.position.set(COIL_RADIUS * Math.cos(arr.angle), arr.py, COIL_RADIUS * -Math.sin(arr.angle));
+                        arr.mesh.lookAt(COIL_RADIUS * Math.cos(arr.angle + 0.1 * currentDirection), arr.py, COIL_RADIUS * -Math.sin(arr.angle + 0.1 * currentDirection));
+                    }
+                    else if (arr.mode === 'solenoid') {
+                        const speed = currentMagnitude * 0.003125 * currentDirection; 
+                        arr.t += speed * delta;
+                        if(arr.t > 1) arr.t -= 1;
+                        if(arr.t < 0) arr.t += 1;
+                        const pos = arr.curve.getPoint(arr.t);
+                        const tan = arr.curve.getTangent(arr.t).normalize();
+                        arr.mesh.position.copy(pos);
+                        arr.mesh.lookAt(pos.clone().add(tan.multiplyScalar(currentDirection)));
+                    }
+                });
+
+                animatedArrows.forEach(arr => {
+                    if (arr.mode === 'wire') {
+                        const bSpeed = currentMagnitude * 0.2;
+                        arr.angle += bSpeed * currentDirection * delta;
+                        arr.mesh.position.set(arr.r * Math.cos(arr.angle), arr.py, -arr.r * Math.sin(arr.angle));
+                        arr.mesh.lookAt(arr.r * Math.cos(arr.angle + 0.1 * currentDirection), arr.py, -arr.r * Math.sin(arr.angle + 0.1 * currentDirection));
+                    } 
+                    else if (arr.mode === 'path') {
+                        const bSpeed = currentMagnitude * 0.08;
+                        const dirMult = currentDirection; 
+                        arr.t += bSpeed * dirMult * delta;
+                        if (arr.t > 1.0) arr.t -= 1.0;
+                        if (arr.t < 0.0) arr.t += 1.0;
+                        const pos = arr.curve.getPoint(arr.t);
+                        if(pos) {
+                            const tan = arr.curve.getTangent(arr.t).normalize();
+                            arr.mesh.position.copy(pos);
+                            arr.mesh.lookAt(pos.clone().add(tan.multiplyScalar(dirMult)));
+                        }
+                    }
+                });
+            }
+
+            controls.update();
+            renderer.render(scene, camera);
+        }
+
+        window.onload = function() {
+            setMode('wire');
+            if (window.renderMathInElement) {
+                renderMathInElement(document.body, {
+                    delimiters: [
+                        {left: '$$', right: '$$', display: true},
+                        {left: '$', right: '$', display: false}
+                    ]
+                });
+            }
+            animate();
+        };
+
+    </script>
+</body>
+</html>

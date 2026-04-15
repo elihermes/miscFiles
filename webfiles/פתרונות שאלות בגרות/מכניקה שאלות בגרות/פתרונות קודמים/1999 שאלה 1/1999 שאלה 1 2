@@ -1,0 +1,624 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מוסבר בפיזיקה - מכניקה 1999 שאלה 1</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for rendering LaTeX math formulas -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+            line-height: 1.6;
+        }
+
+        /* Custom pedagogical classes */
+        .section-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-top: 4px solid #3b82f6;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #1e40af;
+            margin-top: 1.5rem;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .formula-badge {
+            display: inline-block;
+            background-color: #dbeafe;
+            color: #1e40af;
+            padding: 0.25rem 0.75rem;
+            border-radius: 0.5rem;
+            font-family: monospace;
+            font-size: 1.1em;
+            margin: 0.25rem;
+            border: 1px solid #bfdbfe;
+            direction: ltr;
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .final-answer {
+            background-color: #dcfce7;
+            border-right: 4px solid #22c55e;
+            padding: 1rem;
+            margin-top: 1rem;
+            border-radius: 0.5rem 0 0 0.5rem;
+            font-weight: 500;
+            font-size: 1.1em;
+            color: #166534;
+        }
+
+        .teacher-highlight {
+            background-color: #fef9c3;
+            border-right: 4px solid #eab308;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            border-radius: 0.5rem 0 0 0.5rem;
+            font-style: italic;
+            color: #854d0e;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            z-index: 50;
+            right: 1rem;
+            bottom: 1rem;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid #93c5fd;
+            border-radius: 9999px;
+            background: #eff6ff;
+            color: #1d4ed8;
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: #dbeafe;
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid #cbd5e1;
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (max-width: 640px) {
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+        }
+
+        /* SVG container styling */
+        .svg-container {
+            background-color: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            overflow-x: auto;
+        }
+        
+        /* MathJax horizontal scrolling for mobile */
+        .math-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.5rem 0;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8 max-w-5xl mx-auto">
+
+
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - מכניקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">שנת 1999, שאלה 1 (קינמטיקה)</h2>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א'</h3>
+        <p class="mt-4">עלינו לחשב על פי הטבלה בלבד את מהירות הקרונית ברגע \( t = 0.06 \, \text{s} \), מבלי להסתמך על הנחת תאוצה קבועה.</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            א. מה נתון:
+        </div>
+        <p>מהטבלה, אנו דולים את נתוני המיקום של הקרונית ברגעים הסמוכים לרגע המבוקש:</p>
+        <ul class="list-disc list-inside ml-4 mt-2">
+            <li>זמן מוקדם: \( t_1 = 0.04 \, \text{s} \), המיקום הוא \( x_1 = 0.020 \, \text{m} \)</li>
+            <li>זמן מאוחר: \( t_2 = 0.08 \, \text{s} \), המיקום הוא \( x_2 = 0.048 \, \text{m} \)</li>
+        </ul>
+        <p class="text-sm text-slate-500 mt-1">* כל הנתונים נתונים כבר ביחידות התקניות (MKS) של שניות ומטרים, לכן אין צורך בהמרת יחידות.</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            ב. מה מחפשים:
+        </div>
+        <p>את המהירות הרגעית המקורבת \( v \) של הקרונית בדיוק ברגע \( t = 0.06 \, \text{s} \).</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            ג. נוסחאות בשימוש (מדף הנוסחאות):
+        </div>
+        <p>כיוון שנאסר עלינו להניח תאוצה קבועה, הדרך לחשב מהירות מתוך נתוני מיקום-זמן בדידים היא בעזרת נוסחת המהירות הממוצעת:</p>
+        <div class="text-center mt-2">
+            <span class="formula-badge">\[ \overline{v} = \frac{\Delta x}{\Delta t} \]</span>
+        </div>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            ד. הצבה ופתרון:
+        </div>
+        <p>נחשב את המהירות הממוצעת בפרק הזמן הסימטרי שסביב הרגע המבוקש, כלומר בין \( t=0.04 \, \text{s} \) לבין \( t=0.08 \, \text{s} \):</p>
+        <div class="math-scroll">
+            \[ \overline{v} = \frac{x_2 - x_1}{t_2 - t_1} \]
+            \[ v(0.06) \approx \frac{0.048 - 0.020}{0.08 - 0.04} \]
+            \[ v(0.06) = \frac{0.028}{0.04} \]
+            \[ v(0.06) = 0.7 \, \text{m/s} \]
+        </div>
+        <div class="final-answer">
+            מהירות הקרונית ברגע \( t = 0.06 \, \text{s} \) היא \( v = 0.7 \, \text{m/s} \).
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> למה בחרנו את הנקודות לפני ואחרי? כאשר אנו רוצים לחשב מהירות "רגעית" מתוך טבלה, הקירוב הטוב ביותר מתקבל על ידי חישוב המהירות הממוצעת בפרק זמן <strong>סימטרי</strong> סביב הנקודה המבוקשת. שיטה זו (המכונה "הפרש מרכזי") ממזערת שגיאות במקרים שבהם התאוצה משתנה, והיא מדויקת לחלוטין אם התאוצה קבועה.
+        </div>
+    </section>
+
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב'</h3>
+        <p class="mt-4">כעת אנו נדרשים לחשב את מהירות הקרונית ברגעים נוספים: \( t = 0.02\text{s}, 0.04\text{s}, 0.08\text{s}, 0.10\text{s} \).</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            א. מה נתון:
+        </div>
+        <p>טבלת המדידות המלאה של מיקום כפונקציה של הזמן הנתונה בשאלה.</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            ב. מה מחפשים:
+        </div>
+        <p>את המהירויות בארבעה רגעי זמן שונים, בשיטה זהה לזו שהפעלנו בסעיף א'.</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            ג. נוסחאות בשימוש:
+        </div>
+        <div class="text-center mt-2">
+            <span class="formula-badge">\[ \overline{v} = \frac{\Delta x}{\Delta t} \]</span>
+        </div>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            ד. הצבה ופתרון:
+        </div>
+        <p>נבצע את החישוב עבור כל אחת מהנקודות תוך שימוש במרווח זמן של \( \Delta t = 0.04 \, \text{s} \) (מנקודה אחת לפני ועד נקודה אחת אחרי):</p>
+        <div class="math-scroll">
+            <p>עבור \( t = 0.02 \, \text{s} \):</p>
+            \[ v(0.02) = \frac{x(0.04) - x(0)}{0.04 - 0} = \frac{0.020 - 0}{0.04} = 0.5 \, \text{m/s} \]
+            
+            <p>עבור \( t = 0.04 \, \text{s} \):</p>
+            \[ v(0.04) = \frac{x(0.06) - x(0.02)}{0.06 - 0.02} = \frac{0.033 - 0.009}{0.04} = 0.6 \, \text{m/s} \]
+            
+            <p>עבור \( t = 0.08 \, \text{s} \):</p>
+            \[ v(0.08) = \frac{x(0.10) - x(0.06)}{0.10 - 0.06} = \frac{0.065 - 0.033}{0.04} = 0.8 \, \text{m/s} \]
+            
+            <p>עבור \( t = 0.10 \, \text{s} \):</p>
+            \[ v(0.10) = \frac{x(0.12) - x(0.08)}{0.12 - 0.08} = \frac{0.084 - 0.048}{0.04} = 0.9 \, \text{m/s} \]
+        </div>
+        <div class="final-answer">
+            המהירויות שחושבו הן: \( 0.5 \, \text{m/s} , 0.6 \, \text{m/s} , 0.8 \, \text{m/s} , 0.9 \, \text{m/s} \) בהתאמה לזמנים המבוקשים.
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> שימו לב שמכיוון שהשתמשנו בפרקי זמן סימטריים סביב כל נקודה, איננו יכולים לחשב את המהירות ברגע הראשון המופיע בטבלה (\( t=0 \)) או ברגע האחרון (\( t=0.12 \)), כיוון שחסרים לנו נתונים "לפני" ו"אחרי".
+        </div>
+    </section>
+
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג'</h3>
+        <p class="mt-4">בסעיף זה אנו נדרשים לרכז את התוצאות לטבלה חדשה ולשרטט גרף של מהירות הקרונית כפונקציה של הזמן.</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            א. מה נתון:
+        </div>
+        <p>חמשת ערכי המהירות שחישבנו בסעיפים א' ו-ב'.</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            ב. מה מחפשים:
+        </div>
+        <p>טבלה מסודרת של המהירות \( v \) כתלות בזמן \( t \) והצגה גרפית שלה, תוך העברת קו מגמה.</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            ג. נוסחאות בשימוש:
+        </div>
+        <p>אין נוסחאות חישוב בסעיף זה, אך אנו משתמשים בעקרונות שרטוט גרפים (ציר אופקי למשתנה הבלתי תלוי - זמן, ציר אנכי למשתנה התלוי - מהירות).</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            ד. הצבה ופתרון:
+        </div>
+        <p><strong>1. טבלת הנתונים החדשה:</strong></p>
+        <div class="overflow-x-auto my-4">
+            <table class="w-full text-center border-collapse border border-slate-300 mx-auto max-w-md">
+                <thead>
+                    <tr class="bg-blue-50">
+                        <th class="border border-slate-300 p-2 font-semibold">זמן - \( t \, (\text{s}) \)</th>
+                        <th class="border border-slate-300 p-2 font-semibold">מהירות - \( v \, (\text{m/s}) \)</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <tr><td class="border border-slate-300 p-2">0.02</td><td class="border border-slate-300 p-2">0.5</td></tr>
+                    <tr class="bg-slate-50"><td class="border border-slate-300 p-2">0.04</td><td class="border border-slate-300 p-2">0.6</td></tr>
+                    <tr><td class="border border-slate-300 p-2">0.06</td><td class="border border-slate-300 p-2">0.7</td></tr>
+                    <tr class="bg-slate-50"><td class="border border-slate-300 p-2">0.08</td><td class="border border-slate-300 p-2">0.8</td></tr>
+                    <tr><td class="border border-slate-300 p-2">0.10</td><td class="border border-slate-300 p-2">0.9</td></tr>
+                </tbody>
+            </table>
+        </div>
+
+        <p><strong>2. גרף מהירות-זמן וקו המגמה:</strong></p>
+        <p>לאחר שרטוט הנקודות במערכת הצירים, אנו מעבירים <strong>קו מגמה</strong> (Best fit line) דרכן. מתוך הגרף ניתן לראות בבירור כי הנקודות מסתדרות היטב לאורך קו ישר אחד המשקף את המגמה שלהן.</p>
+        
+        <div class="svg-container flex justify-center my-4" dir="ltr">
+            <img src="image-3.png" alt="גרף מהירות-זמן v(t)" class="w-full max-w-xl h-auto rounded-lg border border-slate-200 shadow-sm" style="background: #fff;" onerror="this.style.display='none'; this.nextElementSibling && (this.nextElementSibling.style.display='block');">
+            <div style="display: none; background: #eff6ff; color: #1e40af; padding: 20px; border-radius: 10px; border: 1px solid #bfdbfe; text-align: center; width: 100%; max-width: 32rem;">
+                <span style="display: block; font-weight: bold; margin-bottom: 8px;">[גרף מהירות-זמן]</span>
+                <span style="font-size: 0.9rem;">לא נמצאה תמונה בשם <code>image-3.png</code> באותה תיקייה של קובץ ה-HTML.</span>
+            </div>
+        </div>
+
+        <div class="final-answer">
+            הנקודות שחושבו מתאימות לקו מגמה ישר, המייצג את פונקציית המהירות כתלות בזמן.
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> שימו לב שבגרף קו המגמה חותך את ציר ה-y (כאשר \( t=0 \)) בערך של \( 0.4 \, \text{m/s} \). זה מסתדר היטב עם הנתון בשאלה שאומר "ברגע \( t=0 \) מהירות הקרונית אינה שווה בהכרח לאפס". הקרונית שוחררה ממנוחה <em>לפני</em> שהתחלנו למדוד את הזמן!
+        </div>
+    </section>
+
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד'</h3>
+        <p class="mt-4">אנו נשאלים האם תאוצת הקרונית קבועה, ואם כן עלינו לחשב אותה.</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            א. מה נתון:
+        </div>
+        <p>טבלת המהירויות שחישבנו בסעיף ג', וקו המגמה הישר ששרטטנו בגרף המהירות-זמן.</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            ב. מה מחפשים:
+        </div>
+        <p>מסקנה לגבי אופי התאוצה, וחישוב גודל התאוצה \( a \) מתוך הגרף.</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            ג. נוסחאות בשימוש:
+        </div>
+        <p>על פי דף הנוסחאות, תאוצה רגעית מוגדרת כנגזרת המהירות לפי הזמן. בגרף מהירות-זמן התאוצה שווה לשיפוע הקו:</p>
+        <div class="text-center mt-2">
+            <span class="formula-badge">\[ a = \frac{\Delta v}{\Delta t} \]</span>
+        </div>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            ד. הצבה ופתרון:
+        </div>
+        <p>על סמך הגרף ששרטטנו בסעיף ג', ראינו שנקודות המדידה מונחות באופן מושלם על <strong>קו מגמה ישר</strong>. גרף מהירות-זמן שהוא קו ישר (בעל שיפוע קבוע) מעיד מבחינה קינמטית על כך ש<strong>התאוצה קבועה</strong>.</p>
+        <p>כדי לחשב את גודל התאוצה, עלינו לחשב את שיפוע קו המגמה. הדרך הנכונה לעשות זאת היא לבחור שתי נקודות נוחות המונחות בדיוק על קו המגמה (הן לא חייבות להיות בהכרח נקודות מתוך טבלת המדידות, אלא נקודות על הקו ששרטטנו).</p>
+        <p>נבחר מתוך הגרף שתי נקודות על קו המגמה:</p>
+        <ul class="list-disc list-inside ml-4 mb-2">
+            <li>נקודה 1 (נקודת החיתוך של הקו עם ציר המהירות): \( (t_1 = 0 \, \text{s} , v_1 = 0.4 \, \text{m/s}) \)</li>
+            <li>נקודה 2 (נמצאת גם בטבלה וגם על הקו): \( (t_2 = 0.10 \, \text{s} , v_2 = 0.9 \, \text{m/s}) \)</li>
+        </ul>
+        <div class="math-scroll">
+            \[ a = \frac{v_2 - v_1}{t_2 - t_1} \]
+            \[ a = \frac{0.9 - 0.4}{0.10 - 0} \]
+            \[ a = \frac{0.5}{0.10} \]
+            \[ a = 5 \, \text{m/s}^2 \]
+        </div>
+        <div class="final-answer">
+            מכיוון שנקודות המדידה מתאימות לקו מגמה ישר, התאוצה קבועה. גודל התאוצה שחושב מתוך שיפוע קו המגמה הוא \( a = 5 \, \text{m/s}^2 \).
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> זכרו כלל ברזל במעבדות וניתוח נתונים: כאשר אנו מבקשים לחשב גודל פיזיקלי מתוך שיפוע גרף, אנו תמיד מחשבים אותו בעזרת <strong>נקודות מקו המגמה</strong> (Best fit) ולא ישירות מהטבלה הגולמית. קו המגמה "ממצע" את שגיאות המדידה של כל הנקודות הבודדות ונותן לנו את התוצאה המדויקת ביותר הנגזרת מהניסוי כולו.
+        </div>
+    </section>
+
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה'</h3>
+        <p class="mt-4">כעת משחררים את הקרונית ממנוחה על מסלול עקום (חסר חיכוך). עלינו לקבוע איזה מהגרפים (I-IV) מתאר את מהירותה כפונקציה של הזמן ולהסביר מדוע.</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 5H7a2 2 0 00-2 2v12a2 2 0 002 2h10a2 2 0 002-2V7a2 2 0 00-2-2h-2M9 5a2 2 0 002 2h2a2 2 0 002-2M9 5a2 2 0 012-2h2a2 2 0 012 2"></path></svg>
+            א. מה נתון:
+        </div>
+        <p>מסלול עקום שבו השיפוע הולך וקטן ככל שיורדים למטה (המסלול "מתיישר" לקראת הסוף). הקרונית משוחררת ממנוחה (\( v_0 = 0 \)). אין חיכוך.</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+            ב. מה מחפשים:
+        </div>
+        <p>זיהוי הגרף הנכון של המהירות \( v \) כפונקציה של הזמן \( t \).</p>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path></svg>
+            ג. נוסחאות בשימוש:
+        </div>
+        <p>נשתמש בחוק השני של ניוטון כדי לנתח את הכוחות מתוך דף הנוסחאות:</p>
+        <div class="text-center mt-2">
+            <span class="formula-badge">\[ \Sigma\vec{F} = m\vec{a} \]</span>
+            <span class="formula-badge">\[ F = mg \]</span>
+        </div>
+
+        <div class="step-title">
+            <svg class="w-6 h-6 text-blue-600" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"></path></svg>
+            ד. הצבה ופתרון:
+        </div>
+        
+        <p>כדי להבין כיצד המהירות משתנה, נצייר תרשים כוחות (FBD) עבור הקרונית בנקודה אקראית על המסלול העקום:</p>
+        
+        <div class="svg-container flex justify-center my-4" dir="ltr">
+            <img src="image-5.png" alt="תרשים כוחות על הקרונית במסלול" class="w-full max-w-xl h-auto rounded-lg border border-slate-200 shadow-sm" style="background: #fff;" onerror="this.style.display='none'; this.nextElementSibling && (this.nextElementSibling.style.display='block');">
+            <div style="display: none; background: #eff6ff; color: #1e40af; padding: 20px; border-radius: 10px; border: 1px solid #bfdbfe; text-align: center; width: 100%; max-width: 32rem;">
+                <span style="display: block; font-weight: bold; margin-bottom: 8px;">[תרשים כוחות]</span>
+                <span style="font-size: 0.9rem;">לא נמצאה תמונה בשם <code>image-5.png</code> באותה תיקייה של קובץ ה-HTML.</span>
+            </div>
+        </div>
+
+        <p>נבחר ציר \( +x \) משיק למסלול בכיוון התנועה כלפי מטה. נסמן ב- \( \alpha \) את זווית השיפוע של המשיק ביחס לאופק. הכוחות הפועלים הם כוח הכובד (\( mg \)) וכוח נורמלי (\( N \)) הניצב למסלול.</p>
+        <p>רכיב כוח הכובד המקביל לכיוון התנועה הוא: \( F_x = mg \sin\alpha \).</p>
+        <p>נרשום את חוק ניוטון השני בציר התנועה:</p>
+        <div class="math-scroll">
+            \[ \Sigma F_x = m a_x \]
+            \[ mg \sin\alpha = m a_x \]
+            \[ a_x = g \sin\alpha \]
+        </div>
+        <p>מה קורה לזווית \( \alpha \) כאשר הקרונית יורדת? מצורת המסלול רואים שהמסלול "מתיישר", כלומר השיפוע יורד והזווית \( \alpha \) <strong>קטנה</strong> עם הזמן.</p>
+        <p>מכיוון שפונקציית הסינוס עולה (עבור זוויות בין \( 0^\circ \) ל-\( 90^\circ \)), ככל ש- \( \alpha \) קטנה, גם הרכיב \( \sin\alpha \) קטן. המסקנה היא שגודל התאוצה \( a \) <strong>הולך וקטן</strong> לאורך התנועה (התאוצה תמיד חיובית, ולכן גודל המהירות גדל, אך קצב הגידול מואט).</p>
+        <p>בגרף מהירות-זמן, התאוצה היא ה<strong>שיפוע</strong>. אנו מחפשים גרף שבו המהירות מתחילה מ-0 (כי שוחררה ממנוחה), המהירות גדלה (שיפוע חיובי), אך השיפוע הולך וקטן (הגרף הופך לפחות ופחות תלול).</p>
+        <ul class="list-disc list-inside ml-4 mt-2">
+            <li>גרף I: שיפוע קבוע (תאוצה קבועה) - לא מתאים.</li>
+            <li><strong>גרף II: שיפוע חיובי שהולך וקטן - מתאים בדיוק לניתוח הדינמי.</strong></li>
+            <li>גרף III: מהירות יורדת - לא מתאים (הקרונית מאיצה למטה).</li>
+            <li>גרף IV: שיפוע חיובי שהולך וגדל - לא מתאים.</li>
+        </ul>
+
+        <div class="final-answer">
+            הגרף הנכון הוא <strong>גרף II</strong>.
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong> זכרו - "המהירות גדלה" לא אומר "התאוצה גדלה"! בקטע זה, הקרונית נעשית מהירה יותר ויותר (כי \( a > 0 \)), אך התוספת למהירות בכל שנייה קטנה מזו שהייתה בשנייה הקודמת. זהו ההבדל המהותי בין משתנה (מהירות) לבין קצב השינוי שלו (תאוצה).
+        </div>
+    </section>
+
+    <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+            <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+            <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        </svg>
+        <span class="font-semibold text-sm">הצג שאלה</span>
+    </button>
+
+    <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+        <div class="question-modal-card">
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            </div>
+
+            <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+                <img
+                    src="question-image.png"
+                    alt="תמונת השאלה המקורית"
+                    class="max-w-full h-auto rounded-lg"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                >
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה';
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+
+                // Mask the calendar date into a short code so date details are not exposed.
+                const year = modified.getFullYear();
+                const month = modified.getMonth() + 1;
+                const day = modified.getDate();
+                const seed = (year * 372) + (month * 31) + day + 157;
+                const codeNum = (seed * 73) % 46656;
+                const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+            }
+
+            const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+            const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+            const questionModal = document.getElementById('questionModal');
+
+            function openQuestionModal() {
+                questionModal.classList.add('is-open');
+                document.body.classList.add('modal-open');
+            }
+
+            function closeQuestionModal() {
+                questionModal.classList.remove('is-open');
+                document.body.classList.remove('modal-open');
+            }
+
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        });
+    </script>
+</body>
+</html>

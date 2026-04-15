@@ -1,0 +1,517 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0">
+    <title>חוק שני של ניוטון - מחולל נתונים</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Chart.js for Teacher Cheat Graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        ::-webkit-scrollbar { height: 6px; width: 6px; }
+        ::-webkit-scrollbar-track { background: #f1f1f1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb { background: #c1c1c1; border-radius: 3px; }
+        ::-webkit-scrollbar-thumb:hover { background: #a8a8a8; }
+        .fade-in { animation: fadeIn 0.4s ease-in-out; }
+        @keyframes fadeIn { 
+            from { opacity: 0; transform: translateY(5px); } 
+            to { opacity: 1; transform: translateY(0); } 
+        }
+        @media (max-width: 640px) {
+            .table-number { font-size: 0.75rem; }
+            .table-header-text { font-size: 0.65rem; line-height: 1.1; }
+        }
+    </style>
+</head>
+<body class="bg-gray-100 text-gray-800 min-h-screen py-4 sm:py-8 relative">
+
+    <div class="max-w-4xl mx-auto bg-white p-4 sm:p-6 md:p-8 rounded-xl shadow-lg border-t-4 border-blue-600">
+        
+        <header class="text-center mb-6 sm:mb-8">
+            <h1 class="text-2xl sm:text-3xl font-bold text-blue-800 mb-2">מעבדה בפיזיקה: החוק השני של ניוטון</h1>
+            <p class="text-sm sm:text-base text-gray-600">מחולל נתוני מעבדה ייחודיים למערכת שני גופים</p>
+        </header>
+
+        <!-- אזור הזנת שם -->
+        <div class="bg-blue-50 p-4 sm:p-6 rounded-lg mb-6 sm:mb-8 border border-blue-200 text-center shadow-sm">
+            <h2 class="text-lg sm:text-xl font-semibold mb-2 sm:mb-3 text-blue-900">הפקת נתונים אישיים</h2>
+            <p class="mb-4 sm:mb-5 text-xs sm:text-sm text-blue-800">הזן את שמך המלא כדי לייצר את נתוני הניסוי שלך.</p>
+            
+            <div class="flex flex-col sm:flex-row justify-center gap-3 sm:gap-4 items-center">
+                <div class="relative w-full sm:w-auto">
+                    <input type="text" id="student-name" placeholder="שם התלמיד" class="px-4 py-2 border border-gray-300 rounded shadow-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full sm:w-64 text-center">
+                    <div id="error-msg" class="absolute -bottom-5 left-0 right-0 text-red-600 text-xs font-bold hidden">אנא הזן שם תקין</div>
+                </div>
+                <button onclick="generateData()" class="w-full sm:w-auto bg-blue-600 text-white px-6 py-2 rounded shadow hover:bg-blue-700 transition-colors font-medium">הפק נתונים</button>
+            </div>
+        </div>
+
+        <!-- אזור תוצאות -->
+        <div id="results-section" class="hidden fade-in">
+            
+            <div class="bg-yellow-50 border-r-4 border-yellow-400 p-3 sm:p-4 mb-6 sm:mb-8 flex flex-col md:flex-row justify-between items-center rounded shadow-sm gap-3">
+                <div class="text-center md:text-right">
+                    <h3 class="font-bold text-yellow-800 text-base sm:text-lg">קוד זיהוי (Checksum)</h3>
+                    <p class="text-xs sm:text-sm text-yellow-700">העתק קוד זה לראש הדוח:</p>
+                </div>
+                <div class="text-base sm:text-xl font-mono bg-white px-3 sm:px-6 py-2 rounded border border-yellow-300 font-bold tracking-widest text-gray-800 break-all text-center w-full md:w-auto" id="checksum-display">
+                    ---
+                </div>
+            </div>
+
+            <!-- חקירה 1 -->
+            <div class="mb-8 sm:mb-10">
+                <div class="flex items-center gap-2 mb-2 sm:mb-3 border-b-2 border-gray-200 pb-2">
+                    <span class="bg-blue-100 text-blue-800 font-bold px-2 py-1 rounded text-xs sm:text-sm whitespace-nowrap">חקירה 1</span>
+                    <h3 class="text-base sm:text-xl font-bold text-gray-800 leading-tight">תלות a ב-ΣF (מסה קבועה)</h3>
+                </div>
+                <div class="overflow-x-auto shadow-sm rounded-lg border border-gray-200">
+                    <table class="w-full border-collapse text-center">
+                        <thead class="bg-gray-100 text-gray-700 border-b-2 border-gray-300">
+                            <tr>
+                                <th class="px-1 py-2 sm:px-3 sm:py-3 font-semibold border-l border-gray-200 table-header-text sm:text-sm">מספר<br>מדידה</th>
+                                <th class="px-1 py-2 sm:px-3 sm:py-3 font-semibold border-l border-gray-200 table-header-text sm:text-sm">מסת קרונית<br>m₁ (kg)</th>
+                                <th class="px-1 py-2 sm:px-3 sm:py-3 font-semibold border-l border-gray-200 table-header-text sm:text-sm">מסת תלויה<br>m₂ (kg)</th>
+                                <th class="px-1 py-2 sm:px-3 sm:py-3 font-semibold border-l border-blue-200 bg-blue-50 table-header-text sm:text-sm">הכוח השקול<br>ΣF (N)</th>
+                                <th class="px-1 py-2 sm:px-3 sm:py-3 font-bold text-blue-700 bg-blue-100 table-header-text sm:text-sm">תאוצה נמדדת<br>a (m/s²)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table1-body" class="divide-y divide-gray-200 bg-white"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <!-- חקירה 2 -->
+            <div class="mb-8 sm:mb-10">
+                <div class="flex items-center gap-2 mb-2 sm:mb-3 border-b-2 border-gray-200 pb-2">
+                    <span class="bg-green-100 text-green-800 font-bold px-2 py-1 rounded text-xs sm:text-sm whitespace-nowrap">חקירה 2</span>
+                    <h3 class="text-base sm:text-xl font-bold text-gray-800 leading-tight">תלות a ב-ΣM (כוח קבוע)</h3>
+                </div>
+                <div class="overflow-x-auto shadow-sm rounded-lg border border-gray-200">
+                    <table class="w-full border-collapse text-center">
+                        <thead class="bg-gray-100 text-gray-700 border-b-2 border-gray-300">
+                            <tr>
+                                <th class="px-0.5 py-1.5 sm:px-3 sm:py-3 font-semibold border-l border-gray-200 table-header-text sm:text-sm">מדידה</th>
+                                <th class="px-0.5 py-1.5 sm:px-3 sm:py-3 font-semibold border-l border-gray-200 table-header-text sm:text-sm">מסת קרונית<br>m₁ (kg)</th>
+                                <th class="px-0.5 py-1.5 sm:px-3 sm:py-3 font-semibold border-l border-gray-200 table-header-text sm:text-sm">מסת תלויה<br>m₂ (kg)</th>
+                                <th class="px-0.5 py-1.5 sm:px-3 sm:py-3 font-semibold border-l border-gray-200 bg-gray-50 table-header-text sm:text-sm">מסה כוללת<br>ΣM (kg)</th>
+                                <th class="px-0.5 py-1.5 sm:px-3 sm:py-3 font-semibold border-l border-blue-200 bg-blue-50 table-header-text sm:text-sm">1/ΣM<br>(kg⁻¹)</th>
+                                <th class="px-0.5 py-1.5 sm:px-3 sm:py-3 font-bold text-blue-700 bg-blue-100 table-header-text sm:text-sm">תאוצה<br>a (m/s²)</th>
+                            </tr>
+                        </thead>
+                        <tbody id="table2-body" class="divide-y divide-gray-200 bg-white"></tbody>
+                    </table>
+                </div>
+            </div>
+
+            <div class="text-center mt-6 sm:mt-8 pt-4 sm:pt-6 border-t border-gray-200">
+                <button onclick="showCSVModal()" class="w-full sm:w-auto bg-emerald-600 text-white px-8 py-3 rounded-lg shadow hover:bg-emerald-700 transition flex items-center justify-center gap-2 mx-auto font-medium text-sm sm:text-base">
+                    ייצא נתונים (CSV)
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal לגיבוי ייצוא נתונים -->
+    <div id="csv-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-75 flex items-center justify-center z-50 p-4 fade-in">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-2xl flex flex-col">
+            <div class="p-3 sm:p-4 border-b flex justify-between items-center bg-gray-50 rounded-t-xl">
+                <h3 class="text-lg sm:text-xl font-bold text-gray-800">הורדת נתונים</h3>
+                <button onclick="closeCSVModal()" class="text-gray-500 hover:text-red-500 text-2xl font-bold leading-none px-2">&times;</button>
+            </div>
+            <div class="p-3 sm:p-4">
+                <p class="text-xs sm:text-sm text-gray-700 mb-3">העתק את הנתונים מכאן והדבק באקסל (או לחץ על כפתור ההורדה):</p>
+                <textarea id="csv-textarea" class="w-full h-48 sm:h-64 p-2 sm:p-3 border rounded text-xs sm:text-sm bg-gray-50 text-left font-mono" dir="ltr" readonly></textarea>
+            </div>
+            <div class="p-3 sm:p-4 border-t bg-gray-50 flex flex-wrap justify-end gap-2 sm:gap-3 rounded-b-xl items-center">
+                <span id="copy-feedback" class="text-green-600 text-xs sm:text-sm font-bold hidden w-full sm:w-auto text-center sm:text-right mb-2 sm:mb-0">הועתק בהצלחה!</span>
+                <button onclick="copyCSV()" class="flex-1 sm:flex-none bg-blue-600 text-white px-3 sm:px-5 py-2 rounded shadow hover:bg-blue-700 text-sm">העתק ללוח</button>
+                <button onclick="downloadCSV()" class="flex-1 sm:flex-none bg-emerald-600 text-white px-3 sm:px-5 py-2 rounded shadow hover:bg-emerald-700 text-sm">הורד קובץ</button>
+                <button onclick="closeCSVModal()" class="flex-1 sm:flex-none bg-gray-400 text-white px-3 sm:px-5 py-2 rounded shadow hover:bg-gray-500 text-sm">סגור</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Modal ניתוח: הצגת הגרפים המורחבים -->
+    <div id="analysis-modal" class="hidden fixed inset-0 bg-gray-900 bg-opacity-80 flex items-center justify-center z-[60] p-4 fade-in">
+        <div class="bg-white rounded-xl shadow-2xl w-full max-w-4xl flex flex-col max-h-[95vh] border-t-8 border-purple-600">
+            <div class="p-4 border-b flex justify-between items-center bg-purple-50 rounded-t-lg">
+                <h3 class="text-xl font-bold text-purple-900 flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 12a3 3 0 11-6 0 3 3 0 016 0z" />
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z" />
+                    </svg>
+                    ניתוח גרפים אוטומטי
+                </h3>
+                <button onclick="closeAnalysisModal()" class="text-gray-500 hover:text-red-500 text-3xl font-bold leading-none px-2">&times;</button>
+            </div>
+            
+            <div class="p-4 overflow-y-auto flex-grow flex flex-col md:flex-row gap-6 bg-gray-100">
+                <!-- גרף 1 -->
+                <div class="flex-1 bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col">
+                    <h4 class="font-bold text-blue-800 mb-2 border-b pb-1 text-center">חקירה 1: a כתלות ב- ΣF</h4>
+                    <p class="text-xs text-gray-500 text-center mb-1">השיפוע = 1/ΣM | חיתוך Y = חיכוך חלקי מסה</p>
+                    <div id="eq1" class="text-sm font-mono bg-blue-50 p-2 rounded border border-blue-200 mb-3 text-center text-blue-900 font-bold" dir="ltr"></div>
+                    <div class="relative flex-grow min-h-[250px] w-full">
+                        <canvas id="chart1"></canvas>
+                    </div>
+                </div>
+                <!-- גרף 2 -->
+                <div class="flex-1 bg-white border border-gray-200 rounded-lg p-4 shadow-sm flex flex-col">
+                    <h4 class="font-bold text-green-800 mb-2 border-b pb-1 text-center">חקירה 2: a כתלות ב- 1/ΣM</h4>
+                    <p class="text-xs text-gray-500 text-center mb-1">השיפוע = כוח נטו (ΣF-fk) | חיתוך Y קרוב ל-0</p>
+                    <div id="eq2" class="text-sm font-mono bg-green-50 p-2 rounded border border-green-200 mb-3 text-center text-green-900 font-bold" dir="ltr"></div>
+                    <div class="relative flex-grow min-h-[250px] w-full">
+                        <canvas id="chart2"></canvas>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="p-4 border-t bg-gray-50 flex justify-end rounded-b-xl">
+                <button onclick="closeAnalysisModal()" class="bg-gray-500 text-white px-6 py-2 rounded shadow hover:bg-gray-600 transition">סגור תצוגה</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // פונקציות תשתית למתמטיקה אקראית חזרתית
+        function cyrb128(str) {
+            let h1 = 1779033703, h2 = 3144134277, h3 = 1013904242, h4 = 2773480762;
+            for (let i = 0, k; i < str.length; i++) {
+                k = str.charCodeAt(i);
+                h1 = h2 ^ Math.imul(h1 ^ k, 597399067);
+                h2 = h3 ^ Math.imul(h2 ^ k, 2869860233);
+                h3 = h4 ^ Math.imul(h3 ^ k, 951274213);
+                h4 = h1 ^ Math.imul(h4 ^ k, 2716044179);
+            }
+            h1 = Math.imul(h3 ^ (h1 >>> 18), 597399067);
+            h2 = Math.imul(h4 ^ (h2 >>> 22), 2869860233);
+            h3 = Math.imul(h1 ^ (h3 >>> 17), 951274213);
+            h4 = Math.imul(h2 ^ (h4 >>> 19), 2716044179);
+            return (h1^h2^h3^h4) >>> 0;
+        }
+
+        function mulberry32(a) {
+            return function() {
+              var t = a += 0x6D2B79F5;
+              t = Math.imul(t ^ t >>> 15, t | 1);
+              t ^= t + Math.imul(t ^ t >>> 7, t | 61);
+              return ((t ^ t >>> 14) >>> 0) / 4294967296;
+            }
+        }
+
+        function randomNormal(prng, mean, stdDev) {
+            let u1 = 0, u2 = 0;
+            while(u1 === 0) u1 = prng();
+            while(u2 === 0) u2 = prng();
+            const z0 = Math.sqrt(-2.0 * Math.log(u1)) * Math.cos(2.0 * Math.PI * u2);
+            return z0 * stdDev + mean;
+        }
+
+        function randomRange(prng, min, max) { return min + prng() * (max - min); }
+
+        function randomString(prng, length) {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let result = '';
+            for ( let i = 0; i < length; i++ ) result += chars.charAt(Math.floor(prng() * chars.length));
+            return result;
+        }
+
+        let currentData = { table1: [], table2: [] };
+
+        function generateData() {
+            const studentName = document.getElementById('student-name').value.trim();
+            const errorMsg = document.getElementById('error-msg');
+            const nameInput = document.getElementById('student-name');
+            
+            if(!studentName) {
+                errorMsg.classList.remove('hidden');
+                nameInput.classList.add('border-red-500');
+                return;
+            }
+            
+            errorMsg.classList.add('hidden');
+            nameInput.classList.remove('border-red-500');
+
+            let g_true, f_k, m1_base_true, checksum;
+            const m1_base_declared = 0.261; 
+            const noise_sigma = 0.01; 
+
+            // דלת אחורית למורה: בדיקה האם הקלט הוא למעשה קוד צ'קסאם תקני
+            const checksumRegex = /^G(\d{3,4})-F(\d{2})-M(\d{3,4})-[A-Z0-9]{3}$/i;
+            const match = studentName.match(checksumRegex);
+
+            if (match) {
+                // המורה הזין קוד - שחזור השגיאות השיטתיות ישירות מהקוד
+                g_true = parseInt(match[1]) / 100;
+                f_k = parseInt(match[2]) / 100;
+                m1_base_true = parseInt(match[3]) / 1000;
+                checksum = studentName.toUpperCase(); // שומרים על הקוד המקורי
+            } else {
+                // תלמיד הזין שם - מייצרים מנוע אקראיות ראשוני מבוסס על השם
+                const nameSeed = cyrb128(studentName);
+                const namePrng = mulberry32(nameSeed);
+                
+                // הגרלת השגיאות השיטתיות
+                g_true = randomRange(namePrng, 9.75, 9.85); 
+                f_k = randomRange(namePrng, 0.02, 0.05); 
+                m1_base_true = randomRange(namePrng, 0.258, 0.264); 
+                
+                // בניית קוד הזיהוי
+                const g_code = Math.round(g_true * 100); 
+                const f_code = Math.round(f_k * 100).toString().padStart(2, '0');
+                const m_code = Math.round(m1_base_true * 1000);
+                const rnd_str = randomString(namePrng, 3);
+                checksum = `G${g_code}-F${f_code}-M${m_code}-${rnd_str}`;
+            }
+
+            document.getElementById('checksum-display').innerText = checksum;
+
+            // ***** הלוגיקה החדשה (הפתרון לשאלה שלך): *****
+            // יצירת מנוע אקראיות *חדש* שמבוסס אך ורק על קוד ה-Checksum!
+            // כך, גם כשהתלמיד מזין שם (ומקבל קוד) וגם כשהמורה מזין את הקוד ישירות,
+            // מנוע הרעש יתחיל מאותה נקודת התחלה בדיוק ויפיק את אותן שגיאות אקראיות.
+            const noiseSeed = cyrb128(checksum);
+            const noisePrng = mulberry32(noiseSeed);
+
+            // בניית טבלה 1
+            const table1Body = document.getElementById('table1-body');
+            table1Body.innerHTML = '';
+            currentData.table1 = [];
+
+            for (let i = 0; i < 5; i++) {
+                let m2 = 0.020 + (i * 0.020); 
+                let m1_disks = 0.080 - (i * 0.020); 
+                let m1_declared = m1_base_declared + m1_disks;
+                let m1_true = m1_base_true + m1_disks;
+
+                let a_true = (m2 * g_true - f_k) / (m1_true + m2);
+                
+                // שימוש במנוע הרעש החדש (noisePrng) במקום המנוע הקודם
+                let a_measured = a_true * (1 + randomNormal(noisePrng, 0, noise_sigma));
+                a_measured = Math.max(0.001, a_measured).toFixed(3);
+
+                currentData.table1.push([i+1, m1_declared.toFixed(3), m2.toFixed(3), '', a_measured]);
+
+                table1Body.innerHTML += `<tr class="hover:bg-blue-50/50">
+                    <td class="px-1 py-2 sm:px-3 sm:py-3 border-l border-gray-200 table-number sm:text-sm">${i+1}</td>
+                    <td class="px-1 py-2 sm:px-3 sm:py-3 border-l border-gray-200 table-number sm:text-sm">${m1_declared.toFixed(3)}</td>
+                    <td class="px-1 py-2 sm:px-3 sm:py-3 border-l border-gray-200 table-number sm:text-sm">${m2.toFixed(3)}</td>
+                    <td class="px-1 py-2 sm:px-3 sm:py-3 border-l border-blue-200 bg-blue-50/30"></td>
+                    <td class="px-1 py-2 sm:px-3 sm:py-3 font-bold text-blue-700 bg-blue-100/50 table-number sm:text-sm">${a_measured}</td>
+                </tr>`;
+            }
+
+            // בניית טבלה 2
+            const table2Body = document.getElementById('table2-body');
+            table2Body.innerHTML = '';
+            currentData.table2 = [];
+
+            for (let i = 0; i < 5; i++) {
+                let m2 = 0.020; 
+                let m1_disks = 0.080 - (i * 0.020); 
+                let m1_declared = m1_base_declared + m1_disks;
+                let m1_true = m1_base_true + m1_disks;
+
+                let a_true = (m2 * g_true - f_k) / (m1_true + m2);
+                
+                // שימוש במנוע הרעש החדש (noisePrng)
+                let a_measured = a_true * (1 + randomNormal(noisePrng, 0, noise_sigma));
+                a_measured = Math.max(0.001, a_measured).toFixed(3);
+
+                currentData.table2.push([i+1, m1_declared.toFixed(3), m2.toFixed(3), '', '', a_measured]);
+
+                table2Body.innerHTML += `<tr class="hover:bg-blue-50/50">
+                    <td class="px-0.5 py-1.5 sm:px-3 sm:py-3 border-l border-gray-200 table-number sm:text-sm">${i+1}</td>
+                    <td class="px-0.5 py-1.5 sm:px-3 sm:py-3 border-l border-gray-200 table-number sm:text-sm">${m1_declared.toFixed(3)}</td>
+                    <td class="px-0.5 py-1.5 sm:px-3 sm:py-3 border-l border-gray-200 table-number sm:text-sm">${m2.toFixed(3)}</td>
+                    <td class="px-0.5 py-1.5 sm:px-3 sm:py-3 border-l border-gray-200 bg-gray-50/50"></td>
+                    <td class="px-0.5 py-1.5 sm:px-3 sm:py-3 border-l border-blue-200 bg-blue-50/30"></td>
+                    <td class="px-0.5 py-1.5 sm:px-3 sm:py-3 font-bold text-blue-700 bg-blue-100/50 table-number sm:text-sm">${a_measured}</td>
+                </tr>`;
+            }
+
+            document.getElementById('results-section').classList.remove('hidden');
+        }
+
+        // ==========================================
+        // מודול צ'יט למורה (חישוב רגרסיה וגרפים)
+        // ==========================================
+        
+        let chart1Obj = null;
+        let chart2Obj = null;
+
+        // חישוב רגרסיה לינארית (קו מגמה)
+        function linearRegression(x, y) {
+            let n = y.length;
+            let sum_x = 0, sum_y = 0, sum_xy = 0, sum_xx = 0;
+            for (let i = 0; i < n; i++) {
+                sum_x += x[i];
+                sum_y += y[i];
+                sum_xy += (x[i] * y[i]);
+                sum_xx += (x[i] * x[i]);
+            }
+            let slope = (n * sum_xy - sum_x * sum_y) / (n * sum_xx - sum_x * sum_x);
+            let intercept = (sum_y - slope * sum_x) / n;
+            return { slope: slope, intercept: intercept };
+        }
+
+        // שרטוט הגרף באמצעות Chart.js
+        function renderTeacherChart(canvasId, xData, yData, regression, xLabel, yLabel, pointColor) {
+            const ctx = document.getElementById(canvasId).getContext('2d');
+            const scatterData = xData.map((x, i) => ({ x: x, y: yData[i] }));
+            
+            // נקודות קו המגמה - מתחיל מ-X=0 כדי לראות את החיתוך
+            const maxX = Math.max(...xData);
+            const lineData = [
+                { x: 0, y: regression.intercept },
+                { x: maxX * 1.1, y: regression.slope * (maxX * 1.1) + regression.intercept }
+            ];
+
+            return new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'נתוני תלמיד',
+                        data: scatterData,
+                        backgroundColor: pointColor,
+                        pointRadius: 6,
+                        order: 1
+                    }, {
+                        label: 'קו מגמה אידיאלי',
+                        data: lineData,
+                        type: 'line',
+                        borderColor: 'rgba(239, 68, 68, 1)', // אדום
+                        borderWidth: 2,
+                        borderDash: [5, 5],
+                        fill: false,
+                        pointRadius: 0,
+                        order: 2
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: { type: 'linear', position: 'bottom', title: { display: true, text: xLabel }, min: 0 },
+                        y: { title: { display: true, text: yLabel } }
+                    },
+                    plugins: { legend: { position: 'bottom' }, tooltip: { enabled: true } }
+                }
+            });
+        }
+
+        function showAnalysisModal() {
+            if(currentData.table1.length === 0) {
+                alert("יש להפיק נתונים עבור התלמיד לפני הצגת הגרפים!");
+                return;
+            }
+
+            // חילוץ נתונים מגרף 1 (התלמיד אמור לחשב F = m2 * 9.8)
+            let x1 = [], y1 = [];
+            currentData.table1.forEach(row => {
+                let m2 = parseFloat(row[2]);
+                let a = parseFloat(row[4]);
+                x1.push(m2 * 9.8); // ΣF תיאורטי על פי g קבוע של 9.8
+                y1.push(a);
+            });
+            let reg1 = linearRegression(x1, y1);
+
+            // חילוץ נתונים מגרף 2 (התלמיד אמור לחשב 1/ΣM = 1/(m1+m2))
+            let x2 = [], y2 = [];
+            currentData.table2.forEach(row => {
+                let m1 = parseFloat(row[1]);
+                let m2 = parseFloat(row[2]);
+                let a = parseFloat(row[5]);
+                x2.push(1 / (m1 + m2));
+                y2.push(a);
+            });
+            let reg2 = linearRegression(x2, y2);
+
+            // עדכון המשוואות בתצוגה
+            let sign1 = reg1.intercept >= 0 ? '+' : '-';
+            document.getElementById('eq1').innerText = `a = ${reg1.slope.toFixed(3)} · ΣF ${sign1} ${Math.abs(reg1.intercept).toFixed(3)}`;
+            
+            let sign2 = reg2.intercept >= 0 ? '+' : '-';
+            document.getElementById('eq2').innerText = `a = ${reg2.slope.toFixed(3)} · (1/ΣM) ${sign2} ${Math.abs(reg2.intercept).toFixed(3)}`;
+
+            // איפוס ושרטוט מחדש
+            if (chart1Obj) chart1Obj.destroy();
+            if (chart2Obj) chart2Obj.destroy();
+            chart1Obj = renderTeacherChart('chart1', x1, y1, reg1, 'ΣF (N)', 'a (m/s²)', 'rgba(37, 99, 235, 1)'); // Blue
+            chart2Obj = renderTeacherChart('chart2', x2, y2, reg2, '1/ΣM (1/kg)', 'a (m/s²)', 'rgba(5, 150, 105, 1)'); // Green
+
+            document.getElementById('analysis-modal').classList.remove('hidden');
+        }
+
+        function closeAnalysisModal() {
+            document.getElementById('analysis-modal').classList.add('hidden');
+        }
+
+        // האזנה לקיצור המקשים (Option/Alt + G או Ctrl/Cmd + G)
+        document.addEventListener('keydown', function(event) {
+            // בודק אם מוחזק מקש עזר (Alt/Option או Control או Command)
+            // ומשתמש ב-event.code כדי לזהות את המקש הפיזי G גם אם המקלדת על עברית או במק
+            if ((event.altKey || event.ctrlKey || event.metaKey) && (event.code === 'KeyG' || event.key === 'g' || event.key === 'G' || event.key === 'ע')) {
+                // מונע קיצורי דפדפן רגילים כמו "Find Next"
+                event.preventDefault(); 
+                showAnalysisModal();
+            }
+        });
+
+        // ==========================================
+        // ייצוא נתונים
+        // ==========================================
+        function getCSVContent() {
+            let csvContent = "\uFEFF"; 
+            const studentName = document.getElementById('student-name').value.trim();
+            const checksum = document.getElementById('checksum-display').innerText;
+
+            csvContent += `שם/קוד:,${studentName}\n`;
+            csvContent += `קוד זיהוי מורה:,${checksum}\n\n`;
+            csvContent += "חקירה 1: תלות התאוצה בכוח השקול\nמספר מדידה,מסת קרונית m1 (kg),מסת גוף תלוי m2 (kg),הכוח השקול ΣF (N) לחישוב,תאוצה נמדדת a (m/s^2)\n";
+            currentData.table1.forEach(row => { csvContent += row.join(",") + "\n"; });
+            csvContent += "\nחקירה 2: תלות התאוצה במסה הכוללת\nמספר מדידה,מסת קרונית m1 (kg),מסת גוף תלוי m2 (kg),מסה כוללת ΣM (kg) לחישוב,1/ΣM (kg^-1) לחישוב,תאוצה נמדדת a (m/s^2)\n";
+            currentData.table2.forEach(row => { csvContent += row.join(",") + "\n"; });
+            
+            return csvContent;
+        }
+
+        function showCSVModal() {
+            if(currentData.table1.length === 0) return;
+            document.getElementById('csv-textarea').value = getCSVContent();
+            document.getElementById('csv-modal').classList.remove('hidden');
+            document.getElementById('copy-feedback').classList.add('hidden');
+        }
+
+        function closeCSVModal() { document.getElementById('csv-modal').classList.add('hidden'); }
+        
+        function copyCSV() {
+            const textarea = document.getElementById('csv-textarea');
+            textarea.select();
+            document.execCommand('copy');
+            document.getElementById('copy-feedback').classList.remove('hidden');
+        }
+
+        function downloadCSV() {
+            const studentName = document.getElementById('student-name').value.trim();
+            const csvContent = getCSVContent();
+            const blob = new Blob([csvContent], { type: 'text/csv;charset=utf-8;' });
+            const link = document.createElement("a");
+            const url = URL.createObjectURL(blob);
+            link.setAttribute("href", url);
+            link.setAttribute("download", `נתוני_מעבדה_${studentName}.csv`);
+            document.body.appendChild(link);
+            link.click();
+            document.body.removeChild(link);
+        }
+        
+        // האזנה לאנטר בתיבת הטקסט
+        document.getElementById('student-name').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') generateData();
+        });
+    </script>
+</body>
+</html>
