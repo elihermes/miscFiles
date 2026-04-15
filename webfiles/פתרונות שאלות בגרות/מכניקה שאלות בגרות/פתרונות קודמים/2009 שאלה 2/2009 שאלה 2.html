@@ -34,25 +34,92 @@
     </script>
 
     <style>
+        html {
+            overflow-x: clip;
+        }
+
         body {
-            font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
             background-color: #f8fafc;
-            color: #1e293b;
-            line-height: 1.6;
+            color: #334155;
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .question-image-inline {
+            width: 100%;
+            max-height: 480px;
+            height: auto;
+            object-fit: contain;
+        }
+
+        .question-image-modal {
+            width: 100%;
+            max-height: 78vh;
+            height: auto;
+            object-fit: contain;
         }
 
         .step-card {
             background-color: #ffffff;
             padding: 1rem;
             border-radius: 0.75rem;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
             border: 1px solid #e2e8f0;
             margin-bottom: 1.5rem;
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid #e2e8f0;
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid #e2e8f0;
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid #e2e8f0;
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
         }
 
         @media (min-width: 768px) {
             .step-card {
                 padding: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+
+            .info-grid.md\:grid-cols-2 {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
             }
         }
 
@@ -60,23 +127,21 @@
             background-color: #eff6ff;
             color: #1e40af;
             border: 1px solid #bfdbfe;
-            border-radius: 9999px;
-            padding: 0.25rem 1rem;
+            border-radius: 0.5rem;
+            padding: 0.25rem 0.8rem;
             display: inline-block;
             font-weight: 700;
-            margin-bottom: 0.5rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
             direction: ltr;
         }
 
         .teacher-highlight {
             background-color: #f0fdf4;
-            border-right: 4px solid #10b981;
-            border-top-left-radius: 0.5rem;
-            border-bottom-left-radius: 0.5rem;
-            padding: 1rem;
+            border-right: 4px solid #22c55e;
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
             margin-top: 1rem;
-            margin-bottom: 1rem;
-            color: #064e3b;
+            color: #166534;
         }
 
         .math-block {
@@ -115,7 +180,7 @@
         .math-container mjx-container[display="true"],
         .math-block mjx-container[display="true"],
         .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
-            display: inline-block !important;
+            display: inline-block;
             min-width: max-content;
             max-width: none;
             margin: 0.25rem 0;
@@ -126,21 +191,20 @@
             .math-container mjx-container[display="true"],
             .math-block mjx-container[display="true"],
             .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
-                font-size: 0.9em !important;
-            }
-        }
-        
-        @media (min-width: 768px) {
-            .math-block {
-                font-size: 1.125rem;
+                font-size: 0.9em;
             }
         }
 
         .chart-wrapper {
             position: relative;
-            height: 300px;
+            min-height: 360px;
             width: 100%;
-            margin-top: 1.5rem;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
         }
 
         .floating-question-btn {
@@ -185,12 +249,54 @@
         .question-modal-card {
             background: white;
             width: min(1100px, 96vw);
+            max-width: 100%;
             max-height: 92vh;
             border-radius: 1rem;
             border: 1px solid #cbd5e1;
             box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
             overflow: auto;
             padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
         }
 
         body.modal-open {
@@ -203,44 +309,82 @@
                 bottom: 1.5rem;
             }
         }
+
+        @media (max-width: 640px) {
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
     </style>
 </head>
-<body class="p-3 md:p-8 max-w-4xl mx-auto">
+<body>
 
-    <header class="mb-6 md:mb-8 text-center">
+<div class="page-shell">
+
+    <header class="text-center mb-8">
         <h1 class="text-2xl md:text-3xl font-extrabold text-blue-900 mb-2">פתרון מלא: שאלת בגרות במכניקה (2009, שאלה 2)</h1>
         <p class="text-sm md:text-base text-gray-600">הכנת פתרון מוסבר לתלמידים - צעד אחר צעד</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
     </header>
 
     <!-- תמונת השאלה המקורית -->
-    <div class="mb-8 flex justify-center bg-white p-4 rounded-2xl shadow-sm border border-slate-200">
-        <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg"
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="question-image-inline rounded-lg border border-slate-200"
              onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
 
         <div style="display: none;" class="bg-blue-50 text-blue-800 p-8 rounded-lg border border-blue-200 text-center w-full">
             <span class="block font-bold text-lg mb-2">[תמונת השאלה המקורית]</span>
             <span class="text-sm">כדי להציג את התמונה, שימי קובץ בשם <code>question-image.png</code> באותה תיקייה של קובץ ה-HTML.</span>
         </div>
-    </div>
+    </section>
 
     <!-- סעיף א -->
-    <div class="step-card">
-        <h2 class="text-xl font-bold mb-4 text-blue-800">סעיף א'</h2>
-        <div class="mb-2 text-sm md:text-base"><strong>מה נתון בשלב זה:</strong> גוף A נדחף ימינה על ידי כוח חיצוני F, ודוחף את גוף B.</div>
-        <div class="mb-2 text-sm md:text-base"><strong>מה מחפשים:</strong> לקבוע האם הכוח שגוף A מפעיל על B שווה לכוח ש-B מפעיל על A.</div>
+    <section class="step-card" id="part-a">
+        <h3 class="section-header">סעיף א'</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel text-sm md:text-base"><strong>מה נתון בשלב זה:</strong> גוף A נדחף ימינה על ידי כוח חיצוני F, ודוחף את גוף B.</div>
+            <div class="info-panel text-sm md:text-base"><strong>מה מחפשים:</strong> לקבוע האם הכוח שגוף A מפעיל על B שווה לכוח ש-B מפעיל על A.</div>
+        </div>
         <div class="mb-2 text-sm md:text-base"><strong>עיקרון פיזיקלי:</strong> <span class="formula-badge text-sm md:text-base">החוק השלישי של ניוטון</span></div>
-        <div class="text-base md:text-lg leading-relaxed">
-            <strong>פתרון:</strong>
+        <div class="step-box text-base md:text-lg leading-relaxed">
+            <h4 class="step-title">פתרון:</h4>
             <p>על פי החוק השלישי של ניוטון (חוק פעולה ותגובה), כאשר גוף מפעיל כוח על גוף אחר, הגוף השני מפעיל עליו כוח שווה בגודלו ומנוגד בכיוונו. חוק זה מתקיים תמיד, גם כשהגופים בתאוצה.</p>
             <p class="mt-2 font-bold text-blue-700">לכן, הכוח שגוף A מפעיל על B שווה בגודלו לכוח שגוף B מפעיל על A.</p>
         </div>
-    </div>
+    </section>
 
     <!-- סעיף ב -->
-    <div class="step-card">
-        <h2 class="text-xl font-bold mb-4 text-blue-800">סעיף ב'</h2>
-        <div class="mb-4 text-sm md:text-base">
-            <strong>מה נתון (נתונים מספריים שהתווספו בשלב זה):</strong>
+    <section class="step-card" id="part-b">
+        <h3 class="section-header">סעיף ב'</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel text-sm md:text-base">
+                <strong>מה נתון (נתונים מספריים שהתווספו בשלב זה):</strong>
             <ul class="list-disc ms-6 md:ms-8 space-y-1 mt-2 text-base md:text-lg">
                 <li>מסת גוף A: <span dir="ltr" class="inline-block whitespace-nowrap">\(m_A = 3 \text{ kg}\)</span> (יחידה תקנית).</li>
                 <li>מסת גוף B: <span dir="ltr" class="inline-block whitespace-nowrap">\(m_B = 2 \text{ kg}\)</span> (יחידה תקנית).</li>
@@ -248,8 +392,9 @@
                 <li>מקדם החיכוך: <span dir="ltr" class="inline-block whitespace-nowrap">\(\mu_k = 0.1\)</span> (חסר יחידות).</li>
                 <li>תאוצת הכובד: <span dir="ltr" class="inline-block whitespace-nowrap">\(g = 10 \text{ m/s}^2\)</span>.</li>
             </ul>
+            </div>
+            <div class="info-panel text-sm md:text-base"><strong>מה מחפשים:</strong> לחשב את גודל הכוח שגוף A מפעיל על גוף B.</div>
         </div>
-        <div class="mb-2 text-sm md:text-base"><strong>מה מחפשים:</strong> לחשב את גודל הכוח שגוף A מפעיל על גוף B.</div>
         <div class="mb-2 text-sm md:text-base">
             <strong>נוסחאות:</strong> 
             <span class="formula-badge">\(\Sigma F = ma\)</span> 
@@ -324,8 +469,8 @@
             </div>
         </div>
         
-        <div class="text-base md:text-lg leading-relaxed">
-            <strong>שלבי פתרון:</strong>
+        <div class="step-box text-base md:text-lg leading-relaxed">
+            <h4 class="step-title">שלבי פתרון:</h4>
             <p>1. חישוב כוח החיכוך הקינטי של כל גוף (בציר y מתקיים <span dir="ltr" class="inline-block">\(N=mg\)</span>):</p>
             <div class="math-block">
                 \(f_{kA} = \mu_k m_A g = 0.1 \cdot 3 \cdot 10 = 3 \text{ N}\) <br>
@@ -351,15 +496,18 @@
             </div>
             <p class="font-bold text-blue-700">תשובה: גודל הכוח הוא 5.2 ניוטון.</p>
         </div>
-    </div>
+    </section>
 
     <!-- סעיף ג -->
-    <div class="step-card">
-        <h2 class="text-xl font-bold mb-4 text-blue-800">סעיף ג'</h2>
-        <div class="mb-2 text-sm md:text-base"><strong>מה נתון:</strong> הכוח החיצוני F פסק. מהו הכוח שגוף A מפעיל על B כעת?</div>
+    <section class="step-card" id="part-c">
+        <h3 class="section-header">סעיף ג'</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel text-sm md:text-base"><strong>מה נתון:</strong> הכוח החיצוני F פסק. מהו הכוח שגוף A מפעיל על B כעת?</div>
+            <div class="info-panel text-sm md:text-base"><strong>מה מחפשים:</strong> לקבוע את הכוח שגוף A מפעיל על B כעת.</div>
+        </div>
         
-        <div class="text-base md:text-lg leading-relaxed">
-            <strong>פתרון:</strong>
+        <div class="step-box text-base md:text-lg leading-relaxed">
+            <h4 class="step-title">פתרון:</h4>
             <p>כדי להוכיח זאת בצורה מדויקת, לא נניח מראש שהכוח ביניהם מתאפס. נניח שעדיין קיים כוח מגע <span dir="ltr" class="inline-block">\(F_{AB}\)</span> ושהגופים ממשיכים לנוע יחד באותה תאוצה (<span dir="ltr" class="inline-block">\(a\)</span>).</p>
             <p>נרשום את משוואות הכוחות מחדש (הפעם ללא הכוח הדוחף F):</p>
             <div class="math-block">
@@ -379,13 +527,13 @@
             </div>
             <p class="mt-2 font-bold text-blue-700">מסקנה: המתמטיקה מוכיחה שהכוח ביניהם מתאפס. מכיוון ששני הגופים מאטים באופן טבעי באותו הקצב בדיוק (תאוצתם השלילית שווה), הם אינם לוחצים יותר זה על זה.</p>
         </div>
-    </div>
+    </section>
 
     <!-- סעיף ד -->
-    <div class="step-card">
-        <h2 class="text-xl font-bold mb-4 text-blue-800">סעיף ד'</h2>
-        <div class="text-base md:text-lg leading-relaxed">
-            <strong>פתרון:</strong>
+    <section class="step-card" id="part-d">
+        <h3 class="section-header">סעיף ד'</h3>
+        <div class="step-box text-base md:text-lg leading-relaxed">
+            <h4 class="step-title">פתרון:</h4>
             <p>ברגע עזיבת הכוח, לשני הגופים יש מהירות התחלתית זהה (כי הם נעו יחד). מסעיף ג' הוכחנו שגם התאוצה השלילית שלהם זהה (<span dir="ltr" class="inline-block">\(-1 \text{ m/s}^2\)</span>).</p>
             <p>לפי הנוסחה הקינמטית <span dir="ltr" class="inline-block">\(v = v_0 + at\)</span>, הזמן לעצירה הוא <span dir="ltr" class="inline-block">\(t = -v_0/a\)</span>. מכיוון שהמהירות והתאוצה שוות, הזמן לעצירה שווה.</p>
             <p class="mt-2 font-bold text-blue-700">לכן, היגד (2) הוא הנכון: שניהם יעצרו כעבור אותו זמן.</p>
@@ -394,14 +542,16 @@
         <div class="chart-wrapper">
             <canvas id="velocityChart"></canvas>
         </div>
-    </div>
+    </section>
 
     <!-- סעיף ה -->
-    <div class="step-card">
-        <h2 class="text-xl font-bold mb-4 text-blue-800">סעיף ה'</h2>
+    <section class="step-card" id="part-e">
+        <h3 class="section-header">סעיף ה'</h3>
 
-        <div class="mb-2 text-sm md:text-base"><strong>מה נתון:</strong> במקרה חדש, גוף B מונח על גוף A. הכוח F (13 ניוטון) מופעל שוב על גוף A.</div>
-        <div class="mb-2 text-sm md:text-base"><strong>מה מחפשים:</strong> לקבוע האם תאוצת המערכת שווה, גדולה או קטנה מהתאוצה בסעיף ב'.</div>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel text-sm md:text-base"><strong>מה נתון:</strong> במקרה חדש, גוף B מונח על גוף A. הכוח F (13 ניוטון) מופעל שוב על גוף A.</div>
+            <div class="info-panel text-sm md:text-base"><strong>מה מחפשים:</strong> לקבוע האם תאוצת המערכת שווה, גדולה או קטנה מהתאוצה בסעיף ב'.</div>
+        </div>
         <div class="mb-2 text-sm md:text-base">
             <strong>נוסחאות (מהדף):</strong> 
             <span class="formula-badge">\(\Sigma F = ma\)</span> 
@@ -459,8 +609,8 @@
             </div>
         </div>
 
-        <div class="text-base md:text-lg leading-relaxed">
-            <strong>שלבי פתרון (פיתוח מתמטי):</strong>
+        <div class="step-box text-base md:text-lg leading-relaxed">
+            <h4 class="step-title">שלבי פתרון (פיתוח מתמטי):</h4>
             <p>נוכיח זאת מתמטית בעזרת החוק השני של ניוטון עבור המערכת כולה (A+B):</p>
             
             <p>1. נחשב את המסה הכוללת של המערכת החדשה:</p>
@@ -484,7 +634,9 @@
             
             <p class="mt-2 font-bold text-blue-700">מסקנה: קיבלנו בדיוק את אותה משוואה ואת אותה תוצאה כפי שקיבלנו בסעיף ב'. לכן, תאוצת המערכת שווה לתאוצה שבסעיף ב' (<span dir="ltr" class="inline-block">\(1.6 \text{ m/s}^2\)</span>).</p>
         </div>
-    </div>
+    </section>
+
+</div>
 
     <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
         <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
@@ -496,13 +648,13 @@
 
     <div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
         <div class="question-modal-card">
-            <div class="flex items-center justify-between mb-3">
-                <h3 id="questionModalTitle" class="text-lg font-bold text-slate-800">השאלה המקורית</h3>
-                <button id="closeQuestionModalBtn" type="button" class="px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+            <div class="question-modal-header">
+                <h3 id="questionModalTitle" class="question-modal-title text-lg">השאלה המקורית</h3>
+                <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
             </div>
 
             <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg"
+                 <img src="question-image.png" alt="תמונת השאלה המקורית" class="question-image-modal rounded-lg"
                      onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
 
                 <div style="display: none;" class="bg-blue-50 text-blue-800 p-8 rounded-lg border border-blue-200 text-center w-full">
@@ -515,6 +667,30 @@
 
     <script>
         document.addEventListener("DOMContentLoaded", function() {
+            const versionStamp = document.getElementById('versionStamp');
+            const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+            if (versionStamp) {
+                versionStamp.title = 'עודכן לאחרונה';
+            }
+
+            const modified = new Date(document.lastModified);
+            if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+                const pad = (n) => String(n).padStart(2, '0');
+
+                const year = modified.getFullYear();
+                const month = modified.getMonth() + 1;
+                const day = modified.getDate();
+                const seed = (year * 372) + (month * 31) + day + 157;
+                const codeNum = (seed * 73) % 46656;
+                const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+                const hours = pad(modified.getHours());
+                const minutes = pad(modified.getMinutes());
+                const seconds = pad(modified.getSeconds());
+
+                versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+            }
+
             const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
             const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
             const questionModal = document.getElementById('questionModal');
