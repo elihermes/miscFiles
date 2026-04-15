@@ -1,0 +1,591 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 1995 שאלה 2</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        /* SVG FBD Styling */
+        .fbd-vector {
+            stroke-width: 2.5;
+            marker-end: url(#arrowhead);
+        }
+        .fbd-vector.force { stroke: #ef4444; }
+        .fbd-vector.tension { stroke: #3b82f6; }
+        .fbd-vector.normal { stroke: #10b981; }
+        .fbd-vector.gravity { stroke: #8b5cf6; }
+        
+        .fbd-body {
+            fill: #e2e8f0;
+            stroke: #475569;
+            stroke-width: 2;
+        }
+        
+        .fbd-text {
+            font-family: 'Rubik', sans-serif;
+            font-size: 14px;
+            font-weight: bold;
+            fill: #1e293b;
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        .math-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+
+    <header class="text-center mb-8">
+        <h1 class="text-4xl md:text-5xl font-extrabold text-slate-800 mb-4 tracking-tight">פתרון בגרות בפיזיקה</h1>
+        <h2 class="text-2xl font-medium text-slate-600 mb-6">מכניקה 1995, שאלה 2</h2>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- SVG Definitions for Arrows -->
+    <svg width="0" height="0" class="hidden">
+        <defs>
+            <marker id="arrowhead-force" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444" />
+            </marker>
+            <marker id="arrowhead-tension" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#3b82f6" />
+            </marker>
+            <marker id="arrowhead-normal" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#10b981" />
+            </marker>
+            <marker id="arrowhead-gravity" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                <polygon points="0 0, 10 3.5, 0 7" fill="#8b5cf6" />
+            </marker>
+        </defs>
+    </svg>
+
+    <!-- סעיף א' -->
+    <div class="section-card">
+        <h2 class="text-2xl font-bold mb-4 text-blue-700">סעיף א' - קביעת הכוח השקול</h2>
+        
+        <h3 class="font-semibold text-lg mt-4 mb-2">א. מה נתון:</h3>
+        <ul class="list-disc list-inside space-y-1 text-slate-700 mb-4">
+            <li>שני גופים בעלי מסות \(M\) ו-\(m\) מונחים על משטח אופקי.</li>
+            <li>נתון כי מסת הגוף הגדול גדולה ממסת הגוף הקטן: \(M > m\).</li>
+            <li>הגופים קשורים בחוט אידיאלי (חסר מסה ולא נמתח) ונעים יחד באותה תאוצה \(a\).</li>
+            <li>הנתונים בבעיה זו הם פרמטריים, ולכן נניח שכל הגדלים מבטאים יחידות MKS (ק"ג למסה, מטר לשנייה בריבוע לתאוצה, וניוטון לכוח).</li>
+        </ul>
+
+        <h3 class="font-semibold text-lg mt-4 mb-2">ב. מה מחפשים:</h3>
+        <p class="text-slate-700 mb-4">לקבוע ולהסביר איכותית (במילים) על איזה משני הגופים פועל כוח שקול (\(\Sigma F\)) גדול יותר.</p>
+
+        <h3 class="font-semibold text-lg mt-4 mb-2">ג. נוסחאות בשימוש:</h3>
+        <div class="mb-4">
+            <span class="formula-badge">\(\Sigma\vec{F} = m\vec{a}\)</span> (החוק השני של ניוטון מתוך דף הנוסחאות)
+        </div>
+
+        <h3 class="font-semibold text-lg mt-4 mb-2">ד. הצבה ופתרון:</h3>
+        <div class="text-slate-700 space-y-3 mb-4">
+            <p>מכיוון שהגופים קשורים זה לזה באמצעות חוט מתוח, שניהם נעים באותה מערכת ובעלי תאוצה זהה בגודלה, אותה נסמן באות \(a\).</p>
+            <p>על פי החוק השני של ניוטון, הכוח השקול הפועל על גוף שווה למכפלת מסתו בתאוצתו. לכן נוכל לרשום את הכוח השקול הפועל על כל גוף בנפרד:</p>
+            <div class="math-scroll">
+                \[ \Sigma F_M = M \cdot a \]
+                \[ \Sigma F_m = m \cdot a \]
+            </div>
+            <p>מכיוון שנתון לנו כי \(M > m\), והתאוצה \(a\) חיובית וזהה לשני הגופים, בהכרח נובע אי-השוויון הבא:</p>
+            <div class="math-scroll">
+                \[ M \cdot a > m \cdot a \implies \Sigma F_M > \Sigma F_m \]
+            </div>
+        </div>
+        <div class="final-answer">
+            <span><strong>תשובה סופית:</strong> הכוח השקול הפועל על הגוף בעל המסה \(M\) גדול יותר מהכוח השקול הפועל על הגוף בעל המסה \(m\).</span>
+        </div>
+
+        <div class="teacher-highlight">
+            חשוב לשים לב להבדל העקרוני בין "הכוח המושך" לבין "הכוח השקול". התלמידים נוטים להתבלבל ולחשוב שעל הגוף \(m\) פועל כוח שקול גדול יותר כי הכוח החיצוני \(F\) מופעל עליו ישירות. אך הכוח השקול הוא התוצאה הסופית של <strong>כל</strong> הכוחות (במקרה של \(m\), הכוח \(F\) ימינה פחות המתיחות \(T\) שמושכת שמאלה). החוק השני של ניוטון מלמד אותנו שגוף עם אינרציה (מסה) גדולה יותר דורש כוח שקול גדול יותר כדי להאיץ באותה המידה בדיוק! שים לב שאין זה משנה אם יש חיכוך או אין חיכוך בסעיף זה - כל עוד התאוצה זהה, המסקנה שרירה וקיימת.
+        </div>
+    </div>
+
+    <!-- סעיף ב' -->
+    <div class="section-card">
+        <h2 class="text-2xl font-bold mb-4 text-blue-700">סעיף ב' - חישוב התאוצה ומתיחות החוט (תרשים א')</h2>
+        
+        <h3 class="font-semibold text-lg mt-4 mb-2">א. מה נתון:</h3>
+        <ul class="list-disc list-inside space-y-1 text-slate-700 mb-4">
+            <li>המערכת זהה לסעיף א', הכוח החיצוני המושך ימינה הוא \(F\).</li>
+            <li>החיכוך בין הגופים למשטח <strong>זניח</strong> (כלומר \(f_k = 0\)).</li>
+        </ul>
+
+        <h3 class="font-semibold text-lg mt-4 mb-2">ב. מה מחפשים:</h3>
+        <p class="text-slate-700 mb-4">לבטא את תאוצת המערכת \(a\) ואת מתיחות החוט המקשר \(T\) באמצעות הפרמטרים הנתונים: \(M\), \(m\), \(F\).</p>
+
+        <h3 class="font-semibold text-lg mt-4 mb-2">ג. נוסחאות בשימוש:</h3>
+        <div class="mb-4">
+            <span class="formula-badge">\(\Sigma\vec{F} = m\vec{a}\)</span> (החוק השני של ניוטון)
+            <span class="formula-badge">\(W = mg\)</span> (כוח הכבידה - משקל)
+        </div>
+
+        <h3 class="font-semibold text-lg mt-4 mb-2">ד. הצבה ופתרון:</h3>
+        
+        <!-- FBD Diagram -->
+        <p class="text-slate-700 mb-2">נשרטט תחילה תרשים כוחות (FBD) עבור כל גוף בנפרד:</p>
+        <div class="svg-container flex justify-center my-6 overflow-x-auto">
+            <img
+                src="image-2.png"
+                alt="תרשים כוחות סעיף ב"
+                style="width: 600px; height: 200px; object-fit: contain; display: block; margin: 0 auto;"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            />
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-4 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">לא נמצאה התמונה image-2.png</span>
+            </div>
+        </div>
+
+        <div class="text-slate-700 space-y-3 mb-4">
+            <p>נבחר ציר \(x\) אופקי הפונה ימינה (כיוון התנועה). מכיוון שאין תנועה בציר האנכי, אנו נתמקד במשוואות הכוחות לאורך ציר ה-\(x\).</p>
+            <p>עבור הגוף השמאלי (מסה \(M\)), הכוח היחיד הפועל בכיוון האופקי הוא כוח המתיחות \(T\):</p>
+            <div class="math-scroll">
+                \[ (1) \quad \Sigma F_{x,M} = T = M \cdot a \]
+            </div>
+            <p>עבור הגוף הימני (מסה \(m\)), פועל הכוח \(F\) ימינה, וכוח המתיחות \(T\) שמאלה:</p>
+            <div class="math-scroll">
+                \[ (2) \quad \Sigma F_{x,m} = F - T = m \cdot a \]
+            </div>
+            <p>כדי למצוא את התאוצה, נחבר את שתי המשוואות (משוואה 1 ומשוואה 2). פעולה זו תגרום למתיחות \(T\) (שהיא כוח פנימי במערכת) להצטמצם:</p>
+            <div class="math-scroll">
+                \[ T + (F - T) = M \cdot a + m \cdot a \]
+                \[ F = a(M + m) \]
+                \[ a = \frac{F}{M + m} \]
+            </div>
+            <p>כעת, כדי למצוא את מתיחות החוט \(T\), נציב את ביטוי התאוצה שמצאנו חזרה למשוואה (1):</p>
+            <div class="math-scroll">
+                \[ T = M \cdot \left( \frac{F}{M + m} \right) = \frac{MF}{M + m} \]
+            </div>
+        </div>
+
+        <div class="final-answer flex-col items-start gap-2">
+            <div><strong>תשובה סופית - תאוצה:</strong> \( a = \frac{F}{M + m} \)</div>
+            <div><strong>תשובה סופית - מתיחות:</strong> \( T = \frac{MF}{M + m} \)</div>
+        </div>
+
+        <div class="teacher-highlight">
+            שימו לב לפיתוח ההדרגתי! זוהי טעות נפוצה "לבלוע" את המערכת מיד לגוף אחד של \(M+m\). למרות שזה נותן את התאוצה נכון, הגישה הזו לא מאפשרת למצוא את המתיחות כי כוחות פנימיים "נעלמים" בהסתכלות על המערכת כשלם. הקפדה על רישום משוואת כוחות <strong>לכל גוף בנפרד</strong> מבטיחה הבנה מלאה ומניעת טעויות. כמו כן, ניתן לראות כי המתיחות אינה שווה ל-\(F\), אלא רק לחלק יחסי מ-\(F\) הנדרש כדי להאיץ אך ורק את המסה האחורית \(M\).
+        </div>
+    </div>
+
+    <!-- סעיף ג' -->
+    <div class="section-card">
+        <h2 class="text-2xl font-bold mb-4 text-blue-700">סעיף ג' - השוואת תאוצות (תרשים ב')</h2>
+        
+        <h3 class="font-semibold text-lg mt-4 mb-2">א. מה נתון:</h3>
+        <ul class="list-disc list-inside space-y-1 text-slate-700 mb-4">
+            <li>המערכת זהה, אלא שכעת מחובר לגוף \(m\) חוט נוסף העובר דרך גלגלת אידיאלית.</li>
+            <li>בקצה החוט החדש תלוי גוף שמשקלו \(W\) שווה בגודלו לכוח \(F\) מתרשים א' (כלומר, \(W_{new} = m_{new} \cdot g = F\)).</li>
+            <li>מכאן שמסת הגוף התלוי החדש היא: \(m_{new} = \frac{F}{g}\).</li>
+            <li>החיכוך עדיין זניח.</li>
+        </ul>
+
+        <h3 class="font-semibold text-lg mt-4 mb-2">ב. מה מחפשים:</h3>
+        <p class="text-slate-700 mb-4">לקבוע האם גודל התאוצה החדשה (בתרשים ב', נסמנה כ-\(a_B\)) קטן או גדול מגודל התאוצה הקודמת (בתרשים א', נסמנה כ-\(a_A\)), ולנמק.</p>
+
+        <h3 class="font-semibold text-lg mt-4 mb-2">ג. נוסחאות בשימוש:</h3>
+        <div class="mb-4">
+            <span class="formula-badge">\(\Sigma\vec{F} = m\vec{a}\)</span> (החוק השני של ניוטון)
+        </div>
+
+        <h3 class="font-semibold text-lg mt-4 mb-2">ד. הצבה ופתרון:</h3>
+        
+        <p class="text-slate-700 mb-2">נשרטט את תרשימי הכוחות (FBD) עבור שלושת הגופים במערכת החדשה:</p>
+        <div class="svg-container flex justify-center my-6 overflow-x-auto">
+            <img
+                src="image-3.png"
+                alt="תרשימי כוחות סעיף ג"
+                style="width: 700px; height: 250px; object-fit: contain; display: block; margin: 0 auto;"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            />
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-4 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">לא נמצאה התמונה image-3.png</span>
+            </div>
+        </div>
+
+        <div class="text-slate-700 space-y-3 mb-4">
+            <p>במערכת החדשה ישנם שלושה גופים המאיצים יחד (נסמן את התאוצה החדשה ב-\(a_B\)). נרשום את משוואות הכוחות לכל גוף בנפרד בכיוון התנועה:</p>
+            <div class="math-scroll space-y-2 my-4">
+                <div class="flex justify-center items-center gap-4 text-lg">
+                    <span class="font-medium">עבור הגוף \(M\):</span>
+                    <span>\( T_1 = M \cdot a_B \)</span>
+                </div>
+                <div class="flex justify-center items-center gap-4 text-lg">
+                    <span class="font-medium">עבור הגוף \(m\):</span>
+                    <span>\( T_2 - T_1 = m \cdot a_B \)</span>
+                </div>
+                <div class="flex justify-center items-center gap-4 text-lg">
+                    <span class="font-medium">עבור הגוף התלוי:</span>
+                    <span>\( W - T_2 = m_{new} \cdot a_B \)</span>
+                </div>
+            </div>
+            <p>נציב את הנתון \(W = F\) ואת המסה \(m_{new} = \frac{F}{g}\) במשוואת הגוף התלוי:</p>
+            <div class="math-scroll">
+                \[ F - T_2 = \left(\frac{F}{g}\right) \cdot a_B \]
+            </div>
+            <p>נחבר את שלוש המשוואות יחד. המתיחויות השונות מצטמצמות והכוח החיצוני המניע את המערכת כולה נותר בלבד:</p>
+            <div class="math-scroll">
+                \[ T_1 + (T_2 - T_1) + (F - T_2) = M \cdot a_B + m \cdot a_B + \left(\frac{F}{g}\right) \cdot a_B \]
+                \[ F = \left( M + m + \frac{F}{g} \right) \cdot a_B \]
+                \[ a_B = \frac{F}{M + m + \frac{F}{g}} \]
+            </div>
+            <p>נשווה את התאוצה החדשה \(a_B\) לתאוצה הקודמת \(a_A\) שמצאנו בסעיף ב':</p>
+            <div class="math-scroll">
+                \[ a_A = \frac{F}{M + m} \]
+            </div>
+            <p>המונה בשני המקרים זהה (\(F\)), אולם המכנה בביטוי עבור \(a_B\) גדול יותר מאשר המכנה בביטוי עבור \(a_A\) בגלל הוספת המסה \(\frac{F}{g}\). כאשר המכנה גדול יותר, ערך השבר כולו קטן יותר.</p>
+        </div>
+
+        <div class="final-answer">
+            <span><strong>תשובה סופית:</strong> גודל התאוצה במצב החדש (תרשים ב') <strong>קטן</strong> מגודל התאוצה במצב הקודם (תרשים א'). ההסבר: למרות שכוח המשיכה המניע את המערכת (\(F\)) נותר זהה, המסה הכוללת של המערכת המואצת גדלה ולכן האינרציה גדולה יותר והתאוצה קטנה.</span>
+        </div>
+
+        <div class="teacher-highlight">
+            זוהי "מלכודת מכניקה" קלאסית ומצוינת! בסעיף א', הכוח \(F\) הוא כוח טהור הניתן מן החוץ ואין לו "משקל" או מסה משלו. לעומת זאת, כאשר תולים משקולת שמשקלה שווה ל-\(F\), אנו אמנם מספקים את אותו הכוח המניע, אך באותו הזמן אנו <strong>מוסיפים אינרציה</strong> למערכת! עכשיו אותו כוח \(F\) צריך להאיץ לא רק את \(M\) ו-\(m\), אלא גם את המסה של עצמו (\(\frac{F}{g}\)). לכן התאוצה חייבת להיות קטנה יותר. תמיד זכרו: משקולת תלויה מוסיפה גם כוח וגם מסה!
+        </div>
+    </div>
+
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        if (openQuestionModalBtn && closeQuestionModalBtn && questionModal) {
+            openQuestionModalBtn.addEventListener('click', openQuestionModal);
+            closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+
+            document.addEventListener('keydown', function(event) {
+                if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                    closeQuestionModal();
+                }
+            });
+        }
+    });
+</script>
+</body>
+</html>

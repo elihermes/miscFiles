@@ -1,0 +1,627 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מלא - בגרות מכניקה 1996</title>
+    
+    <!-- MathJax for rendering equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    
+    <!-- Chart.js for graphs -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --primary-blue: #2563eb;
+            --dark-blue: #1e40af;
+            --light-blue: #eff6ff;
+            --border-blue: #bfdbfe;
+            --success-green: #16a34a;
+            --light-green: #dcfce7;
+            --text-main: #334155;
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+        }
+
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.7;
+            color: var(--text-main);
+            background-color: var(--bg-page);
+            margin: 0;
+            padding: 15px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background-color: var(--bg-card);
+            padding: 30px 25px;
+            border-radius: 16px;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.05);
+        }
+
+        h1 {
+            color: var(--dark-blue);
+            text-align: center;
+            font-size: 2rem;
+            margin-bottom: 30px;
+            border-bottom: 4px solid var(--border-blue);
+            padding-bottom: 15px;
+        }
+
+        h2 {
+            color: var(--primary-blue);
+            font-size: 1.5rem;
+            margin-top: 40px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h2::before {
+            content: '';
+            display: inline-block;
+            width: 6px;
+            height: 28px;
+            background-color: var(--primary-blue);
+            border-radius: 4px;
+        }
+
+        .section-block {
+            background-color: #fff;
+            border: 1px solid #e2e8f0;
+            border-radius: 12px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+        }
+
+        .data-list {
+            list-style-type: none;
+            padding-right: 0;
+            margin-top: 10px;
+        }
+
+        .data-list li {
+            margin-bottom: 8px;
+            padding-right: 20px;
+            position: relative;
+        }
+
+        .data-list li::before {
+            content: '•';
+            color: var(--primary-blue);
+            font-weight: bold;
+            font-size: 1.2rem;
+            position: absolute;
+            right: 0;
+            top: -2px;
+        }
+
+        /* חוקי עיצוב קפדניים - נוסחאות */
+        .formula-badge {
+            background-color: var(--light-blue);
+            color: var(--dark-blue);
+            border: 1px solid var(--border-blue);
+            border-radius: 9999px;
+            display: inline-block;
+            padding: 10px 25px;
+            margin: 15px 0;
+            font-weight: bold;
+            font-size: 1.15rem;
+            box-shadow: 0 2px 6px rgba(37, 99, 235, 0.1);
+        }
+
+        /* רספונסיביות למשוואות ארוכות */
+        .math-scroll {
+            width: 100%;
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 10px 0;
+            margin: 10px 0;
+            /* הסתרת פס גלילה עיצובי */
+            scrollbar-width: thin;
+            scrollbar-color: var(--border-blue) transparent;
+        }
+        
+        .math-scroll::-webkit-scrollbar {
+            height: 6px;
+        }
+        .math-scroll::-webkit-scrollbar-thumb {
+            background-color: var(--border-blue);
+            border-radius: 10px;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block !important;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em !important;
+            }
+        }
+
+        /* הערת מורה */
+        .teacher-highlight {
+            background-color: var(--light-green);
+            border-right: 5px solid var(--success-green);
+            padding: 15px 20px;
+            border-radius: 8px;
+            margin: 20px 0;
+            color: #14532d;
+            font-size: 0.95rem;
+            position: relative;
+        }
+        
+        .teacher-highlight::before {
+            content: '💡 טיפ מהמורה:';
+            display: block;
+            font-weight: bold;
+            color: var(--success-green);
+            margin-bottom: 8px;
+            font-size: 1.05rem;
+        }
+
+        .step-title {
+            font-weight: 700;
+            color: var(--text-main);
+            margin-bottom: 8px;
+            font-size: 1.1rem;
+        }
+
+        .fbd-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 30px 0;
+            padding: 15px;
+            background: #f8fafc;
+            border-radius: 12px;
+            border: 1px dashed #cbd5e1;
+        }
+
+        .graph-wrapper {
+            position: relative;
+            height: 350px;
+            width: 100%;
+            margin: 30px 0;
+        }
+
+        .image-preview {
+            display: flex;
+            justify-content: center;
+            background: #fff;
+            padding: 16px;
+            border-radius: 16px;
+            border: 1px solid #e2e8f0;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+        }
+
+        /* כפתור ומודל התמונה המקורית */
+        .floating-question-btn {
+            position: fixed;
+            right: 1.5rem;
+            bottom: 1.5rem;
+            z-index: 50;
+            height: 3.5rem;
+            padding: 0 1.2rem;
+            gap: 0.5rem;
+            border: 2px solid var(--border-blue);
+            border-radius: 9999px;
+            background: var(--light-blue);
+            color: var(--dark-blue);
+            box-shadow: 0 8px 20px rgba(37, 99, 235, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            font-family: inherit;
+        }
+
+        .floating-question-btn:hover {
+            background: #dbeafe;
+            transform: translateY(-3px);
+            box-shadow: 0 12px 25px rgba(37, 99, 235, 0.3);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.8);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+            backdrop-filter: blur(4px);
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(900px, 95vw);
+            max-height: 90vh;
+            border-radius: 16px;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.5);
+            overflow: auto;
+            padding: 24px;
+            position: relative;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        /* התאמות למובייל */
+        @media (max-width: 640px) {
+            .container { padding: 15px 12px; }
+            h1 { font-size: 1.5rem; }
+            .formula-badge { padding: 8px 16px; font-size: 1rem; }
+            .fbd-container svg { max-width: 100%; height: auto; }
+            .graph-wrapper { height: 280px; }
+        }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <h1>פתרון מלא - בגרות מכניקה 1996</h1>
+
+    <!-- תמונת השאלה המקורית -->
+    <div class="image-preview">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" style="width: 100%; max-width: 100%; height: auto; border-radius: 8px; cursor: pointer;" onclick="document.getElementById('openQuestionModalBtn').click();" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div style="display: none; background: #eff6ff; color: #1e40af; padding: 20px; border-radius: 10px; border: 1px solid #bfdbfe; text-align: center; width: 100%;">
+            <span style="display: block; font-weight: bold; margin-bottom: 8px;">[תמונת השאלה המקורית]</span>
+            <span style="font-size: 0.9rem;">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה של קובץ ה-HTML.</span>
+        </div>
+    </div>
+
+    <!-- סעיף א -->
+    <h2>סעיף א': חישוב תאוצת המערכת</h2>
+    <div class="section-block">
+        <div class="step-title">מה נתון:</div>
+        <p>לפני שנתחיל, נוודא שכל הנתונים הם במערכת יחידות תקנית (MKS: מטר, קילוגרם, שניות).</p>
+        <ul class="data-list">
+            <li>המערכת משוחררת ממנוחה: \(v_0 = 0 \text{ m/s}\).</li>
+            <li>זמן תנועת המשקולת עד לרצפה: \(t = 0.6 \text{ s}\).</li>
+            <li>העתק המשקולת (הגובה ההתחלתי): \(\Delta y = 0.54 \text{ m}\).</li>
+        </ul>
+
+        <div class="step-title" style="margin-top: 15px;">מה מחפשים:</div>
+        <p>את תאוצת המערכת, אותה נסמן באות \(a\).</p>
+
+        <div class="step-title" style="margin-top: 15px;">נוסחאות מהדף:</div>
+        <div class="math-scroll" dir="ltr" style="text-align: right;">
+            <div class="formula-badge">
+                \( x = x_0 + v_0 t + \frac{1}{2} a t^2 \)
+            </div>
+        </div>
+
+        <div class="step-title">הצבה ופתרון:</div>
+        <p>נבחר ציר אנכי \(y\) שכיוונו החיובי כלפי מטה (ככיוון התנועה). נעביר אגפים בנוסחה כדי לקבל את ההעתק \(\Delta y = x - x_0\), ונציב את הנתונים:</p>
+        <div class="math-scroll">
+            $$ 0.54 = 0 \cdot 0.6 + \frac{1}{2} \cdot a \cdot (0.6)^2 $$
+            $$ 0.54 = \frac{1}{2} \cdot a \cdot 0.36 $$
+            $$ 0.54 = 0.18 \cdot a $$
+            $$ a = \frac{0.54}{0.18} = 3 \text{ m/s}^2 $$
+        </div>
+        <p>תאוצת המערכת היא <strong>\(3 \text{ m/s}^2\)</strong>. כיוון שהתאוצה חיובית (באותו כיוון של המהירות), גודל המהירות של הגופים גדל לאורך התנועה.</p>
+
+        <div class="teacher-highlight">
+            הקפידו תמיד לבחור ציר חיובי בכיוון התנועה הראשונית של המערכת. במקרה זה, עבור המשקולת הציר חיובי כלפי מטה, ועבור הבול על השולחן הציר חיובי ימינה. כך שני הגופים חולקים את אותה תאוצה \(a\) בסימן חיובי. כמו כן, שימו לב שאין צורך להשתמש במסה של הגופים בסעיף זה, כי קיבלנו מספיק נתונים קינמטיים!
+        </div>
+    </div>
+
+    <!-- סעיף ב -->
+    <h2>סעיף ב': האם פועל כוח חיכוך?</h2>
+    <div class="section-block">
+        <div class="step-title">מה נתון:</div>
+        <p>כעת נחשוף את נתוני המסות של הגופים. כל הנתונים כבר ביחידות MKS (ק"ג):</p>
+        <ul class="data-list">
+            <li>מסת הבול על השולחן: \(M_1 = 1.4 \text{ kg}\).</li>
+            <li>מסת המשקולת התלויה: \(M_2 = 0.6 \text{ kg}\).</li>
+            <li>תאוצת הכובד: \(g = 10 \text{ m/s}^2\).</li>
+            <li>התאוצה בפועל (מצאנו בסעיף א'): \(a = 3 \text{ m/s}^2\).</li>
+        </ul>
+
+        <div class="step-title" style="margin-top: 15px;">מה מחפשים:</div>
+        <p>עלינו לבדוק האם קיים כוח חיכוך קינטי (\(f_k\)) בין הבול \(M_1\) לשולחן.</p>
+
+        <div class="step-title" style="margin-top: 15px;">נוסחאות מהדף:</div>
+        <div class="math-scroll" dir="ltr" style="text-align: right;">
+            <div class="formula-badge">
+                \( \Sigma F = m a \)
+            </div>
+        </div>
+
+        <div class="step-title">המחשה ויזואלית וניתוח כוחות (FBD):</div>
+        <div class="fbd-container">
+            <!-- SVG of System and FBD -->
+                <svg xmlns="http://www.w3.org/2000/svg" viewBox="28.75 174.9796 516.6591 173.0674" width="516.659px" height="173.067px">
+                    <defs>
+                        <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#dc2626"/>
+                        </marker>
+                        <marker id="arrowhead-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb"/>
+                        </marker>
+                    </defs>
+                    <g>
+                        <rect x="28.75" y="250.714" width="150" height="15" fill="#94a3b8" style="stroke-width: 1;"/>
+                        <path fill="none" stroke="#475569" stroke-width="2" style="stroke-width: 2;" d="M 118.745 230.714 C 118.745 230.264 144.842 230.707 165.121 231.312 C 178.006 231.697 190.55 233.32 185.556 233.946 L 188.901 307.753"/>
+                        <rect x="68.745" y="210.714" width="50" height="40" fill="#fb923c" rx="4" style="stroke-width: 1;"/>
+                        <text x="93.745" y="230.714" text-anchor="middle" dominant-baseline="middle" font-weight="bold" font-size="18" fill="#fff" style="white-space: pre; stroke-width: 1; font-size: 18px;">M₁</text>
+                        <rect x="172.726" y="308.047" width="30" height="40" fill="#fb923c" rx="4" style="stroke-width: 1;"/>
+                        <text x="187.726" y="328.047" text-anchor="middle" dominant-baseline="middle" font-weight="bold" font-size="18" fill="#fff" style="white-space: pre; stroke-width: 1; font-size: 18px;">M₂</text>
+                        <rect x="308.745" y="230.714" width="40" height="40" fill="none" stroke="#fb923c" stroke-width="2" stroke-dasharray="4" style="stroke-width: 2;"/>
+                        <text x="328.745" y="250.714" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" fill="#64748b" style="white-space: pre; stroke-width: 1; font-size: 14px;">M₁</text>
+                        <line x1="347.075" y1="250.407" x2="388.745" y2="250.714" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowhead-red)" style="stroke-width: 2;"/>
+                        <text x="398.745" y="250.714" text-anchor="start" dominant-baseline="middle" fill="#dc2626" font-weight="bold" font-size="14" style="white-space: pre; stroke-width: 1; font-size: 14px;">T</text>
+                        <line x1="310.008" y1="250.701" x2="268.745" y2="250.714" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowhead-red)" style="stroke-width: 2;"/>
+                        <text x="254.745" y="250.714" text-anchor="end" dominant-baseline="middle" fill="#dc2626" font-weight="bold" font-size="14" style="white-space: pre; stroke-width: 1; font-size: 14px;">fₖ</text>
+                        <path stroke="#2563eb" stroke-width="2" marker-end="url(#arrowhead-blue)" style="stroke-width: 2;" d="M 328.706 233.22 C 328.335 226.847 329.086 188.217 330.214 207.589 L 330.508 190.714"/>
+                        <text x="340.745" y="184.714" text-anchor="start" dominant-baseline="middle" fill="#2563eb" font-weight="bold" font-size="14" style="white-space: pre; stroke-width: 1; font-size: 14px;">N</text>
+                        <line x1="328.729" y1="269.516" x2="328.745" y2="310.714" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowhead-blue)" style="stroke-width: 2;"/>
+                        <text x="344.745" y="318.714" text-anchor="start" dominant-baseline="middle" fill="#2563eb" font-weight="bold" font-size="14" style="white-space: pre; stroke-width: 1; font-size: 14px;">M₁g</text>
+                        <rect x="488.745" y="230.714" width="40" height="40" fill="none" stroke="#fb923c" stroke-width="2" stroke-dasharray="4" style="stroke-width: 2;"/>
+                        <text x="508.745" y="250.714" text-anchor="middle" dominant-baseline="middle" font-size="14" font-weight="bold" fill="#64748b" style="white-space: pre; stroke-width: 1; font-size: 14px;">M₂</text>
+                        <line x1="508.448" y1="230.508" x2="508.745" y2="190.714" stroke="#dc2626" stroke-width="2" marker-end="url(#arrowhead-red)" style="stroke-width: 2;"/>
+                        <text x="518.745" y="184.714" text-anchor="start" dominant-baseline="middle" fill="#dc2626" font-weight="bold" font-size="14" style="white-space: pre; stroke-width: 1; font-size: 14px;">T</text>
+                        <line x1="508.729" y1="270.397" x2="508.745" y2="320.714" stroke="#2563eb" stroke-width="2" marker-end="url(#arrowhead-blue)" style="stroke-width: 2;"/>
+                        <text x="518.745" y="326.714" text-anchor="start" dominant-baseline="middle" fill="#2563eb" font-weight="bold" font-size="14" style="white-space: pre; stroke-width: 1; font-size: 14px;">M₂g</text>
+                        <circle cx="178.745" cy="240.714" r="10" fill="#cbd5e1" stroke="#475569" stroke-width="2" style="stroke-width: 2;"/>
+                    </g>
+                </svg>
+        </div>
+
+        <div class="step-title">הצבה ופתרון (פיתוח הדרגתי):</div>
+        <p>נרשום את החוק השני של ניוטון עבור <strong>כל גוף בנפרד</strong>. נניח שקיים חיכוך קינטי \(f_k\) המתנגד לתנועת הבול \(M_1\).</p>
+        <div class="math-scroll">
+            <p><strong>עבור המשקולת \(M_2\) (ציר \(y\) חיובי מטה):</strong></p>
+            $$ (1) \quad M_2 \cdot g - T = M_2 \cdot a $$
+            
+            <p><strong>עבור הבול \(M_1\) (ציר \(x\) חיובי ימינה):</strong></p>
+            $$ (2) \quad T - f_k = M_1 \cdot a $$
+        </div>
+        <p>נחבר את שתי המשוואות כדי לבטל את המתיחות \(T\) (שהיא כוח פנימי מערכתי):</p>
+        <div class="math-scroll">
+            $$ M_2 \cdot g - T + T - f_k = M_2 \cdot a + M_1 \cdot a $$
+            $$ M_2 \cdot g - f_k = (M_1 + M_2) \cdot a $$
+        </div>
+        <p>כעת, נציב את כל הנתונים הידועים לנו (כולל התאוצה \(a=3\) שמצאנו בסעיף א'):</p>
+        <div class="math-scroll">
+            $$ 0.6 \cdot 10 - f_k = (1.4 + 0.6) \cdot 3 $$
+            $$ 6 - f_k = 2.0 \cdot 3 $$
+            $$ 6 - f_k = 6 $$
+            $$ f_k = 0 \text{ N} $$
+        </div>
+        <p><strong>מסקנה:</strong> קיבלנו שכוח החיכוך שווה בדיוק לאפס. לכן, <strong>לא פועל כוח חיכוך</strong> בין הבול לשולחן.</p>
+
+        <div class="teacher-highlight">
+            שימו לב ליופי של הפיזיקה כאן! יכולנו לפתור זאת גם הפוך: נחשב את התאוצה התיאורטית בהנחה שאין חיכוך. אם היינו מציבים \(f_k = 0\), היינו מקבלים \(a = \frac{M_2 g}{M_1 + M_2} = \frac{6}{2} = 3 \text{ m/s}^2\). מכיוון שהתאוצה התיאורטית ללא חיכוך שווה בדיוק לתאוצה שנמדדה במציאות (מסעיף א'), ניתן להסיק בוודאות שהחיכוך זניח (אפס). זכרו: תאוצת הכובד \(g\) תמיד חיובית בחישובים והצירים שלנו קובעים את הסימנים למשוואות!
+        </div>
+    </div>
+
+    <!-- סעיף ג -->
+    <h2>סעיף ג': גרף מהירות-זמן</h2>
+    <div class="section-block">
+        <div class="step-title">מה נתון:</div>
+        <ul class="data-list">
+            <li>תאוצת הבול בחלק הראשון של התנועה: \(a = 3 \text{ m/s}^2\).</li>
+            <li>רגע פגיעת המשקולת ברצפה: \(t = 0.6 \text{ s}\).</li>
+            <li>אין חיכוך על השולחן (\(f_k = 0\)).</li>
+            <li>נדרש לשרטט גרף מרגע השחרור (\(t=0\)) ועד \(t = 1.2 \text{ s}\).</li>
+        </ul>
+
+        <div class="step-title" style="margin-top: 15px;">מה מחפשים:</div>
+        <p>לשרטט גרף מדוייק של מהירות הבול \(M_1\) כפונקציה של הזמן.</p>
+
+        <div class="step-title" style="margin-top: 15px;">נוסחאות מהדף:</div>
+        <div class="math-scroll" dir="ltr" style="text-align: right;">
+            <div class="formula-badge">
+                \( v = v_0 + a t \)
+            </div>
+        </div>
+
+        <div class="step-title">הצבה ופתרון (ניתוח שלבי התנועה):</div>
+        <p>נחלק את תנועת הבול \(M_1\) לשני שלבים:</p>
+        <ol>
+            <li>
+                <strong>שלב 1 (\(0 \le t \le 0.6\)):</strong><br>
+                הבול מאיץ בתאוצה קבועה. נחשב את המהירות בסוף פרק זמן זה:
+                <div class="math-scroll">
+                    $$ v(0.6) = 0 + 3 \cdot 0.6 = 1.8 \text{ m/s} $$
+                </div>
+            </li>
+            <li>
+                <strong>שלב 2 (\(0.6 < t \le 1.2\)):</strong><br>
+                ברגע \(t=0.6\text{s}\), המשקולת \(M_2\) פוגעת ברצפה ונעצרת. החוט הופך לרפוי ולכן המתיחות מתאפסת (\(T=0\)).<br>
+                מכיוון שהוכחנו בסעיף ב' שאין כוח חיכוך, שקול הכוחות האופקי הפועל על הבול מתאפס (\(\Sigma F_x = 0\)).<br>
+                לפי החוק הראשון של ניוטון, הבול יתמיד במצבו וינוע במהירות שגודלה וכיוונה קבועים. המהירות תישאר <strong>\(1.8 \text{ m/s}\)</strong> עד סוף הזמן המבוקש.
+            </li>
+        </ol>
+
+        <div class="teacher-highlight">
+            החוק הראשון של ניוטון (חוק ההתמדה) בפעולה! ברגע שהכוח המניע נעלם ואין כוח מתנגד, הגוף לא "מאבד" את המהירות שלו אלא שומר עליה במדויק. גודל המהירות אינו קטן ואינו גדל.
+        </div>
+
+        <!-- גרף Chart.js -->
+        <div class="graph-wrapper">
+            <canvas id="velocityGraph"></canvas>
+        </div>
+    </div>
+
+</div>
+
+<!-- כפתור צף להצגת התמונה המקורית -->
+<button id="openQuestionModalBtn" class="floating-question-btn" aria-label="הצג את השאלה המקורית">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span>הצג שאלה</span>
+</button>
+
+<!-- מודל (חלון קופץ) לתמונה -->
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true">
+    <div class="question-modal-card">
+        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; border-bottom: 2px solid #e2e8f0; padding-bottom: 10px;">
+            <h3 style="margin: 0; color: #1e40af; font-size: 1.25rem;">השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" style="background: #f1f5f9; border: 1px solid #cbd5e1; padding: 6px 12px; border-radius: 6px; cursor: pointer; font-weight: bold; color: #475569;">סגור (Esc)</button>
+        </div>
+        <div style="display: flex; justify-content: center; background: #f8fafc; border-radius: 8px;">
+            <img src="question-image.png" alt="תמונת השאלה המקורית" style="max-width: 100%; height: auto; border-radius: 8px;" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div style="display: none; background: #eff6ff; color: #1e40af; padding: 30px; border-radius: 10px; border: 1px solid #bfdbfe; text-align: center; width: 100%;">
+                <span style="display: block; font-weight: bold; font-size: 1.2rem; margin-bottom: 10px;">[תמונת השאלה המקורית]</span>
+                <span>לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה של קובץ ה-HTML.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // פונקציונליות המודל (חלון קופץ לתמונה)
+    document.addEventListener('DOMContentLoaded', () => {
+        const modal = document.getElementById('questionModal');
+        const openBtn = document.getElementById('openQuestionModalBtn');
+        const closeBtn = document.getElementById('closeQuestionModalBtn');
+
+        const openModal = () => {
+            modal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        };
+
+        const closeModal = () => {
+            modal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        };
+
+        openBtn.addEventListener('click', openModal);
+        closeBtn.addEventListener('click', closeModal);
+        
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) closeModal();
+        });
+
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && modal.classList.contains('is-open')) closeModal();
+        });
+
+        // יצירת הגרף בעזרת Chart.js
+        const ctx = document.getElementById('velocityGraph').getContext('2d');
+        
+        // הנתונים לגרף: t מ-0 עד 1.2
+        const dataPoints = [
+            { x: 0, y: 0 },
+            { x: 0.6, y: 1.8 },
+            { x: 1.2, y: 1.8 }
+        ];
+
+        new Chart(ctx, {
+            type: 'scatter', // חובה לפי חוקי ברזל: ציר ליניארי מדוייק
+            data: {
+                datasets: [{
+                    label: 'מהירות הבול v(t)',
+                    data: dataPoints,
+                    backgroundColor: '#2563eb',
+                    borderColor: '#2563eb',
+                    borderWidth: 3,
+                    pointRadius: 5,
+                    pointHoverRadius: 8,
+                    showLine: true, // מחבר את הנקודות בקו
+                    tension: 0 // קווים ישרים ללא עיקול
+                }]
+            },
+            options: {
+                responsive: true,
+                maintainAspectRatio: false,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'גרף מהירות-זמן של הבול M1',
+                        font: { size: 16, family: 'Segoe UI' }
+                    },
+                    tooltip: {
+                        callbacks: {
+                            label: function(context) {
+                                return `t: ${context.parsed.x} s, v: ${context.parsed.y} m/s`;
+                            }
+                        }
+                    }
+                },
+                scales: {
+                    x: {
+                        type: 'linear',
+                        position: 'bottom',
+                        min: 0,
+                        max: 1.3,
+                        title: {
+                            display: true,
+                            text: 'זמן t [s]',
+                            font: { weight: 'bold', size: 14 }
+                        },
+                        grid: {
+                            color: function(context) {
+                                if (context.tick.value === 0) return '#000'; // קו אפס מודגש
+                                return '#e2e8f0';
+                            },
+                            lineWidth: function(context) {
+                                return context.tick.value === 0 ? 2 : 1;
+                            }
+                        }
+                    },
+                    y: {
+                        min: -0.5, // מאפשר לראות את ציר ה-X (קו האפס) בבירור
+                        max: 2.5,
+                        title: {
+                            display: true,
+                            text: 'מהירות v [m/s]',
+                            font: { weight: 'bold', size: 14 }
+                        },
+                        grid: {
+                            color: function(context) {
+                                if (context.tick.value === 0) return '#334155'; // קו y=0 מודגש במיוחד
+                                return '#e2e8f0';
+                            },
+                            lineWidth: function(context) {
+                                return context.tick.value === 0 ? 3 : 1;
+                            }
+                        }
+                    }
+                }
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
