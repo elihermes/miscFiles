@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - ספקטרומטר מסות</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for rendering math equations -->
+    <script src="https://polyfill.io/v3/polyfill.min.js?features=es6"></script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+
+    <!-- Google Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700&family=Rubik:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <style>
+        body {
+            font-family: 'Assistant', sans-serif;
+            background-color: #f8fafc;
+            color: #334155;
+        }
+        h1, h2, h3, .rubik-font {
+            font-family: 'Rubik', sans-serif;
+        }
+        
+        /* Custom Classes according to instructions */
+        .section-card {
+            background-color: #ffffff;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-top: 4px solid #3b82f6;
+        }
+        .step-title {
+            color: #1e40af;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            display: inline-block;
+            border-bottom: 2px solid #93c5fd;
+            padding-bottom: 0.25rem;
+        }
+        .formula-badge {
+            display: inline-block;
+            background-color: #eff6ff;
+            color: #1d4ed8;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            padding: 0.5rem 1rem;
+            margin: 0.5rem 0;
+            font-family: monospace;
+            font-size: 1.1em;
+            direction: ltr;
+        }
+        .final-answer {
+            background-color: #dcfce7;
+            border-right: 4px solid #22c55e;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            margin-top: 1.5rem;
+            text-align: center;
+            font-size: 1.2rem;
+        }
+        .teacher-highlight {
+            background-color: #fef9c3;
+            border: 1px dashed #eab308;
+            border-radius: 0.5rem;
+            padding: 1rem;
+            margin-top: 1.5rem;
+            display: flex;
+            align-items: flex-start;
+            gap: 0.75rem;
+        }
+        .teacher-highlight::before {
+            content: "💡";
+            font-size: 1.5rem;
+        }
+        .version-stamp {
+            background-color: #f1f5f9;
+            color: #64748b;
+            font-size: 0.875rem;
+            padding: 0.5rem 1rem;
+            border-radius: 9999px;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            margin-bottom: 2rem;
+        }
+        .version-label {
+            font-weight: 600;
+        }
+        
+        /* Modal Styles */
+        #imageModal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.8);
+            backdrop-filter: blur(4px);
+        }
+        #modalImg {
+            margin: auto;
+            display: block;
+            max-width: 90%;
+            max-height: 90vh;
+            margin-top: 5vh;
+            border-radius: 0.5rem;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+        }
+        .close-btn {
+            position: absolute;
+            top: 15px;
+            right: 35px;
+            color: #f1f1f1;
+            font-size: 40px;
+            font-weight: bold;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .close-btn:hover { color: #bbb; }
+        .floating-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            background-color: #2563eb;
+            color: white;
+            padding: 1rem 1.5rem;
+            border-radius: 9999px;
+            box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1);
+            font-weight: 600;
+            cursor: pointer;
+            transition: background-color 0.3s, transform 0.2s;
+            z-index: 50;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .floating-btn:hover {
+            background-color: #1d4ed8;
+            transform: translateY(-2px);
+        }
+
+        /* SVG Container for responsiveness */
+        .svg-container {
+            width: 100%;
+            max-width: 500px;
+            margin: 1.5rem auto;
+            display: block;
+        }
+    </style>
+</head>
+<body class="p-4 md:p-8">
+
+    <div class="max-w-4xl mx-auto">
+        
+        <header class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">פתרון שאלה בפיזיקה: ספקטרומטר מסות (פרק ה', חשמל ומגנטיות)</h1>
+            
+            <div class="version-stamp" id="versionStamp">
+                <span class="version-label">עודכן:</span>
+                <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+            </div>
+
+            <!-- Mandatory Question Image -->
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-3/4 md:w-2/3 h-auto rounded-lg border border-slate-200 mx-auto mb-6" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <div style="display:none;" class="bg-red-50 text-red-600 p-4 rounded-lg border border-red-200 w-3/4 mx-auto text-sm">
+                הערת מערכת: תמונת השאלה לא נמצאה בנתיב המבוקש. הפתרון ממשיך כרגיל.
+            </div>
+            
+            <p class="text-lg text-slate-600 mt-4 leading-relaxed">
+                שלום לתלמידים היקרים! בפתרון זה ננתח תנועה של חלקיקים טעונים (יונים) בתוך שדות חשמליים ומגנטיים. ספקטרומטר מסות הוא מכשיר קלאסי שמשתמש בעקרונות בסיסיים של כוחות וקינמטיקה כדי להפריד בין חלקיקים בעלי מסות שונות. נעבוד שלב אחר שלב, נמיר יחידות כנדרש ונבין לעומק כל תופעה פיזיקלית.
+            </p>
+        </header>
+
+        <!-- סעיף א -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 border-r-4 border-blue-500 pr-3">סעיף א': כיוון השדה החשמלי באזור I</h2>
+            
+            <div class="mb-6">
+                <h3 class="step-title">1. מה נתון:</h3>
+                <ul class="list-disc list-inside text-slate-700 space-y-2 mt-2">
+                    <li>היונים הם של פחמן ומטענם חיובי ושווה למטען יסודי אחד: \( q = +e \).</li>
+                    <li>היונים מתחילים את תנועתם ממנוחה בנקודה A, כלומר מהירות התחלתית \( v_0 = 0 \).</li>
+                    <li>היונים מואצים (גודל מהירותם גדל) אל עבר נקודה C, ולכן כיוון תנועתם באזור I הוא ימינה.</li>
+                </ul>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">2. מה מחפשים:</h3>
+                <p class="text-slate-700 mt-2">לקבוע ולהסביר מהו כיוון השדה החשמלי \( \vec{E} \) השורר באזור I (האם הוא מכוון ימינה או שמאלה).</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">3. נוסחאות ועקרונות בשימוש:</h3>
+                <div class="mt-2 flex flex-col gap-2 items-start">
+                    <span class="formula-badge">\[ \vec{F}_e = q\vec{E} \]</span>
+                    <span class="formula-badge">\[ \Sigma\vec{F} = m\vec{a} \]</span>
+                    <p class="text-slate-700">עקרון קינמטי: כאשר גוף מתחיל ממנוחה וגודל מהירותו גדל, כיוון התאוצה \( \vec{a} \) חייב להיות זהה לכיוון התנועה.</p>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">4. הצבה ופתרון:</h3>
+                <p class="text-slate-700 mt-2 mb-4">
+                    היון מתחיל ממנוחה בלוח A ונע אל עבר לוח C. מכיוון שהוא מתחיל ממנוחה וצובר מהירות ימינה, על פי החוק השני של ניוטון, שקול הכוחות הפועל עליו חייב להיות מכוון ימינה. הכוח היחיד שפועל עליו באזור I (בהזנחת כוח הכובד, כמקובל בחלקיקים אטומיים) הוא הכוח החשמלי \( \vec{F}_e \). לכן, הכוח החשמלי פועל <strong>ימינה</strong>.
+                </p>
+                
+                <!-- SVG FBD for Section A -->
+                <div class="svg-container bg-slate-50 rounded-lg p-4 border border-slate-200">
+                    <svg viewBox="0 0 400 200" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                        <defs>
+                            <marker id="arrowHeadBlue" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6" />
+                            </marker>
+                            <marker id="arrowHeadRed" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                            </marker>
+                            <marker id="arrowHeadGray" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#64748b" />
+                            </marker>
+                        </defs>
+                        
+                        <!-- Plates -->
+                        <rect x="50" y="20" width="10" height="160" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+                        <text x="55" y="15" text-anchor="middle" font-family="Rubik, sans-serif" font-weight="bold" fill="#334155">A</text>
+                        
+                        <rect x="340" y="20" width="10" height="160" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+                        <text x="345" y="15" text-anchor="middle" font-family="Rubik, sans-serif" font-weight="bold" fill="#334155">C</text>
+                        
+                        <!-- Particle -->
+                        <circle cx="150" cy="100" r="12" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+                        <text x="150" y="105" text-anchor="middle" font-family="sans-serif" font-weight="bold" fill="#b91c1c" font-size="14">+</text>
+                        
+                        <!-- Vectors -->
+                        <line x1="150" y1="100" x2="230" y2="100" stroke="#ef4444" stroke-width="3" marker-end="url(#arrowHeadRed)" />
+                        <text x="200" y="90" fill="#ef4444" font-family="serif" font-weight="bold" font-size="16">Fe</text>
+                        
+                        <line x1="150" y1="60" x2="250" y2="60" stroke="#3b82f6" stroke-width="2" marker-end="url(#arrowHeadBlue)" />
+                        <text x="210" y="50" fill="#3b82f6" font-family="serif" font-weight="bold" font-size="16">E</text>
+
+                        <line x1="150" y1="140" x2="200" y2="140" stroke="#64748b" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrowHeadGray)" />
+                        <text x="180" y="160" fill="#64748b" font-family="serif" font-style="italic" font-size="16">v</text>
+                    </svg>
+                    <p class="text-center text-sm text-slate-500 mt-2">תרשים כוחות באזור I: כיוון הכוח החשמלי זהה לכיוון השדה עבור מטען חיובי.</p>
+                </div>
+
+                <p class="text-slate-700 mt-4">
+                    הקשר בין הכוח החשמלי לשדה החשמלי נתון על ידי \( \vec{F}_e = q\vec{E} \). כיוון שמטען היון הוא חיובי (\( q > 0 \)), כיוון השדה החשמלי \( \vec{E} \) חייב להיות באותו כיוון של הכוח החשמלי \( \vec{F}_e \). לפיכך, השדה החשמלי מכוון גם הוא ימינה.
+                </p>
+                <div class="final-answer">
+                    כיוון השדה החשמלי באזור I הוא ימינה (מלוח A ללוח C).
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <div>
+                    <strong class="block mb-1">טיפ מורה:</strong>
+                    שימו לב למלכודת הנפוצה! שדה חשמלי לא תמיד מצביע בכיוון התנועה. הוא מצביע בכיוון הכוח על מטען <strong>חיובי</strong>. אם היינו מאיצים אלקטרון (מטען שלילי) ימינה, השדה החשמלי היה חייב להיות מכוון שמאלה!
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ב -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 border-r-4 border-blue-500 pr-3">סעיף ב': האנרגיה הקינטית בנקודה C</h2>
+            
+            <div class="mb-6">
+                <h3 class="step-title">1. מה נתון:</h3>
+                <ul class="list-disc list-inside text-slate-700 space-y-2 mt-2">
+                    <li>מתח ההאצה באזור I הוא \( V_{AC} = 2 \cdot 10^4 \text{ V} \).</li>
+                    <li>מטען היון (מהסוג הראשון, פחמן-12, למרות שזה לא משנה כרגע כי לשניהם אותו מטען) הוא מטען יסודי: \( q = +e = 1.6 \cdot 10^{-19} \text{ C} \).</li>
+                    <li>האנרגיה הקינטית ההתחלתית בלוח A היא אפס: \( E_{kA} = 0 \).</li>
+                </ul>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">2. מה מחפשים:</h3>
+                <p class="text-slate-700 mt-2">את האנרגיה הקינטית \( E_{kC} \) של היון ברגע שהוא מגיע לחריץ בלוח C.</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">3. נוסחאות ועקרונות בשימוש:</h3>
+                <div class="mt-2 flex flex-col gap-2 items-start">
+                    <span class="formula-badge">\[ W = qV \]</span>
+                    <span class="formula-badge">\[ W = \Delta E_k \]</span>
+                    <p class="text-slate-700">השתמשנו במשפט עבודה-אנרגיה. העבודה של הכוח השקול (שהוא במקרה זה רק הכוח החשמלי) שווה לשינוי באנרגיה הקינטית.</p>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">4. הצבה ופתרון:</h3>
+                <p class="text-slate-700 mt-2">
+                    העבודה שעושה השדה החשמלי על המטען בעוברו הפרש פוטנציאלים \( V_{AC} \) ממירה אנרגיה חשמלית לאנרגיה קינטית. נרשום את משפט עבודה-אנרגיה:
+                    \[ W_{el} = \Delta E_k = E_{kC} - E_{kA} \]
+                    מכיוון ש- \( E_{kA} = 0 \), נקבל:
+                    \[ E_{kC} = q \cdot V_{AC} \]
+                    נציב את הערכים המספריים ליחידות MKS (שהן כבר נתונות):
+                    \[ E_{kC} = (1.6 \cdot 10^{-19} \text{ C}) \cdot (2 \cdot 10^4 \text{ V}) \]
+                    \[ E_{kC} = 3.2 \cdot 10^{-15} \text{ J} \]
+                </p>
+                <div class="final-answer">
+                    האנרגיה הקינטית של היון בחריץ C היא \( E_{kC} = 3.2 \cdot 10^{-15} \text{ J} \).
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <div>
+                    <strong class="block mb-1">טיפ מורה:</strong>
+                    האם המסה של פחמן-12 משפיעה על התשובה בסעיף זה? לא! האנרגיה הקינטית הנרכשת תלויה אך ורק במטען \( q \) ובמתח \( V \). לכן, גם איזוטופ פחמן-14 ירכוש בדיוק את אותה אנרגיה קינטית. המסה תשפיע על המהירות עצמה, אבל לא על סך האנרגיה הקינטית.
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ג -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 border-r-4 border-blue-500 pr-3">סעיף ג': ביטוי למהירות היון</h2>
+            
+            <div class="mb-6">
+                <h3 class="step-title">1. מה נתון:</h3>
+                <ul class="list-disc list-inside text-slate-700 space-y-2 mt-2">
+                    <li>אנרגיה קינטית מובעת באמצעות המטען והמתח (מסעיף קודם): \( E_k = qV_{AC} \).</li>
+                    <li>מסת היון תסומן באות הכללית \( m \).</li>
+                </ul>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">2. מה מחפשים:</h3>
+                <p class="text-slate-700 mt-2">לפתח ביטוי אלגברי עבור גודל מהירות היון \( v \) כפונקציה של \( q, m, V_{AC} \).</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">3. נוסחאות ועקרונות בשימוש:</h3>
+                <div class="mt-2 flex flex-col gap-2 items-start">
+                    <span class="formula-badge">\[ E_k = \frac{1}{2}mv^2 \]</span>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">4. הצבה ופתרון:</h3>
+                <p class="text-slate-700 mt-2 overflow-x-auto">
+                    נשווה בין ההגדרה הקינמטית של אנרגיה קינטית לבין האנרגיה שחושבה באמצעות העבודה החשמלית:
+                    \[ \frac{1}{2}mv^2 = qV_{AC} \]
+                    נכפול את שני אגפי המשוואה ב-2:
+                    \[ mv^2 = 2qV_{AC} \]
+                    נחלק במסת היון \( m \):
+                    \[ v^2 = \frac{2qV_{AC}}{m} \]
+                    ונוציא שורש ריבועי כדי לבודד את \( v \) (ניקח את הפתרון החיובי מכיוון שאנו מעוניינים בגודל המהירות):
+                    \[ v = \sqrt{\frac{2qV_{AC}}{m}} \]
+                </p>
+                <div class="final-answer">
+                    הביטוי למהירות הוא: \( v = \sqrt{\frac{2qV_{AC}}{m}} \)
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <div>
+                    <strong class="block mb-1">טיפ מורה:</strong>
+                    שימו לב כיצד המסה נמצאת במכנה בתוך השורש. זה אומר שככל שהחלקיק מסיבי יותר (כמו פחמן-14 לעומת פחמן-12), כך מהירותו הסופית תהיה קטנה יותר, למרות שלשניהם יש אותה אנרגיה קינטית בדיוק!
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ד -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 border-r-4 border-blue-500 pr-3">סעיף ד': צורת המסלול באזור II</h2>
+            
+            <div class="mb-6">
+                <h3 class="step-title">1. מה נתון:</h3>
+                <ul class="list-disc list-inside text-slate-700 space-y-2 mt-2">
+                    <li>באזור II שורר שדה מגנטי אחיד \( \vec{B} \) המכוון לתוך הדף.</li>
+                    <li>היון נכנס לאזור זה במהירות \( \vec{v} \) שכיוונה ימינה. לכן, הזווית בין וקטור המהירות לווקטור השדה המגנטי היא \( \alpha = 90^\circ \).</li>
+                </ul>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">2. מה מחפשים:</h3>
+                <p class="text-slate-700 mt-2">הסבר פיזיקלי מדוע חלקיקים הטעונים חיובית ינועו במסלול מעגלי באזור זה.</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">3. נוסחאות ועקרונות בשימוש:</h3>
+                <div class="mt-2 flex flex-col gap-2 items-start">
+                    <span class="formula-badge">\[ F_B = qvB\sin\alpha \]</span>
+                    <span class="formula-badge">\[ \Sigma F = ma_R \]</span>
+                    <span class="formula-badge">\[ a_R = \frac{v^2}{R} \]</span>
+                    <p class="text-slate-700">נשתמש גם בכלל יד ימין (הראשון) למציאת כיוון הכוח המגנטי.</p>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">4. הצבה ופתרון:</h3>
+                <p class="text-slate-700 mt-2 mb-4">
+                    כאשר מטען חיובי נכנס לשדה מגנטי המאונך למהירותו, פועל עליו כוח מגנטי המכונה כוח לורנץ. נשתמש בכלל יד ימין (האגודל בכיוון המהירות \( \vec{v} \) ימינה, האצבעות פנימה אל תוך הדף בכיוון \( \vec{B} \)), ונמצא שכיוון הכוח המגנטי \( \vec{F}_B \) (היוצא מכף היד) הוא <strong>כלפי מעלה</strong>.
+                </p>
+                <p class="text-slate-700 mb-4">
+                    תכונתו המרכזית של הכוח המגנטי היא שהוא <strong>תמיד מאונך</strong> לווקטור המהירות. כוח שמאונך למהירות אינו מבצע עבודה, ולכן אינו יכול לשנות את גודל המהירות (האנרגיה הקינטית נשמרת), אלא רק את כיוונה.
+                </p>
+                
+                <!-- SVG FBD for Circular Motion -->
+                <div class="svg-container bg-slate-50 rounded-lg p-4 border border-slate-200">
+                    <svg viewBox="0 0 400 300" xmlns="http://www.w3.org/2000/svg" class="w-full h-full">
+                        <defs>
+                            <marker id="arrowHeadV" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981" />
+                            </marker>
+                            <marker id="arrowHeadF" markerWidth="10" markerHeight="10" refX="9" refY="5" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#8b5cf6" />
+                            </marker>
+                            <pattern id="bField" x="0" y="0" width="40" height="40" patternUnits="userSpaceOnUse">
+                                <circle cx="20" cy="20" r="5" fill="none" stroke="#64748b" stroke-width="1.5"/>
+                                <line x1="16" y1="16" x2="24" y2="24" stroke="#64748b" stroke-width="1.5"/>
+                                <line x1="24" y1="16" x2="16" y2="24" stroke="#64748b" stroke-width="1.5"/>
+                            </pattern>
+                        </defs>
+                        
+                        <!-- Magnetic Field Background -->
+                        <rect x="0" y="0" width="400" height="300" fill="url(#bField)" />
+                        
+                        <!-- Slit Wall -->
+                        <rect x="0" y="290" width="400" height="10" fill="#94a3b8" />
+                        <rect x="180" y="290" width="40" height="10" fill="#f8fafc" />
+                        <text x="200" y="285" text-anchor="middle" font-family="Rubik" font-weight="bold" fill="#334155">C</text>
+
+                        <!-- Particle Trajectory (Semi-circle) -->
+                        <path d="M 200 290 A 100 100 0 0 1 0 290" fill="none" stroke="#334155" stroke-width="2" stroke-dasharray="6,4" />
+                        
+                        <!-- Particle at Start -->
+                        <circle cx="200" cy="290" r="8" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+                        <line x1="200" y1="290" x2="200" y2="230" stroke="#10b981" stroke-width="3" marker-end="url(#arrowHeadV)" />
+                        <text x="210" y="250" fill="#10b981" font-family="serif" font-weight="bold" font-size="16">v</text>
+                        <line x1="200" y1="290" x2="140" y2="290" stroke="#8b5cf6" stroke-width="3" marker-end="url(#arrowHeadF)" />
+                        <text x="150" y="280" fill="#8b5cf6" font-family="serif" font-weight="bold" font-size="16">F_B</text>
+
+                        <!-- Particle in Middle -->
+                        <circle cx="100" cy="190" r="8" fill="#fecaca" stroke="#dc2626" stroke-width="2"/>
+                        <line x1="100" y1="190" x2="40" y2="190" stroke="#10b981" stroke-width="3" marker-end="url(#arrowHeadV)" />
+                        <text x="60" y="180" fill="#10b981" font-family="serif" font-weight="bold" font-size="16">v</text>
+                        <line x1="100" y1="190" x2="100" y2="250" stroke="#8b5cf6" stroke-width="3" marker-end="url(#arrowHeadF)" />
+                        <text x="110" y="240" fill="#8b5cf6" font-family="serif" font-weight="bold" font-size="16">F_B</text>
+                        
+                        <!-- Center Point -->
+                        <circle cx="100" cy="290" r="4" fill="#334155" />
+                        <text x="100" y="280" text-anchor="middle" font-family="sans-serif" fill="#334155">R</text>
+
+                    </svg>
+                    <p class="text-center text-sm text-slate-500 mt-2">הכוח המגנטי תמיד פונה למרכז, ויוצר תאוצה רדיאלית קבועה השומרת על מסלול מעגלי.</p>
+                </div>
+
+                <p class="text-slate-700 mt-4">
+                    מכיוון שגודל המהירות קבוע, גם גודל הכוח המגנטי קבוע (\( F_B = qvB \)). כוח שגודלו קבוע והוא תמיד ניצב למהירות פועל ככוח צנטריפטלי מרכזי מושלם. תאוצה רדיאלית קבועה גורמת לתנועה במסלול שרדיוסו קבוע, כלומר תנועה מעגלית קצובה (במקרה שלנו, חצי מעגל עד הפגיעה בלוח).
+                </p>
+                <div class="final-answer">
+                    הכוח המגנטי ניצב תמיד למהירות היון, לכן אינו משנה את גודל המהירות אלא רק את כיוונה. כוח ניצב קבוע יוצר תאוצה רדיאלית קבועה, מה שגורם לתנועה מעגלית.
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <div>
+                    <strong class="block mb-1">טיפ מורה:</strong>
+                    חשוב מאוד במבחני בגרות להזכיר את המילה "תמיד"! הכוח מאונך למהירות <strong>תמיד</strong> לאורך כל המסלול, ולא רק ברגע הכניסה. זה מה שמבטיח שהמסלול יהיה מעגלי ולא פרבולי או משהו אחר.
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ה -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold text-slate-800 mb-6 border-r-4 border-blue-500 pr-3">סעיף ה': חישוב המרחק \( M_1M_2 \)</h2>
+            
+            <div class="mb-6">
+                <h3 class="step-title">1. מה נתון:</h3>
+                <p class="text-slate-700 mb-2">ראשית, נבצע המרת יחידות מסה (MKS) מ- u לק"ג, באמצעות הנתון \( 1\text{ u} = 1.66 \cdot 10^{-27} \text{ kg} \):</p>
+                <ul class="list-disc list-inside text-slate-700 space-y-2 mt-2">
+                    <li>מסת האיזוטופ הראשון (פחמן-12): \( m_1 = 12 \text{ u} = 12 \cdot 1.66 \cdot 10^{-27} \text{ kg} = 1.992 \cdot 10^{-26} \text{ kg} \)</li>
+                    <li>מסת האיזוטופ השני (פחמן-14): \( m_2 = 14 \text{ u} = 14 \cdot 1.66 \cdot 10^{-27} \text{ kg} = 2.324 \cdot 10^{-26} \text{ kg} \)</li>
+                    <li>עוצמת השדה המגנטי: \( B = 0.5 \text{ T} \)</li>
+                    <li>הנתונים הקודמים: \( V_{AC} = 2 \cdot 10^4 \text{ V} \) , \( q = 1.6 \cdot 10^{-19} \text{ C} \)</li>
+                </ul>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">2. מה מחפשים:</h3>
+                <p class="text-slate-700 mt-2">את המרחק הפיזי על הלוח הצילומי בין נקודת הפגיעה של פחמן-12 (\( M_1 \)) לנקודת הפגיעה של פחמן-14 (\( M_2 \)).</p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">3. נוסחאות ועקרונות בשימוש:</h3>
+                <div class="mt-2 flex flex-col gap-2 items-start">
+                    <span class="formula-badge">\[ \Sigma F_r = m a_R \]</span>
+                    <span class="formula-badge">\[ qvB = m\frac{v^2}{R} \]</span>
+                    <p class="text-slate-700">עקרון גיאומטרי: חלקיק משלים חצי מעגל, ולכן מרחק הפגיעה מהחריץ הוא בדיוק קוטר המסלול: \( d = 2R \). המרחק המבוקש הוא ההפרש בין הקטרים: \( \Delta x = 2R_2 - 2R_1 \).</p>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="step-title">4. הצבה ופתרון:</h3>
+                <p class="text-slate-700 mt-2 overflow-x-auto">
+                    תחילה, <strong>חובה לפתח</strong> את נוסחת הרדיוס \( R \) מהחוק השני של ניוטון, כיוון שהיא אינה מופיעה בצורה מפורשת בדף הנוסחאות. הכוח השקול בציר הרדיאלי הוא הכוח המגנטי:
+                    \[ \Sigma F_r = m a_R \Rightarrow qvB = m\frac{v^2}{R} \]
+                    נצמצם \( v \) אחד משני האגפים ונבודד את \( R \):
+                    \[ qB = m\frac{v}{R} \Rightarrow R = \frac{mv}{qB} \]
+                    נציב את הביטוי למהירות \( v = \sqrt{\frac{2qV_{AC}}{m}} \) שפיתחנו בסעיף ג':
+                    \[ R = \frac{m}{qB} \sqrt{\frac{2qV_{AC}}{m}} = \frac{1}{B} \sqrt{\frac{m^2 \cdot 2qV_{AC}}{q^2 \cdot m}} = \frac{1}{B} \sqrt{\frac{2mV_{AC}}{q}} \]
+                    כעת נחשב את הרדיוס עבור כל אחד מהאיזוטופים:
+                    <br><br>
+                    <strong>עבור פחמן-12 (\( R_1 \)):</strong>
+                    \[ R_1 = \frac{1}{0.5} \sqrt{\frac{2 \cdot 1.992 \cdot 10^{-26} \cdot 20000}{1.6 \cdot 10^{-19}}} \]
+                    \[ R_1 = 2 \cdot \sqrt{4.98 \cdot 10^{-3}} \approx 2 \cdot 0.070569 = 0.1411 \text{ m} \]
+                    קוטר המסלול של פחמן-12 הוא: \( D_1 = 2R_1 = 0.2822 \text{ m} \).
+                    <br><br>
+                    <strong>עבור פחמן-14 (\( R_2 \)):</strong>
+                    \[ R_2 = \frac{1}{0.5} \sqrt{\frac{2 \cdot 2.324 \cdot 10^{-26} \cdot 20000}{1.6 \cdot 10^{-19}}} \]
+                    \[ R_2 = 2 \cdot \sqrt{5.81 \cdot 10^{-3}} \approx 2 \cdot 0.076223 = 0.1524 \text{ m} \]
+                    קוטר המסלול של פחמן-14 הוא: \( D_2 = 2R_2 = 0.3048 \text{ m} \).
+                    <br><br>
+                    המרחק בין שתי נקודות הפגיעה \( M_1 \) ו- \( M_2 \) הוא הפרש הקטרים:
+                    \[ \Delta x = D_2 - D_1 = 0.3048 - 0.2822 = 0.0226 \text{ m} \]
+                    נמיר לסנטימטרים לנוחות הקריאה: \( 0.0226 \text{ m} = 2.26 \text{ cm} \).
+                </p>
+                <div class="final-answer">
+                    המרחק על הלוח בין \( M_1 \) ל- \( M_2 \) הוא \( 2.26 \text{ cm} \).
+                </div>
+            </div>
+
+            <div class="teacher-highlight">
+                <div>
+                    <strong class="block mb-1">טיפ מורה:</strong>
+                    זהו הקסם של ספקטרומטר מסות! ראיתם כיצד ההבדל הקטן במסה בין שני איזוטופים מתורגם להבדל פיזי של כ-2.2 ס"מ על הלוח. כך מדענים מפרידים וסופרים איזוטופים במעבדה. זכרו תמיד לפתח את \( R=mv/qB \) ישירות מחוקי ניוטון, בוחנים מורידים על זה נקודות אם רק שולפים את הנוסחה!
+                </div>
+            </div>
+        </div>
+
+    </div> <!-- End of Max Width Container -->
+
+    <!-- Floating Button for Question Image -->
+    <button class="floating-btn" onclick="document.getElementById('imageModal').style.display='block'">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+        הצג שאלה
+    </button>
+
+    <!-- Modal Form -->
+    <div id="imageModal">
+        <span class="close-btn" onclick="document.getElementById('imageModal').style.display='none'">&times;</span>
+        <img class="modal-content" id="modalImg" src="question-image.png" alt="תמונת השאלה">
+    </div>
+
+    <!-- JavaScript to handle dates and modal clicks -->
+    <script>
+        // Set update timestamp
+        const now = new Date();
+        const dateString = now.toLocaleDateString('he-IL');
+        const timeString = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+        document.getElementById('versionUpdatedAt').textContent = `${dateString} ${timeString}`;
+
+        // Close modal when clicking outside the image
+        var modal = document.getElementById('imageModal');
+        window.onclick = function(event) {
+            if (event.target == modal) {
+                modal.style.display = "none";
+            }
+        }
+    </script>
+</body>
+</html>

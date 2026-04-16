@@ -48,6 +48,10 @@
             margin: 0;
         }
 
+        body.drawer-open {
+            overflow: hidden;
+        }
+
         .page-shell {
             max-width: 980px;
             margin: 0 auto;
@@ -106,14 +110,480 @@
             gap: 0.9rem;
         }
 
+        .section-card.filter-shell {
+            padding: 0;
+            overflow: hidden;
+            border-color: rgba(191, 219, 254, 0.95);
+            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.08);
+        }
+
+        .filter-topbar {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 0.9rem;
+            padding: 1.1rem 1.25rem 1rem;
+            align-items: end;
+            background: #ffffff;
+        }
+
+        .search-field {
+            display: block;
+        }
+
+        .toolbar-cluster {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-open-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            border: 1px solid rgba(147, 197, 253, 0.95);
+            border-radius: 0.9rem;
+            background: #ffffff;
+            color: #1e3a8a;
+            font: inherit;
+            font-weight: 700;
+            padding: 0.82rem 1rem;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.08);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+        }
+
+        .filter-open-btn:hover {
+            transform: translateY(-1px);
+            border-color: var(--blue-600);
+            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.14);
+        }
+
+        .filter-open-btn.has-active {
+            background: var(--blue-50);
+            border-color: var(--blue-600);
+        }
+
+        .filter-open-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.55rem;
+            height: 1.55rem;
+            border-radius: 9999px;
+            background: var(--blue-700);
+            color: #eff6ff;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1;
+            padding: 0 0.35rem;
+        }
+
+        .results-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.9rem;
+            padding: 0.95rem 1.25rem 1rem;
+            border-top: 1px solid rgba(226, 232, 240, 0.95);
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.72), rgba(255, 255, 255, 0.94));
+        }
+
+        .results-info {
+            margin: 0;
+            font-size: 0.92rem;
+            color: #475569;
+        }
+
+        .active-summary {
+            padding: 0 1.25rem 1.1rem;
+            display: grid;
+            gap: 0.7rem;
+        }
+
+        .active-summary[hidden] {
+            display: none;
+        }
+
+        .active-summary-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .active-summary-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .active-filter-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+
+        .active-filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            border-radius: 9999px;
+            border: 1px solid var(--slate-300);
+            padding: 0.35rem 0.7rem;
+            font: inherit;
+            font-size: 0.86rem;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .active-filter-chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+        }
+
+        .active-filter-chip.is-topic {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            color: #1d4ed8;
+        }
+
+        .active-filter-chip.is-skill {
+            background: #f0fdf4;
+            border-color: #86efac;
+            color: #166534;
+        }
+
+        .active-filter-remove {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.1rem;
+            height: 1.1rem;
+            border-radius: 9999px;
+            font-size: 0.88rem;
+            line-height: 1;
+            background: rgba(255, 255, 255, 0.72);
+        }
+
+        .filter-drawer-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.42);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 300;
+        }
+
+        .filter-drawer-backdrop.is-open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .filter-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: min(430px, 100vw);
+            height: 100vh;
+            background: #ffffff;
+            box-shadow: -24px 0 54px rgba(15, 23, 42, 0.2);
+            transform: translateX(100%);
+            transition: transform 0.24s ease;
+            z-index: 320;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+        }
+
+        .filter-drawer.is-open {
+            transform: translateX(0);
+        }
+
+        .filter-drawer-header {
+            padding: 1rem 1.1rem 0.95rem;
+            border-bottom: 1px solid var(--slate-200);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+        }
+
+        .filter-drawer-kicker {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #1d4ed8;
+            margin-bottom: 0.2rem;
+        }
+
+        .filter-drawer-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .filter-drawer-text {
+            margin: 0.35rem 0 0;
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        .filter-drawer-close {
+            border: 1px solid var(--slate-300);
+            background: #ffffff;
+            color: #334155;
+            border-radius: 9999px;
+            padding: 0.45rem 0.85rem;
+            font: inherit;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .filter-drawer-close:hover {
+            border-color: var(--blue-border);
+            color: #1d4ed8;
+        }
+
+        .filter-drawer-body {
+            overflow: auto;
+            padding: 1rem 1.1rem 1.25rem;
+            display: grid;
+            gap: 1.15rem;
+        }
+
+        .filter-panel-block {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .filter-section-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .filter-section-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-section-status {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .filter-link-btn {
+            border: none;
+            background: none;
+            padding: 0;
+            font: inherit;
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            cursor: pointer;
+        }
+
+        .filter-link-btn.blue {
+            color: #1d4ed8;
+        }
+
+        .filter-link-btn.green {
+            color: #15803d;
+        }
+
+        .filter-link-btn.neutral {
+            color: #475569;
+        }
+
+        .filter-link-btn:disabled {
+            opacity: 0.45;
+            cursor: default;
+            text-decoration: none;
+        }
+
+        .filter-drawer-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.95rem 1.1rem 1.1rem;
+            border-top: 1px solid var(--slate-200);
+            background: #ffffff;
+        }
+
+        .drawer-primary-btn,
+        .drawer-secondary-btn {
+            border-radius: 0.8rem;
+            padding: 0.7rem 1rem;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+        }
+
+        .drawer-primary-btn {
+            border: 1px solid var(--blue-700);
+            background: var(--blue-700);
+            color: #eff6ff;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.16);
+        }
+
+        .drawer-secondary-btn {
+            border: 1px solid var(--slate-300);
+            background: #ffffff;
+            color: #334155;
+        }
+
+        .drawer-primary-btn:hover,
+        .drawer-secondary-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .topics-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .topic-filter-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+
+        .skill-filter-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+
+        .topic-chip {
+            border: 1px solid var(--slate-300);
+            background: #fff;
+            color: #334155;
+            border-radius: 9999px;
+            padding: 0.42rem 0.8rem;
+            font: inherit;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .topic-chip:hover {
+            border-color: var(--blue-border);
+            transform: translateY(-1px);
+        }
+
+        .topic-chip.is-active {
+            background: var(--blue-700);
+            color: #eff6ff;
+            border-color: var(--blue-700);
+        }
+
+        .topic-chip.is-empty {
+            opacity: 0.55;
+        }
+
+        .topic-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.45rem;
+            height: 1.45rem;
+            padding: 0 0.35rem;
+            margin-inline-start: 0.35rem;
+            border-radius: 9999px;
+            background: #e2e8f0;
+            color: #334155;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .topic-chip.is-active .topic-count {
+            background: rgba(255, 255, 255, 0.18);
+            color: #eff6ff;
+        }
+
+        .skill-chip {
+            border: 1px solid #86efac;
+            background: #f0fdf4;
+            color: #166534;
+            border-radius: 9999px;
+            padding: 0.42rem 0.8rem;
+            font: inherit;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .skill-chip:hover {
+            border-color: #4ade80;
+            transform: translateY(-1px);
+        }
+
+        .skill-chip.is-active {
+            background: #166534;
+            color: #ecfdf5;
+            border-color: #166534;
+        }
+
+        .skill-chip.is-empty {
+            opacity: 0.55;
+        }
+
+        .skill-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.45rem;
+            height: 1.45rem;
+            padding: 0 0.35rem;
+            margin-inline-start: 0.35rem;
+            border-radius: 9999px;
+            background: #dcfce7;
+            color: #166534;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .skill-chip.is-active .skill-count {
+            background: rgba(255, 255, 255, 0.18);
+            color: #ecfdf5;
+        }
+
         .filter-note {
             font-size: 0.88rem;
             color: #64748b;
+            margin: 0;
         }
 
         .search-input {
             width: 100%;
-            max-width: 34rem;
+            max-width: none;
             border: 1px solid var(--slate-300);
             border-radius: 0.75rem;
             padding: 0.8rem 0.95rem;
@@ -134,7 +604,7 @@
             justify-content: flex-start;
             gap: 0.65rem;
             flex-wrap: wrap;
-            margin-top: 0.25rem;
+            margin-top: 0;
         }
 
         .sort-chip {
@@ -220,6 +690,24 @@
             border-color: #86efac;
             color: #166534;
             background: #f0fdf4;
+        }
+
+        .meta-pill.topic {
+            border-color: #bfdbfe;
+            color: #1d4ed8;
+            background: #eff6ff;
+        }
+
+        .meta-pill.skill {
+            border-color: #86efac;
+            color: #166534;
+            background: #f0fdf4;
+        }
+
+        .meta-pill.pending {
+            border-color: #fed7aa;
+            color: #9a3412;
+            background: #fff7ed;
         }
 
         .meta-pill.example {
@@ -330,6 +818,13 @@
                 padding: 0.75rem;
             }
 
+            .filter-topbar,
+            .results-strip,
+            .active-summary {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
             .filter-grid {
                 grid-template-columns: 1fr;
             }
@@ -342,6 +837,46 @@
             .thumb-fallback {
                 width: 100%;
                 height: 140px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .filter-topbar {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar-cluster {
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .filter-drawer {
+                top: auto;
+                bottom: 0;
+                width: 100vw;
+                height: min(84vh, 760px);
+                border-radius: 1.1rem 1.1rem 0 0;
+                box-shadow: 0 -20px 48px rgba(15, 23, 42, 0.24);
+                transform: translateY(100%);
+            }
+
+            .filter-drawer.is-open {
+                transform: translateY(0);
+            }
+
+            .filter-drawer-footer {
+                flex-direction: column-reverse;
+            }
+
+            .drawer-primary-btn,
+            .drawer-secondary-btn,
+            .filter-open-btn {
+                width: 100%;
+            }
+
+            .toolbar-cluster {
+                width: 100%;
             }
         }
     </style>
@@ -363,17 +898,18 @@
             </div>
         </header>
 
-        <section class="section-card">
-            <h3 class="section-header">סינון</h3>
-            <div class="filter-grid">
-                <div class="filter-stack">
-                    <label class="block">
-                        <span class="block text-sm font-semibold text-slate-700 mb-1">חיפוש חופשי</span>
-                        <input id="searchInput" class="search-input" type="search" placeholder="חפשי לפי שם תרגול, שם מורה, תאריך או מחוון" aria-label="חיפוש חופשי בתרגולים">
-                    </label>
+        <section class="section-card filter-shell">
+            <div class="filter-topbar">
+                <label class="search-field">
+                    <span class="block text-sm font-semibold text-slate-700 mb-1">חיפוש חופשי</span>
+                    <input id="searchInput" class="search-input" type="search" placeholder="חפשי לפי שם תרגול, שם מורה, תאריך או מחוון" aria-label="חיפוש חופשי בתרגולים">
+                </label>
 
-                    <p class="filter-note">החיפוש בודק את שם התרגול, התאריך המלא, קוד התאריך, האם קיים מחוון, וגם טקסט מתוך גוף דף התרגול עצמו.</p>
-
+                <div class="toolbar-cluster">
+                    <button id="openFiltersBtn" type="button" class="filter-open-btn" aria-controls="filterDrawer" aria-expanded="false">
+                        <span>סינון מתקדם</span>
+                        <span id="drawerFilterCount" class="filter-open-count" hidden>0</span>
+                    </button>
                     <div class="sort-toolbar">
                         <button id="sortRecentBtn" type="button" class="sort-chip is-active" aria-pressed="true">מיון: חדש לישן</button>
                         <button id="sortTitleBtn" type="button" class="sort-chip" aria-pressed="false">מיון: לפי שם</button>
@@ -381,7 +917,17 @@
                 </div>
             </div>
 
-            <p id="resultsInfo" class="mt-3 text-sm text-slate-500"></p>
+            <div class="results-strip">
+                <p id="resultsInfo" class="results-info"></p>
+            </div>
+
+            <div id="activeSummary" class="active-summary" hidden>
+                <div class="active-summary-head">
+                    <span class="active-summary-title">סינונים פעילים</span>
+                    <button type="button" class="filter-link-btn neutral" data-clear-all-filters>נקה הכל</button>
+                </div>
+                <div id="activeFilters" class="active-filter-list"></div>
+            </div>
         </section>
 
         <section class="section-card">
@@ -394,6 +940,54 @@
             <a href="../../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
         </footer>
     </div>
+
+    <div id="filterBackdrop" class="filter-drawer-backdrop"></div>
+
+    <aside id="filterDrawer" class="filter-drawer" aria-hidden="true" aria-label="מגירת סינון מתקדם">
+        <div class="filter-drawer-header">
+            <div>
+                <div class="filter-drawer-kicker">סינון מתקדם</div>
+                <h3 class="filter-drawer-title">נושאים ומיומנויות</h3>
+                <p class="filter-drawer-text">הבחירה מתעדכנת מיד ברשימה. אפשר לשלב כמה תגיות יחד בלי לעזוב את המסך הראשי.</p>
+            </div>
+            <button id="closeFiltersBtn" type="button" class="filter-drawer-close" aria-label="סגירת מגירת הסינון">סגור</button>
+        </div>
+
+        <div class="filter-drawer-body">
+            <section class="filter-panel-block">
+                <div class="filter-section-head">
+                    <div>
+                        <h4 class="filter-section-title">נושאים</h4>
+                        <p class="filter-note">יוצגו רק שאלות שמכילות את כל הנושאים שנבחרו.</p>
+                    </div>
+                    <div class="filter-section-actions">
+                        <span id="topicsStatus" class="filter-section-status">0 זמינים</span>
+                        <button id="clearTopicsBtn" type="button" class="filter-link-btn blue">נקה תגיות</button>
+                    </div>
+                </div>
+                <div id="topicsFilter" class="topic-filter-box"></div>
+            </section>
+
+            <section class="filter-panel-block">
+                <div class="filter-section-head">
+                    <div>
+                        <h4 class="filter-section-title">מיומנויות</h4>
+                        <p class="filter-note">יוצגו רק שאלות שמכילות את כל המיומנויות שנבחרו.</p>
+                    </div>
+                    <div class="filter-section-actions">
+                        <span id="skillsStatus" class="filter-section-status">0 זמינות</span>
+                        <button id="clearSkillsBtn" type="button" class="filter-link-btn green">נקה מיומנויות</button>
+                    </div>
+                </div>
+                <div id="skillsFilter" class="skill-filter-box"></div>
+            </section>
+        </div>
+
+        <div class="filter-drawer-footer">
+            <button type="button" class="drawer-secondary-btn" data-clear-all-filters>נקה הכל</button>
+            <button id="doneFiltersBtn" type="button" class="drawer-primary-btn">חזרה לרשימה</button>
+        </div>
+    </aside>
 
     <div id="hoverPreview" class="hover-preview" aria-hidden="true">
         <img id="hoverPreviewImg" alt="תצוגה מוגדלת של התרגול">
@@ -422,13 +1016,32 @@
         const listEl = document.getElementById("solutionsList");
         const sortRecentBtn = document.getElementById("sortRecentBtn");
         const sortTitleBtn = document.getElementById("sortTitleBtn");
+        const topicsFilterEl = document.getElementById("topicsFilter");
+        const skillsFilterEl = document.getElementById("skillsFilter");
+        const clearTopicsBtn = document.getElementById("clearTopicsBtn");
+        const clearSkillsBtn = document.getElementById("clearSkillsBtn");
         const hoverPreview = document.getElementById("hoverPreview");
         const hoverPreviewImg = document.getElementById("hoverPreviewImg");
+        const openFiltersBtn = document.getElementById("openFiltersBtn");
+        const closeFiltersBtn = document.getElementById("closeFiltersBtn");
+        const doneFiltersBtn = document.getElementById("doneFiltersBtn");
+        const filterDrawer = document.getElementById("filterDrawer");
+        const filterBackdrop = document.getElementById("filterBackdrop");
+        const drawerFilterCount = document.getElementById("drawerFilterCount");
+        const activeSummaryEl = document.getElementById("activeSummary");
+        const activeFiltersEl = document.getElementById("activeFilters");
+        const topicsStatusEl = document.getElementById("topicsStatus");
+        const skillsStatusEl = document.getElementById("skillsStatus");
+        const clearAllFilterButtons = document.querySelectorAll("[data-clear-all-filters]");
 
         let previewActive = false;
         let sortMode = "recent";
         let solutions = [];
         let bodySearchIndexReady = false;
+        let topicCatalog = [];
+        let skillCatalog = [];
+        const selectedTopics = new Set();
+        const selectedSkills = new Set();
 
         function isLocalhost() {
             return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
@@ -546,7 +1159,37 @@
         function getPracticeFolder(path) {
             const normalized = normalizeRelativePath(path);
             const parts = normalized.split("/").filter(Boolean);
-            return parts.length ? parts[0] : "";
+            return parts.find((part) => Boolean(parseFolderName(part))) || "";
+        }
+
+        function getPracticeRootPath(path) {
+            const normalized = normalizeRelativePath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            const practiceIndex = parts.findIndex((part) => Boolean(parseFolderName(part)));
+            if (practiceIndex < 0) {
+                return "";
+            }
+            return parts.slice(0, practiceIndex + 1).join("/");
+        }
+
+        function createQuestionIdFromFolder(folderName, usedIds) {
+            const parsed = parseFolderName(folderName);
+            const rawBase = parsed ? `${parsed.dateCode}-${parsed.label || parsed.title}` : String(folderName || "practice");
+            const base = rawBase
+                .trim()
+                .replace(/\s+/g, "-")
+                .replace(/[^\u0590-\u05FF\w-]/g, "")
+                .replace(/-+/g, "-")
+                .replace(/^-|-$/g, "") || "practice";
+
+            let candidate = base;
+            let index = 2;
+            while (usedIds.has(candidate)) {
+                candidate = `${base}-${index}`;
+                index += 1;
+            }
+            usedIds.add(candidate);
+            return candidate;
         }
 
         function pickMainHtml(folderPath, htmlFiles) {
@@ -588,7 +1231,8 @@
                 const fileName = getFileName(relativePath);
                 const folderPath = getFolderPath(relativePath);
                 const practiceFolder = getPracticeFolder(relativePath);
-                if (!fileName || !folderPath || !practiceFolder) {
+                const practiceRootPath = getPracticeRootPath(relativePath);
+                if (!fileName || !folderPath || !practiceFolder || !practiceRootPath) {
                     return;
                 }
 
@@ -596,19 +1240,19 @@
                     return;
                 }
 
-                const entry = ensureFolder(practiceFolder);
-                if (fileName.toLowerCase() === "question-image.png" && folderPath === practiceFolder) {
+                const entry = ensureFolder(practiceRootPath);
+                if (fileName.toLowerCase() === "question-image.png" && folderPath === practiceRootPath) {
                     entry.hasQuestionImage = true;
                     return;
                 }
 
                 if (fileName.toLowerCase().endsWith(".html") && !DISCOVERY_EXCLUDED_FILES.has(fileName)) {
-                    if (folderPath === practiceFolder) {
+                    if (folderPath === practiceRootPath) {
                         entry.htmlFiles.add(fileName);
                         return;
                     }
 
-                    const isRubric = /מחוון/.test(folderPath) || /מחוון/.test(fileName);
+                    const isRubric = folderPath !== practiceRootPath && (/מחוון/.test(folderPath) || /מחוון/.test(fileName));
                     if (isRubric && !entry.rubricHref) {
                         entry.rubricHref = `./${relativePath}`;
                     }
@@ -616,13 +1260,14 @@
             }
 
             function finalize() {
-                return [...discovered.entries()].map(([practiceFolder, entry]) => {
+                return [...discovered.entries()].map(([practiceRootPath, entry]) => {
+                    const practiceFolder = getPracticeFolder(practiceRootPath);
                     const parsed = parseFolderName(practiceFolder);
                     if (!parsed || !entry.htmlFiles.size) {
                         return null;
                     }
 
-                    const htmlFile = pickMainHtml(practiceFolder, entry.htmlFiles);
+                    const htmlFile = pickMainHtml(practiceRootPath, entry.htmlFiles);
                     if (!htmlFile) {
                         return null;
                     }
@@ -634,8 +1279,8 @@
                         displayDate: parsed.displayDate,
                         year: parsed.year,
                         timestamp: parsed.timestamp,
-                        href: `./${practiceFolder}/${htmlFile}`,
-                        thumb: entry.hasQuestionImage ? `./${practiceFolder}/question-image.png` : "",
+                        href: `./${practiceRootPath}/${htmlFile}`,
+                        thumb: entry.hasQuestionImage ? `./${practiceRootPath}/question-image.png` : "",
                         rubricHref: entry.rubricHref,
                         isExample: false
                     };
@@ -688,7 +1333,7 @@
         function mergeStaticAndDiscovered(staticItems, discoveredItems) {
             const byTitle = new Map();
 
-            [...discoveredItems, ...staticItems].forEach((item) => {
+            [...staticItems, ...discoveredItems].forEach((item) => {
                 const parsed = parseFolderName(item.title);
                 if (!parsed) {
                     return;
@@ -723,6 +1368,344 @@
             });
 
             return [...byTitle.values()];
+        }
+
+        function mergeTopicDataWithDiscovered(rawData, discoveredItems) {
+            const topics = Array.isArray(rawData.topics) ? rawData.topics : [];
+            const skills = Array.isArray(rawData.skills) ? rawData.skills : [];
+            const questions = Array.isArray(rawData.questions) ? rawData.questions.map((question) => ({ ...question })) : [];
+
+            const byPath = new Map();
+            const byPracticeFolder = new Map();
+            const usedIds = new Set();
+
+            questions.forEach((question) => {
+                const normalizedPath = normalizeRelativePath(question.path || "");
+                question.path = normalizedPath;
+                if (!Array.isArray(question.topics)) {
+                    question.topics = [];
+                }
+                if (!Array.isArray(question.skills)) {
+                    question.skills = [];
+                }
+                if (question.id) {
+                    usedIds.add(question.id);
+                }
+                if (normalizedPath) {
+                    byPath.set(normalizedPath, question);
+                }
+
+                const practiceFolder = getPracticeFolder(normalizedPath);
+                if (practiceFolder && !byPracticeFolder.has(practiceFolder)) {
+                    byPracticeFolder.set(practiceFolder, question);
+                }
+            });
+
+            discoveredItems.forEach((item) => {
+                const normalizedPath = normalizeRelativePath(item.href || "");
+                if (!normalizedPath || byPath.has(normalizedPath)) {
+                    return;
+                }
+
+                const practiceFolder = getPracticeFolder(normalizedPath);
+                if (!practiceFolder) {
+                    return;
+                }
+
+                const existingQuestion = byPracticeFolder.get(practiceFolder);
+                if (existingQuestion) {
+                    byPath.delete(normalizeRelativePath(existingQuestion.path || ""));
+                    existingQuestion.path = normalizedPath;
+                    byPath.set(normalizedPath, existingQuestion);
+                    return;
+                }
+
+                const newQuestion = {
+                    id: createQuestionIdFromFolder(practiceFolder, usedIds),
+                    title: item.title || practiceFolder,
+                    path: normalizedPath,
+                    topics: [],
+                    skills: []
+                };
+                questions.push(newQuestion);
+                byPath.set(normalizedPath, newQuestion);
+                byPracticeFolder.set(practiceFolder, newQuestion);
+            });
+
+            return { topics, skills, questions };
+        }
+
+        function getTopicCountFromList(topic, items) {
+            return items.filter((solution) => (solution.topicTags || []).includes(topic)).length;
+        }
+
+        function getSkillCountFromList(skill, items) {
+            return items.filter((solution) => (solution.skillTags || []).includes(skill)).length;
+        }
+
+        function getActiveFilterCount() {
+            return selectedTopics.size + selectedSkills.size;
+        }
+
+        function clearAllFilters() {
+            selectedTopics.clear();
+            selectedSkills.clear();
+            runFilter();
+        }
+
+        function setFilterDrawerOpen(isOpen) {
+            if (!filterDrawer || !filterBackdrop) {
+                return;
+            }
+
+            filterDrawer.classList.toggle("is-open", isOpen);
+            filterBackdrop.classList.toggle("is-open", isOpen);
+            filterDrawer.setAttribute("aria-hidden", isOpen ? "false" : "true");
+            if (openFiltersBtn) {
+                openFiltersBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            }
+            document.body.classList.toggle("drawer-open", isOpen);
+        }
+
+        function renderActiveFilters() {
+            if (!activeSummaryEl || !activeFiltersEl) {
+                return;
+            }
+
+            activeFiltersEl.innerHTML = "";
+
+            const activeEntries = [
+                ...[...selectedTopics].map((value) => ({ type: "topic", value })),
+                ...[...selectedSkills].map((value) => ({ type: "skill", value }))
+            ];
+
+            if (!activeEntries.length) {
+                activeSummaryEl.hidden = true;
+                return;
+            }
+
+            const fragment = document.createDocumentFragment();
+
+            activeEntries.forEach((entry) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = `active-filter-chip ${entry.type === "topic" ? "is-topic" : "is-skill"}`;
+
+                const label = document.createElement("span");
+                label.textContent = entry.value;
+
+                const remove = document.createElement("span");
+                remove.className = "active-filter-remove";
+                remove.textContent = "×";
+
+                button.append(label, remove);
+                button.addEventListener("click", () => {
+                    if (entry.type === "topic") {
+                        selectedTopics.delete(entry.value);
+                    } else {
+                        selectedSkills.delete(entry.value);
+                    }
+                    runFilter();
+                });
+
+                fragment.appendChild(button);
+            });
+
+            activeFiltersEl.appendChild(fragment);
+            activeSummaryEl.hidden = false;
+        }
+
+        function syncFilterUi() {
+            const activeCount = getActiveFilterCount();
+
+            if (drawerFilterCount) {
+                drawerFilterCount.textContent = String(activeCount);
+                drawerFilterCount.hidden = activeCount === 0;
+            }
+
+            if (openFiltersBtn) {
+                openFiltersBtn.classList.toggle("has-active", activeCount > 0);
+            }
+
+            if (topicsStatusEl) {
+                topicsStatusEl.textContent = selectedTopics.size ? `${selectedTopics.size} נבחרו` : `${topicCatalog.length} זמינים`;
+            }
+
+            if (skillsStatusEl) {
+                skillsStatusEl.textContent = selectedSkills.size ? `${selectedSkills.size} נבחרו` : `${skillCatalog.length} זמינות`;
+            }
+
+            if (clearTopicsBtn) {
+                clearTopicsBtn.disabled = selectedTopics.size === 0;
+            }
+
+            if (clearSkillsBtn) {
+                clearSkillsBtn.disabled = selectedSkills.size === 0;
+            }
+
+            clearAllFilterButtons.forEach((button) => {
+                button.disabled = activeCount === 0;
+            });
+
+            renderActiveFilters();
+        }
+
+        function renderTopicFilters(items) {
+            if (!topicsFilterEl) {
+                return;
+            }
+
+            topicsFilterEl.innerHTML = "";
+            const scopedItems = Array.isArray(items) ? items : solutions;
+
+            topicCatalog.forEach((topic) => {
+                const count = getTopicCountFromList(topic, scopedItems);
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "topic-chip";
+                if (selectedTopics.has(topic)) {
+                    button.classList.add("is-active");
+                }
+                if (count === 0) {
+                    button.classList.add("is-empty");
+                }
+
+                const label = document.createElement("span");
+                label.textContent = topic;
+
+                const countBadge = document.createElement("span");
+                countBadge.className = "topic-count";
+                countBadge.textContent = String(count);
+
+                button.append(label, countBadge);
+                button.addEventListener("click", () => {
+                    if (selectedTopics.has(topic)) {
+                        selectedTopics.delete(topic);
+                    } else {
+                        selectedTopics.add(topic);
+                    }
+                    runFilter();
+                });
+                topicsFilterEl.appendChild(button);
+            });
+        }
+
+        function renderSkillFilters(items) {
+            if (!skillsFilterEl) {
+                return;
+            }
+
+            skillsFilterEl.innerHTML = "";
+            const scopedItems = Array.isArray(items) ? items : solutions;
+
+            skillCatalog.forEach((skill) => {
+                const count = getSkillCountFromList(skill, scopedItems);
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "skill-chip";
+                if (selectedSkills.has(skill)) {
+                    button.classList.add("is-active");
+                }
+                if (count === 0) {
+                    button.classList.add("is-empty");
+                }
+
+                const label = document.createElement("span");
+                label.textContent = skill;
+
+                const countBadge = document.createElement("span");
+                countBadge.className = "skill-count";
+                countBadge.textContent = String(count);
+
+                button.append(label, countBadge);
+                button.addEventListener("click", () => {
+                    if (selectedSkills.has(skill)) {
+                        selectedSkills.delete(skill);
+                    } else {
+                        selectedSkills.add(skill);
+                    }
+                    runFilter();
+                });
+                skillsFilterEl.appendChild(button);
+            });
+        }
+
+        async function loadSolutionsFromTopicsJson(discoveredItems) {
+            const response = await fetch("./question-topics.json", { cache: "no-store" });
+            if (!response.ok) {
+                throw new Error("topics-json-load-failed");
+            }
+
+            const rawData = await response.json();
+            const data = mergeTopicDataWithDiscovered(rawData, discoveredItems);
+            topicCatalog = Array.isArray(data.topics) ? data.topics : [];
+            skillCatalog = Array.isArray(data.skills) ? data.skills : [];
+            const questions = Array.isArray(data.questions) ? data.questions : [];
+
+            const discoveredByFolder = new Map();
+            discoveredItems.forEach((item) => {
+                const folder = getPracticeFolder(item.href);
+                if (folder) {
+                    discoveredByFolder.set(folder, item);
+                }
+            });
+
+            const mapped = questions.map((entry, index) => {
+                const normalizedPath = normalizeRelativePath(entry.path || "");
+                const practiceFolder = getPracticeFolder(normalizedPath);
+                const practiceRootPath = getPracticeRootPath(normalizedPath);
+                const parsed = parseFolderName(practiceFolder) || {
+                    title: entry.title || `שאלה ${index + 1}`,
+                    label: entry.title || `שאלה ${index + 1}`,
+                    dateCode: "",
+                    displayDate: "לא צוין",
+                    year: 0,
+                    timestamp: 0
+                };
+
+                const discovered = discoveredByFolder.get(practiceFolder);
+
+                return {
+                    id: entry.id || `q-${index + 1}`,
+                    title: entry.title || parsed.title,
+                    label: parsed.label || entry.title || parsed.title,
+                    dateCode: parsed.dateCode || "",
+                    displayDate: parsed.displayDate || "לא צוין",
+                    year: parsed.year || 0,
+                    timestamp: Number.isFinite(parsed.timestamp) ? parsed.timestamp : 0,
+                    href: `./${normalizedPath}`,
+                    thumb: discovered?.thumb || (practiceRootPath ? `./${practiceRootPath}/question-image.png` : ""),
+                    rubricHref: discovered?.rubricHref || "",
+                    isExample: Boolean(discovered?.isExample),
+                    topicTags: Array.isArray(entry.topics) ? entry.topics : [],
+                    skillTags: Array.isArray(entry.skills) ? entry.skills : [],
+                    bodySearchText: ""
+                };
+            });
+
+            const mappedPaths = new Set(mapped.map((item) => normalizeRelativePath(item.href)));
+            discoveredItems.forEach((item) => {
+                const normalized = normalizeRelativePath(item.href);
+                if (mappedPaths.has(normalized)) {
+                    return;
+                }
+
+                mapped.push({
+                    ...item,
+                    topicTags: [],
+                    skillTags: [],
+                    bodySearchText: ""
+                });
+            });
+
+            if (!topicCatalog.length) {
+                topicCatalog = [...new Set(mapped.flatMap((item) => item.topicTags || []))];
+            }
+            if (!skillCatalog.length) {
+                skillCatalog = [...new Set(mapped.flatMap((item) => item.skillTags || []))];
+            }
+
+            return mapped;
         }
 
         function normalizeSearchText(text) {
@@ -848,6 +1831,14 @@
                 titleLink.textContent = solution.label;
                 titleLine.appendChild(titleLink);
 
+                if (solution.rubricHref) {
+                    const rubricTitleLink = document.createElement("a");
+                    rubricTitleLink.className = "aux-link";
+                    rubricTitleLink.href = solution.rubricHref;
+                    rubricTitleLink.textContent = "מחוון";
+                    titleLine.appendChild(rubricTitleLink);
+                }
+
                 const metaRow = document.createElement("div");
                 metaRow.className = "mt-2 mb-2";
 
@@ -856,13 +1847,6 @@
                 datePill.textContent = `תאריך: ${solution.displayDate}`;
                 metaRow.appendChild(datePill);
 
-                if (solution.rubricHref) {
-                    const rubricPill = document.createElement("span");
-                    rubricPill.className = "meta-pill rubric";
-                    rubricPill.textContent = "כולל מחוון";
-                    metaRow.appendChild(rubricPill);
-                }
-
                 if (solution.isExample) {
                     const examplePill = document.createElement("span");
                     examplePill.className = "meta-pill example";
@@ -870,26 +1854,28 @@
                     metaRow.appendChild(examplePill);
                 }
 
+                if (!solution.topicTags?.length || !solution.skillTags?.length) {
+                    const pendingPill = document.createElement("span");
+                    pendingPill.className = "meta-pill pending";
+                    pendingPill.textContent = "נדרש תיוג";
+                    metaRow.appendChild(pendingPill);
+                }
+
                 const desc = document.createElement("p");
                 desc.className = "text-sm text-slate-600 mb-2";
                 desc.textContent = "קישור ישיר לפתרון התרגול, עם אפשרות לפתוח גם את המחוון כאשר הוא קיים באותה תיקייה.";
 
-                const linksRow = document.createElement("div");
-                const solutionAux = document.createElement("a");
-                solutionAux.className = "aux-link";
-                solutionAux.href = solution.href;
-                solutionAux.textContent = "לפתרון המלא";
-                linksRow.appendChild(solutionAux);
+                const topicsRow = document.createElement("div");
+                topicsRow.className = "mt-2 text-sm text-slate-600";
+                const topicPills = (solution.topicTags || []).map((tag) => `<span class=\"meta-pill topic\">${tag}</span>`).join(" ");
+                topicsRow.innerHTML = `נושאים: ${topicPills || '<span class="meta-pill">ללא תיוג</span>'}`;
 
-                if (solution.rubricHref) {
-                    const rubricAux = document.createElement("a");
-                    rubricAux.className = "aux-link";
-                    rubricAux.href = solution.rubricHref;
-                    rubricAux.textContent = "למחוון";
-                    linksRow.appendChild(rubricAux);
-                }
+                const skillsRow = document.createElement("div");
+                skillsRow.className = "mt-2 text-sm text-slate-600";
+                const skillPills = (solution.skillTags || []).map((tag) => `<span class=\"meta-pill skill\">${tag}</span>`).join(" ");
+                skillsRow.innerHTML = `מיומנויות: ${skillPills || '<span class="meta-pill">ללא תיוג</span>'}`;
 
-                body.append(titleLine, metaRow, desc, linksRow);
+                body.append(titleLine, metaRow, desc, topicsRow, skillsRow);
                 card.append(mediaWrap, body);
                 fragment.appendChild(card);
             });
@@ -917,10 +1903,37 @@
                 });
             }
 
+            if (selectedTopics.size) {
+                filtered = filtered.filter((solution) =>
+                    [...selectedTopics].every((topic) => (solution.topicTags || []).includes(topic))
+                );
+            }
+
+            if (selectedSkills.size) {
+                filtered = filtered.filter((solution) =>
+                    [...selectedSkills].every((skill) => (solution.skillTags || []).includes(skill))
+                );
+            }
+
             filtered.sort(sortMode === "recent" ? compareSolutionsByRecent : compareSolutionsByTitle);
 
-            const indexingNote = bodySearchIndexReady ? "" : " האינדוקס של גוף התרגולים עדיין נטען.";
-            resultsInfo.textContent = `מוצגים ${filtered.length} מתוך ${solutions.length} תרגולים.${indexingNote}`;
+            renderTopicFilters(filtered);
+            renderSkillFilters(filtered);
+
+            syncFilterUi();
+
+            const summaryParts = [`מוצגים ${filtered.length} מתוך ${solutions.length} תרגולים`];
+            if (selectedTopics.size) {
+                summaryParts.push(`${selectedTopics.size} נושאים פעילים`);
+            }
+            if (selectedSkills.size) {
+                summaryParts.push(`${selectedSkills.size} מיומנויות פעילות`);
+            }
+            summaryParts.push(sortMode === "recent" ? "מיון: חדש לישן" : "מיון: לפי שם");
+            if (!bodySearchIndexReady) {
+                summaryParts.push("האינדוקס של גוף התרגולים עדיין נטען");
+            }
+            resultsInfo.textContent = summaryParts.join(" · ");
             renderList(filtered);
         }
 
@@ -949,11 +1962,20 @@
         }
 
         async function init() {
+            const discovered = await discoverPracticeEntries().catch(() => []);
+            const mergedDiscovered = mergeStaticAndDiscovered(staticSolutions, discovered);
+
             try {
-                const discovered = await discoverPracticeEntries();
-                solutions = mergeStaticAndDiscovered(staticSolutions, discovered);
+                solutions = await loadSolutionsFromTopicsJson(mergedDiscovered);
             } catch (error) {
-                solutions = mergeStaticAndDiscovered(staticSolutions, []);
+                solutions = mergedDiscovered.map((item) => ({
+                    ...item,
+                    topicTags: [],
+                    skillTags: [],
+                    bodySearchText: ""
+                }));
+                topicCatalog = [];
+                skillCatalog = [];
             }
 
             solutions.sort(compareSolutionsByRecent);
@@ -974,8 +1996,51 @@
             syncSortButtons();
             runFilter();
         });
+        if (openFiltersBtn) {
+            openFiltersBtn.addEventListener("click", () => {
+                setFilterDrawerOpen(true);
+            });
+        }
+        if (closeFiltersBtn) {
+            closeFiltersBtn.addEventListener("click", () => {
+                setFilterDrawerOpen(false);
+            });
+        }
+        if (doneFiltersBtn) {
+            doneFiltersBtn.addEventListener("click", () => {
+                setFilterDrawerOpen(false);
+            });
+        }
+        if (filterBackdrop) {
+            filterBackdrop.addEventListener("click", () => {
+                setFilterDrawerOpen(false);
+            });
+        }
+        if (clearTopicsBtn) {
+            clearTopicsBtn.addEventListener("click", () => {
+                selectedTopics.clear();
+                runFilter();
+            });
+        }
+        if (clearSkillsBtn) {
+            clearSkillsBtn.addEventListener("click", () => {
+                selectedSkills.clear();
+                runFilter();
+            });
+        }
+        clearAllFilterButtons.forEach((button) => {
+            button.addEventListener("click", () => {
+                clearAllFilters();
+            });
+        });
         document.addEventListener("scroll", hidePreview, { passive: true });
         window.addEventListener("resize", hidePreview);
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") {
+                hidePreview();
+                setFilterDrawerOpen(false);
+            }
+        });
 
         init();
     </script>
