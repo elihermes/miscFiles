@@ -12,7 +12,7 @@
         </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>תפריט ראשי - פתרונות במכניקה</title>
+    <title>תפריט ראשי - תרגולי חשמל</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -30,6 +30,9 @@
             --green-500: #22c55e;
             --slate-200: #e2e8f0;
             --slate-300: #cbd5e1;
+            --amber-50: #fffbeb;
+            --amber-200: #fde68a;
+            --amber-700: #b45309;
         }
 
         html {
@@ -103,27 +106,38 @@
             gap: 0.9rem;
         }
 
-        .topics-toolbar {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            gap: 0.75rem;
-            flex-wrap: wrap;
+        .filter-note {
+            font-size: 0.88rem;
+            color: #64748b;
         }
 
-        .topic-filter-box {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.55rem;
+        .search-input {
+            width: 100%;
+            max-width: 34rem;
+            border: 1px solid var(--slate-300);
+            border-radius: 0.75rem;
+            padding: 0.8rem 0.95rem;
+            font: inherit;
+            color: #334155;
+            background: #fff;
+            box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
         }
 
-        .skill-filter-box {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 0.55rem;
+        .search-input:focus {
+            outline: none;
+            border-color: var(--blue-border);
+            box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.28);
         }
 
-        .topic-chip {
+        .sort-toolbar {
+            display: flex;
+            justify-content: flex-start;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+            margin-top: 0.25rem;
+        }
+
+        .sort-chip {
             border: 1px solid var(--slate-300);
             background: #fff;
             color: #334155;
@@ -135,99 +149,15 @@
             transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
         }
 
-        .topic-chip:hover {
+        .sort-chip:hover {
             border-color: var(--blue-border);
             transform: translateY(-1px);
         }
 
-        .topic-chip.is-active {
+        .sort-chip.is-active {
             background: var(--blue-700);
             color: #eff6ff;
             border-color: var(--blue-700);
-        }
-
-        .topic-chip.is-empty {
-            opacity: 0.55;
-        }
-
-        .topic-count {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 1.45rem;
-            height: 1.45rem;
-            padding: 0 0.35rem;
-            margin-inline-start: 0.35rem;
-            border-radius: 9999px;
-            background: #e2e8f0;
-            color: #334155;
-            font-size: 0.78rem;
-            font-weight: 700;
-            line-height: 1;
-        }
-
-        .topic-chip.is-active .topic-count {
-            background: rgba(255, 255, 255, 0.18);
-            color: #eff6ff;
-        }
-
-        .skill-chip {
-            border: 1px solid #86efac;
-            background: #f0fdf4;
-            color: #166534;
-            border-radius: 9999px;
-            padding: 0.42rem 0.8rem;
-            font: inherit;
-            font-size: 0.92rem;
-            cursor: pointer;
-            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
-        }
-
-        .skill-chip:hover {
-            border-color: #4ade80;
-            transform: translateY(-1px);
-        }
-
-        .skill-chip.is-active {
-            background: #166534;
-            color: #ecfdf5;
-            border-color: #166534;
-        }
-
-        .skill-chip.is-empty {
-            opacity: 0.55;
-        }
-
-        .skill-count {
-            display: inline-flex;
-            align-items: center;
-            justify-content: center;
-            min-width: 1.45rem;
-            height: 1.45rem;
-            padding: 0 0.35rem;
-            margin-inline-start: 0.35rem;
-            border-radius: 9999px;
-            background: #dcfce7;
-            color: #166534;
-            font-size: 0.78rem;
-            font-weight: 700;
-            line-height: 1;
-        }
-
-        .skill-chip.is-active .skill-count {
-            background: rgba(255, 255, 255, 0.18);
-            color: #ecfdf5;
-        }
-
-        .filter-note {
-            font-size: 0.88rem;
-            color: #64748b;
-        }
-
-        .sort-toolbar {
-            display: flex;
-            justify-content: flex-start;
-            margin-top: 0.25rem;
         }
 
         .solution-item {
@@ -280,22 +210,22 @@
             background: #f8fafc;
         }
 
-        .meta-pill.topic {
+        .meta-pill.date {
             border-color: #bfdbfe;
             color: #1d4ed8;
             background: #eff6ff;
         }
 
-        .meta-pill.skill {
+        .meta-pill.rubric {
             border-color: #86efac;
             color: #166534;
             background: #f0fdf4;
         }
 
-        .meta-pill.pending {
-            border-color: #fed7aa;
-            color: #9a3412;
-            background: #fff7ed;
+        .meta-pill.example {
+            border-color: var(--amber-200);
+            color: var(--amber-700);
+            background: var(--amber-50);
         }
 
         .empty-state {
@@ -339,7 +269,6 @@
         .legal-entry-link:hover {
             color: #1d4ed8;
         }
-
 
         .solution-thumb {
             width: 96px;
@@ -420,15 +349,9 @@
 <body>
     <div class="page-shell">
         <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">תפריט ראשי - פתרונות בגרות במכניקה</h1>
-            <h2 class="text-xl md:text-2xl text-slate-600">גישה מהירה לכל הפתרונות במקום אחד</h2>
-            <p class="mt-3 text-slate-500">אפשר לסנן לפי שנה ולקפוץ ישירות לכל פתרון. לכל פריט מוצגת תמונת שאלה מקדימה.</p>
-            <div class="mt-4">
-                <a href="טבלת כיסוי שאלות מכניקה.html" class="inline-flex items-center gap-2 px-4 py-2 rounded-lg border border-blue-200 bg-blue-50 text-blue-700 font-semibold text-sm hover:bg-blue-100 transition-colors">
-                    <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" aria-hidden="true"><rect x="3" y="3" width="18" height="18" rx="2"/><path d="M3 9h18M9 9v12"/></svg>
-                    טבלת כיסוי שאלות
-                </a>
-            </div>
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">תפריט ראשי - תרגולי חשמל</h1>
+            <h2 class="text-xl md:text-2xl text-slate-600">גישה מהירה לכל התרגולים והמחוונים במקום אחד</h2>
+            <p class="mt-3 text-slate-500">אותו סטנדרט של תפריט המכניקה, אבל כאן הרשימה בנויה לפי תאריך התרגול. לכל פריט מוצגת תמונת תרגול מקדימה, וקישור ישיר לפתרון ולמחוון אם קיים.</p>
             <div class="version-stamp" id="versionStamp" dir="ltr" aria-label="Version stamp">
                 <span class="version-label">ver</span>
                 <span id="versionId">vAUTO</span>
@@ -444,33 +367,16 @@
             <h3 class="section-header">סינון</h3>
             <div class="filter-grid">
                 <div class="filter-stack">
-                    <label class="block max-w-xs">
-                        <span class="block text-sm font-semibold text-slate-700 mb-1">סינון לפי שנה</span>
-                        <select id="yearSelect" class="w-full rounded-lg border border-slate-300 p-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
-                            <option value="all">כל השנים</option>
-                        </select>
+                    <label class="block">
+                        <span class="block text-sm font-semibold text-slate-700 mb-1">חיפוש חופשי</span>
+                        <input id="searchInput" class="search-input" type="search" placeholder="חפשי לפי שם תרגול, שם מורה, תאריך או מחוון" aria-label="חיפוש חופשי בתרגולים">
                     </label>
 
-                    <div>
-                        <div class="topics-toolbar mb-2">
-                            <span class="block text-sm font-semibold text-slate-700">סינון לפי נושאים</span>
-                            <button id="clearTopicsBtn" type="button" class="text-sm text-blue-700 hover:underline">נקה תגיות</button>
-                        </div>
-                        <div id="topicsFilter" class="topic-filter-box"></div>
-                        <p class="filter-note mt-2">אפשר לבחור כמה נושאים יחד. יוצגו רק שאלות שמכילות את כל הנושאים שנבחרו.</p>
-                    </div>
-
-                    <div>
-                        <div class="topics-toolbar mb-2">
-                            <span class="block text-sm font-semibold text-slate-700">סינון לפי מיומנויות</span>
-                            <button id="clearSkillsBtn" type="button" class="text-sm text-green-700 hover:underline">נקה מיומנויות</button>
-                        </div>
-                        <div id="skillsFilter" class="skill-filter-box"></div>
-                        <p class="filter-note mt-2">אפשר לבחור כמה מיומנויות יחד. יוצגו רק שאלות שמכילות את כל המיומנויות שנבחרו.</p>
-                    </div>
+                    <p class="filter-note">החיפוש בודק את שם התרגול, התאריך המלא, קוד התאריך, האם קיים מחוון, וגם טקסט מתוך גוף דף התרגול עצמו.</p>
 
                     <div class="sort-toolbar">
-                        <button id="sortByRecentBtn" type="button" class="topic-chip" aria-pressed="false">מיון: ברירת מחדל</button>
+                        <button id="sortRecentBtn" type="button" class="sort-chip is-active" aria-pressed="true">מיון: חדש לישן</button>
+                        <button id="sortTitleBtn" type="button" class="sort-chip" aria-pressed="false">מיון: לפי שם</button>
                     </div>
                 </div>
             </div>
@@ -479,7 +385,7 @@
         </section>
 
         <section class="section-card">
-            <h3 class="section-header">רשימת פתרונות</h3>
+            <h3 class="section-header">רשימת תרגולים</h3>
             <div id="solutionsList" class="space-y-3"></div>
         </section>
 
@@ -487,173 +393,70 @@
             <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
             <a href="../../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
         </footer>
-
     </div>
 
     <div id="hoverPreview" class="hover-preview" aria-hidden="true">
-        <img id="hoverPreviewImg" alt="תצוגה מוגדלת של השאלה">
+        <img id="hoverPreviewImg" alt="תצוגה מוגדלת של התרגול">
     </div>
 
     <script>
-        const staticSolutions = [];
-        const folderNamePattern = /^(\d{4})\s+שאלה\s+(.+)$/;
-        const MECHANICS_FOLDER_REPO_PATH = "webfiles/פתרונות שאלות בגרות/מכניקה שאלות בגרות";
+        const ELECTRICITY_FOLDER_REPO_PATH = "webfiles/תרגולים/תרגולי חשמל";
         const DISCOVERY_EXCLUDED_FILES = new Set([
-            "question-topics.json",
-            "תפריט ראשי מכניקה.html",
-            "ניהול נושאי שאלות מכניקה.html"
+            "תפריט ראשי תרגולי חשמל.html"
         ]);
+        const folderNamePattern = /^(.*?)(\d{6})$/;
 
-        const yearSelect = document.getElementById("yearSelect");
+        const staticSolutions = [
+            {
+                title: "תרגול יב עמית 260411",
+                dateCode: "260411",
+                href: "./תרגול יב עמית 260411/תרגול עמית 260411.html",
+                thumb: "./תרגול יב עמית 260411/question-image.png",
+                rubricHref: "./תרגול יב עמית 260411/מחוון תרגול יב עמית 260411/מחוון תרגול יב עמית 260411.html",
+                isExample: true
+            }
+        ];
+
+        const searchInput = document.getElementById("searchInput");
         const resultsInfo = document.getElementById("resultsInfo");
         const listEl = document.getElementById("solutionsList");
-        const topicsFilterEl = document.getElementById("topicsFilter");
-        const skillsFilterEl = document.getElementById("skillsFilter");
-        const clearTopicsBtn = document.getElementById("clearTopicsBtn");
-        const clearSkillsBtn = document.getElementById("clearSkillsBtn");
-        const sortByRecentBtn = document.getElementById("sortByRecentBtn");
+        const sortRecentBtn = document.getElementById("sortRecentBtn");
+        const sortTitleBtn = document.getElementById("sortTitleBtn");
         const hoverPreview = document.getElementById("hoverPreview");
         const hoverPreviewImg = document.getElementById("hoverPreviewImg");
 
         let previewActive = false;
-        let solutions = [...staticSolutions];
-        let topicCatalog = [];
-        let skillCatalog = [];
-        let rubricPathByQuestionFolder = new Map();
-        const selectedTopics = new Set();
-        const selectedSkills = new Set();
-        let sortByRecent = false;
+        let sortMode = "recent";
+        let solutions = [];
+        let bodySearchIndexReady = false;
 
         function isLocalhost() {
             return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
-        }
-
-        function parseFromFolderName(folderName) {
-            const match = folderName.match(folderNamePattern);
-            if (!match) {
-                return null;
-            }
-
-            return {
-                year: Number(match[1]),
-                question: match[2],
-                title: folderName
-            };
-        }
-
-        function compareSolutions(a, b) {
-            if (a.year !== b.year) {
-                return a.year - b.year;
-            }
-            return String(a.question).localeCompare(String(b.question), "he", { numeric: true });
-        }
-
-        function parseAddedAtToTimestamp(value) {
-            if (typeof value !== "string") {
-                return NaN;
-            }
-
-            const trimmed = value.trim();
-            const match = trimmed.match(/^(\d{4})-(\d{2})-(\d{2})\s+(\d{2}):(\d{2}):(\d{2})$/);
-            if (!match) {
-                return NaN;
-            }
-
-            const year = Number(match[1]);
-            const month = Number(match[2]) - 1;
-            const day = Number(match[3]);
-            const hour = Number(match[4]);
-            const minute = Number(match[5]);
-            const second = Number(match[6]);
-
-            const ts = new Date(year, month, day, hour, minute, second).getTime();
-            return Number.isFinite(ts) ? ts : NaN;
-        }
-
-        function compareSolutionsByRecent(a, b) {
-            if (Boolean(a.needsTagging) !== Boolean(b.needsTagging)) {
-                return a.needsTagging ? -1 : 1;
-            }
-
-            const aAddedAtTs = Number.isFinite(a.addedAtTs) ? a.addedAtTs : -1;
-            const bAddedAtTs = Number.isFinite(b.addedAtTs) ? b.addedAtTs : -1;
-            if (aAddedAtTs !== bAddedAtTs) {
-                return bAddedAtTs - aAddedAtTs;
-            }
-
-            const aOrder = Number.isFinite(a.addedOrder) ? a.addedOrder : -1;
-            const bOrder = Number.isFinite(b.addedOrder) ? b.addedOrder : -1;
-            if (aOrder !== bOrder) {
-                return bOrder - aOrder;
-            }
-            return compareSolutions(a, b);
-        }
-
-        function syncSortButtonUi() {
-            if (!sortByRecentBtn) {
-                return;
-            }
-
-            sortByRecentBtn.textContent = sortByRecent ? "מיון: נוסף אחרון" : "מיון: ברירת מחדל";
-            sortByRecentBtn.setAttribute("aria-pressed", sortByRecent ? "true" : "false");
-            sortByRecentBtn.classList.toggle("is-active", sortByRecent);
         }
 
         function normalizeSlashes(path) {
             return String(path || "").replace(/\\/g, "/").replace(/^\/+/, "");
         }
 
-        function normalizeRelativeQuestionPath(path) {
+        function normalizeRelativePath(path) {
             let normalized = normalizeSlashes(path);
             if (normalized.startsWith("./")) {
                 normalized = normalized.slice(2);
             }
 
-            const mechanicsRootWithSlash = `${MECHANICS_FOLDER_REPO_PATH}/`;
-            const directIdx = normalized.indexOf(mechanicsRootWithSlash);
+            const directPrefix = `${ELECTRICITY_FOLDER_REPO_PATH}/`;
+            const directIdx = normalized.indexOf(directPrefix);
             if (directIdx >= 0) {
-                normalized = normalized.slice(directIdx + mechanicsRootWithSlash.length);
-                return normalized;
+                return normalized.slice(directIdx + directPrefix.length);
             }
 
-            const mechanicsFolderName = "מכניקה שאלות בגרות";
-            const folderWithSlash = `${mechanicsFolderName}/`;
-            const folderIdx = normalized.indexOf(folderWithSlash);
+            const folderName = "תרגולי חשמל/";
+            const folderIdx = normalized.indexOf(folderName);
             if (folderIdx >= 0) {
-                normalized = normalized.slice(folderIdx + folderWithSlash.length);
+                return normalized.slice(folderIdx + folderName.length);
             }
+
             return normalized;
-        }
-
-        function extractTitleFromPath(path) {
-            const normalized = normalizeRelativeQuestionPath(path);
-            const parts = normalized.split("/").filter(Boolean);
-            const questionFolder = parts.find((part) => folderNamePattern.test(part));
-            if (questionFolder) {
-                return questionFolder;
-            }
-            return parts.length >= 2 ? parts[parts.length - 2] : "";
-        }
-
-        function createIdFromTitle(title, usedIds) {
-            const parsed = parseFromFolderName(title);
-            const base = parsed ? `${parsed.year}-${String(parsed.question).replace(/\s+/g, "-")}` : title.replace(/\s+/g, "-");
-            let candidate = base;
-            let i = 2;
-            while (usedIds.has(candidate)) {
-                candidate = `${base}-${i}`;
-                i += 1;
-            }
-            usedIds.add(candidate);
-            return candidate;
-        }
-
-        function idBaseFromTitle(title) {
-            const parsed = parseFromFolderName(title);
-            if (parsed) {
-                return `${parsed.year}-${String(parsed.question).replace(/\s+/g, "-")}`;
-            }
-            return String(title || "").replace(/\s+/g, "-");
         }
 
         function getRepoContextFromLocation() {
@@ -668,33 +471,65 @@
             return { owner: hostMatch[1], repo: pathParts[0] };
         }
 
-        function isQuestionHtmlPath(path) {
-            const normalized = normalizeRelativeQuestionPath(path);
-            const parts = normalized.split("/").filter(Boolean);
-            if (parts.length < 2) {
-                return false;
+        function parseFolderName(folderName) {
+            const trimmed = String(folderName || "").trim();
+            const match = trimmed.match(folderNamePattern);
+            if (!match) {
+                return null;
             }
-            const fileName = parts[parts.length - 1];
-            if (!fileName.toLowerCase().endsWith(".html")) {
-                return false;
+
+            const dateCode = match[2];
+            const yy = Number(dateCode.slice(0, 2));
+            const mm = Number(dateCode.slice(2, 4));
+            const dd = Number(dateCode.slice(4, 6));
+            if (!yy || mm < 1 || mm > 12 || dd < 1 || dd > 31) {
+                return null;
             }
-            if (DISCOVERY_EXCLUDED_FILES.has(fileName)) {
-                return false;
+
+            const year = 2000 + yy;
+            const date = new Date(year, mm - 1, dd);
+            if (date.getFullYear() !== year || date.getMonth() !== mm - 1 || date.getDate() !== dd) {
+                return null;
             }
-            // Support nested folders (e.g. "נסיון/1993 שאלה 2/1993 שאלה 2.html")
-            // by checking the parent folder of the html file.
-            const parentFolder = parts[parts.length - 2];
-            return folderNamePattern.test(parentFolder);
+
+            const label = match[1].trim();
+            return {
+                title: trimmed,
+                label: label || trimmed,
+                dateCode,
+                year,
+                month: mm,
+                day: dd,
+                displayDate: `${String(dd).padStart(2, "0")}.${String(mm).padStart(2, "0")}.${year}`,
+                timestamp: date.getTime()
+            };
         }
 
-        function getFileName(path) {
-            const normalized = normalizeRelativeQuestionPath(path);
-            const parts = normalized.split("/").filter(Boolean);
-            return parts.length ? parts[parts.length - 1] : "";
+        function compareSolutionsByRecent(a, b) {
+            if (a.timestamp !== b.timestamp) {
+                return b.timestamp - a.timestamp;
+            }
+            return a.title.localeCompare(b.title, "he", { numeric: true });
+        }
+
+        function compareSolutionsByTitle(a, b) {
+            const labelCompare = a.label.localeCompare(b.label, "he", { numeric: true });
+            if (labelCompare !== 0) {
+                return labelCompare;
+            }
+            return compareSolutionsByRecent(a, b);
+        }
+
+        function syncSortButtons() {
+            const recentActive = sortMode === "recent";
+            sortRecentBtn.classList.toggle("is-active", recentActive);
+            sortRecentBtn.setAttribute("aria-pressed", recentActive ? "true" : "false");
+            sortTitleBtn.classList.toggle("is-active", !recentActive);
+            sortTitleBtn.setAttribute("aria-pressed", recentActive ? "false" : "true");
         }
 
         function getFolderPath(path) {
-            const normalized = normalizeRelativeQuestionPath(path);
+            const normalized = normalizeRelativePath(path);
             const parts = normalized.split("/").filter(Boolean);
             if (parts.length <= 1) {
                 return "";
@@ -702,91 +537,109 @@
             return parts.slice(0, -1).join("/");
         }
 
-        function getQuestionFolder(path) {
-            const normalized = normalizeRelativeQuestionPath(path);
+        function getFileName(path) {
+            const normalized = normalizeRelativePath(path);
             const parts = normalized.split("/").filter(Boolean);
-            return parts.find((part) => folderNamePattern.test(part)) || "";
+            return parts.length ? parts[parts.length - 1] : "";
         }
 
-        function pickHtmlInSolutionFolder(folderPath, htmlFiles) {
+        function getPracticeFolder(path) {
+            const normalized = normalizeRelativePath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            return parts.length ? parts[0] : "";
+        }
+
+        function pickMainHtml(folderPath, htmlFiles) {
             const files = [...htmlFiles].sort((a, b) => a.localeCompare(b, "he", { numeric: true }));
             if (!files.length) {
                 return "";
             }
 
             const folderName = folderPath.split("/").filter(Boolean).pop() || "";
-            const exactFolderMatch = `${folderName}.html`;
-            if (files.includes(exactFolderMatch)) {
-                return exactFolderMatch;
+            const sameAsFolder = `${folderName}.html`;
+            if (files.includes(sameAsFolder)) {
+                return sameAsFolder;
             }
 
-            const parsed = parseFromFolderName(folderName);
-            if (parsed) {
-                const startsWithYear = files.find((file) => file.startsWith(String(parsed.year)));
-                if (startsWithYear) {
-                    return startsWithYear;
-                }
+            const practiceHtml = files.find((file) => /תרגול/.test(file) && !/מחוון/.test(file));
+            if (practiceHtml) {
+                return practiceHtml;
             }
 
             return files[0];
         }
 
-        async function discoverQuestionPaths() {
-            const discovered = new Set();
-            const folders = new Map();
-            rubricPathByQuestionFolder = new Map();
+        async function discoverPracticeEntries() {
+            const discovered = new Map();
 
             function ensureFolder(folderPath) {
-                if (!folders.has(folderPath)) {
-                    folders.set(folderPath, {
+                if (!discovered.has(folderPath)) {
+                    discovered.set(folderPath, {
                         hasQuestionImage: false,
-                        htmlFiles: new Set()
+                        htmlFiles: new Set(),
+                        rubricHref: ""
                     });
                 }
-                return folders.get(folderPath);
+                return discovered.get(folderPath);
             }
 
             function collectNodePath(nodePath) {
-                const relativePath = normalizeRelativeQuestionPath(nodePath);
+                const relativePath = normalizeRelativePath(nodePath);
                 const fileName = getFileName(relativePath);
                 const folderPath = getFolderPath(relativePath);
-                if (!fileName || !folderPath) {
+                const practiceFolder = getPracticeFolder(relativePath);
+                if (!fileName || !folderPath || !practiceFolder) {
                     return;
                 }
 
-                const entry = ensureFolder(folderPath);
-                if (fileName.toLowerCase() === "question-image.png") {
+                if (!parseFolderName(practiceFolder)) {
+                    return;
+                }
+
+                const entry = ensureFolder(practiceFolder);
+                if (fileName.toLowerCase() === "question-image.png" && folderPath === practiceFolder) {
                     entry.hasQuestionImage = true;
                     return;
                 }
 
                 if (fileName.toLowerCase().endsWith(".html") && !DISCOVERY_EXCLUDED_FILES.has(fileName)) {
-                    entry.htmlFiles.add(fileName);
+                    if (folderPath === practiceFolder) {
+                        entry.htmlFiles.add(fileName);
+                        return;
+                    }
 
-                    const questionFolder = getQuestionFolder(relativePath);
-                    const isRubric = questionFolder
-                        && folderPath !== questionFolder
-                        && (/מחוון/.test(folderPath) || /^מחוון/i.test(fileName));
-
-                    if (isRubric && !rubricPathByQuestionFolder.has(questionFolder)) {
-                        rubricPathByQuestionFolder.set(questionFolder, `${folderPath}/${fileName}`);
+                    const isRubric = /מחוון/.test(folderPath) || /מחוון/.test(fileName);
+                    if (isRubric && !entry.rubricHref) {
+                        entry.rubricHref = `./${relativePath}`;
                     }
                 }
             }
 
-            function finalizeDiscoveredPaths() {
-                folders.forEach((entry, folderPath) => {
-                    if (!entry.hasQuestionImage || entry.htmlFiles.size === 0) {
-                        return;
+            function finalize() {
+                return [...discovered.entries()].map(([practiceFolder, entry]) => {
+                    const parsed = parseFolderName(practiceFolder);
+                    if (!parsed || !entry.htmlFiles.size) {
+                        return null;
                     }
 
-                    const htmlFile = pickHtmlInSolutionFolder(folderPath, entry.htmlFiles);
+                    const htmlFile = pickMainHtml(practiceFolder, entry.htmlFiles);
                     if (!htmlFile) {
-                        return;
+                        return null;
                     }
 
-                    discovered.add(`${folderPath}/${htmlFile}`);
-                });
+                    return {
+                        title: parsed.title,
+                        label: parsed.label,
+                        dateCode: parsed.dateCode,
+                        displayDate: parsed.displayDate,
+                        year: parsed.year,
+                        timestamp: parsed.timestamp,
+                        href: `./${practiceFolder}/${htmlFile}`,
+                        thumb: entry.hasQuestionImage ? `./${practiceFolder}/question-image.png` : "",
+                        rubricHref: entry.rubricHref,
+                        isExample: false
+                    };
+                }).filter(Boolean);
             }
 
             if (isLocalhost()) {
@@ -800,14 +653,12 @@
                     if (!node || node.type !== "blob" || typeof node.path !== "string") {
                         return;
                     }
-                    if (!node.path.startsWith(`${MECHANICS_FOLDER_REPO_PATH}/`)) {
+                    if (!node.path.startsWith(`${ELECTRICITY_FOLDER_REPO_PATH}/`)) {
                         return;
                     }
                     collectNodePath(node.path);
                 });
-
-                finalizeDiscoveredPaths();
-                return [...discovered];
+                return finalize();
             }
 
             const ctx = getRepoContextFromLocation();
@@ -815,7 +666,6 @@
                 return [];
             }
 
-            const encodedPath = MECHANICS_FOLDER_REPO_PATH.split("/").map(encodeURIComponent).join("/");
             const treeUrl = `https://api.github.com/repos/${ctx.owner}/${ctx.repo}/git/trees/HEAD?recursive=1`;
             const response = await fetch(treeUrl, { cache: "no-store" });
             if (!response.ok) {
@@ -827,153 +677,85 @@
                 if (!node || node.type !== "blob" || typeof node.path !== "string") {
                     return;
                 }
-                if (!node.path.startsWith(`${MECHANICS_FOLDER_REPO_PATH}/`)) {
+                if (!node.path.startsWith(`${ELECTRICITY_FOLDER_REPO_PATH}/`)) {
                     return;
                 }
                 collectNodePath(node.path);
             });
-
-            finalizeDiscoveredPaths();
-            return [...discovered];
+            return finalize();
         }
 
-        function mergeTopicDataWithDiscovered(topicData, discoveredPaths) {
-            const questions = Array.isArray(topicData.questions) ? topicData.questions.map((q) => ({ ...q })) : [];
-            const topics = Array.isArray(topicData.topics) ? topicData.topics : [];
-            const skills = Array.isArray(topicData.skills) ? topicData.skills : [];
-
-            const byPath = new Map();
+        function mergeStaticAndDiscovered(staticItems, discoveredItems) {
             const byTitle = new Map();
-            const byId = new Map();
-            const existingTitles = new Set();
-            const usedIds = new Set();
-            questions.forEach((question) => {
-                const normalizedPath = normalizeRelativeQuestionPath(question.path);
-                question.path = normalizedPath;
-                if (!Array.isArray(question.topics)) {
-                    question.topics = [];
-                }
-                if (!Array.isArray(question.skills)) {
-                    question.skills = [];
-                }
-                byPath.set(normalizedPath, question);
-                if (question.title) {
-                    const title = String(question.title);
-                    existingTitles.add(title);
-                    if (!byTitle.has(title)) {
-                        byTitle.set(title, question);
-                    }
-                }
-                if (question.id) {
-                    usedIds.add(question.id);
-                    if (!byId.has(question.id)) {
-                        byId.set(question.id, question);
-                    }
-                }
-            });
 
-            discoveredPaths.forEach((path) => {
-                const normalizedPath = normalizeRelativeQuestionPath(path);
-                if (byPath.has(normalizedPath)) {
-                    return;
-                }
-                const title = extractTitleFromPath(normalizedPath) || normalizedPath;
-
-                // Also reconcile by id inferred from title, so moved folders are found
-                // even if there are duplicate titles in JSON.
-                const inferredId = idBaseFromTitle(title);
-                const existingById = byId.get(inferredId);
-                if (existingById) {
-                    byPath.delete(normalizeRelativeQuestionPath(existingById.path));
-                    existingById.path = normalizedPath;
-                    byPath.set(normalizedPath, existingById);
+            [...discoveredItems, ...staticItems].forEach((item) => {
+                const parsed = parseFolderName(item.title);
+                if (!parsed) {
                     return;
                 }
 
-                // If the question moved to another folder, keep existing tags and update the saved path.
-                const existingByTitle = byTitle.get(title);
-                if (existingByTitle) {
-                    byPath.delete(normalizeRelativeQuestionPath(existingByTitle.path));
-                    existingByTitle.path = normalizedPath;
-                    byPath.set(normalizedPath, existingByTitle);
-                    return;
-                }
-
-                const id = createIdFromTitle(title, usedIds);
-                const newQuestion = {
-                    id,
-                    title,
-                    path: normalizedPath,
-                    topics: [],
-                    skills: []
+                const normalized = {
+                    title: parsed.title,
+                    label: parsed.label,
+                    dateCode: parsed.dateCode,
+                    displayDate: parsed.displayDate,
+                    year: parsed.year,
+                    timestamp: parsed.timestamp,
+                    href: item.href,
+                    thumb: item.thumb || `./${parsed.title}/question-image.png`,
+                    rubricHref: item.rubricHref || "",
+                    isExample: Boolean(item.isExample)
                 };
-                questions.push(newQuestion);
-                byPath.set(normalizedPath, newQuestion);
-                existingTitles.add(title);
-                byTitle.set(title, newQuestion);
-            });
 
-            const dedupedByTitle = new Map();
-            questions.forEach((question) => {
-                const title = String(question.title || "").trim();
-                if (!title) {
+                const existing = byTitle.get(normalized.title);
+                if (!existing) {
+                    byTitle.set(normalized.title, normalized);
                     return;
                 }
 
-                const current = dedupedByTitle.get(title);
-                if (!current) {
-                    dedupedByTitle.set(title, question);
-                    return;
-                }
-
-                const currentTagged = Array.isArray(current.topics) && current.topics.length > 0;
-                const candidateTagged = Array.isArray(question.topics) && question.topics.length > 0;
-
-                // If one duplicate is tagged and the other is empty, keep the tagged entry.
-                if (!currentTagged && candidateTagged) {
-                    dedupedByTitle.set(title, question);
-                }
+                byTitle.set(normalized.title, {
+                    ...existing,
+                    ...normalized,
+                    thumb: normalized.thumb || existing.thumb,
+                    rubricHref: normalized.rubricHref || existing.rubricHref,
+                    isExample: existing.isExample || normalized.isExample
+                });
             });
 
-            return { topics, skills, questions: [...dedupedByTitle.values()] };
+            return [...byTitle.values()];
         }
 
-        async function loadSolutionsFromTopicsJson() {
-            const response = await fetch("./question-topics.json", { cache: "no-store" });
-            if (!response.ok) {
-                throw new Error("topics-json-load-failed");
+        function normalizeSearchText(text) {
+            return String(text || "")
+                .replace(/\s+/g, " ")
+                .trim()
+                .toLowerCase();
+        }
+
+        async function fetchBodySearchText(path) {
+            try {
+                const response = await fetch(path, { cache: "no-store" });
+                if (!response.ok) {
+                    return "";
+                }
+
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, "text/html");
+                doc.querySelectorAll("script, style, noscript").forEach((node) => node.remove());
+                const bodyText = doc.body ? doc.body.textContent : doc.documentElement.textContent;
+                return normalizeSearchText(bodyText);
+            } catch (error) {
+                return "";
             }
+        }
 
-            const rawData = await response.json();
-            const discoveredPaths = await discoverQuestionPaths();
-            const data = mergeTopicDataWithDiscovered(rawData, discoveredPaths);
-            const questions = Array.isArray(data.questions) ? data.questions : [];
-            topicCatalog = Array.isArray(data.topics) ? data.topics : [];
-            skillCatalog = Array.isArray(data.skills) ? data.skills : [];
-
-            return questions.map((entry, index) => {
-                const parsed = parseFromFolderName(entry.title) || { year: 0, question: "?", title: entry.title };
-                const topicTags = Array.isArray(entry.topics) ? entry.topics : [];
-                const skillTags = Array.isArray(entry.skills) ? entry.skills : [];
-                const needsTagging = topicTags.length === 0;
-                const addedAtTs = parseAddedAtToTimestamp(entry.addedAt);
-                const questionFolder = getQuestionFolder(entry.path);
-                const rubricPath = questionFolder ? rubricPathByQuestionFolder.get(questionFolder) : "";
-                return {
-                    year: parsed.year,
-                    question: parsed.question,
-                    title: entry.title,
-                    href: `./${entry.path}`,
-                    rubricHref: rubricPath ? `./${rubricPath}` : "",
-                    tags: ["מכניקה", "בגרות", ...topicTags],
-                    topicTags,
-                    skillTags,
-                    needsTagging,
-                    addedAt: typeof entry.addedAt === "string" ? entry.addedAt : "",
-                    addedAtTs,
-                    addedOrder: index
-                };
-            });
+        async function enrichSolutionsWithBodySearch(items) {
+            await Promise.all(items.map(async (solution) => {
+                solution.bodySearchText = await fetchBodySearchText(solution.href);
+            }));
+            bodySearchIndexReady = true;
+            runFilter();
         }
 
         function movePreview(event) {
@@ -1027,233 +809,175 @@
             });
         }
 
-        function yearOptionsInit() {
-            yearSelect.innerHTML = '<option value="all">כל השנים</option>';
-            const years = [...new Set(solutions.map((s) => s.year))].sort((a, b) => a - b);
-            years.forEach((y) => {
-                const opt = document.createElement("option");
-                opt.value = String(y);
-                opt.textContent = String(y);
-                yearSelect.appendChild(opt);
-            });
-        }
-
-        function getTopicCountFromList(topic, items) {
-            return items.filter((solution) => (solution.topicTags || []).includes(topic)).length;
-        }
-
-        function renderTopicFilters(items) {
-            topicsFilterEl.innerHTML = "";
-            const scopedItems = Array.isArray(items) ? items : solutions;
-
-            topicCatalog.forEach((topic) => {
-                const count = getTopicCountFromList(topic, scopedItems);
-                const button = document.createElement("button");
-                button.type = "button";
-                button.className = "topic-chip";
-                if (selectedTopics.has(topic)) {
-                    button.classList.add("is-active");
-                }
-                if (count === 0) {
-                    button.classList.add("is-empty");
-                }
-
-                const label = document.createElement("span");
-                label.textContent = topic;
-
-                const countBadge = document.createElement("span");
-                countBadge.className = "topic-count";
-                countBadge.textContent = String(count);
-
-                button.append(label, countBadge);
-                button.addEventListener("click", () => {
-                    if (selectedTopics.has(topic)) {
-                        selectedTopics.delete(topic);
-                    } else {
-                        selectedTopics.add(topic);
-                    }
-                    renderTopicFilters();
-                    runFilter();
-                });
-                topicsFilterEl.appendChild(button);
-            });
-        }
-
-        function getSkillCountFromList(skill, items) {
-            return items.filter((solution) => (solution.skillTags || []).includes(skill)).length;
-        }
-
-        function renderSkillFilters(items) {
-            skillsFilterEl.innerHTML = "";
-            const scopedItems = Array.isArray(items) ? items : solutions;
-
-            skillCatalog.forEach((skill) => {
-                const count = getSkillCountFromList(skill, scopedItems);
-                const button = document.createElement("button");
-                button.type = "button";
-                button.className = "skill-chip";
-                if (selectedSkills.has(skill)) {
-                    button.classList.add("is-active");
-                }
-                if (count === 0) {
-                    button.classList.add("is-empty");
-                }
-
-                const label = document.createElement("span");
-                label.textContent = skill;
-
-                const countBadge = document.createElement("span");
-                countBadge.className = "skill-count";
-                countBadge.textContent = String(count);
-
-                button.append(label, countBadge);
-                button.addEventListener("click", () => {
-                    if (selectedSkills.has(skill)) {
-                        selectedSkills.delete(skill);
-                    } else {
-                        selectedSkills.add(skill);
-                    }
-                    renderSkillFilters();
-                    runFilter();
-                });
-                skillsFilterEl.appendChild(button);
-            });
-        }
-
-        function getFilteredSolutions() {
-            const yearVal = yearSelect.value;
-            return solutions.filter((s) => {
-                const yearOk = yearVal === "all" || String(s.year) === yearVal;
-                const topicOk = selectedTopics.size === 0
-                    || [...selectedTopics].every((topic) => (s.topicTags || []).includes(topic));
-                const skillOk = selectedSkills.size === 0
-                    || [...selectedSkills].every((skill) => (s.skillTags || []).includes(skill));
-                return yearOk && topicOk && skillOk;
-            });
-        }
-
-        function render(items) {
+        function renderList(items) {
             listEl.innerHTML = "";
-
             if (!items.length) {
-                const empty = document.createElement("div");
-                empty.className = "empty-state";
-                empty.textContent = "לא נמצאו פתרונות התואמים את הסינון. נסה/י מילה אחרת או שנה אחרת.";
-                listEl.appendChild(empty);
-            } else {
-                items.forEach((item) => {
-                    const card = document.createElement("article");
-                    card.className = "solution-item";
-
-                    const folderPath = item.href.slice(0, item.href.lastIndexOf("/"));
-                    const thumbPath = `${folderPath}/question-image.png`;
-                    const tagsHtml = (item.tags || []).map((t) => {
-                        const cls = (item.topicTags || []).includes(t) ? "meta-pill topic" : "meta-pill";
-                        return `<span class="${cls}">${t}</span>`;
-                    }).join(" ");
-                    const skillsHtml = (item.skillTags || []).map((s) => `<span class="meta-pill skill">${s}</span>`).join(" ");
-                    const pendingTag = item.needsTagging ? '<span class="meta-pill pending">נדרש תיוג</span>' : "";
-                    const rubricLinkHtml = item.rubricHref
-                        ? `<a class="aux-link" href="${item.rubricHref}">מחוון</a>`
-                        : "";
-
-                    card.innerHTML = `
-                        <div>
-                            <img class="solution-thumb" src="${thumbPath}" alt="תמונה מקדימה - ${item.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
-                            <div class="thumb-fallback">אין תמונה מקדימה</div>
-                        </div>
-                        <div>
-                            <div>
-                                <a class="solution-link" href="${item.href}">${item.title}</a>
-                                ${rubricLinkHtml}
-                            </div>
-                            <div class="mt-2 text-sm text-slate-600">שנה: <strong>${item.year}</strong> | שאלה: <strong>${item.question}</strong></div>
-                            <div class="mt-2">${pendingTag} ${tagsHtml}</div>
-                            <div class="mt-2 text-sm text-slate-600">מיומנויות: ${skillsHtml || '<span class="meta-pill">ללא תיוג</span>'}</div>
-                        </div>
-                    `;
-
-                    listEl.appendChild(card);
-                    attachThumbnailPreviewHandlers(card);
-                });
+                listEl.innerHTML = '<div class="empty-state">לא נמצאו תרגולים שמתאימים לסינון שנבחר.</div>';
+                return;
             }
 
+            const fragment = document.createDocumentFragment();
+
+            items.forEach((solution) => {
+                const card = document.createElement("article");
+                card.className = "solution-item";
+
+                const mediaWrap = document.createElement("div");
+                const thumb = document.createElement("img");
+                thumb.className = "solution-thumb";
+                thumb.alt = `תמונה מקדימה עבור ${solution.title}`;
+                thumb.src = solution.thumb;
+
+                const fallback = document.createElement("div");
+                fallback.className = "thumb-fallback";
+                fallback.textContent = "תמונה מקדימה לא זמינה";
+
+                thumb.addEventListener("error", () => {
+                    thumb.style.display = "none";
+                    fallback.style.display = "flex";
+                });
+
+                mediaWrap.append(thumb, fallback);
+
+                const body = document.createElement("div");
+
+                const titleLine = document.createElement("div");
+                const titleLink = document.createElement("a");
+                titleLink.className = "solution-link";
+                titleLink.href = solution.href;
+                titleLink.textContent = solution.label;
+                titleLine.appendChild(titleLink);
+
+                const metaRow = document.createElement("div");
+                metaRow.className = "mt-2 mb-2";
+
+                const datePill = document.createElement("span");
+                datePill.className = "meta-pill date";
+                datePill.textContent = `תאריך: ${solution.displayDate}`;
+                metaRow.appendChild(datePill);
+
+                if (solution.rubricHref) {
+                    const rubricPill = document.createElement("span");
+                    rubricPill.className = "meta-pill rubric";
+                    rubricPill.textContent = "כולל מחוון";
+                    metaRow.appendChild(rubricPill);
+                }
+
+                if (solution.isExample) {
+                    const examplePill = document.createElement("span");
+                    examplePill.className = "meta-pill example";
+                    examplePill.textContent = "פריט דוגמה";
+                    metaRow.appendChild(examplePill);
+                }
+
+                const desc = document.createElement("p");
+                desc.className = "text-sm text-slate-600 mb-2";
+                desc.textContent = "קישור ישיר לפתרון התרגול, עם אפשרות לפתוח גם את המחוון כאשר הוא קיים באותה תיקייה.";
+
+                const linksRow = document.createElement("div");
+                const solutionAux = document.createElement("a");
+                solutionAux.className = "aux-link";
+                solutionAux.href = solution.href;
+                solutionAux.textContent = "לפתרון המלא";
+                linksRow.appendChild(solutionAux);
+
+                if (solution.rubricHref) {
+                    const rubricAux = document.createElement("a");
+                    rubricAux.className = "aux-link";
+                    rubricAux.href = solution.rubricHref;
+                    rubricAux.textContent = "למחוון";
+                    linksRow.appendChild(rubricAux);
+                }
+
+                body.append(titleLine, metaRow, desc, linksRow);
+                card.append(mediaWrap, body);
+                fragment.appendChild(card);
+            });
+
+            listEl.appendChild(fragment);
+            attachThumbnailPreviewHandlers(listEl);
         }
 
         function runFilter() {
-            const yearVal = yearSelect.value;
-            const filtered = getFilteredSolutions();
-            renderTopicFilters(filtered);
-            renderSkillFilters(filtered);
+            const searchTerm = String(searchInput.value || "").trim().toLowerCase();
+            let filtered = [...solutions];
 
-            filtered.sort(sortByRecent ? compareSolutionsByRecent : compareSolutions);
-            render(filtered);
+            if (searchTerm) {
+                filtered = filtered.filter((solution) => {
+                    const haystack = [
+                        solution.title,
+                        solution.label,
+                        solution.displayDate,
+                        solution.dateCode,
+                        solution.rubricHref ? "מחוון rubric" : "",
+                        solution.isExample ? "דוגמה example" : "",
+                        solution.bodySearchText || ""
+                    ].join(" ").toLowerCase();
+                    return haystack.includes(searchTerm);
+                });
+            }
 
-            const yearText = yearVal === "all" ? "כל השנים" : `שנה ${yearVal}`;
-            const topicsText = selectedTopics.size ? ` | נושאים: ${[...selectedTopics].join(", ")}` : "";
-            const skillsText = selectedSkills.size ? ` | מיומנויות: ${[...selectedSkills].join(", ")}` : "";
-            const sortText = sortByRecent ? " | מיון: נוסף אחרון" : "";
-            resultsInfo.textContent = `נמצאו ${filtered.length} פתרונות עבור ${yearText}${topicsText}${skillsText}${sortText}.`;
+            filtered.sort(sortMode === "recent" ? compareSolutionsByRecent : compareSolutionsByTitle);
+
+            const indexingNote = bodySearchIndexReady ? "" : " האינדוקס של גוף התרגולים עדיין נטען.";
+            resultsInfo.textContent = `מוצגים ${filtered.length} מתוך ${solutions.length} תרגולים.${indexingNote}`;
+            renderList(filtered);
         }
 
-        document.addEventListener("DOMContentLoaded", async function() {
-            const versionStamp = document.getElementById("versionStamp");
+        function applyVersionStamp() {
             const versionId = document.getElementById("versionId");
             const versionUpdatedAt = document.getElementById("versionUpdatedAt");
-            if (versionStamp) {
-                versionStamp.title = "Last file modified: " + document.lastModified;
+            if (!versionId || !versionUpdatedAt) {
+                return;
             }
 
             const modified = new Date(document.lastModified);
-            if (!Number.isNaN(modified.getTime())) {
-                const pad = (n) => String(n).padStart(2, "0");
-                const y = modified.getFullYear();
-                const m = pad(modified.getMonth() + 1);
-                const d = pad(modified.getDate());
-                const hh = pad(modified.getHours());
-                const mm = pad(modified.getMinutes());
-
-                if (versionId) {
-                    versionId.textContent = `v${y}${m}${d}-${hh}${mm}`;
-                }
-                if (versionUpdatedAt) {
-                    versionUpdatedAt.textContent = `${y}-${m}-${d} ${hh}:${mm}`;
-                }
+            if (Number.isNaN(modified.getTime())) {
+                return;
             }
 
+            const pad = (n) => String(n).padStart(2, "0");
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, "0");
+
+            versionId.textContent = `v${dateCode}`;
+            versionUpdatedAt.textContent = `${dateCode} ${pad(modified.getHours())}:${pad(modified.getMinutes())}:${pad(modified.getSeconds())}`;
+        }
+
+        async function init() {
             try {
-                solutions = await loadSolutionsFromTopicsJson();
-            } catch (_err) {
-                solutions = [...staticSolutions];
-                topicCatalog = [];
-                skillCatalog = [];
+                const discovered = await discoverPracticeEntries();
+                solutions = mergeStaticAndDiscovered(staticSolutions, discovered);
+            } catch (error) {
+                solutions = mergeStaticAndDiscovered(staticSolutions, []);
             }
 
-            yearOptionsInit();
-            syncSortButtonUi();
+            solutions.sort(compareSolutionsByRecent);
+            syncSortButtons();
             runFilter();
-            yearSelect.addEventListener("change", runFilter);
-            clearTopicsBtn.addEventListener("click", () => {
-                selectedTopics.clear();
-                renderTopicFilters();
-                runFilter();
-            });
-            if (clearSkillsBtn) {
-                clearSkillsBtn.addEventListener("click", () => {
-                    selectedSkills.clear();
-                    renderSkillFilters();
-                    runFilter();
-                });
-            }
-            if (sortByRecentBtn) {
-                sortByRecentBtn.addEventListener("click", () => {
-                    sortByRecent = !sortByRecent;
-                    syncSortButtonUi();
-                    runFilter();
-                });
-            }
+            applyVersionStamp();
+            enrichSolutionsWithBodySearch(solutions);
+        }
+
+        searchInput.addEventListener("input", runFilter);
+        sortRecentBtn.addEventListener("click", () => {
+            sortMode = "recent";
+            syncSortButtons();
+            runFilter();
         });
+        sortTitleBtn.addEventListener("click", () => {
+            sortMode = "title";
+            syncSortButtons();
+            runFilter();
+        });
+        document.addEventListener("scroll", hidePreview, { passive: true });
+        window.addEventListener("resize", hidePreview);
+
+        init();
     </script>
 </body>
 </html>
-
