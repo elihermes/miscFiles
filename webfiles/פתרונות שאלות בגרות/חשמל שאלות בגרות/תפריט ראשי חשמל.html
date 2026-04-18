@@ -1,18 +1,18 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
-    <!-- Google tag (gtag.js) -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
-    <script>
-      window.dataLayer = window.dataLayer || [];
-      function gtag(){dataLayer.push(arguments);}
-      gtag('js', new Date());
+        <!-- Google tag (gtag.js) -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
 
-      gtag('config', 'G-QZJ7JT80X2');
-    </script>
+            gtag('config', 'G-QZJ7JT80X2');
+        </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>תפריט ראשי - פתרונות בחשמל</title>
+    <title>תפריט ראשי - שאלות חשמל</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -21,12 +21,18 @@
             --bg-page: #f8fafc;
             --bg-card: #ffffff;
             --text-main: #334155;
+            --blue-600: #2563eb;
             --blue-700: #1d4ed8;
             --blue-100: #dbeafe;
             --blue-50: #eff6ff;
             --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
             --slate-200: #e2e8f0;
             --slate-300: #cbd5e1;
+            --amber-50: #fffbeb;
+            --amber-200: #fde68a;
+            --amber-700: #b45309;
         }
 
         html {
@@ -40,6 +46,10 @@
             line-height: 1.65;
             overflow-x: clip;
             margin: 0;
+        }
+
+        body.drawer-open {
+            overflow: hidden;
         }
 
         .page-shell {
@@ -92,7 +102,532 @@
             display: grid;
             grid-template-columns: 1fr;
             gap: 0.75rem;
-            max-width: 260px;
+            max-width: 100%;
+        }
+
+        .filter-stack {
+            display: grid;
+            gap: 0.9rem;
+        }
+
+        .section-card.filter-shell {
+            padding: 0;
+            overflow: hidden;
+            border-color: rgba(191, 219, 254, 0.95);
+            box-shadow: 0 14px 28px rgba(37, 99, 235, 0.08);
+        }
+
+        .filter-topbar {
+            display: grid;
+            grid-template-columns: minmax(0, 1fr) auto;
+            gap: 0.9rem;
+            padding: 1.1rem 1.25rem 1rem;
+            align-items: end;
+            background: #ffffff;
+        }
+
+        .search-field {
+            display: block;
+        }
+
+        .toolbar-cluster {
+            display: flex;
+            align-items: center;
+            justify-content: flex-end;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-open-btn {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.55rem;
+            border: 1px solid rgba(147, 197, 253, 0.95);
+            border-radius: 0.9rem;
+            background: #ffffff;
+            color: #1e3a8a;
+            font: inherit;
+            font-weight: 700;
+            padding: 0.82rem 1rem;
+            cursor: pointer;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.08);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease, background-color 0.15s ease;
+        }
+
+        .filter-open-btn:hover {
+            transform: translateY(-1px);
+            border-color: var(--blue-600);
+            box-shadow: 0 10px 22px rgba(37, 99, 235, 0.14);
+        }
+
+        .filter-open-btn.has-active {
+            background: var(--blue-50);
+            border-color: var(--blue-600);
+        }
+
+        .filter-open-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.55rem;
+            height: 1.55rem;
+            border-radius: 9999px;
+            background: var(--blue-700);
+            color: #eff6ff;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1;
+            padding: 0 0.35rem;
+        }
+
+        .results-strip {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.9rem;
+            padding: 0.95rem 1.25rem 1rem;
+            border-top: 1px solid rgba(226, 232, 240, 0.95);
+            background: linear-gradient(180deg, rgba(248, 250, 252, 0.72), rgba(255, 255, 255, 0.94));
+        }
+
+        .results-info {
+            margin: 0;
+            font-size: 0.92rem;
+            color: #475569;
+        }
+
+        .active-summary {
+            padding: 0 1.25rem 1.1rem;
+            display: grid;
+            gap: 0.7rem;
+        }
+
+        .active-summary[hidden] {
+            display: none;
+        }
+
+        .active-summary-head {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .active-summary-title {
+            font-size: 0.92rem;
+            font-weight: 700;
+            color: #0f172a;
+        }
+
+        .active-filter-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+
+        .active-filter-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            border-radius: 9999px;
+            border: 1px solid var(--slate-300);
+            padding: 0.35rem 0.7rem;
+            font: inherit;
+            font-size: 0.86rem;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease;
+        }
+
+        .active-filter-chip:hover {
+            transform: translateY(-1px);
+            box-shadow: 0 6px 14px rgba(15, 23, 42, 0.08);
+        }
+
+        .active-filter-chip.is-topic {
+            background: #eff6ff;
+            border-color: #bfdbfe;
+            color: #1d4ed8;
+        }
+
+        .active-filter-chip.is-skill {
+            background: #f0fdf4;
+            border-color: #86efac;
+            color: #166534;
+        }
+
+        .active-filter-remove {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            width: 1.1rem;
+            height: 1.1rem;
+            border-radius: 9999px;
+            font-size: 0.88rem;
+            line-height: 1;
+            background: rgba(255, 255, 255, 0.72);
+        }
+
+        .filter-drawer-backdrop {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.42);
+            backdrop-filter: blur(3px);
+            opacity: 0;
+            pointer-events: none;
+            transition: opacity 0.2s ease;
+            z-index: 300;
+        }
+
+        .filter-drawer-backdrop.is-open {
+            opacity: 1;
+            pointer-events: auto;
+        }
+
+        .filter-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            width: min(430px, 100vw);
+            height: 100vh;
+            background: #ffffff;
+            box-shadow: -24px 0 54px rgba(15, 23, 42, 0.2);
+            transform: translateX(100%);
+            transition: transform 0.24s ease;
+            z-index: 320;
+            display: grid;
+            grid-template-rows: auto 1fr auto;
+        }
+
+        .filter-drawer.is-open {
+            transform: translateX(0);
+        }
+
+        .filter-drawer-header {
+            padding: 1rem 1.1rem 0.95rem;
+            border-bottom: 1px solid var(--slate-200);
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            background: linear-gradient(180deg, #f8fbff 0%, #ffffff 100%);
+        }
+
+        .filter-drawer-kicker {
+            font-size: 0.78rem;
+            font-weight: 700;
+            color: #1d4ed8;
+            margin-bottom: 0.2rem;
+        }
+
+        .filter-drawer-title {
+            font-size: 1.2rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .filter-drawer-text {
+            margin: 0.35rem 0 0;
+            color: #475569;
+            font-size: 0.9rem;
+        }
+
+        .filter-drawer-close {
+            border: 1px solid var(--slate-300);
+            background: #ffffff;
+            color: #334155;
+            border-radius: 9999px;
+            padding: 0.45rem 0.85rem;
+            font: inherit;
+            font-size: 0.88rem;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        .filter-drawer-close:hover {
+            border-color: var(--blue-border);
+            color: #1d4ed8;
+        }
+
+        .filter-drawer-body {
+            overflow: auto;
+            padding: 1rem 1.1rem 1.25rem;
+            display: grid;
+            gap: 1.15rem;
+        }
+
+        .filter-panel-block {
+            display: grid;
+            gap: 0.75rem;
+        }
+
+        .filter-section-head {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #0f172a;
+            margin: 0;
+        }
+
+        .filter-section-actions {
+            display: flex;
+            align-items: center;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+        }
+
+        .filter-section-status {
+            font-size: 0.82rem;
+            font-weight: 600;
+            color: #64748b;
+        }
+
+        .filter-link-btn {
+            border: none;
+            background: none;
+            padding: 0;
+            font: inherit;
+            font-size: 0.88rem;
+            font-weight: 700;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+            cursor: pointer;
+        }
+
+        .filter-link-btn.blue {
+            color: #1d4ed8;
+        }
+
+        .filter-link-btn.green {
+            color: #15803d;
+        }
+
+        .filter-link-btn.neutral {
+            color: #475569;
+        }
+
+        .filter-link-btn:disabled {
+            opacity: 0.45;
+            cursor: default;
+            text-decoration: none;
+        }
+
+        .filter-drawer-footer {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            padding: 0.95rem 1.1rem 1.1rem;
+            border-top: 1px solid var(--slate-200);
+            background: #ffffff;
+        }
+
+        .drawer-primary-btn,
+        .drawer-secondary-btn {
+            border-radius: 0.8rem;
+            padding: 0.7rem 1rem;
+            font: inherit;
+            font-weight: 700;
+            cursor: pointer;
+            transition: transform 0.15s ease, box-shadow 0.15s ease, border-color 0.15s ease;
+        }
+
+        .drawer-primary-btn {
+            border: 1px solid var(--blue-700);
+            background: var(--blue-700);
+            color: #eff6ff;
+            box-shadow: 0 8px 18px rgba(37, 99, 235, 0.16);
+        }
+
+        .drawer-secondary-btn {
+            border: 1px solid var(--slate-300);
+            background: #ffffff;
+            color: #334155;
+        }
+
+        .drawer-primary-btn:hover,
+        .drawer-secondary-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .topics-toolbar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.75rem;
+            flex-wrap: wrap;
+        }
+
+        .topic-filter-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+
+        .skill-filter-box {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.55rem;
+        }
+
+        .topic-chip {
+            border: 1px solid var(--slate-300);
+            background: #fff;
+            color: #334155;
+            border-radius: 9999px;
+            padding: 0.42rem 0.8rem;
+            font: inherit;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .topic-chip:hover {
+            border-color: var(--blue-border);
+            transform: translateY(-1px);
+        }
+
+        .topic-chip.is-active {
+            background: var(--blue-700);
+            color: #eff6ff;
+            border-color: var(--blue-700);
+        }
+
+        .topic-chip.is-empty {
+            opacity: 0.55;
+        }
+
+        .topic-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.45rem;
+            height: 1.45rem;
+            padding: 0 0.35rem;
+            margin-inline-start: 0.35rem;
+            border-radius: 9999px;
+            background: #e2e8f0;
+            color: #334155;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .topic-chip.is-active .topic-count {
+            background: rgba(255, 255, 255, 0.18);
+            color: #eff6ff;
+        }
+
+        .skill-chip {
+            border: 1px solid #86efac;
+            background: #f0fdf4;
+            color: #166534;
+            border-radius: 9999px;
+            padding: 0.42rem 0.8rem;
+            font: inherit;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .skill-chip:hover {
+            border-color: #4ade80;
+            transform: translateY(-1px);
+        }
+
+        .skill-chip.is-active {
+            background: #166534;
+            color: #ecfdf5;
+            border-color: #166534;
+        }
+
+        .skill-chip.is-empty {
+            opacity: 0.55;
+        }
+
+        .skill-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 1.45rem;
+            height: 1.45rem;
+            padding: 0 0.35rem;
+            margin-inline-start: 0.35rem;
+            border-radius: 9999px;
+            background: #dcfce7;
+            color: #166534;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1;
+        }
+
+        .skill-chip.is-active .skill-count {
+            background: rgba(255, 255, 255, 0.18);
+            color: #ecfdf5;
+        }
+
+        .filter-note {
+            font-size: 0.88rem;
+            color: #64748b;
+            margin: 0;
+        }
+
+        .search-input {
+            width: 100%;
+            max-width: none;
+            border: 1px solid var(--slate-300);
+            border-radius: 0.75rem;
+            padding: 0.8rem 0.95rem;
+            font: inherit;
+            color: #334155;
+            background: #fff;
+            box-shadow: inset 0 1px 2px rgba(15, 23, 42, 0.03);
+        }
+
+        .search-input:focus {
+            outline: none;
+            border-color: var(--blue-border);
+            box-shadow: 0 0 0 4px rgba(147, 197, 253, 0.28);
+        }
+
+        .sort-toolbar {
+            display: flex;
+            justify-content: flex-start;
+            gap: 0.65rem;
+            flex-wrap: wrap;
+            margin-top: 0;
+        }
+
+        .sort-chip {
+            border: 1px solid var(--slate-300);
+            background: #fff;
+            color: #334155;
+            border-radius: 9999px;
+            padding: 0.42rem 0.8rem;
+            font: inherit;
+            font-size: 0.92rem;
+            cursor: pointer;
+            transition: background-color 0.15s ease, color 0.15s ease, border-color 0.15s ease, transform 0.15s ease;
+        }
+
+        .sort-chip:hover {
+            border-color: var(--blue-border);
+            transform: translateY(-1px);
+        }
+
+        .sort-chip.is-active {
+            background: var(--blue-700);
+            color: #eff6ff;
+            border-color: var(--blue-700);
         }
 
         .solution-item {
@@ -123,6 +658,17 @@
             text-decoration: underline;
         }
 
+        .aux-link {
+            color: #0f766e;
+            font-weight: 700;
+            text-decoration: none;
+            margin-right: 0.8rem;
+        }
+
+        .aux-link:hover {
+            text-decoration: underline;
+        }
+
         .meta-pill {
             display: inline-block;
             padding: 0.15rem 0.55rem;
@@ -134,6 +680,90 @@
             background: #f8fafc;
         }
 
+        .meta-pill.date {
+            border-color: #bfdbfe;
+            color: #1d4ed8;
+            background: #eff6ff;
+        }
+
+        .meta-pill.rubric {
+            border-color: #86efac;
+            color: #166534;
+            background: #f0fdf4;
+        }
+
+        .meta-pill.topic {
+            border-color: #bfdbfe;
+            color: #1d4ed8;
+            background: #eff6ff;
+        }
+
+        .meta-pill.skill {
+            border-color: #86efac;
+            color: #166534;
+            background: #f0fdf4;
+        }
+
+        .meta-pill.pending {
+            border-color: #fed7aa;
+            color: #9a3412;
+            background: #fff7ed;
+        }
+
+        .meta-pill.example {
+            border-color: var(--amber-200);
+            color: var(--amber-700);
+            background: var(--amber-50);
+        }
+
+        .meta-pill.bagrut {
+            border-color: #c4b5fd;
+            color: #6d28d9;
+            background: #f5f3ff;
+        }
+
+        .empty-state {
+            background: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            color: #166534;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
         .solution-thumb {
             width: 96px;
             height: 96px;
@@ -143,14 +773,19 @@
             background: #f8fafc;
         }
 
-        /* Empty square shown when question-image.png is missing */
-        .thumb-empty {
+        .thumb-fallback {
             width: 96px;
             height: 96px;
             border-radius: 0.6rem;
             border: 1px dashed var(--slate-300);
             background: #f8fafc;
+            color: #64748b;
+            font-size: 0.75rem;
             display: none;
+            align-items: center;
+            justify-content: center;
+            text-align: center;
+            padding: 0.35rem;
         }
 
         .hover-preview {
@@ -178,14 +813,6 @@
             background: #f8fafc;
         }
 
-        .empty-state {
-            background: #f0fdf4;
-            border-right: 4px solid #22c55e;
-            border-radius: 0.5rem 0 0 0.5rem;
-            padding: 0.9rem;
-            color: #166534;
-        }
-
         @media (max-width: 900px) {
             .hover-preview {
                 display: none !important;
@@ -197,14 +824,65 @@
                 padding: 0.75rem;
             }
 
+            .filter-topbar,
+            .results-strip,
+            .active-summary {
+                padding-left: 1rem;
+                padding-right: 1rem;
+            }
+
+            .filter-grid {
+                grid-template-columns: 1fr;
+            }
+
             .solution-item {
                 grid-template-columns: 1fr;
             }
 
             .solution-thumb,
-            .thumb-empty {
+            .thumb-fallback {
                 width: 100%;
                 height: 140px;
+            }
+        }
+
+        @media (max-width: 900px) {
+            .filter-topbar {
+                grid-template-columns: 1fr;
+            }
+
+            .toolbar-cluster {
+                justify-content: space-between;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .filter-drawer {
+                top: auto;
+                bottom: 0;
+                width: 100vw;
+                height: min(84vh, 760px);
+                border-radius: 1.1rem 1.1rem 0 0;
+                box-shadow: 0 -20px 48px rgba(15, 23, 42, 0.24);
+                transform: translateY(100%);
+            }
+
+            .filter-drawer.is-open {
+                transform: translateY(0);
+            }
+
+            .filter-drawer-footer {
+                flex-direction: column-reverse;
+            }
+
+            .drawer-primary-btn,
+            .drawer-secondary-btn,
+            .filter-open-btn {
+                width: 100%;
+            }
+
+            .toolbar-cluster {
+                width: 100%;
             }
         }
     </style>
@@ -212,395 +890,767 @@
 <body>
     <div class="page-shell">
         <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">תפריט ראשי - פתרונות בגרות בחשמל</h1>
-            <h2 class="text-xl md:text-2xl text-slate-600">גישה מהירה לכל פתרונות החשמל</h2>
-            <p class="mt-3 text-slate-500">סינון לפי שנה ותצוגה מקדימה של תמונת השאלה אם קיימת בתיקייה.</p>
+            <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">שאלות חשמל</h1>
+            <h2 class="text-xl md:text-2xl text-slate-600">פתרונות מלאים ומפורטים לשאלות פיזיקה — נושא חשמל</h2>
+            <p class="mt-3 text-slate-500">סינון לפי נושאים, מיומנויות ושנת שאלה. לחצי על כל שאלה לצפייה בפתרון המלא.</p>
             <div class="version-stamp" id="versionStamp" dir="ltr" aria-label="Version stamp">
                 <span class="version-label">ver</span>
                 <span id="versionId">vAUTO</span>
                 <span>|</span>
                 <span id="versionUpdatedAt">auto</span>
             </div>
+            <div>
+                <a class="legal-entry-link" href="../../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+            </div>
         </header>
 
-        <section class="section-card">
-            <h3 class="section-header">סינון</h3>
-            <div class="filter-grid">
-                <label class="block">
-                    <span class="block text-sm font-semibold text-slate-700 mb-1">סינון לפי שנה</span>
-                    <select id="yearSelect" class="w-full rounded-lg border border-slate-300 p-2.5 text-slate-700 focus:outline-none focus:ring-2 focus:ring-blue-200">
-                        <option value="all">כל השנים</option>
-                    </select>
+        <section class="section-card filter-shell">
+            <div class="filter-topbar">
+                <label class="search-field">
+                    <span class="block text-sm font-semibold text-slate-700 mb-1">חיפוש חופשי</span>
+                    <input id="searchInput" class="search-input" type="search" placeholder="חפשי לפי שנה, מספר שאלה, נושא או מיומנות" aria-label="חיפוש חופשי בשאלות">
                 </label>
+
+                <div class="toolbar-cluster">
+                    <button id="openFiltersBtn" type="button" class="filter-open-btn" aria-controls="filterDrawer" aria-expanded="false">
+                        <span>סינון מתקדם</span>
+                        <span id="drawerFilterCount" class="filter-open-count" hidden>0</span>
+                    </button>
+                    <div class="sort-toolbar">
+                        <button id="filterAllBtn" type="button" class="sort-chip is-active" aria-pressed="true">הכל</button>
+                        <button id="filterBagrutBtn" type="button" class="sort-chip" aria-pressed="false">רק בגרות</button>
+                    </div>
+                    <div class="sort-toolbar">
+                        <button id="sortYearDescBtn" type="button" class="sort-chip is-active" aria-pressed="true">חדש לישן</button>
+                        <button id="sortYearAscBtn" type="button" class="sort-chip" aria-pressed="false">ישן לחדש</button>
+                        <button id="sortTitleBtn" type="button" class="sort-chip" aria-pressed="false">לפי שם</button>
+                    </div>
+                </div>
             </div>
-            <p id="resultsInfo" class="mt-3 text-sm text-slate-500"></p>
+
+            <div class="results-strip">
+                <p id="resultsInfo" class="results-info"></p>
+            </div>
+
+            <div id="activeSummary" class="active-summary" hidden>
+                <div class="active-summary-head">
+                    <span class="active-summary-title">סינונים פעילים</span>
+                    <button type="button" class="filter-link-btn neutral" data-clear-all-filters>נקה הכל</button>
+                </div>
+                <div id="activeFilters" class="active-filter-list"></div>
+            </div>
         </section>
 
         <section class="section-card">
-            <h3 class="section-header">רשימת פתרונות</h3>
+            <h3 class="section-header">רשימת שאלות</h3>
             <div id="solutionsList" class="space-y-3"></div>
         </section>
+
+        <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+            <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+            <a href="../../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </footer>
     </div>
+
+    <div id="filterBackdrop" class="filter-drawer-backdrop"></div>
+
+    <aside id="filterDrawer" class="filter-drawer" aria-hidden="true" aria-label="מגירת סינון מתקדם">
+        <div class="filter-drawer-header">
+            <div>
+                <div class="filter-drawer-kicker">סינון מתקדם</div>
+                <h3 class="filter-drawer-title">נושאים ומיומנויות</h3>
+                <p class="filter-drawer-text">הבחירה מתעדכנת מיד ברשימה. אפשר לשלב כמה תגיות יחד בלי לעזוב את המסך הראשי.</p>
+            </div>
+            <button id="closeFiltersBtn" type="button" class="filter-drawer-close" aria-label="סגירת מגירת הסינון">סגור</button>
+        </div>
+
+        <div class="filter-drawer-body">
+            <section class="filter-panel-block">
+                <div class="filter-section-head">
+                    <div>
+                        <h4 class="filter-section-title">נושאים</h4>
+                        <p class="filter-note">יוצגו רק שאלות שמכילות את כל הנושאים שנבחרו.</p>
+                    </div>
+                    <div class="filter-section-actions">
+                        <span id="topicsStatus" class="filter-section-status">0 זמינים</span>
+                        <button id="clearTopicsBtn" type="button" class="filter-link-btn blue">נקה תגיות</button>
+                    </div>
+                </div>
+                <div id="topicsFilter" class="topic-filter-box"></div>
+            </section>
+
+            <section class="filter-panel-block">
+                <div class="filter-section-head">
+                    <div>
+                        <h4 class="filter-section-title">מיומנויות</h4>
+                        <p class="filter-note">יוצגו רק שאלות שמכילות את כל המיומנויות שנבחרו.</p>
+                    </div>
+                    <div class="filter-section-actions">
+                        <span id="skillsStatus" class="filter-section-status">0 זמינות</span>
+                        <button id="clearSkillsBtn" type="button" class="filter-link-btn green">נקה מיומנויות</button>
+                    </div>
+                </div>
+                <div id="skillsFilter" class="skill-filter-box"></div>
+            </section>
+        </div>
+
+        <div class="filter-drawer-footer">
+            <button type="button" class="drawer-secondary-btn" data-clear-all-filters>נקה הכל</button>
+            <button id="doneFiltersBtn" type="button" class="drawer-primary-btn">חזרה לרשימה</button>
+        </div>
+    </aside>
 
     <div id="hoverPreview" class="hover-preview" aria-hidden="true">
         <img id="hoverPreviewImg" alt="תצוגה מוגדלת של השאלה">
     </div>
 
     <script>
-        const staticSolutions = [
-            { year: 1991, question: "4", title: "1991 שאלה 4", href: "./1991 שאלה 4/1991 שאלה 4.html", tags: ["חשמל", "בגרות"] },
-            { year: 1992, question: "4", title: "1992 שאלה 4", href: "./1992 שאלה 4/1992 שאלה 4.html", tags: ["חשמל", "בגרות"] },
-            { year: 1993, question: "4", title: "1993 שאלה 4", href: "./1993 שאלה 4/1993 שאלה 4.html", tags: ["חשמל", "בגרות"] },
-            { year: 1996, question: "3", title: "1996 שאלה 3", href: "./1996 שאלה 3/1996 שאלה 3.html", tags: ["חשמל", "בגרות"] },
-            { year: 1997, question: "2", title: "1997 שאלה 2", href: "./1997 שאלה 2/1997 שאלה 2.html", tags: ["חשמל", "בגרות"] },
-            { year: 2005, question: "4", title: "2005 שאלה 4", href: "./2005 שאלה 4/2005 שאלה 4.html", tags: ["חשמל", "בגרות"] },
-            { year: 2017, question: "4", title: "2017 שאלה 4", href: "./2017 שאלה 4/2017 שאלה 4.html", tags: ["חשמל", "בגרות"] },
-            { year: 2022, question: "3", title: "2022 שאלה 3", href: "./2022 שאלה 3/2022 שאלה 3.html", tags: ["חשמל", "בגרות"] },
-            { year: 2024, question: "5", title: "2024 שאלה 5", href: "./2024 שאלה 5/2024 שאלה 5.html", tags: ["חשמל", "בגרות"] },
-            { year: 2024, question: "6", title: "2024 שאלה 6", href: "./2024 שאלה 6/2024 שאלה 6.html", tags: ["חשמל", "בגרות"] }
-        ];
+        const BAGRUT_FOLDER_REPO_PATH = "webfiles/פתרונות שאלות בגרות/חשמל שאלות בגרות";
+        const DISCOVERY_EXCLUDED_FILES = new Set([
+            "תפריט ראשי חשמל.html",
+            "question-topics.json"
+        ]);
 
-        const folderRelativeToRepo = "webfiles/פתרונות שאלות בגרות/חשמל שאלות בגרות";
-        const folderNamePattern = /^(\d{4})\s+שאלה\s+(.+)$/;
-
-        const yearSelect = document.getElementById("yearSelect");
-        const resultsInfo = document.getElementById("resultsInfo");
-        const listEl = document.getElementById("solutionsList");
-        const hoverPreview = document.getElementById("hoverPreview");
-        const hoverPreviewImg = document.getElementById("hoverPreviewImg");
-
-        let previewActive = false;
-        let solutions = [...staticSolutions];
-
-        function parseFromFolderName(folderName) {
-            const match = folderName.match(folderNamePattern);
-            if (!match) {
-                return null;
-            }
-
-            return {
-                year: Number(match[1]),
-                question: match[2],
-                title: folderName
-            };
+        // Parse bagrut folder names like "1991 שאלה 4"
+        function parseBagrutFolder(folderName) {
+            const trimmed = String(folderName || "").trim();
+            const match = trimmed.match(/^(\d{4})\s+שאלה\s+(\d+)$/);
+            if (!match) return null;
+            const year = Number(match[1]);
+            const questionNumber = Number(match[2]);
+            if (year < 1985 || year > 2050) return null;
+            return { title: trimmed, year, questionNumber, timestamp: year * 100 + questionNumber };
         }
 
-        function normalizeHref(baseHref) {
-            if (!baseHref.endsWith("/")) {
-                return `${baseHref}/`;
-            }
-            return baseHref;
+        function compareSolutionsByYearDesc(a, b) {
+            if (a.bagrutYear !== b.bagrutYear) return b.bagrutYear - a.bagrutYear;
+            return a.bagrutQuestionNumber - b.bagrutQuestionNumber;
         }
 
-        function yearOptionsInit() {
-            yearSelect.innerHTML = '<option value="all">כל השנים</option>';
-            const years = [...new Set(solutions.map((s) => s.year))].sort((a, b) => a - b);
-            years.forEach((y) => {
-                const opt = document.createElement("option");
-                opt.value = String(y);
-                opt.textContent = String(y);
-                yearSelect.appendChild(opt);
+        function compareSolutionsByYearAsc(a, b) {
+            if (a.bagrutYear !== b.bagrutYear) return a.bagrutYear - b.bagrutYear;
+            return a.bagrutQuestionNumber - b.bagrutQuestionNumber;
+        }
+
+        function compareSolutionsByTitle(a, b) {
+            return a.title.localeCompare(b.title, "he", { numeric: true });
+        }
+
+        function syncSortButtons() {
+            sortYearDescBtn.classList.toggle("is-active", sortMode === "yearDesc");
+            sortYearDescBtn.setAttribute("aria-pressed", sortMode === "yearDesc" ? "true" : "false");
+            sortYearAscBtn.classList.toggle("is-active", sortMode === "yearAsc");
+            sortYearAscBtn.setAttribute("aria-pressed", sortMode === "yearAsc" ? "true" : "false");
+            sortTitleBtn.classList.toggle("is-active", sortMode === "title");
+            sortTitleBtn.setAttribute("aria-pressed", sortMode === "title" ? "true" : "false");
+        }
+
+        function syncBagrutFilterButtons() {
+            filterAllBtn.classList.toggle("is-active", bagrutFilterMode === "all");
+            filterAllBtn.setAttribute("aria-pressed", bagrutFilterMode === "all" ? "true" : "false");
+            filterBagrutBtn.classList.toggle("is-active", bagrutFilterMode === "bagrutOnly");
+            filterBagrutBtn.setAttribute("aria-pressed", bagrutFilterMode === "bagrutOnly" ? "true" : "false");
+        }
+
+        function isLocalhost() {
+            return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+        }
+
+        function normalizeSlashes(path) {
+            return String(path || "").replace(/\\/g, "/").replace(/^\/+/, "");
+        }
+
+        function normalizeRelativePath(path) {
+            let normalized = normalizeSlashes(path);
+            if (normalized.startsWith("./")) normalized = normalized.slice(2);
+            const directPrefix = `${BAGRUT_FOLDER_REPO_PATH}/`;
+            const directIdx = normalized.indexOf(directPrefix);
+            if (directIdx >= 0) return normalized.slice(directIdx + directPrefix.length);
+            const folderName = "חשמל שאלות בגרות/";
+            const folderIdx = normalized.indexOf(folderName);
+            if (folderIdx >= 0) return normalized.slice(folderIdx + folderName.length);
+            return normalized;
+        }
+
+        function getRepoContextFromLocation() {
+            const hostMatch = window.location.hostname.match(/^([^.]+)\.github\.io$/);
+            if (!hostMatch) return null;
+            const pathParts = window.location.pathname.split("/").filter(Boolean);
+            if (!pathParts.length) return null;
+            return { owner: hostMatch[1], repo: pathParts[0] };
+        }
+
+        function getFolderPath(path) {
+            const normalized = normalizeRelativePath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            if (parts.length <= 1) return "";
+            return parts.slice(0, -1).join("/");
+        }
+
+        function getFileName(path) {
+            const normalized = normalizeRelativePath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            return parts.length ? parts[parts.length - 1] : "";
+        }
+
+        function getPracticeFolder(path) {
+            const normalized = normalizeRelativePath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            const bagrutFolder = parts.find((part) => Boolean(parseBagrutFolder(part)));
+            if (bagrutFolder) return bagrutFolder;
+            if (parts.length >= 2 && /\.[a-z0-9]+$/i.test(parts[parts.length - 1])) {
+                return parts[parts.length - 2];
+            }
+            return parts.length ? parts[parts.length - 1] : "";
+        }
+
+        function getPracticeRootPath(path) {
+            const normalized = normalizeRelativePath(path);
+            const parts = normalized.split("/").filter(Boolean);
+            const practiceIndex = parts.findIndex((part) => Boolean(parseBagrutFolder(part)));
+            if (practiceIndex >= 0) return parts.slice(0, practiceIndex + 1).join("/");
+            if (parts.length >= 2 && /\.[a-z0-9]+$/i.test(parts[parts.length - 1])) {
+                return parts.slice(0, -1).join("/");
+            }
+            return "";
+        }
+
+        function createQuestionIdFromFolder(folderName, usedIds) {
+            const parsed = parseBagrutFolder(folderName);
+            const rawBase = parsed ? `bagrut-${parsed.year}-q${parsed.questionNumber}` : String(folderName || "q");
+            const base = rawBase.trim().replace(/\s+/g, "-").replace(/[^\u0590-\u05FF\w-]/g, "").replace(/-+/g, "-").replace(/^-|-$/g, "") || "q";
+            let candidate = base;
+            let index = 2;
+            while (usedIds.has(candidate)) { candidate = `${base}-${index}`; index += 1; }
+            usedIds.add(candidate);
+            return candidate;
+        }
+
+        function pickMainHtml(folderPath, htmlFiles) {
+            const files = [...htmlFiles].sort((a, b) => a.localeCompare(b, "he", { numeric: true }));
+            if (!files.length) return "";
+            const folderName = folderPath.split("/").filter(Boolean).pop() || "";
+            const sameAsFolder = `${folderName}.html`;
+            if (files.includes(sameAsFolder)) return sameAsFolder;
+            return files[0];
+        }
+
+        async function discoverQuestionEntries() {
+            const discovered = new Map();
+
+            function ensureFolder(folderPath) {
+                if (!discovered.has(folderPath)) {
+                    discovered.set(folderPath, { hasQuestionImage: false, htmlFiles: new Set() });
+                }
+                return discovered.get(folderPath);
+            }
+
+            function collectNodePath(nodePath) {
+                const relativePath = normalizeRelativePath(nodePath);
+                const fileName = getFileName(relativePath);
+                const folderPath = getFolderPath(relativePath);
+                const practiceRootPath = getPracticeRootPath(relativePath);
+                if (!fileName || !folderPath || !practiceRootPath) return;
+                if (DISCOVERY_EXCLUDED_FILES.has(fileName)) return;
+                const entry = ensureFolder(practiceRootPath);
+                if (fileName.toLowerCase() === "question-image.png" && folderPath === practiceRootPath) {
+                    entry.hasQuestionImage = true;
+                    return;
+                }
+                if (fileName.toLowerCase().endsWith(".html") && folderPath === practiceRootPath) {
+                    entry.htmlFiles.add(fileName);
+                }
+            }
+
+            function finalize() {
+                return [...discovered.entries()].map(([practiceRootPath, entry]) => {
+                    const practiceFolder = getPracticeFolder(practiceRootPath);
+                    const parsed = parseBagrutFolder(practiceFolder);
+                    if (!practiceFolder || !entry.htmlFiles.size) return null;
+                    const htmlFile = pickMainHtml(practiceRootPath, entry.htmlFiles);
+                    if (!htmlFile) return null;
+                    return {
+                        title: parsed ? `בגרות ${parsed.year} - שאלה ${parsed.questionNumber}` : practiceFolder,
+                        bagrutYear: parsed ? parsed.year : 0,
+                        bagrutQuestionNumber: parsed ? parsed.questionNumber : 0,
+                        isBagrutQuestion: Boolean(parsed),
+                        href: `./${practiceRootPath}/${htmlFile}`,
+                        thumb: entry.hasQuestionImage ? `./${practiceRootPath}/question-image.png` : ""
+                    };
+                }).filter(Boolean);
+            }
+
+            if (isLocalhost()) {
+                const response = await fetch("/api/local-tree", { cache: "no-store" });
+                if (!response.ok) throw new Error("local-tree-unavailable");
+                const data = await response.json();
+                const tree = Array.isArray(data.tree) ? data.tree : [];
+                tree.forEach((node) => {
+                    if (!node || node.type !== "blob" || typeof node.path !== "string") return;
+                    if (!node.path.startsWith(`${BAGRUT_FOLDER_REPO_PATH}/`)) return;
+                    collectNodePath(node.path);
+                });
+                return finalize();
+            }
+
+            const ctx = getRepoContextFromLocation();
+            if (!ctx) return [];
+            const treeUrl = `https://api.github.com/repos/${ctx.owner}/${ctx.repo}/git/trees/HEAD?recursive=1`;
+            const response = await fetch(treeUrl, { cache: "no-store" });
+            if (!response.ok) throw new Error("github-tree-unavailable");
+            const data = await response.json();
+            const tree = Array.isArray(data.tree) ? data.tree : [];
+            tree.forEach((node) => {
+                if (!node || node.type !== "blob" || typeof node.path !== "string") return;
+                if (!node.path.startsWith(`${BAGRUT_FOLDER_REPO_PATH}/`)) return;
+                collectNodePath(node.path);
+            });
+            return finalize();
+        }
+
+        async function loadSolutionsFromTopicsJson(discoveredItems) {
+            const response = await fetch("./question-topics.json", { cache: "no-store" });
+            if (!response.ok) throw new Error("topics-json-load-failed");
+            const rawData = await response.json();
+
+            const topicsArr = Array.isArray(rawData.topics) ? rawData.topics.map(t => typeof t === "string" ? t : t.name) : [];
+            const skillsArr = Array.isArray(rawData.skills) ? rawData.skills : [];
+            const questions = Array.isArray(rawData.questions) ? rawData.questions : [];
+
+            topicCatalog = topicsArr;
+            skillCatalog = skillsArr;
+
+            const usedIds = new Set(questions.map(q => q.id).filter(Boolean));
+            const byPath = new Map();
+            const byFolder = new Map();
+
+            const discoveredByFolder = new Map();
+            discoveredItems.forEach((item) => {
+                const folder = getPracticeFolder(item.href);
+                if (folder) discoveredByFolder.set(folder, item);
+            });
+
+            const mapped = questions.map((entry, index) => {
+                const normalizedPath = normalizeRelativePath(entry.path || "");
+                const practiceFolder = getPracticeFolder(normalizedPath);
+                const practiceRootPath = getPracticeRootPath(normalizedPath);
+                const discovered = discoveredByFolder.get(practiceFolder);
+                const resolvedHref = discovered?.href || `./${normalizedPath}`;
+                const resolvedNormalizedPath = normalizeRelativePath(resolvedHref);
+                const bagrutYear = entry.bagrutYear || 0;
+                const bagrutQuestionNumber = entry.bagrutQuestionNumber || 0;
+
+                const item = {
+                    id: entry.id || `q-${index + 1}`,
+                    title: entry.title || `שאלה ${index + 1}`,
+                    bagrutYear,
+                    bagrutQuestionNumber,
+                    isBagrutQuestion: Boolean(entry.isBagrutQuestion),
+                    href: resolvedHref,
+                    thumb: discovered?.thumb || (practiceRootPath ? `./${practiceRootPath}/question-image.png` : ""),
+                    topicTags: Array.isArray(entry.topics) ? entry.topics : [],
+                    skillTags: Array.isArray(entry.skills) ? entry.skills : [],
+                    bodySearchText: ""
+                };
+
+                if (resolvedNormalizedPath) byPath.set(resolvedNormalizedPath, item);
+                if (normalizedPath) byPath.set(normalizedPath, item);
+                if (practiceFolder) byFolder.set(practiceFolder, item);
+                return item;
+            });
+
+            // Add discovered items not yet in JSON
+            discoveredItems.forEach((item) => {
+                const normalized = normalizeRelativePath(item.href);
+                if (byPath.has(normalized)) return;
+                const folder = getPracticeFolder(normalized);
+                if (byFolder.has(folder)) return;
+                const newItem = {
+                    id: createQuestionIdFromFolder(folder, usedIds),
+                    title: item.title || folder,
+                    bagrutYear: item.bagrutYear || 0,
+                    bagrutQuestionNumber: item.bagrutQuestionNumber || 0,
+                    isBagrutQuestion: Boolean(item.isBagrutQuestion),
+                    href: item.href,
+                    thumb: item.thumb || "",
+                    topicTags: [],
+                    skillTags: [],
+                    bodySearchText: ""
+                };
+                mapped.push(newItem);
+                byPath.set(normalized, newItem);
+                byFolder.set(folder, newItem);
+            });
+
+            return mapped;
+        }
+
+        function getTopicCountFromList(topic, items) {
+            return items.filter((s) => (s.topicTags || []).includes(topic)).length;
+        }
+
+        function getSkillCountFromList(skill, items) {
+            return items.filter((s) => (s.skillTags || []).includes(skill)).length;
+        }
+
+        function getActiveFilterCount() { return selectedTopics.size + selectedSkills.size; }
+
+        function clearAllFilters() { selectedTopics.clear(); selectedSkills.clear(); runFilter(); }
+
+        function setFilterDrawerOpen(isOpen) {
+            filterDrawer.classList.toggle("is-open", isOpen);
+            filterBackdrop.classList.toggle("is-open", isOpen);
+            filterDrawer.setAttribute("aria-hidden", isOpen ? "false" : "true");
+            if (openFiltersBtn) openFiltersBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            document.body.classList.toggle("drawer-open", isOpen);
+        }
+
+        function renderActiveFilters() {
+            if (!activeSummaryEl || !activeFiltersEl) return;
+            activeFiltersEl.innerHTML = "";
+            const activeEntries = [
+                ...[...selectedTopics].map((value) => ({ type: "topic", value })),
+                ...[...selectedSkills].map((value) => ({ type: "skill", value }))
+            ];
+            if (!activeEntries.length) { activeSummaryEl.hidden = true; return; }
+            const fragment = document.createDocumentFragment();
+            activeEntries.forEach((entry) => {
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = `active-filter-chip ${entry.type === "topic" ? "is-topic" : "is-skill"}`;
+                const label = document.createElement("span");
+                label.textContent = entry.value;
+                const remove = document.createElement("span");
+                remove.className = "active-filter-remove";
+                remove.textContent = "×";
+                button.append(label, remove);
+                button.addEventListener("click", () => {
+                    if (entry.type === "topic") selectedTopics.delete(entry.value);
+                    else selectedSkills.delete(entry.value);
+                    runFilter();
+                });
+                fragment.appendChild(button);
+            });
+            activeFiltersEl.appendChild(fragment);
+            activeSummaryEl.hidden = false;
+        }
+
+        function syncFilterUi() {
+            const activeCount = getActiveFilterCount();
+            if (drawerFilterCount) { drawerFilterCount.textContent = String(activeCount); drawerFilterCount.hidden = activeCount === 0; }
+            if (openFiltersBtn) openFiltersBtn.classList.toggle("has-active", activeCount > 0);
+            if (topicsStatusEl) topicsStatusEl.textContent = selectedTopics.size ? `${selectedTopics.size} נבחרו` : `${topicCatalog.length} זמינים`;
+            if (skillsStatusEl) skillsStatusEl.textContent = selectedSkills.size ? `${selectedSkills.size} נבחרו` : `${skillCatalog.length} זמינות`;
+            if (clearTopicsBtn) clearTopicsBtn.disabled = selectedTopics.size === 0;
+            if (clearSkillsBtn) clearSkillsBtn.disabled = selectedSkills.size === 0;
+            clearAllFilterButtons.forEach((button) => { button.disabled = activeCount === 0; });
+            renderActiveFilters();
+        }
+
+        function renderTopicFilters(items) {
+            if (!topicsFilterEl) return;
+            topicsFilterEl.innerHTML = "";
+            const scopedItems = Array.isArray(items) ? items : solutions;
+            topicCatalog.forEach((topic) => {
+                const count = getTopicCountFromList(topic, scopedItems);
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "topic-chip";
+                if (selectedTopics.has(topic)) button.classList.add("is-active");
+                if (count === 0) button.classList.add("is-empty");
+                const label = document.createElement("span");
+                label.textContent = topic;
+                const countBadge = document.createElement("span");
+                countBadge.className = "topic-count";
+                countBadge.textContent = String(count);
+                button.append(label, countBadge);
+                button.addEventListener("click", () => {
+                    if (selectedTopics.has(topic)) selectedTopics.delete(topic); else selectedTopics.add(topic);
+                    runFilter();
+                });
+                topicsFilterEl.appendChild(button);
             });
         }
 
-        function compareSolutions(a, b) {
-            if (a.year !== b.year) {
-                return a.year - b.year;
-            }
-            return String(a.question).localeCompare(String(b.question), "he", { numeric: true });
-        }
-
-        function githubRepoContextFromLocation() {
-            const hostMatch = window.location.hostname.match(/^([^.]+)\.github\.io$/);
-            if (!hostMatch) {
-                return null;
-            }
-
-            const pathParts = window.location.pathname.split("/").filter(Boolean);
-            if (!pathParts.length) {
-                return null;
-            }
-
-            return {
-                owner: hostMatch[1],
-                repo: pathParts[0]
-            };
-        }
-
-        async function loadSolutionsFromDirectoryListing() {
-            const response = await fetch("./", { cache: "no-store" });
-            if (!response.ok) {
-                throw new Error("directory-listing-not-available");
-            }
-
-            const html = await response.text();
-            const doc = new DOMParser().parseFromString(html, "text/html");
-            const anchors = Array.from(doc.querySelectorAll("a"));
-
-            const folderEntries = anchors
-                .map((a) => {
-                    const href = a.getAttribute("href") || "";
-                    if (!href || href === "../" || !href.endsWith("/")) {
-                        return null;
-                    }
-
-                    const decodedName = decodeURIComponent(href.replace(/\/$/, ""));
-                    const parsed = parseFromFolderName(decodedName);
-                    if (!parsed) {
-                        return null;
-                    }
-
-                    return {
-                        ...parsed,
-                        folderHref: normalizeHref(href)
-                    };
-                })
-                .filter(Boolean);
-
-            if (!folderEntries.length) {
-                throw new Error("directory-listing-empty");
-            }
-
-            const discovered = [];
-            for (const folder of folderEntries) {
-                const folderResponse = await fetch(folder.folderHref, { cache: "no-store" });
-                if (!folderResponse.ok) {
-                    continue;
-                }
-
-                const folderHtml = await folderResponse.text();
-                const folderDoc = new DOMParser().parseFromString(folderHtml, "text/html");
-                const fileAnchors = Array.from(folderDoc.querySelectorAll("a"));
-
-                const htmlCandidates = fileAnchors
-                    .map((a) => a.getAttribute("href") || "")
-                    .filter((href) => href.toLowerCase().endsWith(".html"));
-
-                if (!htmlCandidates.length) {
-                    continue;
-                }
-
-                const exact = htmlCandidates.find((href) => decodeURIComponent(href) === `${folder.title}.html`);
-                const htmlFile = exact || htmlCandidates[0];
-
-                discovered.push({
-                    year: folder.year,
-                    question: folder.question,
-                    title: folder.title,
-                    href: `${folder.folderHref}${htmlFile}`,
-                    tags: ["חשמל", "בגרות"]
+        function renderSkillFilters(items) {
+            if (!skillsFilterEl) return;
+            skillsFilterEl.innerHTML = "";
+            const scopedItems = Array.isArray(items) ? items : solutions;
+            skillCatalog.forEach((skill) => {
+                const count = getSkillCountFromList(skill, scopedItems);
+                const button = document.createElement("button");
+                button.type = "button";
+                button.className = "skill-chip";
+                if (selectedSkills.has(skill)) button.classList.add("is-active");
+                if (count === 0) button.classList.add("is-empty");
+                const label = document.createElement("span");
+                label.textContent = skill;
+                const countBadge = document.createElement("span");
+                countBadge.className = "skill-count";
+                countBadge.textContent = String(count);
+                button.append(label, countBadge);
+                button.addEventListener("click", () => {
+                    if (selectedSkills.has(skill)) selectedSkills.delete(skill); else selectedSkills.add(skill);
+                    runFilter();
                 });
-            }
-
-            if (!discovered.length) {
-                throw new Error("no-html-files-found");
-            }
-
-            return discovered;
+                skillsFilterEl.appendChild(button);
+            });
         }
 
-        async function loadSolutionsFromGitHubApi() {
-            const ctx = githubRepoContextFromLocation();
-            if (!ctx) {
-                throw new Error("not-github-pages");
-            }
-
-            const encodedPath = folderRelativeToRepo
-                .split("/")
-                .map((segment) => encodeURIComponent(segment))
-                .join("/");
-
-            const baseUrl = `https://api.github.com/repos/${ctx.owner}/${ctx.repo}/contents/${encodedPath}`;
-            const rootResponse = await fetch(baseUrl, { cache: "no-store" });
-            if (!rootResponse.ok) {
-                throw new Error("github-root-load-failed");
-            }
-
-            const rootEntries = await rootResponse.json();
-            const folders = rootEntries
-                .filter((entry) => entry.type === "dir")
-                .map((entry) => {
-                    const parsed = parseFromFolderName(entry.name);
-                    if (!parsed) {
-                        return null;
-                    }
-                    return {
-                        ...parsed,
-                        name: entry.name,
-                        apiUrl: entry.url
-                    };
-                })
-                .filter(Boolean);
-
-            const discovered = [];
-            for (const folder of folders) {
-                const folderResponse = await fetch(folder.apiUrl, { cache: "no-store" });
-                if (!folderResponse.ok) {
-                    continue;
-                }
-
-                const files = await folderResponse.json();
-                const htmlFiles = files.filter((file) => file.type === "file" && file.name.toLowerCase().endsWith(".html"));
-                if (!htmlFiles.length) {
-                    continue;
-                }
-
-                const exact = htmlFiles.find((file) => file.name === `${folder.name}.html`);
-                const htmlFile = exact || htmlFiles[0];
-
-                discovered.push({
-                    year: folder.year,
-                    question: folder.question,
-                    title: folder.name,
-                    href: `./${folder.name}/${htmlFile.name}`,
-                    tags: ["חשמל", "בגרות"]
-                });
-            }
-
-            if (!discovered.length) {
-                throw new Error("github-no-solutions");
-            }
-
-            return discovered;
+        function normalizeSearchText(text) {
+            return String(text || "").replace(/\s+/g, " ").trim().toLowerCase();
         }
 
-        async function loadSolutionsAuto() {
+        async function fetchBodySearchText(path) {
             try {
-                return await loadSolutionsFromDirectoryListing();
-            } catch (_directoryErr) {
-                try {
-                    return await loadSolutionsFromGitHubApi();
-                } catch (_githubErr) {
-                    return [...staticSolutions];
-                }
-            }
+                const response = await fetch(path, { cache: "no-store" });
+                if (!response.ok) return "";
+                const html = await response.text();
+                const parser = new DOMParser();
+                const doc = parser.parseFromString(html, "text/html");
+                doc.querySelectorAll("script, style, noscript").forEach((node) => node.remove());
+                const bodyText = doc.body ? doc.body.textContent : doc.documentElement.textContent;
+                return normalizeSearchText(bodyText);
+            } catch { return ""; }
+        }
+
+        async function enrichSolutionsWithBodySearch(items) {
+            await Promise.all(items.map(async (s) => { s.bodySearchText = await fetchBodySearchText(s.href); }));
+            bodySearchIndexReady = true;
+            runFilter();
         }
 
         function movePreview(event) {
-            if (!previewActive) {
-                return;
-            }
-
+            if (!previewActive) return;
             const margin = 18;
             const rect = hoverPreview.getBoundingClientRect();
-            const vw = window.innerWidth;
-            const vh = window.innerHeight;
-
-            let x = event.clientX + margin;
-            let y = event.clientY + margin;
-
-            if (x + rect.width > vw - 8) {
-                x = event.clientX - rect.width - margin;
-            }
-            if (y + rect.height > vh - 8) {
-                y = event.clientY - rect.height - margin;
-            }
-
-            x = Math.max(8, x);
-            y = Math.max(8, y);
-
-            hoverPreview.style.left = `${x}px`;
-            hoverPreview.style.top = `${y}px`;
+            const vw = window.innerWidth; const vh = window.innerHeight;
+            let x = event.clientX + margin; let y = event.clientY + margin;
+            if (x + rect.width > vw - 8) x = event.clientX - rect.width - margin;
+            if (y + rect.height > vh - 8) y = event.clientY - rect.height - margin;
+            x = Math.max(8, x); y = Math.max(8, y);
+            hoverPreview.style.left = `${x}px`; hoverPreview.style.top = `${y}px`;
         }
 
-        function hidePreview() {
-            previewActive = false;
-            hoverPreview.style.display = "none";
-        }
+        function hidePreview() { previewActive = false; hoverPreview.style.display = "none"; }
 
         function attachThumbnailPreviewHandlers(scope) {
-            const thumbs = scope.querySelectorAll(".solution-thumb");
-            thumbs.forEach((thumb) => {
+            scope.querySelectorAll(".solution-thumb").forEach((thumb) => {
                 thumb.addEventListener("mouseenter", (event) => {
-                    if (window.matchMedia("(max-width: 900px)").matches || !thumb.currentSrc) {
-                        return;
-                    }
-
+                    if (window.matchMedia("(max-width: 900px)").matches || !thumb.currentSrc) return;
                     hoverPreviewImg.src = thumb.currentSrc;
                     hoverPreview.style.display = "block";
                     previewActive = true;
                     movePreview(event);
                 });
-
                 thumb.addEventListener("mousemove", movePreview);
                 thumb.addEventListener("mouseleave", hidePreview);
             });
         }
 
-        function render(items) {
+        function renderList(items) {
             listEl.innerHTML = "";
-
             if (!items.length) {
-                const empty = document.createElement("div");
-                empty.className = "empty-state";
-                empty.textContent = "לא נמצאו פתרונות התואמים את הסינון הנוכחי.";
-                listEl.appendChild(empty);
-            } else {
-                items.forEach((item) => {
-                    const card = document.createElement("article");
-                    card.className = "solution-item";
-
-                    const folderPath = item.href.slice(0, item.href.lastIndexOf("/"));
-                    const thumbPath = `${folderPath}/question-image.png`;
-                    const tags = (item.tags || []).map((t) => `<span class=\"meta-pill\">${t}</span>`).join(" ");
-
-                    card.innerHTML = `
-                        <div>
-                            <img class="solution-thumb" src="${thumbPath}" alt="תמונה מקדימה - ${item.title}" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
-                            <div class="thumb-empty"></div>
-                        </div>
-                        <div>
-                            <a class="solution-link" href="${item.href}">${item.title}</a>
-                            <div class="mt-2 text-sm text-slate-600">שנה: <strong>${item.year}</strong> | שאלה: <strong>${item.question}</strong></div>
-                            <div class="mt-2">${tags}</div>
-                        </div>
-                    `;
-
-                    listEl.appendChild(card);
-                    attachThumbnailPreviewHandlers(card);
-                });
+                listEl.innerHTML = '<div class="empty-state">לא נמצאו שאלות שמתאימות לסינון שנבחר.</div>';
+                return;
             }
+            const fragment = document.createDocumentFragment();
+            items.forEach((solution) => {
+                const card = document.createElement("article");
+                card.className = "solution-item";
 
-            resultsInfo.textContent = `נמצאו ${items.length} פתרונות.`;
+                const mediaWrap = document.createElement("div");
+                const thumb = document.createElement("img");
+                thumb.className = "solution-thumb";
+                thumb.alt = `תמונה מקדימה עבור ${solution.title}`;
+                thumb.src = solution.thumb;
+                const fallback = document.createElement("div");
+                fallback.className = "thumb-fallback";
+                fallback.textContent = "תמונה לא זמינה";
+                thumb.addEventListener("error", () => { thumb.style.display = "none"; fallback.style.display = "flex"; });
+                mediaWrap.append(thumb, fallback);
+
+                const body = document.createElement("div");
+
+                const titleLine = document.createElement("div");
+                const titleLink = document.createElement("a");
+                titleLink.className = "solution-link";
+                titleLink.href = solution.href;
+                titleLink.textContent = solution.title;
+                titleLine.appendChild(titleLink);
+
+                const metaRow = document.createElement("div");
+                metaRow.className = "mt-2 mb-2";
+
+                if (solution.isBagrutQuestion && solution.bagrutYear) {
+                    const yearPill = document.createElement("span");
+                    yearPill.className = "meta-pill bagrut";
+                    yearPill.textContent = `בגרות ${solution.bagrutYear}`;
+                    metaRow.appendChild(yearPill);
+                }
+
+                if (!solution.topicTags?.length || !solution.skillTags?.length) {
+                    const pendingPill = document.createElement("span");
+                    pendingPill.className = "meta-pill pending";
+                    pendingPill.textContent = "נדרש תיוג";
+                    metaRow.appendChild(pendingPill);
+                }
+
+                const topicsRow = document.createElement("div");
+                topicsRow.className = "mt-2 text-sm text-slate-600";
+                const topicPills = (solution.topicTags || []).map((tag) => `<span class="meta-pill topic">${tag}</span>`).join(" ");
+                topicsRow.innerHTML = `נושאים: ${topicPills || '<span class="meta-pill">ללא תיוג</span>'}`;
+
+                const skillsRow = document.createElement("div");
+                skillsRow.className = "mt-2 text-sm text-slate-600";
+                const skillPills = (solution.skillTags || []).map((tag) => `<span class="meta-pill skill">${tag}</span>`).join(" ");
+                skillsRow.innerHTML = `מיומנויות: ${skillPills || '<span class="meta-pill">ללא תיוג</span>'}`;
+
+                body.append(titleLine, metaRow, topicsRow, skillsRow);
+                card.append(mediaWrap, body);
+                fragment.appendChild(card);
+            });
+            listEl.appendChild(fragment);
+            attachThumbnailPreviewHandlers(listEl);
+        }
+
+        function getComparator() {
+            if (sortMode === "yearDesc") return compareSolutionsByYearDesc;
+            if (sortMode === "yearAsc") return compareSolutionsByYearAsc;
+            return compareSolutionsByTitle;
         }
 
         function runFilter() {
-            const yearVal = yearSelect.value;
-            const filtered = solutions.filter((s) => yearVal === "all" || String(s.year) === yearVal);
-            filtered.sort(compareSolutions);
-            render(filtered);
+            const searchTerm = String(searchInput.value || "").trim().toLowerCase();
+            let filtered = [...solutions];
+
+            if (bagrutFilterMode === "bagrutOnly") {
+                filtered = filtered.filter((s) => s.isBagrutQuestion);
+            }
+
+            if (searchTerm) {
+                filtered = filtered.filter((s) => {
+                    const haystack = [
+                        s.title,
+                        s.bagrutYear ? String(s.bagrutYear) : "",
+                        s.bagrutQuestionNumber ? `שאלה ${s.bagrutQuestionNumber}` : "",
+                        s.bodySearchText || ""
+                    ].join(" ").toLowerCase();
+                    return haystack.includes(searchTerm);
+                });
+            }
+
+            if (selectedTopics.size) {
+                filtered = filtered.filter((s) => [...selectedTopics].every((t) => (s.topicTags || []).includes(t)));
+            }
+            if (selectedSkills.size) {
+                filtered = filtered.filter((s) => [...selectedSkills].every((sk) => (s.skillTags || []).includes(sk)));
+            }
+
+            filtered.sort(getComparator());
+
+            renderTopicFilters(filtered);
+            renderSkillFilters(filtered);
+            syncFilterUi();
+
+            const summaryParts = [`מוצגות ${filtered.length} מתוך ${solutions.length} שאלות`];
+            if (selectedTopics.size) summaryParts.push(`${selectedTopics.size} נושאים פעילים`);
+            if (selectedSkills.size) summaryParts.push(`${selectedSkills.size} מיומנויות פעילות`);
+            if (!bodySearchIndexReady) summaryParts.push("אינדוקס הגוף עדיין נטען");
+            resultsInfo.textContent = summaryParts.join(" · ");
+            renderList(filtered);
         }
 
-        document.addEventListener("DOMContentLoaded", async function() {
-            const versionStamp = document.getElementById("versionStamp");
+        function applyVersionStamp() {
             const versionId = document.getElementById("versionId");
             const versionUpdatedAt = document.getElementById("versionUpdatedAt");
-            if (versionStamp) {
-                versionStamp.title = "Last file modified: " + document.lastModified;
-            }
-
+            if (!versionId || !versionUpdatedAt) return;
             const modified = new Date(document.lastModified);
-            if (!Number.isNaN(modified.getTime())) {
-                const pad = (n) => String(n).padStart(2, "0");
-                const y = modified.getFullYear();
-                const m = pad(modified.getMonth() + 1);
-                const d = pad(modified.getDate());
-                const hh = pad(modified.getHours());
-                const mm = pad(modified.getMinutes());
+            if (Number.isNaN(modified.getTime())) return;
+            const pad = (n) => String(n).padStart(2, "0");
+            const year = modified.getFullYear(); const month = modified.getMonth() + 1; const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, "0");
+            versionId.textContent = `v${dateCode}`;
+            versionUpdatedAt.textContent = `${dateCode} ${pad(modified.getHours())}:${pad(modified.getMinutes())}:${pad(modified.getSeconds())}`;
+        }
 
-                if (versionId) {
-                    versionId.textContent = `v${y}${m}${d}-${hh}${mm}`;
-                }
-                if (versionUpdatedAt) {
-                    versionUpdatedAt.textContent = `${y}-${m}-${d} ${hh}:${mm}`;
-                }
+        // DOM refs
+        const searchInput = document.getElementById("searchInput");
+        const resultsInfo = document.getElementById("resultsInfo");
+        const listEl = document.getElementById("solutionsList");
+        const sortYearDescBtn = document.getElementById("sortYearDescBtn");
+        const sortYearAscBtn = document.getElementById("sortYearAscBtn");
+        const sortTitleBtn = document.getElementById("sortTitleBtn");
+        const filterAllBtn = document.getElementById("filterAllBtn");
+        const filterBagrutBtn = document.getElementById("filterBagrutBtn");
+        const topicsFilterEl = document.getElementById("topicsFilter");
+        const skillsFilterEl = document.getElementById("skillsFilter");
+        const clearTopicsBtn = document.getElementById("clearTopicsBtn");
+        const clearSkillsBtn = document.getElementById("clearSkillsBtn");
+        const hoverPreview = document.getElementById("hoverPreview");
+        const hoverPreviewImg = document.getElementById("hoverPreviewImg");
+        const openFiltersBtn = document.getElementById("openFiltersBtn");
+        const closeFiltersBtn = document.getElementById("closeFiltersBtn");
+        const doneFiltersBtn = document.getElementById("doneFiltersBtn");
+        const filterDrawer = document.getElementById("filterDrawer");
+        const filterBackdrop = document.getElementById("filterBackdrop");
+        const drawerFilterCount = document.getElementById("drawerFilterCount");
+        const activeSummaryEl = document.getElementById("activeSummary");
+        const activeFiltersEl = document.getElementById("activeFilters");
+        const topicsStatusEl = document.getElementById("topicsStatus");
+        const skillsStatusEl = document.getElementById("skillsStatus");
+        const clearAllFilterButtons = document.querySelectorAll("[data-clear-all-filters]");
+
+        let previewActive = false;
+        let sortMode = "yearDesc";
+        let bagrutFilterMode = "all";
+        let solutions = [];
+        let bodySearchIndexReady = false;
+        let topicCatalog = [];
+        let skillCatalog = [];
+        const selectedTopics = new Set();
+        const selectedSkills = new Set();
+
+        async function init() {
+            const discovered = await discoverQuestionEntries().catch(() => []);
+            try {
+                solutions = await loadSolutionsFromTopicsJson(discovered);
+            } catch {
+                solutions = discovered.map((item) => ({
+                    ...item, topicTags: [], skillTags: [], bodySearchText: ""
+                }));
+                topicCatalog = []; skillCatalog = [];
             }
-
-            solutions = await loadSolutionsAuto();
-            yearOptionsInit();
+            solutions.sort(compareSolutionsByYearDesc);
+            syncSortButtons();
+            syncBagrutFilterButtons();
             runFilter();
-            yearSelect.addEventListener("change", runFilter);
+            applyVersionStamp();
+            enrichSolutionsWithBodySearch(solutions);
+        }
+
+        searchInput.addEventListener("input", runFilter);
+        sortYearDescBtn.addEventListener("click", () => { sortMode = "yearDesc"; syncSortButtons(); runFilter(); });
+        sortYearAscBtn.addEventListener("click", () => { sortMode = "yearAsc"; syncSortButtons(); runFilter(); });
+        sortTitleBtn.addEventListener("click", () => { sortMode = "title"; syncSortButtons(); runFilter(); });
+        filterAllBtn.addEventListener("click", () => { bagrutFilterMode = "all"; syncBagrutFilterButtons(); runFilter(); });
+        filterBagrutBtn.addEventListener("click", () => { bagrutFilterMode = "bagrutOnly"; syncBagrutFilterButtons(); runFilter(); });
+        if (openFiltersBtn) openFiltersBtn.addEventListener("click", () => setFilterDrawerOpen(true));
+        if (closeFiltersBtn) closeFiltersBtn.addEventListener("click", () => setFilterDrawerOpen(false));
+        if (doneFiltersBtn) doneFiltersBtn.addEventListener("click", () => setFilterDrawerOpen(false));
+        if (filterBackdrop) filterBackdrop.addEventListener("click", () => setFilterDrawerOpen(false));
+        if (clearTopicsBtn) clearTopicsBtn.addEventListener("click", () => { selectedTopics.clear(); runFilter(); });
+        if (clearSkillsBtn) clearSkillsBtn.addEventListener("click", () => { selectedSkills.clear(); runFilter(); });
+        clearAllFilterButtons.forEach((button) => { button.addEventListener("click", clearAllFilters); });
+        document.addEventListener("scroll", hidePreview, { passive: true });
+        window.addEventListener("resize", hidePreview);
+        document.addEventListener("keydown", (event) => {
+            if (event.key === "Escape") { hidePreview(); setFilterDrawerOpen(false); }
         });
+
+        init();
     </script>
 </body>
 </html>

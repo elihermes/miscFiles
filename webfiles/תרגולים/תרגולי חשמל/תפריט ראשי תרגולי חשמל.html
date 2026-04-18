@@ -1159,17 +1159,33 @@
         function getPracticeFolder(path) {
             const normalized = normalizeRelativePath(path);
             const parts = normalized.split("/").filter(Boolean);
-            return parts.find((part) => Boolean(parseFolderName(part))) || "";
+            const datedFolder = parts.find((part) => Boolean(parseFolderName(part)));
+            if (datedFolder) {
+                return datedFolder;
+            }
+
+            if (parts.length >= 2 && /\.[a-z0-9]+$/i.test(parts[parts.length - 1])) {
+                return parts[parts.length - 2];
+            }
+
+            return parts.length ? parts[parts.length - 1] : "";
         }
 
         function getPracticeRootPath(path) {
             const normalized = normalizeRelativePath(path);
             const parts = normalized.split("/").filter(Boolean);
             const practiceIndex = parts.findIndex((part) => Boolean(parseFolderName(part)));
-            if (practiceIndex < 0) {
-                return "";
+            if (practiceIndex >= 0) {
+                return parts.slice(0, practiceIndex + 1).join("/");
             }
-            return parts.slice(0, practiceIndex + 1).join("/");
+
+            // Fallback for folders that do not end with a date code:
+            // if path points to a file, treat its parent folder as practice root.
+            if (parts.length >= 2 && /\.[a-z0-9]+$/i.test(parts[parts.length - 1])) {
+                return parts.slice(0, -1).join("/");
+            }
+
+            return "";
         }
 
         function createQuestionIdFromFolder(folderName, usedIds) {
@@ -1236,10 +1252,6 @@
                     return;
                 }
 
-                if (!parseFolderName(practiceFolder)) {
-                    return;
-                }
-
                 const entry = ensureFolder(practiceRootPath);
                 if (fileName.toLowerCase() === "question-image.png" && folderPath === practiceRootPath) {
                     entry.hasQuestionImage = true;
@@ -1263,7 +1275,7 @@
                 return [...discovered.entries()].map(([practiceRootPath, entry]) => {
                     const practiceFolder = getPracticeFolder(practiceRootPath);
                     const parsed = parseFolderName(practiceFolder);
-                    if (!parsed || !entry.htmlFiles.size) {
+                    if (!practiceFolder || !entry.htmlFiles.size) {
                         return null;
                     }
 
@@ -1273,12 +1285,12 @@
                     }
 
                     return {
-                        title: parsed.title,
-                        label: parsed.label,
-                        dateCode: parsed.dateCode,
-                        displayDate: parsed.displayDate,
-                        year: parsed.year,
-                        timestamp: parsed.timestamp,
+                        title: parsed ? parsed.title : practiceFolder,
+                        label: parsed ? parsed.label : practiceFolder,
+                        dateCode: parsed ? parsed.dateCode : "",
+                        displayDate: parsed ? parsed.displayDate : "לא צוין",
+                        year: parsed ? parsed.year : 0,
+                        timestamp: parsed ? parsed.timestamp : 0,
                         href: `./${practiceRootPath}/${htmlFile}`,
                         thumb: entry.hasQuestionImage ? `./${practiceRootPath}/question-image.png` : "",
                         rubricHref: entry.rubricHref,
@@ -1335,19 +1347,16 @@
 
             [...staticItems, ...discoveredItems].forEach((item) => {
                 const parsed = parseFolderName(item.title);
-                if (!parsed) {
-                    return;
-                }
-
+                const fallbackTitle = String(item.title || "").trim() || "תרגול";
                 const normalized = {
-                    title: parsed.title,
-                    label: parsed.label,
-                    dateCode: parsed.dateCode,
-                    displayDate: parsed.displayDate,
-                    year: parsed.year,
-                    timestamp: parsed.timestamp,
+                    title: parsed ? parsed.title : fallbackTitle,
+                    label: parsed ? parsed.label : fallbackTitle,
+                    dateCode: parsed ? parsed.dateCode : "",
+                    displayDate: parsed ? parsed.displayDate : (item.displayDate || "לא צוין"),
+                    year: parsed ? parsed.year : (item.year || 0),
+                    timestamp: parsed ? parsed.timestamp : (item.timestamp || 0),
                     href: item.href,
-                    thumb: item.thumb || `./${parsed.title}/question-image.png`,
+                    thumb: item.thumb || (parsed ? `./${parsed.title}/question-image.png` : ""),
                     rubricHref: item.rubricHref || "",
                     isExample: Boolean(item.isExample)
                 };
@@ -1842,28 +1851,12 @@
                 const metaRow = document.createElement("div");
                 metaRow.className = "mt-2 mb-2";
 
-                const datePill = document.createElement("span");
-                datePill.className = "meta-pill date";
-                datePill.textContent = `תאריך: ${solution.displayDate}`;
-                metaRow.appendChild(datePill);
-
-                if (solution.isExample) {
-                    const examplePill = document.createElement("span");
-                    examplePill.className = "meta-pill example";
-                    examplePill.textContent = "פריט דוגמה";
-                    metaRow.appendChild(examplePill);
-                }
-
                 if (!solution.topicTags?.length || !solution.skillTags?.length) {
                     const pendingPill = document.createElement("span");
                     pendingPill.className = "meta-pill pending";
                     pendingPill.textContent = "נדרש תיוג";
                     metaRow.appendChild(pendingPill);
                 }
-
-                const desc = document.createElement("p");
-                desc.className = "text-sm text-slate-600 mb-2";
-                desc.textContent = "קישור ישיר לפתרון התרגול, עם אפשרות לפתוח גם את המחוון כאשר הוא קיים באותה תיקייה.";
 
                 const topicsRow = document.createElement("div");
                 topicsRow.className = "mt-2 text-sm text-slate-600";
@@ -1875,7 +1868,11 @@
                 const skillPills = (solution.skillTags || []).map((tag) => `<span class=\"meta-pill skill\">${tag}</span>`).join(" ");
                 skillsRow.innerHTML = `מיומנויות: ${skillPills || '<span class="meta-pill">ללא תיוג</span>'}`;
 
-                body.append(titleLine, metaRow, desc, topicsRow, skillsRow);
+                if (metaRow.childElementCount > 0) {
+                    body.append(titleLine, metaRow, topicsRow, skillsRow);
+                } else {
+                    body.append(titleLine, topicsRow, skillsRow);
+                }
                 card.append(mediaWrap, body);
                 fragment.appendChild(card);
             });

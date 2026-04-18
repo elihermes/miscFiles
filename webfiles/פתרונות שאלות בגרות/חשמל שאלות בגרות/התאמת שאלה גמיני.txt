@@ -6,10 +6,23 @@
 כשאני תוכן אני מתכוון לרבות תמונות, גרפים, תרשימים וכו׳
 דגשים: את התמונה של השאלה תגדילי שתתאים למסגרת שלה (באופן פרופורציונאלי)
 לא לשכוח התאמה גם לכפתור צף של ״הצג שאלה״
+לשים לב בבקשה לעימוד של "נתון" לצד "מה מחפשים" כמו בתבנית
+שימי לב לא להשמיט את הקטע הראשון של google tag
+
 
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
+        <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+        <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-QZJ7JT80X2');
+        </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>תבנית סטנדרט לפתרון שאלה</title>
@@ -342,6 +355,40 @@
             text-transform: uppercase;
         }
 
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
         body.modal-open {
             overflow: hidden;
         }
@@ -389,7 +436,7 @@ SECTION CHECKLIST (copy/paste for every part)
 - מה מחפשים
 - נוסחאות (כמה .formula-badge בשורה אחת)
 - step-box עם כותרת “פתרון צעד-אחר-צעד” / “חישוב”
-- הערת מורה (אם יש)
+- טיפ מורה (אם יש)
 -->
 
 <!--
@@ -403,7 +450,7 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
 - Keep the question CTA wording exactly as in the standard example: "הצג שאלה".
 - Do not place a "נוסח השאלה" heading above the inline image block.
 - Use only .section-card for the question image and each part; avoid inventing card variants.
-- Stick to the section checklist (נתון → מחפשים → נוסחאות → step-box → הערת מורה).
+- Stick to the section checklist (נתון → מחפשים → נוסחאות → step-box → טיפ מורה).
 - Prefer the updated visual rhythm: .info-grid + .info-panel for נתון/מחפשים, .step-title for the main box heading, optional .step-label for internal stages, and .final-answer for the conclusion line.
 - Formula chips stay inline; for large math use .math-container dir="ltr" instead of widening the chip.
 - Formula chips must remain rounded rectangles (0.5rem) and not pill/circle chips.
@@ -422,6 +469,9 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
         <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
             <span class="version-label">עודכן:</span>
             <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
         </div>
         <!-- חותמת זו נועדה להציג זמן עדכון קריא בלבד, ולא מספר גרסה פנימי. -->
     </header>
@@ -474,7 +524,7 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
         </div>
 
         <div class="teacher-highlight">
-            <strong>הערת מורה:</strong>
+            <strong>טיפ מורה:</strong>
             [דגש פדגוגי: סימנים, יחידות, משמעות פיזיקלית, מלכודת נפוצה]
         </div>
     </section>
@@ -505,6 +555,11 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
         </div>
         </div>
     </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
 </div>
 
 <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
@@ -539,6 +594,20 @@ COPILOT INSTRUCTIONS (copy with each new solution if needed)
 
 <script>
     document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
         const versionStamp = document.getElementById('versionStamp');
         const versionUpdatedAt = document.getElementById('versionUpdatedAt');
         if (versionStamp) {
