@@ -995,8 +995,8 @@
                         <button id="filterBagrutBtn" type="button" class="sort-chip" aria-pressed="false">רק בגרות</button>
                     </div>
                     <div class="sort-toolbar">
-                        <button id="sortYearDescBtn" type="button" class="sort-chip is-active" aria-pressed="true">חדש לישן</button>
-                        <button id="sortYearAscBtn" type="button" class="sort-chip" aria-pressed="false">ישן לחדש</button>
+                        <button id="sortYearBtn" type="button" class="sort-chip is-active" aria-pressed="true">מיון לפי שנה ↓</button>
+                        <button id="sortAddedAtBtn" type="button" class="sort-chip" aria-pressed="false">נוסף לאחרונה</button>
                         <button id="sortTitleBtn" type="button" class="sort-chip" aria-pressed="false">לפי שם</button>
                     </div>
                 </div>
@@ -1110,11 +1110,24 @@
             return a.title.localeCompare(b.title, "he", { numeric: true });
         }
 
+        function compareSolutionsByAddedAt(a, b) {
+            const ta = a.addedAt || null;
+            const tb = b.addedAt || null;
+            // missing addedAt → treat as newest (appears first)
+            if (ta === null && tb === null) return compareSolutionsByYearDesc(a, b);
+            if (ta === null) return -1;
+            if (tb === null) return 1;
+            if (tb !== ta) return tb.localeCompare(ta);
+            return compareSolutionsByYearDesc(a, b);
+        }
+
         function syncSortButtons() {
-            sortYearDescBtn.classList.toggle("is-active", sortMode === "yearDesc");
-            sortYearDescBtn.setAttribute("aria-pressed", sortMode === "yearDesc" ? "true" : "false");
-            sortYearAscBtn.classList.toggle("is-active", sortMode === "yearAsc");
-            sortYearAscBtn.setAttribute("aria-pressed", sortMode === "yearAsc" ? "true" : "false");
+            const yearIsActive = sortMode === "yearDesc" || sortMode === "yearAsc";
+            sortYearBtn.classList.toggle("is-active", yearIsActive);
+            sortYearBtn.setAttribute("aria-pressed", yearIsActive ? "true" : "false");
+            sortYearBtn.textContent = sortMode === "yearAsc" ? "מיון לפי שנה ↑" : "מיון לפי שנה ↓";
+            sortAddedAtBtn.classList.toggle("is-active", sortMode === "addedAt");
+            sortAddedAtBtn.setAttribute("aria-pressed", sortMode === "addedAt" ? "true" : "false");
             sortTitleBtn.classList.toggle("is-active", sortMode === "title");
             sortTitleBtn.setAttribute("aria-pressed", sortMode === "title" ? "true" : "false");
         }
@@ -1324,6 +1337,7 @@
                     thumb: discovered?.thumb || (practiceRootPath ? `./${practiceRootPath}/question-image.png` : ""),
                     topicTags: Array.isArray(entry.topics) ? entry.topics : [],
                     skillTags: Array.isArray(entry.skills) ? entry.skills : [],
+                    addedAt: entry.addedAt || null,
                     bodySearchText: ""
                 };
 
@@ -1591,6 +1605,7 @@
         function getComparator() {
             if (sortMode === "yearDesc") return compareSolutionsByYearDesc;
             if (sortMode === "yearAsc") return compareSolutionsByYearAsc;
+            if (sortMode === "addedAt") return compareSolutionsByAddedAt;
             return compareSolutionsByTitle;
         }
 
@@ -1654,8 +1669,8 @@
         const searchInput = document.getElementById("searchInput");
         const resultsInfo = document.getElementById("resultsInfo");
         const listEl = document.getElementById("solutionsList");
-        const sortYearDescBtn = document.getElementById("sortYearDescBtn");
-        const sortYearAscBtn = document.getElementById("sortYearAscBtn");
+        const sortYearBtn = document.getElementById("sortYearBtn");
+        const sortAddedAtBtn = document.getElementById("sortAddedAtBtn");
         const sortTitleBtn = document.getElementById("sortTitleBtn");
         const filterAllBtn = document.getElementById("filterAllBtn");
         const filterBagrutBtn = document.getElementById("filterBagrutBtn");
@@ -1706,8 +1721,11 @@
         }
 
         searchInput.addEventListener("input", runFilter);
-        sortYearDescBtn.addEventListener("click", () => { sortMode = "yearDesc"; syncSortButtons(); runFilter(); });
-        sortYearAscBtn.addEventListener("click", () => { sortMode = "yearAsc"; syncSortButtons(); runFilter(); });
+        sortYearBtn.addEventListener("click", () => {
+            sortMode = (sortMode === "yearDesc") ? "yearAsc" : "yearDesc";
+            syncSortButtons(); runFilter();
+        });
+        sortAddedAtBtn.addEventListener("click", () => { sortMode = "addedAt"; syncSortButtons(); runFilter(); });
         sortTitleBtn.addEventListener("click", () => { sortMode = "title"; syncSortButtons(); runFilter(); });
         filterAllBtn.addEventListener("click", () => { bagrutFilterMode = "all"; syncBagrutFilterButtons(); runFilter(); });
         filterBagrutBtn.addEventListener("click", () => { bagrutFilterMode = "bagrutOnly"; syncBagrutFilterButtons(); runFilter(); });
