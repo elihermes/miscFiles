@@ -119,21 +119,22 @@
 
         .filter-topbar {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
+            grid-template-columns: 1fr;
             gap: 0.9rem;
             padding: 1.1rem 1.25rem 1rem;
-            align-items: end;
+            align-items: stretch;
             background: #ffffff;
         }
 
         .search-field {
             display: block;
+            min-width: 0;
         }
 
         .toolbar-cluster {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: flex-start;
             gap: 0.75rem;
             flex-wrap: wrap;
         }
@@ -164,6 +165,27 @@
         .filter-open-btn.has-active {
             background: var(--blue-50);
             border-color: var(--blue-600);
+        }
+
+        .filter-open-btn.is-skill {
+            border-color: #86efac;
+            color: #166534;
+            box-shadow: 0 8px 18px rgba(34, 197, 94, 0.1);
+        }
+
+        .filter-open-btn.is-skill:hover {
+            border-color: #22c55e;
+            box-shadow: 0 10px 22px rgba(34, 197, 94, 0.16);
+        }
+
+        .filter-open-btn.is-skill.has-active {
+            background: #f0fdf4;
+            border-color: #15803d;
+        }
+
+        .filter-open-btn.is-skill .filter-open-count {
+            background: #166534;
+            color: #ecfdf5;
         }
 
         .filter-open-count {
@@ -915,16 +937,6 @@
             }
         }
 
-        @media (max-width: 900px) {
-            .filter-topbar {
-                grid-template-columns: 1fr;
-            }
-
-            .toolbar-cluster {
-                justify-content: space-between;
-            }
-        }
-
         @media (max-width: 640px) {
             .filter-drawer {
                 top: auto;
@@ -986,9 +998,13 @@
                 </label>
 
                 <div class="toolbar-cluster">
-                    <button id="openFiltersBtn" type="button" class="filter-open-btn" aria-controls="filterDrawer" aria-expanded="false">
-                        <span>סינון מתקדם</span>
-                        <span id="drawerFilterCount" class="filter-open-count" hidden>0</span>
+                    <button id="openTopicsBtn" type="button" class="filter-open-btn" aria-controls="filterDrawer" aria-expanded="false">
+                        <span>סינון נושאים</span>
+                        <span id="topicsFilterCount" class="filter-open-count" hidden>0</span>
+                    </button>
+                    <button id="openSkillsBtn" type="button" class="filter-open-btn is-skill" aria-controls="filterDrawer" aria-expanded="false">
+                        <span>סינון מיומנויות</span>
+                        <span id="skillsFilterCount" class="filter-open-count" hidden>0</span>
                     </button>
                     <div class="sort-toolbar">
                         <button id="filterAllBtn" type="button" class="sort-chip is-active" aria-pressed="true">הכל</button>
@@ -1031,15 +1047,15 @@
     <aside id="filterDrawer" class="filter-drawer" aria-hidden="true" aria-label="מגירת סינון מתקדם">
         <div class="filter-drawer-header">
             <div>
-                <div class="filter-drawer-kicker">סינון מתקדם</div>
-                <h3 class="filter-drawer-title">נושאים ומיומנויות</h3>
-                <p class="filter-drawer-text">הבחירה מתעדכנת מיד ברשימה. אפשר לשלב כמה תגיות יחד בלי לעזוב את המסך הראשי.</p>
+                <div id="filterDrawerKicker" class="filter-drawer-kicker">סינון נושאים</div>
+                <h3 id="filterDrawerTitle" class="filter-drawer-title">בחירת נושאים</h3>
+                <p id="filterDrawerText" class="filter-drawer-text">בחרי את הנושאים שחשובים לך. הרשימה למטה מתעדכנת מיד אחרי כל בחירה.</p>
             </div>
             <button id="closeFiltersBtn" type="button" class="filter-drawer-close" aria-label="סגירת מגירת הסינון">סגור</button>
         </div>
 
         <div class="filter-drawer-body">
-            <section class="filter-panel-block">
+            <section id="topicsPanel" class="filter-panel-block">
                 <div class="filter-section-head">
                     <div>
                         <h4 class="filter-section-title">נושאים</h4>
@@ -1053,7 +1069,7 @@
                 <div id="topicsFilter" class="topic-filter-box"></div>
             </section>
 
-            <section class="filter-panel-block">
+            <section id="skillsPanel" class="filter-panel-block">
                 <div class="filter-section-head">
                     <div>
                         <h4 class="filter-section-title">מיומנויות</h4>
@@ -1385,11 +1401,44 @@
 
         function clearAllFilters() { selectedTopics.clear(); selectedSkills.clear(); runFilter(); }
 
-        function setFilterDrawerOpen(isOpen) {
+        const DRAWER_CONTENT = {
+            topics: {
+                kicker: "סינון נושאים",
+                title: "בחירת נושאים",
+                text: "בחרי את הנושאים שחשובים לך. הרשימה למטה מתעדכנת מיד אחרי כל בחירה.",
+                ariaLabel: "חלון סינון נושאים"
+            },
+            skills: {
+                kicker: "סינון מיומנויות",
+                title: "בחירת מיומנויות",
+                text: "בחרי מיומנויות רצויות, ויוצגו רק שאלות שמכילות את כולן יחד.",
+                ariaLabel: "חלון סינון מיומנויות"
+            }
+        };
+
+        function applyDrawerMode(mode) {
+            drawerMode = mode === "skills" ? "skills" : "topics";
+            const isTopicsMode = drawerMode === "topics";
+            if (topicsPanelEl) topicsPanelEl.hidden = !isTopicsMode;
+            if (skillsPanelEl) skillsPanelEl.hidden = isTopicsMode;
+            const content = DRAWER_CONTENT[drawerMode];
+            if (filterDrawerKickerEl) filterDrawerKickerEl.textContent = content.kicker;
+            if (filterDrawerTitleEl) filterDrawerTitleEl.textContent = content.title;
+            if (filterDrawerTextEl) filterDrawerTextEl.textContent = content.text;
+            if (filterDrawer) filterDrawer.setAttribute("aria-label", content.ariaLabel);
+        }
+
+        function setFilterDrawerOpen(isOpen, mode = drawerMode) {
+            if (isOpen) applyDrawerMode(mode);
             filterDrawer.classList.toggle("is-open", isOpen);
             filterBackdrop.classList.toggle("is-open", isOpen);
             filterDrawer.setAttribute("aria-hidden", isOpen ? "false" : "true");
-            if (openFiltersBtn) openFiltersBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            if (openTopicsBtn) {
+                openTopicsBtn.setAttribute("aria-expanded", isOpen && drawerMode === "topics" ? "true" : "false");
+            }
+            if (openSkillsBtn) {
+                openSkillsBtn.setAttribute("aria-expanded", isOpen && drawerMode === "skills" ? "true" : "false");
+            }
             document.body.classList.toggle("drawer-open", isOpen);
         }
 
@@ -1425,8 +1474,16 @@
 
         function syncFilterUi() {
             const activeCount = getActiveFilterCount();
-            if (drawerFilterCount) { drawerFilterCount.textContent = String(activeCount); drawerFilterCount.hidden = activeCount === 0; }
-            if (openFiltersBtn) openFiltersBtn.classList.toggle("has-active", activeCount > 0);
+            if (topicsFilterCountEl) {
+                topicsFilterCountEl.textContent = String(selectedTopics.size);
+                topicsFilterCountEl.hidden = selectedTopics.size === 0;
+            }
+            if (skillsFilterCountEl) {
+                skillsFilterCountEl.textContent = String(selectedSkills.size);
+                skillsFilterCountEl.hidden = selectedSkills.size === 0;
+            }
+            if (openTopicsBtn) openTopicsBtn.classList.toggle("has-active", selectedTopics.size > 0);
+            if (openSkillsBtn) openSkillsBtn.classList.toggle("has-active", selectedSkills.size > 0);
             if (topicsStatusEl) topicsStatusEl.textContent = selectedTopics.size ? `${selectedTopics.size} נבחרו` : `${topicCatalog.length} זמינים`;
             if (skillsStatusEl) skillsStatusEl.textContent = selectedSkills.size ? `${selectedSkills.size} נבחרו` : `${skillCatalog.length} זמינות`;
             if (clearTopicsBtn) clearTopicsBtn.disabled = selectedTopics.size === 0;
@@ -1680,12 +1737,19 @@
         const clearSkillsBtn = document.getElementById("clearSkillsBtn");
         const hoverPreview = document.getElementById("hoverPreview");
         const hoverPreviewImg = document.getElementById("hoverPreviewImg");
-        const openFiltersBtn = document.getElementById("openFiltersBtn");
+        const openTopicsBtn = document.getElementById("openTopicsBtn");
+        const openSkillsBtn = document.getElementById("openSkillsBtn");
         const closeFiltersBtn = document.getElementById("closeFiltersBtn");
         const doneFiltersBtn = document.getElementById("doneFiltersBtn");
         const filterDrawer = document.getElementById("filterDrawer");
         const filterBackdrop = document.getElementById("filterBackdrop");
-        const drawerFilterCount = document.getElementById("drawerFilterCount");
+        const topicsFilterCountEl = document.getElementById("topicsFilterCount");
+        const skillsFilterCountEl = document.getElementById("skillsFilterCount");
+        const filterDrawerKickerEl = document.getElementById("filterDrawerKicker");
+        const filterDrawerTitleEl = document.getElementById("filterDrawerTitle");
+        const filterDrawerTextEl = document.getElementById("filterDrawerText");
+        const topicsPanelEl = document.getElementById("topicsPanel");
+        const skillsPanelEl = document.getElementById("skillsPanel");
         const activeSummaryEl = document.getElementById("activeSummary");
         const activeFiltersEl = document.getElementById("activeFilters");
         const topicsStatusEl = document.getElementById("topicsStatus");
@@ -1699,6 +1763,7 @@
         let bodySearchIndexReady = false;
         let topicCatalog = [];
         let skillCatalog = [];
+        let drawerMode = "topics";
         const selectedTopics = new Set();
         const selectedSkills = new Set();
 
@@ -1715,6 +1780,7 @@
             solutions.sort(compareSolutionsByYearDesc);
             syncSortButtons();
             syncBagrutFilterButtons();
+            applyDrawerMode("topics");
             runFilter();
             applyVersionStamp();
             enrichSolutionsWithBodySearch(solutions);
@@ -1729,7 +1795,8 @@
         sortTitleBtn.addEventListener("click", () => { sortMode = "title"; syncSortButtons(); runFilter(); });
         filterAllBtn.addEventListener("click", () => { bagrutFilterMode = "all"; syncBagrutFilterButtons(); runFilter(); });
         filterBagrutBtn.addEventListener("click", () => { bagrutFilterMode = "bagrutOnly"; syncBagrutFilterButtons(); runFilter(); });
-        if (openFiltersBtn) openFiltersBtn.addEventListener("click", () => setFilterDrawerOpen(true));
+        if (openTopicsBtn) openTopicsBtn.addEventListener("click", () => setFilterDrawerOpen(true, "topics"));
+        if (openSkillsBtn) openSkillsBtn.addEventListener("click", () => setFilterDrawerOpen(true, "skills"));
         if (closeFiltersBtn) closeFiltersBtn.addEventListener("click", () => setFilterDrawerOpen(false));
         if (doneFiltersBtn) doneFiltersBtn.addEventListener("click", () => setFilterDrawerOpen(false));
         if (filterBackdrop) filterBackdrop.addEventListener("click", () => setFilterDrawerOpen(false));

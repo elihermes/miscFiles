@@ -288,6 +288,23 @@
             color: #7b8794;
         }
 
+        .status-cell.status-na {
+            background: repeating-linear-gradient(
+                135deg,
+                #f1f5f9,
+                #f1f5f9 4px,
+                #e8edf2 4px,
+                #e8edf2 8px
+            );
+        }
+
+        .status-badge.na {
+            background: transparent;
+            color: #94a3b8;
+            font-size: 1rem;
+            letter-spacing: 0.05em;
+        }
+
         .year-subtext {
             display: block;
             font-size: 0.78rem;
@@ -840,10 +857,12 @@
                 const isSecondary2016 = parsed.year === 2016 && parsed.variant > 0;
                 const rowKey = isSecondary2016 ? `${parsed.year}-secondary` : `${parsed.year}-primary`;
                 const label = isSecondary2016 ? `${parsed.year} (שאלון 2)` : String(parsed.year);
+                const maxQ = parsed.year <= 1999 ? 5 : parsed.year === 2000 ? 4 : parsed.year <= 2017 ? 5 : QUESTION_COUNT;
                 const row = ensureRow(rowMap, rowKey, {
                     year: parsed.year,
                     orderVariant: isSecondary2016 ? 1 : 0,
-                    label
+                    label,
+                    maxQuestions: maxQ
                 });
 
                 row.questions[parsed.questionNumber - 1] = {
@@ -873,13 +892,18 @@
             }
 
             const coveredCount = rows.reduce((sum, row) => {
-                return sum + row.questions.filter((entry) => entry && entry.exists).length;
+                const maxQ = row.maxQuestions || QUESTION_COUNT;
+                return sum + row.questions.slice(0, maxQ).filter((entry) => entry && entry.exists).length;
             }, 0);
-            const totalSlots = rows.length * QUESTION_COUNT;
+            const totalSlots = rows.reduce((sum, row) => sum + (row.maxQuestions || QUESTION_COUNT), 0);
             const percent = totalSlots ? Math.round((coveredCount / totalSlots) * 100) : 0;
 
             coverageBody.innerHTML = rows.map((row) => {
-                const cells = row.questions.map((entry) => {
+                const maxQ = row.maxQuestions || QUESTION_COUNT;
+                const cells = row.questions.map((entry, idx) => {
+                    if (idx >= maxQ) {
+                        return '<td class="status-cell status-na" title="שנה זו כללה רק 5 שאלות"><span class="status-badge na" aria-label="לא רלוונטי">N/A</span></td>';
+                    }
                     if (entry && entry.exists && entry.path) {
                         return `<td class="status-cell status-present"><a class="status-link" href="./${entry.path}" aria-label="פתח פתרון"><span class="status-badge present" aria-hidden="true">✓</span></a></td>`;
                     }
