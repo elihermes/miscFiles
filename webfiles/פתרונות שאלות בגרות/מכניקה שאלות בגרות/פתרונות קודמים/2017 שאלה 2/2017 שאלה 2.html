@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2017 שאלה 2</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מכניקה 2017, שאלה 2</h2>
+        <p class="mt-3 text-slate-500">מציאת מקדמי חיכוך, תאוצה וניתוח כוחות של מערכת גופים מחוברים תוך שימוש בגרף</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">שלום תלמידים יקרים! 👋</h3>
+        <p class="content-paragraph">בשאלה זו אנו חוקרים מערכת של שני גופים המחוברים בחוט. הייחוד כאן הוא שאנו מוסיפים מסה בהדרגה לאחד הגופים (הסלסלה), מה שגורם למערכת לעבור ממצב של מנוחה (חיכוך סטטי) למצב של תנועה (חיכוך קינטי).</p>
+        <p class="content-paragraph mb-0">ננתח את המערכת שלב אחר שלב באמצעות החוקים של ניוטון והגרף הנתון. בהצלחה!</p>
+    </section>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full max-w-3xl mx-auto h-auto object-contain rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א' -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א': הסבר הגרף בראשית הצירים</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <ul class="list-disc pr-5 mt-1 text-slate-700">
+                    <li>מערכת המורכבת מתיבה \( M \) על שולחן אופקי וסלסלה התלויה באוויר.</li>
+                    <li>גרף 2 מתאר את כוח החיכוך \( f \) הפועל על התיבה כפונקציה של משקל הסלסלה והחול שבתוכה, נסמן אותו ב- \( W \).</li>
+                    <li>בתחילת הניסוי, עד שמשקל הסלסלה מגיע ל- \( 4\text{ N} \), המערכת נמצאת במנוחה (התיבה לא זזה).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                להסביר, מבלי להסתמך על הנתונים המספריים של הגרף, מדוע העקומה (הקו הישר) בחלק הראשון של הגרף חייבת לעבור בראשית הצירים \( (0,0) \).
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>עקרונות בשימוש:</strong>
+            <ul class="list-disc pr-5 mt-1 text-slate-700">
+                <li><strong>החוק הראשון של ניוטון:</strong> כאשר גוף במנוחה, שקול הכוחות הפועלים עליו מתאפס.</li>
+                <li><strong>אופי כוח החיכוך הסטטי:</strong> כוח זה מתאים את גודלו במדויק לגודל הכוח שמנסה להניע את הגוף (עד הגעתו לערך המקסימלי), לכן אין לו "נוסחה" קבועה מלבד עקרון פעולה זה.</li>
+            </ul>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">כדי להבין את הקשר בין כוח החיכוך \( f \) למשקל הסלסלה \( W \), נצייר תרשים כוחות עבור כל גוף בנפרד כאשר המערכת במנוחה.</p>
+            
+            <div class="visual-frame">
+                <div class="overflow-x-auto w-full flex justify-center">
+                    <img src="./image-1.png" alt="תרשים כוחות סעיף א" class="w-full max-w-xl h-auto" />
+                </div>
+            </div>
+
+            <p class="content-paragraph">נרשום את משוואות הכוחות (החוק הראשון של ניוטון) עבור כל גוף כשהמערכת במנוחה.</p>
+            <p class="content-paragraph mb-0">עבור הסלסלה בציר האנכי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_y = T - W = 0 \quad \Rightarrow \quad T = W \]
+            </div>
+            <p class="content-paragraph mt-2 mb-0">עבור התיבה \( M \) בציר האופקי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_x = T - f_s = 0 \quad \Rightarrow \quad f_s = T \]
+            </div>
+            <p class="content-paragraph mt-2 mb-0">נציב את המתיחות \( T \) מהמשוואה הראשונה למשוואה השנייה ונקבל:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ f_s = W \]
+            </div>
+            <p class="content-paragraph mt-2">משוואה זו היא פונקציה ליניארית מהצורה \( y = mx + b \), כאשר כאן \( y = f_s \), \( x = W \), השיפוע הוא \( m = 1 \), ונקודת החיתוך עם ציר ה-y היא \( b = 0 \).</p>
+
+            <p class="final-answer">מסקנה: מכיוון שהקשר הוא \( f_s = W \), זוהי משוואת ישר העוברת בראשית הצירים (כאשר אין משקל לסלסלה, כלומר \( W=0 \), גם כוח החיכוך הסטטי הוא אפס כי התיבה לא "מנסה" לזוז).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            חיכוך סטטי הוא כוח "חכם" – הוא מפעיל בדיוק את הכוח הדרוש כדי לשמור על מנוחה, עד שהוא מגיע לערכו המקסימלי. הגרף מראה לנו בצורה יפהפייה איך החיכוך גדל במדויק יחד עם המשקל שאנחנו מוסיפים!
+        </div>
+    </section>
+
+    <!-- סעיף ב' -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': חישוב מקדמי החיכוך</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc pr-5 mt-1 text-slate-700">
+                    <li>מסת התיבה הוכרזה כעת: \( M = 0.8\text{ kg} \).</li>
+                    <li>תאוצת הכובד: קובעים \( g = 10\text{ m/s}^2 \).</li>
+                    <li>מתוך הגרף: כאשר העקומה מגיעה לשיאה (רגע לפני התנועה), זהו כוח החיכוך הסטטי המקסימלי: \( f_{s,max} = 4\text{ N} \).</li>
+                    <li>מתוך הגרף: לאחר שהמערכת מתחילה לנוע (\( W > 4\text{ N} \)), כוח החיכוך יורד לערך קבוע. זהו כוח החיכוך הקינטי: \( f_k = 2.5\text{ N} \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> את מקדם החיכוך הסטטי המקסימלי \( \mu_s \) ואת מקדם החיכוך הקינטי \( \mu_k \) בין התיבה \( M \) למשטח.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( W = mg \)</span>
+            <span class="formula-badge">\( f_s \le \mu_s N \)</span>
+            <span class="formula-badge">\( f_k = \mu_k N \)</span>
+            <ul class="list-disc pr-5 mt-2 text-slate-700">
+                <li><strong>החוק הראשון של ניוטון:</strong> בציר האנכי אין תנועה, ולכן לפי עקרון זה שקול הכוחות מתאפס.</li>
+            </ul>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">תחילה, נחשב את הכוח הנורמלי \( N \) הפועל על התיבה \( M \). על פי תרשים הכוחות מציר y (אנכי) של התיבה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_y = N - M g = 0 \quad \Rightarrow \quad N = M g \]
+                \[ N = 0.8 \cdot 10 = 8\text{ N} \]
+            </div>
+            
+            <div class="step-label">שלב 1: חישוב מקדם החיכוך הסטטי (\( \mu_s \))</div>
+            <p class="content-paragraph">על פי דף הנוסחאות, כוח החיכוך הסטטי מקיים \( f_s \le \mu_s N \). כוח זה מגיע לערכו המקסימלי בנקודת השוויון. נשתמש בערך המקסימלי שזיהינו מהגרף: \( f_{s,max} = 4\text{ N} \).</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ f_{s,max} = \mu_s N \quad \Rightarrow \quad 4 = \mu_s \cdot 8 \]
+                \[ \mu_s = \frac{4}{8} = 0.5 \]
+            </div>
+
+            <div class="step-label">שלב 2: חישוב מקדם החיכוך הקינטי (\( \mu_k \))</div>
+            <p class="content-paragraph">נשתמש בערך הקבוע מהגרף בזמן תנועה: \( f_k = 2.5\text{ N} \).</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ f_k = \mu_k N \quad \Rightarrow \quad 2.5 = \mu_k \cdot 8 \]
+                \[ \mu_k = \frac{2.5}{8} = 0.3125 \]
+            </div>
+
+            <p class="final-answer">מסקנה: מקדם החיכוך הסטטי \( \mu_s = 0.500 \), מקדם החיכוך הקינטי \( \mu_k = 0.313 \).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            שימו לב שבדרך כלל (למעט מקרים חריגים) מתקיים \( \mu_s > \mu_k \). פיזית, זה אומר שהרבה יותר קשה "לשבור" את האחיזה הראשונית ולהתחיל להזיז גוף, מאשר להמשיך להחליק אותו מרגע שהוא כבר בתנועה.
+        </div>
+    </section>
+
+    <!-- סעיף ג' -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': חישוב תאוצת המערכת</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc pr-5 mt-1 text-slate-700">
+                    <li>משקל הסלסלה כעת הוא \( W = 6\text{ N} \).</li>
+                    <li>היות ו- \( 6\text{ N} > 4\text{ N} \), המערכת בתנועה (התיבה מחליקה ימינה והסלסלה יורדת למטה).</li>
+                    <li>מכאן נובע שכוח החיכוך הפועל הוא חיכוך קינטי: \( f_k = 2.5\text{ N} \) (לפי הגרף).</li>
+                    <li>מסת התיבה: \( M = 0.8\text{ kg} \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> את גודל תאוצת המערכת, נסמן אותה ב- \( a \).
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+            <ul class="list-disc pr-5 mt-2 text-slate-700">
+                <li><strong>קשר קינמטי:</strong> שני גופים הקשורים בחוט אידיאלי מתוח ינועו תמיד באותו גודל תאוצה.</li>
+            </ul>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            
+            <div class="step-label">שלב 0: המרת יחידות ומציאת מסת הסלסלה</div>
+            <p class="content-paragraph">המשקל \( W \) הוא כוח הכובד הפועל על הסלסלה. נסמן את מסת הסלסלה באות \( m \).</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ W = m g \quad \Rightarrow \quad 6 = m \cdot 10 \quad \Rightarrow \quad m = 0.6\text{ kg} \]
+            </div>
+
+            <div class="step-label">שלב 1: בניית משוואות כוחות</div>
+            <p class="content-paragraph mb-0">נגדיר מערכת צירים לכל גוף, כך שכיוון התנועה החיובי מתלכד עם כיוון התאוצה:</p>
+            <ul class="list-disc pr-6 mb-4 text-slate-700">
+                <li>לתיבה \( M \): ציר ה-x חיובי ימינה (כיוון התאוצה).</li>
+                <li>לסלסלה \( m \): ציר ה-y חיובי מטה (כיוון התאוצה). נזכור שקבענו את \( g \) כגודל חיובי.</li>
+            </ul>
+
+            <div class="visual-frame">
+                <div class="overflow-x-auto w-full flex justify-center">
+                    <img src="./image-3.png" alt="תרשים כוחות סעיף ג" class="w-full max-w-xl h-auto" />
+                </div>
+            </div>
+
+            <p class="content-paragraph mb-0">נבנה משוואה עבור כל גוף בנפרד, בכיוון התנועה שלו:</p>
+            <p class="content-paragraph mt-2 mb-0">משוואה (1) עבור התיבה \( M \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_x = T - f_k = M \cdot a \]
+            </div>
+            
+            <p class="content-paragraph mt-2 mb-0">משוואה (2) עבור הסלסלה \( m \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_y = W - T = m \cdot a \]
+            </div>
+
+            <div class="step-label">שלב 2: פתרון המערכת</div>
+            <p class="content-paragraph mb-0">נחבר את שתי המשוואות יחד. נשים לב שהמתיחות \( T \) מתבטלת, משום שהיא פועלת ככוח פנימי במערכת הכוללת:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ (T - f_k) + (W - T) = M \cdot a + m \cdot a \]
+                \[ W - f_k = (M + m) \cdot a \]
+            </div>
+
+            <p class="content-paragraph mb-0 mt-2">נציב את הערכים הידועים (\( W = 6\text{ N} \), \( f_k = 2.5\text{ N} \), \( M = 0.8\text{ kg} \), \( m = 0.6\text{ kg} \)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 6 - 2.5 = (0.8 + 0.6) \cdot a \]
+                \[ 3.5 = 1.4 \cdot a \]
+                \[ a = \frac{3.5}{1.4} = 2.5\text{ m/s}^2 \]
+            </div>
+
+            <p class="final-answer">מסקנה: גודל תאוצת המערכת הוא \( a = 2.50\text{ m/s}^2 \).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            שימו לב. רשמנו משוואת כוחות נפרדת לכל גוף במקום להתייחס לשני הגופים כאל "מערכת" אחת. למרות שבהחלט אפשרי וניתן לחשב תאוצה על ידי הסתכלות על המערכת כולה (במיוחד כשאין צורך למצוא כוחות פנימיים), בניית משוואות נפרדות לכל גוף מאפשרת לנו לחשב גם את הכוחות הפנימיים כמו המתיחות בחוט. מכיוון שהסעיף הבא מתייחס ספציפית למתיחות, הגישה של משוואה נפרדת לכל גוף משרתת אותנו היטב בהמשך הדרך.
+        </div>
+    </section>
+
+    <!-- סעיף ד' -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': ניתוח המתיחות במעבר ממנוחה לתנועה</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                המערכת עוברת ממצב של מנוחה (שבו הוסף חול בהדרגה עד הסף) למצב של תנועה (שבו היא מאיצה מטה). נדרש הסבר פיזיקלי בלבד.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                לקבוע האם המתיחות בחבל גדלה, קטנה או לא השתנתה במעבר ממנוחה לתנועה, ולהסביר מדוע.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+            <ul class="list-disc pr-5 mt-2 text-slate-700">
+                <li><strong>החוק הראשון של ניוטון:</strong> במצב מנוחה שקול הכוחות מתאפס (\( a=0 \)).</li>
+                <li><strong>החוק השני של ניוטון:</strong> במצב של תנועה מואצת, שקול הכוחות שווה למסה כפול התאוצה וכיוונו ככיוון התאוצה.</li>
+            </ul>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">כדי לענות על השאלה, נתמקד בסלסלה, שכן קל יותר לנתח את הכוחות הפועלים עליה (רק מתיחות וכוח כובד).</p>
+            
+            <div class="step-label">במצב מנוחה (רגע לפני התנועה)</div>
+            <p class="content-paragraph mb-0">הסלסלה אינה מאיצה (\( a = 0 \)). לכן, סכום הכוחות עליה שווה לאפס. המתיחות שווה בדיוק למשקל הסלסלה והחול:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F = T_{\text{rest}} - W = 0 \quad \Rightarrow \quad T_{\text{rest}} = W \]
+            </div>
+
+            <div class="step-label">במצב תנועה</div>
+            <p class="content-paragraph mb-0">ברגע שהחיכוך הסטטי נשבר (והופך לחיכוך קינטי חלש יותר), המערכת מתחילה להאיץ. הסלסלה מאיצה כלפי מטה. משמעות הדבר לפי החוק השני של ניוטון היא שסכום הכוחות הפועלים על הסלסלה חייב להיות בכיוון מטה (כלומר, המשקל מנצח את המתיחות):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F = W - T_{\text{motion}} = m a \]
+            </div>
+            <p class="content-paragraph mb-0 mt-2">נבודד את המתיחות במצב תנועה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ T_{\text{motion}} = W - m a \]
+            </div>
+
+            <div class="step-label">השוואה</div>
+            <p class="content-paragraph mb-0">מכיוון שהביטוי \( m a \) הוא חיובי (יש למערכת מסה ויש לה תאוצה), ברור כי \( W - m a \) קטן יותר מ- \( W \). כלומר:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ T_{\text{motion}} < T_{\text{rest}} \]
+            </div>
+
+            <p class="final-answer">מסקנה: כאשר המערכת עברה למצב תנועה, המתיחות בחבל <strong>קטנה</strong>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            תחשבו על התחושה במעלית! כשמעלית במנוחה, הרצפה מפעילה עליכם כוח ששווה בדיוק למשקלכם. אבל כשהמעלית מתחילה להאיץ למטה (צונחת), אתם מרגישים "קלים" יותר – הרצפה דוחפת אתכם פחות (כוח נורמלי קטן מהמשקל). אותו עיקרון בדיוק פועל על החבל המחזיק את הסלסלה שמאיצה למטה!
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
