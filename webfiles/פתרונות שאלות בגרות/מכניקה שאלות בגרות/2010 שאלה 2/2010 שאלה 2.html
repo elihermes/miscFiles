@@ -1,0 +1,1068 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+        <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+        <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-QZJ7JT80X2');
+        </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2010, שאלה 2</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Three.js for 3D Simulation -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/controls/OrbitControls.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax centering and mobile handling */
+        .math-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            text-align: center; /* Ensures the math block centers on the page */
+            width: 100%;
+            padding: 0.5rem 0;
+        }
+
+        .math-scroll mjx-container[display="true"] {
+            display: block !important; 
+            margin-left: auto !important;
+            margin-right: auto !important;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - מכניקה 2010</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">שאלה 2: תנועה מעגלית בתוך חרוט</h2>
+        <p class="mt-3 text-slate-500">בשאלה זו אנו מנתחים תנועה מעגלית אופקית של חרוז המוגבל לנוע על הדופן הפנימית של חרוט חלק. נשתמש בחוקי ניוטון, בפירוק כוחות ובגיאומטריה של התנועה כדי לגלות את הקשרים בין המהירות, זווית החרוט והגובה בו החרוז מסתובב.</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א1 -->
+    <section class="section-card" id="part-a1">
+        <h3 class="section-header">סעיף א' (1): תרשים כוחות</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-1 space-y-1">
+                    <li>חרוז בעל מסה (נסמן אותה ב-\(m\)) נע בתנועה מעגלית קצובה.</li>
+                    <li>התנועה מתבצעת במישור אופקי בתוך חרוט שזווית הפתיחה שלו היא \(2\alpha\).</li>
+                    <li>כוחות חיכוך זניחים. תאוצת הכובד נסמן כ-\(g\) (תמיד פועלת כלפי מטה).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1">בניית תרשים כוחות חופשי (FBD) הפועלים על החרוז תוך ציון שמם.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( F = mg \)</span>
+            <p class="text-sm text-slate-600 mt-2">נוסחת כוח הכבידה מופיעה בדף הנוסחאות. לכוח הנורמלי (\(N\)) אין נוסחה מפורשת בדף, שכן הוא כוח מגע (אילוץ) המגיב ללחיצת הגוף על המשטח ופועל במאונך לו. גודלו ייקבע בהמשך בעזרת חוקי ניוטון.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">על החרוז פועלים שני כוחות בלבד (מאחר שאין חיכוך):</p>
+            <ol class="list-decimal list-inside space-y-2 mb-4 content-paragraph">
+                <li><strong>כוח הכובד (\(\vec{W}\) או \(m\vec{g}\)):</strong> פועל אנכית כלפי מטה.</li>
+                <li><strong>כוח נורמלי (\(\vec{N}\)):</strong> פועל במאונך לדופן החרוט, בכיוון מעלה ופנימה (לכיוון מרכז המעגל והציר המרכזי של החרוט).</li>
+            </ol>
+            
+            <p class="content-paragraph font-semibold">ניתוח גיאומטרי של זווית הכוח הנורמלי:</p>
+            <p class="content-paragraph">החרוט בנוי כך שזווית הפתיחה הכוללת שלו היא \(2\alpha\). לכן, הזווית בין הציר האנכי המרכזי לבין דופן החרוט היא \(\alpha\). המשמעות היא שדופן החרוט יוצרת זווית של \(90^\circ - \alpha\) עם המישור האופקי. מאחר שהכוח הנורמלי \(\vec{N}\) ניצב לדופן, הזווית שהוא יוצר עם המישור האופקי משלימה ל-\(90^\circ\), כלומר הזווית בין הכוח הנורמלי למישור האופקי היא בדיוק \(\alpha\).</p>
+
+            <div class="visual-frame">
+                <div class="w-full max-w-md mx-auto text-center">
+                    <p class="text-sm text-slate-500 mb-2 font-semibold">תרשים כוחות חופשי (FBD) על החרוז במבט צד (כאשר הוא בצד שמאל של החרוט)</p>
+                    <img src="image-1.1.png" alt="תרשים כוחות חופשי על החרוז" class="w-full h-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                    <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+                        <span class="block font-bold mb-1">[תרשים כוחות]</span>
+                        <span class="text-sm">לא נמצאה תמונה בשם <code>image-1.1.png</code> באותה תיקייה.</span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="final-answer">הכוחות הם: כוח הכובד מטה וכוח הנורמל פנימה ובמאונך לדופן.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: גיאומטריה של זוויות</strong><br>
+            תלמידים רבים מתבלבלים במיקום הזווית \(\alpha\) בתרשים הכוחות. כלל אצבע שימושי: אם משטח נטוי בזווית \(\theta\) ביחס לאופק, הכוח הנורמלי (שניצב למשטח) יהיה נטוי בזווית \(\theta\) ביחס לאנך. במקרה שלנו, נתון שהחרוט פתוח בזווית \(2\alpha\), כלומר הדופן נטויה בזווית \(\alpha\) ביחס <strong>לאנך</strong>. לכן, על ידי חילוף, הכוח הנורמלי נטוי בזווית \(\alpha\) ביחס <strong>לאופק</strong>. תמיד כדאי לצייר משולש ישר זווית קטן בצד כדי לוודא שאתם לא הופכים בין סינוס לקוסינוס!
+        </div>
+    </section>
+
+    <!-- סעיף א2 -->
+    <section class="section-card" id="part-a2">
+        <h3 class="section-header">סעיף א' (2): מקור הכוחות</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="mt-1">תרשים הכוחות שזיהינו בסעיף א' (1) הכולל את כוח הכובד (\(\vec{W}\)) והכוח הנורמלי (\(\vec{N}\)).</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1">ציון הגוף (מי) שמפעיל כל אחד מהכוחות הללו על החרוז.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">אינטראקציה בין גופים פיזיקליים</span>
+            <p class="text-sm text-slate-600 mt-2">כוח הוא תמיד ביטוי של אינטראקציה בין שני גופים - אחד מפעיל ואחד מופעל.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הסבר:</h4>
+            <p class="content-paragraph">כל כוח בטבע מופעל על ידי גוף פיזיקלי כלשהו. נשייך כל כוח שפועל על החרוז למקור שלו:</p>
+            <ol class="list-decimal list-inside space-y-2 mb-4 content-paragraph">
+                <li><strong>כוח הכובד (\(\vec{W}\)):</strong> מופעל על ידי <strong>כדור הארץ</strong>.</li>
+                <li><strong>כוח נורמלי (\(\vec{N}\)):</strong> מופעל על ידי <strong>דופן החרוט</strong> (כוח מגע כתגובה לדחיפת החרוז נגד הדופן).</li>
+            </ol>
+
+            <p class="final-answer">כוח הכובד מופעל על ידי כדור הארץ; הכוח הנורמלי מופעל על ידי החרוט.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: חיפוש ה"חשודים"</strong><br>
+            בפיזיקה קלאסית, אין כוחות "קסם". לכל כוח חייב להיות גוף פיזיקלי שמפעיל אותו. אם אתם לא מוצאים איזה גוף נוגע בחרוז או מושך אותו (כמו כדור הארץ) – הכוח הזה פשוט לא קיים! כלל זה יעזור לכם להימנע מ"להמציא" כוחות שגויים בתרשים הכוחות שלכם.
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': משוואות ניוטון</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="mt-1">נתוני סעיף א', בתוספת הידיעה שהחרוז נע בתנועה מעגלית במישור אופקי. כלומר, אין לו תנועה (או תאוצה) בציר האנכי, ויש לו תאוצה רדיאלית כלפי מרכז המעגל האופקי.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1">לכתוב את שתי המשוואות הקובעות את תנועת החרוז על פי חוקי ניוטון (החוק השני): אחת לכיוון הרדיאלי (ציר ה-\(x\)) ואחת לכיוון האנכי (ציר ה-\(y\)).</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\[ \Sigma\vec{F} = m\vec{a} \]</span>
+            <span class="formula-badge">\[ a_R = \frac{v^2}{R} \]</span>
+            <span class="formula-badge">אי-תלות בין צירים</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">נפרק את הכוח הנורמלי לרכיביו בהתאם למערכת הצירים שבחרנו בתרשים (ציר \(y\) אנכי מעלה, ציר \(x\) רדיאלי למרכז הסיבוב):</p>
+            <ul class="list-disc list-inside mb-4 content-paragraph">
+                <li>הרכיב האנכי של הנורמל: \( N_y = N \sin\alpha \)</li>
+                <li>הרכיב האופקי (הרדיאלי) של הנורמל: \( N_x = N \cos\alpha \)</li>
+            </ul>
+
+            <div class="step-label">1. משוואה לכיוון האנכי (ציר ה-\(y\)):</div>
+            <p class="content-paragraph">מכיוון שהחרוז חג במישור אופקי, אין לו תאוצה בציר האנכי (\(a_y = 0\)). לפי החוק הראשון של ניוטון, סכום הכוחות בציר זה שווה לאפס.</p>
+            <div class="math-scroll mb-6" dir="ltr">
+                \[ 
+                \begin{aligned}
+                & \Sigma F_y = 0 \\ 
+                & N_y - W = 0 \\ 
+                & N \sin\alpha - mg = 0 
+                \end{aligned}
+                \]
+            </div>
+
+            <div class="step-label">2. משוואה לכיוון הרדיאלי (ציר ה-\(x\)):</div>
+            <p class="content-paragraph">החרוז נע בתנועה מעגלית קצובה בעלת רדיוס \(R\) ומהירות קווית \(v\). התאוצה שלו מכוונת למרכז המעגל וגודלה \(a_R = \frac{v^2}{R}\). הכוח היחיד שפועל בכיוון זה הוא הרכיב האופקי של הכוח הנורמלי.</p>
+            <div class="math-scroll mb-4" dir="ltr">
+                \[ 
+                \begin{aligned}
+                & \Sigma F_x = m a_R \\ 
+                & N_x = m \frac{v^2}{R} \\ 
+                & N \cos\alpha = m \frac{v^2}{R}
+                \end{aligned}
+                \]
+            </div>
+
+            <p class="final-answer" dir="ltr">
+                \( N \sin\alpha = mg \)<br>
+                \( N \cos\alpha = \frac{mv^2}{R} \)
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: התפקיד הכפול של הנורמל</strong><br>
+            שימו לב ליופי שבפיזיקה כאן: לכוח הנורמלי יש "שני כובעים". הרכיב האנכי שלו אחראי לאזן את כוח הכובד כדי שהחרוז לא ייפול למטה בתוך החרוט, ואילו הרכיב האופקי שלו מתפקד כ"כוח הצנטריפטלי" שמושך את החרוז פנימה ומונע ממנו להמשיך בקו ישר החוצה. זה מדגיש מדוע אי אפשר לנוע בתנועה מעגלית ללא משטח שדוחף פנימה (או חוט/כבידה)!
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': ביטוי לגובה התנועה H</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="mt-1">נתונה המהירות הקווית של החרוז, \(v\). כמו כן, לפי השרטוט בשאלה, רדיוס הסיבוב \(R\) נמצא בגובה \(H\) מקודקוד החרוט.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1">לבטא את גובה מישור התנועה, \(H\), בעזרת המהירות \(v\) (וכמובן שמותר להשתמש גם בקבועים \(\alpha\) ו-\(g\) אם נדרש).</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">טריגונומטריה: \(\tan\alpha = \frac{\text{לומ}}{\text{דיל}}\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">תחילה, נמצא את הקשר הגיאומטרי בין הרדיוס \(R\), הגובה \(H\) והזווית \(\alpha\). נביט במשולש ישר הזווית שנוצר על ידי הציר המרכזי (\(H\)), רדיוס המעגל (\(R\)), ודופן החרוט. לפי עקרונות הטריגונומטריה מתוך המשולש:</p>
+            <div class="math-scroll mb-4" dir="ltr">
+                \[ \tan\alpha = \frac{R}{H} \implies R = H \tan\alpha \]
+            </div>
+            
+            <p class="content-paragraph">כעת, ניקח את שתי המשוואות שפיתחנו בסעיף ב':</p>
+            <ol class="list-decimal list-inside mb-4 content-paragraph">
+                <li>\( N \sin\alpha = mg \)</li>
+                <li>\( N \cos\alpha = \frac{m v^2}{R} \)</li>
+            </ol>
+            
+            <p class="content-paragraph">נחלק את משוואה 1 במשוואה 2 כדי לבודד את \(\tan\alpha\) ולהיפטר מהנעלם \(N\) ומהמסה \(m\):</p>
+            <div class="math-scroll mb-4" dir="ltr">
+                \[ 
+                \begin{aligned}
+                & \frac{N \sin\alpha}{N \cos\alpha} = \frac{mg}{\frac{m v^2}{R}} \\[1ex] 
+                & \tan\alpha = \frac{g R}{v^2} 
+                \end{aligned}
+                \]
+            </div>
+            
+            <p class="content-paragraph">נציב את הביטוי הגיאומטרי של הרדיוס \(R = H \tan\alpha\) לתוך המשוואה:</p>
+            <div class="math-scroll mb-4" dir="ltr">
+                \[ \tan\alpha = \frac{g (H \tan\alpha)}{v^2} \]
+            </div>
+            
+            <p class="content-paragraph">נצמצם ב-\(\tan\alpha\) (הוא שונה מאפס כי החרוט אינו גליל צר לחלוטין) ונבודד את \(H\):</p>
+            <div class="math-scroll mb-4" dir="ltr">
+                \[ 
+                \begin{aligned}
+                & 1 = \frac{g H}{v^2} \\ 
+                & g H = v^2 \\ 
+                & H = \frac{v^2}{g}
+                \end{aligned}
+                \]
+            </div>
+
+            <p class="final-answer" dir="ltr">\( H = \frac{v^2}{g} \)</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: תוצאה מפתיעה!</strong><br>
+            האם שמתם לב שמשהו חסר בתשובה הסופית? הזווית \(\alpha\) והמסה \(m\) נעלמו לגמרי! המשמעות הפיזיקלית המדהימה היא שגובה המסלול תלוי <strong>אך ורק</strong> במהירות החרוז (ובתאוצת הכובד). לא משנה עד כמה החרוט "רחב" או "צר", ולא משנה אם החרוז שוקל גרם או טונה – אם הוא ינוע במהירות מסוימת, הוא תמיד יתייצב בדיוק באותו הגובה מהקודקוד. זהו כוחו של הניתוח האלגברי שחושף חוקיות נסתרת בטבע!
+        </div>
+
+        <!-- מעבדה וירטואלית -->
+        <div class="mt-8 border border-slate-200 rounded-xl overflow-hidden bg-white shadow-sm">
+            <div class="bg-blue-50 px-4 py-3 border-b border-slate-200 flex justify-between items-center">
+                <h4 class="font-bold text-blue-900 m-0">מעבדה וירטואלית: השפעת המהירות והזווית</h4>
+                <span class="text-xs bg-blue-200 text-blue-800 px-2 py-1 rounded-full font-semibold">אינטראקטיבי</span>
+            </div>
+            <div class="p-4 flex flex-col md:flex-row gap-6">
+                <!-- פאנל שליטה -->
+                <div class="w-full md:w-1/3 space-y-6">
+                    <p class="text-sm text-slate-600 mb-2">
+                        הסימולציה ממחישה את המסקנות מסעיפים ג' ו-ד'. שחקו עם המחוונים וראו מה קורה לגובה התנועה!
+                    </p>
+                    
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">
+                            מהירות משיקית (\(v\)): <span id="sim-v-val" class="text-blue-600 font-mono" dir="ltr">1.41 m/s</span>
+                        </label>
+                        <input type="range" id="sim-v-slider" min="0.5" max="3.0" step="0.01" value="1.41" class="w-full accent-blue-600">
+                        <p class="text-xs text-slate-500 mt-1">שינוי המהירות משנה מיד את הגובה (בדיוק כמו הוכחת סעיף ד').</p>
+                    </div>
+
+                    <div>
+                        <label class="block text-sm font-bold text-slate-700 mb-1">
+                            זווית פתיחת החרוט (\(\alpha\)): <span id="sim-alpha-val" class="text-blue-600 font-mono" dir="ltr">30&deg;</span>
+                        </label>
+                        <input type="range" id="sim-alpha-slider" min="15" max="60" step="1" value="30" class="w-full accent-blue-600">
+                        <p class="text-xs text-slate-500 mt-1">הקטינו או הגדילו את החרוט - וראו שהגובה נשאר זהה!</p>
+                    </div>
+
+                    <div class="bg-green-50 p-3 rounded-lg border border-green-200 text-center">
+                        <span class="block text-sm text-green-800 font-semibold mb-1">גובה נוכחי מהקודקוד (\(H\)):</span>
+                        <strong class="text-2xl text-green-700 font-mono" id="sim-h-val" dir="ltr">0.200 m</strong>
+                    </div>
+                </div>
+
+                <!-- חלון הסימולציה -->
+                <div class="w-full md:w-2/3 h-[300px] md:h-[400px] bg-slate-900 rounded-lg relative overflow-hidden" id="sim-container">
+                    <div class="absolute top-2 right-2 text-white/60 text-xs pointer-events-none bg-black/30 px-2 py-1 rounded">
+                        ניתן לסובב בעזרת העכבר / מגע
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': השפעת איבוד אנרגיה</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="mt-1">החרוז מאבד אנרגיה קינטית (מסיבה כלשהי, כגון כניסת חיכוך חלש למערכת שמאט אותו בהדרגה).</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1">להראות ולהסביר מדוע במצב זה, מישור התנועה החדש של החרוז בתוך החרוט יהיה נמוך יותר (כלומר \(H\) יקטן).</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\[ E_k = \frac{1}{2}mv^2 \]</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הסבר:</h4>
+            <p class="content-paragraph">האנרגיה הקינטית מוגדרת על ידי הנוסחה \( E_k = \frac{1}{2}mv^2 \). מסת החרוז \(m\) נשארת קבועה.</p>
+            <p class="content-paragraph">לכן, אם האנרגיה הקינטית של החרוז קטנה, המשמעות המתמטית והפיזיקלית ההכרחית היא שריבוע המהירות \(v^2\) (וכמובן שגם גודל המהירות עצמו, \(v\)) חייב לקטון.</p>
+            <p class="content-paragraph">מתוך הביטוי שפיתחנו בסעיף ג':</p>
+            <div class="math-scroll mb-4" dir="ltr">
+                \[ H = \frac{v^2}{g} \]
+            </div>
+            <p class="content-paragraph">ניתן לראות כי קיים יחס ישר בין הגובה \(H\) לבין ריבוע המהירות \(v^2\) (שכן \(g\) קבוע). מכיוון ש-\(v^2\) קטן, אזי בהכרח גם המונה של השבר קטן, ולכן גם הערך של \(H\) יקטן בהתאמה.</p>
+
+            <p class="final-answer">
+                מסקנה: מאחר שהאנרגיה הקינטית יורדת, גודל המהירות (\(v\)) קטן. לפי הקשר \(H \propto v^2\), ירידה במהירות גוררת בהכרח ירידה בגובה \(H\), ולכן מישור התנועה יהיה נמוך יותר.
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: קריאת משוואות כסיפור</strong><br>
+            שאלות הסבר (כמו "הראה כי...") נפתרות בצורה הטובה ביותר על ידי "קריאת" המשוואות שפיתחנו קודם. במקום לנחש או להסתמך רק על אינטואיציה (שאולי אומרת שאם הוא איטי הוא נופל מטה), אנו מבססים את הטיעון על קשר מתמטי מוצק. השרשרת הלוגית ברורה: איבוד אנרגיה -> הקטנת מהירות -> הקטנת הגובה לפי המשוואה מסעיף ג'. זוהי הדרך הבטוחה לקבל את מלוא הנקודות!
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה': חישובים מספריים</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-1 space-y-1">
+                    <li>זווית החרוט (חצי הזווית): \(\alpha = 30^\circ\).</li>
+                    <li>גובה החרוז: \(H = 20\text{ cm}\).</li>
+                    <li>תאוצת הכובד נלקחת תמיד חיובית בחישוב גדלים: \(g = 10\text{ m/s}^2\).</li>
+                </ul>
+                <div class="mt-3 p-3 bg-blue-100 rounded-md border-r-4 border-blue-400">
+                    <strong class="text-blue-800 block mb-1">שלב 0 - המרת יחידות (MKS):</strong>
+                    <p class="text-blue-900 text-sm">חובה לעבוד ביחידות מטרים. נמיר את הגובה:<br>
+                    \( H = 20\text{ cm} = \frac{20}{100}\text{ m} = 0.2\text{ m} \)</p>
+                </div>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1">לחשב את:</p>
+                <p>(1) המהירות הקווית של החרוז, \(v\).</p>
+                <p>(2) זמן המחזור של תנועת החרוז, \(T\).</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\[ v = \frac{2\pi R}{T} \]</span>
+            <span class="formula-badge">טריגונומטריה: \(\tan\alpha = \frac{\text{לומ}}{\text{דיל}}\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            
+            <div class="step-label">חלק (1) - חישוב המהירות הקווית \(v\):</div>
+            <p class="content-paragraph">נשתמש בנוסחה שפיתחנו בסעיף ג' (\( H = \frac{v^2}{g} \)) ונבודד את המהירות:</p>
+            <div class="math-scroll mb-6" dir="ltr">
+                \[ 
+                \begin{aligned}
+                & v = \sqrt{g \cdot H} \\ 
+                & v = \sqrt{10 \cdot 0.2} \\ 
+                & v = \sqrt{2} \approx 1.41\text{ m/s}
+                \end{aligned}
+                \]
+            </div>
+
+            <div class="step-label">חלק (2) - חישוב זמן המחזור \(T\):</div>
+            <p class="content-paragraph">תחילה, עלינו למצוא את רדיוס הסיבוב \(R\) בעזרת הגיאומטריה של החרוט (\( R = H \tan\alpha \)):</p>
+            <div class="math-scroll mb-4" dir="ltr">
+                \[ 
+                \begin{aligned}
+                & R = H \tan\alpha \\ 
+                & R = 0.2 \cdot \tan(30^\circ) \\ 
+                & R = 0.2 \cdot \frac{\sqrt{3}}{3} \approx 0.1155\text{ m}
+                \end{aligned}
+                \]
+            </div>
+            
+            <p class="content-paragraph">כעת נציב את הרדיוס והמהירות בנוסחת הקשר בין מהירות לזמן מחזור ונבודד את \(T\):</p>
+            <div class="math-scroll mb-4" dir="ltr">
+                \[ 
+                \begin{aligned}
+                & T = \frac{2\pi R}{v} \\[1ex]
+                & T = \frac{2\pi \cdot 0.1155}{1.414} \\[1ex]
+                & T \approx 0.513\text{ s}
+                \end{aligned}
+                \]
+            </div>
+
+            <p class="final-answer" dir="ltr">
+                (1) \( v = 1.41\text{ m/s} \)<br>
+                (2) \( T = 0.513\text{ s} \)
+            </p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: השלבים הקטנים מונעים טעויות גדולות</strong><br>
+            שתי מלכודות נפוצות בסעיפים חישוביים: הראשונה היא לשכוח להמיר את הסנטימטרים למטרים (זה היה גורר מהירות שגויה לחלוטין פי 10!). השנייה היא עיגול מוקדם מדי של תוצאות ביניים. בחישוב \(T\) השתמשתי בערכים מדויקים ככל האפשר של \(\sqrt{2}\) ושל הרדיוס כדי למנוע "שגיאות נגררות". רק בתשובה הסופית (במסגרת הירוקה) אנו מעגלים ל-3 ספרות מהותיות כמקובל. תמיד שמרו יותר ספרות בזיכרון המחשבון שלכם לאורך הדרך!
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+<script>
+    // -------------------------------------------------------------
+    // Three.js Simulation for the Cone & Bead (Section D)
+    // -------------------------------------------------------------
+    window.addEventListener('load', function() {
+        if (typeof THREE === 'undefined') return;
+
+        const container = document.getElementById('sim-container');
+        if (!container) return;
+
+        // 1. Scene Setup
+        const scene = new THREE.Scene();
+        scene.background = new THREE.Color(0x0f172a); // Tailwind slate-900
+
+        // 2. Camera Setup
+        const camera = new THREE.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 100);
+        camera.position.set(0, 1.0, 3.5);
+
+        // 3. Renderer Setup
+        const renderer = new THREE.WebGLRenderer({ antialias: true });
+        renderer.setSize(container.clientWidth, container.clientHeight);
+        renderer.setPixelRatio(window.devicePixelRatio);
+        container.appendChild(renderer.domElement);
+
+        // 4. Orbit Controls (Mouse/Touch interaction)
+        const controls = new THREE.OrbitControls(camera, renderer.domElement);
+        controls.enableDamping = true;
+        controls.dampingFactor = 0.05;
+        controls.target.set(0, 0.5, 0);
+
+        // 5. Lighting
+        const ambientLight = new THREE.AmbientLight(0xffffff, 0.6);
+        scene.add(ambientLight);
+        
+        const dirLight = new THREE.DirectionalLight(0xffffff, 0.8);
+        dirLight.position.set(5, 10, 5);
+        scene.add(dirLight);
+
+        // 6. Grid Helper (floor to indicate apex position)
+        const gridHelper = new THREE.GridHelper(3, 15, 0x475569, 0x1e293b);
+        scene.add(gridHelper);
+
+        // 7. Bead (Sphere)
+        const beadGeo = new THREE.SphereGeometry(0.04, 32, 32);
+        const beadMat = new THREE.MeshPhongMaterial({ color: 0xef4444, shininess: 100 });
+        const bead = new THREE.Mesh(beadGeo, beadMat);
+        scene.add(bead);
+
+        // 8. Trajectory Path (Yellow ring)
+        const circleGeo = new THREE.CircleGeometry(1, 64);
+        const circleEdges = new THREE.EdgesGeometry(circleGeo);
+        const trajLine = new THREE.LineLoop(circleEdges, new THREE.LineBasicMaterial({ color: 0xfde047 }));
+        trajLine.rotation.x = Math.PI / 2; // Flat on the XZ plane
+        scene.add(trajLine);
+
+        // 9. Cone Generation Logic
+        let coneMesh;
+        function updateConeGeometry(alphaRad) {
+            if (coneMesh) scene.remove(coneMesh);
+            
+            const height = 1.5; // Fixed physical height of our cone container
+            const radius = height * Math.tan(alphaRad);
+            
+            // ConeGeometry creates cone centered at origin. Apex is at +height/2, base at -height/2.
+            const geometry = new THREE.ConeGeometry(radius, height, 32, 1, true); // true = open ended
+            geometry.translate(0, -height/2, 0); // shift down: apex now at y=0, base at y=-height
+            
+            const material = new THREE.MeshPhongMaterial({ 
+                color: 0x3b82f6, 
+                transparent: true, 
+                opacity: 0.25,
+                side: THREE.DoubleSide,
+                depthWrite: false
+            });
+            
+            coneMesh = new THREE.Mesh(geometry, material);
+            coneMesh.rotation.x = Math.PI; // Flip it so apex is at y=0 and opens UP (base at y=+height)
+            
+            // Add wireframe to make the cone edges visible
+            const edges = new THREE.EdgesGeometry(geometry);
+            const wireframe = new THREE.LineSegments(edges, new THREE.LineBasicMaterial({ 
+                color: 0x60a5fa, 
+                transparent: true, 
+                opacity: 0.4 
+            }));
+            coneMesh.add(wireframe);
+            
+            scene.add(coneMesh);
+        }
+
+        // 10. Physics Logic & UI Bindings
+        const g = 10;
+        let v = 1.41;
+        let alphaDeg = 30;
+        let alphaRad = alphaDeg * Math.PI / 180;
+        let theta = 0; // Current angle in orbit
+
+        const vSlider = document.getElementById('sim-v-slider');
+        const alphaSlider = document.getElementById('sim-alpha-slider');
+        const vVal = document.getElementById('sim-v-val');
+        const alphaVal = document.getElementById('sim-alpha-val');
+        const hVal = document.getElementById('sim-h-val');
+
+        updateConeGeometry(alphaRad);
+
+        function updatePhysics(dt) {
+            v = parseFloat(vSlider.value);
+            const newAlphaDeg = parseFloat(alphaSlider.value);
+            
+            // Rebuild cone only if angle changed
+            if (newAlphaDeg !== alphaDeg) {
+                alphaDeg = newAlphaDeg;
+                alphaRad = alphaDeg * Math.PI / 180;
+                updateConeGeometry(alphaRad);
+            }
+
+            // Calculations based on Section C
+            const H = (v * v) / g;
+            const R = H * Math.tan(alphaRad);
+
+            // Update UI Texts
+            vVal.textContent = v.toFixed(2) + ' m/s';
+            alphaVal.innerHTML = alphaDeg + '&deg;';
+            hVal.textContent = H.toFixed(3) + ' m';
+
+            // Scale trajectory ring to match Radius R, and move to height H
+            trajLine.position.y = H;
+            if (R > 0) {
+                trajLine.scale.set(R, R, 1);
+            }
+
+            // Move the bead along the orbit
+            if (R > 0) {
+                const omega = v / R; // Angular velocity
+                theta += omega * dt;
+                bead.position.set(R * Math.cos(theta), H, R * Math.sin(theta));
+            }
+        }
+
+        // 11. Animation Loop
+        let lastTime = performance.now();
+        function animate(time) {
+            requestAnimationFrame(animate);
+            
+            // Calculate delta time in seconds
+            const dt = (time - lastTime) / 1000;
+            lastTime = time;
+
+            updatePhysics(dt);
+            controls.update();
+            renderer.render(scene, camera);
+        }
+        
+        animate(performance.now());
+
+        // 12. Handle Window Resize
+        window.addEventListener('resize', () => {
+            if (!container) return;
+            camera.aspect = container.clientWidth / container.clientHeight;
+            camera.updateProjectionMatrix();
+            renderer.setSize(container.clientWidth, container.clientHeight);
+        });
+    });
+</script>
+
+</body>
+</html>
