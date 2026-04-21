@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מכניקה 2017 שאלה 3</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - מכניקה 2017</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">שאלה 3: שימור תנע, עבודה ואנרגיה</h2>
+        <p class="mt-3 text-slate-500">פתרון מוסבר ופדגוגי, מודרך צעד-אחר-צעד</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- שלב מקדים -->
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">שלב מקדים: חילוץ נתונים והמרת יחידות (MKS)</h3>
+        <p class="content-paragraph">לפני שנתחיל לפתור, נרכז את הנתונים המופיעים בפתיח השאלה ונדאג להמיר אותם ליחידות הסטנדרטיות (קילוגרם, מטר, שנייה):</p>
+        <ul class="list-disc list-inside space-y-2 mr-4 text-slate-700">
+            <li>מסת תיבה א': \( m_A = 300\text{gr} = 0.300\text{kg} \)</li>
+            <li>מסת תיבה ב': \( m_B = 100\text{gr} = 0.100\text{kg} \)</li>
+            <li>קבוע הקפיץ: \( k = 480\text{N/m} \) (כבר ביחידות תקניות).</li>
+            <li>אורך הקפיץ במצב מכווץ: \( l_{compressed} = 10\text{cm} = 0.100\text{m} \)</li>
+            <li>אורך הקפיץ במצב רפוי: \( l_{relaxed} = 20\text{cm} = 0.200\text{m} \)</li>
+            <li>התכווצות הקפיץ המקסימלית: \( \Delta l = l_{relaxed} - l_{compressed} = 0.200 - 0.100 = 0.100\text{m} \)</li>
+            <li>תאוצת הכובד: נקבע ציר אנכי \( y \) כלפי מעלה וציר אופקי \( x \) ימינה. גודל תאוצת הכובד הוא \( g = 10\text{m/s}^2 \).</li>
+        </ul>
+    </section>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א' -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> המשטח האופקי שעליו מונחות התיבות חלק (אין חיכוך). מוגדר פרק זמן מסוים: מהרגע שבו החוט נקרע (והתיבות מתחילות לנוע מנוחה) ועד לרגע שבו התיבות ניתקות מהקפיץ.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לקבוע ולנמק האם בפרק הזמן הזה נשמר התנע של המערכת (המורכבת מתיבה א', תיבה ב' והקפיץ).</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\Sigma\vec{F} = \frac{\Delta\vec{p}}{\Delta t}\)</span>
+            <span class="formula-badge">חוק שימור התנע</span>
+            <span class="formula-badge">החוק השני של ניוטון</span>
+            <p class="content-paragraph mt-2 text-sm">העיקרון הפיזיקלי: תנע של מערכת גופים נשמר אם ורק אם שקול הכוחות החיצוניים הפועלים על המערכת באותו ציר הוא אפס.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">נסרטט תרשים כוחות (FBD) עבור המערכת בזמן שהקפיץ דוחף את התיבות:</p>
+            
+            <div class="visual-frame">
+                <img
+                    src="image-1.png"
+                    alt="תרשים כוחות של המערכת בסעיף א'"
+                    class="w-full max-w-lg h-auto"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                />
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full max-w-lg">
+                    <span class="block font-bold mb-1">[תרשים סעיף א']</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>image-1.png</code> באותה תיקייה.</span>
+                </div>
+            </div>
+
+            <p class="content-paragraph mb-2">נבחן את הכוחות הפועלים על המערכת בציר האופקי (\( x \)):</p>
+            <ul class="list-disc list-inside space-y-1 mb-4 text-slate-700">
+                <li>בציר האנכי, כוחות הכובד מאוזנים על ידי הכוחות הנורמליים מהמשטח ולכן אין תנועה בציר זה.</li>
+                <li>הכוח האלסטי שמפעיל הקפיץ על תיבה A ועל תיבה B הוא <strong>כוח פנימי</strong> במערכת (נובע מאינטראקציה בין גופי המערכת לבין עצמם). על פי החוק השלישי של ניוטון, הכוחות שהקפיץ מפעיל שווים בגודלם ומנוגדים בכיוונם ולכן סכומם האלגברי מתאפס.</li>
+                <li>כיוון שהמשטח חלק, אין כוח חיכוך (שהוא כוח חיצוני).</li>
+            </ul>
+            <p class="content-paragraph">מכאן נובע כי שקול הכוחות החיצוניים בציר האופקי שווה לאפס:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_{ext,x} = 0 \]
+            </div>
+            
+            <p class="final-answer">תשובה סופית: מכיוון ששקול הכוחות החיצוניים הפועלים על המערכת בציר האופקי שווה לאפס, התנע הכולל של המערכת בפרק הזמן הנתון נשמר.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> שימו לב להבדל הקריטי בין כוח פנימי לכוח חיצוני! אם היינו מסתכלים רק על תיבה A כמערכת, אז כוח הקפיץ היה כוח חיצוני והתנע של תיבה A לבדה <strong>אינו</strong> נשמר (הרי גודל מהירותה גדל ממנוחה ל-\( u_A \)). רק בבחירת המערכת כולה (A+B+קפיץ) אנו מקבלים שימור תנע.
+        </div>
+    </section>
+
+    <!-- סעיף ב' -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב'</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> אותם תנאים כמו בסעיף א'. מערכת הכוללת קפיץ ושתי תיבות, ללא חיכוך עם המשטח.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לקבוע ולנמק האם בפרק הזמן הנתון נשמרה האנרגיה המכנית הכוללת של המערכת.</div>
+        </div>
+        
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(W_{nc} = \Delta E\)</span>
+            <span class="formula-badge">משפט עבודה-אנרגיה</span>
+            <p class="content-paragraph mt-2 text-sm">העיקרון: אנרגיה מכנית נשמרת אם עבודת הכוחות הלא-משמרים (כגון חיכוך או כוח חיצוני) הפועלים על המערכת שווה לאפס.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">נבדוק אילו כוחות מבצעים עבודה על המערכת במהלך תנועת התיבות:</p>
+            <ul class="list-disc list-inside space-y-1 mb-4 text-slate-700">
+                <li><strong>כוח הכובד והכוח הנורמלי:</strong> פועלים בציר האנכי, המאונך לכיוון התנועה האופקי. לכן, הזווית בינם לבין ההעתק היא \( 90^\circ \). מאחר ו- \( \cos(90^\circ)=0 \), כוחות אלו אינם מבצעים עבודה.</li>
+                <li><strong>כוח חיכוך:</strong> לא קיים מכיוון שהמשטח חלק (\( f_k = 0 \)).</li>
+                <li><strong>כוח אלסטי של הקפיץ:</strong> זהו כוח משמר. העבודה שלו באה לידי ביטוי כהמרת אנרגיה פוטנציאלית אלסטית לאנרגיה קינטית.</li>
+            </ul>
+            <p class="content-paragraph">מכיוון שעבודת כל הכוחות הלא-משמרים שווה לאפס (\( W_{nc} = 0 \)), השינוי באנרגיה המכנית הוא אפס (\( \Delta E = 0 \)).</p>
+            
+            <p class="final-answer">תשובה סופית: האנרגיה המכנית הכוללת של המערכת נשמרת. אנרגיה פוטנציאלית אלסטית של הקפיץ מומרת במלואה לאנרגיה קינטית של שתי התיבות.</p>
+        </div>
+        
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> תמיד תשאלו את עצמכם בסעיפי שימור אנרגיה: "האם יש כאן גורם ש'גונב' אנרגיה מהמערכת (כמו חיכוך) או 'מוסיף' אנרגיה מבחוץ (כמו דחיפה של אדם)?". אם התשובה היא לא, והכוחות היחידים שמבצעים עבודה הם כוח הכובד או קפיץ, האנרגיה נשמרת!
+        </div>
+    </section>
+
+    <!-- סעיף ג' -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג'</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> הוכחנו שיש שימור תנע ושימור אנרגיה. המערכת מתחילה ממנוחה. הנתונים המספריים משלב 0: \( m_A = 0.300\text{kg} \), \( m_B = 0.100\text{kg} \), \( k = 480\text{N/m} \), \( \Delta l = 0.100\text{m} \).</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לחשב את גודלי המהירויות של התיבות, \( u_A \) ו- \( u_B \), ברגע הניתוק מהקפיץ.</div>
+        </div>
+        
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(m_A\vec{v}_A + m_B\vec{v}_B = m_A\vec{u}_A + m_B\vec{u}_B\)</span>
+            <span class="formula-badge">\(E_k = \frac{1}{2}mv^2\)</span>
+            <span class="formula-badge">\(U_{sp} = \frac{1}{2}k(\Delta l)^2\)</span>
+            <span class="formula-badge">\(E_{initial} = E_{final}\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            
+            <div class="step-label">שלב 1: משוואת שימור התנע</div>
+            <p class="content-paragraph">נקבע את הכיוון ימינה כחיובי. המהירות ההתחלתית של שתי התיבות היא אפס, ולכן התנע ההתחלתי שווה לאפס. לאחר שהקפיץ משתחרר, תיבה B נעה ימינה (מהירות חיובית \( u_B \)) ותיבה A נעה שמאלה (מהירות שלילית \( -u_A \), כאשר \( u_A \) מייצג את גודל המהירות).</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 0 = m_A \cdot (-u_A) + m_B \cdot u_B \]
+                \[ m_A u_A = m_B u_B \]
+            </div>
+            <p class="content-paragraph">נציב את המסות (ונסמן תוצאה זו כ-<strong>משוואה 1</strong>):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 0.300 \cdot u_A = 0.100 \cdot u_B \]
+                \[ u_B = \frac{0.300}{0.100} u_A = 3u_A \]
+            </div>
+
+            <div class="step-label">שלב 2: משוואת שימור אנרגיה</div>
+            <p class="content-paragraph">האנרגיה ההתחלתית במערכת היא כולה אנרגיה פוטנציאלית אלסטית אגורה בקפיץ. האנרגיה הסופית היא האנרגיה הקינטית של שתי התיבות (הקפיץ רפוי ולכן האנרגיה שלו אפס, מסתו זניחה).</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ U_{sp,i} = E_{k,f} \]
+                \[ \frac{1}{2}k(\Delta l)^2 = \frac{1}{2}m_A u_A^2 + \frac{1}{2}m_B u_B^2 \]
+            </div>
+            <p class="content-paragraph">נחשב את האנרגיה ההתחלתית:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_i = \frac{1}{2} \cdot 480 \cdot (0.100)^2 = 240 \cdot 0.0100 = 2.40\text{J} \]
+            </div>
+            <p class="content-paragraph">נציב במשוואת האנרגיה יחד עם התוצאה ממשוואה 1 (\( u_B = 3u_A \)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 2.40 = \frac{1}{2}(0.300)u_A^2 + \frac{1}{2}(0.100)(3u_A)^2 \]
+                \[ 2.40 = 0.150 u_A^2 + 0.050 (9u_A^2) \]
+                \[ 2.40 = 0.150 u_A^2 + 0.450 u_A^2 \]
+                \[ 2.40 = 0.600 u_A^2 \]
+                \[ u_A^2 = \frac{2.40}{0.600} = 4.00 \]
+                \[ u_A = 2.00\text{m/s} \]
+            </div>
+            <p class="content-paragraph">כעת נמצא את \( u_B \) בעזרת משוואה 1:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ u_B = 3 \cdot 2.00 = 6.00\text{m/s} \]
+            </div>
+            
+            <p class="final-answer">תשובה סופית: גודל המהירות של תיבה א' הוא \( u_A = 2.00\text{m/s} \) וגודל המהירות של תיבה ב' הוא \( u_B = 6.00\text{m/s} \).</p>
+        </div>
+        
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> תופעה מעניינת! מכיוון שהתנע נשמר ואחת התיבות כבדה פי 3 מהשנייה, התיבה הקלה יותר "חוטפת" מהירות גדולה פי 3 כדי לאזן את התנע. זהו עיקרון שמופיע המון בבעיות של פיצוץ או רתע.
+        </div>
+    </section>
+
+    <!-- סעיף ד' -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד'</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> תיבה A נעה שמאלה ומגיעה למדרון, עולה עליו עד לנקודה C שגובהה \( h_C = 0.100\text{m} \) (שם היא נעצרת רגעית לפני הירידה). מהירותה בתחילת העלייה היא \( u_A = 2.00\text{m/s} \).</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> להוכיח שהמדרון <strong>אינו</strong> חלק (כלומר, קיים עליו כוח חיכוך).</div>
+        </div>
+        
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(E_k = \frac{1}{2}mv^2\)</span>
+            <span class="formula-badge">\(U_G = mgh\)</span>
+            <span class="formula-badge">\(W_{nc} = \Delta E\)</span>
+            <p class="content-paragraph mt-2 text-sm">אסטרטגיית הוכחה: נניח בשלילה שהמדרון חלק, כלומר האנרגיה המכנית צריכה להישמר. נחשב את האנרגיה בתחתית המדרון ובשיאו, ונראה אם הן שוות. אם אינן שוות, ההנחה שגויה ויש עבודת חיכוך.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">נחשב את האנרגיה המכנית של תיבה A רגע לפני העלייה למדרון (קבענו את גובה המשטח האופקי כ- \( h=0 \)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_1 = E_k = \frac{1}{2}m_A u_A^2 = \frac{1}{2} \cdot 0.300 \cdot (2.00)^2 = 0.600\text{J} \]
+            </div>
+            <p class="content-paragraph">נחשב את האנרגיה המכנית של תיבה A בנקודה C (בשיא הגובה גודל המהירות הוא אפס, ולכן יש רק אנרגיה פוטנציאלית כובדית):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_2 = U_G = m_A g h_C = 0.300 \cdot 10 \cdot 0.100 = 0.300\text{J} \]
+            </div>
+            
+            <div class="visual-frame">
+                <img
+                    src="image-4.png"
+                    alt="תרשים המדרון של סעיף ד'"
+                    class="w-full max-w-sm h-auto"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                />
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full max-w-sm">
+                    <span class="block font-bold mb-1">[תרשים סעיף ד']</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>image-4.png</code> באותה תיקייה.</span>
+                </div>
+            </div>
+
+            <p class="content-paragraph">אנו רואים כי \( E_2 < E_1 \). כלומר, האנרגיה המכנית <strong>לא נשמרה</strong>. נחשב את עבודת הכוחות הלא משמרים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ W_{nc} = \Delta E = E_2 - E_1 = 0.300 - 0.600 = -0.300\text{J} \]
+            </div>
+            <p class="content-paragraph">מכיוון שעבודת הכוחות הלא משמרים שלילית ואינה אפס, חייב לפעול כוח לא משמר המבצע עבודה שלילית. כוח זה הוא כוח החיכוך הקינטי המנוגד לכיוון התנועה.</p>
+            
+            <p class="final-answer">תשובה סופית: הראינו כי האנרגיה בשיא הגובה (\( 0.300\text{J} \)) קטנה מהאנרגיה בתחילת העלייה (\( 0.600\text{J} \)). אובדן אנרגיה מכנית זו מוכיח שפעל כוח חיכוך ולכן המדרון אינו חלק.</p>
+        </div>
+        
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> שיטת "הנחה בשלילה" חזקה מאוד בפיזיקה. במקום לחפש ישירות את כוח החיכוך, הראינו שמשהו "נשבר" בחוקי הפיזיקה אם נניח שהוא לא שם. חסרה לנו חצי מהאנרגיה! לאן היא נעלמה? לחום הנוצר מהחיכוך.
+        </div>
+    </section>
+
+    <!-- סעיף ה' -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה'</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> במהלך תנועת התיבה A על המשטח האופקי (לאחר התנתקות הקפיץ ולפני המדרון), תלויה בה מטוטלת. משקולת המטוטלת אינה משפיעה על תנועת התיבה. התיבה נעה במשטח אופקי חלק.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לקבוע איזה מבין האיורים I, II או III מתאר נכון את מצב המטוטלת במהלך התנועה על המשטח האופקי.</div>
+        </div>
+        
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\Sigma\vec{F} = 0 \Rightarrow \vec{v} = \text{const}\)</span>
+            <span class="formula-badge">החוק הראשון של ניוטון (התמדה)</span>
+            <p class="content-paragraph mt-2 text-sm">ניתוח כוחות פשוט: נמצא את תאוצת התיבה, וממנה נסיק לגבי משקולת המטוטלת.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">לאחר הניתוק מהקפיץ, תיבה A נעה על משטח אופקי חלק. בציר האופקי, שקול הכוחות הפועל עליה הוא אפס (\( \Sigma F_{x,A} = 0 \)). לפי החוק הראשון של ניוטון, התיבה מתמידה בתנועתה וגודל מהירותה קבוע. כלומר, <strong>תאוצת התיבה היא אפס (\( a_A = 0 \)).</strong></p>
+            <p class="content-paragraph">משקולת המטוטלת תלויה בתוך התיבה ולכן היא נעה יחד איתה באותה תאוצה. כלומר, גם תאוצת המשקולת בציר האופקי היא אפס (\( a_x = 0 \)).</p>
+            <p class="content-paragraph">נשרטט תרשים כוחות למשקולת המטוטלת, תחת ההנחה שהחוט נטוי בזווית כלשהי (כמו באיורים II ו-III):</p>
+            
+            <div class="visual-frame">
+                <img
+                    src="image-5.png"
+                    alt="תרשים המטוטלת של סעיף ה'"
+                    class="w-full max-w-sm h-auto"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                />
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full max-w-sm">
+                    <span class="block font-bold mb-1">[תרשים סעיף ה']</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>image-5.png</code> באותה תיקייה.</span>
+                </div>
+            </div>
+
+            <p class="content-paragraph">הכוחות הפועלים על המשקולת הם כוח הכובד (\( mg \)) כלפי מטה, וכוח המתיחות בחוט (\( T \)) לאורך החוט. אם החוט היה נטוי, לרכיב האופקי של המתיחות (\( T_x \)) לא היה כוח שיאזן אותו, ולכן, לפי החוק השני של ניוטון, הייתה צריכה להיות למשקולת תאוצה אופקית. אך הוכחנו שאין תאוצה!</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_x = m a_x \]
+                \[ T_x = m \cdot 0 = 0 \]
+            </div>
+            <p class="content-paragraph">הדרך היחידה שבה הרכיב האופקי של המתיחות הוא אפס היא אם החוט אנכי לחלוטין. במצב זה, כוח המתיחות מאזן בדיוק את כוח הכובד (\( T = mg \)), ושקול הכוחות מתאפס בכל הצירים, כנדרש להתמדה של המערכת.</p>
+            
+            <p class="final-answer">תשובה סופית: איור I הוא המתאר נכון את מצב המטוטלת. מכיוון שהתיבה נעה במהירות קבועה (תאוצה אפס), גם המטוטלת אינה מאיצה, ולכן אין שום כוח אופקי שפועל עליה ומוציא אותה משיווי משקלה האנכי.</p>
+        </div>
+        
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> קל להתבלבל ולחשוב שאם התיבה נעה מהר, המטוטלת תעוף אחורה (כמו באיור III). תופעה כזו קורית רק כשיש <strong>תאוצה</strong> (למשל, כשהרכב מאיץ ברמזור ירוק). כאשר המהירות קבועה, החוק הראשון של ניוטון אומר לנו ששקול הכוחות שווה לאפס (ממש כמו במנוחה). לכן המטוטלת "תרגיש" בדיוק כמו שהייתה מרגישה במנוחה – תלויה ישר למטה בשיווי משקל!
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
