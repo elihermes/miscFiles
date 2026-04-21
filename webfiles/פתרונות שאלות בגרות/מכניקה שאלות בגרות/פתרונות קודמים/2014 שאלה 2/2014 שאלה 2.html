@@ -1,0 +1,824 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מודרך בפיזיקה - בגרות 2014, שאלה 2</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מודרך: בגרות 2014, שאלה 2</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מכניקה ודינמיקה</h2>
+        <p class="mt-3 text-slate-500">פתרון מלא ומודרך, הכולל תרשימי כוחות והסברים מילוליים בגישה פדגוגית.</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית: תמיד מתחת לכותרת -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200 mx-auto"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> מכונית מתחילה בנסיעה ממנוחה, כלומר גודל המהירות שלה גדל לאורך זמן עקב פעולת המנוע המסובב את הגלגלים.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> את זהותו של הכוח החיצוני שפועל על המכונית בכיוון תנועתה וגורם לגודל מהירותה לגדול, וציון של הגוף שמפעיל את הכוח הזה.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>מושגים ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">כוח חיכוך סטטי (\(f_s\))</span>
+            <span class="formula-badge">החוק השלישי של ניוטון</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">כאשר המנוע פועל, הוא מסובב את גלגלי המכונית. הגלגלים המסתובבים מפעילים כוח חיכוך על הכביש בכיוון אחורה. על פי החוק השלישי של ניוטון (חוק פעולה ותגובה), הכביש מפעיל על הגלגלים (ועל המכונית כולה) כוח שווה בגודלו ומנוגד בכיוונו - כלומר כוח דחיפה קדימה. מכיוון שנקודת המגע של הגלגל בכביש אינה מחליקה ביחס לכביש (בהנחה של נסיעה תקינה ללא החלקה), מדובר בכוח חיכוך סטטי (\(f_s\)).</p>
+            
+            <div class="visual-frame">
+                <div class="overflow-x-auto w-full flex justify-center">
+                    <img
+                        src="image-1.png"
+                        alt="תרשים כוחות בין הגלגל לכביש"
+                        class="w-full max-w-md h-auto"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                    />
+                    <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full max-w-md">
+                        <span class="block font-bold mb-1">[תרשים סעיף א']</span>
+                        <span class="text-sm">לא נמצאה תמונה בשם <code>image-1.png</code> באותה תיקייה.</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="final-answer">
+                מסקנה: הכוח הפועל בכיוון התנועה הוא כוח החיכוך הסטטי, והגוף המפעיל כוח זה הוא הכביש.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> תלמידים רבים נוטים לרשום ש"המנוע דוחף את המכונית". חשוב לזכור שעל פי החוק הראשון והשני של ניוטון, כדי שמרכז המסה של גוף יאיץ, חייב לפעול עליו כוח <strong>חיצוני</strong>. המנוע הוא חלק פנימי מהמערכת "מכונית", ולכן הכוחות שהוא מפעיל הם כוחות פנימיים. רק האינטראקציה עם הסביבה (הכביש) מייצרת כוח חיצוני שמסוגל לשנות את המהירות הכוללת של הרכב.
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב'</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> כעת יש קרח על הכביש, המשנה את תכונות המגע בין צמיגי המכונית לכביש.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> הסבר מדוע נוכחות קרח על הכביש מגבילה את התאוצה המרבית שהמכונית יכולה להגיע אליה לעומת מצב ללא קרח.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\Sigma \vec{F} = m\vec{a}\)</span>
+            <span class="formula-badge">\(f_{s,max} = \mu_s N\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הסבר מבוסס נוסחאות:</h4>
+            <p class="content-paragraph">נוכחות של קרח על הכביש מקטינה משמעותית את מקדם החיכוך הסטטי \( \mu_s \) בין הצמיגים לכביש לעומת כביש יבש. הכוח היחיד המסוגל להאיץ את המכונית קדימה הוא כוח החיכוך הסטטי שמפעיל עליה הכביש (כפי שהסקנו בסעיף א'). ערכו המקסימלי של כוח זה נתון על ידי הנוסחה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ f_{s,max} = \mu_s \cdot N \]
+            </div>
+            <p class="content-paragraph">מכיוון שמקדם החיכוך הסטטי \( \mu_s \) קטן על קרח, גם הכוח החיצוני המרבי שהכביש יכול להפעיל קדימה (\( f_{s,max} \)) יהיה קטן בהתאמה. על פי החוק השני של ניוטון, שקול הכוחות מתכונתי לתאוצה (\( \Sigma F = ma \)). לכן, כוח דוחף קטן יותר יגרור תאוצה מרבית קטנה יותר.</p>
+
+            <div class="final-answer">
+                מסקנה: בכביש עם קרח מקדם החיכוך הסטטי קטן יותר. לכן, כוח החיכוך המרבי שהכביש יכול להפעיל קדימה קטן יותר, ובהתאם לחוק השני של ניוטון, התאוצה המקסימלית האפשרית תהיה קטנה יותר.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> שימו לב לקשר המתמטי הפשוט שמסתתר כאן. אם נניח שהכביש אופקי (\( N = mg \)), התאוצה המקסימלית האפשרית היא \( a_{max} = \frac{\mu_s mg}{m} = \mu_s g \). המשוואה הזו מוכיחה באופן אלגנטי שהתאוצה המרבית תלויה <strong>אך ורק</strong> במקדם החיכוך (וביחידת התאוצה \( g \)), ואינה תלויה במסת המכונית או בחוזק המנוע שלה במצב המקסימלי! מנוע חזק מדי פשוט יגרום לגלגלים "להסתחרר במקום" (החלקה) והחיכוך יהפוך לקינטי.
+        </div>
+    </section>
+
+    <!-- סעיף ג(1) -->
+    <section class="section-card" id="part-c1">
+        <h3 class="section-header">סעיף ג' (1)</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <ul class="list-disc list-inside space-y-1">
+                    <li>גודל מהירות התחלתית: \( v_0 = 90 \text{ km/h} \)</li>
+                    <li>גודל מהירות סופית: \( v = 0 \) (עצירה)</li>
+                    <li>מקדם חיכוך קינטי עם קרח: \( \mu_{k1} = 0.1 \)</li>
+                    <li>מקדם חיכוך קינטי ללא קרח: \( \mu_{k2} = 0.8 \)</li>
+                    <li>תאוצת הכובד: \( g = 10 \text{ m/s}^2 \) (כיוון מטה)</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> לחשב את המרחק שעוברת המכונית עד לעצירתה המוחלטת (\( \Delta x \)) בכל אחד משני המצבים הנתונים.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(W_{nc} = \Delta E_k\) (משפט עבודה-אנרגיה)</span>
+            <span class="formula-badge">\(E_k = \frac{1}{2}mv^2\)</span>
+            <span class="formula-badge">\(W = F \Delta x \cos\alpha\)</span>
+            <span class="formula-badge">\(f_k = \mu_k N\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            
+            <div class="step-label">שלב 0: המרת יחידות למערכת MKS</div>
+            <p class="content-paragraph">נמיר את גודל המהירות ההתחלתית ליחידות תקניות (מטרים לשנייה) על ידי חלוקה ב-3.6:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ v_0 = \frac{90}{3.6} = 25 \text{ m/s} \]
+            </div>
+
+            <div class="step-label">שלב 1: שרטוט והגדרת כוחות</div>
+            <p class="content-paragraph">נבנה תרשים כוחות כדי למצוא את הכוח הנורמלי ואת כוח החיכוך המעכב את המכונית.</p>
+            
+            <div class="visual-frame">
+                <div class="overflow-x-auto w-full flex justify-center">
+                    <img
+                        src="image-3.1.png"
+                        alt="תרשים כוחות חופשי - רכב בבלימה"
+                        class="w-full max-w-sm h-auto"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                    />
+                    <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full max-w-sm">
+                        <span class="block font-bold mb-1">[תרשים סעיף ג' (1)]</span>
+                        <span class="text-sm">לא נמצאה תמונה בשם <code>image-3.1.png</code> באותה תיקייה.</span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="content-paragraph">בציר ה-\(y\), המכונית אינה מאיצה (\(a_y = 0\)), ולכן על פי החוק הראשון של ניוטון:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_y = 0 \quad \Rightarrow \quad N - mg = 0 \quad \Rightarrow \quad N = mg \]
+            </div>
+            <p class="content-paragraph">מכאן שכוח החיכוך הקינטי הפועל נגד כיוון התנועה הוא: \( f_k = \mu_k mg \).</p>
+
+            <div class="step-label">שלב 2: שימוש במשפט עבודה ואנרגיה</div>
+            <p class="content-paragraph">על פי משפט עבודה ואנרגיה, עבודת הכוחות הלא-משמרים שווה לשינוי באנרגיה הקינטית של המערכת. הכוח הלא-משמר היחיד שמבצע עבודה במקרה זה הוא כוח החיכוך (הכוח הנורמלי וכוח הכבידה מאונכים לכיוון התנועה ולכן העבודה שלהם היא אפס).</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ W_{nc} = \Delta E_k \quad \Rightarrow \quad W_{f_k} = E_{k,f} - E_{k,i} \]
+            </div>
+            <p class="content-paragraph">עבודת כוח החיכוך היא שלילית מכיוון שהוא פועל בזווית של \( 180^\circ \) לכיוון ההעתק (\(\cos 180^\circ = -1\)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ -f_k \cdot \Delta x = 0 - \frac{1}{2}mv_0^2 \]
+                \[ -\mu_k mg \cdot \Delta x = -\frac{1}{2}mv_0^2 \]
+            </div>
+            <p class="content-paragraph">נשים לב שהמסה \( m \) מצטמצמת משני אגפי המשוואה. נבודד את מרחק הבלימה \( \Delta x \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Delta x = \frac{v_0^2}{2\mu_k g} \]
+            </div>
+            
+            <div class="step-label">שלב 3: הצבת הנתונים לשני המצבים</div>
+            <p class="content-paragraph"><strong>מצב ראשון: יש קרח על הכביש (\( \mu_{k1} = 0.1 \))</strong></p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Delta x_1 = \frac{25^2}{2 \cdot 0.1 \cdot 10} = \frac{625}{2} = 312.5 \text{ m} \]
+            </div>
+
+            <p class="content-paragraph mt-4"><strong>מצב שני: אין קרח על הכביש (\( \mu_{k2} = 0.8 \))</strong></p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Delta x_2 = \frac{25^2}{2 \cdot 0.8 \cdot 10} = \frac{625}{16} = 39.0625 \text{ m} \]
+            </div>
+            
+            <div class="final-answer flex flex-col md:flex-row justify-center gap-4 items-center">
+                <div>על כביש עם קרח: \( \Delta x_1 = 313 \text{ m} \)</div>
+                <div class="hidden md:block">|</div>
+                <div>על כביש ללא קרח: \( \Delta x_2 = 39.1 \text{ m} \)</div>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> אפשר היה לפתור את הסעיף גם בעזרת מציאת התאוצה מתוך החוק השני של ניוטון (\(a = -\mu_k g\)) והצבתה בנוסחאות קינמטיקה של תנועה. עם זאת, מצוין וחשוב להתרגל להשתמש ב<strong>שיקולי עבודה ואנרגיה</strong>! במקרים רבים מסובכים יותר (כמו כוחות משתנים או מסלולים עקומים) שיטת האנרגיות היא הדרך המהירה, הבטוחה והקלה יותר לפתרון. וכמובן, כיף לראות שיש בפיזיקה יותר מדרך אחת נכונה להגיע בדיוק לאותה התוצאה!
+        </div>
+    </section>
+
+    <!-- סעיף ג(2) -->
+    <section class="section-card" id="part-c2">
+        <h3 class="section-header">סעיף ג' (2)</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> אנו מתבססים על המסקנות הכמותיות שהשגנו בסעיף ג' (1) בדבר מרחקי הבלימה.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> נימוק פיזיקלי-בטיחותי מדוע סוגרים לתנועה כבישים שמצטבר עליהם קרח.
+            </div>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הסבר והסקת מסקנות:</h4>
+            <p class="content-paragraph">מתוצאות הסעיף הקודם אנו רואים פער עצום במרחקי הבלימה. על כביש יבש, רכב שנוסע ב-90 קמ"ש זקוק לכ-39 מטרים כדי להגיע לעצירה מוחלטת לאחר נעילת הגלגלים. לעומת זאת, על כביש מכוסה קרח, אותו רכב זקוק ליותר מ-310 מטרים!</p>
+            <p class="content-paragraph">מדובר במרחק עצירה שגדול בערך פי 8. המשמעות המעשית היא שאם נהג על כביש קפוא יבחין בסכנה, במכשול או ברכב אחר שעצר מלפנים וינסה לבלום – המכונית תמשיך להחליק מאות מטרים ללא יכולת תמרון לפני שתיעצר. זהו מצב סכנת חיים קריטית עם סיכוי ודאי כמעט להתנגשות קשה, ולכן הרשויות סוגרות כבישים קפואים מראש.</p>
+
+            <div class="final-answer">
+                מסקנה: מרחק הבלימה על קרח ארוך משמעותית (פי 8) ממרחק הבלימה על כביש רגיל. נהג שיידרש לבלום במקרה חירום יעבור מרחק עצום ולא יספיק לעצור בזמן כדי למנוע תאונה. לכן, לשם בטיחות, כבישים אלו נסגרים.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> בבחינות הבגרות אוהבים לשלב שאלות הבנה כאלו שדורשות מכם להרים רגע את העיניים מהמספרים היבשים ולראות את ההשלכות המציאותיות של הפיזיקה על חיי היום יום שלנו. תמיד קשרו את ההסבר המילולי לתוצאות המספריות המדויקות שחישבתם סעיף לפני כן (לציין את היחס פי 8 מחזק מאוד את התשובה!).
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד'</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <ul class="list-disc list-inside space-y-1">
+                    <li>מסת המכונית: \( m = 1,000 \text{ kg} \).</li>
+                    <li>כוח דוחף (קדימה): \( F = 1,200 \text{ N} \).</li>
+                    <li>שקול כוחות מעכבים (אחורה): \( f = 400 \text{ N} \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> את תאוצת המכונית \( a \) באותו רגע מסוים.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\(\Sigma F_x = ma_x\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נצייר תרשים כוחות חופשי לציר האופקי, ונבחר את הכיוון החיובי ככיוון תנועת המכונית (קדימה).</p>
+            
+            <div class="visual-frame">
+                <div class="overflow-x-auto w-full flex justify-center">
+                    <img
+                        src="image-4.png"
+                        alt="תרשים כוחות חופשי בציר האופקי"
+                        class="w-full max-w-md h-auto"
+                        onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                    />
+                    <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full max-w-md">
+                        <span class="block font-bold mb-1">[תרשים סעיף ד']</span>
+                        <span class="text-sm">לא נמצאה תמונה בשם <code>image-4.png</code> באותה תיקייה.</span>
+                    </div>
+                </div>
+            </div>
+
+            <p class="content-paragraph">נרכיב את משוואת הכוחות בציר האופקי (ציר \( x \)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_x = F - f \]
+                \[ \Sigma F_x = 1200 - 400 = 800 \text{ N} \]
+            </div>
+            <p class="content-paragraph">נציב את הנתונים בחוק השני של ניוטון כדי למצוא את התאוצה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_x = m \cdot a \]
+                \[ 800 = 1000 \cdot a \]
+                \[ a = \frac{800}{1000} = 0.8 \text{ m/s}^2 \]
+            </div>
+
+            <div class="final-answer">
+                מסקנה: תאוצת המכונית ברגע זה היא \( a = 0.800 \text{ m/s}^2 \) (בכיוון התנועה).
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> שימו לב שבסעיף זה לא נדרשנו כלל לחשב נורמל (\( N \)) או להתעסק עם ציר ה-\( y \) ותאוצת הכובד \( g \), כיוון שהשאלה נתנה לנו ישירות את סך כל כוחות החיכוך (המעכבים) הפועלים בציר התנועה האופקי כנתון גלובלי מסכם. תמיד בדקו באילו נתונים אפשר להשתמש ישירות מבלי לסבך את הפתרון!
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה'</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> ככל שגודל מהירות המכונית עולה, כך גדל כוח התנגדות האוויר הפועל עליה נגד כיוון תנועתה.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> הסבר פיזיקלי לתופעה שלמכונית יש "מהירות מרבית" (גודל מהירות מקסימלי), למרות שכוח המנוע ממשיך לפעול כל הזמן.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\Sigma \vec{F} = 0\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הסבר פיזיקלי:</h4>
+            <p class="content-paragraph">כאשר מכונית מתחילה להאיץ, הכוח המניע אותה קדימה (החיכוך הסטטי מהכביש שמקורו בפעולת המנוע) גדול מסך הכוחות המעכבים (התנגדות אוויר וחיכוך שונים). כתוצאה מכך שקול הכוחות חיובי, ויש למכונית תאוצה הגורמת לגודל המהירות לעלות.</p>
+            <p class="content-paragraph">עם זאת, הנתון אומר לנו שכוח התנגדות האוויר אינו קבוע, אלא גדל ככל שהמהירות גדלה. הכוח קדימה שהמכונית מסוגלת לייצר מוגבל להספק המנוע ולמקדם החיכוך עם הכביש.</p>
+            <p class="content-paragraph">לכן, ככל שהמכונית נוסעת מהר יותר, הכוח המעכב שפועל עליה גדל. בסופו של דבר, גודל המהירות מגיע לערך קריטי שבו כוח התנגדות האוויר (בתוספת יתר החיכוכים) משתווה בגודלו במדויק לכוח המרבי שהרכב דוחף איתו קדימה.</p>
+            <p class="content-paragraph">ברגע זה, סכום הכוחות על הרכב מתאפס (\( \Sigma F = 0 \)). לפי החוק הראשון של ניוטון, כאשר שקול הכוחות אפס - תאוצת הגוף היא אפס (\( a = 0 \)). מכיוון שאין תאוצה, המכונית תמשיך לנוע בגודל מהירות קבוע, ולא תוכל להגדיל את מהירותה מעבר לנקודה זו. מהירות זו מוגדרת כמהירות המרבית.</p>
+
+            <div class="final-answer">
+                מסקנה: כיוון שכוח התנגדות האוויר גדל עם המהירות, בשלב מסוים שקול הכוחות הפועל על המכונית יתאפס (כוחות ההתנגדות ישתוו לכוח המניע קדימה). במצב זה התאוצה תהיה אפס, וגודל המהירות יישאר קבוע ולא יוכל לגדול יותר.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> המושג שאנחנו מתארים כאן נקרא בפיזיקה <strong>מהירות סופית</strong> או מהירות מסופית (Terminal Velocity). אנו נוהגים לפגוש אותו הרבה בבעיות על עצמים הנופלים דרך האוויר (כמו צנחן או טיפת גשם), אך העיקרון הפיזיקלי זהה לחלוטין גם בתנועה אופקית בתוך זורם (אוויר). הדינמיקה מלמדת אותנו שכוחות חיכוך התלויים במהירות תמיד יובילו, בסופו של דבר, לשיווי משקל כוחות!
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
