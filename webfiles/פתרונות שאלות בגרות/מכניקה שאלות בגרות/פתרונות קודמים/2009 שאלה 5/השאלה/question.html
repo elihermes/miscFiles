@@ -1,0 +1,428 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>שאלה 5</title>
+	<style>
+		@page {
+			size: A4 portrait;
+			margin: 7mm;
+		}
+
+		html {
+			background: #f3f3f0;
+		}
+
+		body {
+			margin: 0;
+			background: linear-gradient(180deg, #f5f5f2 0%, #f1f1ee 100%);
+			color: #111827;
+			font-family: "Times New Roman", "David", "Noto Serif Hebrew", serif;
+			font-size: 14pt;
+			line-height: 1.38;
+		}
+
+		.page {
+			width: min(210mm, calc(100vw - 18px));
+			min-height: 297mm;
+			margin: 8px auto;
+			padding: 11mm 14mm 10mm;
+			box-sizing: border-box;
+			background: linear-gradient(180deg, #fdfdfb 0%, #f8f8f5 100%);
+			border: 1px solid #ecece7;
+			box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+		}
+
+		.question {
+			max-width: 167mm;
+			margin: 0 auto;
+			text-align: right;
+		}
+
+		h1 {
+			margin: 0 0 0.9rem;
+			text-align: center;
+			font-size: 1.42rem;
+			font-weight: 700;
+		}
+
+		p {
+			margin: 0 0 0.26rem;
+			text-align: right;
+		}
+
+		.part {
+			margin-top: 0.55rem;
+		}
+
+		.part-row {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			gap: 0.45rem;
+			align-items: start;
+		}
+
+		.part-label {
+			font-weight: 700;
+			white-space: nowrap;
+		}
+
+		.part-body {
+			text-align: right;
+		}
+
+		.part-body > *:last-child {
+			margin-bottom: 0;
+		}
+
+		.note {
+			margin-top: 0.08rem;
+		}
+
+		.points {
+			margin-top: 0.08rem;
+			text-align: right;
+		}
+
+		.ltr {
+			direction: ltr;
+			unicode-bidi: isolate;
+			display: inline-block;
+			white-space: nowrap;
+		}
+
+		.top-diagrams {
+			display: grid;
+			grid-template-columns: repeat(2, minmax(0, 1fr));
+			gap: 10px 12px;
+			margin: 0.7rem 0 0.45rem;
+			max-width: 142mm;
+			margin-right: auto;
+			margin-left: auto;
+		}
+
+		.small-diagram {
+			width: 100%;
+			margin: 0;
+		}
+
+		.diagram-placeholder {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			color: #4b5563;
+			border: 1.5px dashed #7c7c74;
+			background: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, rgba(242, 242, 237, 0.88) 100%);
+			box-sizing: border-box;
+		}
+
+		.diagram-placeholder.small {
+			height: 126px;
+			padding: 8px;
+			font-size: 0.86rem;
+		}
+
+		.diagram-placeholder.large {
+			height: 208px;
+			padding: 10px;
+			font-size: 0.92rem;
+		}
+
+		.diagram-image {
+			display: block;
+			width: 100%;
+			object-fit: contain;
+			box-sizing: border-box;
+			background: transparent;
+		}
+
+		.diagram-image.small {
+			height: 126px;
+		}
+
+		.diagram-image.large {
+			height: 208px;
+		}
+
+		.diagram-caption {
+			margin-top: 0.24rem;
+			text-align: center;
+			font-size: 1rem;
+		}
+
+		.diagram-block {
+			display: flex;
+			direction: ltr;
+			align-items: flex-start;
+			gap: 10px;
+			margin: 0.42rem 0 0.04rem;
+		}
+
+		.diagram-figure {
+			width: 76mm;
+			flex: 0 0 76mm;
+			margin: 0 0 0 -3mm;
+		}
+
+		.diagram-text {
+			flex: 1;
+			direction: rtl;
+			text-align: right;
+			align-self: flex-end;
+			margin-bottom: 0.26rem;
+			padding-top: 0.05rem;
+		}
+
+		.diagram-text p {
+			margin-bottom: 0.18rem;
+		}
+
+		.question-line {
+			margin-top: 0.02rem;
+		}
+
+		.mixed-fraction {
+			direction: ltr;
+			unicode-bidi: isolate;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.12em;
+		}
+
+		.fraction {
+			display: inline-grid;
+			grid-template-rows: auto auto;
+			justify-items: center;
+			line-height: 1;
+			font-size: 0.88em;
+		}
+
+		.fraction .numerator {
+			padding: 0 0.08em 0.03em;
+			border-bottom: 1px solid currentColor;
+		}
+
+		.fraction .denominator {
+			padding: 0.03em 0.08em 0;
+		}
+
+		@media (max-width: 720px) {
+			.page {
+				min-height: auto;
+				padding: 8mm 7mm;
+			}
+
+			.question {
+				max-width: none;
+			}
+
+			.top-diagrams {
+				flex-wrap: wrap;
+			}
+
+			.small-diagram {
+				width: calc(50% - 5px);
+			}
+
+			.diagram-block {
+				flex-direction: column;
+				align-items: center;
+			}
+
+			.diagram-figure {
+				width: min(100%, 280px);
+				flex-basis: auto;
+			}
+
+			.diagram-text {
+				width: 100%;
+				align-self: auto;
+				margin-bottom: 0;
+			}
+		}
+
+		@media print {
+			html,
+			body {
+				background: #ffffff;
+			}
+
+			body {
+				font-size: 13.45pt;
+				line-height: 1.28;
+			}
+
+			.page {
+				width: auto;
+				min-height: auto;
+				margin: 0;
+				padding: 0;
+				border: 0;
+				box-shadow: none;
+				background: #ffffff;
+			}
+
+			h1 {
+				margin-bottom: 0.72rem;
+			}
+
+			p {
+				margin-bottom: 0.14rem;
+			}
+
+			.part {
+				margin-top: 0.42rem;
+			}
+
+			.top-diagrams {
+				margin: 0.44rem auto 0.22rem;
+				gap: 6px 8px;
+				max-width: 136mm;
+			}
+
+			.diagram-placeholder.small {
+				height: 106px;
+				font-size: 0.78rem;
+			}
+
+			.diagram-image.small {
+				height: 106px;
+			}
+
+			.diagram-placeholder.large {
+				height: 178px;
+				font-size: 0.84rem;
+			}
+
+			.diagram-image.large {
+				height: 178px;
+			}
+
+			.diagram-caption {
+				margin-top: 0.14rem;
+			}
+
+			.diagram-block {
+				gap: 8px;
+				margin: 0.3rem 0 0;
+			}
+
+			.diagram-figure {
+				width: 69mm;
+				flex-basis: 69mm;
+				margin: 0 0 0 -2.5mm;
+			}
+
+			.question-line {
+				margin-top: 0;
+			}
+
+			.points {
+				margin-top: 0.02rem;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="page">
+		<div class="question">
+			<h1>שאלה 5</h1>
+
+			<p>אסטרונאוט בחללית רוצה לחקור כוכב לכת שצורתו כדורית.</p>
+
+			<section class="part">
+				<div class="part-row">
+					<div class="part-label">א.</div>
+					<div class="part-body">
+						<p>בשלב מסוים של המחקר, האסטרונאוט בחללית נמצא במנוחה ביחס למרכז</p>
+						<p>כוכב הלכת. איזה מהתרשימים א-ד שלפניכם, מתאר נכון את מצב החללית ביחס</p>
+						<p>לכוכב הלכת? נמקו את תשובתכם.</p>
+						<p class="note">(שימו לב: בתרשימים א-ג מנוע החללית פועל, ובתרשים ד מנוע החללית אינו פועל).</p>
+						<p class="points">(7 נקודות)</p>
+					</div>
+				</div>
+
+				<div class="top-diagrams">
+					<figure class="small-diagram">
+						<img src="qimage-1.png" alt="תרשים א" class="diagram-image small" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+						<div class="diagram-placeholder small" style="display: none;">qimage-1.png</div>
+					</figure>
+					<figure class="small-diagram">
+						<img src="qimage-2.png" alt="תרשים ב" class="diagram-image small" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+						<div class="diagram-placeholder small" style="display: none;">qimage-2.png</div>
+					</figure>
+					<figure class="small-diagram">
+						<img src="qimage-3.png" alt="תרשים ג" class="diagram-image small" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+						<div class="diagram-placeholder small" style="display: none;">qimage-3.png</div>
+					</figure>
+					<figure class="small-diagram">
+						<img src="qimage-4.png" alt="תרשים ד" class="diagram-image small" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+						<div class="diagram-placeholder small" style="display: none;">qimage-4.png</div>
+					</figure>
+				</div>
+			</section>
+
+			<section class="part">
+				<div class="diagram-block">
+					<figure class="diagram-figure">
+						<img src="qimage-5.png" alt="תרשים ה" class="diagram-image large" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+						<div class="diagram-placeholder large" style="display: none;">qimage-5.png</div>
+					</figure>
+
+					<div class="diagram-text">
+						<p>האסטרונאוט מצא באמצעות מכשיר רדאר</p>
+						<p>כי החללית נמצאת בגובה <span class="ltr">H=10<sup>7</sup> m</span></p>
+						<p>מעל פני כוכב הלכת, וכי רואים את</p>
+						<p>כוכב הלכת בזווית ראייה של <span class="ltr">60&deg;</span>.</p>
+						<p><span class="ltr">O</span> הוא מרכז כוכב הלכת (ראו תרשים ה).</p>
+					</div>
+				</div>
+
+				<div class="part-row question-line">
+					<div class="part-label">ב.</div>
+					<div class="part-body">
+						<p>חשבו את הרדיוס, <span class="ltr">R</span>, של כוכב הלכת.</p>
+						<p class="points">(4 נקודות)</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="part">
+				<p>בעזרת מנוע החללית, האסטרונאוט מכניס את החללית לתנועה מעגלית סביב כוכב הלכת</p>
+				<p>(בגובה <span class="ltr">H</span> מעל פני הכוכב). האסטרונאוט מצא כי זמן מחזור התנועה של החללית סביב</p>
+				<p>כוכב הלכת הוא 150 דקות. הניחו כי צפיפות כוכב הלכת אחידה.</p>
+				<div class="part-row question-line">
+					<div class="part-label">ג.</div>
+					<div class="part-body">
+						<p>חשבו את המסה של כוכב הלכת. (8 נקודות)</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="part">
+				<div class="part-row">
+					<div class="part-label">ד.</div>
+					<div class="part-body">
+						<p>חשבו את גודל תאוצת הנפילה החופשית על פני כוכב הלכת. (8 נקודות)</p>
+					</div>
+				</div>
+			</section>
+
+			<section class="part">
+				<div class="part-row">
+					<div class="part-label">ה.</div>
+					<div class="part-body">
+						<p>האם <strong>במהלך התנועה המעגלית</strong> נדרשת פעולת מנועי החללית כדי לקיים את התנועה</p>
+						<p>המעגלית?</p>
+						<p>אם כן - הסבירו את תפקיד המנועים. אם לא - הסבירו מדוע התנועה המעגלית</p>
+						<p>אפשרית בלי פעולת מנועי החללית.</p>
+						<p class="points">(<span class="mixed-fraction"><span class="whole">6</span><span class="fraction"><span class="numerator">1</span><span class="denominator">3</span></span></span> נקודות)</p>
+					</div>
+				</div>
+			</section>
+		</div>
+	</main>
+</body>
+</html>
