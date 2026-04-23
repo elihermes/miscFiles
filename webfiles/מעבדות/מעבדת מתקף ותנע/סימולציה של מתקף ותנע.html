@@ -1,0 +1,710 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>מעבדת מתקף ותנע - סימולציה משופרת</title>
+    
+    <!-- טעינת ספריות העזר (React, Tailwind) -->
+    <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+    <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+    <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        .no-select { user-select: none; }
+        
+        /* הגדרות מיוחדות להדפסה - הסתרת אלמנטים לא רלוונטיים והדפסת צבעי רקע */
+        @media print {
+            body { background-color: white !important; }
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+            .print-hide { display: none !important; }
+            .print-full-width { grid-column: span 3 / span 3 !important; }
+            @page { margin: 1cm; }
+        }
+    </style>
+</head>
+<body class="bg-slate-50 font-sans text-slate-800">
+    
+    <div id="root"></div>
+
+    <script type="text/babel">
+        const { useState, useEffect, useRef } = React;
+
+        const Icons = {
+            Play: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polygon points="5 3 19 12 5 21 5 3"></polygon></svg>,
+            Settings: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><circle cx="12" cy="12" r="3"></circle><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1 0 2.83 2 2 0 0 1-2.83 0l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-2 2 2 2 0 0 1-2-2v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83 0 2 2 0 0 1 0-2.83l.06-.06a1.65 1.65 0 0 0 .33-1.82 1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1-2-2 2 2 0 0 1 2-2h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 0-2.83 2 2 0 0 1 2.83 0l.06.06a1.65 1.65 0 0 0 1.82.33H9a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 2-2 2 2 0 0 1 2 2v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 0 2 2 0 0 1 0 2.83l-.06.06a1.65 1.65 0 0 0-.33 1.82V9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 2 2 2 2 0 0 1-2 2h-.09a1.65 1.65 0 0 0-1.51 1z"></path></svg>,
+            Database: () => <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><ellipse cx="12" cy="5" rx="9" ry="3"></ellipse><path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"></path><path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"></path></svg>,
+            Activity: ({ className }) => <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" className={className} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"></polyline></svg>,
+            Trash: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="3 6 5 6 21 6"></polyline><path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path><line x1="10" y1="11" x2="10" y2="17"></line><line x1="14" y1="11" x2="14" y2="17"></line></svg>,
+            Printer: () => <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"><polyline points="6 9 6 2 18 2 18 9"></polyline><path d="M6 18H4a2 2 0 0 1-2-2v-5a2 2 0 0 1 2-2h16a2 2 0 0 1 2 2v5a2 2 0 0 1-2 2h-2"></path><rect x="6" y="14" width="12" height="8"></rect></svg>
+        };
+
+        const getNiceTicks = (min, max, targetCount) => {
+            const range = max - min;
+            if (range === 0) return [min];
+            const rawStep = range / targetCount;
+            const mag = Math.pow(10, Math.floor(Math.log10(rawStep)));
+            const normStep = rawStep / mag;
+            let step;
+            if (normStep < 1.5) step = 1;
+            else if (normStep < 3.5) step = 2;
+            else if (normStep < 7.5) step = 5;
+            else step = 10;
+            step *= mag;
+
+            const start = Math.floor(min / step) * step;
+            const ticks = [];
+            for (let t = start; t <= max + step/2; t += step) {
+                ticks.push(t);
+            }
+            return ticks;
+        };
+
+        // --- הגרלת פרמטרי בסיס קבועים (מסות ושיפוע) ---
+        const generateBaseParams = () => {
+            const emptyMass = (259.0 + Math.random() * 3.0) / 1000;
+            const fullMass = (511.5 + Math.random() * 1.5) / 1000;
+            
+            const g = 9.8;
+            const mu = 0.0005; 
+            const d = 0.85; 
+
+            // חישוב זווית שתיתן בערך 0.425 מ/ש
+            const targetV = 0.425;
+            const targetA = (targetV * targetV) / (2 * d);
+            const idealTheta = (targetA / g) + mu; 
+            
+            // סטייה אקראית בזווית המסילה
+            const deviation = 1 + (Math.random() * 0.04 - 0.02);
+            const theta = idealTheta * deviation;
+            const slopePercent = Math.tan(theta) * 100;
+
+            return { emptyMass, fullMass, theta, slopePercent, d, g, mu };
+        };
+
+        // --- מנוע הפיזיקה הספציפי לכל ניסוי ---
+        const generateSimulationData = (hasWeight, isHardSpring, base) => {
+            const m = hasWeight ? base.fullMass : base.emptyMass;
+            const { g, mu, d, theta, slopePercent } = base;
+
+            const a_down = g * Math.sin(theta) - mu * g * Math.cos(theta);
+            const t_reach = Math.sqrt((2 * d) / a_down);
+            const v1 = a_down * t_reach; 
+
+            // עדכון משמעותי לאיבוד האנרגיה כדי שההבדל יהיה ניכר!
+            // קפיץ קשיח יאבד 10%-15% מהאנרגיה. קפיץ רך יאבד 1%-2%.
+            const energyLoss = isHardSpring ? (0.10 + Math.random() * 0.05) : (0.01 + Math.random() * 0.01);
+            const dt_col = isHardSpring ? 0.04 : 0.12; 
+            
+            const Ek1 = 0.5 * m * v1 * v1;
+            const Ek2 = Ek1 * (1 - energyLoss);
+            const v2 = -Math.sqrt((2 * Ek2) / m); 
+
+            // חישוב השינוי התיאורטי בתנע
+            const theoreticalDeltaP = Math.abs(m * v2 - m * v1);
+            
+            // שגיאת מדידת חיישן מוקטנת (רק חצי אחוז) כדי לא להסתיר את ההבדל הפיזיקלי
+            const errorFactor = 1 + (Math.random() * 0.01 - 0.005); 
+            const measuredImpulse = theoreticalDeltaP * errorFactor;
+            
+            const fMax = (measuredImpulse * Math.PI) / (2 * dt_col);
+            const a_up = g * Math.sin(theta) + mu * g * Math.cos(theta);
+
+            const vData = []; 
+            const fData = []; 
+            const xData = []; 
+
+            const tUp = Math.abs(v2) / a_up;
+            const tEnd = t_reach + dt_col + tUp + 0.2; 
+
+            const times = [];
+            for (let t = 0; t <= tEnd + 0.02; t += 0.01) {
+                times.push(t);
+            }
+            times.push(t_reach);
+            times.push(t_reach + dt_col);
+            times.sort((a, b) => a - b);
+
+            const uniqueTimes = [];
+            for (let i = 0; i < times.length; i++) {
+                if (i === 0 || times[i] - uniqueTimes[uniqueTimes.length - 1] > 0.00001) {
+                    uniqueTimes.push(times[i]);
+                }
+            }
+
+            let current_x = 0;
+            let last_t = 0;
+
+            for (let t of uniqueTimes) { 
+                let v = 0;
+                const isExactV1 = Math.abs(t - t_reach) < 0.00001;
+                const isExactV2 = Math.abs(t - (t_reach + dt_col)) < 0.00001;
+                
+                if (t < t_reach && !isExactV1) {
+                    v = a_down * t;
+                    current_x = 0.5 * a_down * t * t;
+                } 
+                else if (isExactV1) {
+                    v = v1; 
+                    current_x = 0.5 * a_down * t * t;
+                }
+                else if (t < t_reach + dt_col && !isExactV2) {
+                    const phase = (t - t_reach) / dt_col;
+                    const physicalImpulse = theoreticalDeltaP * 0.5 * (1 - Math.cos(phase * Math.PI));
+                    v = v1 - (physicalImpulse / m);
+                    current_x += v * (t - last_t); 
+                } 
+                else if (isExactV2) {
+                    v = v2; 
+                    current_x += v * (t - last_t);
+                }
+                else {
+                    const t_after = t - (t_reach + dt_col);
+                    v = v2 + a_up * t_after;
+                    if (v > 0) v = 0; 
+                    if (v < 0) {
+                        current_x = d + (v2 * t_after) + 0.5 * a_up * t_after * t_after;
+                    } else {
+                        current_x = d - (v2 * v2) / (2 * a_up); 
+                    }
+                }
+                
+                let noise = 0;
+                if ((t < t_reach - 0.02 || t > t_reach + dt_col + 0.02) && v !== 0) {
+                    noise = (Math.random() * 0.002 - 0.001);
+                }
+                
+                vData.push({ time: t, value: v + noise });
+                xData.push({ time: t, value: current_x });
+                last_t = t;
+            }
+
+            const tForceStart = t_reach - 0.1;
+            const tForceEnd = t_reach + dt_col + 0.1;
+            for (let t = Math.max(0, tForceStart); t <= tForceEnd; t += 0.002) {
+                let f = 0;
+                if (t >= t_reach && t <= t_reach + dt_col) {
+                    f = fMax * Math.sin(Math.PI * (t - t_reach) / dt_col);
+                }
+                let noise = (Math.random() * 0.04 - 0.02); 
+                f += noise;
+                if (f < 0 && (t < t_reach || t > t_reach + dt_col)) f = Math.abs(noise)*0.1; 
+                fData.push({ time: t, value: f });
+            }
+
+            return {
+                params: { hasWeight, isHardSpring, m, theta, v1, v2, dt_col, t_reach, slopePercent, measuredImpulse },
+                vData,
+                fData,
+                xData
+            };
+        };
+
+        // --- רכיב הגרף ---
+        const InteractiveChart = ({ data, color, title, yLabel, showArea, areaStart, areaEnd, symmetricY, highlightPoints, areaValue }) => {
+            const [hoverPt, setHoverPt] = useState(null);
+            if (!data || data.length === 0) return null;
+
+            const currentTimeInChart = data[data.length - 1].time;
+            const width = 700;
+            const height = 250;
+            const padding = { top: 30, right: 30, bottom: 40, left: 60 };
+
+            const minX = data[0].time;
+            const maxX = data[data.length - 1].time;
+            
+            let maxY = Math.max(...data.map(d => d.value));
+            let minY = Math.min(0, ...data.map(d => d.value));
+            
+            if (maxY === minY) { maxY += 1; minY -= 1; }
+            
+            const paddingY = (maxY - minY) * 0.15;
+            maxY += paddingY;
+            minY -= paddingY;
+
+            if (symmetricY) {
+                const bound = Math.max(Math.abs(maxY), Math.abs(minY));
+                maxY = bound;
+                minY = -bound;
+            }
+
+            const mapX = (x) => padding.left + ((x - minX) / (maxX - minX)) * (width - padding.left - padding.right);
+            const mapY = (y) => height - padding.bottom - ((y - minY) / (maxY - minY)) * (height - padding.top - padding.bottom);
+
+            const xTicks = getNiceTicks(minX, maxX, 10);
+            const yTicks = getNiceTicks(minY, maxY, 6);
+
+            const points = data.map(d => `${mapX(d.time)},${mapY(d.value)}`).join(' ');
+
+            let areaPolygon = null;
+            let areaAnnotations = null;
+            if (showArea && areaStart !== undefined && areaEnd !== undefined) {
+                const areaData = data.filter(d => d.time >= areaStart && d.time <= areaEnd);
+                if (areaData.length > 0) {
+                    const areaPoints = [
+                        `${mapX(areaData[0].time)},${mapY(0)}`,
+                        ...areaData.map(d => `${mapX(d.time)},${mapY(d.value)}`),
+                        `${mapX(areaData[areaData.length - 1].time)},${mapY(0)}`
+                    ].join(' ');
+                    areaPolygon = <polygon points={areaPoints} fill={color} opacity="0.2" />;
+                    
+                    areaAnnotations = (
+                        <g>
+                            {currentTimeInChart >= areaStart && (
+                                <g>
+                                    <line x1={mapX(areaStart)} y1={padding.top} x2={mapX(areaStart)} y2={height - padding.bottom} stroke="#16a34a" strokeDasharray="4" strokeWidth="1.5" />
+                                    <text x={mapX(areaStart) - 4} y={padding.top + 10} fontSize="11" fill="#15803d" textAnchor="end" fontWeight="bold">תחילת התנגשות</text>
+                                </g>
+                            )}
+                            
+                            {currentTimeInChart >= areaEnd && (
+                                <g>
+                                    <line x1={mapX(areaEnd)} y1={padding.top} x2={mapX(areaEnd)} y2={height - padding.bottom} stroke="#16a34a" strokeDasharray="4" strokeWidth="1.5" />
+                                    <text x={mapX(areaEnd) + 4} y={padding.top + 10} fontSize="11" fill="#15803d" textAnchor="start" fontWeight="bold">סוף התנגשות</text>
+                                </g>
+                            )}
+
+                            {areaValue !== undefined && currentTimeInChart >= areaEnd && (
+                                <g>
+                                    <rect x={mapX((areaStart + areaEnd) / 2) - 40} y={height - padding.bottom - 30} width="80" height="20" fill="white" fillOpacity="0.8" rx="4" />
+                                    <text x={mapX((areaStart + areaEnd) / 2)} y={height - padding.bottom - 16} fontSize="12" fill="#166534" textAnchor="middle" fontWeight="bold">
+                                        שטח: {areaValue.toFixed(3)}
+                                    </text>
+                                </g>
+                            )}
+                        </g>
+                    );
+                }
+            }
+
+            const handleMouseMove = (e) => {
+                const rect = e.currentTarget.getBoundingClientRect();
+                const mouseX = e.clientX - rect.left;
+                const timeScale = minX + ((mouseX - padding.left) / (width - padding.left - padding.right)) * (maxX - minX);
+                
+                let closest = data[0];
+                let minDiff = Infinity;
+                for(let i=0; i<data.length; i++) {
+                    const diff = Math.abs(data[i].time - timeScale);
+                    if(diff < minDiff) {
+                        minDiff = diff;
+                        closest = data[i];
+                    }
+                }
+                setHoverPt(closest);
+            };
+
+            return (
+                <div className="bg-white p-4 rounded-lg shadow border border-slate-200 no-select" dir="ltr">
+                    <div className="text-sm font-bold text-slate-700 mb-2 text-center">{title}</div>
+                    <svg viewBox={`0 0 ${width} ${height}`} className="w-full h-auto" style={{cursor: 'crosshair'}}>
+                        
+                        <g opacity="0.3">
+                            {xTicks.map((t, i) => <line key={`x-${i}`} x1={mapX(t)} y1={padding.top} x2={mapX(t)} y2={height - padding.bottom} stroke="#94a3b8" />)}
+                            {yTicks.map((t, i) => <line key={`y-${i}`} x1={padding.left} y1={mapY(t)} x2={width - padding.right} y2={mapY(t)} stroke="#94a3b8" />)}
+                        </g>
+
+                        <line x1={padding.left} y1={mapY(0)} x2={width - padding.right} y2={mapY(0)} stroke="#475569" strokeWidth="1.5" />
+                        <line x1={mapX(0)} y1={padding.top} x2={mapX(0)} y2={height - padding.bottom} stroke="#475569" strokeWidth="1.5" />
+
+                        <g fontSize="11" fill="#475569" fontFamily="sans-serif">
+                            {xTicks.map((t, i) => (
+                                <text key={`xtl-${i}`} x={mapX(t)} y={height - padding.bottom + 15} textAnchor="middle">{t.toFixed(2)}</text>
+                            ))}
+                            {yTicks.map((t, i) => (
+                                <text key={`ytl-${i}`} x={padding.left - 8} y={mapY(t) + 4} textAnchor="end">{t.toFixed(2)}</text>
+                            ))}
+                            <text x={width / 2} y={height - 5} textAnchor="middle" fontWeight="bold">Time (s)</text>
+                            <text x={15} y={height / 2} transform={`rotate(-90 15 ${height / 2})`} textAnchor="middle" fontWeight="bold">{yLabel}</text>
+                        </g>
+
+                        {areaPolygon}
+                        {areaAnnotations}
+
+                        <polyline points={points} fill="none" stroke={color} strokeWidth="2" strokeLinejoin="round" />
+
+                        {highlightPoints && highlightPoints.map((pt, i) => {
+                            if (currentTimeInChart < pt.x) return null;
+                            return (
+                                <g key={`hl-${i}`}>
+                                    <circle cx={mapX(pt.x)} cy={mapY(pt.y)} r="4" fill={color} stroke="white" strokeWidth="1.5" />
+                                    {pt.label && (
+                                        <text 
+                                            x={mapX(pt.x) + (pt.x > (minX + maxX) / 2 ? -8 : 8)} 
+                                            y={mapY(pt.y) - 8} 
+                                            fontSize="12" 
+                                            fill={color} 
+                                            fontWeight="bold" 
+                                            textAnchor={pt.x > (minX + maxX) / 2 ? "end" : "start"}
+                                            style={{ textShadow: "1px 1px 2px white, -1px -1px 2px white, 1px -1px 2px white, -1px 1px 2px white" }}
+                                        >
+                                            {pt.label}
+                                        </text>
+                                    )}
+                                </g>
+                            );
+                        })}
+
+                        <rect x={padding.left} y={padding.top} width={width - padding.left - padding.right} height={height - padding.top - padding.bottom} 
+                              fill="transparent" 
+                              onMouseMove={handleMouseMove} 
+                              onMouseLeave={() => setHoverPt(null)} />
+
+                        {hoverPt && (
+                            <g style={{pointerEvents: 'none'}}>
+                                <line x1={mapX(hoverPt.time)} y1={padding.top} x2={mapX(hoverPt.time)} y2={height - padding.bottom} stroke="#334155" strokeDasharray="4" strokeWidth="1" />
+                                <line x1={padding.left} y1={mapY(hoverPt.value)} x2={width - padding.right} y2={mapY(hoverPt.value)} stroke="#334155" strokeDasharray="4" strokeWidth="1" />
+                                <circle cx={mapX(hoverPt.time)} cy={mapY(hoverPt.value)} r="4" fill={color} stroke="white" strokeWidth="1.5" />
+                                
+                                {(() => {
+                                    const bx = mapX(hoverPt.time) + 10;
+                                    const by = mapY(hoverPt.value) - 45;
+                                    const isRightEdge = bx + 110 > width;
+                                    const finalX = isRightEdge ? mapX(hoverPt.time) - 120 : bx;
+                                    const finalY = by < padding.top ? by + 60 : by;
+
+                                    return (
+                                        <g transform={`translate(${finalX}, ${finalY})`}>
+                                            <rect width="110" height="40" fill="white" stroke="#cbd5e1" rx="4" filter="drop-shadow(0 2px 2px rgb(0 0 0 / 0.1))" />
+                                            <text x="10" y="16" fontSize="11" fill="#334155" fontWeight="bold">t: {hoverPt.time.toFixed(3)} s</text>
+                                            <text x="10" y="32" fontSize="11" fill={color} fontWeight="bold">y: {hoverPt.value.toFixed(3)}</text>
+                                        </g>
+                                    );
+                                })()}
+                            </g>
+                        )}
+                    </svg>
+                </div>
+            );
+        };
+
+        function App() {
+            // State: פרטים מזהים
+            const [studentName, setStudentName] = useState("");
+            const [printDateTime, setPrintDateTime] = useState("");
+
+            // State: פרמטרים קבועים לכל הסשן
+            const [baseParams, setBaseParams] = useState(() => generateBaseParams());
+            
+            // State: הגדרות הניסוי הנוכחי
+            const [hasWeight, setHasWeight] = useState(false);
+            const [isHardSpring, setIsHardSpring] = useState(false);
+            
+            // State: נתוני הרצה אחרונה שבוצעה
+            const [simData, setSimData] = useState(null); 
+
+            // State: אנימציה
+            const [currentTime, setCurrentTime] = useState(0);
+            const [isPlaying, setIsPlaying] = useState(false);
+            const animationRef = useRef(null);
+
+            const runExperiment = () => {
+                const data = generateSimulationData(hasWeight, isHardSpring, baseParams);
+                setSimData(data);
+                setCurrentTime(0);
+                setIsPlaying(true);
+            };
+
+            const handleResetAll = () => {
+                if (window.confirm("האם אתה בטוח שברצונך לנקות את כל הנתונים ולהגריל מערכת חדשה?")) {
+                    setBaseParams(generateBaseParams());
+                    setSimData(null);
+                    setCurrentTime(0);
+                    setIsPlaying(false);
+                    if (animationRef.current) cancelAnimationFrame(animationRef.current);
+                }
+            };
+
+            const handlePrint = () => {
+                setPrintDateTime(new Date().toLocaleString('he-IL'));
+                setTimeout(() => window.print(), 100);
+            };
+
+            useEffect(() => {
+                if (isPlaying && simData) {
+                    const startTime = performance.now();
+                    const endTime = simData.vData[simData.vData.length - 1].time;
+                    
+                    const animate = (time) => {
+                        const elapsed = (time - startTime) / 1000; 
+                        if (elapsed < endTime) {
+                            setCurrentTime(elapsed);
+                            animationRef.current = requestAnimationFrame(animate);
+                        } else {
+                            setCurrentTime(endTime);
+                            setIsPlaying(false);
+                        }
+                    };
+                    animationRef.current = requestAnimationFrame(animate);
+                }
+                return () => {
+                    if (animationRef.current) cancelAnimationFrame(animationRef.current);
+                };
+            }, [isPlaying, simData]);
+
+            let cartPosPercent = 0;
+            if (simData) {
+                let closestX = simData.xData[0].value;
+                let minDiff = Infinity;
+                for(let i=0; i<simData.xData.length; i++) {
+                    const diff = Math.abs(simData.xData[i].time - currentTime);
+                    if(diff < minDiff) {
+                        minDiff = diff;
+                        closestX = simData.xData[i].value;
+                    }
+                }
+                cartPosPercent = 5 + (closestX / baseParams.d) * 80;
+            }
+
+            return (
+                <div className="p-6">
+                    <div className="max-w-6xl mx-auto space-y-6">
+                        
+                        {/* כותרת רגילה - מוסתרת בהדפסה */}
+                        <header className="bg-blue-600 text-white p-6 rounded-xl shadow-lg flex justify-between items-center print-hide">
+                            <div>
+                                <h1 className="text-3xl font-bold">מעבדת מתקף ותנע</h1>
+                                <p className="opacity-90 mt-1">סימולציה וירטואלית - תנועה במורד המדרון</p>
+                            </div>
+                            <Icons.Activity className="opacity-80" />
+                        </header>
+
+                        {/* כותרת מיוחדת להדפסה בלבד - מוסתרת במסך הרגיל */}
+                        <div className="hidden print:block border-b-2 border-slate-800 pb-4 mb-6">
+                            <h1 className="text-3xl font-bold text-center mb-2">דוח תוצאות: ניסוי מתקף ותנע</h1>
+                            <div className="flex justify-between items-end mt-4 text-lg">
+                                <div><span className="font-bold">שם התלמיד/ה:</span> {studentName || '_________________'}</div>
+                                <div><span className="font-bold">תאריך ושעת הפקה:</span> <span dir="ltr">{printDateTime}</span></div>
+                            </div>
+                        </div>
+
+                        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+                        
+                        {/* פאנל הגדרות - מוסתר בהדפסה לחלוטין */}
+                        <div className="bg-white p-6 rounded-xl shadow border border-slate-200 col-span-1 space-y-6 h-fit print-hide">
+                            <h2 className="text-xl font-semibold flex items-center gap-2 border-b pb-2">
+                                <Icons.Settings /> הגדרות מערכת
+                            </h2>
+                            
+                            <div>
+                                <label className="block text-sm font-bold mb-2 text-blue-700">שם התלמיד/ה (יופיע בהדפסה):</label>
+                                <input 
+                                    type="text" 
+                                    value={studentName}
+                                    onChange={(e) => setStudentName(e.target.value)}
+                                    placeholder="הקלד שם מלא כאן..."
+                                    className="w-full p-2 border border-slate-300 rounded focus:ring-blue-500 focus:border-blue-500 bg-slate-50"
+                                />
+                            </div>
+
+                            <div className="bg-blue-50 p-4 rounded-lg text-sm space-y-2 border border-blue-100">
+                                <p className="font-bold text-blue-800">מאפייני המערכת (קבועים למושב זה):</p>
+                                <ul className="list-disc list-inside text-blue-900 space-y-1">
+                                    <li>מסת עגלה ריקה: {(baseParams.emptyMass * 1000).toFixed(1)} גרם</li>
+                                    <li>מסת משקולת: {((baseParams.fullMass - baseParams.emptyMass) * 1000).toFixed(1)} גרם</li>
+                                    <li>שיפוע מסילה: {baseParams.slopePercent.toFixed(2)}%</li>
+                                    <li>מרחק ירידה: {(baseParams.d * 100).toFixed(0)} ס"מ</li>
+                                </ul>
+                            </div>
+
+                            <div className="space-y-4 text-slate-700 mt-4">
+                                <div>
+                                    <label className="block text-sm font-bold mb-2">הרכב העגלה לניסוי הנוכחי</label>
+                                    <div className="flex flex-col gap-2">
+                                        <label className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded">
+                                            <input type="radio" checked={!hasWeight} onChange={() => setHasWeight(false)} disabled={isPlaying} className="text-blue-600 w-4 h-4 disabled:opacity-50" />
+                                            <span className={isPlaying ? 'opacity-50' : ''}>עגלה בלבד</span>
+                                        </label>
+                                        <label className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded">
+                                            <input type="radio" checked={hasWeight} onChange={() => setHasWeight(true)} disabled={isPlaying} className="text-blue-600 w-4 h-4 disabled:opacity-50" />
+                                            <span className={isPlaying ? 'opacity-50' : ''}>עגלה + משקולת</span>
+                                        </label>
+                                    </div>
+                                </div>
+
+                                <div>
+                                    <label className="block text-sm font-bold mb-2 mt-4">קשיחות קפיץ / פגוש לניסוי הנוכחי</label>
+                                    <div className="flex flex-col gap-2">
+                                        <label className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded">
+                                            <input type="radio" checked={!isHardSpring} onChange={() => setIsHardSpring(false)} disabled={isPlaying} className="text-blue-600 w-4 h-4 disabled:opacity-50" />
+                                            <span className={isPlaying ? 'opacity-50' : ''}>קפיץ רך (זמן מגע ארוך)</span>
+                                        </label>
+                                        <label className="flex items-center gap-2 cursor-pointer hover:bg-slate-50 p-2 rounded">
+                                            <input type="radio" checked={isHardSpring} onChange={() => setIsHardSpring(true)} disabled={isPlaying} className="text-blue-600 w-4 h-4 disabled:opacity-50" />
+                                            <span className={isPlaying ? 'opacity-50' : ''}>קפיץ קשיח (זמן מגע קצר)</span>
+                                        </label>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div className="flex flex-col gap-3 mt-6">
+                                <button 
+                                    onClick={runExperiment}
+                                    disabled={isPlaying}
+                                    className="w-full bg-blue-600 hover:bg-blue-700 disabled:bg-slate-400 text-white font-bold py-3 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors shadow"
+                                >
+                                    {isPlaying ? null : <Icons.Play />}
+                                    {isPlaying ? 'מבצע מדידה (נא להמתין)...' : 'הפעל ניסוי'}
+                                </button>
+                                
+                                <button 
+                                    onClick={handlePrint}
+                                    disabled={isPlaying || !simData}
+                                    className="w-full bg-emerald-50 hover:bg-emerald-100 border border-emerald-200 text-emerald-700 disabled:opacity-50 font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors"
+                                >
+                                    <Icons.Printer />
+                                    הדפס דוח / שמור כ-PDF
+                                </button>
+
+                                <button 
+                                    onClick={handleResetAll}
+                                    disabled={isPlaying}
+                                    className="w-full bg-red-50 hover:bg-red-100 border border-red-200 text-red-600 disabled:opacity-50 font-bold py-2 px-4 rounded-lg flex items-center justify-center gap-2 transition-colors mt-4"
+                                >
+                                    <Icons.Trash />
+                                    נקה הכל והגרל מערכת מחדש
+                                </button>
+                            </div>
+                        </div>
+
+                        {/* אזור תצוגת הגרפים והטבלאות - יתפוס את כל רוחב הדף בהדפסה (print-full-width) */}
+                        <div className="col-span-1 lg:col-span-2 print-full-width space-y-6">
+                            
+                            {/* אזור האנימציה - מוסתר בהדפסה כי אינו רלוונטי לסטטי */}
+                            <div className="bg-white p-4 rounded-xl shadow border border-slate-200 h-56 relative overflow-hidden flex items-center justify-center print-hide">
+                                {!simData ? (
+                                    <div className="text-slate-400 font-medium">הגדר פרמטרים ולחץ על "הפעל ניסוי" כדי להתחיל בדיקה חדשה</div>
+                                ) : (
+                                    <div className="relative w-full h-full" dir="ltr">
+                                        <div 
+                                            className="absolute w-[90%] h-3 bg-gradient-to-b from-slate-300 to-slate-400 rounded border-b border-slate-500"
+                                            style={{ 
+                                                top: '30%', 
+                                                left: '5%',
+                                                transformOrigin: 'left center',
+                                                transform: `rotate(${baseParams.theta}rad)` 
+                                            }}
+                                        >
+                                            <div className="absolute left-0 -top-5 w-6 h-12 bg-amber-500 rounded-sm shadow border border-amber-600 flex flex-col items-center justify-center">
+                                                <div className="w-4 h-4 rounded-full bg-amber-200 opacity-80"></div>
+                                            </div>
+
+                                            <div className="absolute right-0 -top-5 w-8 h-12 bg-slate-700 rounded-sm shadow flex items-center pr-2">
+                                                <div className={`h-4 bg-slate-400 ${simData.params.isHardSpring ? 'bg-slate-500' : 'bg-slate-300'}`} style={{
+                                                    width: '12px',
+                                                    transformOrigin: 'right',
+                                                    transform: `scaleX(${
+                                                        (currentTime >= simData.params.t_reach && currentTime <= simData.params.t_reach + simData.params.dt_col) ? 0.3 : 1
+                                                    })`,
+                                                    transition: 'transform 0.01s'
+                                                }}></div>
+                                                <div className="w-1 h-8 bg-slate-800 rounded-full"></div>
+                                            </div>
+
+                                            <div 
+                                                className="absolute bottom-full mb-0 w-16 h-8 bg-blue-500 rounded-t shadow-md border-b-2 border-blue-700 flex flex-col items-center justify-end z-10"
+                                                style={{ 
+                                                    left: `${cartPosPercent}%`,
+                                                    marginLeft: '15px'
+                                                }}
+                                            >
+                                                {simData.params.hasWeight && <div className="w-10 h-4 bg-slate-800 rounded-sm absolute -top-4 shadow-inner"></div>}
+                                                <div className="flex gap-6 absolute -bottom-1.5">
+                                                    <div className="w-3 h-3 rounded-full bg-slate-900 border border-slate-600"></div>
+                                                    <div className="w-3 h-3 rounded-full bg-slate-900 border border-slate-600"></div>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                )}
+                            </div>
+
+                            {/* אזור הגרפים הסטטי - מופיע גם בהדפסה כתיעוד לניסוי האחרון */}
+                            {simData && (
+                                <div className="space-y-4">
+                                    <InteractiveChart 
+                                        data={simData.vData.filter(d => d.time <= currentTime)} 
+                                        color="#ec4899" 
+                                        title="תיעוד גרף מהירות-זמן (חיישן תנועה 100Hz)" 
+                                        yLabel="Velocity (m/s)"
+                                        symmetricY={true}
+                                        highlightPoints={[
+                                            { x: simData.params.t_reach, y: simData.params.v1, label: `V₁ = ${simData.params.v1.toFixed(3)}` },
+                                            { x: simData.params.t_reach + simData.params.dt_col, y: simData.params.v2, label: `V₂ = ${simData.params.v2.toFixed(3)}` }
+                                        ]}
+                                    />
+                                    <InteractiveChart 
+                                        data={simData.fData.filter(d => d.time <= currentTime)} 
+                                        color="#22c55e" 
+                                        title="תיעוד גרף כוח-זמן (חיישן כוח 500Hz)" 
+                                        yLabel="Force (N)"
+                                        showArea={true}
+                                        areaStart={simData.params.t_reach}
+                                        areaEnd={simData.params.t_reach + simData.params.dt_col}
+                                        areaValue={simData.params.measuredImpulse}
+                                    />
+                                </div>
+                            )}
+
+                            {/* טבלת תוצאות המדידה הנוכחית בלבד */}
+                            {simData && !isPlaying && (
+                                <div className="bg-white rounded-xl shadow overflow-hidden border border-slate-200 mt-6">
+                                    <div className="bg-slate-100 p-3 font-semibold border-b border-slate-200 flex items-center gap-2">
+                                        <Icons.Database /> תוצאות המדידה הנוכחית
+                                    </div>
+                                    <div className="overflow-x-auto">
+                                        <table className="w-full text-sm text-center">
+                                            <thead className="bg-slate-50 text-slate-600 border-b">
+                                                <tr>
+                                                    <th className="p-3 border-r">תצורה (עגלה/קפיץ)</th>
+                                                    <th className="p-3 border-r">מסה (kg)</th>
+                                                    <th className="p-3 border-r">V₁ (m/s)</th>
+                                                    <th className="p-3 border-r">V₂ (m/s)</th>
+                                                    <th className="p-3 border-r text-blue-700">ΔP (kg*m/s)</th>
+                                                    <th className="p-3 border-r text-green-700">מתקף J (N*s)</th>
+                                                    <th className="p-3">שגיאה (%)</th>
+                                                </tr>
+                                            </thead>
+                                            <tbody>
+                                                {(() => {
+                                                    const deltaP = Math.abs(simData.params.m * simData.params.v2 - simData.params.m * simData.params.v1);
+                                                    const integral = simData.params.measuredImpulse;
+                                                    const error = Math.abs((integral - deltaP) / deltaP * 100);
+                                                    return (
+                                                        <tr className="hover:bg-slate-50 border-b last:border-0">
+                                                            <td className="p-3 border-r text-xs font-semibold text-slate-600">
+                                                                {simData.params.hasWeight ? 'עם משקולת' : 'עגלה ריקה'}<br/>
+                                                                {simData.params.isHardSpring ? 'קפיץ קשיח' : 'קפיץ רך'}
+                                                            </td>
+                                                            <td className="p-3 border-r font-mono text-lg">{simData.params.m.toFixed(4)}</td>
+                                                            <td className="p-3 border-r font-mono text-lg text-pink-600">{simData.params.v1.toFixed(3)}</td>
+                                                            <td className="p-3 border-r font-mono text-lg text-pink-600">{simData.params.v2.toFixed(3)}</td>
+                                                            <td className="p-3 border-r font-mono text-lg font-bold text-blue-700">{deltaP.toFixed(4)}</td>
+                                                            <td className="p-3 border-r font-mono text-lg font-bold text-green-700">{integral.toFixed(4)}</td>
+                                                            <td className="p-3 font-mono text-lg font-bold text-slate-600">
+                                                                {error.toFixed(1)}%
+                                                            </td>
+                                                        </tr>
+                                                    );
+                                                })()}
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            )}
+
+                        </div>
+                        </div>
+                    </div>
+                </div>
+            );
+        }
+
+        const root = ReactDOM.createRoot(document.getElementById('root'));
+        root.render(<App />);
+    </script>
+</body>
+</html>
