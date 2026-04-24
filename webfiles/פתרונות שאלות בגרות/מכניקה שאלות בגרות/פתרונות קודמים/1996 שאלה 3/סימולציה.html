@@ -1,0 +1,305 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>סימולציית מטוטלת ומסמר</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* הגדרות קנבס בסיסיות */
+        canvas {
+            touch-action: none; /* מניעת גלילה בזמן נגיעה בקנבס */
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex flex-col items-center py-10 px-4 font-sans text-gray-800">
+
+    <div class="max-w-3xl w-full bg-white rounded-2xl shadow-xl overflow-hidden p-6 md:p-8">
+        <h1 class="text-2xl md:text-3xl font-bold text-center text-blue-800 mb-4">
+            סימולציה: מטוטלת מתנגשת במסמר
+        </h1>
+        
+        <p class="text-gray-600 text-center mb-6 text-sm md:text-base">
+            הכדור משוחרר ממצב אופקי, פוגע במסמר בנקודה C, וממשיך בתנועה עד שהמתיחות מתאפסת (בזווית שבה <span dir="ltr">cos(&alpha;) = 2/3</span>), אז הוא עוזב את המסלול המעגלי ועובר למסלול של זריקה משופעת (פרבולה).
+        </p>
+
+        <!-- אזור הקנבס -->
+        <div class="flex justify-center w-full overflow-x-auto">
+            <canvas id="simCanvas" width="600" height="400" class="border border-gray-200 rounded-lg shadow-sm bg-white"></canvas>
+        </div>
+
+        <!-- כפתורי שליטה -->
+        <div class="mt-8 flex flex-wrap justify-center gap-4">
+            <button onclick="startSim()" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-200 ease-in-out transform hover:-translate-y-0.5">
+                התחל / המשך
+            </button>
+            <button onclick="pauseSim()" class="bg-amber-500 hover:bg-amber-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-200 ease-in-out transform hover:-translate-y-0.5">
+                השהה
+            </button>
+            <button onclick="resetSim()" class="bg-gray-500 hover:bg-gray-600 text-white font-semibold py-2 px-6 rounded-full shadow-md transition duration-200 ease-in-out transform hover:-translate-y-0.5">
+                אפס סימולציה
+            </button>
+        </div>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // קבועים פיזיקליים מותאמים לתצוגה הויזואלית (פיקסלים)
+        const L = 200; // אורך החוט המקורי
+        const g = 400; // תאוצת הכובד (מוגדלת כדי שהתנועה תיראה טבעית)
+        
+        // מיקומי הצירים (O=תקרת המטוטלת, C=המסמר)
+        const pivotO = { x: 300, y: 100 };
+        const pivotC = { x: 300, y: 100 + L / 2 };
+
+        // משתני מצב
+        let state = 1; // 1: סביב O, 2: סביב C, 3: זריקה משופעת (פרבולה), 4: חזרה למעגלית
+        let theta = Math.PI / 2; // זווית התחלתית (מצב אופקי)
+        let omega = 0; // מהירות זוויתית
+        let x = 0, y = 0; // מיקום הכדור
+        let vx = 0, vy = 0; // מהירות קווית (לשלב הפרבולה)
+        let path = []; // שמירת נתיב התנועה לציור שובל
+        
+        let isRunning = false;
+        let lastTime = 0;
+
+        // אתחול המערכת למצב התחלתי
+        function init() {
+            state = 1;
+            theta = Math.PI / 2; // שחרור ממצב אופקי ימינה
+            omega = 0;
+            path = [];
+            isRunning = false;
+            updatePosition();
+            draw();
+        }
+
+        // חישוב מיקום X ו-Y על סמך הזווית הנוכחית
+        function updatePosition() {
+            if (state === 1) {
+                // תנועה ברדיוס L סביב O
+                x = pivotO.x + L * Math.sin(theta);
+                y = pivotO.y + L * Math.cos(theta);
+            } else if (state === 2 || state === 4) {
+                // תנועה ברדיוס L/2 סביב C
+                x = pivotC.x + (L / 2) * Math.sin(theta);
+                y = pivotC.y + (L / 2) * Math.cos(theta);
+            }
+        }
+
+        // לולאת האנימציה והפיזיקה
+        function step(timestamp) {
+            if (!isRunning) return;
+            
+            if (!lastTime) lastTime = timestamp;
+            let dt = (timestamp - lastTime) / 1000; // הזמן שעבר בשניות
+            lastTime = timestamp;
+
+            // מניעת קפיצות גדולות מדי אם החלון היה ברקע
+            if (dt > 0.05) dt = 0.05;
+
+            // חלוקת צעד הזמן למספר צעדים קטנים לדיוק נומרי (Euler integration)
+            const steps = 10;
+            dt /= steps;
+
+            for (let i = 0; i < steps; i++) {
+                if (state === 1) {
+                    // שלב 1: תנועה סביב O
+                    let alpha = -(g / L) * Math.sin(theta); // תאוצה זוויתית
+                    omega += alpha * dt;
+                    theta += omega * dt;
+
+                    // כאשר הזווית עוברת את 0 (הנקודה התחתונה), החוט פוגע במסמר
+                    if (theta <= 0) { 
+                        state = 2; // מעבר לשלב 2
+                        theta = 0;
+                        // חוק שימור אנרגיה/מהירות קווית: v = omega1 * L = omega2 * (L/2) -> omega2 = 2 * omega1
+                        omega *= 2; 
+                    }
+                    updatePosition();
+
+                } else if (state === 2 || state === 4) {
+                    // שלב 2 או 4: תנועה סביב C (רדיוס L/2)
+                    let alpha = -(g / (L / 2)) * Math.sin(theta);
+                    omega += alpha * dt;
+                    theta += omega * dt;
+                    updatePosition();
+
+                    // בדיקת מתיחות בחוט
+                    // T = m * v^2 / R + m * g * cos(theta_from_bottom)
+                    // מכיוון שהגדרנו את theta כזווית מהאנך כלפי מטה, החלק הרדיאלי של כוח הכובד הוא g*cos(theta)
+                    let tension_acc = (L / 2) * omega * omega + g * Math.cos(theta);
+                    
+                    // כאשר המתיחות יורדת מתחת לאפס (או שווה ל-0), החוט הופך לרפוי
+                    if (tension_acc <= 0) {
+                        state = 3; // מעבר לזריקה משופעת
+                        // חישוב המהירות הקווית ההתחלתית ברגע הניתוק
+                        vx = (L / 2) * omega * Math.cos(theta);
+                        vy = -(L / 2) * omega * Math.sin(theta);
+                    }
+
+                } else if (state === 3) {
+                    // שלב 3: נפילה חופשית (זריקה משופעת)
+                    vy += g * dt; // השפעת כוח הכובד
+                    x += vx * dt;
+                    y += vy * dt;
+                    
+                    // חישוב מרחק מהמסמר C כדי לבדוק אם החוט נמתח שוב
+                    let dx = x - pivotC.x;
+                    let dy = y - pivotC.y;
+                    let dist = Math.hypot(dx, dy);
+                    
+                    // מהירות רדיאלית (האם מתרחק מהמסמר?)
+                    let vr = (vx * dx + vy * dy) / dist; 
+                    
+                    // אם המרחק עבר את L/2 והכדור בתנועה החוצה, החוט נמתח (התנגשות פלסטית עם החוט)
+                    if (dist >= L / 2 && vr > 0) {
+                        state = 4; // מעבר לשלב 4 (כמו 2, רק לשם הטקסט)
+                        theta = Math.atan2(dx, dy);
+                        // היטל המהירות על המשיק למעגל (רכיב המהירות הרדיאלי אובד לחלוטין)
+                        let vt = vx * Math.cos(theta) - vy * Math.sin(theta);
+                        omega = vt / (L / 2); // מהירות זוויתית חדשה
+                        updatePosition(); // תיקון מיקום חזרה למעגל המדויק
+                    }
+                }
+            }
+
+            // שמירת נקודות לצורך ציור השובל (במרווחים כדי לא להעמיס)
+            if (path.length === 0 || Math.hypot(path[path.length-1].x - x, path[path.length-1].y - y) > 3) {
+                path.push({x, y});
+            }
+
+            draw();
+            requestAnimationFrame(step);
+        }
+
+        // פונקציית הציור
+        function draw() {
+            // ניקוי המסך
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // טקסט שמציג את המצב הנוכחי של המערכת
+            ctx.fillStyle = "#1e40af"; // כחול כהה
+            ctx.font = "bold 18px Arial, sans-serif";
+            ctx.textAlign = "right";
+            
+            let statusText = "";
+            if(state === 1) statusText = "שלב 1: תנועה מעגלית סביב ציר O";
+            if(state === 2) statusText = "שלב 2: תנועה מעגלית סביב המסמר (C)";
+            if(state === 3) statusText = "שלב 3: זריקה משופעת (מתיחות אפס)";
+            if(state === 4) statusText = "שלב 4: החוט נמתח שוב (תנועה מעגלית)";
+            
+            ctx.fillText(statusText, canvas.width - 20, 30);
+
+            // ציור עקבות המסלול שעבר הכדור
+            if (path.length > 1) {
+                ctx.beginPath();
+                ctx.strokeStyle = "rgba(59, 130, 246, 0.3)"; // תכלת שקוף
+                ctx.lineWidth = 3;
+                ctx.setLineDash([5, 5]); // קו מקווקו
+                ctx.moveTo(path[0].x, path[0].y);
+                for (let i = 1; i < path.length; i++) {
+                    ctx.lineTo(path[i].x, path[i].y);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]); // החזרת קו רגיל
+            }
+
+            // ציור נקודת התלייה (O)
+            ctx.fillStyle = "#374151";
+            ctx.beginPath(); 
+            ctx.arc(pivotO.x, pivotO.y, 5, 0, Math.PI * 2); 
+            ctx.fill();
+            ctx.font = "16px Arial";
+            ctx.fillText("O", pivotO.x - 15, pivotO.y + 5);
+
+            // ציור המסמר (C)
+            ctx.fillStyle = "#b91c1c"; // אדום למסמר
+            ctx.beginPath(); 
+            ctx.arc(pivotC.x, pivotC.y, 5, 0, Math.PI * 2); 
+            ctx.fill();
+            ctx.fillStyle = "#374151";
+            ctx.fillText("C", pivotC.x - 15, pivotC.y + 5);
+
+            // ציור החוט
+            ctx.beginPath();
+            ctx.strokeStyle = "#4b5563"; // אפור לחוט
+            ctx.lineWidth = 2;
+            
+            if (state === 1) {
+                // חוט ישר מ-O עד לכדור
+                ctx.moveTo(pivotO.x, pivotO.y);
+                ctx.lineTo(x, y);
+                ctx.stroke();
+            } else if (state === 2 || state === 4) {
+                // חוט נשבר סביב C: מ-O ל-C, ומ-C לכדור
+                ctx.moveTo(pivotO.x, pivotO.y);
+                ctx.lineTo(pivotC.x, pivotC.y);
+                ctx.lineTo(x, y); 
+                ctx.stroke();
+            } else if (state === 3) {
+                 // בשלב 3 נצייר את החוט מ-O ל-C
+                 ctx.moveTo(pivotO.x, pivotO.y);
+                 ctx.lineTo(pivotC.x, pivotC.y);
+                 ctx.stroke();
+                 
+                 // והחוט שבין C לכדור רפוי, לכן נצייר אותו כעקומה רופפת כלפי מטה
+                 let dist = Math.hypot(x - pivotC.x, y - pivotC.y);
+                 let cpX = (pivotC.x + x) / 2;
+                 let cpY = (pivotC.y + y) / 2 + Math.max(0, (L / 2 - dist)) * 1.5; // חישוב ה"צניחה"
+                 
+                 ctx.beginPath();
+                 ctx.strokeStyle = "#9ca3af"; // אפור בהיר לחלק הרפוי
+                 ctx.moveTo(pivotC.x, pivotC.y);
+                 ctx.quadraticCurveTo(cpX, cpY, x, y);
+                 ctx.stroke();
+            }
+
+            // ציור המסה (הכדור)
+            ctx.beginPath();
+            ctx.arc(x, y, 14, 0, Math.PI * 2);
+            
+            // יצירת אפקט תלת מימד לכדור (Gradient)
+            let gradient = ctx.createRadialGradient(x - 4, y - 4, 2, x, y, 14);
+            gradient.addColorStop(0, '#fca5a5'); // אדום בהיר
+            gradient.addColorStop(1, '#dc2626'); // אדום כהה
+            
+            ctx.fillStyle = gradient;
+            ctx.fill();
+            ctx.strokeStyle = "#991b1b";
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            
+            // תווית ליד הכדור
+            ctx.fillStyle = "black";
+            ctx.fillText("m", x + 25, y + 5);
+        }
+
+        // פונקציות לשליטה על ידי הכפתורים
+        function startSim() {
+            if (!isRunning) {
+                isRunning = true;
+                lastTime = 0; // אתחול הזמן כדי למנוע קפיצה
+                requestAnimationFrame(step);
+            }
+        }
+
+        function pauseSim() { 
+            isRunning = false; 
+        }
+        
+        function resetSim() { 
+            isRunning = false; 
+            init(); 
+        }
+
+        // ציור ראשוני כשהדף עולה
+        window.onload = () => {
+            init();
+        };
+
+    </script>
+</body>
+</html>
