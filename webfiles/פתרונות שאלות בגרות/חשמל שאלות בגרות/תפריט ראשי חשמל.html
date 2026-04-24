@@ -119,21 +119,22 @@
 
         .filter-topbar {
             display: grid;
-            grid-template-columns: minmax(0, 1fr) auto;
+            grid-template-columns: 1fr;
             gap: 0.9rem;
             padding: 1.1rem 1.25rem 1rem;
-            align-items: end;
+            align-items: stretch;
             background: #ffffff;
         }
 
         .search-field {
             display: block;
+            min-width: 0;
         }
 
         .toolbar-cluster {
             display: flex;
             align-items: center;
-            justify-content: flex-end;
+            justify-content: flex-start;
             gap: 0.75rem;
             flex-wrap: wrap;
         }
@@ -164,6 +165,27 @@
         .filter-open-btn.has-active {
             background: var(--blue-50);
             border-color: var(--blue-600);
+        }
+
+        .filter-open-btn.is-skill {
+            border-color: #86efac;
+            color: #166534;
+            box-shadow: 0 8px 18px rgba(34, 197, 94, 0.1);
+        }
+
+        .filter-open-btn.is-skill:hover {
+            border-color: #22c55e;
+            box-shadow: 0 10px 22px rgba(34, 197, 94, 0.16);
+        }
+
+        .filter-open-btn.is-skill.has-active {
+            background: #f0fdf4;
+            border-color: #15803d;
+        }
+
+        .filter-open-btn.is-skill .filter-open-count {
+            background: #166534;
+            color: #ecfdf5;
         }
 
         .filter-open-count {
@@ -764,6 +786,58 @@
             color: #1d4ed8;
         }
 
+        .page-header-row {
+            display: flex;
+            align-items: flex-start;
+            gap: 2rem;
+        }
+
+        .header-title-col {
+            flex: 1;
+            text-align: right;
+        }
+
+        .header-meta-col {
+            flex-shrink: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: flex-end;
+            gap: 0.55rem;
+            padding-top: 0.25rem;
+        }
+
+        .header-meta-col .version-stamp {
+            margin-top: 0;
+        }
+
+        .coverage-cta-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.55rem 0.95rem;
+            border-radius: 9999px;
+            border: 1px solid #93c5fd;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 0.98rem;
+            font-weight: 700;
+            text-decoration: none;
+            box-shadow: 0 6px 14px rgba(37, 99, 235, 0.14);
+            transition: transform 0.15s ease, box-shadow 0.15s ease, background-color 0.15s ease;
+        }
+
+        .coverage-cta-link:hover {
+            background: #dbeafe;
+            transform: translateY(-1px);
+            box-shadow: 0 10px 20px rgba(37, 99, 235, 0.2);
+        }
+
+        .legal-entry-link.subtle {
+            margin-top: 0.35rem;
+            font-size: 0.8rem;
+            opacity: 0.82;
+        }
+
         .solution-thumb {
             width: 96px;
             height: 96px;
@@ -847,12 +921,27 @@
         }
 
         @media (max-width: 900px) {
-            .filter-topbar {
-                grid-template-columns: 1fr;
+            .toolbar-cluster {
+                justify-content: flex-start;
+            }
+        }
+
+        @media (max-width: 640px) {
+            .page-header-row {
+                flex-direction: column;
+                align-items: stretch;
             }
 
-            .toolbar-cluster {
-                justify-content: space-between;
+            .header-meta-col {
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+
+            .coverage-cta-link {
+                width: 100%;
             }
         }
 
@@ -889,18 +978,20 @@
 </head>
 <body>
     <div class="page-shell">
-        <header class="text-center mb-8">
-            <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">שאלות חשמל</h1>
-            <h2 class="text-xl md:text-2xl text-slate-600">פתרונות מלאים ומפורטים לשאלות פיזיקה — נושא חשמל</h2>
-            <p class="mt-3 text-slate-500">סינון לפי נושאים, מיומנויות ושנת שאלה. לחצי על כל שאלה לצפייה בפתרון המלא.</p>
-            <div class="version-stamp" id="versionStamp" dir="ltr" aria-label="Version stamp">
-                <span class="version-label">ver</span>
-                <span id="versionId">vAUTO</span>
-                <span>|</span>
-                <span id="versionUpdatedAt">auto</span>
+        <header class="page-header-row mb-8">
+            <div class="header-title-col">
+                <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">שאלות חשמל</h1>
+                <h2 class="text-xl md:text-2xl text-slate-600">פתרונות מלאים ומפורטים לשאלות פיזיקה — נושא חשמל</h2>
+                <p class="mt-3 text-slate-500">סינון לפי נושאים, מיומנויות ושנת שאלה. לחצי על כל שאלה לצפייה בפתרון המלא.</p>
             </div>
-            <div>
-                <a class="legal-entry-link" href="../../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+            <div class="header-meta-col">
+                <div class="version-stamp" id="versionStamp" dir="ltr" aria-label="Version stamp">
+                    <span class="version-label">ver</span>
+                    <span id="versionId">vAUTO</span>
+                    <span>|</span>
+                    <span id="versionUpdatedAt">auto</span>
+                </div>
+                <a class="legal-entry-link subtle" href="../../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
             </div>
         </header>
 
@@ -912,17 +1003,21 @@
                 </label>
 
                 <div class="toolbar-cluster">
-                    <button id="openFiltersBtn" type="button" class="filter-open-btn" aria-controls="filterDrawer" aria-expanded="false">
-                        <span>סינון מתקדם</span>
-                        <span id="drawerFilterCount" class="filter-open-count" hidden>0</span>
+                    <button id="openTopicsBtn" type="button" class="filter-open-btn" aria-controls="filterDrawer" aria-expanded="false">
+                        <span>סינון נושאים</span>
+                        <span id="topicsFilterCount" class="filter-open-count" hidden>0</span>
+                    </button>
+                    <button id="openSkillsBtn" type="button" class="filter-open-btn is-skill" aria-controls="filterDrawer" aria-expanded="false">
+                        <span>סינון מיומנויות</span>
+                        <span id="skillsFilterCount" class="filter-open-count" hidden>0</span>
                     </button>
                     <div class="sort-toolbar">
                         <button id="filterAllBtn" type="button" class="sort-chip is-active" aria-pressed="true">הכל</button>
                         <button id="filterBagrutBtn" type="button" class="sort-chip" aria-pressed="false">רק בגרות</button>
                     </div>
                     <div class="sort-toolbar">
-                        <button id="sortYearDescBtn" type="button" class="sort-chip is-active" aria-pressed="true">חדש לישן</button>
-                        <button id="sortYearAscBtn" type="button" class="sort-chip" aria-pressed="false">ישן לחדש</button>
+                        <button id="sortYearBtn" type="button" class="sort-chip is-active" aria-pressed="true">מיון לפי שנה ↓</button>
+                        <button id="sortAddedAtBtn" type="button" class="sort-chip" aria-pressed="false">נוסף לאחרונה</button>
                         <button id="sortTitleBtn" type="button" class="sort-chip" aria-pressed="false">לפי שם</button>
                     </div>
                 </div>
@@ -957,15 +1052,15 @@
     <aside id="filterDrawer" class="filter-drawer" aria-hidden="true" aria-label="מגירת סינון מתקדם">
         <div class="filter-drawer-header">
             <div>
-                <div class="filter-drawer-kicker">סינון מתקדם</div>
-                <h3 class="filter-drawer-title">נושאים ומיומנויות</h3>
-                <p class="filter-drawer-text">הבחירה מתעדכנת מיד ברשימה. אפשר לשלב כמה תגיות יחד בלי לעזוב את המסך הראשי.</p>
+                <div id="filterDrawerKicker" class="filter-drawer-kicker">סינון נושאים</div>
+                <h3 id="filterDrawerTitle" class="filter-drawer-title">בחירת נושאים</h3>
+                <p id="filterDrawerText" class="filter-drawer-text">בחרי את הנושאים שחשובים לך. הרשימה למטה מתעדכנת מיד אחרי כל בחירה.</p>
             </div>
             <button id="closeFiltersBtn" type="button" class="filter-drawer-close" aria-label="סגירת מגירת הסינון">סגור</button>
         </div>
 
         <div class="filter-drawer-body">
-            <section class="filter-panel-block">
+            <section id="topicsPanel" class="filter-panel-block">
                 <div class="filter-section-head">
                     <div>
                         <h4 class="filter-section-title">נושאים</h4>
@@ -979,7 +1074,7 @@
                 <div id="topicsFilter" class="topic-filter-box"></div>
             </section>
 
-            <section class="filter-panel-block">
+            <section id="skillsPanel" class="filter-panel-block">
                 <div class="filter-section-head">
                     <div>
                         <h4 class="filter-section-title">מיומנויות</h4>
@@ -1036,11 +1131,24 @@
             return a.title.localeCompare(b.title, "he", { numeric: true });
         }
 
+        function compareSolutionsByAddedAt(a, b) {
+            const ta = a.addedAt || null;
+            const tb = b.addedAt || null;
+            // missing addedAt -> treat as newest (appears first)
+            if (ta === null && tb === null) return compareSolutionsByYearDesc(a, b);
+            if (ta === null) return -1;
+            if (tb === null) return 1;
+            if (tb !== ta) return tb.localeCompare(ta);
+            return compareSolutionsByYearDesc(a, b);
+        }
+
         function syncSortButtons() {
-            sortYearDescBtn.classList.toggle("is-active", sortMode === "yearDesc");
-            sortYearDescBtn.setAttribute("aria-pressed", sortMode === "yearDesc" ? "true" : "false");
-            sortYearAscBtn.classList.toggle("is-active", sortMode === "yearAsc");
-            sortYearAscBtn.setAttribute("aria-pressed", sortMode === "yearAsc" ? "true" : "false");
+            const yearIsActive = sortMode === "yearDesc" || sortMode === "yearAsc";
+            sortYearBtn.classList.toggle("is-active", yearIsActive);
+            sortYearBtn.setAttribute("aria-pressed", yearIsActive ? "true" : "false");
+            sortYearBtn.textContent = sortMode === "yearAsc" ? "מיון לפי שנה ↑" : "מיון לפי שנה ↓";
+            sortAddedAtBtn.classList.toggle("is-active", sortMode === "addedAt");
+            sortAddedAtBtn.setAttribute("aria-pressed", sortMode === "addedAt" ? "true" : "false");
             sortTitleBtn.classList.toggle("is-active", sortMode === "title");
             sortTitleBtn.setAttribute("aria-pressed", sortMode === "title" ? "true" : "false");
         }
@@ -1250,6 +1358,7 @@
                     thumb: discovered?.thumb || (practiceRootPath ? `./${practiceRootPath}/question-image.png` : ""),
                     topicTags: Array.isArray(entry.topics) ? entry.topics : [],
                     skillTags: Array.isArray(entry.skills) ? entry.skills : [],
+                    addedAt: entry.addedAt || null,
                     bodySearchText: ""
                 };
 
@@ -1297,11 +1406,44 @@
 
         function clearAllFilters() { selectedTopics.clear(); selectedSkills.clear(); runFilter(); }
 
-        function setFilterDrawerOpen(isOpen) {
+        const DRAWER_CONTENT = {
+            topics: {
+                kicker: "סינון נושאים",
+                title: "בחירת נושאים",
+                text: "בחרי את הנושאים שחשובים לך. הרשימה למטה מתעדכנת מיד אחרי כל בחירה.",
+                ariaLabel: "חלון סינון נושאים"
+            },
+            skills: {
+                kicker: "סינון מיומנויות",
+                title: "בחירת מיומנויות",
+                text: "בחרי מיומנויות רצויות, ויוצגו רק שאלות שמכילות את כולן יחד.",
+                ariaLabel: "חלון סינון מיומנויות"
+            }
+        };
+
+        function applyDrawerMode(mode) {
+            drawerMode = mode === "skills" ? "skills" : "topics";
+            const isTopicsMode = drawerMode === "topics";
+            if (topicsPanelEl) topicsPanelEl.hidden = !isTopicsMode;
+            if (skillsPanelEl) skillsPanelEl.hidden = isTopicsMode;
+            const content = DRAWER_CONTENT[drawerMode];
+            if (filterDrawerKickerEl) filterDrawerKickerEl.textContent = content.kicker;
+            if (filterDrawerTitleEl) filterDrawerTitleEl.textContent = content.title;
+            if (filterDrawerTextEl) filterDrawerTextEl.textContent = content.text;
+            if (filterDrawer) filterDrawer.setAttribute("aria-label", content.ariaLabel);
+        }
+
+        function setFilterDrawerOpen(isOpen, mode = drawerMode) {
+            if (isOpen) applyDrawerMode(mode);
             filterDrawer.classList.toggle("is-open", isOpen);
             filterBackdrop.classList.toggle("is-open", isOpen);
             filterDrawer.setAttribute("aria-hidden", isOpen ? "false" : "true");
-            if (openFiltersBtn) openFiltersBtn.setAttribute("aria-expanded", isOpen ? "true" : "false");
+            if (openTopicsBtn) {
+                openTopicsBtn.setAttribute("aria-expanded", isOpen && drawerMode === "topics" ? "true" : "false");
+            }
+            if (openSkillsBtn) {
+                openSkillsBtn.setAttribute("aria-expanded", isOpen && drawerMode === "skills" ? "true" : "false");
+            }
             document.body.classList.toggle("drawer-open", isOpen);
         }
 
@@ -1337,8 +1479,16 @@
 
         function syncFilterUi() {
             const activeCount = getActiveFilterCount();
-            if (drawerFilterCount) { drawerFilterCount.textContent = String(activeCount); drawerFilterCount.hidden = activeCount === 0; }
-            if (openFiltersBtn) openFiltersBtn.classList.toggle("has-active", activeCount > 0);
+            if (topicsFilterCountEl) {
+                topicsFilterCountEl.textContent = String(selectedTopics.size);
+                topicsFilterCountEl.hidden = selectedTopics.size === 0;
+            }
+            if (skillsFilterCountEl) {
+                skillsFilterCountEl.textContent = String(selectedSkills.size);
+                skillsFilterCountEl.hidden = selectedSkills.size === 0;
+            }
+            if (openTopicsBtn) openTopicsBtn.classList.toggle("has-active", selectedTopics.size > 0);
+            if (openSkillsBtn) openSkillsBtn.classList.toggle("has-active", selectedSkills.size > 0);
             if (topicsStatusEl) topicsStatusEl.textContent = selectedTopics.size ? `${selectedTopics.size} נבחרו` : `${topicCatalog.length} זמינים`;
             if (skillsStatusEl) skillsStatusEl.textContent = selectedSkills.size ? `${selectedSkills.size} נבחרו` : `${skillCatalog.length} זמינות`;
             if (clearTopicsBtn) clearTopicsBtn.disabled = selectedTopics.size === 0;
@@ -1517,6 +1667,7 @@
         function getComparator() {
             if (sortMode === "yearDesc") return compareSolutionsByYearDesc;
             if (sortMode === "yearAsc") return compareSolutionsByYearAsc;
+            if (sortMode === "addedAt") return compareSolutionsByAddedAt;
             return compareSolutionsByTitle;
         }
 
@@ -1580,8 +1731,8 @@
         const searchInput = document.getElementById("searchInput");
         const resultsInfo = document.getElementById("resultsInfo");
         const listEl = document.getElementById("solutionsList");
-        const sortYearDescBtn = document.getElementById("sortYearDescBtn");
-        const sortYearAscBtn = document.getElementById("sortYearAscBtn");
+        const sortYearBtn = document.getElementById("sortYearBtn");
+        const sortAddedAtBtn = document.getElementById("sortAddedAtBtn");
         const sortTitleBtn = document.getElementById("sortTitleBtn");
         const filterAllBtn = document.getElementById("filterAllBtn");
         const filterBagrutBtn = document.getElementById("filterBagrutBtn");
@@ -1591,12 +1742,19 @@
         const clearSkillsBtn = document.getElementById("clearSkillsBtn");
         const hoverPreview = document.getElementById("hoverPreview");
         const hoverPreviewImg = document.getElementById("hoverPreviewImg");
-        const openFiltersBtn = document.getElementById("openFiltersBtn");
+        const openTopicsBtn = document.getElementById("openTopicsBtn");
+        const openSkillsBtn = document.getElementById("openSkillsBtn");
         const closeFiltersBtn = document.getElementById("closeFiltersBtn");
         const doneFiltersBtn = document.getElementById("doneFiltersBtn");
         const filterDrawer = document.getElementById("filterDrawer");
         const filterBackdrop = document.getElementById("filterBackdrop");
-        const drawerFilterCount = document.getElementById("drawerFilterCount");
+        const topicsFilterCountEl = document.getElementById("topicsFilterCount");
+        const skillsFilterCountEl = document.getElementById("skillsFilterCount");
+        const filterDrawerKickerEl = document.getElementById("filterDrawerKicker");
+        const filterDrawerTitleEl = document.getElementById("filterDrawerTitle");
+        const filterDrawerTextEl = document.getElementById("filterDrawerText");
+        const topicsPanelEl = document.getElementById("topicsPanel");
+        const skillsPanelEl = document.getElementById("skillsPanel");
         const activeSummaryEl = document.getElementById("activeSummary");
         const activeFiltersEl = document.getElementById("activeFilters");
         const topicsStatusEl = document.getElementById("topicsStatus");
@@ -1610,6 +1768,7 @@
         let bodySearchIndexReady = false;
         let topicCatalog = [];
         let skillCatalog = [];
+        let drawerMode = "topics";
         const selectedTopics = new Set();
         const selectedSkills = new Set();
 
@@ -1626,18 +1785,23 @@
             solutions.sort(compareSolutionsByYearDesc);
             syncSortButtons();
             syncBagrutFilterButtons();
+            applyDrawerMode("topics");
             runFilter();
             applyVersionStamp();
             enrichSolutionsWithBodySearch(solutions);
         }
 
         searchInput.addEventListener("input", runFilter);
-        sortYearDescBtn.addEventListener("click", () => { sortMode = "yearDesc"; syncSortButtons(); runFilter(); });
-        sortYearAscBtn.addEventListener("click", () => { sortMode = "yearAsc"; syncSortButtons(); runFilter(); });
+        sortYearBtn.addEventListener("click", () => {
+            sortMode = (sortMode === "yearDesc") ? "yearAsc" : "yearDesc";
+            syncSortButtons(); runFilter();
+        });
+        sortAddedAtBtn.addEventListener("click", () => { sortMode = "addedAt"; syncSortButtons(); runFilter(); });
         sortTitleBtn.addEventListener("click", () => { sortMode = "title"; syncSortButtons(); runFilter(); });
         filterAllBtn.addEventListener("click", () => { bagrutFilterMode = "all"; syncBagrutFilterButtons(); runFilter(); });
         filterBagrutBtn.addEventListener("click", () => { bagrutFilterMode = "bagrutOnly"; syncBagrutFilterButtons(); runFilter(); });
-        if (openFiltersBtn) openFiltersBtn.addEventListener("click", () => setFilterDrawerOpen(true));
+        if (openTopicsBtn) openTopicsBtn.addEventListener("click", () => setFilterDrawerOpen(true, "topics"));
+        if (openSkillsBtn) openSkillsBtn.addEventListener("click", () => setFilterDrawerOpen(true, "skills"));
         if (closeFiltersBtn) closeFiltersBtn.addEventListener("click", () => setFilterDrawerOpen(false));
         if (doneFiltersBtn) doneFiltersBtn.addEventListener("click", () => setFilterDrawerOpen(false));
         if (filterBackdrop) filterBackdrop.addEventListener("click", () => setFilterDrawerOpen(false));

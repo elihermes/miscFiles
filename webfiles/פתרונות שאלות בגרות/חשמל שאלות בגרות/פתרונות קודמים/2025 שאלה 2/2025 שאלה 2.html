@@ -1,0 +1,870 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון שאלת בגרות - מעגלי זרם ישר</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Optional: Chart.js (remove if not needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            min-height: 360px;
+            width: 100%;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <!-- Header/stamp structure is locked to keep visual consistency across all questionnaires. -->
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה: חשמל</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">שאלון חשמל - מעגלי זרם ישר</h2>
+        <p class="mt-3 text-slate-500">פתרון מלא, מודרך ומוסבר צעד-אחר-צעד</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית: תמיד מתחת לכותרת -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א' - ניסוי מקדים: חיבור נגד יחיד למקור</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <ul class="list-disc list-inside mt-2 space-y-1 text-slate-600">
+                    <li>כא"מ מקור המתח: \(\varepsilon = 20\text{ V}\).</li>
+                    <li>התנגדות פנימית של המקור: \(r = 2\Omega\).</li>
+                    <li>בניסוי הראשון, רק הנגד \(R_1\) מחובר למקור (מעגל טורי פשוט).</li>
+                    <li>הוריית מד המתח (שמודד את מתח ההדקים בניסוי זה): \(V_{ab} = 16\text{ V}\).</li>
+                    <li>שלב 0 - המרת יחידות (MKS): כל הנתונים הניתנים הינם במערכת היחידות התקנית (וולט, אוהם), ולכן אין צורך בהמרות.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-600">
+                    (1) לסרטט את תרשים המעגל הבסיסי.<br>
+                    (2) לחשב את התנגדות הנגד \(R_1\).
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( V_{ab} = \varepsilon - I \cdot r \)</span> (נוסחת מתח הדקים)<br>
+            <span class="formula-badge">\( V = RI \)</span> (חוק אוהם)
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            
+            <p class="content-paragraph font-bold">(1) תרשים המעגל:</p>
+            <div class="visual-frame">
+                <img src="image-1.png" alt="תרשים מעגל סעיף א" class="w-full max-w-sm h-auto" />
+            </div>
+
+            <p class="content-paragraph font-bold">(2) חישוב ההתנגדות:</p>
+            <p class="content-paragraph">ראשית, נמצא את הזרם הכולל במעגל מתוך משוואת מתח ההדקים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_{ab} = \varepsilon - I \cdot r \]
+                \[ 16 = 20 - I \cdot 2 \]
+                \[ 2I = 4 \implies I = 2.00 \text{ A} \]
+            </div>
+            <p class="content-paragraph">כעת, מכיון שמתח ההדקים הוא גם המתח שנופל על הנגד היחיד במעגל החיצוני, נציב בחוק אוהם המופיע בדף הנוסחאות כדי לחשב את \(R_1\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_{ab} = R_1 \cdot I \]
+                \[ 16 = R_1 \cdot 2.00 \]
+            </div>
+            <div class="final-answer">
+                \[ R_1 = 8.00 \Omega \]
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> במעגל פשוט, מתח ההדקים של המקור שווה בדיוק למתח שנופל על הנגד. מדוע?
+            <br>חשוב להבחין בין <b>פוטנציאל</b> לבין <b>מתח</b> (שהוא למעשה <b>הפרש פוטנציאלים</b> בין שתי נקודות).
+            <br>חוטי החיבור במעגל הם אידיאליים והתנגדותם שווה לאפס, ולכן הפוטנציאל החשמלי לא משתנה לאורכם. 
+            <br>הפוטנציאל בנקודה A (ההדק החיובי) זהה לחלוטין לפוטנציאל בנקודה C (צידו הימני של הנגד). 
+            <br>באופן דומה, הפוטנציאל בנקודה B (ההדק השלילי) זהה לפוטנציאל בנקודה D.
+            <br>מכאן שהפרש הפוטנציאלים בין A ל-B (מתח ההדקים) חייב להיות שווה להפרש הפוטנציאלים בין C ל-D (המתח על הנגד).
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב' - חיבור פוטנציומטרי (תרשים 1) והזזת המגע לאמצע</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 space-y-1 text-slate-600">
+                    <li>התלמידים הרכיבו את המעגל בתרשים 1 (מעגל מחלק מתח).</li>
+                    <li>המגע הנייד \(P\) הוצב בדיוק <b>באמצע</b> הנגד המשתנה \(MN\).</li>
+                    <li>מכאן נובע שההתנגדות של שני חלקי הנגד המשתנה שווה: \( R_{MP} = R_{PN} \).</li>
+                    <li>מד המתח \(V_2\) מודד את מתח ההדקים הכולל של המקור.</li>
+                    <li>מד המתח \(V_1\) מחובר במקביל לנגד \(R_1\), ולכן מודד את המתח עליו. שימו לב מהתרשים ש-\(R_1\) מחובר במקביל לקטע \(MP\).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-600">
+                    לקבוע אם הוריית \(V_1\) גדולה, קטנה או שווה ל- \(\frac{V_2}{2}\), ולנמק.
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma I = 0 \)</span> (חוק הצמתים של קירכהוף - התפצלות הזרם)<br>
+            <span class="formula-badge">\( V = RI \)</span> (חוק אוהם)
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            
+            <div class="step-label">שלב 1: הבנת המעגל השקול</div>
+            <p class="content-paragraph">
+                כדי לנתח את המעגל בקלות, נצייר עבורו <b>מעגל שקול</b>. הנגד המשתנה הוא למעשה חוט מוליך בעל התנגדות. כאשר אנו מניחים את המגע הנייד (P) באמצע הנגד, אנו למעשה מחלקים את החוט לשני קטעים, אותם ניתן להתייחס כשני נגדים נפרדים המחוברים ביניהם בחוט אידיאלי:
+            </p>
+            <ul class="list-disc list-inside mb-4 space-y-2 text-slate-600">
+                <li><b>החלק הראשון (MP):</b> הזרם מגיע לנקודה M ויכול להתפצל - חלק יזרום דרך הנגד \(R_1\) וחלק יזרום דרך החוט של הקטע MP. מכיוון ששני המסלולים הללו מתחילים ב-M ונפגשים שוב ב-P, הם <b>מחוברים במקביל</b>.</li>
+                <li><b>החלק השני (PN):</b> לאחר שהזרמים התאחדו בנקודה P, כל הזרם הראשי חייב להמשיך לזרום דרך שארית החוט, הקטע PN, עד לנקודה N כדי לחזור לסוללה. לכן הקטע PN מחובר <b>בטור</b> לחלק המקבילי.</li>
+            </ul>
+
+            <div class="visual-frame">
+                <img src="image-2.png" alt="תרשים מעגל סעיף ב" class="w-full max-w-md h-auto" />
+            </div>
+
+            <div class="step-label mt-6">שלב 2: ניתוח הזרמים והמתחים</div>
+            <p class="content-paragraph">ננתח את המעגל באמצעות הזרמים הזורמים בו. הזרם הראשי של המעגל (נסמנו ב-\(I_{tot}\)) זורם כולו דרך החלק הטורי, כלומר דרך הקטע PN. לכן הזרם עליו הוא:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I_{PN} = I_{tot} \]
+            </div>
+            <p class="content-paragraph mt-4">לעומת זאת, כאשר הזרם הראשי מגיע לצומת M, הוא <b>מתפצל</b> לשני ענפים המחוברים במקביל: הנגד \(R_1\) וקטע החוט \(MP\). על פי חוק שימור המטען (חוק הצמתים), הזרם הזורם רק דרך הקטע MP חייב להיות <b>קטן</b> מהזרם הראשי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I_{MP} < I_{tot} \implies I_{MP} < I_{PN} \]
+            </div>
+            <p class="content-paragraph mt-4">מכיוון שהמגע הנייד נמצא בדיוק באמצע, ההתנגדויות של שני חלקי הנגד המשתנה שוות (\(R_{MP} = R_{PN}\)). על פי חוק אוהם (\(V = RI\)), המתח על נגד נמצא ביחס ישר לזרם העובר דרכו. מאחר שעל הקטע MP זורם זרם קטן יותר מאשר על הקטע PN (בעוד שהתנגדותם זהה), המתח עליו יהיה בהכרח קטן יותר:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_{MP} < V_{PN} \implies V_1 < V_{PN} \]
+            </div>
+            <p class="content-paragraph mt-4">סכום המתחים על שני החלקים יחד שווה למתח הכולל של המעגל החיצוני (\(V_2\)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_2 = V_1 + V_{PN} \]
+            </div>
+            <p class="content-paragraph mt-4">אם סכום שני חלקים שווה ל-\(V_2\), וחלק אחד (\(V_1\)) קטן מהחלק השני, נובע בהכרח שהחלק הקטן מביניהם מהווה פחות מחצי מהסכום הכולל:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_1 < \frac{V_2}{2} \]
+            </div>
+            <div class="final-answer">
+                מסקנה: \(V_1\) קטן מ-\(\frac{V_2}{2}\)
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> כלל זהב בניתוח מעגלי זרם ישר: נתקלתם במעגל בעל צורה מבלבלת או רכיבים מורכבים כמו פוטנציומטר? <b>ציירו אותו מחדש</b> כמעגל שקול של נגדים "רגילים" בטור ובמקביל (כפי שעשינו בשלב 1). המוח שלנו מנתח תבניות פשוטות הרבה יותר טוב מאשר רשתות של חוטים סבוכים. השרטוט מחדש לוקח רק חצי דקה, אך הוא מונע כמעט לחלוטין טעויות בזיהוי ענפים בטור ובמקביל.
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג' - חישוב התנגדות המקטע MP בנקודה חדשה</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 space-y-1 text-slate-600">
+                    <li>הזיזו את המגע P לנקודה חדשה.</li>
+                    <li>במצב זה, הוריית \(V_1\) היא: \( V_1 = 12\text{ V} \). מתח זה הוא על \(R_1\) וגם על \(R_{MP}\).</li>
+                    <li>הוריית \(V_2\) (מתח ההדקים) היא: \( V_2 = 15\text{ V} \).</li>
+                    <li>חישבנו בסעיף א': \(R_1 = 8\text{ }\Omega\), \(r = 2\text{ }\Omega\), \(\varepsilon = 20\text{ V}\).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-600">
+                    לחשב את ההתנגדות של קטע הנגד המשתנה \(R_{MP}\).
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( V_{ab} = \varepsilon - I \cdot r \)</span><br>
+            <span class="formula-badge">\( V = RI \)</span> (חוק אוהם)<br>
+            <span class="formula-badge">\( \Sigma I = 0 \)</span> (חוק הצמתים של קירכהוף)
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            
+            <div class="step-label">שלב 1: מציאת הזרם הכולל</div>
+            <p class="content-paragraph">נמצא את הזרם הכולל היוצא מהמקור (\(I_{tot}\)) בעזרת משוואת מתח ההדקים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_2 = \varepsilon - I_{tot} \cdot r \]
+                \[ 15 = 20 - I_{tot} \cdot 2 \]
+                \[ 2I_{tot} = 5 \implies I_{tot} = 2.50 \text{ A} \]
+            </div>
+            
+            <div class="step-label">שלב 2: מציאת הזרם בנגד \(R_1\)</div>
+            <p class="content-paragraph">הזרם הזורם דרך הנגד \(R_1\) (נסמנו \(I_1\)) יחושב בעזרת חוק אוהם, שכן אנו יודעים את המתח עליו (\(V_1\)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_1 = R_1 \cdot I_1 \]
+                \[ 12 = 8.00 \cdot I_1 \implies I_1 = 1.50 \text{ A} \]
+            </div>
+
+            <div class="step-label">שלב 3: חוק הצמתים בנקודה M</div>
+            <p class="content-paragraph">הזרם הראשי מתפצל לשני הענפים (דרך \(R_1\) ודרך \(R_{MP}\)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I_{tot} = I_1 + I_{MP} \]
+                \[ 2.50 = 1.50 + I_{MP} \implies I_{MP} = 1.00 \text{ A} \]
+            </div>
+
+            <div class="step-label">שלב 4: מציאת ההתנגדות \(R_{MP}\)</div>
+            <p class="content-paragraph">אנו יודעים שהמתח עליו הוא \(V_1\) (כי הוא במקביל ל-\(R_1\)) והזרם דרכו הוא 1.00A. נציב בחוק אוהם:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_{MP} = R_{MP} \cdot I_{MP} \]
+                \[ 12 = R_{MP} \cdot 1.00 \]
+            </div>
+            <div class="final-answer">
+                \[ R_{MP} = 12.0 \Omega \]
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> תמיד עשו "בדיקת שפיות" לתוצאה שלכם כדי לאתר טעויות חישוב מוקדם! איך נדע ש- $12\Omega$ זו תוצאה הגיונית? הסתכלו על צומת ההתפצלות M: מצאנו שדרך הנגד $R_1$ זורם זרם של $1.5\text{A}$, ואילו דרך הקטע $MP$ זורם זרם קטן יותר של $1.0\text{A}$. הזרם החשמלי מתחלק כך שתמיד חלק גדול יותר ממנו זורם במסלול בעל ההתנגדות הקטנה יותר. מכיוון שדרך $R_{MP}$ עבר פחות זרם, ההתנגדות שלו חייבת להיות <b>גדולה</b> מההתנגדות של $R_1$ (שהיא $8\Omega$). יצא לנו $12\Omega$ שזה אכן גדול מ-8, ולכן התשובה שלנו מתיישבת עם ההיגיון הפיזיקלי! אם היה יוצא לכם ערך קטן מ-8, הייתם יודעים מיד שיש טעות.
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד' - חישוב ההתנגדות הכוללת של הנגד המשתנה</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 space-y-1 text-slate-600">
+                    <li>התנגדות המקטע הראשון: \(R_{MP} = 12.0\text{ }\Omega\).</li>
+                    <li>המתח הכללי (מתח ההדקים): \(V_2 = 15\text{ V}\).</li>
+                    <li>המתח על המקטע המקבילי (M ל-P): \(V_1 = 12\text{ V}\).</li>
+                    <li>הזרם הראשי החוזר דרך מקטע PN: \(I_{tot} = 2.50\text{ A}\).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-600">
+                    את ההתנגדות הכוללת של הנגד המשתנה, כלומר \(R_{MN}\).
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma V = 0 \)</span> (חוק קירכהוף למתחים - מתח כולל על מקטעים בטור)<br>
+            <span class="formula-badge">\( V = RI \)</span> (חוק אוהם)<br>
+            <span class="formula-badge">\( R_T = \Sigma R_i \)</span> (התנגדות שקולה בטור)
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">נגד משתנה מורכב למעשה משני נגדים (\(R_{MP}\) ו- \(R_{PN}\)) המחוברים בטור זה לזה (לפחות מבחינה מבנית של התיל המרכיב אותם). לכן ההתנגדות הכוללת שלו היא סכום התנגדויות שני קטעיו:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ R_{MN} = R_{MP} + R_{PN} \]
+            </div>
+            <p class="content-paragraph mt-4">חסר לנו ערכו של \(R_{PN}\). נחשב את המתח עליו. אנו יודעים שהמתח הכולל של המעגל החיצוני (\(V_2\)) מתחלק בין החלק המקבילי (עליו נופל מתח \(V_1\)) לבין החלק הטורי (\(R_{PN}\)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_2 = V_{MP} + V_{PN} \]
+                \[ 15 = 12 + V_{PN} \implies V_{PN} = 3.00 \text{ V} \]
+            </div>
+            <p class="content-paragraph mt-4">כל הזרם הראשי שמגיע מהמקור חייב לעבור בסופו של דבר דרך המקטע PN כדי לחזור למקור. לכן הזרם דרכו הוא \(I_{tot} = 2.50\text{A}\). נחשב את ההתנגדות שלו בעזרת חוק אוהם:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_{PN} = R_{PN} \cdot I_{tot} \]
+                \[ 3.00 = R_{PN} \cdot 2.50 \implies R_{PN} = 1.20 \Omega \]
+            </div>
+            <p class="content-paragraph mt-4">כעת נוכל לחשב את ההתנגדות הכוללת של הנגד המשתנה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ R_{MN} = 12.0 + 1.20 \]
+            </div>
+            <div class="final-answer">
+                \[ R_{MN} = 13.2 \Omega \]
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> תמיד חשוב לזכור שהנגד המשתנה השלם מיוצג פיזית על ידי תיל מוליך בעל אורך קבוע. הזזת המגע הנייד אינה משנה את ההתנגדות הכוללת של הרכיב (שכאן ראינו שהיא תמיד תישאר 13.2 אוהם), אלא רק את <b>החלוקה</b> הפנימית בין שני החלקים (MP ו-PN).
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה' - החלפת הנגד במפסק והזזת המגע</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 space-y-1 text-slate-600">
+                    <li>המעגל הוחלף לתרשים 2: הנגד \(R_1\) הוסר, ובמקומו חובר מפסק \(S\).</li>
+                    <li>המגע הנייד P מוזז <b>איטית לעבר הנקודה N</b>. משמעות פעולה זו מבחינה גיאומטרית היא שאורך המקטע MP גדל, בעוד שאורך המקטע PN קטן.</li>
+                    <li>מצב (1): המפסק S פתוח (נתק).</li>
+                    <li>מצב (2): המפסק S סגור (קצר).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-600">
+                    עבור כל אחד משני המצבים (פתוח/סגור), יש לקבוע אם קריאות מדי המתח \(V_1\) ו-\(V_2\) יגדלו, יקטנו או לא ישתנו, ולנמק.
+                </p>
+            </div>
+        </div>
+
+        <div class="mt-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( R = \rho \frac{l}{A} \)</span> (קשר בין אורך התיל להתנגדות)<br>
+            <span class="formula-badge">\( I = \frac{\varepsilon}{R_T + r} \)</span> (חוק אוהם למעגל שלם)<br>
+            <span class="formula-badge">\( V_{ab} = \varepsilon - I \cdot r \)</span> (מתח הדקים)
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            
+            <div class="step-label">מצב (1) - המפסק S פתוח</div>
+            <p class="content-paragraph">כאשר S פתוח, הענף התחתון מנותק ואינו מעביר זרם. המעגל הוא מעגל טורי פשוט הכולל את מקור המתח ואת מלוא הנגד המשתנה MN (הזרם זורם מ-M ל-N במלואו).</p>
+            <ul class="list-disc list-inside mb-4 space-y-2 text-slate-600">
+                <li><b>הוריית \(V_2\) (מתח הדקים):</b> ההתנגדות הכוללת של המעגל החיצוני קבועה ושווה ל-\(R_{MN} = 13.2\Omega\). לכן, הזרם הראשי \(I\) קבוע. על פי הנוסחה \(V_2 = \varepsilon - I \cdot r\), מכיוון שהזרם קבוע, גם מתח ההדקים <b>לא ישתנה</b>.</li>
+                <li><b>הוריית \(V_1\):</b> מד מתח אידיאלי מהווה בעצמו נתק, כך שהזרם אינו זורם דרך המד. \(V_1\) מחובר בפועל בין הנקודות M ו-P, כלומר הוא מודד את מפל המתח על הקטע \(MP\). על פי חוק אוהם: \(V_1 = I \cdot R_{MP}\). כאשר המגע P נע לעבר N, אורך הקטע MP גדל, ולכן ההתנגדות \(R_{MP}\) גדלה. מכיוון שהזרם \(I\) קבוע, קריאת \(V_1\) <b>תגדל</b>.</li>
+            </ul>
+
+            <div class="step-label mt-6">מצב (2) - המפסק S סגור</div>
+            <p class="content-paragraph">כאשר S סגור, הוא יוצר "קצר" (תיל חסר התנגדות) בין הצמתים M ו-P. הזרם החשמלי "יעדיף" לזרום כולו דרך המפסק, ולעקוף את הקטע של הנגד המשתנה \(R_{MP}\). לכן הקטע MP אינו פעיל, וההתנגדות החיצונית של המעגל כולו היא רק של הקטע \(R_{PN}\).</p>
+            <ul class="list-disc list-inside mb-4 space-y-2 text-slate-600">
+                <li><b>הוריית \(V_1\):</b> מד המתח מחובר במקביל למפסק סגור (תיל בעל התנגדות אפס). המתח על קצר הוא תמיד אפס (כי \(V=I\cdot 0 = 0\)). לכן, לכל אורך התנועה, \(V_1\) יראה 0 וולט, כלומר <b>לא ישתנה</b>.</li>
+                <li><b>הוריית \(V_2\) (מתח הדקים):</b> ההתנגדות הכוללת של המעגל במצב זה היא ההתנגדות הפנימית \(r\) וההתנגדות החיצונית \(R_{PN}\). כאשר מזיזים את המגע P לעבר N, אורך הקטע PN הולך וקטן. לכן ההתנגדות החיצונית \(R_{PN}\) <b>קטנה</b>.<br>
+                כתוצאה מכך, גודל הזרם הראשי במעגל (\(I = \frac{\varepsilon}{R_{PN} + r}\)) <b>יגדל</b>.<br>
+                לפי משוואת מתח ההדקים \(V_2 = \varepsilon - I \cdot r\), מאחר והזרם \(I\) גדל, האיבר המוחסר עולה, ולכן מתח ההדקים \(V_2\) <b>יקטן</b>.
+                </li>
+            </ul>
+            
+            <div class="final-answer">
+                מצב 1: \(V_1\) יגדל, \(V_2\) לא ישתנה.<br>
+                מצב 2: \(V_1\) לא ישתנה, \(V_2\) יקטן.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> בבעיות רבות בפיזיקה, תנועה של מגע נייד או הוספת/הסרת רכיבים משנה את ההתנגדות הכוללת של המעגל. סדר הפעולות לניתוח צריך תמיד להיות: 
+            <br>1. מה קרה להתנגדות השקולה של המעגל? 
+            <br>2. איך זה השפיע על הזרם הראשי? 
+            <br>3. איך זה משפיע על מתח ההדקים (היחס הוא תמיד <b>הפוך</b> לזרם הראשי!).
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
