@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <title>סימולציית מטוטלת ומסמר</title>
+    <style>
+        body { font-family: system-ui, sans-serif; text-align: center; background-color: #f4f4f9; margin: 0; padding: 20px; }
+        canvas { background-color: white; border: 1px solid #ccc; border-radius: 8px; box-shadow: 0 4px 6px rgba(0,0,0,0.1); margin-top: 10px; }
+        .controls { margin-top: 15px; }
+        button { padding: 10px 20px; font-size: 16px; cursor: pointer; background-color: #007bff; color: white; border: none; border-radius: 5px; margin: 0 5px; transition: 0.2s;}
+        button:hover { background-color: #0056b3; }
+        p { color: #555; max-width: 600px; margin: 0 auto; line-height: 1.5;}
+    </style>
+</head>
+<body>
+    <h2>סימולציה: מטוטלת מתנגשת במסמר</h2>
+    <p>הכדור משוחרר ממצב אופקי, פוגע במסמר בנקודה C, וממשיך בתנועה עד שהמתיחות מתאפסת (בזווית שבה cos(α)=2/3), אז הוא עובר למסלול של זריקה משופעת (פרבולה).</p>
+    <canvas id="simCanvas" width="600" height="400"></canvas>
+    <div class="controls">
+        <button onclick="startSim()">התחל / המשך</button>
+        <button onclick="pauseSim()">השהה</button>
+        <button onclick="resetSim()">אפס סימולציה</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('simCanvas');
+        const ctx = canvas.getContext('2d');
+
+        // קבועים פיזיקליים (מותאמים ויזואלית למסך)
+        const L = 200; 
+        const g = 400; 
+        const pivotO = { x: 300, y: 100 };
+        const pivotC = { x: 300, y: 100 + L / 2 };
+
+        let state = 1; // 1: O סביב, 2: C סביב, 3: פרבולה
+        let theta = Math.PI / 2; 
+        let omega = 0; 
+        let x = 0, y = 0; 
+        let vx = 0, vy = 0; 
+        let path = []; 
+        let isRunning = false;
+        let lastTime = 0;
+
+        function init() {
+            state = 1;
+            theta = Math.PI / 2;
+            omega = 0;
+            path = [];
+            isRunning = false;
+            updatePosition();
+            draw();
+        }
+
+        function updatePosition() {
+            if (state === 1) {
+                x = pivotO.x + L * Math.sin(theta);
+                y = pivotO.y + L * Math.cos(theta);
+            } else if (state === 2) {
+                x = pivotC.x + (L / 2) * Math.sin(theta);
+                y = pivotC.y + (L / 2) * Math.cos(theta);
+            }
+        }
+
+        function step(timestamp) {
+            if (!isRunning) return;
+            if (!lastTime) lastTime = timestamp;
+            let dt = (timestamp - lastTime) / 1000;
+            lastTime = timestamp;
+
+            if (dt > 0.05) dt = 0.05; // מניעת קפיצות אם החלון ברקע
+
+            const steps = 10;
+            dt /= steps;
+
+            for (let i = 0; i < steps; i++) {
+                if (state === 1) {
+                    let alpha = -(g / L) * Math.sin(theta);
+                    omega += alpha * dt;
+                    theta += omega * dt;
+
+                    if (theta <= 0) { // הגעה למסמר
+                        state = 2;
+                        theta = 0;
+                        omega *= 2; // שימור מהירות קווית
+                    }
+                    updatePosition();
+                } else if (state === 2) {
+                    let alpha = -(g / (L / 2)) * Math.sin(theta);
+                    omega += alpha * dt;
+                    theta += omega * dt;
+                    updatePosition();
+
+                    // בדיקת מתיחות - כאשר היא מתאפסת עוברים לפרבולה
+                    let tension_acc = (L / 2) * omega * omega + g * Math.cos(theta);
+                    if (tension_acc <= 0) {
+                        state = 3;
+                        vx = (L / 2) * omega * Math.cos(theta);
+                        vy = -(L / 2) * omega * Math.sin(theta);
+                    }
+                } else if (state === 3) {
+                    vy += g * dt;
+                    x += vx * dt;
+                    y += vy * dt;
+                }
+            }
+
+            if (path.length === 0 || Math.hypot(path[path.length-1].x - x, path[path.length-1].y - y) > 3) {
+                path.push({x, y});
+            }
+
+            draw();
+            requestAnimationFrame(step);
+        }
+
+        function draw() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // טקסט סטטוס
+            ctx.fillStyle = "#333";
+            ctx.font = "18px sans-serif";
+            ctx.textAlign = "right";
+            if(state === 1) ctx.fillText("מצב נוכחי: תנועה מעגלית סביב O", canvas.width - 20, 30);
+            if(state === 2) ctx.fillText("מצב נוכחי: תנועה מעגלית סביב C", canvas.width - 20, 30);
+            if(state === 3) ctx.fillText("מצב נוכחי: פרבולה (מתיחות אפס)", canvas.width - 20, 30);
+
+            // ציור עקבות המסלול
+            if (path.length > 1) {
+                ctx.beginPath();
+                ctx.strokeStyle = "rgba(0, 0, 255, 0.4)";
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.moveTo(path[0].x, path[0].y);
+                for (let i = 1; i < path.length; i++) {
+                    ctx.lineTo(path[i].x, path[i].y);
+                }
+                ctx.stroke();
+                ctx.setLineDash([]);
+            }
+
+            // צירים ומסמרים
+            ctx.fillStyle = "black";
+            ctx.beginPath(); ctx.arc(pivotO.x, pivotO.y, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.fillText("O", pivotO.x - 15, pivotO.y + 5);
+
+            ctx.beginPath(); ctx.arc(pivotC.x, pivotC.y, 4, 0, Math.PI * 2); ctx.fill();
+            ctx.fillText("C", pivotC.x - 15, pivotC.y + 5);
+
+            // ציור החוט
+            ctx.beginPath();
+            ctx.strokeStyle = "#444";
+            ctx.lineWidth = 2;
+            if (state === 1) {
+                ctx.moveTo(pivotO.x, pivotO.y);
+                ctx.lineTo(x, y);
+            } else if (state === 2) {
+                ctx.moveTo(pivotO.x, pivotO.y);
+                ctx.lineTo(pivotC.x, pivotC.y);
+                ctx.lineTo(x, y); 
+            }
+            ctx.stroke();
+
+            // ציור הכדור המסה
+            ctx.beginPath();
+            ctx.arc(x, y, 12, 0, Math.PI * 2);
+            ctx.fillStyle = "#e63946";
+            ctx.fill();
+            ctx.stroke();
+            ctx.fillStyle = "black";
+            ctx.fillText("m", x + 18, y + 5);
+        }
+
+        function startSim() {
+            if (!isRunning) {
+                isRunning = true;
+                lastTime = 0;
+                requestAnimationFrame(step);
+            }
+        }
+
+        function pauseSim() { isRunning = false; }
+        function resetSim() { isRunning = false; init(); }
+
+        init();
+    </script>
+</body>
+</html>
