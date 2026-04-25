@@ -1,0 +1,1013 @@
+﻿<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+	<!-- Google tag (gtag.js) -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+	<script>
+	  window.dataLayer = window.dataLayer || [];
+	  function gtag(){dataLayer.push(arguments);}
+	  gtag('js', new Date());
+
+	  gtag('config', 'G-QZJ7JT80X2');
+	</script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>טבלת כיסוי שאלות חשמל</title>
+	<script src="https://cdn.tailwindcss.com"></script>
+	<style>
+		:root {
+			--bg-page: #edf4ff;
+			--bg-card: rgba(255, 255, 255, 0.9);
+			--text-main: #24364d;
+			--text-soft: #5e748d;
+			--slate-100: #f7fafc;
+			--slate-200: #dbe7f3;
+			--slate-300: #c3d3e5;
+			--slate-500: #64748b;
+			--blue-900: #173a63;
+			--blue-700: #2459a6;
+			--blue-100: #d9e9ff;
+			--blue-50: #eef6ff;
+			--green-50: #effcf4;
+			--green-500: #22c55e;
+			--green-700: #15803d;
+			--green-900: #0f5132;
+			--gray-50: #f8fafc;
+			--gray-200: #e5e7eb;
+			--gray-500: #7b8794;
+			--shadow-soft: 0 20px 45px rgba(36, 89, 166, 0.10);
+		}
+
+		html {
+			overflow-x: clip;
+		}
+
+		body {
+			margin: 0;
+			font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+			background:
+				radial-gradient(circle at top right, rgba(36, 89, 166, 0.14), transparent 28%),
+				radial-gradient(circle at top left, rgba(34, 197, 94, 0.10), transparent 24%),
+				linear-gradient(180deg, #f4f9ff 0%, var(--bg-page) 42%, #eef5fb 100%);
+			color: var(--text-main);
+			line-height: 1.65;
+			overflow-x: clip;
+		}
+
+		body::before {
+			content: "";
+			position: fixed;
+			inset: 0;
+			pointer-events: none;
+			background-image:
+				linear-gradient(rgba(255,255,255,0.42) 1px, transparent 1px),
+				linear-gradient(90deg, rgba(255,255,255,0.42) 1px, transparent 1px);
+			background-size: 44px 44px;
+			mask-image: linear-gradient(180deg, rgba(0,0,0,0.35), transparent 80%);
+		}
+
+		.page-shell {
+			max-width: 1180px;
+			margin: 0 auto;
+			padding: 1.25rem;
+			padding-bottom: 4rem;
+		}
+
+		.section-card {
+			background: var(--bg-card);
+			border: 1px solid rgba(195, 211, 229, 0.95);
+			border-radius: 1.15rem;
+			padding: 1.35rem;
+			margin-bottom: 1.1rem;
+			box-shadow: var(--shadow-soft);
+			backdrop-filter: blur(12px);
+		}
+
+		.section-header {
+			font-size: 1.3rem;
+			font-weight: 700;
+			color: var(--blue-900);
+			border-bottom: 2px solid var(--slate-200);
+			padding-bottom: 0.6rem;
+			margin-bottom: 1rem;
+		}
+
+		.content-paragraph {
+			margin-bottom: 0.9rem;
+			color: var(--text-soft);
+		}
+
+		.hero-card {
+			position: relative;
+			overflow: hidden;
+			background:
+				radial-gradient(circle at 18% 18%, rgba(34, 197, 94, 0.16), transparent 22%),
+				radial-gradient(circle at 82% 12%, rgba(37, 99, 235, 0.18), transparent 28%),
+				linear-gradient(135deg, rgba(255,255,255,0.94) 0%, rgba(239,246,255,0.96) 55%, rgba(255,255,255,0.92) 100%);
+		}
+
+		.hero-card::after {
+			content: "";
+			position: absolute;
+			left: -8%;
+			right: -8%;
+			bottom: -55px;
+			height: 120px;
+			background: linear-gradient(90deg, rgba(36, 89, 166, 0.10), rgba(34, 197, 94, 0.12));
+			filter: blur(28px);
+			pointer-events: none;
+		}
+
+		.legend-row {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 0.75rem;
+			margin-top: 0.75rem;
+		}
+
+		.legend-chip {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.45rem;
+			padding: 0.45rem 0.85rem;
+			border-radius: 9999px;
+			border: 1px solid var(--slate-200);
+			background: rgba(255, 255, 255, 0.88);
+			font-size: 0.92rem;
+			box-shadow: 0 10px 24px rgba(36, 89, 166, 0.06);
+		}
+
+		.chip-dot {
+			width: 0.85rem;
+			height: 0.85rem;
+			border-radius: 9999px;
+			flex-shrink: 0;
+		}
+
+		.chip-dot.success {
+			background: var(--green-500);
+		}
+
+		.chip-dot.missing {
+			background: var(--gray-200);
+			border: 1px solid #cbd5e1;
+		}
+
+		.summary-grid {
+			display: grid;
+			grid-template-columns: repeat(3, minmax(0, 1fr));
+			gap: 0.9rem;
+			margin-top: 1.2rem;
+		}
+
+		.summary-tile {
+			background: rgba(255, 255, 255, 0.88);
+			border: 1px solid rgba(195, 211, 229, 0.95);
+			border-radius: 1rem;
+			padding: 1rem 1.1rem;
+			box-shadow: 0 14px 28px rgba(36, 89, 166, 0.08);
+		}
+
+		.summary-label {
+			font-size: 0.9rem;
+			color: var(--text-soft);
+			margin-bottom: 0.35rem;
+		}
+
+		.summary-value {
+			font-size: 2rem;
+			line-height: 1;
+			font-weight: 800;
+			color: var(--blue-900);
+		}
+
+		.table-wrap {
+			overflow-x: auto;
+			border: 1px solid rgba(195, 211, 229, 0.95);
+			border-radius: 1rem;
+			background: linear-gradient(180deg, rgba(255,255,255,0.92), rgba(248,250,252,0.9));
+			box-shadow: inset 0 1px 0 rgba(255,255,255,0.8);
+			padding: 0.45rem;
+		}
+
+		table {
+			width: 100%;
+			border-collapse: separate;
+			border-spacing: 0;
+			min-width: 760px;
+		}
+
+		th,
+		td {
+			padding: 0.95rem 0.75rem;
+			border-bottom: 1px solid var(--slate-200);
+			text-align: center;
+			vertical-align: middle;
+		}
+
+		th {
+			background: linear-gradient(180deg, #f9fbff, #eef5fd);
+			color: var(--slate-500);
+			font-size: 0.92rem;
+			font-weight: 700;
+			white-space: nowrap;
+			position: sticky;
+			top: 0;
+			z-index: 1;
+		}
+
+		td.year-cell {
+			text-align: right;
+			font-weight: 700;
+			color: #0f172a;
+			white-space: nowrap;
+			background: linear-gradient(180deg, #ffffff, #f8fbff);
+			min-width: 150px;
+		}
+
+		tbody tr {
+			transition: transform 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+		}
+
+		tbody tr:hover {
+			background: rgba(239, 246, 255, 0.6);
+		}
+
+		tr:last-child td {
+			border-bottom: 0;
+		}
+
+		.status-cell {
+			font-size: 1.1rem;
+			font-weight: 700;
+		}
+
+		.status-present {
+			background: linear-gradient(180deg, #f5fff8, #ecfbf1);
+			color: var(--green-700);
+		}
+
+		.status-missing {
+			background: linear-gradient(180deg, #fbfcfd, #f3f6f8);
+			color: var(--gray-500);
+		}
+
+		.status-badge {
+			width: 2.2rem;
+			height: 2.2rem;
+			border-radius: 9999px;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0 auto;
+			font-size: 1.1rem;
+			font-weight: 800;
+		}
+
+		.status-badge.present {
+			background: linear-gradient(180deg, #22c55e, #16a34a);
+			color: #ffffff;
+			box-shadow: 0 10px 20px rgba(34, 197, 94, 0.22);
+		}
+
+		.status-link {
+			text-decoration: none;
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+		}
+
+		.status-link:focus-visible {
+			outline: 3px solid rgba(36, 89, 166, 0.28);
+			outline-offset: 4px;
+			border-radius: 9999px;
+		}
+
+		.status-badge.missing {
+			background: #e9eef4;
+			color: #7b8794;
+		}
+
+		.status-cell.status-na {
+			background: repeating-linear-gradient(
+				135deg,
+				#f1f5f9,
+				#f1f5f9 4px,
+				#e8edf2 4px,
+				#e8edf2 8px
+			);
+		}
+
+		.status-badge.na {
+			background: transparent;
+			color: #94a3b8;
+			font-size: 1rem;
+			letter-spacing: 0.05em;
+		}
+
+		.year-subtext {
+			display: block;
+			font-size: 0.78rem;
+			color: var(--text-soft);
+			font-weight: 500;
+			margin-top: 0.1rem;
+		}
+
+		.note-box {
+			background: linear-gradient(135deg, #eff6ff, #f6fbff);
+			border: 1px solid #bfdbfe;
+			border-radius: 0.9rem;
+			padding: 0.95rem 1rem;
+			color: #1e3a8a;
+			font-size: 0.95rem;
+		}
+
+		.status-text {
+			min-height: 1.4rem;
+			font-size: 0.95rem;
+			color: #475569;
+			margin-bottom: 0.9rem;
+		}
+
+		.legal-entry-link {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			margin-top: 0.7rem;
+			font-size: 0.86rem;
+			color: #64748b;
+			text-decoration: underline;
+			text-underline-offset: 2px;
+		}
+
+		.legal-entry-link:hover {
+			color: #1d4ed8;
+		}
+
+		.legal-footer {
+			margin-top: 1.5rem;
+			padding-top: 1rem;
+			border-top: 1px solid var(--slate-200);
+			text-align: center;
+			font-size: 0.9rem;
+			color: #64748b;
+		}
+
+		.legal-footer a {
+			color: #1d4ed8;
+			font-weight: 600;
+			text-underline-offset: 2px;
+		}
+
+		.legal-footer a:hover {
+			color: #1e3a8a;
+		}
+
+		.hover-preview {
+			position: fixed;
+			z-index: 200;
+			display: none;
+			pointer-events: none;
+			background: #ffffff;
+			border: 1px solid var(--slate-300);
+			border-radius: 0.75rem;
+			box-shadow: 0 16px 38px rgba(15, 23, 42, 0.22);
+			padding: 0.5rem;
+			max-width: min(68vw, 900px);
+			max-height: min(82vh, 900px);
+		}
+
+		.hover-preview img {
+			display: block;
+			max-width: min(66vw, 860px);
+			max-height: min(78vh, 860px);
+			width: auto;
+			height: auto;
+			border-radius: 0.5rem;
+			border: 1px solid var(--slate-200);
+			background: #f8fafc;
+		}
+
+		@media (max-width: 900px) {
+			.hover-preview {
+				display: none !important;
+			}
+		}
+
+		@media (max-width: 640px) {
+			.page-shell {
+				padding: 0.75rem;
+			}
+
+			.section-card {
+				padding: 1rem;
+			}
+
+			.summary-grid {
+				grid-template-columns: 1fr;
+			}
+
+			th,
+			td {
+				padding: 0.75rem 0.55rem;
+			}
+
+			.summary-value {
+				font-size: 1.7rem;
+			}
+		}
+	</style>
+</head>
+<body>
+	<div class="page-shell">
+		<section class="section-card hero-card">
+			<header class="text-center md:text-right mb-2 relative">
+				<div class="inline-flex items-center gap-2 rounded-full border border-blue-200 bg-white/80 px-3 py-1 text-sm font-semibold text-blue-700 shadow-sm">
+					<span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500"></span>
+					מאגר פתרונות בחשמל
+				</div>
+				<h1 class="text-3xl md:text-5xl font-bold text-blue-900 mt-4 mb-2">מפת הכיסוי של מאגר שאלות החשמל</h1>
+				<h2 class="text-lg md:text-2xl text-slate-600">מבט אחד על כל השנים, כל השאלות, ואילו פתרונות כבר זמינים במאגר</h2>
+				<p class="mt-4 text-slate-600 max-w-3xl md:max-w-none">הדף מציג בצורה חזותית אילו שאלות בגרות בחשמל כבר קיימות במאגר הפתרונות, עם אותם סימונים וטבלת כיסוי כמו במכניקה.</p>
+				<div>
+					<a class="legal-entry-link" href="../../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+				</div>
+			</header>
+
+			<div class="summary-grid">
+				<div class="summary-tile">
+					<div class="summary-label">שורות בטבלה</div>
+					<div id="summaryRows" class="summary-value">--</div>
+				</div>
+				<div class="summary-tile">
+					<div class="summary-label">שאלות עם פתרון</div>
+					<div id="summaryCovered" class="summary-value">--</div>
+				</div>
+				<div class="summary-tile">
+					<div class="summary-label">אחוז כיסוי במאגר</div>
+					<div id="summaryPercent" class="summary-value">--</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="section-card">
+			<h3 class="section-header">פירוש הטבלה</h3>
+			<p class="content-paragraph">כל שורה מייצגת שנת בגרות. עד 2016 מוצגות 5 שאלות לכל שורה, ומשנת 2017 ואילך מוצגות 6 שאלות.</p>
+			<div class="legend-row">
+				<div class="legend-chip"><span class="chip-dot success"></span><span>יש פתרון במאגר</span></div>
+				<div class="legend-chip"><span class="chip-dot missing"></span><span>עדיין אין פתרון במאגר</span></div>
+			</div>
+			<div class="note-box mt-4">
+				לחיצה על סימון ה-✓ הירוק פותחת ישירות את הפתרון של אותה שאלה. תאים שאינם רלוונטיים לשנה מסוימת מסומנים כ-<span class="font-semibold">N/A</span>.
+			</div>
+		</section>
+
+		<section class="section-card">
+			<h3 class="section-header">טבלת הכיסוי</h3>
+			<p id="statusText" class="status-text">טוען נתונים...</p>
+			<div class="table-wrap">
+				<table>
+					<thead>
+						<tr>
+							<th>שנה</th>
+							<th>שאלה 1</th>
+							<th>שאלה 2</th>
+							<th>שאלה 3</th>
+							<th>שאלה 4</th>
+							<th>שאלה 5</th>
+							<th>שאלה 6</th>
+						</tr>
+					</thead>
+					<tbody id="coverageBody">
+						<tr>
+							<td colspan="7" class="text-slate-500">טוען...</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</section>
+
+		<footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+			<span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+			<a href="../../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+		</footer>
+	</div>
+
+	<div id="hoverPreview" class="hover-preview" aria-hidden="true">
+		<img id="hoverPreviewImg" alt="תצוגה מוגדלת של השאלה">
+	</div>
+
+	<script>
+		const coverageBody = document.getElementById("coverageBody");
+		const statusText = document.getElementById("statusText");
+		const summaryRows = document.getElementById("summaryRows");
+		const summaryCovered = document.getElementById("summaryCovered");
+		const summaryPercent = document.getElementById("summaryPercent");
+		const QUESTION_COUNT = 6;
+		const START_YEAR = 1990;
+		const END_YEAR = 2025;
+		const hoverPreview = document.getElementById("hoverPreview");
+		const hoverPreviewImg = document.getElementById("hoverPreviewImg");
+		let previewActive = false;
+		const folderNamePattern = /^(\d{4})\s+שאלה\s+(\d+)(?:\.(\d+))?$/;
+		const ELECTRIC_FOLDER_REPO_PATH = "webfiles/פתרונות שאלות בגרות/חשמל שאלות בגרות";
+		const DISCOVERY_EXCLUDED_FILES = new Set([
+			"question-topics.json",
+			"תפריט ראשי חשמל.html",
+			"תפריט ראשי חשמל 2.html",
+			"טבלת כיסוי שאלות חשמל.html"
+		]);
+
+		function movePreview(event) {
+			if (!previewActive) {
+				return;
+			}
+			const margin = 18;
+			const rect = hoverPreview.getBoundingClientRect();
+			const vw = window.innerWidth;
+			const vh = window.innerHeight;
+			let x = event.clientX + margin;
+			let y = event.clientY + margin;
+			if (x + rect.width > vw - 8) {
+				x = event.clientX - rect.width - margin;
+			}
+			if (y + rect.height > vh - 8) {
+				y = event.clientY - rect.height - margin;
+			}
+			x = Math.max(8, x);
+			y = Math.max(8, y);
+			hoverPreview.style.left = `${x}px`;
+			hoverPreview.style.top = `${y}px`;
+		}
+
+		function hidePreview() {
+			previewActive = false;
+			hoverPreview.style.display = "none";
+		}
+
+		function attachStatusLinkPreviewHandlers() {
+			const links = coverageBody.querySelectorAll(".status-link");
+			links.forEach((link) => {
+				const href = link.getAttribute("href") || "";
+				const lastSlash = href.lastIndexOf("/");
+				if (lastSlash < 0) {
+					return;
+				}
+				const imgSrc = href.slice(0, lastSlash) + "/question-image.png";
+
+				link.addEventListener("mouseenter", (event) => {
+					if (window.matchMedia("(max-width: 900px)").matches) {
+						return;
+					}
+					hoverPreviewImg.src = imgSrc;
+					hoverPreview.style.display = "block";
+					previewActive = true;
+					movePreview(event);
+				});
+				link.addEventListener("mousemove", movePreview);
+				link.addEventListener("mouseleave", hidePreview);
+			});
+		}
+
+		function formatNumber(value) {
+			return Number(value).toLocaleString("he-IL");
+		}
+
+		function isLocalhost() {
+			return window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1";
+		}
+
+		function normalizeSlashes(path) {
+			return String(path || "").replace(/\\/g, "/").replace(/^\/+/, "");
+		}
+
+		function normalizeRelativeQuestionPath(path) {
+			let normalized = normalizeSlashes(path);
+			if (normalized.startsWith("./")) {
+				normalized = normalized.slice(2);
+			}
+			const folderWithSlash = `${ELECTRIC_FOLDER_REPO_PATH}/`;
+			const directIdx = normalized.indexOf(folderWithSlash);
+			if (directIdx >= 0) {
+				return normalized.slice(directIdx + folderWithSlash.length);
+			}
+
+			const electricFolderName = "חשמל שאלות בגרות/";
+			const folderIdx = normalized.indexOf(electricFolderName);
+			if (folderIdx >= 0) {
+				normalized = normalized.slice(folderIdx + electricFolderName.length);
+			}
+
+			return normalized;
+		}
+
+		function parseFromFolderName(folderName) {
+			const match = String(folderName || "").match(folderNamePattern);
+			if (!match) {
+				return null;
+			}
+
+			return {
+				year: Number(match[1]),
+				questionNumber: Number(match[2]),
+				variant: match[3] ? Number(match[3]) : 0,
+				title: folderName
+			};
+		}
+
+		function extractTitleFromPath(path) {
+			const normalized = normalizeRelativeQuestionPath(path);
+			const parts = normalized.split("/").filter(Boolean);
+			const questionFolder = parts.find((part) => folderNamePattern.test(part));
+			if (questionFolder) {
+				return questionFolder;
+			}
+			return parts.length >= 2 ? parts[parts.length - 2] : "";
+		}
+
+		function getRepoContextFromLocation() {
+			const hostMatch = window.location.hostname.match(/^([^.]+)\.github\.io$/);
+			if (!hostMatch) {
+				return null;
+			}
+			const pathParts = window.location.pathname.split("/").filter(Boolean);
+			if (!pathParts.length) {
+				return null;
+			}
+			return { owner: hostMatch[1], repo: pathParts[0] };
+		}
+
+		function getFileName(path) {
+			const normalized = normalizeRelativeQuestionPath(path);
+			const parts = normalized.split("/").filter(Boolean);
+			return parts.length ? parts[parts.length - 1] : "";
+		}
+
+		function getFolderPath(path) {
+			const normalized = normalizeRelativeQuestionPath(path);
+			const parts = normalized.split("/").filter(Boolean);
+			if (parts.length <= 1) {
+				return "";
+			}
+			return parts.slice(0, -1).join("/");
+		}
+
+		function pickHtmlInSolutionFolder(folderPath, htmlFiles) {
+			const files = [...htmlFiles].sort((a, b) => a.localeCompare(b, "he", { numeric: true }));
+			if (!files.length) {
+				return "";
+			}
+
+			const folderName = folderPath.split("/").filter(Boolean).pop() || "";
+			const exactFolderMatch = `${folderName}.html`;
+			if (files.includes(exactFolderMatch)) {
+				return exactFolderMatch;
+			}
+
+			const parsed = parseFromFolderName(folderName);
+			if (!parsed) {
+				return "";
+			}
+
+			const startsWithYear = files.find((file) => file.startsWith(String(parsed.year)));
+			if (startsWithYear) {
+				return startsWithYear;
+			}
+
+			return files[0];
+		}
+
+		async function discoverQuestionPaths() {
+			const discovered = new Set();
+			const folders = new Map();
+
+			function ensureFolder(folderPath) {
+				if (!folders.has(folderPath)) {
+					folders.set(folderPath, {
+						hasQuestionImage: false,
+						htmlFiles: new Set()
+					});
+				}
+				return folders.get(folderPath);
+			}
+
+			function collectNodePath(nodePath) {
+				const relativePath = normalizeRelativeQuestionPath(nodePath);
+				const fileName = getFileName(relativePath);
+				const folderPath = getFolderPath(relativePath);
+				if (!fileName || !folderPath) {
+					return;
+				}
+
+				const entry = ensureFolder(folderPath);
+				if (fileName.toLowerCase() === "question-image.png") {
+					entry.hasQuestionImage = true;
+					return;
+				}
+
+				if (fileName.toLowerCase().endsWith(".html") && !DISCOVERY_EXCLUDED_FILES.has(fileName)) {
+					entry.htmlFiles.add(fileName);
+				}
+			}
+
+			function finalizeDiscoveredPaths() {
+				folders.forEach((entry, folderPath) => {
+					if (!entry.hasQuestionImage || entry.htmlFiles.size === 0) {
+						return;
+					}
+
+					const htmlFile = pickHtmlInSolutionFolder(folderPath, entry.htmlFiles);
+					if (!htmlFile) {
+						return;
+					}
+
+					discovered.add(`${folderPath}/${htmlFile}`);
+				});
+			}
+
+			if (isLocalhost()) {
+				const response = await fetch("/api/local-tree", { cache: "no-store" });
+				if (!response.ok) {
+					throw new Error("local-tree-unavailable");
+				}
+
+				const data = await response.json();
+				const tree = Array.isArray(data.tree) ? data.tree : [];
+				tree.forEach((node) => {
+					if (!node || node.type !== "blob" || typeof node.path !== "string") {
+						return;
+					}
+					if (!node.path.startsWith(`${ELECTRIC_FOLDER_REPO_PATH}/`)) {
+						return;
+					}
+					collectNodePath(node.path);
+				});
+
+				finalizeDiscoveredPaths();
+				return [...discovered];
+			}
+
+			const ctx = getRepoContextFromLocation();
+			if (!ctx) {
+				return [];
+			}
+
+			const treeUrl = `https://api.github.com/repos/${ctx.owner}/${ctx.repo}/git/trees/HEAD?recursive=1`;
+			const response = await fetch(treeUrl, { cache: "no-store" });
+			if (!response.ok) {
+				throw new Error("github-tree-unavailable");
+			}
+
+			const data = await response.json();
+			const tree = Array.isArray(data.tree) ? data.tree : [];
+			tree.forEach((node) => {
+				if (!node || node.type !== "blob" || typeof node.path !== "string") {
+					return;
+				}
+				if (!node.path.startsWith(`${ELECTRIC_FOLDER_REPO_PATH}/`)) {
+					return;
+				}
+				collectNodePath(node.path);
+			});
+
+			finalizeDiscoveredPaths();
+			return [...discovered];
+		}
+
+		function questionMetaKey(meta) {
+			return `${meta.year}-${meta.questionNumber}-${meta.variant || 0}`;
+		}
+
+		function parseVariantFromId(id) {
+			const match = String(id || "").match(/^(\d{4})-bagrut-(\d+)(?:\.(\d+))?$/);
+			if (!match) {
+				return null;
+			}
+
+			return {
+				year: Number(match[1]),
+				questionNumber: Number(match[2]),
+				variant: match[3] ? Number(match[3]) : 0
+			};
+		}
+
+		function parseQuestionMeta(question) {
+			if (question && question.isBagrutQuestion) {
+				const year = Number(question.bagrutYear);
+				const questionNumber = Number(question.bagrutQuestionNumber);
+				if (Number.isFinite(year) && Number.isFinite(questionNumber)) {
+					const byId = parseVariantFromId(question.id);
+					return {
+						year,
+						questionNumber,
+						variant: byId ? byId.variant : 0
+					};
+				}
+			}
+
+			if (question && question.id) {
+				return parseVariantFromId(question.id);
+			}
+
+			if (question && question.path) {
+				return parseFromFolderName(extractTitleFromPath(question.path));
+			}
+
+			return null;
+		}
+
+		function buildSyntheticQuestion(meta, path) {
+			const variantSuffix = meta.variant ? `.${meta.variant}` : "";
+			return {
+				id: `${meta.year}-bagrut-${meta.questionNumber}${variantSuffix}`,
+				title: `בגרות פיזיקה ${meta.year} - חשמל שאלה ${meta.questionNumber}`,
+				path,
+				isBagrutQuestion: true,
+				bagrutYear: meta.year,
+				bagrutQuestionNumber: meta.questionNumber
+			};
+		}
+
+		function mergeQuestionsWithDiscovered(rawQuestions, discoveredPaths) {
+			const questions = Array.isArray(rawQuestions)
+				? rawQuestions
+					.filter((question) => question && question.isBagrutQuestion)
+					.map((question) => ({ ...question, path: normalizeRelativeQuestionPath(question.path) }))
+				: [];
+
+			const byPath = new Map();
+			const byMeta = new Map();
+
+			questions.forEach((question) => {
+				if (question.path) {
+					byPath.set(question.path, question);
+				}
+				const meta = parseQuestionMeta(question);
+				if (meta) {
+					byMeta.set(questionMetaKey(meta), question);
+				}
+			});
+
+			discoveredPaths.forEach((path) => {
+				const normalizedPath = normalizeRelativeQuestionPath(path);
+				if (byPath.has(normalizedPath)) {
+					return;
+				}
+
+				const meta = parseFromFolderName(extractTitleFromPath(normalizedPath));
+				if (!meta) {
+					return;
+				}
+
+				const key = questionMetaKey(meta);
+				const existing = byMeta.get(key);
+				if (existing) {
+					const previousPath = normalizeRelativeQuestionPath(existing.path);
+					if (previousPath && previousPath !== normalizedPath) {
+						byPath.delete(previousPath);
+					}
+					existing.path = normalizedPath;
+					byPath.set(normalizedPath, existing);
+					return;
+				}
+
+				const synthetic = buildSyntheticQuestion(meta, normalizedPath);
+				questions.push(synthetic);
+				byMeta.set(key, synthetic);
+				byPath.set(normalizedPath, synthetic);
+			});
+
+			return questions;
+		}
+
+		function ensureRow(rowMap, rowKey, rowData) {
+			if (!rowMap.has(rowKey)) {
+				rowMap.set(rowKey, {
+					...rowData,
+					questions: new Array(QUESTION_COUNT).fill(null)
+				});
+			}
+			return rowMap.get(rowKey);
+		}
+
+		function maxQuestionSlotsForYear(year) {
+			return year >= 2017 ? 6 : 5;
+		}
+
+		function buildRows(questions) {
+			const rowMap = new Map();
+
+			questions.forEach((question) => {
+				const parsed = parseQuestionMeta(question);
+				if (
+					!parsed ||
+					parsed.year < START_YEAR ||
+					parsed.year > END_YEAR ||
+					parsed.questionNumber < 1 ||
+					parsed.questionNumber > QUESTION_COUNT
+				) {
+					return;
+				}
+
+				const rowKey = parsed.variant > 0 ? `${parsed.year}-variant-${parsed.variant}` : `${parsed.year}-primary`;
+				const row = ensureRow(rowMap, rowKey, {
+					year: parsed.year,
+					orderVariant: parsed.variant || 0,
+					variantLabel: parsed.variant > 0 ? `שאלון ${parsed.variant + 1}` : "",
+					maxQuestions: maxQuestionSlotsForYear(parsed.year)
+				});
+
+				row.questions[parsed.questionNumber - 1] = {
+					exists: true,
+					path: question.path || ""
+				};
+			});
+
+			for (let year = START_YEAR; year <= END_YEAR; year += 1) {
+				ensureRow(rowMap, `${year}-primary`, {
+					year,
+					orderVariant: 0,
+					variantLabel: "",
+					maxQuestions: maxQuestionSlotsForYear(year)
+				});
+			}
+
+			return Array.from(rowMap.values()).sort((a, b) => {
+				if (a.year !== b.year) {
+					return a.year - b.year;
+				}
+				return a.orderVariant - b.orderVariant;
+			});
+		}
+
+		function renderTable(rows) {
+			if (!rows.length) {
+				coverageBody.innerHTML = '<tr><td colspan="7" class="text-slate-500">לא נמצאו שאלות להצגה.</td></tr>';
+				statusText.textContent = 'עדיין אין נתונים להצגה.';
+				summaryRows.textContent = '0';
+				summaryCovered.textContent = '0';
+				summaryPercent.textContent = '0%';
+				return;
+			}
+
+			const coveredCount = rows.reduce((sum, row) => {
+				const maxQ = row.maxQuestions || QUESTION_COUNT;
+				return sum + row.questions.slice(0, maxQ).filter((entry) => entry && entry.exists).length;
+			}, 0);
+			const totalSlots = rows.reduce((sum, row) => sum + (row.maxQuestions || QUESTION_COUNT), 0);
+			const percent = totalSlots ? Math.round((coveredCount / totalSlots) * 100) : 0;
+
+			coverageBody.innerHTML = rows.map((row) => {
+				const maxQ = row.maxQuestions || QUESTION_COUNT;
+				const cells = row.questions.map((entry, idx) => {
+					if (idx >= maxQ) {
+						return '<td class="status-cell status-na" title="שנה זו כללה רק 5 שאלות"><span class="status-badge na" aria-label="לא רלוונטי">N/A</span></td>';
+					}
+					if (entry && entry.exists && entry.path) {
+						return `<td class="status-cell status-present"><a class="status-link" href="./${entry.path}" aria-label="פתח פתרון"><span class="status-badge present" aria-hidden="true">✓</span></a></td>`;
+					}
+					return '<td class="status-cell status-missing"><span class="status-badge missing" aria-label="חסר">−</span></td>';
+				}).join('');
+
+				const yearLabel = row.variantLabel
+					? `${row.year}<span class="year-subtext">${row.variantLabel}</span>`
+					: `${row.year}`;
+
+				return `
+					<tr>
+						<td class="year-cell">${yearLabel}</td>
+						${cells}
+					</tr>
+				`;
+			}).join('');
+
+			statusText.textContent = `מוצגות ${rows.length} שורות בטבלה. לחיצה על ✓ ירוק פותחת את הפתרון.`;
+			summaryRows.textContent = formatNumber(rows.length);
+			summaryCovered.textContent = formatNumber(coveredCount);
+			summaryPercent.textContent = `${percent}%`;
+		}
+
+		async function loadCoverage() {
+			try {
+				const response = await fetch('./question-topics.json', { cache: 'no-store' });
+				if (!response.ok) {
+					throw new Error('load-failed');
+				}
+
+				const data = await response.json();
+				const discoveredPaths = await discoverQuestionPaths();
+				const questions = mergeQuestionsWithDiscovered(data.questions, discoveredPaths);
+				const rows = buildRows(questions);
+				renderTable(rows);
+				attachStatusLinkPreviewHandlers();
+			} catch (error) {
+				coverageBody.innerHTML = '<tr><td colspan="7" class="text-red-700">לא ניתן לטעון כרגע את מאגר הפתרונות.</td></tr>';
+				statusText.textContent = 'אירעה תקלה בטעינת הנתונים. אפשר לנסות לרענן את הדף.';
+				console.error(error);
+			}
+		}
+
+		loadCoverage();
+	</script>
+</body>
+</html>
