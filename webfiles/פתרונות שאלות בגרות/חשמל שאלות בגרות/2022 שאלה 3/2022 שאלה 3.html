@@ -1,532 +1,830 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>פתרון בגרות בפיזיקה - חשמל 2022 שאלה 3</title>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
     <script>
-        MathJax = {
+        window.MathJax = {
             tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']]
-            },
-            svg: {
-                fontCache: 'global'
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
             }
         };
     </script>
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
     <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
         body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background-color: #f8fafc;
-            color: #1e293b;
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
         }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
         .section-card {
-            background-color: #ffffff;
-            padding: 1.5rem;
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
             border-radius: 0.75rem;
-            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
-            margin-bottom: 2rem;
-            border-top: 4px solid #3b82f6;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
         }
-        .formula-badge {
-            background-color: #dbeafe;
-            color: #1e40af;
-            padding: 0.25rem 0.75rem;
-            border-radius: 9999px;
-            font-size: 0.875rem;
-            font-weight: 600;
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
             display: inline-block;
-            margin-bottom: 0.5rem;
-            box-shadow: 0 1px 2px 0 rgba(0, 0, 0, 0.05);
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
             direction: ltr;
         }
-        .final-answer {
-            background-color: #f0fdf4;
-            border-right: 4px solid #22c55e;
-            color: #14532d;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            border-top-right-radius: 0;
-            border-bottom-right-radius: 0;
-            margin-top: 1rem;
-            font-weight: 500;
-        }
+
         .teacher-highlight {
-            background-color: #fffbeb;
-            border: 1px solid #fde68a;
-            color: #78350f;
-            padding: 1rem;
-            border-radius: 0.5rem;
-            margin-top: 1.5rem;
-            position: relative;
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
         }
-        .teacher-highlight-icon {
-            position: absolute;
-            top: -0.75rem;
-            right: -0.75rem;
-            background-color: #fde047;
-            color: #854d0e;
-            width: 2rem;
-            height: 2rem;
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
             border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
             display: flex;
             align-items: center;
             justify-content: center;
-            font-weight: bold;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            transition: transform 0.2s ease, background-color 0.2s ease;
         }
-        .version-stamp {
-            text-align: left;
-            font-size: 0.875rem;
-            color: #64748b;
-            margin-bottom: 1.5rem;
-            direction: ltr;
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
         }
-        .modal {
-            display: none;
+
+        .question-modal {
             position: fixed;
-            z-index: 50;
-            left: 0;
-            top: 0;
-            width: 100%;
-            height: 100%;
-            overflow: auto;
-            background-color: rgba(0,0,0,0.8);
-            backdrop-filter: blur(4px);
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
         }
-        .modal-content {
-            margin: auto;
-            display: block;
-            width: 80%;
-            max-width: 800px;
-            border-radius: 0.5rem;
-            margin-top: 5%;
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
         }
     </style>
 </head>
-<body class="antialiased p-4 md:p-8">
+<body>
 
-    <div class="max-w-4xl mx-auto">
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מלא בפיזיקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">חשמל 2022 - שאלה 3 (5 יח"ל)</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך צעד-אחר-צעד: מעגלי זרם ישר, חיבור נגדים ונורות, ונצילות.</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית: תמיד מתחת לכותרת -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- מבט כללי ותרשים עזר -->
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">מבט כללי על השאלה</h3>
+        <p class="content-paragraph">ברוכים הבאים לפתרון המודרך! בשאלה זו נעסוק במעגלי זרם ישר (DC), חיבור נגדים ונורות בטור ובמקביל, מקורות מתח בעלי התנגדות פנימית ונצילות המעגל החשמלי. נעבוד צעד-אחר-צעד, תוך פירוק פיזיקלי של התהליכים.</p>
+        <p class="content-paragraph mb-0">לפני שנתחיל, מומלץ להיעזר בתרשים הפיזור של הזרמים והמתחים בשני המעגלים שהרכבנו.</p>
         
-        <h1 class="text-3xl md:text-4xl font-extrabold text-slate-800 mb-2 text-center">פתרון מלא: בגרות בפיזיקה - חשמל 2022, שאלה 3</h1>
-        
-        <div class="version-stamp" id="versionStamp">
-            <span class="font-semibold">Last Updated:</span> <span id="versionUpdatedAt">26.04.2026 18:09:00</span>
+        <div class="visual-frame">
+            <div class="overflow-x-auto w-full" dir="ltr">
+                <img src="image-1.png" alt="תרשים עזר לשני המעגלים" class="w-full h-auto max-w-[800px] mx-auto" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full max-w-[800px] mx-auto">
+                    <span class="block font-bold mb-1">[תרשים - image-1.png]</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>image-1.png</code> באותה תיקייה.</span>
+                </div>
+            </div>
         </div>
+    </section>
 
-        <!-- Question Image -->
-        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-3/4 md:w-2/3 h-auto rounded-lg border border-slate-200 mx-auto mb-6 shadow-sm" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-        <div style="display:none;" class="bg-red-50 text-red-600 p-4 rounded-lg text-center border border-red-200 mb-6">
-            תמונת השאלה (question-image.png) לא נמצאה בנתיב. אנא ודא שהקובץ קיים בתיקייה.
-        </div>
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א' - חישוב הוריות מדי הזרם</h3>
 
-        <p class="text-lg text-slate-700 mb-8 leading-relaxed">
-            ברוכים הבאים לפתרון המודרך! בשאלה זו נעסוק במעגלי זרם ישר (DC), חיבור נגדים ונורות בטור ובמקביל, מקורות מתח בעלי התנגדות פנימית ונצילות המעגל החשמלי. נעבוד צעד-אחר-צעד, תוך פירוק פיזיקלי של התהליכים.
-        </p>
-
-        <!-- General SVG Diagram for visual aid -->
-        <div class="mb-8 p-4 bg-white rounded-xl shadow-sm border border-slate-200 overflow-x-auto">
-            <h3 class="text-lg font-bold text-slate-700 mb-4 text-center">תרשים עזר: פיזור הזרמים והמתחים בשני המעגלים</h3>
-            <svg viewBox="0 0 800 350" class="w-full h-auto" xmlns="http://www.w3.org/2000/svg">
-                <!-- Circuit 1 Background -->
-                <rect x="20" y="20" width="360" height="310" rx="15" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
-                <text x="200" y="50" font-family="sans-serif" font-size="18" font-weight="bold" fill="#334155" text-anchor="middle">מעגל 1 (חיבור בטור)</text>
-                
-                <!-- Circuit 1 Wires -->
-                <path d="M 80 260 L 80 120 L 320 120 L 320 260 Z" fill="none" stroke="#64748b" stroke-width="4"/>
-                
-                <!-- Circuit 1 Source -->
-                <line x1="170" y1="260" x2="190" y2="260" stroke="#000" stroke-width="4"/>
-                <line x1="190" y1="245" x2="190" y2="275" stroke="#000" stroke-width="4"/>
-                <line x1="210" y1="230" x2="210" y2="290" stroke="#000" stroke-width="2"/>
-                <line x1="210" y1="260" x2="230" y2="260" stroke="#000" stroke-width="4"/>
-                <text x="195" y="305" font-family="sans-serif" font-size="14" fill="#000" text-anchor="middle">ε, r</text>
-
-                <!-- Circuit 1 Bulbs -->
-                <circle cx="120" cy="120" r="15" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
-                <line x1="110" y1="110" x2="130" y2="130" stroke="#ca8a04" stroke-width="2"/>
-                <line x1="130" y1="110" x2="110" y2="130" stroke="#ca8a04" stroke-width="2"/>
-                
-                <circle cx="160" cy="120" r="15" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
-                <line x1="150" y1="110" x2="170" y2="130" stroke="#ca8a04" stroke-width="2"/>
-                <line x1="170" y1="110" x2="150" y2="130" stroke="#ca8a04" stroke-width="2"/>
-                
-                <circle cx="200" cy="120" r="15" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
-                <line x1="190" y1="110" x2="210" y2="130" stroke="#ca8a04" stroke-width="2"/>
-                <line x1="210" y1="110" x2="190" y2="130" stroke="#ca8a04" stroke-width="2"/>
-                
-                <text x="160" y="85" font-family="sans-serif" font-size="12" fill="#ca8a04" text-anchor="middle">3x V_n</text>
-
-                <!-- Circuit 1 Ammeter & Resistor -->
-                <circle cx="260" cy="120" r="15" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
-                <text x="260" y="125" font-family="sans-serif" font-size="14" fill="#0284c7" text-anchor="middle">A₁</text>
-                
-                <rect x="305" y="180" width="30" height="50" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
-                <text x="345" y="210" font-family="sans-serif" font-size="14" fill="#475569">R₁</text>
-                
-                <!-- Circuit 1 Current Arrow -->
-                <path d="M 235 260 L 255 260 L 245 250 M 255 260 L 245 270" fill="none" stroke="#16a34a" stroke-width="3"/>
-                <text x="260" y="280" font-family="sans-serif" font-size="14" fill="#16a34a" font-weight="bold">I₁ (זרם משותף)</text>
-
-                <!-- Circuit 2 Background -->
-                <rect x="420" y="20" width="360" height="310" rx="15" fill="#f8fafc" stroke="#e2e8f0" stroke-width="2"/>
-                <text x="600" y="50" font-family="sans-serif" font-size="18" font-weight="bold" fill="#334155" text-anchor="middle">מעגל 2 (חיבור במקביל)</text>
-                
-                <!-- Circuit 2 Wires main -->
-                <path d="M 480 260 L 480 170" fill="none" stroke="#64748b" stroke-width="4"/>
-                <path d="M 680 170 L 720 170 L 720 260 Z" fill="none" stroke="#64748b" stroke-width="4"/>
-                <path d="M 480 260 L 720 260" fill="none" stroke="#64748b" stroke-width="4"/>
-                
-                <!-- Circuit 2 Parallel branches -->
-                <path d="M 480 170 L 520 170 L 520 70 L 640 70 L 640 170" fill="none" stroke="#64748b" stroke-width="4"/>
-                <path d="M 480 170 L 520 170 L 520 120 L 640 120 L 640 170" fill="none" stroke="#64748b" stroke-width="4"/>
-                <path d="M 480 170 L 680 170" fill="none" stroke="#64748b" stroke-width="4"/>
-                
-                <!-- Circuit 2 Source -->
-                <line x1="570" y1="260" x2="590" y2="260" stroke="#000" stroke-width="4"/>
-                <line x1="590" y1="245" x2="590" y2="275" stroke="#000" stroke-width="4"/>
-                <line x1="610" y1="230" x2="610" y2="290" stroke="#000" stroke-width="2"/>
-                <line x1="610" y1="260" x2="630" y2="260" stroke="#000" stroke-width="4"/>
-                <text x="595" y="305" font-family="sans-serif" font-size="14" fill="#000" text-anchor="middle">ε, r</text>
-
-                <!-- Circuit 2 Bulbs -->
-                <circle cx="580" cy="70" r="15" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
-                <line x1="570" y1="60" x2="590" y2="80" stroke="#ca8a04" stroke-width="2"/>
-                <line x1="590" y1="60" x2="570" y2="80" stroke="#ca8a04" stroke-width="2"/>
-                
-                <circle cx="580" cy="120" r="15" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
-                <line x1="570" y1="110" x2="590" y2="130" stroke="#ca8a04" stroke-width="2"/>
-                <line x1="590" y1="110" x2="570" y2="130" stroke="#ca8a04" stroke-width="2"/>
-                
-                <circle cx="580" cy="170" r="15" fill="#fef08a" stroke="#ca8a04" stroke-width="2"/>
-                <line x1="570" y1="160" x2="590" y2="180" stroke="#ca8a04" stroke-width="2"/>
-                <line x1="590" y1="160" x2="570" y2="180" stroke="#ca8a04" stroke-width="2"/>
-
-                <text x="530" y="55" font-family="sans-serif" font-size="12" fill="#ca8a04">I_n</text>
-                <text x="530" y="105" font-family="sans-serif" font-size="12" fill="#ca8a04">I_n</text>
-                <text x="530" y="155" font-family="sans-serif" font-size="12" fill="#ca8a04">I_n</text>
-
-                <!-- Circuit 2 Ammeter & Resistor -->
-                <circle cx="680" cy="170" r="15" fill="#e0f2fe" stroke="#0284c7" stroke-width="2"/>
-                <text x="680" y="175" font-family="sans-serif" font-size="14" fill="#0284c7" text-anchor="middle">A₂</text>
-                
-                <rect x="705" y="195" width="30" height="50" fill="#f1f5f9" stroke="#475569" stroke-width="2"/>
-                <text x="745" y="225" font-family="sans-serif" font-size="14" fill="#475569">R₂</text>
-                
-                <!-- Circuit 2 Current Arrow -->
-                <path d="M 635 260 L 655 260 L 645 250 M 655 260 L 645 270" fill="none" stroke="#16a34a" stroke-width="3"/>
-                <text x="660" y="285" font-family="sans-serif" font-size="14" fill="#16a34a" font-weight="bold">I₂ (זרם ראשי)</text>
-            </svg>
-        </div>
-
-
-        <!-- סעיף א -->
-        <div class="section-card">
-            <h2 class="text-xl font-bold text-blue-600 mb-4">סעיף א' - חישוב הוריות מדי הזרם</h2>
+        <!-- הרחבה מושגית -->
+        <div class="bg-indigo-50 border-r-4 border-indigo-500 p-5 rounded-l-lg mb-6 shadow-sm">
+            <h4 class="text-lg font-bold text-indigo-900 mb-2 flex items-center">
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                רגע של למידה: ערכים נומינליים של נורה
+            </h4>
+            <p class="content-paragraph text-indigo-800">
+                על כל נורה מודפסים שני מספרים על ידי היצרן, למשל \( V_n = 3 \text{ V} \) ו- \( P_n = 2 \text{ W} \). אלו הם <strong>הערכים הנומינליים</strong> (ערכי עבודה מתוכננים המוגדרים על ידי היצרן). 
+                כאשר השאלה מציינת שהנורה <strong>"מאירה במלואה"</strong> (או "באורה המלא"), זוהי הדרך הפיזיקלית להגיד לנו שהנורה עובדת בדיוק בתנאי היצרן האופטימליים שלה. כלומר, המתח השורר עליה בפועל הוא בדיוק המתח הנומינלי (\( V = V_n \)) ולכן היא מפיקה בדיוק את ההספק הנומינלי המקסימלי שלה (\( P = P_n \)).
+            </p>
+            <p class="content-paragraph text-indigo-800 mb-3">
+                מתוך שני הנתונים הללו, אנו יכולים לחלץ מיד שני מאפיינים פיזיקליים קריטיים, מתוך הנחה שהם מתקיימים כשהיא מאירה במלואה:
+                <br>
+                1. <strong>הזרם הזורם בה:</strong> בעזרת הנוסחה \( P = V \cdot I \), נוכל לחשב את הזרם הנומינלי הדרוש לה: \( I_n = \frac{P_n}{V_n} \).
+                <br>
+                2. <strong>התנגדות הנורה:</strong> בעזרת חוק אוהם \( R = \frac{V}{I} \) או הנוסחה \( P = \frac{V^2}{R} \), נוכל למצוא את ההתנגדות הפנימית שלה: \( R = \frac{V_n^2}{P_n} \). התנגדות זו נחשבת לקבועה ברוב שאלות הבגרות.
+            </p>
             
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">א. מה נתון:</h3>
-            <ul class="list-disc list-inside mb-4 text-slate-700 space-y-1">
-                <li>על כל נורה רשום מתח נומינלי (תפעולי) של \( V_n = 3 \text{ V} \) והספק נומינלי של \( P_n = 2 \text{ W} \).</li>
-                <li>במצב המתואר, כל הנורות בכל מעגל מאירות ב"אורן המלא" (קרי, מקבלות את המתח והזרם הנומינליים שלהן).</li>
-                <li>מתח ההדקים במעגל 1 (נמדד על ידי וולטמטר \( V_1 \)) הוא \( V_1 = 9 \frac{1}{3} \text{ V} = \frac{28}{3} \text{ V} \).</li>
-                <li>מתח ההדקים במעגל 2 (נמדד על ידי וולטמטר \( V_2 \)) הוא \( V_2 = 4 \text{ V} \).</li>
-                <li><strong>שלב 0 - יחידות מידה (MKS):</strong> היחידות הנתונות הן כבר ביחידות תקניות (וולט ו-וואט), ולכן אין צורך בהמרה.</li>
-            </ul>
+            <div class="mt-4 p-4 bg-white bg-opacity-60 rounded-lg border border-indigo-100">
+                <h5 class="font-bold text-indigo-900 mb-2">מה קורה כאשר חורגים מתנאי היצרן?</h5>
+                <ul class="list-disc list-inside text-indigo-800 space-y-2">
+                    <li><strong>כשהמתח בפועל נמוך מהנומינלי (\( V < V_n \)):</strong> הנורה מקבלת פחות אנרגיה ממה שדרוש לה. היא תמשיך לעבוד, אך תאיר באור עמום וחלש יותר. זהו מצב תקין לחלוטין שלא פוגע בנורה.</li>
+                    <li><strong>כשהמתח בפועל גבוה מהנומינלי (\( V > V_n \)):</strong> הנורה תאיר באור חזק ומסנוור הרבה יותר מהרגיל, אך זהו מצב מסוכן! חוט הלהט עשוי להתחמם יתר על המידה ולהישרף במהירות. במצב כזה (שבו אנו מספקים רכיבים גבוהים מהמותר), אנו חורגים מתנאי ההפעלה והיצרן כמובן מסיר כל אחריות על הרכיב.</li>
+                </ul>
+            </div>
+        </div>
 
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ב. מה מחפשים:</h3>
-            <p class="mb-4 text-slate-700">את הוריות מדי הזרם במעגלים. כלומר, את הזרם הראשי הזורם דרך מד הזרם \( A_1 \) במעגל 1 (נסמנו \( I_1 \)) ואת הזרם הראשי דרך מד הזרם \( A_2 \) במעגל 2 (נסמנו \( I_2 \)).</p>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 text-slate-700 space-y-1">
+                    <li>על כל נורה מתח נומינלי \( V_n = 3 \text{ V} \) והספק נומינלי \( P_n = 2 \text{ W} \).</li>
+                    <li>כל הנורות מאירות ב"אורן המלא".</li>
+                    <li><strong>שלב 0 - MKS:</strong> יחידות תקניות, אין צורך בהמרה.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-700">את הוריות מדי הזרם במעגלים. כלומר, את הזרם הראשי \( I_1 \) העובר דרך \( A_1 \), והזרם הראשי \( I_2 \) העובר דרך \( A_2 \).</p>
+            </div>
+        </div>
 
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ג. נוסחאות ועקרונות בשימוש:</h3>
-            <div class="mb-4">
-                <span class="formula-badge">\( P = V \cdot I \)</span>
-                <span class="formula-badge">חוק הזרמים של קירכהוף (צומת)</span>
-                <p class="text-sm text-slate-600 mt-1">נשתמש בנוסחת ההספק החשמלי כדי למצוא את הזרם הנומינלי הדרוש לנורה בודדת. לאחר מכן, ניישם עקרונות חיבור בטור (הזרם זהה בכל הרכיבים) וחיבור במקביל (הזרם הראשי מתפצל שווה בשווה בין ענפים זהים) כדי למצוא את הזרם הראשי.</p>
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( P = V \cdot I \)</span>
+            <span class="formula-badge">חוק הזרמים של קירכהוף (צומת)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            
+            <div class="step-label">שלב 1: זרם נומינלי לנורה אחת</div>
+            <p class="content-paragraph">נחשב את הזרם הנדרש להארה מלאה על פי נתוני היצרן:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I_n = \frac{P_n}{V_n} = \frac{2 \text{ W}}{3 \text{ V}} = \frac{2}{3} \text{ A} \]
             </div>
 
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ד. הצבה ופתרון:</h3>
-            <div class="overflow-x-auto text-slate-700 leading-loose">
-                נחשב תחילה את הזרם הנומינלי (הנדרש להארה מלאה) שעובר דרך נורה אחת, מתוך הנתונים הרשומים עליה:
-                \[ I_n = \frac{P_n}{V_n} = \frac{2 \text{ W}}{3 \text{ V}} = \frac{2}{3} \text{ A} \]
-                <br>
-                <strong>במעגל 1:</strong> שלוש הנורות, מד הזרם \( A_1 \) והנגד המשתנה מחוברים <strong>בטור</strong>. בחיבור טורי הזרם בכל רכיבי המעגל זהה. מכיוון שהנורות מאירות באורן המלא, הזרם העובר בהן הוא הזרם הנומינלי שלהן. לכן, הזרם שמודד האמפרמטר הוא:
+            <div class="step-label">שלב 2: הזרם במעגל 1 (טורי)</div>
+            <p class="content-paragraph">שלוש הנורות מחוברות בטור יחד עם מד הזרם. בחיבור טורי הזרם זהה בכולן. מאחר והן מוארות במלואן:</p>
+            <div class="math-container text-center" dir="ltr">
                 \[ I_1 = I_n = \frac{2}{3} \text{ A} \approx 0.667 \text{ A} \]
-                <br>
-                <strong>במעגל 2:</strong> שלוש הנורות מחוברות <strong>במקביל</strong> אחת לשנייה, וכל הקבוצה מחוברת בטור למד הזרם \( A_2 \) ולנגד המשתנה. כל נורה שמאירה באורה המלא צורכת זרם של \( \frac{2}{3} \text{ A} \). לפי חוק הצמתים של קירכהוף, הזרם הראשי המגיע מהמקור (ונמדד על ידי \( A_2 \)) מתפצל לשלושת הענפים. מכיוון שהנורות זהות, הזרם הראשי שווה לסכום הזרמים בענפים:
+            </div>
+
+            <div class="step-label">שלב 3: הזרם במעגל 2 (מקבילי)</div>
+            <p class="content-paragraph">הנורות מחוברות במקביל, הזרם הראשי מתפצל ל-3. מכיוון שהנורות מוארות במלואן, סכום הזרמים הוא:</p>
+            <div class="math-container text-center" dir="ltr">
                 \[ I_2 = 3 \cdot I_n = 3 \cdot \frac{2}{3} \text{ A} = 2 \text{ A} \]
             </div>
 
-            <div class="final-answer">
-                הוריית מד הזרם במעגל 1 היא \( I_1 = 0.667 \text{ A} \)<br>
-                הוריית מד הזרם במעגל 2 היא \( I_2 = 2.00 \text{ A} \)
-            </div>
+            <p class="final-answer">מסקנה: הוריית מד הזרם \( A_1 \) היא \( 0.667 \text{ A} \), והוריית \( A_2 \) היא \( 2.00 \text{ A} \).</p>
+        </div>
 
-            <div class="teacher-highlight">
-                <div class="teacher-highlight-icon">!</div>
-                <strong>טיפ מורה:</strong> בבעיות מסוג זה, המשפט "מאירות באורן המלא" הוא המפתח! הוא מאפשר לנו לחלץ את הזרם (או המתח) האמיתי ששורר על הרכיב מתוך נתוני היצרן. במעגל טורי - הזרם מכתיב את הכלל. במעגל מקבילי - המתח הוא המשותף, והזרמים מתחברים.
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> בבעיות מסוג זה, המשפט "מאירות באורן המלא" הוא המפתח! הוא מאפשר לנו לחלץ את הזרם (או המתח) האמיתי ששורר על הרכיב מתוך נתוני היצרן. במעגל טורי - הזרם מכתיב את הכלל. במעגל מקבילי - המתח הוא המשותף, והזרמים מתחברים.
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב' - חישוב התנגדות הנגד המשתנה</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 text-slate-700 space-y-1">
+                    <li><strong>נתון חדש בשאלה:</strong> מתח ההדקים במעגל 1 הוא \( V_1 = 9 \frac{1}{3} \text{ V} = \frac{28}{3} \text{ V} \).</li>
+                    <li><strong>נתון חדש בשאלה:</strong> מתח ההדקים במעגל 2 הוא \( V_2 = 4 \text{ V} \).</li>
+                    <li>זרמים שחושבו בסעיף א': \( I_1 = \frac{2}{3} \text{ A} \), \( I_2 = 2 \text{ A} \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-700">את התנגדות הנגדים המשתנים בכל מעגל (\( R_1 \) ואת \( R_2 \)).</p>
             </div>
         </div>
 
-        <!-- סעיף ב -->
-        <div class="section-card">
-            <h2 class="text-xl font-bold text-blue-600 mb-4">סעיף ב' - חישוב התנגדות הנגד המשתנה</h2>
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( V_{AB} = \Sigma I R - \Sigma \epsilon \)</span>
+            <span class="formula-badge">\( V = I \cdot R \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
             
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">א. מה נתון:</h3>
-            <ul class="list-disc list-inside mb-4 text-slate-700 space-y-1">
-                <li>הזרמים שמצאנו: \( I_1 = \frac{2}{3} \text{ A} \), \( I_2 = 2 \text{ A} \).</li>
-                <li>מתחי ההדקים: \( V_1 = \frac{28}{3} \text{ V} \), \( V_2 = 4 \text{ V} \).</li>
-            </ul>
+            <p class="content-paragraph font-medium text-blue-800 bg-blue-50 p-3 rounded-lg border border-blue-100 mb-4">
+                <strong>הקשר למושגים:</strong> זוכרים את "רגע של למידה" מסעיף א'? מכיוון שנאמר לנו שהנורות <strong>"מאירות באורן המלא"</strong>, המשמעות היא שהמתח הנופל על כל אחת מהן בפועל שווה בדיוק למתח הנומינלי שלה. לכן, אנו יכולים לקבוע בוודאות שהמתח על כל נורה הוא \( V = 3 \text{ V} \). נשתמש במידע זה כדי לפצח את המעגלים.
+            </p>
 
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ב. מה מחפשים:</h3>
-            <p class="mb-4 text-slate-700">את התנגדות הנגד המשתנה בכל מעגל, קרי למצוא את \( R_1 \) ואת \( R_2 \).</p>
-
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ג. נוסחאות ועקרונות בשימוש:</h3>
-            <div class="mb-4">
-                <span class="formula-badge">\( V_{AB} = \Sigma I R - \Sigma \epsilon \) (כחוק לולאות/מתחים למקטע)</span>
-                <span class="formula-badge">\( V = I \cdot R \) (חוק אוהם)</span>
-                <p class="text-sm text-slate-600 mt-1">נבטא את מתח ההדקים \( V_{ab} \) (המסופק למעגל החיצוני) כסכום מפל המתחים על הרכיבים החיצוניים (הנורות והנגד המשתנה).</p>
+            <div class="step-label">שלב 1: התנגדות \( R_1 \) (במעגל טורי)</div>
+            <p class="content-paragraph">מתח ההדקים \( V_1 \) מתחלק בין 3 הנורות והנגד המשתנה המחוברים בטור. כפי שהסקנו כעת, המתח על כל נורה הוא \( 3 \text{ V} \).</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \frac{28}{3} = 3 \cdot 3 + V_{R1} \quad \Rightarrow \quad V_{R1} = \frac{28}{3} - 9 = \frac{1}{3} \text{ V} \]
+                \[ R_1 = \frac{V_{R1}}{I_1} = \frac{\frac{1}{3}}{\frac{2}{3}} = 0.5 \text{ } \Omega \]
             </div>
 
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ד. הצבה ופתרון:</h3>
-            <div class="overflow-x-auto text-slate-700 leading-loose">
-                <strong>חישוב עבור מעגל 1 (טורי):</strong><br>
-                מד המתח מודד את מתח ההדקים של המקור. מתח זה נופל על המעגל החיצוני, המורכב משלוש נורות בטור ומנגד משתנה בטור. המתח על כל נורה (המאירה במלואה) הוא \( 3 \text{ V} \).<br>
-                נרשום משוואת מתחים עבור המעגל החיצוני:
-                \[ V_1 = 3 \cdot V_n + V_{R1} \]
-                \[ \frac{28}{3} = 3 \cdot 3 + V_{R1} \quad \Rightarrow \quad \frac{28}{3} = 9 + V_{R1} \quad \Rightarrow \quad V_{R1} = \frac{28}{3} - \frac{27}{3} = \frac{1}{3} \text{ V} \]
-                כעת, נשתמש בחוק אוהם עבור הנגד המשתנה למציאת ההתנגדות:
-                \[ R_1 = \frac{V_{R1}}{I_1} = \frac{\frac{1}{3} \text{ V}}{\frac{2}{3} \text{ A}} = 0.5 \text{ } \Omega \]
-
-                <br><strong>חישוב עבור מעגל 2 (מקבילי):</strong><br>
-                גם כאן, מתח ההדקים נופל על המעגל החיצוני. המעגל החיצוני מורכב מקבוצת הנורות במקביל (שמחוברת בטור) לנגד המשתנה. מכיוון שהנורות מחוברות במקביל ומאירות במלואן, המתח על כל מקבץ הנורות הוא פשוט המתח של נורה אחת, כלומר \( V_n = 3 \text{ V} \).<br>
-                נרשום משוואת מתחים עבור המעגל החיצוני:
-                \[ V_2 = V_{\text{parallel\_bulbs}} + V_{R2} \]
-                \[ 4 = 3 + V_{R2} \quad \Rightarrow \quad V_{R2} = 4 - 3 = 1 \text{ V} \]
-                נחשב את ההתנגדות בעזרת חוק אוהם:
-                \[ R_2 = \frac{V_{R2}}{I_2} = \frac{1 \text{ V}}{2 \text{ A}} = 0.5 \text{ } \Omega \]
+            <div class="step-label">שלב 2: התנגדות \( R_2 \) (במעגל מקבילי)</div>
+            <p class="content-paragraph">במקביל המתח על כל נורה זהה למתח על כל קבוצת הנורות יחד (\( 3 \text{ V} \)). יתרת מתח ההדקים נופלת על הנגד המשתנה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 4 = 3 + V_{R2} \quad \Rightarrow \quad V_{R2} = 1 \text{ V} \]
+                \[ R_2 = \frac{V_{R2}}{I_2} = \frac{1}{2} = 0.5 \text{ } \Omega \]
             </div>
 
-            <div class="final-answer">
-                התנגדות הנגד המשתנה במעגל 1 היא \( R_1 = 0.500 \text{ } \Omega \)<br>
-                התנגדות הנגד המשתנה במעגל 2 היא \( R_2 = 0.500 \text{ } \Omega \)
-            </div>
+            <p class="final-answer">מסקנה: בשני המעגלים התנגדות הנגד המשתנה היא \( R_1 = R_2 = 0.500 \text{ } \Omega \).</p>
+        </div>
 
-            <div class="teacher-highlight">
-                <div class="teacher-highlight-icon">!</div>
-                <strong>טיפ מורה:</strong> שימו לב לבלבול נפוץ! תלמידים נוטים לחבר מתחים גם בחיבור מקבילי. במעגל מקבילי (מעגל 2), המתח על כל ענף זהה ושווה למתח על כל הצומת המקבילי כולו (3 וולט). במעגל טורי (מעגל 1), יש לחבר את מפלי המתח (3+3+3 = 9 וולט).
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> שימו לב לבלבול נפוץ! בחיבור מקבילי (מעגל 2), המתח על כל ענף זהה ושווה למתח על הצומת המקבילי כולו (3 וולט). במעגל טורי (מעגל 1), יש לחבר את מפלי המתח (3+3+3 = 9 וולט).
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג' - השוואת ההספק המושקע על ידי המקור</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="mt-2 text-slate-700">זרמים שחושבו בסעיף א': \( I_1 = \frac{2}{3} \text{ A} \), \( I_2 = 2 \text{ A} \). מדובר באותו מקור מתח בעל כא"מ \( \epsilon \).</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-700">באיזה מעגל ההספק המושקע (על ידי מקור המתח) גדול יותר, ובכמה פעמים.</p>
             </div>
         </div>
 
-        <!-- סעיף ג -->
-        <div class="section-card">
-            <h2 class="text-xl font-bold text-blue-600 mb-4">סעיף ג' - השוואת ההספק המושקע על ידי המקור</h2>
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( P_{in} = \epsilon \cdot I \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
             
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">א. מה נתון:</h3>
-            <ul class="list-disc list-inside mb-4 text-slate-700 space-y-1">
-                <li>מקור המתח אידיאלי אינו מושלם ויש לו התנגדות פנימית \( r \) וכא"מ \( \epsilon \) זהים בשני המעגלים.</li>
-                <li>ידועים לנו מתחי ההדקים והזרמים הראשיים בכל מעגל מתחילת השאלה.</li>
-            </ul>
-
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ב. מה מחפשים:</h3>
-            <p class="mb-4 text-slate-700">באיזה מעגל ההספק המושקע (ההספק הכולל המופק) על ידי מקור המתח גדול יותר, ובכמה פעמים הוא גדול מהשני.</p>
-
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ג. נוסחאות ועקרונות בשימוש:</h3>
-            <div class="mb-4">
-                <span class="formula-badge">\( V_{ab} = \epsilon - r \cdot I \) (מתח הדקים)</span>
-                <span class="formula-badge">\( P_{in} = \epsilon \cdot I \) (הספק מושקע / כללי של המקור)</span>
-                <p class="text-sm text-slate-600 mt-1">מתוך דף הנוסחאות, פיתוח של נוסחת ההספק על מקור מתח (המייצר זרם) קובע שההספק המושקע/המשמש אותנו במעגל הוא מכפלת הכא"מ בזרם הראשי. כדי לחשב זאת, נצטרך תחילה לגלות מהו הכא"מ (\( \epsilon \)).</p>
+            <div class="step-label">בניית יחס (פרופורציה) בין ההספקים</div>
+            <p class="content-paragraph">כדי לגלות "פי כמה" גדול הספק אחד מהשני, כל שצריך לעשות הוא לחלק אותם זה בזה. מכיוון שמדובר באותו מקור מתח, הכא"מ (\( \epsilon \)) זהה ופשוט יצטמצם מהמשוואה!</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \frac{P_{in,2}}{P_{in,1}} = \frac{\epsilon \cdot I_2}{\epsilon \cdot I_1} = \frac{I_2}{I_1} \]
+            </div>
+            <p class="content-paragraph">נציב את הזרמים שמצאנו:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \frac{P_{in,2}}{P_{in,1}} = \frac{2}{\frac{2}{3}} = 2 \cdot \frac{3}{2} = 3 \]
             </div>
 
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ד. הצבה ופתרון:</h3>
-            <div class="overflow-x-auto text-slate-700 leading-loose">
-                ראשית, נבנה מערכת של שתי משוואות עם שני נעלמים (\( \epsilon \) ו- \( r \)) המבוססת על נוסחת מתח ההדקים בשני המעגלים:
-                <br>
-                עבור מעגל 1:
-                \[ V_1 = \epsilon - I_1 \cdot r \quad \Rightarrow \quad \frac{28}{3} = \epsilon - \frac{2}{3}r \]
-                עבור מעגל 2:
-                \[ V_2 = \epsilon - I_2 \cdot r \quad \Rightarrow \quad 4 = \epsilon - 2r \]
-                <br>
-                נפתור את המערכת. נכפיל את משוואה 1 ב-3 כדי להיפטר מהמכנה:
-                \[ 28 = 3\epsilon - 2r \]
-                נחסר את משוואה 2 מהמשוואה החדשה:
-                \[ 28 - 4 = (3\epsilon - 2r) - (\epsilon - 2r) \]
-                \[ 24 = 2\epsilon \quad \Rightarrow \quad \epsilon = 12 \text{ V} \]
-                <br>
-                כעת, נחשב את ההספק המושקע (\( P_{in} = \epsilon \cdot I \)) בכל אחד מהמעגלים:
-                \[ \text{מעגל 1: } P_{in,1} = \epsilon \cdot I_1 = 12 \cdot \frac{2}{3} = 8 \text{ W} \]
-                \[ \text{מעגל 2: } P_{in,2} = \epsilon \cdot I_2 = 12 \cdot 2 = 24 \text{ W} \]
-                נחשב פי כמה גדול ההספק במעגל 2 לעומת מעגל 1:
-                \[ \frac{P_{in,2}}{P_{in,1}} = \frac{24}{8} = 3 \]
-            </div>
+            <p class="final-answer">מסקנה: במעגל 2 ההספק המושקע גדול יותר (פי 3.00).</p>
+        </div>
 
-            <div class="final-answer">
-                במעגל 2 ההספק המושקע גדול יותר, והוא גדול פי 3.00 מההספק המושקע במעגל 1.
-            </div>
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> שימו לב כמה אלגנטית השיטה הזו! סטודנטים רבים נוטים לבנות כאן מערכת משוואות ארוכה (למשל ממתח ההדקים) רק כדי למצוא את ערכו המדויק של \( \epsilon \). למעשה - אין בזה צורך! כששואלים אותנו "פי כמה", לרוב נוכל להשתמש ביחסים ולצמצם את הגדלים הקבועים.
+        </div>
+    </section>
 
-            <div class="teacher-highlight">
-                <div class="teacher-highlight-icon">!</div>
-                <strong>טיפ מורה:</strong> המושג "הספק מושקע" (\( P_{in} \)) מתייחס תמיד להספק הכולל שמקור המתח ממיר (לרוב מאנרגיה כימית לחשמלית). אסור לבלבל אותו עם "הספק מנוצל" (\( P_{eff} \)) שהוא ההספק על הצרכנים החיצוניים ומחושב כ- \( V_{ab} \cdot I \).
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד' - השוואת ההספק המבוזבז בתוך המקור</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="mt-2 text-slate-700">הזרמים של שני המעגלים ומקור מתח בעל התנגדות פנימית \( r \) משותפת.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-700">באיזה מעגל ההספק המבוזבז בתוך המקור גדול יותר, ופי כמה.</p>
             </div>
         </div>
 
-        <!-- סעיף ד -->
-        <div class="section-card">
-            <h2 class="text-xl font-bold text-blue-600 mb-4">סעיף ד' - השוואת ההספק המבוזבז בתוך המקור</h2>
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( P_r = I^2 \cdot r \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
             
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">א. מה נתון:</h3>
-            <ul class="list-disc list-inside mb-4 text-slate-700 space-y-1">
-                <li>על מנת לחשב הספק מבוזבז, אנו זקוקים להתנגדות הפנימית של המקור \( r \), שניתן לחלץ מהסעיף הקודם.</li>
-            </ul>
-
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ב. מה מחפשים:</h3>
-            <p class="mb-4 text-slate-700">באיזה מעגל ההספק המבוזבז בתוך מקור המתח גדול יותר, ובכמה פעמים.</p>
-
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ג. נוסחאות ועקרונות בשימוש:</h3>
-            <div class="mb-4">
-                <span class="formula-badge">\( P_r = I^2 \cdot r \)</span>
-                <p class="text-sm text-slate-600 mt-1">פיתוח מתוך הנוסחאות \( P = V \cdot I \) ו- \( V = I \cdot r \). הספק המבוזבז (על חום) בהתנגדות הפנימית תלוי בריבוע הזרם שעובר בה.</p>
+            <div class="step-label">השוואת ההספק המבוזבז באמצעות יחס</div>
+            <p class="content-paragraph">שוב, נשתמש בטריק האלגנטי של בניית יחס. אנו מחפשים "פי כמה" ומכיוון שההתנגדות הפנימית \( r \) זהה בשני המעגלים, היא תצטמצם מהביטוי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \frac{P_{r,2}}{P_{r,1}} = \frac{I_2^2 \cdot r}{I_1^2 \cdot r} = \left(\frac{I_2}{I_1}\right)^2 \]
+            </div>
+            <p class="content-paragraph">כבר מצאנו בסעיף הקודם שהיחס בין הזרמים הוא 3, לכן:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \frac{P_{r,2}}{P_{r,1}} = (3)^2 = 9 \]
             </div>
 
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ד. הצבה ופתרון:</h3>
-            <div class="overflow-x-auto text-slate-700 leading-loose">
-                תחילה, נחשב את ההתנגדות הפנימית \( r \) על ידי הצבת \( \epsilon = 12 \text{ V} \) במשוואה 2 מהסעיף הקודם:
-                \[ 4 = 12 - 2r \quad \Rightarrow \quad 2r = 8 \quad \Rightarrow \quad r = 4 \text{ } \Omega \]
-                <br>
-                כעת, נחשב את ההספק המבוזבז בתוך המקור בכל מעגל:
-                \[ \text{מעגל 1: } P_{r,1} = I_1^2 \cdot r = \left(\frac{2}{3}\right)^2 \cdot 4 = \frac{4}{9} \cdot 4 = \frac{16}{9} \text{ W} \approx 1.778 \text{ W} \]
-                \[ \text{מעגל 2: } P_{r,2} = I_2^2 \cdot r = (2)^2 \cdot 4 = 4 \cdot 4 = 16 \text{ W} \]
-                נבדוק פי כמה ההספק המבוזבז במעגל 2 גדול מזה שבמעגל 1:
-                \[ \text{יחס: } \frac{P_{r,2}}{P_{r,1}} = \frac{16}{\frac{16}{9}} = 16 \cdot \frac{9}{16} = 9 \]
-            </div>
+            <p class="final-answer">מסקנה: ההספק המבוזבז בתוך מקור המתח גדול יותר במעגל 2 (פי 9.00).</p>
+        </div>
 
-            <div class="final-answer">
-                ההספק המבוזבז בתוך מקור המתח גדול יותר במעגל 2, והוא גדול פי 9.00 מאשר במעגל 1.
-            </div>
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> גם כאן חסכנו לעצמנו את החישוב של \( r \). חשוב לזכור: ההספק המבוזבז (כחום) על התנגדות תלוי ב<strong>ריבוע הזרם</strong> שעובר בה. ולכן, כשהזרם גדל פי 3, כמות החום המתבזבזת בתוך הסוללה גדלה פי 9!
+        </div>
+    </section>
 
-            <div class="teacher-highlight">
-                <div class="teacher-highlight-icon">!</div>
-                <strong>טיפ מורה:</strong> דרך מהירה יותר, ללא חישוב \( r \): אנו יודעים שההספק המבוזבז יחסי לריבוע הזרם \( I^2 \). מאחר והזרם במעגל 2 גדול פי 3 מהזרם במעגל 1 (2 אמפר לעומת 2/3 אמפר), ההספק המבוזבז בו יהיה גדול פי \( 3^2 = 9 \).
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה' - התייחסות לטענת התלמיד (נצילות)</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="mt-2 text-slate-700">תלמיד טוען שכיוון שהספק הנורות זהה בשני המעגלים (6W), המעגל שבו הספק הנגד המשתנה גדול יותר יהיה המעגל הנציל יותר.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-700">לקבוע האם הטענה נכונה או שגויה ולנמק באופן פיזיקלי.</p>
             </div>
         </div>
 
-        <!-- סעיף ה -->
-        <div class="section-card">
-            <h2 class="text-xl font-bold text-blue-600 mb-4">סעיף ה' - התייחסות לטענת התלמיד (נצילות)</h2>
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \eta = \frac{P_{eff}}{P_{in}} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">נימוק התשובה:</h4>
+            <div class="step-label">הגדרת ההספק המנוצל</div>
+            <p class="content-paragraph">ההספק המנוצל הכולל של המעגל (\( P_{eff} \)) מוגדר כסכום ההספקים של כל הצרכנים החיצוניים אליהם המקור מזרים אנרגיה. במעגל שלנו הצרכנים הם הנורות והנגד המשתנה, ולכן נוכל לרשום:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ P_{eff} = P_{\text{bulbs}} + P_R \]
+            </div>
             
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">א. מה נתון:</h3>
-            <ul class="list-disc list-inside mb-4 text-slate-700 space-y-1">
-                <li>הגדרת הנצילות: יחס בין ההספק המנוצל על ידי כל המעגל החיצוני (הספק מנוצל \( P_{eff} \)) לבין ההספק המושקע על ידי המקור (\( P_{in} \)).</li>
-                <li>תלמיד טוען: מכיוון שהספק הנורות הכולל זהה בשני המעגלים (6 וואט), המעגל שבו ההספק של הנגד המשתנה גדול יותר - הוא המעגל בעל הנצילות הגדולה יותר.</li>
-            </ul>
-
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ב. מה מחפשים:</h3>
-            <p class="mb-4 text-slate-700">האם טענת התלמיד נכונה או שגויה, ולנמק זאת באופן פיזיקלי/מתמטי.</p>
-
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ג. נוסחאות ועקרונות בשימוש:</h3>
-            <div class="mb-4">
-                <span class="formula-badge">\( \eta = \frac{P_{eff}}{P_{in}} \)</span>
-                <span class="formula-badge">\( P_{eff} = P_{\text{bulbs}} + P_R \)</span>
-                <p class="text-sm text-slate-600 mt-1">נבדוק את מרכיבי נוסחת הנצילות (מונה ומכנה) וכיצד הם משתנים בין שני המעגלים.</p>
+            <div class="step-label">ניתוח טענת התלמיד</div>
+            <p class="content-paragraph">התלמיד מבסס את טענתו על התבוננות רק במונה של הנצילות (ההספק המנוצל הכולל). אכן במעגל 2 הספק הנגד גדול יותר ולכן \( P_{eff} \) (ההספק המנוצל) במעגל 2 גדול יותר.</p>
+            <p class="content-paragraph">אולם, המכנה בנוסחת הנצילות הוא ההספק המושקע על ידי המקור \( P_{in} = \epsilon \cdot I \). כפי שראינו בסעיף ג', המכנה אינו קבוע ומשתנה דרסטית בהתאם לזרם:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ P_{in,2} = 3 \cdot P_{in,1} \]
             </div>
+            <p class="content-paragraph">הגידול העצום במכנה (ההספק המושקע גדל פי 3) גובר משמעותית על הגידול המתון במונה. התלמיד התעלם לחלוטין מהמכנה שמשתנה בעקבות הזרם השונה.</p>
 
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ד. הצבה ופתרון:</h3>
-            <div class="overflow-x-auto text-slate-700 leading-loose">
-                התלמיד מבסס את טענתו על התבוננות במונה של נוסחת הנצילות בלבד: ההספק המנוצל הכולל הוא סכום הספק הנורות והספק הנגד (\( P_{eff} = P_{\text{bulbs}} + P_R \)). אם \( P_R \) גדול יותר, אז \( P_{eff} \) גדול יותר. מסקנה זו הייתה נכונה <strong>לו המכנה היה קבוע</strong>.<br><br>
-                אולם, המכנה הוא ההספק המושקע על ידי המקור (\( P_{in} = \epsilon \cdot I \)). כפי שראינו בסעיף ג', הספק זה <strong>אינו קבוע</strong>, אלא תלוי ישירות בזרם הראשי \( I \).<br>
-                נבדוק את הנתונים:<br>
-                הספק הנגד המשתנה במעגל 1: \( P_{R1} = I_1^2 \cdot R_1 = \left(\frac{2}{3}\right)^2 \cdot 0.5 = \frac{4}{9} \cdot \frac{1}{2} = \frac{2}{9} \text{ W} \)<br>
-                הספק הנגד המשתנה במעגל 2: \( P_{R2} = I_2^2 \cdot R_2 = 2^2 \cdot 0.5 = 4 \cdot 0.5 = 2 \text{ W} \)<br>
-                אכן, \( P_{R2} > P_{R1} \) ולכן ההספק המנוצל الكולל במעגל 2 גדול יותר מזה שבמעגל 1 (\( 8\text{W} \) לעומת \( 6.22\text{W} \)).<br><br>
-                אך כשאנו בוחנים את המכנה (ההספק המושקע), במעגל 2 ההספק המושקע גדל באופן דרסטי לפי 3 (24 וואט לעומת 8 וואט). הגידול העצום במכנה (פי 3) עולה על הגידול המתון במונה. לכן, התלמיד מתעלם מהתלות החשובה של ההספק המושקע בזרם ולפיכך טענתו שגויה מיסודה.
+            <p class="final-answer">מסקנה: טענת התלמיד שגויה מיסודה מכיוון שהתעלם מהשתנות ההספק המושקע (המכנה).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה - בדקו את עצמכם!</strong> תמיד כשיש יחס בין שני גדלים (כמו בנצילות), יש לבחון כיצד משתנים <strong>שני</strong> הגדלים במקביל ואי אפשר להסיק רק לפי המונה. למעשה, נוכל לבדוק את עצמנו בקלות: נצילות יכולה להיכתב גם כ- \( \eta = \frac{V_{ab}}{\epsilon} \). מכיוון ש- \( \epsilon \) קבוע בשני המעגלים, אם מתח ההדקים \( V_{ab} \) שונה, הנצילות בהכרח שונה. מכיוון שמתח ההדקים גדול יותר במעגל 1 (\( 9\frac{1}{3} > 4 \)), הנצילות בו בהכרח גדולה יותר (בניגוד גמור לטענת התלמיד!).
+        </div>
+    </section>
+
+    <!-- סעיף ו -->
+    <section class="section-card" id="part-f">
+        <h3 class="section-header">סעיף ו' - קביעת המעגל בעל הנצילות הגדולה יותר</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="mt-2 text-slate-700">מתחי ההדקים בשני המעגלים: \( V_1 = 28/3 \text{ V} \), ו- \( V_2 = 4 \text{ V} \).</p>
             </div>
-
-            <div class="final-answer">
-                הטענה של התלמיד היא <strong>שגויה</strong>. הוא התייחס רק להגדלת המונה (ההספק המנוצל) והתעלם מכך שהמכנה (ההספק המושקע על ידי המקור) משתנה גם הוא באופן משמעותי כתלות בזרם בין המעגלים.
-            </div>
-
-            <div class="teacher-highlight">
-                <div class="teacher-highlight-icon">!</div>
-                <strong>טיפ מורה:</strong> תמיד כשיש יחס בין שני גדלים כמו בנצילות, יש לבחון כיצד משתנים <strong>שני</strong> הגדלים במקביל! אי אפשר להסיק על שבר רק לפי התנהגות המונה שלו אם גם המכנה שלו יכול להשתנות.
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-700">באיזה מעגל הנצילות גדולה יותר (לנמק מתוך המשוואות).</p>
             </div>
         </div>
 
-        <!-- סעיף ו -->
-        <div class="section-card">
-            <h2 class="text-xl font-bold text-blue-600 mb-4">סעיף ו' - קביעת המעגל בעל הנצילות הגדולה יותר</h2>
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \eta = \frac{P_{eff}}{P_{in}} = \frac{V_{ab} \cdot I}{\epsilon \cdot I} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
             
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">א. מה נתון:</h3>
-            <ul class="list-disc list-inside mb-4 text-slate-700 space-y-1">
-                <li>כל הנתונים והחישובים עד כה.</li>
-                <li>מתחי ההדקים: \( V_1 = \frac{28}{3} \text{ V} \), \( V_2 = 4 \text{ V} \).</li>
-                <li>כא"מ: \( \epsilon = 12 \text{ V} \).</li>
-            </ul>
-
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ב. מה מחפשים:</h3>
-            <p class="mb-4 text-slate-700">באיזה מעגל הנצילות גדולה יותר (לנמק פיזיקלית/מתמטית).</p>
-
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ג. נוסחאות ועקרונות בשימוש:</h3>
-            <div class="mb-4">
-                <span class="formula-badge">\( \eta = \frac{P_{eff}}{P_{in}} = \frac{V_{ab} \cdot I}{\epsilon \cdot I} = \frac{V_{ab}}{\epsilon} \)</span>
-                <p class="text-sm text-slate-600 mt-1">נוכיח שנצילות של מעגל תלויה ביחס שבין מתח ההדקים לכא"מ המקור.</p>
-            </div>
-
-            <h3 class="font-bold text-slate-800 border-b-2 border-slate-200 inline-block mb-2">ד. הצבה ופתרון:</h3>
-            <div class="overflow-x-auto text-slate-700 leading-loose">
-                נפתח את נוסחת הנצילות כדי להקל על ההשוואה. ההספק המנוצל על ידי כל המעגל החיצוני שווה למכפלת מתח ההדקים בזרם: \( P_{eff} = V_{ab} \cdot I \). ההספק המושקע על ידי המקור שווה למכפלת הכא"מ בזרם: \( P_{in} = \epsilon \cdot I \).<br>
-                אם נציב זאת בנוסחת הנצילות, הזרם יצטמצם ונקבל קשר ישיר למתח ההדקים:
+            <div class="step-label">פיתוח קשר מתמטי פשוט</div>
+            <p class="content-paragraph">נפתח את נוסחת הנצילות. ההספק המנוצל על ידי המעגל שווה למתח ההדקים כפול הזרם, וההספק המושקע הוא הכא"מ כפול הזרם:</p>
+            <div class="math-container text-center" dir="ltr">
                 \[ \eta = \frac{V_{ab} \cdot I}{\epsilon \cdot I} = \frac{V_{ab}}{\epsilon} \]
-                מכיוון שהכא"מ (\( \epsilon = 12 \text{ V} \)) זהה בשני המעגלים, הנצילות נמצאת ביחס ישר למתח ההדקים.<br>
-                נבדוק את מתחי ההדקים: במעגל 1 מתח ההדקים הוא \( 9\frac{1}{3} \text{ V} \), ובמעגל 2 מתח ההדקים הוא רק \( 4 \text{ V} \). מכיוון ש- \( V_1 > V_2 \), בהכרח עולה כי הנצילות של מעגל 1 גדולה יותר.<br>
-                אפשר להראות גם בחישוב מספרי:
-                \[ \eta_1 = \frac{28/3}{12} = \frac{28}{36} = \frac{7}{9} \approx 0.778 \text{ (77.8\%)} \]
-                \[ \eta_2 = \frac{4}{12} = \frac{1}{3} \approx 0.333 \text{ (33.3\%)} \]
             </div>
+            <p class="content-paragraph">מכיוון שהכא"מ (\( \epsilon \)) זהה בשני המעגלים (מדובר באותו מקור מתח), אנו רואים שהנצילות תלויה ביחס ישר למתח ההדקים. כלומר, ככל שמתח ההדקים גבוה יותר - כך הנצילות גבוהה יותר.</p>
+            <p class="content-paragraph">מכיוון שמתח ההדקים במעגל הראשון גדול משמעותית (\( \frac{28}{3} > 4 \)), המעגל הראשון הוא בהכרח בעל הנצילות הגדולה יותר.</p>
 
-            <div class="final-answer">
-                במעגל 1 הנצילות גדולה יותר. הסיבה היא שהנצילות תלויה ביחס שבין מתח ההדקים לכא"מ, ולמעגל 1 מתח הדקים גבוה יותר עבור אותו מקור מתח.
-            </div>
-
-            <div class="teacher-highlight">
-                <div class="teacher-highlight-icon">!</div>
-                <strong>טיפ מורה:</strong> זה כלל אצבע חשוב מאוד! ככל שמתח ההדקים שקרוב יותר לערכו של הכא"מ (משמע, פחות מתח "מתבזבז" בתוך המקור על ההתנגדות הפנימית), כך המעגל יעיל ונציל יותר. במעגל 2 הזרם היה עצום, ולכן רוב המתח "נפל" על המקור פנימה, מה שהוביל לנצילות נמוכה מאוד.
-            </div>
+            <p class="final-answer">מסקנה: במעגל 1 הנצילות גדולה יותר.</p>
         </div>
 
-    </div>
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> זה כלל אצבע חשוב! ככל שמתח ההדקים קרוב יותר לערכו של הכא"מ (פחות מתח מתבזבז בתוך המקור כחום), המעגל נציל יותר. במעגל 2 הזרם היה עצום, ולכן רוב המתח של הסוללה נפל עליה פנימה כבזבוז חום.
+        </div>
+    </section>
 
-    <!-- Floating Action Button for Modal -->
-    <button onclick="toggleModal(true)" class="fixed bottom-6 left-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-transform hover:scale-105 flex items-center justify-center z-40 group">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 mr-2" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-        <span class="font-bold">הצג שאלה</span>
-    </button>
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
 
-    <!-- Modal Container -->
-    <div id="questionModal" class="modal" onclick="toggleModal(false)">
-        <div class="modal-content relative p-4 bg-white" onclick="event.stopPropagation()">
-            <button onclick="toggleModal(false)" class="absolute top-2 right-2 text-slate-500 hover:text-red-500 bg-slate-100 rounded-full w-8 h-8 flex items-center justify-center z-50">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                  <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-            </button>
-            <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded" onerror="this.src=''; this.alt='התמונה לא זמינה במסמך זה.';" />
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
         </div>
     </div>
+</div>
 
-    <script>
-        function toggleModal(show) {
-            const modal = document.getElementById('questionModal');
-            if(show) {
-                modal.style.display = 'block';
-                document.body.style.overflow = 'hidden';
-            } else {
-                modal.style.display = 'none';
-                document.body.style.overflow = 'auto';
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
             }
         }
-    </script>
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
 </body>
 </html>
