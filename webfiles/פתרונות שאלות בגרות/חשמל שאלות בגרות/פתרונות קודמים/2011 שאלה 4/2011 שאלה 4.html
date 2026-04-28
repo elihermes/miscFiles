@@ -1,0 +1,830 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מוסבר - פיזיקה 5 יח"ל - כוח מגנטי ותנועת יונים</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מודרך: בגרות בפיזיקה - שדה מגנטי</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">שאלון חשמל 2011, שאלה 4</h2>
+        <p class="mt-3 text-slate-500">תנועת חלקיקים טעונים</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">שלום תלמידים! 👋</h3>
+        <p class="content-paragraph">בשאלה זו אנו חוקרים את תנועתם של שני יונים חיוביים (מימן והליום) בתוך שדה חשמלי מאיץ ולאחריו בתוך שדה מגנטי אחיד.</p>
+        <p class="content-paragraph mb-0">השאלה משלבת את חוק שימור האנרגיה יחד עם כוחות מגנטיים (כוח לורנץ) ותנועה מעגלית קצובה. בואו נפרק את זה צעד אחר צעד!</p>
+    </section>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א': כיוון השדה המגנטי</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li>היונים הם בעלי מטען חיובי <span class="inline-ltr">\( q > 0 \)</span> (יוני \( H^+ \) ו- \( He^+ \)).</li>
+                    <li>מהירות היונים בנקודה A היא כלפי מעלה.</li>
+                    <li>המסלול בתוך השדה המגנטי הוא חצי מעגל בכיוון השעון, ולכן מרכז המעגל נמצא מימין.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2">את כיוון השדה המגנטי האחיד <span class="inline-ltr">\( \vec{B} \)</span> (האם הוא נכנס אל הדף או יוצא מן הדף).</p>
+            </div>
+        </div>
+
+        <div class="mt-4 mb-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mb-2">אנו מסתמכים על כוח לורנץ הפועל על מטען נע בשדה מגנטי, המחושב לפי כלל מפורסם:</p>
+            <span class="formula-badge">כלל יד ימין (Right Hand Rule)</span>
+            <span class="formula-badge">\( \vec{F} = q\vec{v} \times \vec{B} \)</span>
+            <p class="content-paragraph mt-2">בתנועה מעגלית, שקול הכוחות (וכאן זה רק הכוח המגנטי) חייב להצביע אל עבר מרכז המעגל.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">בנקודה A, מהירות החלקיק <span class="inline-ltr">\( \vec{v} \)</span> מכוונת <strong>למעלה</strong>. מכיוון שהחלקיק מתחיל לנוע במעגל (בכיוון השעון) שמרכזו נמצא מימין לנקודת הכניסה, הכוח המגנטי <span class="inline-ltr">\( \vec{F}_B \)</span> חייב להיות מכוון <strong>ימינה</strong>.</p>
+            
+            <div class="visual-frame">
+                <img src="image-1.png" alt="תרשים כיוון וקטורים א" class="max-w-full h-auto" />
+            </div>
+
+            <p class="content-paragraph">נפעיל את כלל יד ימין:<br>
+            1. נכוון את האגודל של יד ימין בכיוון המהירות <span class="inline-ltr">\( \vec{v} \)</span> (למעלה).<br>
+            2. כף היד (כיוון הדחיפה של הכוח) פונה ימינה (אל עבר מרכז המעגל).<br>
+            3. במצב זה, כדי שהאגודל יפנה למעלה וכף היד ימינה, האצבעות (המייצגות את השדה המגנטי) חייבות להצביע אלינו, מחוץ לדף.</p>
+            
+            <p class="final-answer">תשובה סופית סעיף א': כיוון השדה המגנטי הוא יוצא מן הדף.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            תמיד זכרו לבדוק את סימן המטען! אם היינו עוסקים באלקטרון (מטען שלילי), היינו משתמשים ביד ימין והופכים את כיוון הכוח בסוף. כאן מדובר ביונים חיוביים ולכן כיוון כף היד הימנית מייצג ישירות את כיוון הכוח המגנטי.
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': גודל מהירות היונים</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li>היונים נעים בתוך שדה מגנטי אחיד בלבד.</li>
+                    <li>הכוח המגנטי פועל עליהם בהתאם למהירותם ולשדה המגנטי.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2">האם גודל מהירות היונים משתנה במהלך תנועתם בשדה המגנטי? נדרש נימוק.</p>
+            </div>
+        </div>
+
+        <div class="mt-4 mb-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">משפט עבודה ואנרגיה: \( W = \Delta E_k \)</span>
+            <span class="formula-badge">עבודה של כוח: \( W = F \Delta x \cos\alpha \)</span>
+            <span class="formula-badge">אנרגיה קינטית: \( E_k = \frac{1}{2}mv^2 \)</span>
+            <p class="content-paragraph mt-2">אנו יודעים מעקרונות המגנטיות כי הכוח המגנטי תמיד ניצב (מאונך) לוקטור המהירות של החלקיק: <span class="inline-ltr">\( \vec{F}_B \perp \vec{v} \)</span>.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">מכיוון שהכוח המגנטי הפועל על החלקיק ניצב בכל רגע ורגע לכיוון התנועה (וקטור המהירות), הזווית בין הכוח להעתק היא תמיד <span class="inline-ltr">\( 90^\circ \)</span>.<br>נחשב את העבודה שמבצע השדה המגנטי:</p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ W = F_B \cdot \Delta x \cdot \cos(90^\circ) = 0 \]
+            </div>
+            
+            <p class="content-paragraph">מכיוון שהעבודה הכוללת הפועלת על הגוף (בהיעדר כוחות אחרים) שווה לאפס, לפי משפט עבודה ואנרגיה, השינוי באנרגיה הקינטית הוא אפס:</p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ \Delta E_k = 0 \Rightarrow E_{k,\text{final}} = E_{k,\text{initial}} \]
+            </div>
+            
+            <p class="content-paragraph">מכיוון שהאנרגיה הקינטית נשמרת קבועה, והמסה <span class="inline-ltr">\( m \)</span> קבועה, נובע מכך שגודל המהירות <span class="inline-ltr">\( v \)</span> נשאר קבוע.</p>
+
+            <p class="final-answer">תשובה סופית סעיף ב': גודל מהירות היונים אינו משתנה (נשאר קבוע). הכוח המגנטי ניצב לכיוון התנועה ואינו משנה את האנרגיה הקינטית.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            חשוב לדייק במונחים! המילה "מהירות" בפיזיקה מתייחסת לוקטור (גודל + כיוון). וקטור המהירות בהחלט משתנה (כי הכיוון משתנה בתנועה מעגלית), אך <strong>גודל המהירות</strong> (Speed) נשאר קבוע. שימו לב שהשאלה דייקה ושאלה על "גודל מהירות היונים".
+        </div>
+    </section>
+
+    <!-- סעיף ג 1 -->
+    <section class="section-card" id="part-c1">
+        <h3 class="section-header">סעיף ג' (1): זמן התנועה של יון המימן</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li>יון מימן מיוצג עם מסה <span class="inline-ltr">\( m_H \)</span> ומטען <span class="inline-ltr">\( q_H \)</span>.</li>
+                    <li>הואט במתח <span class="inline-ltr">\( V \)</span> ונכנס לשדה מגנטי <span class="inline-ltr">\( B \)</span>.</li>
+                    <li>תנועתו בשדה המגנטי היא תנועה מעגלית קצובה במסלול של חצי מעגל.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2">לכתוב ביטוי לזמן התנועה <span class="inline-ltr">\( t_H \)</span> של יון המימן בשדה המגנטי באמצעות הפרמטרים הנתונים.</p>
+            </div>
+        </div>
+
+        <div class="mt-4 mb-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">החוק השני של ניוטון: \( \Sigma F_r = m a_r \)</span>
+            <span class="formula-badge">כוח מגנטי: \( F = qvB \)</span>
+            <span class="formula-badge">תאוצה רדיאלית: \( a_R = \frac{v^2}{R} \)</span>
+            <span class="formula-badge">מהירות בתנועה מעגלית: \( v = \frac{2\pi R}{T} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <div class="step-label">שלב 1: מציאת זמן המחזור \( T \)</div>
+            <p class="content-paragraph">ראשית, נרשום את משוואת הכוחות בציר הרדיאלי. הכוח היחיד שפועל הוא הכוח המגנטי:</p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ q_H v B = m_H \frac{v^2}{R} \]
+            </div>
+            
+            <p class="content-paragraph">נצמצם ב-<span class="inline-ltr">\( v \)</span> (מותר כי הוא אינו אפס) ונבודד את היחס <span class="inline-ltr">\( \frac{R}{v} \)</span>:</p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ \frac{R}{v} = \frac{m_H}{q_H B} \]
+            </div>
+            
+            <p class="content-paragraph">כעת נשתמש בנוסחת המהירות בתנועה מעגלית קצובה כדי לבטא את זמן המחזור <span class="inline-ltr">\( T \)</span>:</p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ v = \frac{2\pi R}{T} \quad \Rightarrow \quad T = 2\pi \left( \frac{R}{v} \right) \]
+            </div>
+            
+            <p class="content-paragraph">נציב את היחס שמצאנו ממשוואת הכוחות לתוך הנוסחה של זמן המחזור:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ T = 2\pi \frac{m_H}{q_H B} \]
+            </div>
+
+            <div class="step-label">שלב 2: חישוב הזמן במסלול של חצי מעגל</div>
+            <p class="content-paragraph">זמן מחזור שלם (<span class="inline-ltr">\( T \)</span>) הוא הזמן שלוקח לחלקיק להשלים מעגל מלא. מכיוון שהחלקיק שלנו מתווה בדיוק חצי מעגל, זמן התנועה שלו יהיה מחצית מזמן המחזור:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ t_H = \frac{T}{2} = \frac{1}{2} \left( 2\pi \frac{m_H}{q_H B} \right) = \frac{\pi m_H}{q_H B} \]
+            </div>
+            
+            <p class="final-answer">תשובה סופית סעיף ג' (1): הזמן הוא <span class="inline-ltr">\( t_H = \frac{\pi m_H}{q_H B} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            האם שמתם לב למשהו מיוחד? זמן המחזור <span class="inline-ltr">\( T \)</span> (וכתוצאה מכך גם זמן החצייה <span class="inline-ltr">\( t_H \)</span>) כלל אינו תלוי במהירות החלקיק <span class="inline-ltr">\( v \)</span>! חלקיק מהיר יותר ינוע במסלול עם רדיוס גדול יותר, אך הזמן להשלמת ההקפה (או חצי הקפה) יישאר זהה. זו תכונה קסומה של תנועה בשדה מגנטי המשמשת במאיצי חלקיקים.
+        </div>
+    </section>
+
+    <!-- סעיף ג 2 -->
+    <section class="section-card" id="part-c2">
+        <h3 class="section-header">סעיף ג' (2): השוואת זמני התנועה</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li>ליון ההליום מסה גדולה פי 4: <span class="inline-ltr">\( m_{He} = 4m_H \)</span>.</li>
+                    <li>ליון ההליום מטען זהה ליון המימן: <span class="inline-ltr">\( q_{He} = q_H \)</span>.</li>
+                    <li>זמן התנועה של המימן ממקודם: <span class="inline-ltr">\( t_H = \frac{\pi m_H}{q_H B} \)</span>.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2">פי כמה גדול זמן התנועה של יון ההליום <span class="inline-ltr">\( t_{He} \)</span> מזמן התנועה של יון המימן <span class="inline-ltr">\( t_H \)</span>, בתוספת נימוק.</p>
+            </div>
+        </div>
+
+        <div class="mt-4 mb-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mb-0">בסעיף זה אין שימוש בנוסחאות חדשות מדף הנוסחאות. אנו נסתמך ישירות על הביטוי המפותח לזמן התנועה שמצאנו בסעיף ג' (1).</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">נשתמש בביטוי שפיתחנו בסעיף הקודם (<span class="inline-ltr">\( t = \frac{\pi m}{qB} \)</span>) ונכתוב את ביטוי הזמן עבור יון ההליום, תוך הצבת הנתונים הספציפיים שלו:</p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ t_{He} = \frac{\pi m_{He}}{q_{He} B} \]
+            </div>
+            
+            <p class="content-paragraph">נציב את הקשרים הנתונים בשאלה (<span class="inline-ltr">\( m_{He} = 4m_H \)</span> ו- <span class="inline-ltr">\( q_{He} = q_H \)</span>):</p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ t_{He} = \frac{\pi (4m_H)}{(q_H) B} = 4 \cdot \left( \frac{\pi m_H}{q_H B} \right) \]
+            </div>
+            
+            <p class="content-paragraph">מכיוון שהביטוי בתוך הסוגריים הוא בדיוק <span class="inline-ltr">\( t_H \)</span>, נקבל:</p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ t_{He} = 4 \cdot t_H \]
+            </div>
+            
+            <p class="final-answer">תשובה סופית סעיף ג' (2): הזמן גדול <span class="inline-ltr">פי 4</span> מזמן התנועה של המימן.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            שאלות של "פי כמה" הן מתנה בבחינת הבגרות! הדרך הבטוחה ביותר לפתור אותן היא לא להתחיל לחשב מחדש מאפס, אלא לכתוב את הנוסחה, להציב את הנתונים החדשים עם המקדמים (כמו ה-4 כאן), ולהוציא את המקדם מחוץ לביטוי המקורי.
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': המרחק d בלוח הצילום</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 space-y-1">
+                    <li>היונים הואצו מנוחה על ידי מתח חשמלי <span class="inline-ltr">\( V \)</span>.</li>
+                    <li>מרחק הפגיעה של כל נקודה מ-A הוא קוטר המעגל (<span class="inline-ltr">\( 2R \)</span>).</li>
+                    <li><span class="inline-ltr">\( d \)</span> הוא המרחק בין נקודת הפגיעה של ההליום לבין זו של המימן.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2">לבטא את המרחק <span class="inline-ltr">\( d \)</span> באמצעות הפרמטרים הנתונים.</p>
+            </div>
+        </div>
+
+        <div class="mt-4 mb-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">משפט עבודה-אנרגיה: \( W_{\text{total}} = \Delta E_k \)</span>
+            <span class="formula-badge">עבודת הכוח החשמלי: \( W = qV \)</span>
+            <span class="formula-badge">החוק השני של ניוטון: \( \Sigma F_r = m a_r \)</span>
+            <span class="formula-badge">כוח מגנטי (לורנץ): \( F = qvB \)</span>
+            <span class="formula-badge">תאוצה רדיאלית: \( a_R = \frac{v^2}{R} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            
+            <div class="step-label">שלב 1: מציאת הקשר בין המהירות \( v \) למתח המאיץ \( V \)</div>
+            <p class="content-paragraph">היונים מואצים ממנוחה. הכוח היחיד שמבצע עבודה על היונים הוא הכוח החשמלי, ולכן העבודה הכוללת שווה לעבודתו (<span class="inline-ltr">\( W_{\text{total}} = W_{elec} \)</span>). נציב במשפט עבודה-אנרגיה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ qV = \frac{1}{2}mv^2 \quad \Rightarrow \quad v = \sqrt{\frac{2qV}{m}} \]
+            </div>
+
+            <div class="step-label">שלב 2: פיתוח ביטוי לרדיוס המסלול \( R \)</div>
+            <p class="content-paragraph">החלקיק נע בתנועה מעגלית. נרשום את משוואת הכוחות בציר הרדיאלי לפי החוק השני של ניוטון:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_r = m a_r \quad \Rightarrow \quad qvB = m\frac{v^2}{R} \]
+            </div>
+            <p class="content-paragraph">נצמצם ב-<span class="inline-ltr">\( v \)</span> ונבודד את הרדיוס <span class="inline-ltr">\( R \)</span>:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ R = \frac{mv}{qB} \]
+            </div>
+            <p class="content-paragraph">כעת, נציב את המהירות <span class="inline-ltr">\( v \)</span> שמצאנו בשלב 1 לתוך הביטוי שקיבלנו לרדיוס:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ R = \frac{m}{qB} \sqrt{\frac{2qV}{m}} = \frac{1}{B} \sqrt{\frac{m^2}{q^2} \cdot \frac{2qV}{m}} = \frac{1}{B} \sqrt{\frac{2mV}{q}} \]
+            </div>
+
+            <div class="step-label">שלב 3: חישוב המרחק הגיאומטרי \( d \)</div>
+            <p class="content-paragraph">על פי השרטוט, כל יון פוגע בלוח במרחק של קוטר שלם מנקודת הכניסה A (כלומר <span class="inline-ltr">\( 2R \)</span>). המרחק <span class="inline-ltr">\( d \)</span> הוא ההפרש בין נקודת הפגיעה של ההליום למימן, ולכן: <span class="inline-ltr">\( d = 2R_{He} - 2R_H \)</span>.</p>
+            <p class="content-paragraph">נחשב את הרדיוס של יון המימן:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ R_H = \frac{1}{B} \sqrt{\frac{2m_H V}{q_H}} \]
+            </div>
+            
+            <p class="content-paragraph">נחשב את הרדיוס של יון ההליום. נציב <span class="inline-ltr">\( m_{He}=4m_H \)</span> ו- <span class="inline-ltr">\( q_{He}=q_H \)</span> ונוציא 4 מהשורש:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ R_{He} = \frac{1}{B} \sqrt{\frac{2(4m_H) V}{q_H}} = 2 \cdot \frac{1}{B} \sqrt{\frac{2m_H V}{q_H}} = 2 \cdot R_H \]
+            </div>
+            
+            <p class="content-paragraph">המרחק <span class="inline-ltr">\( d \)</span> הוא ההפרש בין הקטרים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ d = 2R_{He} - 2R_H = 4R_H - 2R_H = 2R_H \]
+            </div>
+
+            <p class="content-paragraph">נציב בחזרה את הביטוי עבור <span class="inline-ltr">\( R_H \)</span> ונקבל:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ d = 2 \cdot \left( \frac{1}{B} \sqrt{\frac{2m_H V}{q_H}} \right) \]
+            </div>
+
+            <p class="final-answer">תשובה סופית סעיף ד': <span class="inline-ltr">\( d = \frac{2}{B} \sqrt{\frac{2m_H V}{q_H}} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            זהו ספקטרומטר מסות קלאסי! מכשיר זה מאפשר לנו להפריד בין חלקיקים בעלי יחס מסה למטען (m/q) שונה. חלקיק כבד יותר ייצור מעגל גדול יותר. זו הדרך שלנו בפיזיקה מודרנית לשקול אטומים ויונים בדיוק רב!
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
