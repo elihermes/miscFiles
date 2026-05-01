@@ -1,0 +1,822 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מתכונת בפיזיקה - קינמטיקה ודינמיקה</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מתכונת בפיזיקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">קינמטיקה ודינמיקה - נפילה עם התנגדות אוויר</h2>
+        <p class="mt-3 text-slate-500">הכנת פתרון מוסבר לתלמידים - רמת 5 יח"ל</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית: תמיד מתחת לכותרת -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200 mx-auto block"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א' - יחידות המידה של הקבוע K</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> גודל כוח החיכוך עם האוויר נתון על ידי המשוואה: \( F = Kv^2 \). אנו יודעים כי יחידות המידה במערכת MKS עבור כוח הן ניוטון (\(N\)), ועבור מהירות הן מטר לשנייה (\(m/s\)).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> עלינו למצוא את יחידות המידה של המקדם \(K\), ולהביע אותן אך ורק באמצעות היחידות הבסיסיות של מערכת MKS, כלומר: קילוגרם (\(kg\)), מטר (\(m\)) ושנייה (\(s\)).
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma F = ma \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">תחילה, נשתמש בחוק השני של ניוטון כדי לפרק את יחידת הניוטון ליחידות בסיס, ונבודד את \(K\) מהמשוואה הנתונה:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ K = \frac{F}{v^2} \]
+            </div>
+            <p class="content-paragraph">כעת, נבדוק את יחידות המידה של כל איבר. כוח נמדד בניוטונים, אך על פי החוק השני של ניוטון (\(F=ma\)), ניוטון אחד מוגדר כ- \( 1 N = 1 kg \cdot \frac{m}{s^2} \).</p>
+            <p class="content-paragraph">מהירות \(v\) נמדדת ב- \( \frac{m}{s} \), ולכן \(v^2\) נמדד ב- \( \frac{m^2}{s^2} \).</p>
+            <p class="content-paragraph">נציב את היחידות לביטוי שבודדנו:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ [K] = \frac{[F]}{[v^2]} = \frac{kg \cdot \frac{m}{s^2}}{\frac{m^2}{s^2}} \]
+            </div>
+            <p class="content-paragraph">השניות בריבוע (\(s^2\)) מצטמצמות, וכן מטר אחד במונה ובמכנה:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ [K] = \frac{kg \cdot m}{s^2} \cdot \frac{s^2}{m^2} = \frac{kg}{m} \]
+            </div>
+            <p class="final-answer">מסקנה: יחידות המידה של הקבוע K הן <span class="inline-ltr">\( \frac{kg}{m} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> תלמידים יקרים, חשוב שתזכרו שבמכניקה כל יחידות המידה כולן מבוטאות על ידי שלוש יחידות המידה הבסיסיות של מערכת MKS בלבד: מטר (\(m\)), קילוגרם (\(kg\)) ושנייה (\(s\)). אז מה עושים אם בלחץ של מבחן הבגרות או המתכונת אתם נתקלים לפתע ביחידה שאינה יחידה בסיסית, כמו ניוטון (\(N\)) או ג'אול (\(J\)), ואתם לא בטוחים איך לפרק אותה? הסוד הוא לא לשנן בעל פה! פשוט מצאו בדף הנוסחאות נוסחה קצרה ומוכרת שקושרת את היחידה הזו ליחידות הבסיסיות. לדוגמה, כדי לפרק ניוטון נשתמש בחוק השני של ניוטון \(F=ma\), וכדי לפרק ג'אול נשתמש בנוסחת העבודה \(W=F \Delta x\). 
+            <br><br>
+            בנוסף, זכרו תמיד את חוק "אחידות היחידות" (הומוגניות): בכל נוסחה או משוואה בפיזיקה, כל האיברים שמחוברים, מחוסרים או מושווים זה לזה חייבים להיות בעלי אותן יחידות מידה בדיוק! אי אפשר לחבר תפוחים לתפוזים, ואי אפשר לחבר מטרים לשניות. אם תתרגלו לבדוק שהיחידות בשני אגפי המשוואה זהות לפני הצבת המספרים, תוכלו לגלות ולתקן בקלות טעויות אלגבריות שאולי עשיתם בדרך.
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב' - קירוב לנפילה חופשית</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> על פי הגרף הנתון, בזמן \( t = 0s \) המהירות היא \( v = 0 m/s \). ניתן לראות כי בזמן \( t = 1s \), המהירות מגיעה ל- \( v \approx 10 m/s \).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> עלינו להראות שבמשך השנייה הראשונה לירידתו, הגוף נע בקירוב בתנאי נפילה חופשית, כלומר שהתאוצה שלו קרובה לתאוצת הכובד \(g\).
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( a = \frac{dv}{dt} \)</span>
+            <span class="formula-badge">\( \overline{a} = \frac{\Delta v}{\Delta t} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב והסבר:</h4>
+            <p class="content-paragraph">נפילה חופשית מוגדרת כמצב בו הכוח היחיד הפועל על הגוף הוא כוח הכבידה, ולכן תאוצת הגוף שווה בקירוב לתאוצת הכובד \( a = g = 10 m/s^2 \).</p>
+            <p class="content-paragraph">נחשב את תאוצת הגוף הממוצעת בשנייה הראשונה לפי קריאה מהגרף:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ a \approx \frac{v_f - v_i}{t_f - t_i} = \frac{10 - 0}{1 - 0} = 10 \frac{m}{s^2} \]
+            </div>
+            <p class="content-paragraph">מאחר והתאוצה שחישבנו שווה בגודלה לתאוצת הכובד \(g = 10 m/s^2\), המסקנה היא שהכוח השקול הפועל על הגוף בפרק זמן זה מורכב כמעט אך ורק מכוח הכבידה (\(mg\)).</p>
+            <p class="content-paragraph">מדוע זה קורה? כוח התנגדות האוויר תלוי במהירות בריבוע (\(F = Kv^2\)). במהירויות נמוכות מאוד (כפי שיש בתחילת הנפילה), הכוח \(F\) זניח לעומת כוח הכובד, ולכן התנועה היא בקירוב טוב נפילה חופשית.</p>
+            
+            <p class="final-answer">מסקנה: התאוצה בשנייה הראשונה היא כ- <span class="inline-ltr">\( 10 m/s^2 \)</span>, השווה לתאוצת הכובד \(g\), ולכן זוהי בקירוב נפילה חופשית.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> בגרף מהירות-זמן, התאוצה מיוצגת על ידי שיפוע המשיק. שימו לב שהגרף מתחיל בשיפוע חד השווה ל-10, וככל שהזמן חולף, השיפוע קטן (גודל המהירות גדל, אבל התאוצה קטנה). אל תתבלבלו בין מהירות לתאוצה!
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג' - הערכת המרחק האנכי עד לזמן 20s</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> נתון גרף מהירות כפונקציה של הזמן עד \( t = 20s \).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> אנו נדרשים להסביר את השיטה לחישוב המרחק (ההעתק האנכי) בעזרת הגרף, ולהעריך מרחק זה מתוך התבוננות בגרף.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <div class="content-paragraph font-bold text-blue-800 mt-2">
+                עיקרון פיזיקלי: המרחק (ההעתק) שעובר הגוף שווה לשטח הכלוא תחת עקומת גרף מהירות-זמן.
+            </div>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">שיטה וחישוב:</h4>
+            <p class="content-paragraph"><strong>הסבר השיטה:</strong> המרחק הכולל מיוצג על ידי השטח הכלוא מתחת לעקומת גרף מהירות-זמן, מעל ציר הזמן. לכן נחשב את השטח מתחת לגרף מרגע \(t=0\) ועד \(t=20s\).</p>
+            <p class="content-paragraph"><strong>הערכת השטח:</strong> מכיוון שהצורה אינה גיאומטרית פשוטה לאורך כל הדרך, נפרק למלבנים וטרפזים גדולים (בקפיצות של 5 שניות) להערכה מהירה:</p>
+            
+            <ul class="list-disc list-inside mb-4 text-slate-700 pr-4">
+                <li>בין הזמנים \(10s\) ל-\(20s\), המהירות כמעט קבועה על \(50 m/s\). זהו שטח של מלבן בגובה 50 וברוחב 10. השטח: <span class="inline-ltr">\( 10 \times 50 = 500 m \)</span>.</li>
+                <li>בין הזמנים \(5s\) ל-\(10s\), המהירות עולה מכ-35 לכ-49. נקרב כטרפז: <span class="inline-ltr">\(\frac{35+49}{2} \times 5 \approx 210 m\)</span>.</li>
+                <li>בין הזמנים \(0s\) ל-\(5s\), המהירות עולה מ-0 לכ-35. נקרב כמשולש: <span class="inline-ltr">\(\frac{35 \times 5}{2} \approx 87.5 m\)</span>.</li>
+            </ul>
+            
+            <p class="content-paragraph">נסכם את השטחים המוערכים:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ \Delta y \approx 500 + 210 + 87.5 = 797.5 m \]
+            </div>
+            
+            <p class="final-answer">מסקנה: השיטה היא חישוב השטח הכלוא מתחת לגרף. המרחק המוערך הוא כ- <span class="inline-ltr">\( 800 m \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> בבחינות בגרות, כשמבקשים "להעריך" (Estimate), לא מצפים לתוצאה מדויקת עד הספרה האחרונה. המטרה היא להדגים שאתם מבינים את המשמעות הפיזיקלית של השטח ולהפעיל שיטת קירוב הגיונית (ספירת משבצות, חלוקה לטרפזים/משולשים).
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד' - הסבר דינמי להתפתחות תנועת הגוף</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> על הגוף פועלים שני כוחות: כוח הכובד מטה (\(mg\)) והתנגדות האוויר מעלה (\(F=Kv^2\)). גודל המהירות של הגוף הולך וגדל עד הגעה למהירות סופית קבועה.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> להסביר (בליווי תרשימי כוחות FBD), מדוע ככל שמהירות הגוף גדלה התאוצה קטנה, עד למצב שבו התאוצה מתאפסת והוא ממשיך במהירות קבועה.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma F = ma \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">ניתוח כוחות (FBD) ודינמיקה:</h4>
+            <p class="content-paragraph">נבחר ציר \(y\) חיובי כלפי מטה (בכיוון התנועה). נצייר תרשימי כוחות לשלושה שלבים שונים במהלך הנפילה:</p>
+            
+            <!-- SVG Diagram for Forces -->
+            <div class="flex flex-col md:flex-row justify-around items-center bg-white p-4 rounded-lg border border-slate-200 shadow-sm mb-6 gap-4">
+                <!-- State 1: t=0 -->
+                <div class="text-center">
+                    <p class="mb-2 font-semibold text-sm">זמן \( t=0 \)<br>\( v=0 \)</p>
+                    <svg viewBox="0 0 100 200" width="100" height="200" aria-label="תרשים כוחות תחילת תנועה">
+                        <line x1="20" y1="10" x2="20" y2="190" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4"/>
+                        <text x="10" y="195" font-size="12" fill="#64748b" text-anchor="middle">+y</text>
+                        <polygon points="17,190 23,190 20,195" fill="#cbd5e1"/>
+                        <circle cx="50" cy="100" r="15" fill="#3b82f6"/>
+                        <line x1="50" y1="115" x2="50" y2="180" stroke="#ef4444" stroke-width="3"/>
+                        <polygon points="45,175 55,175 50,185" fill="#ef4444"/>
+                        <text x="60" y="150" font-size="16" fill="#ef4444" text-anchor="start">mg</text>
+                    </svg>
+                    <p class="text-sm mt-2" dir="ltr">\( a = g \)</p>
+                </div>
+
+                <!-- State 2: t>0 -->
+                <div class="text-center">
+                    <p class="mb-2 font-semibold text-sm">מהירות ביניים<br>\( 0 < v < v_T \)</p>
+                    <svg viewBox="0 0 100 200" width="100" height="200" aria-label="תרשים כוחות מהירות ביניים">
+                        <line x1="20" y1="10" x2="20" y2="190" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4"/>
+                        <circle cx="50" cy="100" r="15" fill="#3b82f6"/>
+                        <line x1="50" y1="115" x2="50" y2="180" stroke="#ef4444" stroke-width="3"/>
+                        <polygon points="45,175 55,175 50,185" fill="#ef4444"/>
+                        <text x="60" y="150" font-size="16" fill="#ef4444" text-anchor="start">mg</text>
+                        <line x1="50" y1="85" x2="50" y2="50" stroke="#22c55e" stroke-width="3"/>
+                        <polygon points="45,55 55,55 50,45" fill="#22c55e"/>
+                        <text x="60" y="70" font-size="16" fill="#22c55e" text-anchor="start">F</text>
+                    </svg>
+                    <p class="text-sm mt-2" dir="ltr">\( a < g \)</p>
+                </div>
+
+                <!-- State 3: Terminal -->
+                <div class="text-center">
+                    <p class="mb-2 font-semibold text-sm">מהירות קבועה<br>\( v = v_T \)</p>
+                    <svg viewBox="0 0 100 200" width="100" height="200" aria-label="תרשים כוחות מהירות קבועה">
+                        <line x1="20" y1="10" x2="20" y2="190" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="4"/>
+                        <circle cx="50" cy="100" r="15" fill="#3b82f6"/>
+                        <line x1="50" y1="115" x2="50" y2="180" stroke="#ef4444" stroke-width="3"/>
+                        <polygon points="45,175 55,175 50,185" fill="#ef4444"/>
+                        <text x="60" y="150" font-size="16" fill="#ef4444" text-anchor="start">mg</text>
+                        <line x1="50" y1="85" x2="50" y2="20" stroke="#22c55e" stroke-width="3"/>
+                        <polygon points="45,25 55,25 50,15" fill="#22c55e"/>
+                        <text x="60" y="50" font-size="16" fill="#22c55e" text-anchor="start">F</text>
+                    </svg>
+                    <p class="text-sm mt-2" dir="ltr">\( a = 0 \)</p>
+                </div>
+            </div>
+
+            <p class="content-paragraph">נרשום את משוואת הכוחות לפי החוק השני של ניוטון עבור ציר ה-\(y\):</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ \Sigma F_y = mg - F = ma \]
+                \[ mg - Kv^2 = ma \]
+            </div>
+            <p class="content-paragraph">נחלץ את התאוצה \(a\):</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ a = g - \frac{K}{m}v^2 \]
+            </div>
+            
+            <p class="content-paragraph"><strong>שלב ראשון (\(v=0\)):</strong> ברגע השחרור המהירות היא אפס, ולכן התאוצה שווה ל-\(g\). אין התנגדות אוויר.</p>
+            <p class="content-paragraph"><strong>שלב הביניים (המהירות גדלה):</strong> מכיוון שהגוף מאיץ מטה (\(a > 0\)), גודל המהירות \(v\) הולך וגדל. ככל ש-\(v\) גדל, הביטוי \(\frac{K}{m}v^2\) גדל. כתוצאה מכך, ההפרש \( g - \frac{K}{m}v^2 \) קטן. לכן, התאוצה \(a\) הולכת וקטנה.</p>
+            
+            <p class="final-answer">מסקנה (שלב המהירות הקבועה): לבסוף, גודל המהירות עולה עד למצב שבו כוח התנגדות האוויר משתווה בדיוק לכוח הכובד. בנקודה זו שקול הכוחות מתאפס. לפי החוק הראשון של ניוטון, התאוצה מתאפסת (<span class="inline-ltr">\(a = 0\)</span>) והגוף ממשיך לנוע במהירות קבועה.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> שימו לב לדקויות בשפה! גודל המהירות <em>גדל</em>, אבל קצב הגידול (התאוצה) <em>קטן</em>. אסור לומר שהגוף "מאט" - האטה משמעותה שגודל המהירות קטן, וזה לא מה שקורה כאן. הגוף ממשיך להאיץ מטה, פשוט כל שנייה שעוברת, התוספת למהירות הולכת ופוחתת. (הערה: תאוצת הגוף כאן הוגדרה כחיובית כיוון שבחרנו ציר y כלפי מטה).
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה' - חישוב המקדם K</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> מסת הגוף היא \( m = 80 kg \), ותאוצת הכובד \( g = 10 m/s^2 \). מתוך הגרף, אנו רואים שלאחר זמן רב, מהירות הגוף מתייצבת על מהירות סופית קבועה (טרמינלית) של \( v_T = 50 m/s \).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> לחשב את ערכו המספרי של המקדם \(K\) ולהציגו ביחידות שמצאנו בסעיף א'.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma F = 0 \)</span>
+            <span class="formula-badge">\( mg - Kv_T^2 = 0 \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">נבודד את המקדם \(K\) ממשוואת הכוחות במצב של מהירות טרמינלית (כאשר שקול הכוחות מתאפס):</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ mg = Kv_T^2 \]
+                \[ K = \frac{mg}{v_T^2} \]
+            </div>
+            <p class="content-paragraph">נציב את הנתונים המספריים:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ K = \frac{80 \cdot 10}{50^2} \]
+                \[ K = \frac{800}{2500} \]
+                \[ K = 0.32 \]
+            </div>
+            <p class="final-answer">מסקנה: ערך המקדם הוא <span class="inline-ltr">\( K = 0.32 \frac{kg}{m} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> זהו יישום קלאסי של קריאת אסימפטוטה מגרף. המהירות הקבועה נקראת "מהירות סופית" (Terminal Velocity). זכרו שהיא מתרחשת אך ורק כש- \(\Sigma F = 0\).
+        </div>
+    </section>
+
+    <!-- סעיף ו -->
+    <section class="section-card" id="part-f">
+        <h3 class="section-header">סעיף ו' - ניסוי חוזר עם מסה שונה</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> גוף חדש מופל, בעל מסה שונה: \( m_2 = 40 kg \). הקבוע \(K\) תלוי בצורת הגוף ולא במסה שלו, לכן נשתמש באותו \(K\) שחישבנו: \( K = 0.32 kg/m \).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> לאיזו מהירות קבועה (טרמינלית) יגיע הגוף השני במורד דרכו?
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma F = 0 \)</span>
+            <span class="formula-badge">\( m_2g - Kv^2 = 0 \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">נבודד כעת את המהירות הסופית \(v\) ממשוואת שיווי המשקל:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ m_2g = Kv^2 \]
+                \[ v^2 = \frac{m_2g}{K} \]
+                \[ v = \sqrt{\frac{m_2g}{K}} \]
+            </div>
+            <p class="content-paragraph">נציב את הנתונים החדשים:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ v = \sqrt{\frac{40 \cdot 10}{0.32}} \]
+                \[ v = \sqrt{\frac{400}{0.32}} \]
+                \[ v = \sqrt{1250} \approx 35.355 \frac{m}{s} \]
+            </div>
+            <p class="content-paragraph">כנדרש, נעגל את התוצאה הסופית ל-3 ספרות מהותיות:</p>
+            <p class="final-answer">מסקנה: המהירות הקבועה (טרמינלית) אליה יגיע הגוף היא כ- <span class="inline-ltr">\( 35.4 \frac{m}{s} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> הגיוני שגוף קל יותר, בעל אותה הנדסת צורה (אותו מקדם \(K\)), יגיע למהירות טרמינלית נמוכה יותר. כוח הכובד המושך אותו מטה קטן יותר (\(400N\) לעומת \(800N\)), ולכן נדרש כוח התנגדות אוויר קטן יותר כדי לאפס אותו. כיוון שהתנגדות האוויר תלויה במהירות, מהירות נמוכה יותר תספיק כדי לייצר את ה-\(400N\) הנדרשים לאיזון.
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
