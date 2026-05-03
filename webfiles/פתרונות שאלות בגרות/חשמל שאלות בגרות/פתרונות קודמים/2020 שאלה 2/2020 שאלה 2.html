@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+        <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+        <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-QZJ7JT80X2');
+        </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מודרך בפיזיקה - מעגלי זרם ישר</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+            display: flex;
+            align-items: center;
+        }
+
+        .section-badge {
+            background-color: var(--blue-100);
+            color: var(--blue-800);
+            width: 2rem;
+            height: 2rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 9999px;
+            margin-left: 0.75rem;
+            font-size: 1.125rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+            overflow: hidden;
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+            position: relative;
+        }
+
+        .teacher-highlight::before {
+            content: '💡';
+            position: absolute;
+            right: -12px;
+            top: -12px;
+            font-size: 1.5rem;
+            background: white;
+            border-radius: 50%;
+            padding: 2px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מודרך: מעגלי זרם ישר</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">בגרות בפיזיקה - חשמל 2020, שאלה 2</h2>
+        <p class="mt-3 text-slate-500">פתרון מלא, שלב-אחר-שלב, הכולל המחשות חזותיות והרחבות פדגוגיות.</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- רגע של למידה: שיטת הצבעים -->
+    <section class="section-card bg-amber-50 border-t-4 border-amber-400">
+        <h3 class="text-xl font-bold text-amber-900 mb-4 flex items-center">
+            <span class="text-2xl ml-2">💡</span>
+            רגע של למידה: שיטת צביעת הפוטנציאלים (שיטת הצמתים)
+        </h3>
+        <p class="content-paragraph text-amber-900">לפני שניגש לסעיפי המפסקים, בואו נכיר כלי ויזואלי ועוצמתי לניתוח מעגלים שנקרא "שיטת צביעת הפוטנציאלים". השיטה הזו עוזרת לנו "לראות" מתחים ומפסקים בעיניים.</p>
+        
+        <div class="step-box bg-white border-amber-200">
+            <h4 class="step-title text-amber-800">איך זה עובד?</h4>
+            <ul class="list-disc list-inside space-y-2 text-slate-700">
+                <li>כל <strong>תיל אידיאלי</strong> (חוט ללא התנגדות) נמצא תמיד באותו פוטנציאל חשמלי לכל אורכו. לכן, אנו נצבע אותו בצבע אחד אחיד.</li>
+                <li>ברגע שאנו חוצים רכיב בעל התנגדות (כמו נגד, נורה או סוללה), הפוטנציאל משתנה, ולכן <strong>הצבע משתנה</strong>.</li>
+                <li><strong>מתח (\(V\)):</strong> הוא פשוט <em>ההבדל בין שני צבעים</em>.</li>
+                <li><strong>הקסם:</strong> אם רכיב כלשהו (נגד, מד-מתח או מפסק) נוגע באותו הצבע בדיוק משני צדדיו – סימן שאין עליו הפרש פוטנציאלים. המתח עליו הוא אפס (<span class="inline-ltr">\(V=0\)</span>), ולא יזרום דרכו זרם!</li>
+            </ul>
+        </div>
+        <p class="content-paragraph text-amber-900 mt-4 mb-0">נשתמש בשיטה הזו במפורש בסעיפים ג' ו-ד' כדי לפצח את השאלה בקלות.</p>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">
+            <span class="section-badge">א</span>
+            חישוב המתח על מפסק פתוח
+        </h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <p class="text-sm mt-1 mb-2">נרכז את הנתונים המספריים מתוך התרשים והפתיח. כל הנתונים במערכת יחידות תקנית (MKS), לכן אין צורך בהמרה.</p>
+                <ul class="list-disc list-inside space-y-1 text-slate-700 text-sm">
+                    <li>כא"מ הסוללה: <span class="inline-ltr">\(\varepsilon = 6\text{ V}\)</span></li>
+                    <li>התנגדות פנימית: <span class="inline-ltr">\(r = 1\text{ }\Omega\)</span></li>
+                    <li>נגדים קבועים: <span class="inline-ltr">\(R_1 = 2\text{ }\Omega\)</span>, <span class="inline-ltr">\(R_2 = 3\text{ }\Omega\)</span></li>
+                    <li>התנגדות מרבית של הנגד המשתנה (MN): <span class="inline-ltr">\(R_{MN} = 12\text{ }\Omega\)</span></li>
+                    <li>מצב המפסקים: <span class="inline-ltr">\(S_1\)</span> סגור, <span class="inline-ltr">\(S_2\)</span> פתוח.</li>
+                    <li>מצב הגררה: בקצה N (כלומר, כל הנגד המשתנה נמצא במסלול הזרם).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1 text-slate-700 text-sm">אנו מחפשים את המתח בין קצות המפסק <span class="inline-ltr">\(S_2\)</span>. נסמן מתח זה כ-<span class="inline-ltr">\(V_{S2}\)</span>.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="text-sm text-slate-600 mb-2">נשתמש בנוסחאות מתוך דף הנוסחאות, בפרק אלקטרומגנטיות:</p>
+            <span class="formula-badge">\(V_{ab} = \varepsilon - rI\)</span>
+            <span class="formula-badge">\(V = RI\)</span>
+            <span class="formula-badge">\(R_T = \Sigma R_i\)</span>
+            <span class="formula-badge">\(\Sigma \varepsilon = \Sigma IR\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">כאשר הגררה בנקודה N ומפסק <span class="inline-ltr">\(S_2\)</span> פתוח, לא יכול לזרום זרם דרך <span class="inline-ltr">\(S_2\)</span>. הזרם יוצא מההדק החיובי, מגיע לצומת M, עובר דרך כל הנגד המשתנה עד לנקודה N. מכיוון ש-<span class="inline-ltr">\(S_2\)</span> פתוח, המסלול היחיד להמשך הוא דרך הגררה (שנמצאת ב-N), דרך <span class="inline-ltr">\(R_1\)</span>, דרך המפסק הסגור <span class="inline-ltr">\(S_1\)</span>, ומשם דרך <span class="inline-ltr">\(R_2\)</span> חזרה לסוללה. לפנינו מעגל טורי פשוט!</p>
+            
+            <div class="visual-frame">
+                <div style="width: 500px; max-width: 100%; aspect-ratio: 2 / 1; display: flex; align-items: center; justify-content: center;">
+                    <img src="image-1.png" alt="תרשים סעיף א" style="display: block; max-width: 100%; max-height: 100%; width: auto; height: auto;" />
+                </div>
+            </div>
+
+            <p class="content-paragraph">נחשב את ההתנגדות השקולה של המעגל הטורי (כולל ההתנגדות הפנימית):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ R_{T} = r + R_{MN} + R_1 + R_2 = 1 + 12 + 2 + 3 = 18\text{ }\Omega \]
+            </div>
+            
+            <p class="content-paragraph">נחשב את הזרם במעגל:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I = \frac{\varepsilon}{R_T} = \frac{6}{18} = \frac{1}{3}\text{ A} \]
+            </div>
+            
+            <p class="content-paragraph">כעת, נחשב את המתח על המפסק <span class="inline-ltr">\(S_2\)</span>. המפסק מחובר בין נקודה N לבין התיל הימני המשותף (נסמנו כצומת K בתרשים שלנו). נחשב את הפרש הפוטנציאלים בין N ל-K. נבחר מסלול דרך ההדק העליון: מנקודה N הזרם זורם דרך הגררה, הנגד <span class="inline-ltr">\(R_1\)</span> ומפסק <span class="inline-ltr">\(S_1\)</span> אל צומת K. לכן, הפרש הפוטנציאלים הוא בדיוק המתח הנופל על הנגד <span class="inline-ltr">\(R_1\)</span>:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_{S2} = V_N - V_K = I \cdot R_1 = \left(\frac{1}{3}\right) \cdot 2 = \frac{2}{3}\text{ V} \]
+            </div>
+            
+            <p class="content-paragraph mb-0">נעגל את התוצאה ל-3 ספרות מהותיות.</p>
+            
+            <div class="final-answer">
+                המתח בין קצות המפסק \(S_2\) הוא: <span class="inline-ltr">\(V_{S2} = 0.667\text{ V}\)</span>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> איך מחשבים מתח על רכיב פתוח (כמו מפסק)? מתייחסים אליו כמו אל וולטמטר אידיאלי בעל התנגדות אינסופית. לא זורם דרכו זרם, אבל קיים הפרש פוטנציאלים בין ההדקים שלו! כדי למצוא אותו, פשוט מוצאים מסלול סגור שעוקף אותו (במקרה שלנו, דרך <span class="inline-ltr">\(R_1\)</span>) ומחשבים את הפרש הפוטנציאלים לאורך המסלול הזה.
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">
+            <span class="section-badge">ב</span>
+            השפעת הזזת הגררה על הוריית הוולטמטר
+        </h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <p class="text-sm mt-1">מזיזים את הגררה מקצה N לכיוון קצה M. שאר תנאי המעגל נשארו כפי שהיו (מפסק <span class="inline-ltr">\(S_1\)</span> סגור, <span class="inline-ltr">\(S_2\)</span> פתוח).</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="text-sm mt-1">לקבוע האם הוריית הוולטמטר (המודד את מתח ההדקים של הסוללה) גדלה, קטנה או אינה משתנה, ולנמק.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(V_{ab} = \varepsilon - I\cdot r\)</span>
+            <span class="formula-badge">\(I = \frac{\varepsilon}{R_T}\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">ניתוח ופתרון:</h4>
+            <p class="content-paragraph">כאשר מזיזים את הגררה לכיוון M, אורך החלק הפעיל של הנגד המשתנה (החלק שנמצא במסלול הזרם בין M לבין הגררה) מתקצר. מכיוון שמפסק <span class="inline-ltr">\(S_2\)</span> פתוח, החלק של הנגד בין הגררה ל-N אינו סוגר מעגל ולכן אינו משפיע. לפיכך, ההתנגדות של המעגל הטורי קטנה.</p>
+            
+            <p class="content-paragraph">נסתכל על משוואת הזרם: <span class="inline-ltr">\(I = \frac{\varepsilon}{R_T}\)</span>. כאשר המכנה <span class="inline-ltr">\(R_T\)</span> קטן, הזרם הכללי במעגל, <span class="inline-ltr">\(I\)</span>, גדל.</p>
+            
+            <p class="content-paragraph">הוולטמטר מחובר במקביל לסוללה ומודד את מתח ההדקים שלה. נציב את המסקנה שלנו במשוואת מתח ההדקים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V = \varepsilon - I\cdot r \]
+            </div>
+            
+            <p class="content-paragraph">מכיוון שהכא"מ <span class="inline-ltr">\(\varepsilon\)</span> וההתנגדות הפנימית <span class="inline-ltr">\(r\)</span> קבועים, וכפי שהראינו הזרם <span class="inline-ltr">\(I\)</span> גדל, הביטוי <span class="inline-ltr">\(I\cdot r\)</span> (מפל המתח הפנימי) גדל. כתוצאה מכך, הערך הכללי של <span class="inline-ltr">\(\varepsilon - I\cdot r\)</span> קטן.</p>
+            
+            <div class="final-answer">
+                הוריית הוולטמטר <strong>קטנה</strong>.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> זהו כלל ברזל במעגלים עם מקור מתח בעל התנגדות פנימית: ככל שהמעגל החיצוני דורש יותר זרם (התנגדות שקולה קטנה יותר), ה"קנס" שמשלמים על ההתנגדות הפנימית (<span class="inline-ltr">\(Ir\)</span>) גדל, ולכן המתח שהסוללה מצליחה לספק החוצה קטן.
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">
+            <span class="section-badge">ג</span>
+            מתח על מפסק S1 כאשר S2 סגור
+        </h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <p class="text-sm mt-1">פותחים את מפסק <span class="inline-ltr">\(S_1\)</span>, סוגרים את מפסק <span class="inline-ltr">\(S_2\)</span>, ומחזירים את הגררה לנקודה N.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="text-sm mt-1">את המתח בין קצות המפסק הפתוח <span class="inline-ltr">\(S_1\)</span>, יחד עם נימוק (נעזר בשיטת צביעת הפוטנציאלים).</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="text-sm text-slate-600 mb-2">נשתמש בחוק אוהם לנגד כדי להראות שאין מפל מתח על ענף שאין בו זרם. וכמובן - <strong>שיטת צביעת הפוטנציאלים</strong>.</p>
+            <span class="formula-badge">\(V = RI\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">ניתוח המעגל בעזרת צבעים:</h4>
+            <p class="content-paragraph mb-2">ננתח את המעגל במצבו החדש ונצבע אותו:</p>
+            <ul class="list-disc list-inside space-y-1 text-slate-700 text-sm mb-4">
+                <li>הגררה נמצאת בקצה N.</li>
+                <li>מפסק <span class="inline-ltr">\(S_1\)</span> פתוח, ולכן הענף העליון הוא ענף מנותק ולא זורם בו זרם כלל.</li>
+            </ul>
+            
+            <p class="content-paragraph mb-2">בואו נבחר נקודת ייחוס (למשל, התיל הימני שאחרי הנגד <span class="inline-ltr">\(R_2\)</span>) ונצבע אותה ב<strong>ירוק</strong>. כל מקום שהצבע הירוק מגיע אליו ללא התנגדות נמצא באותו פוטנציאל!</p>
+            
+            <div class="visual-frame">
+                <div style="width: 600px; max-width: 100%; display: flex; align-items: center; justify-content: center;">
+                    <img src="image-3.png" alt="תרשים סעיף ג" style="display: block; width: 100%; height: auto;" class="bg-slate-50 rounded-lg" />
+                </div>
+            </div>
+
+            <p class="content-paragraph mb-2">הביטו בתרשים הצבוע למעלה ועקבו אחרי ה<strong>צבע הירוק</strong>:</p>
+            <p class="content-paragraph mb-2">1. הצד הימני של מפסק <span class="inline-ltr">\(S_1\)</span> מחובר לתיל הימני, ולכן הוא צבוע ב<strong>ירוק</strong>.</p>
+            <p class="content-paragraph mb-2">2. מפסק <span class="inline-ltr">\(S_2\)</span> סגור (מתפקד כחוט). לכן, הצבע הירוק עובר דרכו ומגיע לנקודה N.</p>
+            <p class="content-paragraph mb-2">3. הגררה נמצאת ב-N, ולכן גם היא ירוקה. התיל מוביל אל הנגד <span class="inline-ltr">\(R_1\)</span>. מכיוון שמפסק <span class="inline-ltr">\(S_1\)</span> פתוח, לא זורם זרם דרך <span class="inline-ltr">\(R_1\)</span> (<span class="inline-ltr">\(I=0\)</span>). חוק אוהם קובע שהמתח על הנגד הוא <span class="inline-ltr">\(V = 0 \cdot R_1 = 0\)</span>. <strong>אם אין מפל מתח, הצבע לא משתנה!</strong> הצבע הירוק עובר דרך הנגד ומגיע עד לצד השמאלי של מפסק <span class="inline-ltr">\(S_1\)</span>.</p>
+            
+            <p class="content-paragraph mb-0"><strong>המסקנה הוויזואלית:</strong> שני צידי המפסק הפתוח <span class="inline-ltr">\(S_1\)</span> צבועים בדיוק באותו הצבע (ירוק). לכן, הפרש הפוטנציאלים ביניהם הוא אפס.</p>
+
+            <div class="final-answer">
+                המתח בין קצות המפסק \(S_1\) הוא: <span class="inline-ltr">\(V_{S1} = 0\text{ V}\)</span>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> זהו מקרה קלאסי של "עוקף קצר". הענף של <span class="inline-ltr">\(S_1\)</span> מחובר למעשה במקביל למפסק <span class="inline-ltr">\(S_2\)</span> שהוא סגור וחסר התנגדות (הוא בעצמו צבוע ירוק משני צדדיו). מתח על קצר הוא תמיד אפס, ולכן כל מה שמחובר אליו במקביל (כמו הענף העליון) יקבל גם הוא מתח אפס, אפילו אם המפסק שלו פתוח. הצבעים חושפים זאת מיד!
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">
+            <span class="section-badge">ד</span>
+            השפעת הזזת הגררה מחדש
+        </h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <p class="text-sm mt-1">באותו מצב כמו בסעיף ג' (<span class="inline-ltr">\(S_1\)</span> פתוח, <span class="inline-ltr">\(S_2\)</span> סגור), מזיזים את הגררה מנקודה N לנקודה M.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="text-sm mt-1">האם הוריית הוולטמטר משתנה במהלך תנועת הגררה? נמקו.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="text-sm text-slate-600">שוב נשתמש בראייה הוויזואלית של נתיבי זרם מול ענפים "מתים".</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">ניתוח מסלול הזרם הפעיל:</h4>
+            <p class="content-paragraph">הוולטמטר מודד את מתח ההדקים של הסוללה, אשר תלוי אך ורק בזרם הכללי היוצא ממנה (<span class="inline-ltr">\(V = \varepsilon - Ir\)</span>). הזרם נקבע לפי ההתנגדות השקולה של המעגל כולו.</p>
+            
+            <p class="content-paragraph">בואו נצבע במוחנו את <strong>מסלול הזרם</strong>. מאיפה הזרם יוצא ולאן הוא הולך? הוא יוצא מהסוללה, מגיע לנקודה M, זורם דרך <strong>כל</strong> הנגד המשתנה עד לנקודה N, עובר דרך המפסק הסגור <span class="inline-ltr">\(S_2\)</span>, ומשם חזרה דרך <span class="inline-ltr">\(R_2\)</span> לסוללה.</p>
+            
+            <p class="content-paragraph">ומה קורה לגררה? הגררה מחוברת לענף העליון דרך <span class="inline-ltr">\(R_1\)</span> ומפסק <span class="inline-ltr">\(S_1\)</span>. אבל רגע, <strong>מפסק <span class="inline-ltr">\(S_1\)</span> פתוח!</strong> משמעות הדבר היא ששום זרם אינו יכול לזרום דרך הגררה לשום מקום. הגררה רק מרחפת מעל הנגד המשתנה כמו אנטנה שלא מחוברת לכלום בקצה השני.</p>
+            
+            <p class="content-paragraph">גם כאשר הגררה מחליקה שמאלה וימינה, הזרם של המעגל ממשיך לזרום דרך <strong>כל</strong> אורך הנגד המשתנה (מ-M עד N) ללא שום הפרעה. התנגדות הנגד המשתנה במסלול הפעיל נשארת קבועה לחלוטין על <span class="inline-ltr">\(12\text{ }\Omega\)</span>.</p>
+            
+            <p class="content-paragraph">מכיוון שההתנגדות השקולה אינה משתנה, הזרם לא משתנה, ומתח ההדקים נשאר קבוע.</p>
+
+            <div class="final-answer">
+                הוריית הוולטמטר <strong>אינה משתנה</strong>.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> זכרו את הכלל: רכיב שנמצא בענף מנותק (מעגל פתוח) הוא כמו צינור מים עם פקק בסוף. גם אם תזיזו את פתח הצינור ממקום למקום בתוך הבריכה, שום מים לא יזרמו לתוכו ולא ישפיעו על זרימת המים בשאר המערכת.
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">
+            <span class="section-badge">ה</span>
+            קביעת הקוטביות של מקור המתח החדש
+        </h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <p class="text-sm mt-1 mb-2">מצב חדש (תרשים 2):</p>
+                <ul class="list-disc list-inside space-y-1 text-slate-700 text-sm">
+                    <li>מפסק <span class="inline-ltr">\(S_1\)</span> הוחלף במקור מתח אידיאלי בעל כא"מ <span class="inline-ltr">\(\varepsilon^*\)</span> (נקודות C ו-D).</li>
+                    <li>מפסק <span class="inline-ltr">\(S_2\)</span> נשאר סגור.</li>
+                    <li>הגררה הוצבה בנקודה M.</li>
+                    <li>נתון משמעותי: לא זורם זרם בנגד המשתנה, כלומר <span class="inline-ltr">\(V_{MN} = 0\)</span>.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="text-sm mt-1">לקבוע לאיזו נקודה (C או D) חובר ההדק החיובי של המקור <span class="inline-ltr">\(\varepsilon^*\)</span>, כולל נימוק.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\Sigma I_{in} = \Sigma I_{out}\)</span>
+            <span class="formula-badge">\(\Sigma \varepsilon = \Sigma IR\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">קביעת כיוון הזרם וניתוח הפוטנציאלים:</h4>
+            <p class="content-paragraph mb-2">ראשית, נוכיח מהו כיוון הזרם במעגל התחתון (ולא נניח אותו מראש).</p>
+            <p class="content-paragraph mb-2">נתון שלא זורם זרם בנגד המשתנה MN, ולכן אין עליו מפל מתח: <span class="inline-ltr">\(V_M = V_N\)</span>.</p>
+            <p class="content-paragraph mb-2">בנוסף, מפסק <span class="inline-ltr">\(S_2\)</span> סגור ומחבר את נקודה N לתיל הימני המשותף (צומת K). לכן: <span class="inline-ltr">\(V_N = V_K\)</span>. המסקנה היא ששני קצות המסלול התחתון נמצאים באותו פוטנציאל: <strong><span class="inline-ltr">\(V_M = V_K\)</span></strong>.</p>
+            
+            <p class="content-paragraph mb-2">כעת נתבונן במסלול התחתון (הכולל את הסוללה <span class="inline-ltr">\(\varepsilon\)</span> והנגד <span class="inline-ltr">\(R_2\)</span>). ההדק החיובי של הסוללה פונה שמאלה (לכיוון M), ולכן הסוללה מנסה "להעלות" את הפוטנציאל ב-6V מ-K לכיוון M.</p>
+
+            <div class="visual-frame">
+                <div style="width: 600px; max-width: 100%; display: flex; align-items: center; justify-content: center;">
+                    <img src="image-5.png" alt="תרשים סעיף ה" style="display: block; width: 100%; height: auto;" class="rounded-lg" />
+                </div>
+            </div>
+            
+            <p class="content-paragraph mb-2">אך מכיוון שהפוטנציאל הכולל אינו משתנה (<span class="inline-ltr">\(V_M = V_K\)</span>), חייב להיות גורם ש"יוריד" בחזרה את ה-6V האלו. מפל מתח על נגדים (<span class="inline-ltr">\(R_2\)</span> ו-<span class="inline-ltr">\(r\)</span>) מתרחש אך ורק <strong>בכיוון הזרם</strong>. לכן, הזרם חייב לזרום מימין לשמאל (מ-K ל-M), כדי ליצור מפל מתח שיקזז את עליית המתח של הסוללה. <strong>הוכחנו שהזרם זורם מ-K ל-M!</strong></p>
+
+            <p class="content-paragraph mb-2">נרשום את חוק הלולאות בצורה מדויקת מ-K ל-M (כאשר אנו הולכים עם כיוון הזרם שהוכחנו):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_K + \varepsilon - I\cdot r - I\cdot R_2 = V_M \]
+            </div>
+            
+            <p class="content-paragraph mb-2">מכיוון ש-<span class="inline-ltr">\(V_M = V_K\)</span>, המשוואה מצטמצמת ל:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 6 - I(1) - I(3) = 0 \quad \Rightarrow \quad 4I = 6 \quad \Rightarrow \quad I = 1.5\text{ A} \]
+            </div>
+            
+            <p class="content-paragraph mb-2">הזרם שמגיע לצומת M חייב להמשיך הלאה. מכיוון שאין זרם בענף האמצעי (MN), כל הזרם של <span class="inline-ltr">\(1.5\text{ A}\)</span> פונה לענף העליון (מ-M ימינה לכיוון K).</p>
+            
+            <p class="content-paragraph mb-2">נרשום את משוואת הפוטנציאלים מ-M ל-K דרך הענף העליון. אנו הולכים עם הזרם דרך <span class="inline-ltr">\(R_1\)</span>, וחוצים את המקור החדש. נסמן את המתח עליו כ-<span class="inline-ltr">\(V_{CD} = V_D - V_C\)</span> (עלייה בפוטנציאל מ-C ל-D):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_M - I\cdot R_1 + V_{CD} = V_K \]
+            </div>
+            
+            <p class="content-paragraph mb-2">שוב, בגלל ש-<span class="inline-ltr">\(V_M = V_K\)</span>, נקבל:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ -I\cdot R_1 + V_{CD} = 0 \quad \Rightarrow \quad V_{CD} = I\cdot R_1 \]
+                \[ V_{CD} = 1.5 \cdot 2 = 3\text{ V} \]
+            </div>
+
+            <p class="content-paragraph">קיבלנו ש-<span class="inline-ltr">\(V_{CD}\)</span> הוא ערך חיובי (<span class="inline-ltr">\(+3\text{V}\)</span>). משמעות הדבר היא שהפוטנציאל בנקודה D גבוה מהפוטנציאל בנקודה C. כדי לעלות בפוטנציאל כאשר חוצים מקור מתח, אנו חייבים לחצות אותו מההדק השלילי אל ההדק החיובי. לכן, נקודה D היא ההדק החיובי.</p>
+
+            <div class="final-answer">
+                ההדק החיובי מחובר לנקודה <strong>D</strong>.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> שימו לב עד כמה חזקה ההבנה של "פוטנציאל חשמלי". ברגע שידענו ששתי נקודות (M ו-K) נמצאות באותו פוטנציאל, יכולנו לא רק לחשב את הזרם בקלות, אלא אפילו <strong>להוכיח באופן לוגי</strong> את כיוון הזרם מבלי להניח אותו מראש. מפל מתח על נגד תמיד "מלשין" לנו לאן הזרם זורם!
+        </div>
+    </section>
+
+    <!-- סעיף ו -->
+    <section class="section-card" id="part-f">
+        <h3 class="section-header">
+            <span class="section-badge">ו</span>
+            חישוב הכא"מ החדש
+        </h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <p class="text-sm mt-1">כל הנתונים מסעיף ה', וכן התוצאות שהשגנו: הזרם הוא <span class="inline-ltr">\(1.5\text{ A}\)</span>, והמתח מ-C ל-D הוא הכא"מ <span class="inline-ltr">\(\varepsilon^*\)</span>.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="text-sm mt-1">את הערך המספרי של <span class="inline-ltr">\(\varepsilon^*\)</span>.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="text-sm text-slate-600 mb-2">חוק קירכהוף למתחים. כא"מ הסוללה האידיאלית שווה להפרש הפוטנציאלים בין קצותיה:</p>
+            <span class="formula-badge">\(\varepsilon^* = V_D - V_C\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">למעשה, עשינו את החישוב המלא במהלך ההנמקה בסעיף ה'. ראינו כי ההפרש <span class="inline-ltr">\(V_{CD}\)</span> שנדרש כדי לאזן את מפל המתח על הנגד <span class="inline-ltr">\(R_1\)</span> (כך שהפוטנציאל ב-K יחזור להיות שווה לפוטנציאל ב-M) הוא בידיוק מפל המתח על הנגד <span class="inline-ltr">\(R_1\)</span>.</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \varepsilon^* = I \cdot R_1 \]
+                \[ \varepsilon^* = 1.5 \cdot 2 = 3\text{ V} \]
+            </div>
+            
+            <div class="final-answer">
+                הכא"מ של מקור המתח הוא: <span class="inline-ltr">\(\varepsilon^* = 3\text{ V}\)</span>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> בבחינת הבגרות לעיתים קרובות סעיף הוכחתי מוביל ישירות לחישוב קצר בסעיף העוקב. אל תחששו להסתמך על חישובים מסעיפים קודמים.
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
