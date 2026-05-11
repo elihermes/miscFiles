@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תרגול אופטיקה: חוק סנל</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; }
+        .input-correct { border-color: #22c55e !important; background-color: #f0fdf4 !important; }
+        .input-incorrect { border-color: #ef4444 !important; background-color: #fef2f2 !important; }
+        canvas { touch-action: none; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen py-8 px-4">
+
+    <div class="max-w-3xl mx-auto">
+        <!-- Header -->
+        <header class="bg-white rounded-2xl shadow-sm p-6 mb-6 flex justify-between items-center">
+            <div>
+                <h1 class="text-2xl font-bold text-slate-800">תרגול חוק סנל</h1>
+                <p class="text-sm text-slate-500 mt-1">מעבר אור בין אוויר לחומר שקוף</p>
+            </div>
+            <div class="text-left">
+                <span class="text-sm font-semibold text-slate-500">ציון נצבר</span>
+                <div class="text-xl font-bold text-blue-600" id="score-display">0 / 0</div>
+            </div>
+        </header>
+
+        <!-- Quiz Container -->
+        <main id="quiz-container" class="bg-white rounded-2xl shadow-md p-6 overflow-hidden">
+            
+            <div class="flex justify-between items-end mb-4 border-b pb-2">
+                <h2 class="text-lg font-bold text-slate-700" id="question-title">שאלה 1 מתוך 20</h2>
+                <span class="text-sm font-medium text-blue-600 bg-blue-50 py-1 px-3 rounded-full" id="scenario-hint"></span>
+            </div>
+
+            <!-- Canvas for Diagram -->
+            <div class="flex justify-center mb-8 bg-slate-50 rounded-xl p-4 border border-slate-100">
+                <canvas id="opticsCanvas" width="500" height="350" class="max-w-full bg-white shadow-sm border border-slate-200 rounded"></canvas>
+            </div>
+
+            <!-- Question Data Info -->
+            <p id="question-info" class="text-base text-slate-700 mb-6 font-medium bg-yellow-50 p-3 rounded-lg border border-yellow-100 hidden"></p>
+
+            <!-- Inputs Area -->
+            <div id="inputs-container" class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-8">
+                <!-- Dynamically populated -->
+            </div>
+
+            <!-- Actions -->
+            <div class="flex justify-end gap-3 mt-4">
+                <button id="btn-check" class="bg-blue-600 hover:bg-blue-700 text-white font-semibold py-2 px-6 rounded-xl transition-colors shadow-sm" onclick="checkAnswers()">
+                    בדוק תשובות
+                </button>
+                <button id="btn-next" class="hidden bg-slate-800 hover:bg-slate-900 text-white font-semibold py-2 px-6 rounded-xl transition-colors shadow-sm" onclick="nextQuestion()">
+                    המשך לשאלה הבאה
+                </button>
+            </div>
+
+        </main>
+
+        <!-- End Screen (Hidden by default) -->
+        <div id="end-screen" class="hidden bg-white rounded-2xl shadow-md p-10 text-center">
+            <h2 class="text-3xl font-bold text-slate-800 mb-4">סיימת את התרגול!</h2>
+            <div class="text-6xl font-black text-blue-600 mb-2" id="final-percentage">100%</div>
+            <p class="text-lg text-slate-600 mb-8" id="final-stats">צברת 80 מתוך 80 נקודות אפשריות.</p>
+            <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl transition-colors shadow-md text-lg" onclick="initQuiz()">
+                התחל תרגול מחדש
+            </button>
+        </div>
+
+    </div>
+
+    <script>
+        // --- Physics & Engine Logic ---
+        
+        const C_SPEED = 3.0; // 3 * 10^8 m/s
+        const TOTAL_QUESTIONS = 20;
+        let questions = [];
+        let currentIndex = 0;
+        let score = 0;
+        let totalPossibleScore = 0;
+        
+        // Math utilities
+        const round = (val, dec) => Math.round(val * Math.pow(10, dec)) / Math.pow(10, dec);
+        const deg2rad = deg => deg * (Math.PI / 180);
+        const rad2deg = rad => rad * (180 / Math.PI);
+
+        function generateQuestions() {
+            questions = [];
+            for (let i = 0; i < TOTAL_QUESTIONS; i++) {
+                // Determine scenario: 0-6 (Scen 1), 7-13 (Scen 2), 14-19 (Scen 3)
+                let scenario = 1;
+                if (i >= 7 && i <= 13) scenario = 2;
+                if (i >= 14) scenario = 3;
+
+                // Random physical properties
+                let n_mat = round(1.3 + Math.random() * 1.1, 2); // 1.30 to 2.40
+                let theta_air = Math.floor(20 + Math.random() * 50); // 20 to 69 degrees
+                
+                // Calculate theta_mat using Snell's law: 1 * sin(air) = n_mat * sin(mat)
+                let sin_mat = Math.sin(deg2rad(theta_air)) / n_mat;
+                let theta_mat = round(rad2deg(Math.asin(sin_mat)), 1);
+                
+                // Determine direction (50% chance Air->Mat, 50% chance Mat->Air)
+                let direction = Math.random() > 0.5 ? 'air_to_mat' : 'mat_to_air';
+                let theta1 = direction === 'air_to_mat' ? theta_air : theta_mat;
+                let theta2 = direction === 'air_to_mat' ? theta_mat : theta_air;
+
+                // Derived answers
+                let v_mat = round(C_SPEED / n_mat, 2);
+                let deviation = round(Math.abs(theta1 - theta2), 1);
+                
+                // Visual properties
+                let tiltAngle = Math.floor((Math.random() - 0.5) * 60); // -30 to 30 degrees
+
+                questions.push({
+                    scenario: scenario,
+                    n_mat: n_mat,
+                    v_mat: v_mat,
+                    theta1: theta1,
+                    theta2: theta2,
+                    deviation: deviation,
+                    direction: direction,
+                    tiltAngle: tiltAngle
+                });
+            }
+            // Shuffle questions slightly so scenarios aren't perfectly clumped, but keep general distribution
+            questions.sort(() => Math.random() - 0.5);
+        }
+
+        function initQuiz() {
+            generateQuestions();
+            currentIndex = 0;
+            score = 0;
+            totalPossibleScore = 0;
+            
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            
+            updateScoreDisplay();
+            renderQuestion();
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('score-display').innerText = `${score} / ${totalPossibleScore}`;
+        }
+
+        function renderQuestion() {
+            const q = questions[currentIndex];
+            
+            document.getElementById('question-title').innerText = `שאלה ${currentIndex + 1} מתוך ${TOTAL_QUESTIONS}`;
+            
+            const hintEl = document.getElementById('scenario-hint');
+            const infoEl = document.getElementById('question-info');
+            infoEl.classList.add('hidden');
+            infoEl.innerHTML = '';
+
+            // Set up prompt based on scenario
+            if (q.scenario === 1) {
+                hintEl.innerText = 'חישוב זוויות (מקדם שבירה נתון)';
+                infoEl.innerHTML = `נתון כי מקדם השבירה של החומר הוא: <strong dir="ltr">n = ${q.n_mat}</strong>`;
+                infoEl.classList.remove('hidden');
+            } else if (q.scenario === 2) {
+                hintEl.innerText = 'מציאת מקדם שבירה (זוויות נתונות)';
+            } else {
+                hintEl.innerText = 'אתגר הזווית הצמודה למשטח';
+            }
+
+            drawDiagram(q);
+            buildInputs(q);
+            
+            document.getElementById('btn-check').classList.remove('hidden');
+            document.getElementById('btn-next').classList.add('hidden');
+        }
+
+        function buildInputs(q) {
+            const container = document.getElementById('inputs-container');
+            container.innerHTML = '';
+            
+            // Define required fields based on scenario
+            let fields = [
+                { id: 'ans_theta1', label: 'מהי זווית הפגיעה (ביחס לאנך)? [°]', correct: q.theta1, tol: 0.5 },
+                { id: 'ans_theta2', label: 'מהי זווית השבירה (ביחס לאנך)? [°]', correct: q.theta2, tol: 0.5 },
+            ];
+
+            if (q.scenario !== 1) {
+                fields.push({ id: 'ans_n', label: 'מהו מקדם השבירה של החומר?', correct: q.n_mat, tol: 0.05 });
+            }
+            
+            fields.push({ id: 'ans_v', label: 'מהי מהירות האור בחומר? [10⁸ m/s]', correct: q.v_mat, tol: 0.05 });
+            fields.push({ id: 'ans_dev', label: 'מהי זווית הסטייה של הקרן? [°]', correct: q.deviation, tol: 0.5 });
+
+            // Increase possible score for this screen
+            totalPossibleScore += fields.length;
+            updateScoreDisplay();
+
+            fields.forEach(f => {
+                container.innerHTML += `
+                    <div class="relative flex flex-col">
+                        <label class="text-sm font-semibold text-slate-700 mb-1" for="${f.id}">${f.label}</label>
+                        <div class="relative">
+                            <input type="number" id="${f.id}" step="0.01" class="w-full border border-slate-300 rounded-lg py-2 px-3 focus:outline-none focus:ring-2 focus:ring-blue-500 transition-colors" data-correct="${f.correct}" data-tol="${f.tol}">
+                            <div id="icon_${f.id}" class="absolute left-3 top-2.5 hidden"></div>
+                        </div>
+                        <p id="feedback_${f.id}" class="text-xs font-bold mt-1 text-red-600 hidden"></p>
+                    </div>
+                `;
+            });
+        }
+
+        function checkAnswers() {
+            const q = questions[currentIndex];
+            const inputs = document.querySelectorAll('#inputs-container input');
+            
+            inputs.forEach(input => {
+                const userVal = parseFloat(input.value);
+                const correctVal = parseFloat(input.getAttribute('data-correct'));
+                const tol = parseFloat(input.getAttribute('data-tol'));
+                const iconEl = document.getElementById(`icon_${input.id}`);
+                const feedbackEl = document.getElementById(`feedback_${input.id}`);
+                
+                input.disabled = true;
+                iconEl.classList.remove('hidden');
+
+                if (!isNaN(userVal) && Math.abs(userVal - correctVal) <= tol) {
+                    // Correct
+                    score++;
+                    input.classList.add('input-correct');
+                    iconEl.innerHTML = `<svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"></path></svg>`;
+                } else {
+                    // Incorrect
+                    input.classList.add('input-incorrect');
+                    iconEl.innerHTML = `<svg class="w-5 h-5 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M6 18L18 6M6 6l12 12"></path></svg>`;
+                    feedbackEl.innerText = `תשובה נכונה: ${correctVal}`;
+                    feedbackEl.classList.remove('hidden');
+                }
+            });
+
+            updateScoreDisplay();
+            document.getElementById('btn-check').classList.add('hidden');
+            document.getElementById('btn-next').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            currentIndex++;
+            if (currentIndex >= TOTAL_QUESTIONS) {
+                showEndScreen();
+            } else {
+                renderQuestion();
+            }
+        }
+
+        function showEndScreen() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('end-screen').classList.remove('hidden');
+            
+            const percentage = Math.round((score / totalPossibleScore) * 100);
+            document.getElementById('final-percentage').innerText = `${percentage}%`;
+            document.getElementById('final-stats').innerText = `צברת ${score} מתוך ${totalPossibleScore} נקודות אפשריות.`;
+        }
+
+        // --- Canvas Drawing Function ---
+        function drawDiagram(q) {
+            const canvas = document.getElementById('opticsCanvas');
+            const ctx = canvas.getContext('2d');
+            const w = canvas.width;
+            const h = canvas.height;
+            const cx = w / 2;
+            const cy = h / 2;
+
+            ctx.clearRect(0, 0, w, h);
+            ctx.save();
+            ctx.translate(cx, cy);
+            ctx.rotate(deg2rad(q.tiltAngle));
+
+            // Draw Box (Surface is Y=0, Box is bottom half Y>0 or top half Y<0 depending on direction)
+            ctx.fillStyle = q.direction === 'air_to_mat' ? '#cbd5e1' : '#ffffff'; // Mat is gray, Air is white
+            ctx.fillRect(-w, 0, w * 2, h); // Bottom half
+            ctx.fillStyle = q.direction === 'air_to_mat' ? '#ffffff' : '#cbd5e1';
+            ctx.fillRect(-w, -h, w * 2, h); // Top half
+
+            // Draw separating line
+            ctx.beginPath();
+            ctx.moveTo(-w, 0);
+            ctx.lineTo(w, 0);
+            ctx.strokeStyle = '#0f172a';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            // Draw Normal line (dashed)
+            ctx.beginPath();
+            ctx.setLineDash([5, 5]);
+            ctx.moveTo(0, -h/1.5);
+            ctx.lineTo(0, h/1.5);
+            ctx.strokeStyle = '#475569';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+            ctx.setLineDash([]);
+
+            // Physics calculation for drawing
+            // Light comes from top-left. Normal is Y-axis.
+            // Incident angle from top Normal (-90 deg in canvas is top, so angle is -90 - theta1)
+            let rayLength = 150;
+            let startX = -rayLength * Math.sin(deg2rad(q.theta1));
+            let startY = -rayLength * Math.cos(deg2rad(q.theta1));
+            
+            // Refracted ray goes to bottom-right (angle is 90 - theta2 in normal math, but we measure from downward Normal which is +Y)
+            let endX = rayLength * Math.sin(deg2rad(q.theta2));
+            let endY = rayLength * Math.cos(deg2rad(q.theta2));
+
+            // Draw Incident Ray
+            drawArrowLine(ctx, startX, startY, 0, 0, '#000000', 2);
+            // Draw Refracted Ray
+            drawArrowLine(ctx, 0, 0, endX, endY, '#000000', 2);
+
+            // Draw Arcs and Text based on scenario
+            ctx.font = "bold 16px sans-serif";
+            ctx.textAlign = "center";
+            ctx.textBaseline = "middle";
+
+            // Helper function to draw readable horizontal text with outline
+            function drawAngleLabel(text, angleRad, distance) {
+                let x = distance * Math.cos(angleRad);
+                let y = distance * Math.sin(angleRad);
+                
+                ctx.save();
+                ctx.translate(x, y);
+                ctx.rotate(-deg2rad(q.tiltAngle)); // Keep text horizontal despite canvas tilt
+                
+                // White outline for readability against lines
+                ctx.lineWidth = 4;
+                ctx.strokeStyle = "rgba(255, 255, 255, 0.9)";
+                ctx.strokeText(text, 0, 0);
+                
+                // Black text
+                ctx.fillStyle = "#000";
+                ctx.fillText(text, 0, 0);
+                ctx.restore();
+            }
+
+            // Determine what to display
+            let showTheta1Normal = (q.scenario === 1 || q.scenario === 2);
+            let showTheta2Normal = (q.scenario === 2 || (q.scenario === 3 && Math.random() > 0.5)); // Randomly show normal angle in scen 3
+            let showTheta1Surface = (q.scenario === 3 && !showTheta1Normal);
+            let showTheta2Surface = (q.scenario === 3 && !showTheta2Normal && !showTheta1Surface); // Fallback for trap
+            
+            // Force the "trap" in scenario 3 if neither was selected
+            if (q.scenario === 3 && !showTheta1Surface && !showTheta2Surface) {
+                showTheta1Surface = true;
+            }
+
+            // Draw Arc for Incident Ray (relative to normal)
+            if (showTheta1Normal) {
+                ctx.beginPath();
+                ctx.arc(0, 0, 40, 1.5 * Math.PI - deg2rad(q.theta1), 1.5 * Math.PI, false);
+                ctx.stroke();
+                let midAngle = 1.5 * Math.PI - deg2rad(q.theta1 / 2);
+                drawAngleLabel(`${q.theta1}°`, midAngle, 65);
+            }
+            // Draw Arc for Incident Ray (relative to surface - The Trap)
+            if (showTheta1Surface) {
+                let surfaceAngle = 90 - q.theta1;
+                ctx.beginPath();
+                ctx.arc(0, 0, 50, Math.PI, 1.5 * Math.PI - deg2rad(q.theta1), false);
+                ctx.stroke();
+                let midAngle = Math.PI + (Math.PI / 2 - deg2rad(q.theta1)) / 2;
+                drawAngleLabel(`${round(surfaceAngle, 1)}°`, midAngle, 75);
+            }
+
+            // Draw Arc for Refracted Ray (relative to normal)
+            if (showTheta2Normal) {
+                ctx.beginPath();
+                ctx.arc(0, 0, 40, Math.PI / 2 - deg2rad(q.theta2), Math.PI / 2, false);
+                ctx.stroke();
+                let midAngle = Math.PI / 2 - deg2rad(q.theta2 / 2);
+                drawAngleLabel(`${q.theta2}°`, midAngle, 65);
+            }
+            // Draw Arc for Refracted Ray (relative to surface - The Trap)
+            if (showTheta2Surface) {
+                let surfaceAngle = 90 - q.theta2;
+                ctx.beginPath();
+                ctx.arc(0, 0, 50, 0, Math.PI / 2 - deg2rad(q.theta2), false);
+                ctx.stroke();
+                let midAngle = (Math.PI / 2 - deg2rad(q.theta2)) / 2;
+                drawAngleLabel(`${round(surfaceAngle, 1)}°`, midAngle, 75);
+            }
+
+            // Add Material Labels
+            ctx.font = "bold 18px sans-serif";
+            
+            // Draw "אוויר" label - always in white area
+            ctx.save();
+            ctx.translate(0, q.direction === 'air_to_mat' ? -h/4 : h/4); 
+            // Undo rotation for text so it's always readable straight
+            ctx.rotate(-deg2rad(q.tiltAngle)); 
+            ctx.fillStyle = "#0f172a";
+            ctx.fillText("אוויר", 0, 0);
+            ctx.restore();
+
+            // Draw "חומר" label - always in gray area
+            ctx.save();
+            ctx.translate(0, q.direction === 'air_to_mat' ? h/4 : -h/4);
+            // Undo rotation for text
+            ctx.rotate(-deg2rad(q.tiltAngle));
+            ctx.fillStyle = "#0f172a";
+            ctx.fillText("חומר שקוף", 0, 0);
+            ctx.restore();
+
+            ctx.restore();
+        }
+
+        function drawArrowLine(ctx, fromX, fromY, toX, toY, color, width) {
+            ctx.beginPath();
+            ctx.moveTo(fromX, fromY);
+            ctx.lineTo(toX, toY);
+            ctx.strokeStyle = color;
+            ctx.lineWidth = width;
+            ctx.stroke();
+
+            // Arrow head exactly in the middle to prevent origin overlap
+            let midX = (fromX + toX) / 2;
+            let midY = (fromY + toY) / 2;
+            let angle = Math.atan2(toY - fromY, toX - fromX);
+            
+            ctx.beginPath();
+            ctx.moveTo(midX, midY);
+            ctx.lineTo(midX - 10 * Math.cos(angle - Math.PI / 6), midY - 10 * Math.sin(angle - Math.PI / 6));
+            ctx.lineTo(midX - 10 * Math.cos(angle + Math.PI / 6), midY - 10 * Math.sin(angle + Math.PI / 6));
+            ctx.lineTo(midX, midY);
+            ctx.fillStyle = color;
+            ctx.fill();
+        }
+
+        // Start everything
+        window.onload = initQuiz;
+
+    </script>
+</body>
+</html>
