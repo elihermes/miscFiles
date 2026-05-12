@@ -1,0 +1,521 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תרגול קינמטיקה - שיהויי זמן ומשוואות תנועה</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; }
+        .feedback-icon { flex-shrink: 0; width: 1.25rem; height: 1.25rem; margin-right: 0.5rem; margin-left: 0.25rem; }
+        .math-text { font-family: 'Times New Roman', Times, serif; font-style: italic; font-size: 1.1em; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen text-slate-800">
+
+    <div id="loadingScreen" class="flex min-h-screen items-center justify-center text-xl font-medium">
+        מכין את התרגול...
+    </div>
+
+    <div id="finishScreen" class="hidden min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center border-t-8 border-blue-600">
+            <svg class="w-16 h-16 text-blue-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16.01" y1="10" y2="10"/><line x1="12" x2="12.01" y1="10" y2="10"/><line x1="8" x2="8.01" y1="10" y2="10"/><line x1="16" x2="16.01" y1="14" y2="14"/><line x1="12" x2="12.01" y1="14" y2="14"/><line x1="8" x2="8.01" y1="14" y2="14"/><line x1="16" x2="16.01" y1="18" y2="18"/><line x1="12" x2="12.01" y1="18" y2="18"/><line x1="8" x2="8.01" y1="18" y2="18"/></svg>
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">התרגול הסתיים!</h1>
+            <p class="text-lg text-slate-600 mb-6">ענית על כל 20 התרחישים.</p>
+            <div class="text-4xl font-black text-blue-600 mb-8 flex justify-center items-center gap-2">
+                <span class="text-xl text-slate-500 font-normal">ציון:</span> 
+                <span id="finalScorePercent">0</span>
+            </div>
+            <p class="text-sm text-slate-500 mb-8">
+                תשובות נכונות: <span id="finalScoreText">0 מתוך 0</span> סעיפים
+            </p>
+            <button onclick="restartQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2">
+                <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                התחל תרגול מחדש
+            </button>
+        </div>
+    </div>
+
+    <div id="quizScreen" class="hidden p-4 md:p-8">
+        <div class="max-w-4xl mx-auto flex flex-col gap-8">
+            
+            <!-- Top Card: Scenario Description -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
+                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                    <h2 class="text-2xl font-bold text-slate-800">ניתוח תנועה ותנאי התחלה</h2>
+                    <div class="flex gap-3 text-sm sm:text-base">
+                        <div class="bg-emerald-100 text-emerald-800 px-4 py-1 rounded-full font-semibold">
+                            ציון נצבר: <span dir="ltr" id="scoreDisplay">0/0</span>
+                        </div>
+                        <div class="bg-blue-100 text-blue-800 px-4 py-1 rounded-full font-semibold">
+                            תרחיש <span id="questionNum">1</span> מתוך 20
+                        </div>
+                    </div>
+                </div>
+
+                <div class="bg-amber-50 border-r-4 border-amber-400 p-4 rounded-l-lg shadow-sm text-lg leading-relaxed">
+                    <p id="scenarioText" class="text-slate-800"></p>
+                </div>
+            </div>
+
+            <!-- Bottom Card: Questions Form -->
+            <div class="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
+                <h3 class="text-xl font-bold text-slate-800 mb-6">ענה על השאלות הבאות:</h3>
+                
+                <div id="questionsContainer" class="space-y-6">
+                    <!-- Dynamic Questions will be injected here -->
+                </div>
+
+                <!-- Action Buttons -->
+                <div class="mt-8 pt-6 border-t border-slate-200">
+                    <button id="btnCheck" onclick="checkAnswers()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-md hover:shadow-lg text-lg flex items-center justify-center gap-2">
+                        <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
+                        בדוק תשובות
+                    </button>
+                    
+                    <button id="btnNext" onclick="nextQuestion()" class="hidden w-full bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-md hover:shadow-lg text-lg flex items-center justify-center gap-2">
+                        <span id="btnNextText">המשך לתרחיש הבא</span>
+                        <svg class="w-6 h-6 rotate-180" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // --- Physics Engine & Data Generation ---
+        
+        // Logical Direction Groupings
+        const DIR_PAIRS = [
+            { pos: 'צפונה', neg: 'דרומה', type: 'map' },
+            { pos: 'דרומה', neg: 'צפונה', type: 'map' },
+            { pos: 'מזרחה', neg: 'מערבה', type: 'map' },
+            { pos: 'מערבה', neg: 'מזרחה', type: 'map' },
+            { pos: 'ימינה', neg: 'שמאלה', type: 'horiz' },
+            { pos: 'שמאלה', neg: 'ימינה', type: 'horiz' },
+            { pos: 'למעלה', neg: 'למטה', type: 'vert' },
+            { pos: 'למטה', neg: 'למעלה', type: 'vert' }
+        ];
+
+        // Actor Contexts for realism
+        const EVENT_CONTEXTS = [
+            { event: 'שהרמזור התחלף לירוק', actor: 'מכונית', allowed: ['map', 'horiz'], gender: 'f' },
+            { event: 'שנשמעה שריקת הפתיחה', actor: 'אצן', allowed: ['map', 'horiz'], gender: 'm' },
+            { event: 'שנפתח שער החצר', actor: 'כלב', allowed: ['map', 'horiz'], gender: 'm' },
+            { event: 'שהופעל חיישן המדידה', actor: 'גוף', allowed: ['map', 'horiz', 'vert'], gender: 'm' },
+            { event: 'שהמערכת שחררה את התפס', actor: 'כדור', allowed: ['map', 'horiz', 'vert'], gender: 'm' },
+            { event: 'שהתקבל אישור יציאה מהתחנה', actor: 'רכבת', allowed: ['map', 'horiz'], gender: 'f' }
+        ];
+
+        const SINGLE_ACTORS = [
+            { name: "מכונית", allowed: ['map', 'horiz'], gender: 'f' },
+            { name: "רוכב אופניים", allowed: ['map', 'horiz'], gender: 'm' },
+            { name: "כדור", allowed: ['vert'], gender: 'm' },
+            { name: "גוף", allowed: ['map', 'horiz', 'vert'], gender: 'm' }
+        ];
+
+        const TWO_ACTORS = [
+            { name1: "מכונית א'", name2: "מכונית ב'", allowed: ['map', 'horiz'], gender: 'f' },
+            { name1: "רוכב א'", name2: "רוכב ב'", allowed: ['map', 'horiz'], gender: 'm' },
+            { name1: "כדור א'", name2: "כדור ב'", allowed: ['vert'], gender: 'm' },
+            { name1: "גוף א'", name2: "גוף ב'", allowed: ['map', 'horiz', 'vert'], gender: 'm' }
+        ];
+
+        const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+        
+        const formatPosition = (val, posDir, negDir) => {
+            if (Math.abs(val) < 0.01) return '0 מ\' (בראשית הצירים)';
+            const dir = val > 0 ? posDir : negDir;
+            
+            if (dir === 'למעלה') return `${Math.abs(val).toFixed(2).replace(/\.00$/, '')} מ' מעל ראשית הצירים`;
+            if (dir === 'למטה') return `${Math.abs(val).toFixed(2).replace(/\.00$/, '')} מ' מתחת לראשית הצירים`;
+            
+            return `${Math.abs(val).toFixed(2).replace(/\.00$/, '')} מ' ${dir} מראשית הצירים`;
+        };
+
+        const formatVelocity = (val, posDir, negDir) => {
+             if (Math.abs(val) < 0.01) return '0 מ\'/ש\' (במנוחה)';
+             const dir = val > 0 ? posDir : negDir;
+             return `${Math.abs(val).toFixed(2).replace(/\.00$/, '')} מ\'/ש\' ${dir}`;
+        };
+
+        const formatEq = (x0, v0, a, shift = 0) => {
+            let eq = "";
+            let hasPrev = false;
+            
+            if (x0 !== 0) {
+                eq += `${x0}`;
+                hasPrev = true;
+            }
+
+            let tPart = shift > 0 ? `(t-${shift})` : `t`;
+            if (v0 !== 0) {
+                if (hasPrev) eq += v0 > 0 ? ` + ` : ` - `;
+                else if (v0 < 0) eq += `-`;
+                if (Math.abs(v0) !== 1) eq += `${Math.abs(v0)}`;
+                eq += tPart;
+                hasPrev = true;
+            }
+
+            let halfA = a / 2;
+            if (halfA !== 0) {
+                if (hasPrev) eq += halfA > 0 ? ` + ` : ` - `;
+                else if (halfA < 0) eq += `-`;
+                if (Math.abs(halfA) !== 1) eq += `${Math.abs(halfA)}`;
+                eq += shift > 0 ? `(t-${shift})^2` : `t^2`;
+            }
+
+            if (eq === "") eq = "0";
+            return eq;
+        };
+
+        const formatVelEq = (v0, a, shift = 0) => {
+             let eq = "";
+             let hasPrev = false;
+             
+             if(v0 !== 0) {
+                 eq += `${v0}`;
+                 hasPrev = true;
+             }
+
+             let tPart = shift > 0 ? `(t-${shift})` : `t`;
+             if (a !== 0) {
+                 if (hasPrev) eq += a > 0 ? ` + ` : ` - `;
+                 else if (a < 0) eq += `-`;
+                 if(Math.abs(a) !== 1) eq += `${Math.abs(a)}`;
+                 eq += tPart;
+             }
+             if (eq === "") eq = "0";
+             return eq;
+        };
+
+        const getDirNoun = (dir) => {
+            const nounMap = {'צפונה':'צפון', 'דרומה':'דרום', 'מזרחה':'מזרח', 'מערבה':'מערב', 'ימינה':'ימין', 'שמאלה':'שמאל', 'למעלה':'מעלה', 'למטה':'מטה'};
+            return nounMap[dir] || dir;
+        };
+
+        const formatPosDesc = (val, posDir, negDir) => {
+            if (val === 0) return 'מראשית הצירים';
+            const dir = val > 0 ? posDir : negDir;
+            if (dir === 'למעלה') return `מנקודה הנמצאת <span class="math-text">${Math.abs(val)}</span> מטרים מעל ראשית הצירים`;
+            if (dir === 'למטה') return `מנקודה הנמצאת <span class="math-text">${Math.abs(val)}</span> מטרים מתחת לראשית הצירים`;
+            return `מנקודה הנמצאת <span class="math-text">${Math.abs(val)}</span> מטרים ${dir} לראשית הצירים`;
+        };
+
+        const formatVelDesc = (val, posDir, negDir) => {
+            if (val === 0) return 'ממנוחה';
+            const dir = val > 0 ? posDir : negDir;
+            return `במהירות התחלתית של <span class="math-text">${Math.abs(val)}m/s</span> ${dir}`;
+        };
+
+        const formatAccDesc = (val, posDir, negDir) => {
+            if (val === 0) return `ללא תאוצה`;
+            const dir = val > 0 ? posDir : negDir;
+            return `ובתאוצה של <span class="math-text">${Math.abs(val)}m/s²</span> לכיוון ${getDirNoun(dir)}`;
+        };
+
+        const getEqDistractors = (x0, v0, a, shift) => {
+            let distractors = [
+                formatEq(x0, v0, a * 2, shift),
+                formatEq(x0, v0, a, 0),
+                formatEq(v0, x0, a, shift),
+                formatEq(x0, v0, -a, shift),
+                formatEq(-x0, v0, a, shift),
+                formatEq(x0, -v0, a, shift),
+                formatEq(0, v0, a, shift)
+            ];
+            
+            let correct = formatEq(x0, v0, a, shift);
+            let uniqueDistractors = [...new Set(distractors)].filter(d => d !== correct);
+            uniqueDistractors = uniqueDistractors.sort(() => Math.random() - 0.5).slice(0, 3);
+            
+            return [correct, ...uniqueDistractors].sort(() => Math.random() - 0.5);
+        };
+
+        const getVelEqDistractors = (v0, a, shift) => {
+            let distractors = [
+                formatVelEq(v0, a/2, shift),
+                formatVelEq(v0, a, 0),
+                formatVelEq(-v0, a, shift),
+                formatVelEq(v0, -a, shift),
+                formatVelEq(0, a, shift),
+                formatVelEq(v0, a * 2, shift)
+            ];
+            
+            let correct = formatVelEq(v0, a, shift);
+            let uniqueDistractors = [...new Set(distractors)].filter(d => d !== correct);
+            uniqueDistractors = uniqueDistractors.sort(() => Math.random() - 0.5).slice(0, 3);
+            
+            return [correct, ...uniqueDistractors].sort(() => Math.random() - 0.5);
+        };
+
+        const generateTwoBodiesScenario = () => {
+            const context = TWO_ACTORS[getRandomInt(0, TWO_ACTORS.length - 1)];
+            const validDirs = DIR_PAIRS.filter(d => context.allowed.includes(d.type));
+            const dirPair = validDirs[getRandomInt(0, validDirs.length - 1)];
+            const startsVerb = context.gender === 'f' ? "מתחילה את תנועתה" : "מתחיל את תנועתו";
+            
+            let a1 = getRandomInt(-4, 4); while(a1 === 0) a1 = getRandomInt(-4, 4);
+            let a2 = getRandomInt(-4, 4); while(a2 === 0) a2 = getRandomInt(-4, 4);
+            let v01 = getRandomInt(-10, 10);
+            let v02 = getRandomInt(-10, 10);
+            let x01 = getRandomInt(-50, 50);
+            let x02 = getRandomInt(-50, 50);
+
+            let delay = getRandomInt(2, 6);
+            let firstBodyIsDelayed = Math.random() > 0.5;
+            let b1Delay = firstBodyIsDelayed ? delay : 0;
+            let b2Delay = firstBodyIsDelayed ? 0 : delay;
+
+            let text = `כיוון ${dirPair.pos} מוגדר כחיובי. <br>`;
+            text += `<b>${context.name1}</b> ${startsVerb} בזמן <span class="math-text">t = ${b1Delay}s</span> ${formatPosDesc(x01, dirPair.pos, dirPair.neg)}, ${formatVelDesc(v01, dirPair.pos, dirPair.neg)} ${formatAccDesc(a1, dirPair.pos, dirPair.neg)}.<br>`;
+            text += `<b>${context.name2}</b> ${startsVerb} בזמן <span class="math-text">t = ${b2Delay}s</span> ${formatPosDesc(x02, dirPair.pos, dirPair.neg)}, ${formatVelDesc(v02, dirPair.pos, dirPair.neg)} ${formatAccDesc(a2, dirPair.pos, dirPair.neg)}.`;
+
+            let evalTime = delay + getRandomInt(2, 5);
+            const x1Fn = (t) => t >= b1Delay ? x01 + v01*(t-b1Delay) + 0.5*a1*Math.pow(t-b1Delay, 2) : x01;
+            const x2Fn = (t) => t >= b2Delay ? x02 + v02*(t-b2Delay) + 0.5*a2*Math.pow(t-b2Delay, 2) : x02;
+
+            const delayedBodyObj = firstBodyIsDelayed ? {name: context.name1, v0:v01, a:a1, shift:b1Delay} : {name: context.name2, v0:v02, a:a2, shift:b2Delay};
+            const anyBodyObj = Math.random() > 0.5 ? {name: context.name1, fn: x1Fn} : {name: context.name2, fn: x2Fn};
+
+            let questions = [
+                { id: 'q1', type: 'select', label: `1. בחר את משוואת התנועה (מקום-זמן) של ${context.name1}:`, options: getEqDistractors(x01, v01, a1, b1Delay), correct: formatEq(x01, v01, a1, b1Delay) },
+                { id: 'q2', type: 'select', label: `2. בחר את משוואת התנועה (מקום-זמן) של ${context.name2}:`, options: getEqDistractors(x02, v02, a2, b2Delay), correct: formatEq(x02, v02, a2, b2Delay) },
+                { id: 'q3', type: 'number', subType: 'distance', label: `3. מה המרחק בין הגופים בזמן <span class="math-text">t = ${evalTime}s</span>?`, correct: Math.abs(x1Fn(evalTime) - x2Fn(evalTime)) },
+                { id: 'q4', type: 'number', subType: 'position', label: `4. מהו המיקום של ${anyBodyObj.name} בזמן <span class="math-text">t = ${evalTime}s</span>? (הזן קואורדינטה מספרית)`, correct: anyBodyObj.fn(evalTime) },
+                { id: 'q5', type: 'select', label: `5. בחר את משוואת המהירות-זמן של הגוף שהחל בתנועה בשיהוי (${delayedBodyObj.name}):`, options: getVelEqDistractors(delayedBodyObj.v0, delayedBodyObj.a, delayedBodyObj.shift), correct: formatVelEq(delayedBodyObj.v0, delayedBodyObj.a, delayedBodyObj.shift) }
+            ];
+
+            return { text, questions, posDir: dirPair.pos, negDir: dirPair.neg };
+        };
+
+        const generateSingleBodyZeroScenario = () => {
+            const context = SINGLE_ACTORS[getRandomInt(0, SINGLE_ACTORS.length - 1)];
+            const validDirs = DIR_PAIRS.filter(d => context.allowed.includes(d.type));
+            const dirPair = validDirs[getRandomInt(0, validDirs.length - 1)];
+            const startsVerb = context.gender === 'f' ? "מתחילה את תנועתה" : "מתחיל את תנועתו";
+
+            let a = getRandomInt(-5, 5); while(a===0) a = getRandomInt(-5,5);
+            let v0 = getRandomInt(-15, 15);
+            let x0 = getRandomInt(-20, 20);
+
+            let text = `כיוון ${dirPair.pos} מוגדר כחיובי. <br>`;
+            text += `<b>${context.name}</b> ${startsVerb} מזמן <span class="math-text">t = 0</span> ${formatPosDesc(x0, dirPair.pos, dirPair.neg)}, ${formatVelDesc(v0, dirPair.pos, dirPair.neg)} ${formatAccDesc(a, dirPair.pos, dirPair.neg)}.`;
+
+            let evalTime = getRandomInt(3, 8);
+            const xFn = (t) => x0 + v0*t + 0.5*a*Math.pow(t, 2);
+            const vFn = (t) => v0 + a*t;
+
+            let questions = [
+                { id: 'q1', type: 'select', label: `1. בחר את משוואת התנועה (מקום-זמן) במקרה זה:`, options: getEqDistractors(x0, v0, a, 0), correct: formatEq(x0, v0, a, 0) },
+                { id: 'q2', type: 'select', label: `2. בחר את משוואת המהירות-זמן של תנועה זו:`, options: getVelEqDistractors(v0, a, 0), correct: formatVelEq(v0, a, 0) },
+                { id: 'q3', type: 'number', subType: 'position', label: `3. מהו המיקום בזמן <span class="math-text">t = ${evalTime}s</span>? (הזן קואורדינטה)`, correct: xFn(evalTime) },
+                { id: 'q4', type: 'number', subType: 'velocity', label: `4. מהי המהירות בזמן <span class="math-text">t = ${evalTime}s</span>? (הזן ערך מספרי עם סימן)`, correct: vFn(evalTime) },
+                { id: 'q5', type: 'number', subType: 'distance', label: `5. מהו ההעתק (שינוי המיקום) בין הרגע <span class="math-text">t=0</span> לרגע <span class="math-text">t = ${evalTime}s</span>?`, correct: xFn(evalTime) - x0 }
+            ];
+            return { text, questions, posDir: dirPair.pos, negDir: dirPair.neg };
+        };
+
+        const generateSingleBodyEventScenario = () => {
+            const context = EVENT_CONTEXTS[getRandomInt(0, EVENT_CONTEXTS.length - 1)];
+            const validDirs = DIR_PAIRS.filter(d => context.allowed.includes(d.type));
+            const dirPair = validDirs[getRandomInt(0, validDirs.length - 1)];
+            const startsVerb = context.gender === 'f' ? "מתחילה את תנועתה" : "מתחיל את תנועתו";
+            let delay = getRandomInt(2, 5);
+            
+            let a = getRandomInt(-5, 5); while(a===0) a = getRandomInt(-5,5);
+            let v0 = getRandomInt(-10, 10);
+            let x0 = getRandomInt(-10, 10);
+
+            let text = `כיוון ${dirPair.pos} מוגדר כחיובי. מוגדר רגע <span class="math-text">t=0</span> כרגע ${context.event}.<br>`;
+            text += `<b>${context.actor}</b> ${startsVerb} <span class="font-bold">${delay} שניות</span> לאחר מכן (כלומר בשיהוי). ההתחלה היא ${formatPosDesc(x0, dirPair.pos, dirPair.neg)}, ${formatVelDesc(v0, dirPair.pos, dirPair.neg)} ${formatAccDesc(a, dirPair.pos, dirPair.neg)}.`;
+
+            let evalTime = delay + getRandomInt(2, 6);
+            const xFn = (t) => t >= delay ? x0 + v0*(t-delay) + 0.5*a*Math.pow(t-delay, 2) : x0;
+            const vFn = (t) => t >= delay ? v0 + a*(t-delay) : 0;
+
+            let questions = [
+                { id: 'q1', type: 'select', label: `1. בחר את משוואת התנועה (מקום-זמן) עבור t &ge; ${delay}:`, options: getEqDistractors(x0, v0, a, delay), correct: formatEq(x0, v0, a, delay) },
+                { id: 'q2', type: 'select', label: `2. בחר את משוואת המהירות-זמן במקרה זה:`, options: getVelEqDistractors(v0, a, delay), correct: formatVelEq(v0, a, delay) },
+                { id: 'q3', type: 'number', subType: 'position', label: `3. מהו המיקום בזמן <span class="math-text">t = ${evalTime}s</span>? (הזן קואורדינטה)`, correct: xFn(evalTime) },
+                { id: 'q4', type: 'number', subType: 'velocity', label: `4. מהי המהירות בזמן <span class="math-text">t = ${evalTime}s</span>? (הזן ערך עם סימן)`, correct: vFn(evalTime) },
+                { id: 'q5', type: 'number', subType: 'time', label: `5. כמה זמן (בשניות) התרחשה התנועה בפועל עד לרגע <span class="math-text">t = ${evalTime}s</span>?`, correct: evalTime - delay }
+            ];
+            return { text, questions, posDir: dirPair.pos, negDir: dirPair.neg };
+        };
+
+        const generateQuiz = () => {
+            let singleScenarios = [];
+            for(let i=0; i<5; i++) singleScenarios.push(generateSingleBodyZeroScenario());
+            for(let i=0; i<5; i++) singleScenarios.push(generateSingleBodyEventScenario());
+            singleScenarios = singleScenarios.sort(() => Math.random() - 0.5); // Shuffle first 10
+
+            let twoBodiesScenarios = [];
+            for(let i=0; i<10; i++) twoBodiesScenarios.push(generateTwoBodiesScenario());
+            twoBodiesScenarios = twoBodiesScenarios.sort(() => Math.random() - 0.5); // Shuffle last 10
+
+            return [...singleScenarios, ...twoBodiesScenarios]; // Combine into 20 questions
+        };
+
+        let currentScenarios = [];
+        let currentIndex = 0;
+        let score = { correct: 0, total: 0 };
+
+        const iconCorrect = `<svg class="text-green-500 feedback-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`;
+        const iconWrong = `<svg class="text-red-500 feedback-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>`;
+
+        document.addEventListener("DOMContentLoaded", () => {
+            restartQuiz();
+        });
+
+        function restartQuiz() {
+            document.getElementById('loadingScreen').classList.remove('hidden');
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('finishScreen').classList.add('hidden');
+            
+            setTimeout(() => {
+                currentScenarios = generateQuiz();
+                currentIndex = 0;
+                score = { correct: 0, total: 0 };
+                renderScenario();
+                document.getElementById('loadingScreen').classList.add('hidden');
+                document.getElementById('quizScreen').classList.remove('hidden');
+            }, 300);
+        }
+
+        function renderScenario() {
+            const scenario = currentScenarios[currentIndex];
+            
+            document.getElementById('questionNum').innerText = currentIndex + 1;
+            document.getElementById('scoreDisplay').innerText = `${score.correct}/${score.total}`;
+            document.getElementById('scenarioText').innerHTML = scenario.text;
+
+            const container = document.getElementById('questionsContainer');
+            container.innerHTML = '';
+
+            scenario.questions.forEach((q) => {
+                const wrapper = document.createElement('div');
+                wrapper.className = "flex flex-col";
+                
+                let inputHtml = '';
+                if (q.type === 'select') {
+                    let optionsHtml = `<option value="" disabled selected>בחר משוואה מתאימה...</option>`;
+                    q.options.forEach(opt => {
+                        let prefix = q.label.includes('מהירות') ? 'v(t)' : 'x(t)';
+                        optionsHtml += `<option value="${opt}">${prefix} = ${opt}</option>`;
+                    });
+                    inputHtml = `
+                        <select id="input_${q.id}" class="math-text flex-grow p-3 border rounded-lg border-slate-300 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none" dir="ltr">
+                            ${optionsHtml}
+                        </select>
+                    `;
+                } else if (q.type === 'number') {
+                    inputHtml = `
+                        <input id="input_${q.id}" type="number" step="0.01" placeholder="הזן ערך מספרי..." class="flex-grow p-3 border rounded-lg border-slate-300 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none" dir="ltr" />
+                    `;
+                }
+
+                wrapper.innerHTML = `
+                    <label class="font-medium text-slate-700 mb-2">${q.label}</label>
+                    <div class="flex items-center" id="container_${q.id}">
+                        ${inputHtml}
+                        <div id="feedback_${q.id}" class="hidden mr-2 flex-grow-0 sm:flex-grow"></div>
+                    </div>
+                `;
+                container.appendChild(wrapper);
+            });
+
+            document.getElementById('btnCheck').classList.remove('hidden');
+            document.getElementById('btnNext').classList.add('hidden');
+            if (currentIndex === currentScenarios.length - 1) {
+                document.getElementById('btnNextText').innerText = 'סיים תרגול';
+            } else {
+                document.getElementById('btnNextText').innerText = 'המשך לתרחיש הבא';
+            }
+        }
+
+        function checkAnswers() {
+            const scenario = currentScenarios[currentIndex];
+            let correctCount = 0;
+
+            scenario.questions.forEach(q => {
+                const inputEl = document.getElementById(`input_${q.id}`);
+                const feedbackEl = document.getElementById(`feedback_${q.id}`);
+                let isCorrect = false;
+
+                if (q.type === 'select') {
+                    isCorrect = inputEl.value === q.correct;
+                } else if (q.type === 'number') {
+                    const userVal = parseFloat(inputEl.value);
+                    if (!isNaN(userVal) && Math.abs(userVal - q.correct) < 0.05) {
+                        isCorrect = true;
+                    }
+                }
+
+                inputEl.disabled = true;
+                feedbackEl.classList.remove('hidden');
+                feedbackEl.classList.add('flex', 'items-center', 'text-sm', 'font-medium');
+
+                if (isCorrect) {
+                    correctCount++;
+                    feedbackEl.innerHTML = iconCorrect;
+                } else {
+                    inputEl.classList.add('border-red-400', 'bg-red-50');
+                    
+                    let correctStr = "";
+                    if (q.type === 'select') {
+                        let prefix = q.label.includes('מהירות') ? 'v(t)' : 'x(t)';
+                        correctStr = `${prefix} = ${q.correct}`;
+                    } else {
+                        if (q.subType === 'position') {
+                            correctStr = formatPosition(q.correct, scenario.posDir, scenario.negDir);
+                        } else if (q.subType === 'velocity') {
+                            correctStr = formatVelocity(q.correct, scenario.posDir, scenario.negDir);
+                        } else if (q.subType === 'distance') {
+                            correctStr = `${q.correct.toFixed(2).replace(/\.00$/, '')} מטרים`;
+                        } else if (q.subType === 'time') {
+                            correctStr = `${q.correct.toFixed(2).replace(/\.00$/, '')} שניות`;
+                        } else {
+                            correctStr = q.correct.toFixed(2).replace(/\.00$/, '');
+                        }
+                    }
+
+                    feedbackEl.innerHTML = `
+                        <div class="flex items-center text-red-600 pr-2">
+                            ${iconWrong}
+                            <span class="whitespace-nowrap hidden sm:inline">(תשובה נכונה: <span dir="rtl">${correctStr}</span>)</span>
+                            <span class="whitespace-nowrap sm:hidden" title="${correctStr}">(טעות)</span>
+                        </div>
+                    `;
+                }
+            });
+
+            score.correct += correctCount;
+            score.total += 5;
+            document.getElementById('scoreDisplay').innerText = `${score.correct}/${score.total}`;
+
+            document.getElementById('btnCheck').classList.add('hidden');
+            document.getElementById('btnNext').classList.remove('hidden');
+        }
+
+        function nextQuestion() {
+            if (currentIndex < currentScenarios.length - 1) {
+                currentIndex++;
+                renderScenario();
+                window.scrollTo(0,0);
+            } else {
+                finishQuiz();
+            }
+        }
+
+        function finishQuiz() {
+            document.getElementById('quizScreen').classList.add('hidden');
+            document.getElementById('finishScreen').classList.remove('hidden');
+            
+            const percent = Math.round((score.correct / score.total) * 100);
+            document.getElementById('finalScorePercent').innerText = percent + "%";
+            document.getElementById('finalScoreText').innerText = `${score.correct} מתוך ${score.total}`;
+        }
+    </script>
+</body>
+</html>
