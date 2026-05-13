@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>שאלה 3</title>
+	<style>
+		@page {
+			size: A4 portrait;
+			margin: 0;
+		}
+
+		:root {
+			color-scheme: light;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html,
+		body {
+			margin: 0;
+			padding: 0;
+		}
+
+		body {
+			padding: 7mm 0;
+			background: #e8e8e8;
+			color: #000;
+			font-family: "Times New Roman", "David Libre", serif;
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
+		}
+
+		.page {
+			width: 210mm;
+			min-height: 297mm;
+			margin: 0 auto;
+			padding: 4.8mm 6.6mm 4.4mm;
+			background: #fff;
+			border: 1px solid #cfcfcf;
+			box-shadow: 0 2mm 6mm rgba(0, 0, 0, 0.08);
+		}
+
+		@media print {
+			body {
+				padding: 0;
+				background: #fff;
+			}
+
+			.page {
+				border: 0;
+				box-shadow: none;
+			}
+		}
+
+		h1 {
+			margin: 0 0 1.2mm;
+			font-size: 19px;
+			font-weight: 700;
+			text-align: center;
+		}
+
+		p {
+			margin: 0 0 0.55mm;
+			font-size: 14pt;
+			line-height: 1.08;
+			text-align: right;
+		}
+
+		figure {
+			margin: 0;
+		}
+
+		strong {
+			font-weight: 700;
+		}
+
+		u {
+			text-underline-offset: 0.08em;
+		}
+
+		sup,
+		sub {
+			line-height: 0;
+		}
+
+		.ltr {
+			direction: ltr;
+			unicode-bidi: isolate;
+			display: inline-block;
+			white-space: nowrap;
+		}
+
+		.figure-box {
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			margin: 0.6mm auto 0.2mm;
+		}
+
+		.figure-box img {
+			display: block;
+			width: 100%;
+			height: 100%;
+			object-fit: contain;
+		}
+
+		.figure-fallback {
+			display: none;
+			width: 100%;
+			height: 100%;
+		}
+
+		.placeholder-box {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			padding: 3mm;
+			border: 1px dashed #6b7280;
+			border-radius: 3mm;
+			background: #fafafa;
+			color: #374151;
+			text-align: center;
+		}
+
+		.placeholder-name {
+			font-size: 13pt;
+			font-weight: 700;
+		}
+
+		.placeholder-caption {
+			margin-top: 1mm;
+			font-size: 12pt;
+		}
+
+		.circuit-box {
+			width: 74mm;
+			height: 51mm;
+		}
+
+		.graph-box-wide {
+			width: 115mm;
+			height: 57.5mm;
+		}
+
+		.graph-box-narrow {
+			width: 92mm;
+			height: 46mm;
+		}
+
+		.fig-label {
+			margin: 0 0 0.4mm;
+			font-size: 14pt;
+			font-weight: 700;
+			text-align: center;
+		}
+
+		.top-row,
+		.mid-row,
+		.bottom-row {
+			display: grid;
+			direction: ltr;
+			align-items: start;
+			column-gap: 3.2mm;
+			margin-bottom: 0.45mm;
+		}
+
+		.top-row {
+			grid-template-columns: 76mm minmax(0, 1fr);
+		}
+
+		.mid-row {
+			grid-template-columns: 102mm minmax(0, 1fr);
+		}
+
+		.bottom-row {
+			grid-template-columns: 94mm minmax(0, 1fr);
+		}
+
+		.full-row {
+			margin-bottom: 0.1mm;
+		}
+
+		.col-rtl {
+			direction: rtl;
+		}
+
+		.part-row {
+			display: grid;
+			grid-template-columns: 1.3em minmax(0, 1fr);
+			column-gap: 0.4em;
+			align-items: start;
+			margin-bottom: 0.35mm;
+		}
+
+		.part-label {
+			display: block;
+			font-size: 14pt;
+			font-weight: 700;
+			line-height: 1.14;
+			white-space: nowrap;
+			text-align: right;
+		}
+
+		.part-body p {
+			margin: 0 0 0.28mm;
+		}
+
+		.points {
+			direction: rtl;
+			unicode-bidi: isolate;
+			display: inline-block;
+			white-space: nowrap;
+		}
+
+		.sub-items {
+			display: flex;
+			flex-direction: column;
+			gap: 0.15mm;
+			margin-right: 1.5em;
+		}
+
+		.sub-item {
+			display: flex;
+			align-items: baseline;
+			gap: 0.45em;
+			align-items: start;
+			margin-bottom: 0;
+		}
+
+		.sub-label {
+			font-size: 14pt;
+			font-weight: 700;
+			text-align: right;
+		}
+
+		.note-list {
+			margin-right: 1.5em;
+		}
+
+		.note-row {
+			display: flex;
+			gap: 0.45em;
+			align-items: baseline;
+			margin-bottom: 0.2mm;
+		}
+
+		.note-row p {
+			margin: 0;
+		}
+
+		.value-gap {
+			display: inline-block;
+			width: 1.5em;
+		}
+
+		.section-gap {
+			margin-top: 1.1mm;
+		}
+	</style>
+	<script>
+		document.addEventListener('DOMContentLoaded', () => {
+			document.querySelectorAll('[data-figure-image]').forEach((img) => {
+				const fallback = img.nextElementSibling;
+				const baseSrc = img.getAttribute('data-src');
+				if (!fallback || !baseSrc) {
+					return;
+				}
+
+				img.addEventListener('load', () => {
+					img.style.display = 'block';
+					fallback.style.display = 'none';
+				});
+
+				img.addEventListener('error', () => {
+					img.style.display = 'none';
+					fallback.style.display = 'flex';
+				});
+
+				img.src = `${baseSrc}?v=${Date.now()}`;
+			});
+		});
+	</script>
+</head>
+<body>
+	<main class="page">
+		<h1>שאלה 3</h1>
+
+		<div class="top-row">
+			<div class="col-rtl">
+				<figure class="figure-box circuit-box">
+					<img data-figure-image data-src="qimage-1.png" alt="תרשים 1" />
+					<div class="placeholder-box figure-fallback" aria-label="placeholder לתרשים 1">
+						<div class="placeholder-name">qimage-1.png</div>
+						<div class="placeholder-caption">תרשים 1</div>
+					</div>
+				</figure>
+				<div class="fig-label">תרשים 1</div>
+			</div>
+			<div class="col-rtl">
+				<p>תלמידה ערכה ניסוי לבדיקת התלות שבין עוצמת הזרם בנורת להט ובין המתח על הנורה.</p>
+				<p>לשם כך היא הרכיבה מעגל הכולל מקור מתח, נורה, נגד קבוע, נגד משתנה, מפסק ותיילי חיבור שהתנגדותם זניחה (ראה תרשים 1).</p>
+				<p>התלמידה ערכה מדידות אחדות בעזרת מכשירי מדידה אידיאליים. את תוצאות המדידות היא הציגה בגרף מקורב, המתאר את הקשר בין שני המשתנים (הזרם והמתח).</p>
+				<div class="part-row">
+					<span class="part-label">א.</span>
+					<div class="part-body">
+						<p>העתיקו את תרשים 1 למחברתכם. הוסיפו לתרשים המעגל שבמחברתכם מד-מתח ומד-זרם אידיאליים, שימדדו את המתח על הנורה ואת עוצמת הזרם העובר דרכה. <span class="points">(8 נקודות)</span></p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="mid-row">
+			<div class="col-rtl">
+				<figure class="figure-box graph-box-wide">
+					<img data-figure-image data-src="qimage-2.png" alt="תרשים 2" />
+					<div class="placeholder-box figure-fallback" aria-label="placeholder לתרשים 2">
+						<div class="placeholder-name">qimage-2.png</div>
+						<div class="placeholder-caption">תרשים 2</div>
+					</div>
+				</figure>
+				<div class="fig-label">תרשים 2</div>
+			</div>
+			<div class="col-rtl">
+				<p>בתרשים 2 שלפניכם מוצג הגרף ששרטטה התלמידה.</p>
+				<p>על פי הגרף:</p>
+				<div class="part-row">
+					<span class="part-label">ב.</span>
+					<div class="part-body">
+						<p>חשבו את התנגדות הנורה <u>בכל אחד</u> משני תחומי המתח:</p>
+						<div class="sub-items">
+							<div class="sub-item">
+								<span class="sub-label">(1)</span>
+								<p><span class="ltr">0 &lt; V &lt; 1V</span></p>
+							</div>
+							<div class="sub-item">
+								<span class="sub-label">(2)</span>
+								<p><span class="ltr">3V &lt; V &lt; 5V</span></p>
+							</div>
+						</div>
+						<p><span class="points">(8 נקודות)</span></p>
+					</div>
+				</div>
+
+				<div class="part-row">
+					<span class="part-label">ג.</span>
+					<div class="part-body">
+						<p>חשבו את הספק הנורה עבור <u>כל אחד</u> משני המתחים:</p>
+						<div class="sub-items">
+							<div class="sub-item">
+								<span class="sub-label">(1)</span>
+								<p><span class="ltr">V = 1V</span></p>
+							</div>
+							<div class="sub-item">
+								<span class="sub-label">(2)</span>
+								<p><span class="ltr">V = 5V</span></p>
+							</div>
+						</div>
+						<p><span class="points">(8 נקודות)</span></p>
+					</div>
+				</div>
+			</div>
+		</div>
+
+		<div class="full-row col-rtl">
+			<div class="part-row">
+				<span class="part-label">ד.</span>
+				<div class="part-body">
+					<p>נתונה כמות האנרגיה <u>המתבזבזת</u> בנורה (בעיקר על חום) במשך שנייה אחת:</p>
+					<div class="note-list">
+						<div class="note-row">
+							<span class="sub-label">(1)</span>
+							<p>כאשר <span class="ltr">V = 1V</span><span class="value-gap" aria-hidden="true"></span><span class="ltr">E = 0.132 J</span></p>
+						</div>
+						<div class="note-row">
+							<span class="sub-label">(2)</span>
+							<p>כאשר <span class="ltr">V = 5V</span><span class="value-gap" aria-hidden="true"></span><span class="ltr">E = 1.52 J</span></p>
+						</div>
+					</div>
+					<p>חשבו את נצילות הנורה עבור <u>שני</u> ערכי המתח <span class="ltr">(1)-(2)</span>. <span class="points">(6 נקודות)</span></p>
+				</div>
+			</div>
+		</div>
+
+		<div class="bottom-row">
+			<div class="col-rtl">
+				<figure class="figure-box graph-box-narrow">
+					<img data-figure-image data-src="qimage-3.png" alt="תרשים 3" />
+					<div class="placeholder-box figure-fallback" aria-label="placeholder לתרשים 3">
+						<div class="placeholder-name">qimage-3.png</div>
+						<div class="placeholder-caption">תרשים 3</div>
+					</div>
+				</figure>
+				<div class="fig-label">תרשים 3</div>
+			</div>
+			<div class="col-rtl">
+				<p class="section-gap">נורות להט מוחלפות כיום בנורות מסוגים אחרים (כגון נורות <span class="ltr">LED</span> או נורות <span class="ltr">PL</span>) בעיקר בשל הנצילות הנמוכה מאוד של נורות להט. בתרשים 3 שלפניכם מוצגים ההספקים של נורת <span class="ltr">PL</span>, נורת להט ונורת <span class="ltr">LED</span>, כפונקציה של עוצמת האור שהן מפיקות.</p>
+				<div class="part-row">
+					<span class="part-label">ה.</span>
+					<div class="part-body">
+						<p>קבעו איזה מן הגרפים, 1, 2 או 3, מתאר נורת להט. <u>נמקו את קביעתכם</u>. <span class="points">(<span class="ltr">1.33</span> נקודות)</span></p>
+					</div>
+				</div>
+			</div>
+		</div>
+	</main>
+</body>
+</html>
