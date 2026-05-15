@@ -242,6 +242,15 @@
 			font-weight: 700;
 		}
 
+		.status-cell-content {
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+			justify-content: center;
+			gap: 0.32rem;
+			min-height: 4.65rem;
+		}
+
 		.status-present {
 			background: linear-gradient(180deg, #f5fff8, #ecfbf1);
 			color: var(--green-700);
@@ -303,6 +312,70 @@
 			color: #94a3b8;
 			font-size: 1rem;
 			letter-spacing: 0.05em;
+		}
+
+		.focus-badge {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			padding: 0.18rem 0.5rem;
+			border-radius: 9999px;
+			border: 1px solid transparent;
+			font-size: 0.68rem;
+			font-weight: 800;
+			line-height: 1.1;
+			white-space: nowrap;
+		}
+
+		.focus-badge.in-focus {
+			background: #e9fbef;
+			border-color: #86efac;
+			color: #166534;
+		}
+
+		.focus-badge.out-of-focus {
+			background: #feecec;
+			border-color: #fca5a5;
+			color: #991b1b;
+		}
+
+		.focus-badge.not-asked {
+			background: #ffffff;
+			border-color: #cbd5e1;
+			color: #64748b;
+		}
+
+		.focus-note {
+			display: block;
+			max-width: 108px;
+			font-size: 0.72rem;
+			line-height: 1.15;
+			font-weight: 700;
+			text-align: center;
+			color: #475569;
+		}
+
+		.focus-legend-pill {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			padding: 0.16rem 0.45rem;
+			border-radius: 9999px;
+			font-size: 0.74rem;
+			font-weight: 800;
+			border: 1px solid transparent;
+		}
+
+		.focus-legend-pill.in-focus {
+			background: #e9fbef;
+			border-color: #86efac;
+			color: #166534;
+		}
+
+		.focus-legend-pill.out-of-focus {
+			background: #feecec;
+			border-color: #fca5a5;
+			color: #991b1b;
 		}
 
 		.year-subtext {
@@ -456,9 +529,11 @@
 			<div class="legend-row">
 				<div class="legend-chip"><span class="chip-dot success"></span><span>יש פתרון במאגר</span></div>
 				<div class="legend-chip"><span class="chip-dot missing"></span><span>עדיין אין פתרון במאגר</span></div>
+				<div class="legend-chip"><span class="focus-legend-pill in-focus">מיקוד תשפו</span><span>לפי עמית</span></div>
+				<div class="legend-chip"><span class="focus-legend-pill out-of-focus">לא במיקוד תשפו</span><span>לפי עמית</span></div>
 			</div>
 			<div class="note-box mt-4">
-				לחיצה על סימון ה-✓ הירוק פותחת ישירות את הפתרון של אותה שאלה. תאים שאינם רלוונטיים לשנה מסוימת מסומנים כ-<span class="font-semibold">N/A</span>.
+				לחיצה על סימון ה-✓ הירוק פותחת ישירות את הפתרון של אותה שאלה. תאים שאינם רלוונטיים לשנה מסוימת מסומנים כ-<span class="font-semibold">N/A</span>. בשנים שיש עליהן נתון בקובץ של עמית, תופיע בתוך התא גם תגית מיקוד תשפו והערה אם קיימת.
 			</div>
 		</section>
 
@@ -511,6 +586,7 @@
 		let previewActive = false;
 		const folderNamePattern = /^(\d{4})\s+שאלה\s+(\d+)(?:\.(\d+))?$/;
 		const ELECTRIC_FOLDER_REPO_PATH = "webfiles/פתרונות שאלות בגרות/חשמל שאלות בגרות";
+		const FOCUS_JSON_PATH = './שאלות במיקוד עמית.json';
 		const DISCOVERY_EXCLUDED_FILES = new Set([
 			"question-topics.json",
 			"תפריט ראשי חשמל.html",
@@ -571,6 +647,15 @@
 
 		function formatNumber(value) {
 			return Number(value).toLocaleString("he-IL");
+		}
+
+		function escapeHtml(value) {
+			return String(value ?? "")
+				.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt;")
+				.replace(/\"/g, "&quot;")
+				.replace(/'/g, "&#39;");
 		}
 
 		function isLocalhost() {
@@ -940,7 +1025,86 @@
 			});
 		}
 
-		function renderTable(rows) {
+		function buildFocusLookup(focusData) {
+			const focusLookup = new Map();
+			const rows = Array.isArray(focusData?.rows) ? focusData.rows : [];
+
+			rows.forEach((row) => {
+				const year = Number(row?.bagrutYear);
+				if (!Number.isFinite(year)) {
+					return;
+				}
+
+				const questionMap = new Map();
+				const questions = Array.isArray(row?.questions) ? row.questions : [];
+				questions.forEach((question) => {
+					const questionNumber = Number(question?.bagrutQuestionNumber);
+					if (!Number.isFinite(questionNumber)) {
+						return;
+					}
+
+					questionMap.set(questionNumber, {
+						focusStatus: question?.focusStatus || "",
+						focusNote: question?.focusNote || ""
+					});
+				});
+
+				focusLookup.set(year, {
+					yearNote: row?.yearNote || "",
+					questions: questionMap
+				});
+			});
+
+			return focusLookup;
+		}
+
+		function buildFocusInfoHtml(focusEntry) {
+			if (!focusEntry || !focusEntry.focusStatus) {
+				return "";
+			}
+
+			const status = focusEntry.focusStatus;
+			let badgeText = "";
+			let badgeClass = "";
+
+			if (status === "inFocus") {
+				badgeText = "מיקוד תשפו";
+				badgeClass = "in-focus";
+			} else if (status === "outOfFocus") {
+				badgeText = "לא במיקוד תשפו";
+				badgeClass = "out-of-focus";
+			} else if (status === "notAsked") {
+				badgeText = "לא הייתה שאלה";
+				badgeClass = "not-asked";
+			}
+
+			if (!badgeText) {
+				return "";
+			}
+
+			const noteHtml = focusEntry.focusNote
+				? `<span class="focus-note">${escapeHtml(focusEntry.focusNote)}</span>`
+				: "";
+
+			return `<span class="focus-badge ${badgeClass}">${badgeText}</span>${noteHtml}`;
+		}
+
+		function buildCellTitle(baseTitle, focusEntry) {
+			const parts = [baseTitle];
+			if (focusEntry?.focusStatus === "inFocus") {
+				parts.push("מיקוד תשפו לפי עמית");
+			} else if (focusEntry?.focusStatus === "outOfFocus") {
+				parts.push("לא במיקוד תשפו לפי עמית");
+			} else if (focusEntry?.focusStatus === "notAsked") {
+				parts.push("לא הייתה שאלה לפי נתוני עמית");
+			}
+			if (focusEntry?.focusNote) {
+				parts.push(focusEntry.focusNote);
+			}
+			return escapeHtml(parts.filter(Boolean).join(" | "));
+		}
+
+		function renderTable(rows, focusLookup) {
 			if (!rows.length) {
 				coverageBody.innerHTML = '<tr><td colspan="7" class="text-slate-500">לא נמצאו שאלות להצגה.</td></tr>';
 				statusText.textContent = 'עדיין אין נתונים להצגה.';
@@ -959,14 +1123,23 @@
 
 			coverageBody.innerHTML = rows.map((row) => {
 				const maxQ = row.maxQuestions || QUESTION_COUNT;
+				const focusRow = row.orderVariant === 0 ? focusLookup.get(row.year) : null;
 				const cells = row.questions.map((entry, idx) => {
+					const questionNumber = idx + 1;
+					const focusEntry = focusRow?.questions?.get(questionNumber) || null;
 					if (idx >= maxQ) {
-						return '<td class="status-cell status-na" title="שנה זו כללה רק 5 שאלות"><span class="status-badge na" aria-label="לא רלוונטי">N/A</span></td>';
+						const title = buildCellTitle('שנה זו כללה רק 5 שאלות', focusEntry);
+						const focusHtml = buildFocusInfoHtml(focusEntry);
+						return `<td class="status-cell status-na" title="${title}"><div class="status-cell-content"><span class="status-badge na" aria-label="לא רלוונטי">N/A</span>${focusHtml}</div></td>`;
 					}
 					if (entry && entry.exists && entry.path) {
-						return `<td class="status-cell status-present"><a class="status-link" href="./${entry.path}" aria-label="פתח פתרון"><span class="status-badge present" aria-hidden="true">✓</span></a></td>`;
+						const title = buildCellTitle('יש פתרון במאגר', focusEntry);
+						const focusHtml = buildFocusInfoHtml(focusEntry);
+						return `<td class="status-cell status-present" title="${title}"><div class="status-cell-content"><a class="status-link" href="./${entry.path}" aria-label="פתח פתרון"><span class="status-badge present" aria-hidden="true">✓</span></a>${focusHtml}</div></td>`;
 					}
-					return '<td class="status-cell status-missing"><span class="status-badge missing" aria-label="חסר">−</span></td>';
+					const title = buildCellTitle('עדיין אין פתרון במאגר', focusEntry);
+					const focusHtml = buildFocusInfoHtml(focusEntry);
+					return `<td class="status-cell status-missing" title="${title}"><div class="status-cell-content"><span class="status-badge missing" aria-label="חסר">−</span>${focusHtml}</div></td>`;
 				}).join('');
 
 				const yearLabel = row.variantLabel
@@ -981,7 +1154,8 @@
 				`;
 			}).join('');
 
-			statusText.textContent = `מוצגות ${rows.length} שורות בטבלה. לחיצה על ✓ ירוק פותחת את הפתרון.`;
+			const focusYearsCount = focusLookup.size;
+			statusText.textContent = `מוצגות ${rows.length} שורות בטבלה. לחיצה על ✓ ירוק פותחת את הפתרון. בשנים שיש עליהן נתון של עמית (${focusYearsCount} שנים), מופיעה גם אינדיקציית מיקוד תשפו בתוך התא.`;
 			summaryRows.textContent = formatNumber(rows.length);
 			summaryCovered.textContent = formatNumber(coveredCount);
 			summaryPercent.textContent = `${percent}%`;
@@ -989,16 +1163,22 @@
 
 		async function loadCoverage() {
 			try {
-				const response = await fetch('./question-topics.json', { cache: 'no-store' });
-				if (!response.ok) {
+				const [questionTopicsResponse, focusResponse] = await Promise.all([
+					fetch('./question-topics.json', { cache: 'no-store' }),
+					fetch(FOCUS_JSON_PATH, { cache: 'no-store' })
+				]);
+
+				if (!questionTopicsResponse.ok) {
 					throw new Error('load-failed');
 				}
 
-				const data = await response.json();
+				const data = await questionTopicsResponse.json();
+				const focusData = focusResponse.ok ? await focusResponse.json() : { rows: [] };
 				const discoveredPaths = await discoverQuestionPaths();
 				const questions = mergeQuestionsWithDiscovered(data.questions, discoveredPaths);
 				const rows = buildRows(questions);
-				renderTable(rows);
+				const focusLookup = buildFocusLookup(focusData);
+				renderTable(rows, focusLookup);
 				attachStatusLinkPreviewHandlers();
 			} catch (error) {
 				coverageBody.innerHTML = '<tr><td colspan="7" class="text-red-700">לא ניתן לטעון כרגע את מאגר הפתרונות.</td></tr>';
