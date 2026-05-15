@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+        <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+        <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-QZJ7JT80X2');
+        </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון שאלת בגרות בפיזיקה - מכניקה</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות מוסבר: שימור אנרגיה ותנועה מעגלית</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">פיזיקה - מכניקה (5 יח"ל)</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך ומוסבר צעד-אחר-צעד, הכולל תרשימי כוחות וניתוח קינמטי</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">מבוא לבעיה והנחות יסוד</h3>
+        <p class="content-paragraph">לפנינו בעיה קלאסית במכניקה המשלבת נפילה חופשית, תנועה מעגלית אנכית (ללא חיכוך) ותנועה בקו ישר על משטח מחוספס. הקרונית והנוסע מתוארים כגוף נקודתי בעל מסה <span class="inline-ltr">\( M \)</span>, מה שמאפשר לנו להתעלם מאפקטים של מומנט התמד ולנתח את תנועת מרכז המסה בלבד.</p>
+        <p class="content-paragraph mb-0">תאוצת הכובד מוגדרת כחיובית: <span class="inline-ltr">\( g = 10 \text{ m/s}^2 \)</span>.</p>
+    </section>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א': תרשים כוחות בנקודה C</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> הקרונית בעלת מסה <span class="inline-ltr">\( M \)</span> נמצאת בנקודה C על גבי קשת מעגלית חלקה (אין חיכוך). הישר OC יוצר זווית <span class="inline-ltr">\( \theta \)</span> מתחת לאופק OB. המסילה החלקה מפעילה על הגוף כוח רק בניצב למשטח.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לשרטט תרשים כוחות (FBD - Free Body Diagram) הפועלים על הקרונית בנקודה C.</div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">כוח הכובד: \( W = Mg \)</span>
+            <span class="formula-badge">כוח נורמלי: \( N \)</span>
+            <p class="content-paragraph mt-2">עקרון הפעולה: כוח הכובד תמיד מצביע אנכית כלפי מטה (לכיוון מרכז כדור הארץ), והכוח הנורמלי שמפעיל המשטח תמיד מצביע בניצב למשטח מגע - במקרה של מעגל, הכיוון הוא רדיאלי כלפי המרכז O.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">תרשים הכוחות:</h4>
+            <p class="content-paragraph">להלן תרשים הכוחות המדויק על הקרונית בנקודה C. הציר הרדיאלי סומן בקו מקווקו המכוון למרכז המעגל.</p>
+            
+            <div class="visual-frame">
+                <svg width="300" height="300" viewBox="0 0 300 300" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M50 100H250" stroke="#CBD5E1" stroke-width="2" stroke-dasharray="5 5"/>
+<path d="M41.233 95V84.8182H44.7926C45.5019 84.8182 46.0869 84.9408 46.5476 85.1861C47.0083 85.428 47.3513 85.7545 47.5767 86.1655C47.8021 86.5732 47.9148 87.0256 47.9148 87.5227C47.9148 87.9602 47.8369 88.3215 47.6811 88.6065C47.5286 88.8916 47.3265 89.117 47.0746 89.2827C46.826 89.4484 46.5559 89.571 46.2642 89.6506V89.75C46.5758 89.7699 46.889 89.8793 47.2038 90.0781C47.5187 90.277 47.7822 90.562 47.9943 90.9332C48.2064 91.3045 48.3125 91.7585 48.3125 92.2955C48.3125 92.8059 48.1965 93.2649 47.9645 93.6726C47.7325 94.0803 47.3662 94.4034 46.8658 94.642C46.3653 94.8807 45.714 95 44.9119 95H41.233ZM42.4659 93.9062H44.9119C45.7173 93.9062 46.2891 93.7505 46.6271 93.4389C46.9685 93.1241 47.1392 92.7429 47.1392 92.2955C47.1392 91.9508 47.0514 91.6326 46.8757 91.3409C46.7 91.0459 46.4498 90.8106 46.125 90.6349C45.8002 90.456 45.4157 90.3665 44.9716 90.3665H42.4659V93.9062ZM42.4659 89.2926H44.7528C45.1241 89.2926 45.4588 89.2197 45.7571 89.0739C46.0587 88.928 46.2973 88.7225 46.473 88.4574C46.652 88.1922 46.7415 87.8807 46.7415 87.5227C46.7415 87.0753 46.5857 86.6958 46.2741 86.3842C45.9626 86.0694 45.4688 85.9119 44.7926 85.9119H42.4659V89.2926Z" fill="#64748B"/>
+<path d="M264.824 89.9091C264.824 90.983 264.63 91.911 264.242 92.6932C263.854 93.4754 263.322 94.0786 262.646 94.5028C261.97 94.9271 261.198 95.1392 260.33 95.1392C259.461 95.1392 258.689 94.9271 258.013 94.5028C257.337 94.0786 256.805 93.4754 256.417 92.6932C256.029 91.911 255.835 90.983 255.835 89.9091C255.835 88.8352 256.029 87.9072 256.417 87.125C256.805 86.3428 257.337 85.7396 258.013 85.3153C258.689 84.8911 259.461 84.679 260.33 84.679C261.198 84.679 261.97 84.8911 262.646 85.3153C263.322 85.7396 263.854 86.3428 264.242 87.125C264.63 87.9072 264.824 88.8352 264.824 89.9091ZM263.631 89.9091C263.631 89.0275 263.483 88.2834 263.188 87.6768C262.897 87.0703 262.5 86.6113 262 86.2997C261.503 85.9882 260.946 85.8324 260.33 85.8324C259.713 85.8324 259.155 85.9882 258.654 86.2997C258.157 86.6113 257.761 87.0703 257.466 87.6768C257.174 88.2834 257.028 89.0275 257.028 89.9091C257.028 90.7907 257.174 91.5348 257.466 92.1413C257.761 92.7479 258.157 93.2069 258.654 93.5185C259.155 93.83 259.713 93.9858 260.33 93.9858C260.946 93.9858 261.503 93.83 262 93.5185C262.5 93.2069 262.897 92.7479 263.188 92.1413C263.483 91.5348 263.631 90.7907 263.631 89.9091Z" fill="#64748B"/>
+<path d="M100 100C100 139.782 115.804 177.936 143.934 206.066C172.064 234.196 210.218 250 250 250" stroke="#94A3B8" stroke-width="4"/>
+<path d="M250 100L144 206" stroke="#94A3B8" stroke-width="2" stroke-dasharray="4 4"/>
+<path d="M200 100C199.922 113.046 204.946 125.607 214 135" stroke="#334155" stroke-width="2"/>
+<path d="M187.432 117.705L187.227 118.955H181.682L181.886 117.705H187.432ZM188.273 117.568L188.045 118.955C187.848 120.144 187.538 121.123 187.114 121.892C186.693 122.661 186.182 123.231 185.58 123.602C184.981 123.973 184.318 124.159 183.591 124.159C182.864 124.159 182.258 123.973 181.773 123.602C181.292 123.231 180.962 122.661 180.784 121.892C180.61 121.123 180.621 120.144 180.818 118.955L181.045 117.568C181.242 116.386 181.551 115.419 181.972 114.665C182.396 113.911 182.907 113.354 183.506 112.994C184.108 112.634 184.773 112.455 185.5 112.455C186.235 112.455 186.843 112.634 187.324 112.994C187.809 113.354 188.136 113.911 188.307 114.665C188.481 115.419 188.47 116.386 188.273 117.568ZM186.636 119.205L186.955 117.318C187.083 116.538 187.098 115.875 187 115.33C186.905 114.784 186.712 114.369 186.42 114.085C186.133 113.801 185.765 113.659 185.318 113.659C184.659 113.659 184.061 113.977 183.523 114.614C182.989 115.246 182.625 116.148 182.432 117.318L182.114 119.205C181.92 120.375 181.987 121.294 182.312 121.96C182.642 122.623 183.136 122.955 183.795 122.955C184.242 122.955 184.657 122.805 185.04 122.506C185.422 122.206 185.752 121.777 186.028 121.216C186.305 120.655 186.508 119.985 186.636 119.205Z" fill="#334155"/>
+<path d="M135.278 216.438H132.79C132.744 216.116 132.652 215.83 132.511 215.58C132.371 215.326 132.191 215.11 131.972 214.932C131.752 214.754 131.498 214.617 131.21 214.523C130.926 214.428 130.617 214.381 130.284 214.381C129.682 214.381 129.157 214.53 128.71 214.83C128.263 215.125 127.917 215.557 127.67 216.125C127.424 216.689 127.301 217.375 127.301 218.182C127.301 219.011 127.424 219.708 127.67 220.273C127.92 220.837 128.269 221.263 128.716 221.551C129.163 221.839 129.68 221.983 130.267 221.983C130.597 221.983 130.902 221.939 131.182 221.852C131.466 221.765 131.718 221.638 131.938 221.472C132.157 221.301 132.339 221.095 132.483 220.852C132.631 220.61 132.733 220.333 132.79 220.023L135.278 220.034C135.214 220.568 135.053 221.083 134.795 221.58C134.542 222.072 134.199 222.513 133.767 222.903C133.339 223.29 132.828 223.597 132.233 223.824C131.642 224.047 130.973 224.159 130.227 224.159C129.189 224.159 128.261 223.924 127.443 223.455C126.629 222.985 125.985 222.305 125.511 221.415C125.042 220.525 124.807 219.447 124.807 218.182C124.807 216.913 125.045 215.833 125.523 214.943C126 214.053 126.648 213.375 127.466 212.909C128.284 212.439 129.205 212.205 130.227 212.205C130.902 212.205 131.527 212.299 132.102 212.489C132.682 212.678 133.195 212.955 133.642 213.318C134.089 213.678 134.453 214.119 134.733 214.642C135.017 215.165 135.199 215.763 135.278 216.438Z" fill="#1E293B"/>
+<path d="M144 214C148.418 214 152 210.418 152 206C152 201.582 148.418 198 144 198C139.582 198 136 201.582 136 206C136 210.418 139.582 214 144 214Z" fill="#3B82F6"/>
+<path d="M204 146L187.27 150.483L199.517 162.73L204 146ZM144 206L145.061 207.061L195.515 156.607L194.454 155.546L193.393 154.485L142.939 204.939L144 206Z" fill="#EF4444"/>
+<path d="M227.087 151.909V165H224.697L219.001 156.761H218.906V165H216.138V151.909H218.567L224.217 160.142H224.332V151.909H227.087Z" fill="#EF4444"/>
+<path d="M145.5 206V204.5H142.5V206H144H145.5ZM144 276L152.66 261H135.34L144 276ZM144 206H142.5V262.5H144H145.5V206H144Z" fill="#10B981"/>
+<path d="M156.138 256.909H159.551L163.156 265.705H163.31L166.915 256.909H170.328V270H167.643V261.479H167.535L164.147 269.936H162.319L158.931 261.447H158.822V270H156.138V256.909ZM176.981 273.886C176.099 273.886 175.342 273.765 174.711 273.522C174.085 273.283 173.586 272.957 173.216 272.544C172.845 272.131 172.604 271.666 172.493 271.151L175.012 270.812C175.089 271.008 175.21 271.191 175.376 271.362C175.542 271.532 175.762 271.668 176.035 271.771C176.312 271.877 176.648 271.93 177.045 271.93C177.637 271.93 178.125 271.786 178.508 271.496C178.896 271.21 179.09 270.731 179.09 270.058V268.261H178.975C178.856 268.534 178.677 268.792 178.438 269.035C178.199 269.278 177.893 269.476 177.518 269.629C177.143 269.783 176.695 269.859 176.175 269.859C175.438 269.859 174.767 269.689 174.162 269.348C173.561 269.003 173.081 268.477 172.724 267.769C172.37 267.058 172.193 266.158 172.193 265.072C172.193 263.96 172.374 263.031 172.736 262.285C173.099 261.539 173.58 260.981 174.181 260.61C174.786 260.239 175.449 260.054 176.169 260.054C176.719 260.054 177.179 260.148 177.55 260.335C177.92 260.518 178.219 260.749 178.444 261.026C178.675 261.298 178.851 261.567 178.975 261.831H179.077V260.182H181.781V270.096C181.781 270.931 181.577 271.63 181.167 272.192C180.758 272.755 180.192 273.177 179.467 273.458C178.747 273.744 177.918 273.886 176.981 273.886ZM177.038 267.814C177.477 267.814 177.848 267.705 178.15 267.488C178.457 267.266 178.692 266.951 178.854 266.542C179.02 266.129 179.103 265.634 179.103 265.059C179.103 264.484 179.022 263.985 178.86 263.563C178.698 263.137 178.464 262.807 178.157 262.572C177.85 262.338 177.477 262.221 177.038 262.221C176.591 262.221 176.214 262.342 175.907 262.585C175.6 262.824 175.368 263.156 175.21 263.582C175.052 264.009 174.974 264.501 174.974 265.059C174.974 265.626 175.052 266.116 175.21 266.529C175.372 266.938 175.604 267.256 175.907 267.482C176.214 267.703 176.591 267.814 177.038 267.814Z" fill="#10B981"/>
+</svg>
+            </div>
+            
+            <p class="final-answer">מסקנה: התרשים כולל שני כוחות בלבד: <span class="inline-ltr">\( N \)</span> לכיוון המרכז, ו- <span class="inline-ltr">\( Mg \)</span> מטה.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            תלמידים רבים מתפתים להוסיף לתרשים "כוח צנטריפטלי" המכוון פנימה. חשוב להבין ש"כוח צנטריפטלי" (או כוח רדיאלי) אינו סוג של כוח בטבע! אין כוח פיזיקלי שנקרא כך. זהו בסך הכל <strong>תפקיד</strong> שממלאים כוחות אחרים (כמו הכוח הנורמלי או רכיבי כוח הכובד במקרה שלנו). לכן, בתרשים כוחות (FBD) אנו משרטטים אך ורק את הכוחות האמיתיים הפועלים על הגוף כתוצאה ממגע או משדה, ובהמשך מזהים מי מהם משמש ככוח הצנטריפטלי.
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': שקול הכוחות הרדיאלי בנקודה C</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> הקרונית משוחררת ממנוחה בנקודה A. כלומר, גודל המהירות ההתחלתית הוא <span class="inline-ltr">\( v_A = 0 \)</span>. המרחק האנכי מנקודה A לנקודה B הוא <span class="inline-ltr">\( \frac{3}{4}R \)</span>. לכן, אם נגדיר את הגובה של ציר OB כ- <span class="inline-ltr">\( y = 0 \)</span>, הגובה ההתחלתי הוא <span class="inline-ltr">\( y_A = \frac{3}{4}R \)</span>.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> את גודל שקול הכוחות הרדיאלי בנקודה C, כלומר את הביטוי עבור <span class="inline-ltr">\( \Sigma F_r \)</span> מבוטא באמצעות הפרמטרים <span class="inline-ltr">\( M, \theta, g \)</span> בלבד.</div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">החוק השני של ניוטון: \( \Sigma \vec{F} = m \vec{a} \)</span>
+            <span class="formula-badge">תאוצה רדיאלית: \( a_R = \frac{v^2}{R} \)</span>
+            <span class="formula-badge">אנרגיה קינטית: \( E_k = \frac{1}{2}mv^2 \)</span>
+            <span class="formula-badge">אנרגיה פוטנציאלית כובדית: \( U_G = mgh \)</span>
+            <span class="formula-badge">משפט עבודה-אנרגיה: \( W_{\text{nc}} = \Delta E \)</span>
+            <p class="content-paragraph mt-2">מכיוון שהמסילה חלקה, עבודת הכוחות הלא משמרים (כוח הנורמל מאונך לתנועה ולכן לא מבצע עבודה) היא אפס (<span class="inline-ltr">\( W_{\text{nc}} = 0 \)</span>). לכן חל חוק שימור אנרגיה מכנית בין הנקודות A ו-C.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">ראשית, על פי החוק השני של ניוטון בתנועה מעגלית, שקול הכוחות בציר הרדיאלי שווה למסה כפול התאוצה הרדיאלית:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_r = M a_R = M \frac{v_C^2}{R} \]
+            </div>
+            <p class="content-paragraph">כדי למצוא את המהירות בנקודה C (<span class="inline-ltr">\( v_C \)</span>), נשתמש בחוק שימור אנרגיה בין הנקודה A לנקודה C. כדי לפשט את האלגברה ולהימנע מגבהים שליליים, נגדיר את מישור הייחוס לאנרגיה פוטנציאלית (<span class="inline-ltr">\( h = 0 \)</span>) בנקודה C, שהיא הנקודה הנמוכה ביותר בתנועה הנוכחית.</p>
+            <ul class="list-disc list-inside mb-4 ml-4 text-[#475569]">
+                <li>בנקודה C: יש מהירות <span class="inline-ltr">\( v_C \)</span> והגובה מוגדר כאפס (<span class="inline-ltr">\( h_C = 0 \)</span>).</li>
+                <li>בנקודה A: המהירות אפס (<span class="inline-ltr">\( E_k = 0 \)</span>). הגובה מורכב מהמרחק האנכי מנקודה C עד לקו האופקי OB (שהוא <span class="inline-ltr">\( R \sin\theta \)</span>) ועוד המרחק מקו OB לנקודה A (שהוא <span class="inline-ltr">\( \frac{3}{4}R \)</span>). לכן, <span class="inline-ltr">\( h_A = \frac{3}{4}R + R \sin\theta \)</span>.</li>
+            </ul>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_A = E_C \]
+                \[ M g \left( \frac{3}{4}R + R \sin\theta \right) = \frac{1}{2} M v_C^2 + 0 \]
+            </div>
+            <p class="content-paragraph">נצמצם את המסה <span class="inline-ltr">\( M \)</span> משני אגפי המשוואה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ g \left( \frac{3}{4} R + R \sin\theta \right) = \frac{1}{2} v_C^2 \]
+            </div>
+            <p class="content-paragraph">נחלץ את ריבוע המהירות, <span class="inline-ltr">\( v_C^2 \)</span>, על ידי הכפלה ב-2 והוצאת גורם משותף <span class="inline-ltr">\( R \)</span>:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ v_C^2 = 2 g \left( \frac{3}{4} R + R \sin\theta \right) \]
+                \[ v_C^2 = g R (1.5 + 2 \sin\theta) \]
+            </div>
+            <p class="content-paragraph">כעת נציב את הביטוי שקיבלנו עבור <span class="inline-ltr">\( v_C^2 \)</span> לתוך משוואת הכוחות הרדיאלית <span class="inline-ltr">\( \Sigma F_r = M \frac{v_C^2}{R} \)</span>:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_r = M \frac{g R (1.5 + 2 \sin\theta)}{R} \]
+                \[ \Sigma F_r = M g (1.5 + 2 \sin\theta) \]
+            </div>
+            
+            <p class="final-answer">מסקנה: <span class="inline-ltr">\( \Sigma F_r = M g (1.5 + 2 \sin\theta) \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> שימו לב לטעות נפוצה! תלמידים ממהרים לכתוב משוואת כוחות בציר הרדיאלי: <span class="inline-ltr">\( \Sigma F_r = N - Mg \sin\theta \)</span>. למרות שהמשוואה נכונה פיזיקלית, היא לא עונה על השאלה, משום שגודל הכוח הנורמלי <span class="inline-ltr">\( N \)</span> <strong>אינו ידוע</strong> והוא אינו מופיע ברשימת הפרמטרים המותרים. לכן, הדרך היחידה למצוא את שקול הכוחות היא דרך האגף הימני של חוק ניוטון, כלומר חישוב התאוצה באמצעות שיקולי אנרגיה.
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': מהירות הקרונית בנקודה D</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> הנקודה D נמצאת בתחתית המסילה המעגלית. המסילה עדיין חלקה. המרחק מנקודה B (אשר באותו גובה כמו O) לנקודה D הוא בדיוק רדיוס המעגל, <span class="inline-ltr">\( R \)</span>.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> את גודל מהירות הקרונית בנקודה D, נסמנה <span class="inline-ltr">\( v_D \)</span>, מבוטאת באמצעות הפרמטרים <span class="inline-ltr">\( M, R, g \)</span> או חלקם.</div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">משפט עבודה-אנרגיה (שימור אנרגיה): \( E_A = E_D \)</span>
+            <span class="formula-badge">\( E_k = \frac{1}{2}mv^2 \)</span>
+            <span class="formula-badge">\( U_G = mgh \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">שוב נשתמש בחוק שימור אנרגיה מכנית. הפעם, כדי למנוע גבהים שליליים, נגדיר את מישור הייחוס לאנרגיה הפוטנציאלית הכובדית בנקודה הנמוכה ביותר, כלומר בנקודה D (<span class="inline-ltr">\( h_D = 0 \)</span>).</p>
+            <p class="content-paragraph">נחשב את הגובה ההתחלתי של נקודה A ביחס לנקודה D. הגובה מורכב מהמרחק מ-O ל-D (שהוא הרדיוס <span class="inline-ltr">\( R \)</span>) ועוד המרחק מ-B ל-A (שהוא <span class="inline-ltr">\( \frac{3}{4}R \)</span>):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ h_A = R + \frac{3}{4}R = 1.75R \]
+            </div>
+            <p class="content-paragraph">נשווה את האנרגיה המכנית הכוללת בנקודה A לאנרגיה בנקודה D:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_A = E_D \]
+                \[ M g (1.75R) + 0 = 0 + \frac{1}{2} M v_D^2 \]
+            </div>
+            <p class="content-paragraph">נצמצם את המסה <span class="inline-ltr">\( M \)</span> (אנו רואים שהמהירות אינה תלויה במסה):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 1.75 g R = \frac{1}{2} v_D^2 \]
+                \[ v_D^2 = 3.5 g R \]
+                \[ v_D = \sqrt{3.5 g R} \]
+            </div>
+            
+            <p class="final-answer">מסקנה: <span class="inline-ltr">\( v_D = \sqrt{3.5 g R} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> בחירת מישור הייחוס לאנרגיה (<span class="inline-ltr">\( h=0 \)</span>) היא שרירותית ונועדה לנוחות בלבד. בחירה בנקודה הנמוכה ביותר בתנועה (נקודה D) מבטיחה שכל הגבהים יהיו חיוביים, מה שמקטין משמעותית את הסיכוי לטעות בסימני פלוס ומינוס במהלך האלגברה.
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': חישוב מקדם החיכוך הקינטי</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> המשטח DE אופקי ומחוספס. אורך המשטח הוא <span class="inline-ltr">\( d = 3R \)</span>. הקרונית נכנסת לקטע זה במהירות <span class="inline-ltr">\( v_D \)</span> שחישבנו בסעיף הקודם, ונעצרת בנקודה E. כלומר, גודל המהירות בסוף הקטע קטן לאפס, <span class="inline-ltr">\( v_E = 0 \)</span>.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> את הערך המספרי של מקדם החיכוך הקינטי <span class="inline-ltr">\( \mu_k \)</span> בין הקרונית למשטח.</div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">משפט עבודה-אנרגיה: \( W_{\text{nc}} = \Delta E \)</span>
+            <span class="formula-badge">עבודת כוח קבוע: \( W = F \Delta x \cos\theta \)</span>
+            <span class="formula-badge">כוח חיכוך קינטי: \( f_k = \mu_k N \)</span>
+            <span class="formula-badge">החוק הראשון של ניוטון בציר Y: \( \Sigma F_y = 0 \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נחשב תחילה את הכוח הנורמלי הפועל על הקרונית בקטע האופקי DE. כיוון שאין תנועה בציר האנכי, שקול הכוחות בציר זה הוא אפס:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_y = N - M g = 0 \implies N = M g \]
+            </div>
+            <p class="content-paragraph">לכן, כוח החיכוך הקינטי הפועל נגד כיוון התנועה הוא:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ f_k = \mu_k N = \mu_k M g \]
+            </div>
+            <p class="content-paragraph">עבודת כוח החיכוך (שהוא הכוח הלא-משמר היחיד שמבצע עבודה לאורך ההעתק <span class="inline-ltr">\( \Delta x = 3R \)</span>) ניתנת על ידי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ W_f = f_k \cdot (3R) \cdot \cos(180^\circ) = - (\mu_k M g) \cdot 3R = -3 \mu_k M g R \]
+            </div>
+            <p class="content-paragraph">לפי משפט עבודה ואנרגיה, עבודת הכוחות הלא משמרים שווה לשינוי באנרגיה המכנית מ-D ל-E. האנרגיה הפוטנציאלית נשארת אפס משום שהמשטח אופקי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Delta E = E_E - E_D = E_{k,E} - E_{k,D} \]
+                \[ \Delta E = 0 - \frac{1}{2} M v_D^2 \]
+            </div>
+            <p class="content-paragraph">מסעיף ג', אנו זוכרים כי <span class="inline-ltr">\( \frac{1}{2} M v_D^2 = 1.75 M g R \)</span>. נציב זאת במשוואה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ -3 \mu_k M g R = - 1.75 M g R \]
+            </div>
+            <p class="content-paragraph">נצמצם משני האגפים את הביטוי <span class="inline-ltr">\( -M g R \)</span> (ששונה מאפס):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 3 \mu_k = 1.75 \]
+                \[ \mu_k = \frac{1.75}{3} = \frac{7/4}{3} = \frac{7}{12} \approx 0.583 \]
+            </div>
+            
+            <p class="final-answer">מסקנה: מקדם החיכוך הקינטי הוא <span class="inline-ltr">\( \mu_k = 0.583 \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> שימו לב שזווית ה- <span class="inline-ltr">\( \theta \)</span> בנוסחת העבודה <span class="inline-ltr">\( W = F \Delta x \cos\theta \)</span> היא הזווית בין וקטור הכוח לווקטור ההעתק. עבור כוח החיכוך הקינטי שתמיד מנוגד לכיוון התנועה, הזווית היא תמיד <span class="inline-ltr">\( 180^\circ \)</span>, ו- <span class="inline-ltr">\( \cos(180^\circ) = -1 \)</span>. זו הסיבה שעבודת החיכוך פה היא <strong>תמיד שלילית</strong> וגורמת להקטנת האנרגיה המכנית.
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה': בדיקת נכונות היגד על כוח החיכוך</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> מוצג ההיגד: "גודלו של כוח החיכוך הקינטי הפועל על גוף תמיד שווה למכפלת מקדם החיכוך הקינטי בגודל כוח הכבידה הפועל על הגוף (<span class="inline-ltr">\( Mg \)</span>)."</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לקבוע האם ההיגד נכון או שגוי, ולהביא נימוק או דוגמה תומכת לדעתנו.</div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">גודל כוח חיכוך קינטי: \( f_k = \mu_k N \)</span>
+            <p class="content-paragraph mt-2">העיקרון הפיזיקלי הוא שכוח החיכוך תלוי במידת ה"לחיצה" של הגוף אל המשטח, המיוצגת על ידי הכוח הנורמלי <span class="inline-ltr">\( N \)</span>, ולא ישירות בכוח הכבידה של הגוף.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">נימוק והוכחה:</h4>
+            <p class="content-paragraph">ההיגד <strong>אינו נכון</strong>.</p>
+            <p class="content-paragraph">נוסחת החיכוך הקינטי היא אכן <span class="inline-ltr">\( f_k = \mu_k N \)</span>. הכוח הנורמלי <span class="inline-ltr">\( N \)</span> שווה לכוח הכבידה <span class="inline-ltr">\( Mg \)</span> <strong>אך ורק</strong> במקרה הפרטי של תנועה על משטח אופקי שבו לא פועלים כוחות נוספים בציר האנכי (כפי שהיה לנו בסעיף ד').</p>
+            <p class="content-paragraph"><strong>דוגמה סותרת:</strong> נתבונן בגוף המחליק על גבי מישור משופע בעל זווית נטייה <span class="inline-ltr">\( \alpha \)</span>. במקרה זה, אם נבחר ציר Y הניצב למישור, מתקיים שיווי משקל בציר זה מכיוון שאין תנועה בניצב למישור:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_y = 0 \implies N - Mg \cos\alpha = 0 \implies N = Mg \cos\alpha \]
+            </div>
+            <p class="content-paragraph">לכן, על המישור המשופע, כוח החיכוך הקינטי יהיה שווה ל:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ f_k = \mu_k (Mg \cos\alpha) \]
+            </div>
+            <p class="content-paragraph">מכיוון ש- <span class="inline-ltr">\( \cos\alpha < 1 \)</span> (עבור זווית שאינה אפס), מקבלים כי <span class="inline-ltr">\( f_k \neq \mu_k Mg \)</span>, מה שסותר את ההיגד הכללי.</p>
+
+            <div class="visual-frame">
+                <!-- SVG Example for Inclined Plane -->
+                <svg width="300" height="200" viewBox="0 0 300 200" fill="none" xmlns="http://www.w3.org/2000/svg">
+<path d="M74.8778 148.159C74.2415 148.152 73.6863 147.98 73.2124 147.642C72.7384 147.301 72.3705 146.832 72.1087 146.235C71.8468 145.638 71.7159 144.954 71.7159 144.182C71.7159 143.416 71.8535 142.74 72.1286 142.153C72.407 141.563 72.7898 141.101 73.277 140.766C73.7642 140.432 74.3243 140.264 74.9574 140.264C75.4214 140.264 75.8224 140.354 76.1605 140.533C76.4986 140.708 76.7853 140.954 77.0206 141.268C77.2592 141.583 77.4598 141.945 77.6222 142.352H78.0795L78.2585 144.162L79.2528 148H78.1591L77.2244 144.162C77.1747 143.92 77.0985 143.638 76.9957 143.317C76.893 142.995 76.7554 142.682 76.5831 142.377C76.4107 142.072 76.1903 141.82 75.9219 141.621C75.6567 141.419 75.3352 141.318 74.9574 141.318C74.553 141.318 74.1951 141.441 73.8835 141.686C73.572 141.931 73.3284 142.271 73.1527 142.705C72.977 143.139 72.8892 143.638 72.8892 144.202C72.8892 144.752 72.9721 145.247 73.1378 145.688C73.3035 146.126 73.5355 146.472 73.8338 146.727C74.1321 146.979 74.4801 147.105 74.8778 147.105C75.2457 147.105 75.5656 147.004 75.8374 146.802C76.1091 146.596 76.3378 146.339 76.5234 146.031C76.709 145.72 76.8582 145.4 76.9709 145.072C77.0869 144.74 77.1714 144.45 77.2244 144.202L78.0597 140.364H79.1534L78.2585 144.202L78.0795 146.071H77.6818C77.5095 146.482 77.294 146.847 77.0355 147.165C76.7803 147.48 76.4737 147.725 76.1158 147.901C75.7611 148.076 75.3485 148.162 74.8778 148.159Z" fill="black"/>
+<path d="M85.3855 151.068C86.5611 145.281 86.2921 139.087 84.6009 133" stroke="#64748B" stroke-width="1.5"/>
+<path d="M158.777 68L123 85.8885L134.18 108.249L169.957 90.3607L158.777 68Z" fill="#3B82F6"/>
+<path d="M50 150H250V50L50 150Z" fill="#E2E8F0" stroke="#64748B" stroke-width="2"/>
+<path d="M150 92.5L150 181.943" stroke="#CBD5E1" stroke-width="1.5" stroke-dasharray="4 4"/>
+<path d="M129 45L127.719 56.4757L138.298 51.8474L129 45ZM150 93L150.916 92.5992L133.524 52.8446L132.607 53.2454L131.691 53.6462L149.084 93.4008L150 93Z" fill="#EF4444"/>
+<path d="M122.058 51.2727V60H120.464L116.668 54.5071H116.604V60H114.759V51.2727H116.378L120.145 56.7614H120.222V51.2727H122.058Z" fill="#EF4444"/>
+<path d="M150 162.5L155.774 152.5H144.226L150 162.5ZM150 92.5H149V153.5H150H151V92.5H150Z" fill="#10B981"/>
+<path d="M156.759 158.273H159.034L161.438 164.136H161.54L163.943 158.273H166.219V167H164.429V161.32H164.357L162.098 166.957H160.879L158.621 161.298H158.548V167H156.759V158.273ZM170.654 169.591C170.066 169.591 169.561 169.51 169.141 169.348C168.723 169.189 168.391 168.972 168.144 168.696C167.897 168.42 167.736 168.111 167.662 167.767L169.341 167.541C169.392 167.672 169.473 167.794 169.584 167.908C169.695 168.021 169.841 168.112 170.023 168.18C170.208 168.251 170.432 168.287 170.696 168.287C171.091 168.287 171.417 168.19 171.672 167.997C171.931 167.807 172.06 167.487 172.06 167.038V165.841H171.983C171.904 166.023 171.784 166.195 171.625 166.357C171.466 166.518 171.262 166.651 171.012 166.753C170.762 166.855 170.463 166.906 170.117 166.906C169.625 166.906 169.178 166.793 168.775 166.565C168.374 166.335 168.054 165.984 167.816 165.513C167.58 165.038 167.462 164.439 167.462 163.714C167.462 162.973 167.583 162.354 167.824 161.857C168.066 161.359 168.387 160.987 168.787 160.74C169.191 160.493 169.632 160.369 170.113 160.369C170.479 160.369 170.786 160.432 171.033 160.557C171.28 160.679 171.479 160.832 171.63 161.017C171.783 161.199 171.901 161.378 171.983 161.554H172.051V160.455H173.854V167.064C173.854 167.621 173.718 168.087 173.445 168.462C173.172 168.837 172.794 169.118 172.311 169.305C171.831 169.496 171.279 169.591 170.654 169.591ZM170.692 165.543C170.985 165.543 171.232 165.47 171.434 165.325C171.638 165.178 171.794 164.967 171.902 164.695C172.013 164.419 172.069 164.089 172.069 163.706C172.069 163.322 172.015 162.99 171.907 162.709C171.799 162.425 171.642 162.205 171.438 162.048C171.233 161.892 170.985 161.814 170.692 161.814C170.394 161.814 170.142 161.895 169.938 162.057C169.733 162.216 169.578 162.437 169.473 162.722C169.368 163.006 169.316 163.334 169.316 163.706C169.316 164.084 169.368 164.411 169.473 164.686C169.581 164.959 169.736 165.17 169.938 165.321C170.142 165.469 170.394 165.543 170.692 165.543Z" fill="#10B981"/>
+<path d="M192 73L185.454 82.512L180.489 72.0867L192 73ZM150 93L149.57 92.0971L183.444 75.9665L183.874 76.8694L184.304 77.7723L150.43 93.9029L150 93Z" fill="#F59E0B"/>
+<path d="M190.244 61.4545V62.8182H186.205V61.4545H190.244ZM187.129 68V60.9815C187.129 60.5071 187.222 60.1136 187.406 59.8011C187.594 59.4886 187.849 59.2543 188.173 59.098C188.497 58.9418 188.865 58.8636 189.277 58.8636C189.555 58.8636 189.81 58.8849 190.04 58.9276C190.273 58.9702 190.446 59.0085 190.56 59.0426L190.236 60.4062C190.165 60.3835 190.077 60.3622 189.972 60.3423C189.869 60.3224 189.764 60.3125 189.656 60.3125C189.389 60.3125 189.203 60.375 189.098 60.5C188.993 60.6222 188.94 60.794 188.94 61.0156V68H187.129ZM192.603 66.4304L192.607 64.6158H192.827L194.574 62.5455H196.311L193.963 65.2869H193.605L192.603 66.4304ZM191.233 68V60.7273H192.745V68H191.233ZM194.642 68L193.037 65.6243L194.045 64.5554L196.414 68H194.642Z" fill="#F59E0B"/>
+</svg>
+            </div>
+            
+            <p class="final-answer">מסקנה: ההיגד אינו נכון. כוח החיכוך תלוי בכוח הנורמלי <span class="inline-ltr">\( N \)</span>, אשר עשוי להיות שונה מ- <span class="inline-ltr">\( Mg \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong> חשוב לזכור שהכוח הנורמלי (N) הוא כוח של "תגובה" מאלצת. המשטח מפעיל בדיוק את הכוח הדרוש כדי שהגוף לא יחדור לתוכו. לכן, ערכו של N משתנה בהתאם לזווית המשטח ואף בהתאם לכוחות חיצוניים נוספים שאולי לוחצים על הגוף מלמעלה או מושכים אותו כלפי מעלה. לעולם אל תניחו באופן אוטומטי ש- <span class="inline-ltr">\( N = Mg \)</span>!
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

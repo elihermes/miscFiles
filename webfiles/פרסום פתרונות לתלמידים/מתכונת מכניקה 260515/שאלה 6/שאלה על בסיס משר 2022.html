@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מלא: משימת DART ומערכת דידימוס</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: center;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מלא: משימת DART ומערכת דידימוס</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">כבידה קינמטיקה ודינמיקה של תנועה מעגלית</h2>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">מבט כללי על השאלה</h3>
+        <p class="content-paragraph mb-0">שלום תלמידים! לפנינו שאלת בגרות מרתקת העוסקת באסטרופיזיקה אמיתית - משימת DART של נאס"א להסטת אסטרואידים. נפרק את השאלה צעד אחר צעד, נקפיד על יחידות מידה תקניות ונבין את העקרונות הפיזיקליים העומדים מאחורי כל נוסחה. בואו נתחיל!</p>
+    </section>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א' -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א'</h3>
+
+        <div class="visual-frame">
+            <svg viewBox="0 0 400 200" class="w-full max-w-md mx-auto bg-slate-50 rounded-lg shadow-inner p-4">
+                <defs>
+                    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444" />
+                    </marker>
+                </defs>
+                <!-- Orbit -->
+                <circle cx="200" cy="100" r="70" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="5,5" />
+                
+                <!-- Didymos Body & Name (bottom) -->
+                <circle cx="200" cy="100" r="15" fill="#64748b" />
+                <text x="200" y="142" text-anchor="middle" font-size="14" fill="#475569" font-weight="bold">דידימוס</text>
+                
+                <!-- Moon Body & Name (bottom) -->
+                <circle cx="270" cy="100" r="10" fill="#94a3b8" />
+                <text x="270" y="138" text-anchor="middle" font-size="14" fill="#475569" font-weight="bold">ירח</text>
+                
+                <!-- Radius line & Text (>15px clear spacing above line) -->
+                <line x1="200" y1="100" x2="260" y2="100" stroke="#3b82f6" stroke-width="1.5" />
+                <text x="230" y="75" text-anchor="middle" font-size="14" fill="#3b82f6">R</text>
+                
+                <!-- Velocity Vector from inner anchor point -->
+                <circle cx="270" cy="100" r="2.5" fill="#1e293b" />
+                <line x1="270" y1="100" x2="270" y2="30" stroke="#ef4444" stroke-width="2.5" marker-end="url(#arrow)" />
+                <text x="290" y="65" text-anchor="start" font-size="16" fill="#ef4444" font-weight="bold">v</text>
+            </svg>
+        </div>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="text-sm mt-1">לפני הכל, נסדר את הנתונים ונעביר אותם ליחידות המערכת הבינלאומית (MKS): מטרים, קילוגרמים ושניות.</p>
+                <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+                    <li>רדיוס המסלול המעגלי: \( R = 1,200 \text{ m} \) (היחידות תקינות).</li>
+                    <li>זמן המחזור של הירח: \( T = 11.9 \text{ h} \). שעות אינן יחידה תקנית, לכן נמיר לשניות. בכל שעה יש 3,600 שניות, לכן:</li>
+                </ul>
+                <div class="math-container text-center text-sm" dir="ltr">
+                    \[ T = 11.9 \cdot 3,600 = 42,840 \text{ s} \]
+                </div>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="text-sm mt-1">אנו מתבקשים לחשב את גודל מהירותו הקווית של הירח, כלומר את המהירות המשיקית במסלול המעגלי (\( v \)).</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( v = \frac{2\pi r}{T} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">נציב את הנתונים שסידרנו לתוך הנוסחה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ v = \frac{2 \cdot \pi \cdot 1,200}{42,840} \]
+                \[ v \approx 0.17604 \text{ m/s} \]
+            </div>
+            <p class="content-paragraph text-sm">נעגל את התשובה ל-3 ספרות מהותיות:</p>
+            <div class="final-answer">
+                מסקנה: <span class="inline-ltr">\( v = 0.176 \text{ m/s} \)</span>.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>רגע של למידה:</strong>
+            זהו בדיוק אותו כוח כבידה שכבר פגשתם כאשר כתבתם ליד פני כדור הארץ \( F_g = mg \). שם הוא נראה כמו נוסחה "מיוחדת" רק מפני שמדובר במקרה מסוים מאוד: הגוף המרכזי הוא כדור הארץ, ואנו קרובים לפניו, ולכן \( g \) כמעט קבוע. אין כאן כוח חדש, אלא אותו כוח כבידה משמר שפועל גם על תפוח הנופל מן העץ, גם על הירח הסובב את כדור הארץ וגם על כוכבי הלכת הסובבים את השמש. במקרה הכללי מתארים אותו באמצעות הגוף המרכזי והמרחק ממנו, ולא רק באמצעות \( mg \).
+        </div>
+    </section>
+
+    <!-- סעיף ב' -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב'</h3>
+
+        <div class="visual-frame flex-col items-center">
+            <svg viewBox="0 0 400 200" class="w-full max-w-md mx-auto bg-slate-50 rounded-lg shadow-inner p-4">
+                <defs>
+                    <marker id="arrow-force" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#2563eb" />
+                    </marker>
+                    <marker id="arrow-accel" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
+                    </marker>
+                </defs>
+                
+                <!-- Asteroid Body & Name (bottom) -->
+                <circle cx="100" cy="100" r="20" fill="#64748b" />
+                <text x="100" y="150" text-anchor="middle" font-size="16" fill="#475569" font-weight="bold">M</text>
+                
+                <!-- Moon Body & Name (bottom) -->
+                <circle cx="300" cy="100" r="14" fill="#94a3b8" />
+                <text x="300" y="145" text-anchor="middle" font-size="16" fill="#475569" font-weight="bold">m</text>
+                
+                <!-- Axis line avoiding text -->
+                <line x1="340" y1="100" x2="60" y2="100" stroke="#cbd5e1" stroke-dasharray="4,4" />
+                <text x="45" y="104" text-anchor="middle" font-size="12" fill="#64748b">+r</text>
+
+                <!-- Force Vector from inner anchor point -->
+                <!-- Y shifted slightly to clearly separate vectors while originating inside the body -->
+                <circle cx="300" cy="94" r="2.5" fill="#1e293b" />
+                <line x1="300" y1="94" x2="180" y2="94" stroke="#2563eb" stroke-width="2.5" marker-end="url(#arrow-force)" />
+                <!-- Text >15px above the line -->
+                <text x="240" y="70" text-anchor="middle" font-size="16" fill="#2563eb" font-weight="bold">
+                    F<tspan baseline-shift="sub" font-size="0.75em">g</tspan>
+                </text>
+                
+                <!-- Acceleration Vector from inner anchor point -->
+                <circle cx="300" cy="106" r="2.5" fill="#1e293b" />
+                <line x1="300" y1="106" x2="210" y2="106" stroke="#16a34a" stroke-width="2" marker-end="url(#arrow-accel)" />
+                <!-- Text >15px below the line -->
+                <text x="240" y="135" text-anchor="middle" font-size="16" fill="#16a34a" font-weight="bold">
+                    a<tspan baseline-shift="sub" font-size="0.75em">R</tspan>
+                </text>
+            </svg>
+            <p class="text-sm text-center text-slate-500 mt-2">תרשים כוחות עבור הירח. ציר הייחוס נקבע חיובי לכיוון מרכז המעגל.</p>
+        </div>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+                    <li>מהסעיף הקודם: \( v = 0.176 \text{ m/s} \) ו- \( R = 1,200 \text{ m} \).</li>
+                    <li>מדף הנוסחאות נוציא את קבוע הגרביטציה האוניברסלי: \( G = 6.67 \cdot 10^{-11} \text{ N} \cdot \text{m}^2 / \text{kg}^2 \).</li>
+                    <li>נסמן את מסת האסטרואיד (הגוף המרכזי) כ- \( M \), ואת מסת הירח כ- \( m \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="text-sm mt-1">אנו מתבקשים למצוא את מסת האסטרואיד דידימוס (\( M \)).</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma F_R = m a_R \)</span>
+            <span class="formula-badge">\( F_G = G \frac{m_1 m_2}{r^2} \)</span>
+            <span class="formula-badge">\( a_R = \frac{v^2}{r} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">הכוח היחיד הפועל על הירח (בהזנחת כוכבים אחרים) הוא כוח הכבידה שהאסטרואיד מפעיל עליו, וכיוונו למרכז המעגל. נרשום את משוואת הכוחות לפי ציר רדיאלי חיובי פנימה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ F_G = m a_R \]
+                \[ G \frac{M m}{R^2} = m \frac{v^2}{R} \]
+            </div>
+            <p class="content-paragraph mt-4">ניתן לראות שמסת הירח \( m \) מצטמצמת משני צידי המשוואה. כמו כן, נכפול את שני האגפים ב- \( R \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ G \frac{M}{R} = v^2 \]
+            </div>
+            <p class="content-paragraph mt-4">נבודד את המסה של האסטרואיד \( M \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ M = \frac{v^2 R}{G} \]
+            </div>
+            <p class="content-paragraph mt-4">נציב את הנתונים המספריים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ M = \frac{0.176^2 \cdot 1,200}{6.67 \cdot 10^{-11}} \]
+                \[ M \approx 5.572 \cdot 10^{11} \text{ kg} \]
+            </div>
+            <p class="content-paragraph mt-4 text-sm">נעגל את התשובה ל-3 ספרות מהותיות:</p>
+            <div class="final-answer">
+                מסקנה: <span class="inline-ltr">\( M = 5.57 \cdot 10^{11} \text{ kg} \)</span>.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            שימו לב שמסת הלוויין (במקרה שלנו, הירח \( m \)) הצטמצמה במשוואה! זוהי מסקנה חשובה מאוד בפיזיקה: התנועה הקינמטית של לוויין (מהירותו וזמן המחזור שלו) תלויה אך ורק ברדיוס המסלול ובמסת הגוף המרכזי אותו הוא מקיף, ואינה תלויה במסה של הלוויין עצמו.
+            בנוסף, זה מזכיר את מה שלמדנו על פני כדור הארץ: גם התאוצה הכבידתית \( g \) אינה תלויה במסת הגוף הנופל. כל גוף, קל או כבד, נמשך באותה תאוצה קבועה לעבר מרכז כדור הארץ, בלי קשר למסה שלו. זה אותו רעיון פיזיקלי של כוח כבידה ותאוצה שאינה תלויה במסה.
+        </div>
+    </section>
+
+    <!-- סעיף ג' -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+                    <li>רדיוס המסלול החדש גדול פי שניים מהרדיוס המקורי. נסמן: \( R_{new} = 2R \).</li>
+                    <li>התנועה היא עדיין מעגלית סביב אותו גוף מרכזי (דידימוס).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="text-sm mt-1">כיצד משתנה זמן המחזור של הירח? כלומר, עלינו למצוא את היחס בין זמן המחזור החדש (\( T_{new} \)) לזמן המחזור הישן (\( T \)).</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="text-sm mt-1 mb-2">נוכל לפתח שוב את המשוואות, אך דרך אלגנטית ומהירה יותר היא להשתמש בחוק השלישי של קפלר הקושר בין זמן המחזור לרדיוס המסלול עבור גופים המקיפים את אותו מרכז כובד:</p>
+            <span class="formula-badge">\( \left( \frac{T_1}{T_2} \right)^2 = \left( \frac{R_1}{R_2} \right)^3 \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">נציב את הנתונים שלנו לתוך חוק קפלר, כאשר מצב 1 הוא המסלול החדש ומצב 2 הוא המסלול המקורי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \left( \frac{T_{new}}{T} \right)^2 = \left( \frac{R_{new}}{R} \right)^3 \]
+            </div>
+            <p class="content-paragraph mt-4">נציב את הקשר \( R_{new} = 2R \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \left( \frac{T_{new}}{T} \right)^2 = \left( \frac{2R}{R} \right)^3 \]
+            </div>
+            <p class="content-paragraph mt-4">נצמצם את \( R \) ונקבל:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \left( \frac{T_{new}}{T} \right)^2 = 2^3 = 8 \]
+            </div>
+            <p class="content-paragraph mt-4">כעת נוציא שורש ריבועי משני האגפים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \frac{T_{new}}{T} = \sqrt{8} \]
+                \[ T_{new} = \sqrt{8} \cdot T \]
+            </div>
+            <p class="content-paragraph mt-4">נציב את זמן המחזור המקורי המומר לשניות (\( T = 42,840 \text{ s} \)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ T_{new} = \sqrt{8} \cdot 42,840 \approx 121,170 \text{ s} \]
+            </div>
+            <p class="content-paragraph mt-4 text-sm">נעגל את התשובה ל-3 ספרות מהותיות (אפשר להציג בכתיב מדעי או להמיר חזרה לשעות: כ- \( 33.7 \text{ h} \)):</p>
+            <div class="final-answer">
+                מסקנה: <span class="inline-ltr">\( T_{new} = 1.21 \cdot 10^5 \text{ s} \)</span>.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>אזהרת טעות נפוצה:</strong>
+            חוק קפלר השלישי מאפשר להשוות בין זמני ההקפה ורדיוסי המסלול <strong>רק כאשר שני הגופים מקיפים אותו גוף מרכזי</strong> בדיוק. לכן, מותר להציב בנוסחה רק בין שני מסלולים סביב אותו כוכב, ו<strong>לא</strong> בין גופים שמקיפים <strong>מרכזים שונים</strong>. זו טעות נפוצה כי הנוסחה נראית כמו "נוסחת יחס", אבל מאחוריה מסתתרת <strong>הנחה פיזיקלית</strong> חשובה: <strong>אותו כוח כבידה ואותו מרכז מסה</strong> קובעים את הקשר.
+        </div>
+    </section>
+
+    <!-- סעיף ד' -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד'</h3>
+
+        <div class="visual-frame flex-col items-center">
+            <svg viewBox="0 0 400 200" class="w-full max-w-md mx-auto bg-slate-50 rounded-lg shadow-inner p-4">
+                <!-- Ellipse -->
+                <ellipse cx="200" cy="100" rx="150" ry="70" fill="none" stroke="#94a3b8" stroke-width="2" />
+                
+                <!-- Focus (Didymos) Body & Name (bottom) -->
+                <circle cx="120" cy="100" r="15" fill="#64748b" />
+                <text x="120" y="142" text-anchor="middle" font-size="14" fill="#475569" font-weight="bold">דידימוס (מוקד)</text>
+                
+                <!-- Point A Body & Name (bottom) -->
+                <circle cx="350" cy="100" r="10" fill="#ef4444" />
+                <text x="350" y="138" text-anchor="middle" font-size="16" fill="#ef4444" font-weight="bold">A</text>
+                
+                <!-- Point B Body & Name (bottom) -->
+                <circle cx="50" cy="100" r="10" fill="#22c55e" />
+                <text x="50" y="138" text-anchor="middle" font-size="16" fill="#22c55e" font-weight="bold">B</text>
+                
+                <!-- Anchors for lines originating from bodies -->
+                <circle cx="120" cy="100" r="2.5" fill="#1e293b" />
+                <circle cx="350" cy="100" r="2.5" fill="#1e293b" />
+                <circle cx="50" cy="100" r="2.5" fill="#1e293b" />
+
+                <!-- Radii Lines -->
+                <line x1="120" y1="100" x2="350" y2="100" stroke="#ef4444" stroke-width="1.5" stroke-dasharray="3,3" />
+                <text x="235" y="75" text-anchor="middle" font-size="14" fill="#ef4444">
+                    r<tspan baseline-shift="sub" font-size="0.75em">A</tspan> גדול
+                </text>
+                
+                <line x1="120" y1="100" x2="50" y2="100" stroke="#22c55e" stroke-width="1.5" stroke-dasharray="3,3" />
+                <text x="85" y="75" text-anchor="middle" font-size="14" fill="#22c55e">
+                    r<tspan baseline-shift="sub" font-size="0.75em">B</tspan> קטן
+                </text>
+            </svg>
+        </div>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 space-y-1 text-sm">
+                    <li>המסלול הוא אליפטי. על פי חוקי קפלר הראשונים, הגוף המרכזי (דידימוס) נמצא באחד ממוקדי האליפסה.</li>
+                    <li>מתוך האיור ניתן לראות כי נקודה A רחוקה יותר מהאסטרואיד (אפואפסיס) ונקודה B קרובה יותר לאסטרואיד (פריאפסיס). כלומר: \( r_A > r_B \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="text-sm mt-1">לקבוע באיזו נקודה, A או B, גודל מהירותו של הירח גדול יותר ולנמק פיזיקלית.</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="text-sm mt-1 mb-2">נשתמש בעקרון חוק שימור אנרגיה מכנית בקווי שדה כבידה. הכוח היחיד שמבצע עבודה על הירח הוא כוח הכבידה שהוא כוח משמר, ולכן האנרגיה המכנית הכוללת (\( E \)) נשמרת קבועה.</p>
+            <span class="formula-badge">\( E = E_k + U_G = \text{const} \)</span>
+            <span class="formula-badge">\( E_k = \frac{1}{2}mv^2 \)</span>
+            <span class="formula-badge">\( U_G = -G\frac{Mm}{r} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון (נימוק):</h4>
+            <p class="content-paragraph">נרשום את חוק שימור האנרגיה בין נקודה כלשהי במסלול:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E = \frac{1}{2}mv^2 - G\frac{Mm}{r} = \text{const} \]
+            </div>
+            <p class="content-paragraph mt-4">נבחן את האנרגיה הפוטנציאלית הכובדית \( U_G \). שימו לב שיש לה סימן שלילי! כאשר המרחק \( r \) <strong>קטן</strong> (כמו בנקודה B), המנה \( G\frac{Mm}{r} \) גדלה, אך בגלל הסימן השלילי, הערך הכולל של הפוטנציאל הפוטנציאלי <strong>קטן</strong> יותר (הוא הופך להיות יותר שלילי).</p>
+            <p class="content-paragraph">מכיוון שהאנרגיה הכוללת \( E \) חייבת להישאר קבועה, ירידה באנרגיה הפוטנציאלית \( U_G \) חייבת להיות מלווה בעלייה באנרגיה הקינטית \( E_k \). במילים אחרות:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_k = E - U_G = E - \left(-G\frac{Mm}{r}\right) = E + G\frac{Mm}{r} \]
+            </div>
+            <p class="content-paragraph mt-4">ככל ש- \( r \) קטן יותר, המונח החיובי גדול יותר ולכן \( E_k \) גדולה יותר. אנרגיה קינטית גדולה יותר משמעותה גודל מהירות גבוה יותר.</p>
+            <p class="content-paragraph">מכיוון שמרחק הירח בנקודה B קטן יותר מהמרחק בנקודה A (\( r_B < r_A \)), האנרגיה הפוטנציאלית ב-B קטנה יותר ולכן האנרגיה הקינטית ב-B גדולה יותר.</p>
+            
+            <div class="final-answer">
+                מסקנה: הירח נע מהר יותר בנקודה B.
+            </div>
+        </div>
+
+        <div class="step-box" style="background: linear-gradient(180deg, #f0fdf4 0%, #ffffff 100%); border-color: #86efac;">
+            <h4 class="step-title" style="color: #166534;">דרך פתרון חלופית (מצוינת!): החוק השני של קפלר</h4>
+            <p class="content-paragraph">ניתן לענות על סעיף זה בצורה אלגנטית ומילולית באמצעות <strong>החוק השני של קפלר</strong>. חוק זה קובע כי הרדיוס-וקטור המחבר את הגוף המרכזי והלוויין "מכסה" שטחים שווים בפרקי זמן שווים.</p>
+            <p class="content-paragraph">שטח הגזרה במרווח זמן קצר יחסי בקירוב למכפלת הרדיוס באורך הקשת שהלוויין עובר (\( \Delta A \approx \frac{1}{2} r \cdot \Delta s \)).</p>
+            <p class="content-paragraph mb-0">כאשר הירח קרוב לאסטרואיד (באזור נקודה B, שם הרדיוס קטן יותר), כדי "לפצות" על הרדיוס הקטן ולכסות את אותו השטח, עליו לעבור <strong>קשת גדולה יותר</strong> באותו פרק זמן. קשת גדולה יותר משמעותה מהירות קווית גדולה יותר!</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            דרך אינטואיטיבית נוספת להסביר זאת היא באמצעות "עבודה ואנרגיה". כאשר הירח נע מנקודה A לנקודה B הוא מתקרב לאסטרואיד. כוח הכבידה מושך אותו פנימה, כלומר כיוון הכוח הוא בקירוב באותו כיוון של התנועה (הזווית ביניהם חדה). לכן כוח הכבידה עושה <strong>עבודה חיובית</strong> שגורמת לעלייה באנרגיה הקינטית ולכן גודל המהירות גדל.
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+            if (legalLinks.length) {
+                const resolvedLegalPath = '../דף זכויות יוצרים.html';
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

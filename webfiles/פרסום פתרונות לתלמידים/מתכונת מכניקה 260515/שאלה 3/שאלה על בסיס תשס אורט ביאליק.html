@@ -1,0 +1,827 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+	<!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+	<!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+	<script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+	<script>
+		window.dataLayer = window.dataLayer || [];
+		function gtag(){dataLayer.push(arguments);}
+		gtag('js', new Date());
+
+		gtag('config', 'G-QZJ7JT80X2');
+	</script>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>פתרון מודרך בפיזיקה - רכבת הרים ותנועה מעגלית</title>
+
+	<script src="https://cdn.tailwindcss.com"></script>
+
+	<script>
+		window.MathJax = {
+			tex: {
+				inlineMath: [['\\(', '\\)'], ['$', '$']],
+				displayMath: [['\\[', '\\]'], ['$$', '$$']],
+				processEscapes: true
+			}
+		};
+	</script>
+	<script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+	<style>
+		:root {
+			--bg-page: #f8fafc;
+			--bg-card: #ffffff;
+			--text-main: #334155;
+			--blue-600: #2563eb;
+			--blue-700: #1d4ed8;
+			--blue-100: #dbeafe;
+			--blue-50: #eff6ff;
+			--blue-border: #93c5fd;
+			--green-50: #f0fdf4;
+			--green-500: #22c55e;
+			--slate-200: #e2e8f0;
+			--slate-300: #cbd5e1;
+		}
+
+		body {
+			font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+			background-color: var(--bg-page);
+			color: var(--text-main);
+			line-height: 1.65;
+		}
+
+		html {
+			overflow-x: clip;
+		}
+
+		body {
+			overflow-x: clip;
+		}
+
+		.page-shell {
+			max-width: 980px;
+			margin: 0 auto;
+			padding: 1rem;
+			padding-bottom: 7rem;
+		}
+
+		.section-card {
+			background: var(--bg-card);
+			border: 1px solid var(--slate-200);
+			border-radius: 0.75rem;
+			padding: 1.25rem;
+			margin-bottom: 1.5rem;
+			box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+		}
+
+		.section-header {
+			font-size: 1.4rem;
+			font-weight: 700;
+			color: #1e3a8a;
+			border-bottom: 2px solid var(--slate-200);
+			padding-bottom: 0.5rem;
+			margin-bottom: 0.9rem;
+		}
+
+		.content-paragraph {
+			margin-bottom: 1rem;
+			color: #475569;
+		}
+
+		.info-grid {
+			display: grid;
+			gap: 0.85rem;
+			margin: 1rem 0 1.1rem;
+		}
+
+		.info-panel {
+			background: #f8fafc;
+			border: 1px solid var(--slate-200);
+			border-radius: 0.75rem;
+			padding: 0.9rem 1rem;
+			box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+		}
+
+		.info-panel strong {
+			color: #0f172a;
+			display: block;
+			margin-bottom: 0.5rem;
+		}
+
+		.step-title {
+			font-weight: 700;
+			margin-bottom: 0.6rem;
+			color: #1f2937;
+			display: block;
+		}
+
+		.step-label {
+			display: inline-block;
+			margin: 0.5rem 0 0.75rem;
+			padding: 0.25rem 0.8rem;
+			border-radius: 9999px;
+			background: #f1f5f9;
+			color: #334155;
+			font-weight: 700;
+			font-size: 0.95rem;
+		}
+
+		.final-answer {
+			background-color: var(--green-50);
+			color: #166534;
+			border: 1px solid #86efac;
+			padding: 0.9rem;
+			border-radius: 0.6rem;
+			text-align: right;
+			direction: rtl;
+			unicode-bidi: plaintext;
+			font-weight: 700;
+			margin-top: 1rem;
+		}
+
+		.visual-frame {
+			display: flex;
+			justify-content: center;
+			margin: 1rem 0;
+			padding: 0.75rem;
+			background: #ffffff;
+			border: 1px solid var(--slate-200);
+			border-radius: 0.85rem;
+			box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+		}
+
+		.formula-badge {
+			background-color: var(--blue-50);
+			color: #1e40af;
+			border: 1px solid #bfdbfe;
+			border-radius: 0.5rem;
+			display: inline-block;
+			padding: 0.25rem 0.8rem;
+			margin: 0.25rem 0.25rem 0.25rem 0;
+			font-weight: 700;
+			direction: ltr;
+		}
+
+		.inline-ltr {
+			display: inline-block;
+			direction: ltr;
+			unicode-bidi: isolate;
+			white-space: nowrap;
+		}
+
+		.teacher-highlight {
+			background-color: var(--green-50);
+			border-right: 4px solid var(--green-500);
+			border-radius: 0.5rem 0 0 0.5rem;
+			padding: 0.9rem;
+			margin-top: 1rem;
+			color: #166534;
+		}
+
+		.step-box {
+			background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+			border: 1px solid var(--slate-200);
+			border-radius: 0.85rem;
+			padding: 1rem;
+			margin-top: 0.8rem;
+			box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+		}
+
+		.math-scroll,
+		.math-container,
+		.math-block,
+		.overflow-x-auto[dir="ltr"] {
+			overflow-x: auto;
+			overflow-y: hidden;
+			-webkit-overflow-scrolling: touch;
+			touch-action: pan-x pan-y;
+		}
+
+		.math-scroll mjx-container[display="true"],
+		.math-container mjx-container[display="true"],
+		.math-block mjx-container[display="true"],
+		.overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+			display: inline-block;
+			min-width: max-content;
+			max-width: none;
+			margin: 0.25rem 0;
+		}
+
+		@media (max-width: 640px) {
+			.math-scroll mjx-container[display="true"],
+			.math-container mjx-container[display="true"],
+			.math-block mjx-container[display="true"],
+			.overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+				font-size: 0.9em;
+			}
+
+			.page-shell {
+				padding-bottom: 8.5rem;
+			}
+
+			.question-modal-header {
+				flex-wrap: wrap;
+			}
+
+			.question-modal-title {
+				width: 100%;
+				text-align: right;
+				font-size: 1rem;
+				order: 2;
+			}
+
+			.question-modal-close {
+				order: 1;
+			}
+		}
+
+		.floating-question-btn {
+			position: fixed;
+			right: 1rem;
+			bottom: 1rem;
+			z-index: 50;
+			height: 3rem;
+			padding: 0 0.9rem;
+			gap: 0.45rem;
+			border: 1px solid var(--blue-border);
+			border-radius: 9999px;
+			background: var(--blue-50);
+			color: var(--blue-700);
+			box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+			display: flex;
+			align-items: center;
+			justify-content: center;
+			transition: transform 0.2s ease, background-color 0.2s ease;
+		}
+
+		.floating-question-btn:hover {
+			background: var(--blue-100);
+			transform: scale(1.05);
+		}
+
+		.question-modal {
+			position: fixed;
+			inset: 0;
+			background: rgba(15, 23, 42, 0.7);
+			z-index: 60;
+			display: none;
+			align-items: center;
+			justify-content: center;
+			padding: 1rem;
+		}
+
+		.question-modal.is-open {
+			display: flex;
+		}
+
+		.question-modal-card {
+			background: white;
+			width: min(1100px, 96vw);
+			max-width: 100%;
+			max-height: 92vh;
+			border-radius: 1rem;
+			border: 1px solid var(--slate-300);
+			box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+			overflow: auto;
+			padding: 1rem;
+		}
+
+		.question-modal-header {
+			display: flex;
+			align-items: center;
+			justify-content: space-between;
+			gap: 0.5rem;
+			margin-bottom: 0.75rem;
+		}
+
+		.question-modal-title {
+			min-width: 0;
+			flex: 1;
+			font-weight: 700;
+			color: #1f2937;
+		}
+
+		.question-modal-close {
+			flex-shrink: 0;
+		}
+
+		.version-stamp {
+			display: inline-flex;
+			align-items: center;
+			gap: 0.35rem;
+			padding: 0.28rem 0.55rem;
+			border-radius: 9999px;
+			border: 1px solid #bfdbfe;
+			background: rgba(239, 246, 255, 0.95);
+			color: #1e3a8a;
+			font-size: 0.72rem;
+			font-weight: 600;
+			line-height: 1;
+			backdrop-filter: blur(2px);
+			margin-top: 0.45rem;
+		}
+
+		.version-stamp .version-label {
+			color: #1d4ed8;
+			font-weight: 700;
+			text-transform: uppercase;
+		}
+
+		.legal-entry-link {
+			display: inline-flex;
+			align-items: center;
+			justify-content: center;
+			margin-top: 0.7rem;
+			font-size: 0.86rem;
+			color: #64748b;
+			text-decoration: underline;
+			text-underline-offset: 2px;
+		}
+
+		.legal-entry-link:hover {
+			color: #1d4ed8;
+		}
+
+		.legal-footer {
+			margin-top: 1.5rem;
+			padding-top: 1rem;
+			border-top: 1px solid var(--slate-200);
+			text-align: center;
+			font-size: 0.9rem;
+			color: #64748b;
+		}
+
+		.legal-footer a {
+			color: #1d4ed8;
+			font-weight: 600;
+			text-underline-offset: 2px;
+		}
+
+		.legal-footer a:hover {
+			color: #1e3a8a;
+		}
+
+		body.modal-open {
+			overflow: hidden;
+		}
+
+		@media (min-width: 768px) {
+			.floating-question-btn {
+				right: 1.5rem;
+				bottom: 1.5rem;
+			}
+
+			.page-shell {
+				padding: 1.5rem;
+				padding-bottom: 7rem;
+			}
+		}
+	</style>
+</head>
+<body>
+
+<div class="page-shell">
+	<header class="text-center mb-8">
+		<h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מודרך בפיזיקה - רכבת הרים ותנועה מעגלית</h1>
+		<h2 class="text-xl md:text-2xl text-slate-600">שאלה על בסיס תש&quot;ס - אורט ביאליק</h2>
+		<p class="mt-3 text-slate-500">פתרון מלא, מוסבר וצעד-אחר-צעד לשאלה המשלבת שימור אנרגיה, תנועה מעגלית, קריאת מד משקל ועבודת כוח חיכוך.</p>
+		<div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+			<span class="version-label">עודכן:</span>
+			<span id="versionUpdatedAt">--- --:--:--</span>
+		</div>
+		<div>
+			<a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+		</div>
+	</header>
+
+	<section class="section-card bg-slate-50 border-t-4 border-slate-300">
+		<h3 class="text-xl font-bold text-blue-900 mb-4">מבט כללי על השאלה</h3>
+		<p class="content-paragraph">השאלה הזאת נראית ארוכה, אבל הרעיון המרכזי שלה פשוט מאוד: כל עוד אין חיכוך ואין כוחות לא משמרים אחרים שעושים עבודה, האנרגיה המכנית נשמרת ולכן אפשר לחשב מהירויות לפי גבהים בלבד. ברגע שיש עקומה מעגלית, נשלב בזה גם את החוק השני של ניוטון בכיוון הרדיאלי.</p>
+		<p class="content-paragraph">לכן סדר העבודה שלנו יהיה קבוע: תחילה נחשב מהירות בעזרת אנרגיה, אחר כך נשתמש בקריאת מד המשקל כדי למצוא את הרדיוס, לאחר מכן נבדוק באיזו נקודה הכוח הנורמלי הוא הגדול ביותר, ולבסוף נחשב את עבודת החיכוך בקטע שבו החיכוך אכן קיים.</p>
+		<p class="content-paragraph mb-0">זה בדיוק סוג השאלות שבו כדאי להפריד בין שני כלים: אנרגיה כדי למצוא מהירות, ודינמיקה מעגלית כדי לקשור בין המהירות לבין קריאת מד המשקל.</p>
+	</section>
+
+	<section class="section-card border-t-4 border-slate-300 p-0 overflow-hidden">
+		<img
+			src="question-image.png"
+			alt="תמונת השאלה המקורית"
+			class="w-full h-auto block"
+			onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+		/>
+		<div style="display: none;" class="bg-blue-50 text-blue-800 p-5 text-center w-full">
+			<span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+			<span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+		</div>
+	</section>
+
+	<section class="section-card" id="part-a">
+		<h3 class="section-header">סעיף א': מהירות הקרונית בנקודה F</h3>
+
+		<div class="info-grid md:grid-cols-2">
+			<div class="info-panel">
+				<strong>מה נתון:</strong>
+				<ul class="list-disc list-inside mt-1 space-y-1">
+					<li>הקרונית יוצאת מנקודה <span class="inline-ltr">\( A \)</span> ממנוחה, כלומר <span class="inline-ltr">\( v_A = 0 \)</span>.</li>
+					<li>בין <span class="inline-ltr">\( A \)</span> לבין <span class="inline-ltr">\( F \)</span> המסילה חלקה, לכן אין חיכוך בקטע זה.</li>
+					<li>גובה נקודה <span class="inline-ltr">\( A \)</span> הוא <span class="inline-ltr">\( 45\text{ m} \)</span>, וגובה נקודה <span class="inline-ltr">\( F \)</span> הוא <span class="inline-ltr">\( 40\text{ m} \)</span>.</li>
+					<li>תאוצת הכובד היא תמיד חיובית: <span class="inline-ltr">\( g = 10\text{ m/s}^2 \)</span>.</li>
+				</ul>
+			</div>
+			<div class="info-panel">
+				<strong>מה מחפשים:</strong>
+				<p class="mt-1">את גודל מהירות הקרונית בעת שהיא חולפת דרך נקודה <span class="inline-ltr">\( F \)</span>.</p>
+			</div>
+		</div>
+
+		<div class="mt-2">
+			<strong>נוסחאות ועקרונות בשימוש:</strong><br>
+			<span class="formula-badge">\( E_k = \frac{1}{2}mv^2 \)</span>
+			<span class="formula-badge">\( U_g = mgh \)</span>
+			<p class="text-sm text-slate-600 mt-2">עיקרון: כאשר אין חיכוך ואין כוחות לא משמרים אחרים שעושים עבודה, האנרגיה המכנית נשמרת.</p>
+		</div>
+
+		<div class="step-box">
+			<h4 class="step-title">הצבה ופתרון</h4>
+			<p class="content-paragraph">נבחר את מפלס הקרקע כגובה אפס. מכיוון שבין <span class="inline-ltr">\( A \)</span> לבין <span class="inline-ltr">\( F \)</span> אין חיכוך וגם אין כוחות לא משמרים אחרים שעושים עבודה, האנרגיה המכנית בנקודה <span class="inline-ltr">\( A \)</span> שווה לאנרגיה המכנית בנקודה <span class="inline-ltr">\( F \)</span>.</p>
+
+			<div class="step-label">שלב 1: רושמים את האנרגיה בנקודה A</div>
+			<p class="content-paragraph">בנקודה <span class="inline-ltr">\( A \)</span> הקרונית מתחילה ממנוחה, לכן האנרגיה הקינטית שם שווה לאפס, ונשארת רק אנרגיית גובה.</p>
+			<div class="math-container text-center" dir="ltr">
+				\[
+				E_A = U_{g,A} + E_{k,A} = mg \cdot 45 + 0
+				\]
+			</div>
+
+			<div class="step-label">שלב 2: רושמים את האנרגיה בנקודה F</div>
+			<p class="content-paragraph">בנקודה <span class="inline-ltr">\( F \)</span> יש גם אנרגיית גובה וגם אנרגיה קינטית, כי הקרונית כבר בתנועה.</p>
+			<div class="math-container text-center" dir="ltr">
+				\[
+				E_F = U_{g,F} + E_{k,F} = mg \cdot 40 + \frac{1}{2}mv_F^2
+				\]
+			</div>
+
+			<div class="step-label">שלב 3: משווים ומבודדים את המהירות</div>
+			<p class="content-paragraph">כעת נציב את שני הביטויים במשוואת שימור האנרגיה. לאחר מכן נחסר <span class="inline-ltr">\( 40mg \)</span> משני האגפים ונצמצם במסה <span class="inline-ltr">\( m \)</span>, שמופיעה בכל האיברים.</p>
+			<div class="overflow-x-auto text-center" dir="ltr">
+				\[
+				\begin{aligned}
+				mg \cdot 45 &= mg \cdot 40 + \frac{1}{2}mv_F^2 \\
+				mg(45-40) &= \frac{1}{2}mv_F^2 \\
+				5g &= \frac{1}{2}v_F^2 \\
+				5 \cdot 10 &= \frac{1}{2}v_F^2 \\
+				50 &= \frac{1}{2}v_F^2 \\
+				v_F^2 &= 100 \\
+				v_F &= 10
+				\end{aligned}
+				\]
+			</div>
+
+			<div class="final-answer">מהירות הקרונית בנקודה <span class="inline-ltr">\( F \)</span> היא <span class="inline-ltr">\( v_F = 10.0\text{ m/s} \)</span>.</div>
+		</div>
+
+		<div class="teacher-highlight">
+			<strong>טיפ מורה:</strong>
+			הקריאה האפסית של מד המשקל בנקודה <span class="inline-ltr">\( F \)</span> עדיין לא אומרת לנו כאן מהי המהירות. לסעיף א' מספיק להשתמש רק בהפרש הגבהים. הקריאה האפסית תהיה הכלי המרכזי שלנו דווקא בסעיף הבא, כדי לקשור בין המהירות לבין הרדיוס.
+		</div>
+	</section>
+
+	<section class="section-card" id="part-b">
+		<h3 class="section-header">סעיף ב': רדיוס הקשתות המעגליות</h3>
+
+		<div class="info-grid md:grid-cols-2">
+			<div class="info-panel">
+				<strong>מה נתון:</strong>
+				<ul class="list-disc list-inside mt-1 space-y-1">
+					<li>מהסעיף הקודם: <span class="inline-ltr">\( v_F = 10.0\text{ m/s} \)</span>.</li>
+					<li>בנקודה <span class="inline-ltr">\( F \)</span> הוריית מד המשקל היא אפס, ולכן הכוח הנורמלי על התלמיד שווה לאפס: <span class="inline-ltr">\( N_F = 0 \)</span>.</li>
+					<li>הקטע <span class="inline-ltr">\( EFG \)</span> הוא קשת מעגלית בעלת רדיוס <span class="inline-ltr">\( R \)</span>.</li>
+					<li>נבחר ציר רדיאלי חיובי כלפי מרכז המעגל, כלומר כלפי מטה.</li>
+				</ul>
+			</div>
+			<div class="info-panel">
+				<strong>מה מחפשים:</strong>
+				<p class="mt-1">את רדיוס הקשתות המעגליות, שנסמנו <span class="inline-ltr">\( R \)</span>.</p>
+			</div>
+		</div>
+
+		<div class="mt-2">
+			<strong>נוסחאות ועקרונות בשימוש:</strong><br>
+			<span class="formula-badge">\( \Sigma F = ma \)</span>
+			<span class="formula-badge">\( a_r = \frac{v^2}{r} \)</span>
+			<span class="formula-badge">\( w = mg \)</span>
+		</div>
+
+		<div class="step-box">
+			<h4 class="step-title">הצבה ופתרון</h4>
+			<p class="content-paragraph">בנקודה <span class="inline-ltr">\( F \)</span> התנועה היא מעגלית, ולכן התאוצה מכוונת אל מרכז המעגל. מרכז המעגל נמצא מתחת לנקודה <span class="inline-ltr">\( F \)</span>, לכן גם התאוצה הרדיאלית מכוונת כלפי מטה.</p>
+
+			<div class="visual-frame">
+				<div class="w-full max-w-xs mx-auto">
+					<div class="text-center text-sm text-slate-500 font-semibold mb-3">תרשים כוחות של התלמיד בנקודה <span class="inline-ltr">F</span></div>
+					<img src="image-2.png" alt="תרשים כוחות בנקודה F" class="w-full h-auto object-contain" />
+				</div>
+			</div>
+
+			<div class="step-label">שלב 1: כותבים את החוק השני של ניוטון בכיוון הרדיאלי</div>
+			<p class="content-paragraph">מכיוון שמד המשקל מורה אפס, הכוח הנורמלי איננו פועל על התלמיד באותו רגע. לכן הכוח היחיד בכיוון הרדיאלי הוא כוח הכובד.</p>
+			<div class="math-container text-center" dir="ltr">
+				\[
+				\Sigma F_r = ma_r
+				\]
+				\[
+				mg = m\frac{v_F^2}{R}
+				\]
+			</div>
+
+			<div class="step-label">שלב 2: מציבים את המהירות שמצאנו בסעיף א'</div>
+			<p class="content-paragraph">כעת נצמצם במסה <span class="inline-ltr">\( m \)</span>, נבודד את <span class="inline-ltr">\( R \)</span>, ואז נציב <span class="inline-ltr">\( v_F = 10.0\text{ m/s} \)</span>.</p>
+			<div class="overflow-x-auto text-center" dir="ltr">
+				\[
+				\begin{aligned}
+				g &= \frac{v_F^2}{R} \\
+				R &= \frac{v_F^2}{g} \\
+				R &= \frac{10.0^2}{10} \\
+				R &= 10.0
+				\end{aligned}
+				\]
+			</div>
+
+			<div class="final-answer">רדיוס הקשתות המעגליות הוא <span class="inline-ltr">\( R = 10.0\text{ m} \)</span>.</div>
+		</div>
+
+		<div class="teacher-highlight">
+			<strong>טיפ מורה:</strong>
+			מד המשקל אינו מודד את כוח הכובד <span class="inline-ltr">\( mg \)</span>, אלא את הכוח הנורמלי <span class="inline-ltr">\( N \)</span> שהמשטח מפעיל על הגוף. לכן הקריאה שלו יכולה להיות גדולה מ-<span class="inline-ltr">\( mg \)</span>, קטנה ממנו, ולפעמים אפילו אפס. בסעיף הזה הקריאה היא אפס מפני ש-<span class="inline-ltr">\( N = 0 \)</span>, אבל כוח הכובד עצמו עדיין פועל במלואו.
+		</div>
+	</section>
+
+	<section class="section-card" id="part-c">
+		<h3 class="section-header">סעיף ג': היכן הוריית מד המשקל מקסימלית, ומה הורייתה בנקודה זו</h3>
+
+		<div class="info-grid md:grid-cols-2">
+			<div class="info-panel">
+				<strong>מה נתון:</strong>
+				<ul class="list-disc list-inside mt-1 space-y-1">
+					<li>מהסעיף הקודם: <span class="inline-ltr">\( R = 10.0\text{ m} \)</span>.</li>
+					<li>נקודה <span class="inline-ltr">\( C \)</span> היא הנקודה הנמוכה ביותר על המסילה המעגלית התחתונה, ולכן גובהה <span class="inline-ltr">\( 0\text{ m} \)</span>.</li>
+					<li>עד נקודה <span class="inline-ltr">\( C \)</span> אין חיכוך, וגם אין כוחות לא משמרים אחרים שעושים עבודה, לכן אפשר להשתמש בשימור אנרגיה.</li>
+				</ul>
+			</div>
+			<div class="info-panel">
+				<strong>מה מחפשים:</strong>
+				<p class="mt-1">באיזו נקודה הוריית מד המשקל מקסימלית, ולבטא הורייה זו באמצעות מסת התלמיד (<span class="inline-ltr">\( m \)</span>) וקבועים.</p>
+			</div>
+		</div>
+
+		<div class="mt-2">
+			<strong>נוסחאות ועקרונות בשימוש:</strong><br>
+			<span class="formula-badge">\( E_k = \frac{1}{2}mv^2 \)</span>
+			<span class="formula-badge">\( U_g = mgh \)</span>
+			<span class="formula-badge">\( \Sigma F = ma \)</span>
+			<span class="formula-badge">\( a_r = \frac{v^2}{r} \)</span>
+		</div>
+
+		<div class="step-box">
+			<h4 class="step-title">הצבה ופתרון</h4>
+			<p class="content-paragraph">הוריית מד המשקל שווה לכוח הנורמלי (<span class="inline-ltr">\( N \)</span>) שהכיסא מפעיל על התלמיד. לפני שניגש לחישוב, נבין באיזו נקודה הכוח הזה יהיה הכי גדול.</p>
+			
+			<div class="step-label">שלב 1: מצדיקים מדוע דווקא בנקודה C ההורייה מקסימלית</div>
+			<p class="content-paragraph">בתנועה מעגלית, הכוח הנורמלי משחק תפקיד כפול: עליו גם להתגבר על הרכיב הרדיאלי של כוח הכובד (המושך החוצה מהמעגל) וגם לספק את הכוח הדרוש ליצירת התאוצה הרדיאלית (כלפי המרכז). בנקודה התחתונה <span class="inline-ltr">\( C \)</span> מתקבל שילוב של שני "שיאים" שמצריכים כוח נורמלי עצום:</p>
+			<ul class="list-disc list-inside mt-1 mb-4 space-y-1 text-slate-700">
+				<li><strong>מהירות מקסימלית:</strong> זוהי הנקודה הנמוכה ביותר, ולכן כל אנרגיית הגובה הומרה לאנרגיה קינטית. מהירות גדולה פירושה תאוצה רדיאלית גדולה, ולכן המשטח צריך לייצר כוח רדיאלי חזק במיוחד כלפי המרכז.</li>
+				<li><strong>התגברות על משקל מלא:</strong> בנקודה תחתית זו, כוח הכובד כולו מכוון ישר החוצה ממרכז המעגל. המשטח (מד המשקל) צריך לשאת את <b>מלוא</b> כוח הכובד (ולא רק רכיב חלקי ממנו), ובנוסף לכך גם לדחוף חזק כלפי מעלה בשביל התאוצה.</li>
+			</ul>
+			<p class="content-paragraph mb-4">לכן, בנקודה <span class="inline-ltr">\( C \)</span> מתקבל כוח נורמלי מקסימלי: <span class="inline-ltr">\( N = mg + m\frac{v^2}{R} \)</span>.</p>
+
+			<div class="visual-frame">
+				<div class="w-full max-w-xs mx-auto">
+					<div class="text-center text-sm text-slate-500 font-semibold mb-3">תרשים כוחות של התלמיד בנקודה <span class="inline-ltr">C</span></div>
+					<img src="image-3.png" alt="תרשים כוחות בנקודה C" class="w-full h-auto object-contain" />
+				</div>
+			</div>
+
+			<div class="step-label">שלב 2: מחשבים את המהירות בנקודה C</div>
+			<p class="content-paragraph">נשתמש בשימור אנרגיה בין נקודה <span class="inline-ltr">\( A \)</span> לבין נקודה <span class="inline-ltr">\( C \)</span>. הפרש הגבהים הוא <span class="inline-ltr">\( 45 - 0 = 45\text{ m} \)</span>, משום שנקודה <span class="inline-ltr">\( C \)</span> נמצאת על הקרקע.</p>
+			<div class="overflow-x-auto text-center" dir="ltr">
+				\[
+				\begin{aligned}
+				mg \cdot 45 &= \frac{1}{2}mv_C^2 \\
+				45g &= \frac{1}{2}v_C^2 \\
+				v_C^2 &= 90g
+				\end{aligned}
+				\]
+			</div>
+			<p class="content-paragraph">נשאיר את הביטוי בצורה של <span class="inline-ltr">\( v_C^2 \)</span> עם <span class="inline-ltr">\( g \)</span>, כי נזדקק לו בשלב הבא.</p>
+
+			<div class="step-label">שלב 3: מחשבים את הכוח הנורמלי (הוריית מד המשקל) בנקודה C</div>
+			<p class="content-paragraph">בנקודה <span class="inline-ltr">\( C \)</span> מרכז המעגל נמצא מעל המסילה, לכן הכיוון הרדיאלי החיובי הוא כלפי מעלה. משוואת הכוחות בכיוון הרדיאלי:</p>
+			<div class="math-container text-center" dir="ltr">
+				\[
+				\Sigma F_r = m a_r
+				\]
+				\[
+				N_C - mg = m\frac{v_C^2}{R}
+				\]
+			</div>
+			<p class="content-paragraph">נציב את <span class="inline-ltr">\( v_C^2 = 90g \)</span> ואת הרדיוס <span class="inline-ltr">\( R = 10\text{ m} \)</span>:</p>
+			<div class="overflow-x-auto text-center" dir="ltr">
+				\[
+				\begin{aligned}
+				N_C - mg &= m \cdot \frac{90g}{10.0} \\
+				N_C - mg &= 9mg \\
+				N_C &= mg + 9mg \\
+				N_C &= 10mg
+				\end{aligned}
+				\]
+			</div>
+			
+			<div class="final-answer">הוריית מד המשקל מקסימלית בנקודה <span class="inline-ltr">\( C \)</span>, וערכה הוא <span class="inline-ltr">\( N_C = 10mg \)</span>.</div>
+		</div>
+
+		<div class="teacher-highlight">
+			<strong>טיפ מורה:</strong>
+			טעות נפוצה בסעיפים מן הסוג הזה היא לבחור את הנקודה שבה המהירות מקסימלית, ומיד להסיק ששם גם הוריית מד המשקל מקסימלית. זה לא תמיד מספיק. כדי לקבוע היכן <span class="inline-ltr">\( N \)</span> מקסימלי צריך לבדוק בכל נקודה גם את כיוון הכבידה ביחס למרכז המעגל, כלומר איך נראית משוואת הכוחות הרדיאלית באותה נקודה. בתחתית הלולאה שני האפקטים מצטרפים, ולכן דווקא שם הקריאה גדולה ביותר.
+		</div>
+
+	</section>
+
+	<section class="section-card" id="part-d">
+		<h3 class="section-header">סעיף ד': עבודת כוח החיכוך בקטע GL</h3>
+
+		<div class="info-grid md:grid-cols-2">
+			<div class="info-panel">
+				<strong>מה נתון:</strong>
+				<ul class="list-disc list-inside mt-1 space-y-1">
+					<li>מסת הקרונית עם התלמיד היא <span class="inline-ltr">\( M = 150\text{ kg} \)</span>. אין צורך בהמרת יחידות, כי הנתון כבר ביחידות תקניות.</li>
+					<li>הקרונית חולפת דרך נקודה <span class="inline-ltr">\( L \)</span> במהירות <span class="inline-ltr">\( v_L = 8.00\text{ m/s} \)</span>.</li>
+					<li>חיכוך קיים רק בקטע <span class="inline-ltr">\( GL \)</span>.</li>
+					<li>גובה נקודה <span class="inline-ltr">\( L \)</span> הוא <span class="inline-ltr">\( 35.0\text{ m} \)</span>.</li>
+					<li>גובה נקודה <span class="inline-ltr">\( F \)</span> הוא <span class="inline-ltr">\( 40.0\text{ m} \)</span>, ומהסעיף הקודם: <span class="inline-ltr">\( R = 10.0\text{ m} \)</span>.</li>
+				</ul>
+			</div>
+			<div class="info-panel">
+				<strong>מה מחפשים:</strong>
+				<p class="mt-1">את עבודת כוח החיכוך בקטע <span class="inline-ltr">\( GL \)</span>.</p>
+			</div>
+		</div>
+
+		<div class="mt-2">
+			<strong>נוסחאות ועקרונות בשימוש:</strong><br>
+			<span class="formula-badge">\( E_k = \frac{1}{2}Mv^2 \)</span>
+			<span class="formula-badge">\( U_g = Mgh \)</span>
+			<span class="formula-badge">\( W_{nc} = \Delta E_m \)</span>
+			<p class="text-sm text-slate-600 mt-2">עיקרון: אם אין חיכוך ואין כוחות לא משמרים אחרים שעושים עבודה, האנרגיה המכנית נשמרת. במקרה שלנו, בין <span class="inline-ltr">\( A \)</span> לבין <span class="inline-ltr">\( G \)</span> תנאי זה מתקיים, ולכן האנרגיה המכנית נשמרת. בקטע <span class="inline-ltr">\( GL \)</span> החיכוך הוא הכוח הלא משמר היחיד, ולכן עבודת החיכוך שווה לשינוי באנרגיה המכנית.</p>
+		</div>
+
+		<div class="step-box">
+			<h4 class="step-title">הצבה ופתרון</h4>
+			<p class="content-paragraph">נשתמש בקשר בין עבודת כוחות לא משמרים לבין השינוי באנרגיה המכנית. החיכוך פועל רק בקטע <span class="inline-ltr">\( GL \)</span>, ולכן עבודת החיכוך בקטע זה שווה לשינוי באנרגיה המכנית מן הרגע שבו הקרונית יצאה מנקודה <span class="inline-ltr">\( A \)</span> ועד שהיא הגיעה לנקודה <span class="inline-ltr">\( L \)</span>. כדי לנצל זאת בצורה הפשוטה ביותר, נחשב את האנרגיה המכנית ב-<span class="inline-ltr">\( A \)</span> ואת האנרגיה המכנית ב-<span class="inline-ltr">\( L \)</span>.</p>
+
+			<div class="step-label">שלב 1: מחשבים את האנרגיה המכנית בהתחלה (נקודה A)</div>
+			<p class="content-paragraph">בין נקודה <span class="inline-ltr">\( A \)</span> לבין נקודה <span class="inline-ltr">\( G \)</span> אין חיכוך ואין כוחות לא משמרים אחרים שעושים עבודה, ולכן האנרגיה המכנית נשמרת בקטע זה. לכן מותר לנו לקבוע ש-<span class="inline-ltr">\( E_G = E_A \)</span>. נוח במיוחד לחשב את האנרגיה בנקודה <span class="inline-ltr">\( A \)</span>, כי שם הקרונית מתחילה ממנוחה ויש רק אנרגיית גובה.</p>
+			<div class="overflow-x-auto text-center" dir="ltr">
+				\[
+				\begin{aligned}
+				E_A &= Mgh_A + E_{k,A} \\
+				E_A &= 150 \cdot 10 \cdot 45 + 0 \\
+				E_A &= 67500\text{ J}
+				\end{aligned}
+				\]
+			</div>
+			<p class="content-paragraph">מכאן נובע מיד שגם <span class="inline-ltr">\( E_G = 67500\text{ J} \)</span>, אף שלא היינו צריכים לחשב בנפרד את הגובה או את המהירות בנקודה <span class="inline-ltr">\( G \)</span>.</p>
+
+			<div class="step-label">שלב 2: מחשבים את האנרגיה המכנית בנקודה L</div>
+			<p class="content-paragraph">בנקודה <span class="inline-ltr">\( L \)</span> יש לקרונית גם מהירות (<span class="inline-ltr">\( 8.00\text{ m/s} \)</span>) וגם גובה (<span class="inline-ltr">\( 35.0\text{ m} \)</span>).</p>
+			<div class="overflow-x-auto text-center" dir="ltr">
+				\[
+				\begin{aligned}
+				E_L &= \frac{1}{2}Mv_L^2 + Mgh_L \\
+				&= \frac{1}{2} \cdot 150 \cdot 8.00^2 + 150 \cdot 10 \cdot 35 \\
+				&= 4800 + 52500 \\
+				&= 57300\text{ J}
+				\end{aligned}
+				\]
+			</div>
+
+			<div class="step-label">שלב 3: מפעילים את הקשר בין עבודה לשינוי באנרגיה</div>
+			<p class="content-paragraph">כוח החיכוך הוא הכוח הלא משמר היחיד שעושה עבודה, והוא פועל רק בקטע <span class="inline-ltr">\( GL \)</span>. לכן עבודת החיכוך בקטע <span class="inline-ltr">\( GL \)</span> שווה לשינוי באנרגיה המכנית בין תחילת התנועה בנקודה <span class="inline-ltr">\( A \)</span> לבין המצב בנקודה <span class="inline-ltr">\( L \)</span>.</p>
+			<div class="overflow-x-auto text-center" dir="ltr">
+				\[
+				\begin{aligned}
+				W_f &= \Delta E_m = E_L - E_A \\
+				W_f &= 57300 - 67500 \\
+				W_f &= -10200\text{ J}
+				\end{aligned}
+				\]
+			</div>
+
+			<div class="final-answer">עבודת כוח החיכוך בקטע <span class="inline-ltr">\( GL \)</span> היא <span class="inline-ltr">\( W_f = -1.02 \times 10^4\text{ J} \)</span>.</div>
+		</div>
+
+		<div class="teacher-highlight">
+			<strong>איך זה יכול להיות ש...</strong>
+			התקבלה עבודה שלילית? זה דווקא מה שצריך לקרות. חיכוך פועל נגד כיוון התנועה ולכן הוא גורע אנרגיה מכנית מן המערכת. הסימן השלילי הוא לא קישוט אלגברי; הוא אומר שהחיכוך "לקח" אנרגיה מן הקרונית והתלמיד.
+		</div>
+	</section>
+
+	<footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+		<span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+		<a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+	</footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+	<svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+		<path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+		<circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+	</svg>
+	<span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+	<div class="question-modal-card">
+		<div class="question-modal-header">
+			<h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+			<button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+		</div>
+
+		<div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+			<img
+				src="question-image.png"
+				alt="תמונת השאלה המקורית"
+				class="w-full h-auto rounded-lg"
+				onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+			>
+			<div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+				<span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+				<span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+			</div>
+		</div>
+	</div>
+</div>
+
+<script>
+	document.addEventListener('DOMContentLoaded', function() {
+		const legalLinks = document.querySelectorAll('[data-legal-link]');
+			if (legalLinks.length) {
+				const resolvedLegalPath = '../דף זכויות יוצרים.html';
+				legalLinks.forEach((link) => {
+					link.setAttribute('href', resolvedLegalPath);
+				});
+			}
+
+		const versionStamp = document.getElementById('versionStamp');
+		const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+		if (versionStamp) {
+			versionStamp.title = 'עודכן לאחרונה';
+		}
+
+		const modified = new Date(document.lastModified);
+		if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+			const pad = (n) => String(n).padStart(2, '0');
+			const year = modified.getFullYear();
+			const month = modified.getMonth() + 1;
+			const day = modified.getDate();
+			const seed = (year * 372) + (month * 31) + day + 157;
+			const codeNum = (seed * 73) % 46656;
+			const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+			const hours = pad(modified.getHours());
+			const minutes = pad(modified.getMinutes());
+			const seconds = pad(modified.getSeconds());
+			versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+		}
+
+		const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+		const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+		const questionModal = document.getElementById('questionModal');
+
+		function openQuestionModal() {
+			questionModal.classList.add('is-open');
+			document.body.classList.add('modal-open');
+		}
+
+		function closeQuestionModal() {
+			questionModal.classList.remove('is-open');
+			document.body.classList.remove('modal-open');
+		}
+
+		openQuestionModalBtn.addEventListener('click', openQuestionModal);
+		closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+		questionModal.addEventListener('click', function(event) {
+			if (event.target === questionModal) {
+				closeQuestionModal();
+			}
+		});
+
+		document.addEventListener('keydown', function(event) {
+			if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+				closeQuestionModal();
+			}
+		});
+	});
+</script>
+
+</body>
+</html>

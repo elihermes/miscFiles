@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מלא: מדידת מסה באמצעות התנגשות</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            min-height: 360px;
+            width: 100%;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מלא: מדידת מסה באמצעות התנגשות</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">פיזיקה - מכניקה ותנועה מעגלית</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך וצעד-אחר-צעד, כולל תרשימי כוחות וניתוח אנרגיה ותנע.</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> כדור הנמצא בתנועה מעגלית (מטוטלת), הנבחן בדיוק ברגע הגעתו לנקודה הנמוכה ביותר במסלולו, רגע לפני ההתנגשות. גודל תאוצת הכובד נלקח כרגיל כ- <span class="inline-ltr">\( g = 10 \text{ m/s}^2 \)</span>.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> לשרטט תרשים של כל הכוחות הפועלים על הכדור (תרשים גוף חופשי - FBD) רגע לפני פגיעתו בתיבה, תוך הקפדה על כיוונים נכונים ויחס אורכים מתאים בין הווקטורים.
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <p class="content-paragraph mb-2">בסעיף זה אנו מסתמכים על הבנת הכוחות הפיזיקליים בתנועה מעגלית. הכוחות הם כוח הכובד הפועל מטה וכוח המתיחות הפועל במעלה החוט. העיקרון המנחה נשען על החוק השני של ניוטון בתנועה מעגלית, הקובע כי בנקודה הנמוכה שקול הכוחות חייב להיות כלפי מעלה (לכיוון מרכז המעגל).</p>
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\Sigma\vec{F} = m\vec{a}_R\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון:</h4>
+            <p class="content-paragraph">נשרטט את הכדור בנקודה הנמוכה ביותר. פועלים עליו שני כוחות: כוח הכובד \( Mg \) כלפי מטה, וכוח המתיחות של החוט \( T \) כלפי מעלה. מכיוון שהגוף מאיץ רדיאלית כלפי מרכז המסלול (כלומר כלפי מעלה), וקטור כוח המתיחות חייב להיות ארוך יותר מווקטור כוח הכובד.</p>
+            
+            <div class="visual-frame">
+                <svg width="200" height="300" viewBox="0 0 200 300" xmlns="http://www.w3.org/2000/svg">
+                    <!-- כדור -->
+                    <circle cx="100" cy="150" r="20" fill="#94a3b8" stroke="#334155" stroke-width="2"/>
+                    <text x="100" y="155" font-family="Arial" font-size="16" font-weight="bold" fill="white" text-anchor="middle">M</text>
+                    
+                    <!-- ציר מקווקו -->
+                    <line x1="100" y1="20" x2="100" y2="130" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="5,5"/>
+                    
+                    <!-- וקטור מתיחות (ארוך למעלה) -->
+                    <line x1="100" y1="130" x2="100" y2="40" stroke="#2563eb" stroke-width="4" marker-end="url(#arrowhead-blue)"/>
+                    <text x="80" y="80" font-family="Arial" font-size="18" font-weight="bold" fill="#2563eb">T</text>
+                    
+                    <!-- וקטור כוח כובד (קצר למטה) -->
+                    <line x1="100" y1="170" x2="100" y2="230" stroke="#ef4444" stroke-width="4" marker-end="url(#arrowhead-red)"/>
+                    <text x="70" y="210" font-family="Arial" font-size="18" font-weight="bold" fill="#ef4444">Mg</text>
+
+                    <!-- חצים להגדרת מרקרים -->
+                    <defs>
+                        <marker id="arrowhead-blue" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#2563eb" />
+                        </marker>
+                        <marker id="arrowhead-red" markerWidth="10" markerHeight="7" refX="9" refY="3.5" orient="auto">
+                            <polygon points="0 0, 10 3.5, 0 7" fill="#ef4444" />
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            שימו לב לדרישה לצייר "תרשים של כל הכוחות". זוהי טעות נפוצה לצייר כוח צנטריפטלי ככוח בפני עצמו. הכוח הצנטריפטלי הוא ה<strong>שקול</strong> של הכוחות הרדיאליים, ולא כוח נוסף שיש לסמן בתרשים! הווקטור למעלה \( T \) שורטט ארוך יותר מהווקטור למטה \( Mg \) כדי להמחיש ששקול הכוחות אינו אפס, אלא מצביע למרכז המעגל.
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> מסת הכדור היא \( M = 1 \text{ kg} \). הכדור משוחרר ממנוחה מגובה \( H = 0.5 \text{ m} \) מעל לנקודת הפגיעה. היחידות כבר נתונות במערכת MKS ואין צורך בהמרות. תאוצת הכובד היא \( g = 10 \text{ m/s}^2 \).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> את עבודתו של <strong>כל אחד</strong> מהכוחות שהופיעו בתרשים (כוח הכובד וכוח המתיחות) לאורך המסלול, מרגע השחרור ועד רגע לפני הפגיעה.
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <p class="content-paragraph mb-2">נשתמש בנוסחת העבודה לכוח קבוע או עבודה על דרך אלמנטרית, ובמשפט לפיו עבודת כוח הכובד (כוח משמר) שווה למינוס השינוי באנרגיה הפוטנציאלית.</p>
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(W = F \cos\theta \Delta s\)</span>
+            <span class="formula-badge">\(W_G = -\Delta U_G\)</span>
+            <span class="formula-badge">\(U_G = mgh\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נחשב את העבודה עבור כל כוח בנפרד:</p>
+            <ul class="list-disc list-inside space-y-2 text-slate-700">
+                <li><strong>עבודת כוח המתיחות \( W_T \):</strong> בכל רגע נתון, כיוון התנועה (המהירות המשיקית) מאונך לכיוון החוט (הכיוון הרדיאלי שבו פועלת המתיחות). מכיוון שהזווית היא \( 90^\circ \), מתקיים \( \cos(90^\circ) = 0 \), ולכן כוח המתיחות אינו מבצע עבודה:
+                    <div class="overflow-x-auto text-center mt-2" dir="ltr">\[ W_T = 0 \text{ J} \]</div>
+                </li>
+                <li><strong>עבודת כוח הכובד \( W_G \):</strong> הכדור יורד גובה של \( H \). כוח הכובד פועל כלפי מטה, וכיוון ההעתק האנכי הוא גם כלפי מטה. לכן העבודה חיובית ושווה לשינוי באנרגיה הפוטנציאלית (ההתחלתית פחות הסופית):
+                    <div class="overflow-x-auto text-center mt-2" dir="ltr">\[ W_G = M \cdot g \cdot H = 1 \cdot 10 \cdot 0.5 = 5 \text{ J} \]</div>
+                </li>
+            </ul>
+            <p class="final-answer">מסקנה: עבודת כוח המתיחות: <span class="inline-ltr">\( 0 \text{ J} \)</span> | עבודת כוח הכובד: <span class="inline-ltr">\( 5.00 \text{ J} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            זכרו את כלל האצבע החשוב: כוח שפועל תמיד במאונך למסלול (כמו מתיחות במטוטלת או כוח נורמלי במשטח חלק) לא מבצע עבודה ואינו תורם לשינוי האנרגיה הקינטית של הגוף לפי משפט עבודה-אנרגיה <span class="inline-ltr">\(W_{\text{total}} = \Delta E_k\)</span>.
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> אורך החוט הוא \( l = 0.8 \text{ m} \) (המהווה את רדיוס התנועה המעגלית \( r \)). מסת הכדור \( M = 1 \text{ kg} \). מצאנו שהאנרגיה הקינטית בנקודה הנמוכה שווה לעבודת כוח הכובד (או לפי שימור אנרגיה), והגובה ההתחלתי הוא \( H = 0.5 \text{ m} \).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> את גודל מתיחות החוט \( T \) בדיוק רגע לפני ההתנגשות בתיבה.
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <p class="content-paragraph mb-2">כדי למצוא כוח בנקודה, עלינו להשתמש בחוק השני של ניוטון בציר הרדיאלי, יחד עם התאוצה הרדיאלית. כדי למצוא את המהירות \( v \), נשתמש בחוק שימור אנרגיה מכנית לפיו האנרגיה הפוטנציאלית מומרת כולה לאנרגיה קינטית בנקודה הנמוכה.</p>
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\Sigma\vec{F} = m\vec{a}_R\)</span>
+            <span class="formula-badge">\(a_R = \frac{v^2}{r}\)</span>
+            <span class="formula-badge">\(E_k = \frac{1}{2}mv^2\)</span>
+            <span class="formula-badge">\(U_G = mgh\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב צעד-אחר-צעד:</h4>
+            <div class="step-label">שלב 1: מציאת המהירות בנקודה הנמוכה</div>
+            <p class="content-paragraph">נמצא את המהירות \( v \) מתוך שימור אנרגיה (נקבע את מישור הייחוס \( U_G = 0 \) בנקודה הנמוכה):</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                <div class="mb-2">\[ U_{G,\text{initial}} = E_{k,\text{final}} \]</div>
+                <div class="mb-2">\[ MgH = \frac{1}{2}Mv^2 \]</div>
+                <div>\[ v = \sqrt{2gH} = \sqrt{2 \cdot 10 \cdot 0.5} = \sqrt{10} \text{ m/s} \approx 3.162 \text{ m/s} \]</div>
+            </div>
+
+            <div class="step-label mt-4">שלב 2: משוואת כוחות בציר הרדיאלי</div>
+            <p class="content-paragraph">נרשום את משוואת הכוחות. נבחר ציר חיובי המכוון כלפי מעלה (לכיוון מרכז המעגל). לכן התאוצה היא \( +a_R \):</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                <div class="mb-2">\[ \Sigma F_R = M \cdot a_R \]</div>
+                <div class="mb-2">\[ T - Mg = M \frac{v^2}{l} \]</div>
+                <div>\[ T = M\left(g + \frac{v^2}{l}\right) \]</div>
+            </div>
+            
+            <p class="content-paragraph mt-3">נציב את הערכים הידועים כולל ריבוע המהירות \( v^2 = 10 \text{ m}^2/\text{s}^2 \) ואת הרדיוס \( l = 0.8 \text{ m} \):</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ T = 1 \cdot \left(10 + \frac{10}{0.8}\right) = 1 \cdot (10 + 12.5) = 22.5 \text{ N} \]
+            </div>
+            <p class="final-answer">מסקנה: מתיחות החוט רגע לפני ההתנגשות היא <span class="inline-ltr">\( T = 22.5 \text{ N} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            תמיד הקפידו לציין את כיוון הציר שבחרתם בעת רישום משוואת חוק שני של ניוטון! מכיוון שבחרנו ציר חיובי למרכז המעגל (למעלה), כוח המתיחות הוא חיובי ומשקלו הוא שלילי. בנוסף, מומלץ להציב את הביטוי המדויק ל- \( v^2 \) (ולא את השורש המקורב) כדי להימנע משגיאות עיגול מוקדמות במהלך חישוב ביניים.
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> הכדור (מסה \( M = 1 \text{ kg} \)) מתנגש בתיבה נחה ונדבק אליה (התנגשות פלסטית לחלוטין). מהירות הכדור לפני ההתנגשות מצאנו: \( v = \sqrt{10} \text{ m/s} \). לאחר ההתנגשות, שני הגופים עולים יחד לגובה מקסימלי נתון של \( h = 0.3 \text{ m} \) (יחידות MKS).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> את מסת התיבה, אותה נסמן באות \( m \).
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <p class="content-paragraph mb-2">הבעיה מחולקת לשני שלבים נפרדים: שימור תנע בזמן ההתנגשות, ושימור אנרגיה מכנית לאחריה כשהמערכת המשותפת עולה לגובה שיא.</p>
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(m_A \vec{v}_A + m_B \vec{v}_B = (m_A + m_B)\vec{u}\)</span>
+            <span class="formula-badge">\(E_{k,\text{initial}} = U_{G,\text{final}}\)</span>
+            <span class="formula-badge">\(\frac{1}{2}(M+m)u^2 = (M+m)gh\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נוח להתחיל את הפתרון "מהסוף להתחלה" - נמצא תחילה את המהירות המשותפת של הגופים \( u \) מיד לאחר ההתנגשות, על ידי שימוש בנתון הגובה שאליו הגיעו.</p>
+            
+            <div class="step-label">שלב 1: שימור אנרגיה לאחר ההתנגשות</div>
+            <p class="content-paragraph">נשווה את האנרגיה הקינטית מיד לאחר ההתנגשות לאנרגיה הפוטנציאלית בגובה המקסימלי:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                <div class="mb-2">\[ \frac{1}{2}(M+m)u^2 = (M+m)gh \]</div>
+                <div class="mb-2">\[ u^2 = 2gh \]</div>
+                <div>\[ u = \sqrt{2 \cdot 10 \cdot 0.3} = \sqrt{6} \text{ m/s} \approx 2.449 \text{ m/s} \]</div>
+            </div>
+
+            <div class="step-label mt-4">שלב 2: שימור תנע במהלך ההתנגשות</div>
+            <p class="content-paragraph">התיבה הייתה במנוחה לפני ההתנגשות, כלומר מהירותה ההתחלתית אפס. נציב במשוואת שימור התנע את מהירות הכדור \( v \) ואת המהירות המשותפת \( u \) שמצאנו:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                <div class="mb-2">\[ M \cdot v + m \cdot 0 = (M + m) \cdot u \]</div>
+                <div class="mb-2">\[ 1 \cdot \sqrt{10} = (1 + m) \cdot \sqrt{6} \]</div>
+                <div class="mb-2">\[ 1 + m = \frac{\sqrt{10}}{\sqrt{6}} = \sqrt{\frac{10}{6}} = \sqrt{\frac{5}{3}} \approx 1.291 \]</div>
+                <div>\[ m = \sqrt{\frac{5}{3}} - 1 \approx 1.291 - 1 = 0.291 \text{ kg} \]</div>
+            </div>
+            
+            <p class="final-answer">מסקנה: מסת התיבה המחושבת היא <span class="inline-ltr">\( m = 0.291 \text{ kg} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            הפרדת שלבים היא המפתח כאן! לעולם אין לעשות "שימור אנרגיה" מנקודת השחרור ועד לגובה הסופי בשאלת התנגשות פלסטית. חלק מהאנרגיה הקינטית מומר לאנרגיית חום ודפורמציה במהלך ההתנגשות, ולכן האנרגיה המכנית הכוללת של המערכת קטנה ואינה נשמרת. התנע במערכת האופקית, לעומת זאת, כן נשמר ברגע המפגש.
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> כעת מחליפים את התיבה, כך שמסתה שווה למסת הכדור (כלומר, המסה החדשה גם היא \( M \)). הכדור שוב משוחרר מאותו גובה \( H \). ההתנגשות עדיין פלסטית (הם נצמדים ונעים יחד).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> לקבוע ולנמק האם הגובה המקסימלי החדש שאליו תגיע המערכת יהיה גדול מ- \( H/2 \), קטן מ- \( H/2 \) או שווה ל- \( H/2 \).
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <p class="content-paragraph mb-2">אנו משתמשים באותם עקרונות מהסעיף הקודם: שימור תנע בהתנגשות פלסטית, ושימור אנרגיה לעלייה לאחר מכן. כעת נפתור זאת פרמטרית כדי להשוות ל- \( H/2 \).</p>
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(m_A \vec{v}_A + m_B \vec{v}_B = (m_A + m_B)\vec{u}\)</span>
+            <span class="formula-badge">\(\frac{1}{2}m_{\text{total}}u^2 = m_{\text{total}}gh\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">ניתוח אלגברי:</h4>
+            <p class="content-paragraph">נסמן ב- \( v \) את מהירות הכדור רגע לפני ההתנגשות כפי שכבר בטאנו בעבר: \( v = \sqrt{2gH} \). נחשב את המהירות המשותפת החדשה, שנסמן כ- \( u' \), לפי חוק שימור התנע כאשר שתי המסות זהות:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                <div class="mb-2">\[ M \cdot v = (M + M) \cdot u' \]</div>
+                <div>\[ Mv = 2M \cdot u' \quad \Rightarrow \quad u' = \frac{v}{2} \]</div>
+            </div>
+            
+            <p class="content-paragraph mt-3">כלומר, בגלל שהמסה הוכפלה, המהירות קטנה פי שניים. כעת נחשב לאיזה גובה \( h' \) יגיעו המסות יחד בעזרת שימור אנרגיה:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                <div class="mb-2">\[ \frac{1}{2}(2M)(u')^2 = (2M)gh' \]</div>
+                <div>\[ (u')^2 = 2gh' \]</div>
+            </div>
+            
+            <p class="content-paragraph mt-3">נציב את הקשר \( u' = v/2 \) אל תוך משוואת האנרגיה:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                <div>\[ \left(\frac{v}{2}\right)^2 = 2gh' \quad \Rightarrow \quad \frac{v^2}{4} = 2gh' \]</div>
+            </div>
+            
+            <p class="content-paragraph mt-3">מכיוון שאנו יודעים שמהירות הכדור המקורית מקיימת \( v^2 = 2gH \), נציב זאת לקבלת הקשר בין הגבהים:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                <div class="mb-2">\[ \frac{2gH}{4} = 2gh' \quad \Rightarrow \quad \frac{gH}{2} = 2gh' \]</div>
+                <div>\[ h' = \frac{H}{4} \]</div>
+            </div>
+            <p class="content-paragraph mt-2">קיבלנו שהגובה המקסימלי החדש יהיה רבע מהגובה המקורי, \( H/4 \). מכיוון ש- \( 1/4 \) קטן מ- \( 1/2 \), הגובה קטן מ- \( H/2 \).</p>
+            
+            <p class="final-answer">מסקנה: הגובה המקסימלי יהיה <strong>קטן</strong> מ- <span class="inline-ltr">\( H/2 \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: פתרון חלופי בהסבר מילולי (ללא חישוב)</strong><br>
+            אפשר להגיע למסקנה זו מתוך הבנת שיקולי אנרגיה בלבד. האנרגיה המכנית ההתחלתית של המערכת היא האנרגיה הפוטנציאלית של הכדור במצב ההתחלתי, כלומר \( MgH \).
+            אם המערכת המשותפת (שמסתה הכוללת היא כעת \( 2M \)) תעלה בדיוק לחצי הגובה (\( H/2 \)), האנרגיה הפוטנציאלית הסופית שלה תהיה: \( (2M) \cdot g \cdot \frac{H}{2} = MgH \).
+            משמעות הדבר היא שמצב כזה יתאפשר <strong>אך ורק</strong> אם האנרגיה המכנית הכוללת של המערכת נשמרה במלואה מתחילת התנועה ועד סופה.
+            יחד עם זאת, אנו יודעים שמדובר ב<strong>התנגשות פלסטית</strong>, ולכן בהכרח חלק מהאנרגיה המכנית אבד במהלך ההתנגשות (הומר לאנרגיית חום ודפורמציה). מכיוון שהאנרגיה שנותרה למערכת קטנה בהכרח מ- \( MgH \), הגובה המקסימלי אליו תוכל המערכת המשותפת לעלות חייב להיות קטן מ- \( H/2 \).
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+            if (legalLinks.length) {
+                const resolvedLegalPath = '../דף זכויות יוצרים.html';
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

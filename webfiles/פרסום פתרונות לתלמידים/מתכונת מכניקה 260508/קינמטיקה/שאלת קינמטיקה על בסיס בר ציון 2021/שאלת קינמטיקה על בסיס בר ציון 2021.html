@@ -1,0 +1,849 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מודרך - משימת שני הגופים</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+            text-align: justify;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מודרך: תנועת שני הגופים</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מתכונת מכניקה 8/5 תשפ״ו | שאלה 1</h2>
+        <p class="mt-3 text-slate-500">ניתוח מעמיק של תנועה בקו ישר בעזרת גרף מהירות-זמן</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200 mx-auto"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- זהירות! תפיסה שגויה -->
+    <section class="section-card bg-amber-50 border-t-4 border-amber-400">
+        <h3 class="text-xl font-bold text-amber-900 mb-3 flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+              <path stroke-linecap="round" stroke-linejoin="round" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z" />
+            </svg>
+            זהירות! תפיסה שגויה נפוצה
+        </h3>
+        <p class="content-paragraph text-amber-900">
+            תלמידים רבים נוטים לחשוב שברגע שהמהירות של גוף מתאפסת, הוא בהכרח נמצא "במנוחה" ושגם התאוצה שלו באותו הרגע היא אפס. זוהי טעות! על פי החוק הראשון של ניוטון, גוף מוגדר כנמצא במנוחה (התמדה) רק אם שקול הכוחות עליו הוא אפס, מה שאכן אומר שהתאוצה היא אפס. אבל... גוף יכול להיות בתאוצה פעילה ועדיין לחצות את נקודת האפס של המהירות.
+        </p>
+        <p class="content-paragraph text-amber-900">
+            <strong>לדוגמה בשאלה שלנו:</strong> נסתכל על גוף I. בשנייה <span class="inline-ltr">\( t = 5\text{ s} \)</span> המהירות הרגעית שלו בדיוק מתאפסת (<span class="inline-ltr">\( 0\text{ m/s} \)</span>), רגע לפני שהוא משנה את כיוון התנועה שלו ושב לאחור. עם זאת, הוא אינו באמת במנוחה! התאוצה שלו הייתה ונשארה קבועה: <span class="inline-ltr">\( -4\text{ m/s}^2 \)</span> כל הזמן. הכוח שפועל עליו לא פסק אפילו לשבריר שנייה, והוא זה שגורם לו מיד לאחר מכן לנוע לכיוון הנגדי. <strong>מהירות רגעית אפס אינה מעידה על תאוצה אפס בנקודה זו!</strong>
+        </p>
+        <p class="content-paragraph text-amber-900 mb-0">
+            <strong>דוגמה קלאסית נוספת:</strong> חישבו על גוף שנזרק אנכית כלפי מעלה. כאשר הגוף מגיע לשיא הגובה, הוא נעצר לרגע והמהירות הרגעית שלו מתאפסת (<span class="inline-ltr">\( v = 0 \)</span>). אך האם התאוצה שלו היא אפס? ממש לא! כוח הכובד ממשיך לפעול עליו כל הזמן, ולכן גם בשיא הגובה התאוצה שלו היא התאוצה <span class="inline-ltr">\( g \)</span> שכיוונה כלפי מטה. אם התאוצה הייתה מתאפסת בשיא הגובה, משמעות הדבר היא שאין כוח שמושך אותו חזרה, והגוף פשוט היה נשאר לרחף באוויר לנצח!
+        </p>
+    </section>
+
+    <!-- סעיף א' -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א'</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                מוצג בפנינו גרף מהירות-זמן (v-t) של שני גופים, I ו-II. מוגדר בשאלה כי "מהירות ימינה מוגדרת כחיובית". היחידות בגרף הן <span class="inline-ltr">\(\text{m/s}\)</span> ו-<span class="inline-ltr">\(\text{s}\)</span>, כלומר אנו כבר נמצאים במערכת יחידות MKS ולכן אין צורך בהמרת יחידות.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                עלינו לבחור מבין שלושה משפטים נתונים את המשפט המתאר נכונה את כיווני התנועה של הגופים ולנמק את הבחירה.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>עקרונות בשימוש:</strong><br>
+            הקשר שבין כיוון התנועה לסימן המהירות:<br>
+            <span class="formula-badge">כאשר \( v > 0 \) הגוף נע בכיוון החיובי (ימינה)</span>
+            <span class="formula-badge">כאשר \( v < 0 \) הגוף נע בכיוון השלילי (שמאלה)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נבחן את שני הגופים לפי הגרף:</p>
+            <ul class="list-disc list-inside space-y-2 mb-4 text-[#475569]">
+                <li><strong>גוף II:</strong> הגרף שלו מתחיל ממהירות 0 ועולה. הוא נמצא תמיד מעל ציר הזמן (<span class="inline-ltr">\( v_{II} \ge 0 \)</span>), ולכן גוף זה נע אך ורק ימינה לאורך כל התנועה המוצגת.</li>
+                <li><strong>גוף I:</strong> הגרף שלו מתחיל בערך חיובי (<span class="inline-ltr">\( v = 20\text{ m/s} \)</span>). כלומר, בתחילת התנועה הוא נע ימינה. בנקודת החיתוך עם ציר הזמן הגוף עוצר רגעית, ולאחר מכן המהירות שלו הופכת לשלילית (<span class="inline-ltr">\( v_{I} < 0 \)</span>). לכן, בחלק השני של תנועתו הוא נע שמאלה.</li>
+            </ul>
+            <p class="content-paragraph">מסקנה זו מתאימה בדיוק למשפט מספר 2.</p>
+            <div class="final-answer">
+                מסקנה: המשפט הנכון הוא משפט 2: גוף II נע ימינה, גוף I נע ימינה בהתחלה ולאחר מכן נע שמאלה.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong><br>
+            תלמידים רבים נוטים להתבלבל ולחשוב שאם הגרף "יורד" (שיפוע שלילי), משמעות הדבר שהגוף נע שמאלה. חשוב להפריד: הירידה של הגרף מעידה על כך שהתאוצה שלילית (הגודל האלגברי של המהירות קטן). כיוון התנועה נקבע <strong>אך ורק</strong> לפי הערך בציר ה-v (מעל או מתחת לציר האופקי)!
+        </div>
+    </section>
+
+    <!-- סעיף ב' -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב'</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                נוכל לחלץ נקודות מתוך הגרף:<br>
+                עבור גוף I: הנקודה ההתחלתית היא <span class="inline-ltr">\((0, 20)\)</span> ונקודת החיתוך המסומנת היא <span class="inline-ltr">\((4, 4)\)</span>.<br>
+                עבור גוף II: הנקודה ההתחלתית היא <span class="inline-ltr">\((0, 0)\)</span> ונקודת החיתוך היא <span class="inline-ltr">\((4, 4)\)</span>.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                חישוב התאוצה של כל אחד מהגופים: <span class="inline-ltr">\( a_I \)</span> ו- <span class="inline-ltr">\( a_{II} \)</span>.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות מהדף:</strong><br>
+            <p class="content-paragraph mb-1">התאוצה הממוצעת (שהיא קבועה במקרה זה כי הגרפים הם קווים ישרים) מוגדרת כשיפוע של גרף המהירות-זמן:</p>
+            <span class="formula-badge">\( \overline{a} = \frac{\Delta v}{\Delta t} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">נחשב את השיפוע (תאוצה) עבור גוף I:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ a_I = \frac{v_2 - v_1}{t_2 - t_1} = \frac{4 - 20}{4 - 0} = \frac{-16}{4} = -4 \text{ m/s}^2 \]
+            </div>
+            <p class="content-paragraph mt-4">כעת נחשב את השיפוע (תאוצה) עבור גוף II:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ a_{II} = \frac{v_2 - v_1}{t_2 - t_1} = \frac{4 - 0}{4 - 0} = \frac{4}{4} = 1 \text{ m/s}^2 \]
+            </div>
+            <div class="final-answer">
+                מסקנה: התאוצה של גוף I היא <span class="inline-ltr">\(-4\text{ m/s}^2\)</span>, והתאוצה של גוף II היא <span class="inline-ltr">\(1\text{ m/s}^2\)</span>.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong><br>
+            היזהרו מהמילה "תאוטה"! תאוצת גוף I היא אכן שלילית (<span class="inline-ltr">\(-4\text{ m/s}^2\)</span>). מכיוון שהוא מתחיל עם מהירות חיובית, התאוצה השלילית גורמת לכך ש<strong>גודל המהירות שלו קטן</strong> (עד שהוא נעצר ומשנה כיוון). תמיד עדיף לתאר את השינוי ב"גודל המהירות" במקום להשתמש במושגים מבלבלים כמו תאוטה.
+        </div>
+    </section>
+
+    <!-- סעיף ג' -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג'</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                על סמך סעיפים קודמים, יש לנו את המהירויות ההתחלתיות והתאוצות:<br>
+                גוף I: <span class="inline-ltr">\( v_{0I} = 20\text{ m/s} , a_I = -4\text{ m/s}^2 \)</span><br>
+                גוף II: <span class="inline-ltr">\( v_{0II} = 0\text{ m/s} , a_{II} = 1\text{ m/s}^2 \)</span>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                האם קיים רגע <strong>נוסף</strong> (מלבד <span class="inline-ltr">\(t=4\text{ s}\)</span> שכבר ראינו בגרף) שבו <strong>גודל</strong> המהירות של שני הגופים שווה? אם כן, מצאו אותו.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות מהדף:</strong><br>
+            <p class="content-paragraph mb-1">משוואת מהירות כפונקציה של הזמן בתנועה שוות-תאוצה:</p>
+            <span class="formula-badge">\( v = v_0 + at \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">כדי לדרוש שוויון של <strong>גודל</strong> המהירות (Speed), עלינו להשתמש בערך מוחלט, שכן גודל מתעלם מכיוון המהירות (הסימן שלה). תחילה, נבנה את משוואות המהירות-זמן לכל גוף:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ v_I(t) = 20 - 4t \]
+                \[ v_{II}(t) = 0 + 1t = t \]
+            </div>
+            <p class="content-paragraph">נדרוש שוויון בגדלים על ידי ערך מוחלט:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ |20 - 4t| = |t| \]
+            </div>
+            <p class="content-paragraph">למשוואת ערך מוחלט כזו יש שתי אפשרויות לפתרון. האפשרות הראשונה היא שהמהירויות שוות בגודלן ובכיוונן:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 20 - 4t = t \implies 5t = 20 \implies t = 4 \text{ s} \]
+            </div>
+            <p class="content-paragraph">זהו הרגע שכבר נראה בבירור בשרטוט (נקודת החיתוך). אבל שאלו על רגע <em>נוסף</em>. נבדוק את האפשרות השנייה – המהירויות שוות בגודלן אך הפוכות בכיוונן:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 20 - 4t = -t \implies 3t = 20 \implies t = \frac{20}{3} \approx 6.67 \text{ s} \]
+            </div>
+            <div class="final-answer">
+                מסקנה: כן, קיים רגע כזה. הרגע שבו גודל המהירויות שווה הוא <span class="inline-ltr">\(t = 6.67\text{ s}\)</span>.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong><br>
+            הבנת ההבדל בין "מהירות" (Velocity - וקטור הכולל כיוון) לבין "גודל מהירות" (Speed - סקלאר) היא קריטית. ברגע <span class="inline-ltr">\(t=6.67\text{ s}\)</span> גוף II נע ימינה במהירות של <span class="inline-ltr">\(6.67\text{ m/s}\)</span>, ואילו גוף I כבר החל את תנועתו שמאלה ונע במהירות של <span class="inline-ltr">\(-6.67\text{ m/s}\)</span>. הגדלים שלהם זהים!
+        </div>
+    </section>
+
+    <!-- סעיף ד' -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד'</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                נתון חדש: ברגע <span class="inline-ltr">\(t=0\)</span> שני הגופים נמצאים בראשית הצירים, כלומר <span class="inline-ltr">\(x_{0I} = 0\)</span> ו- <span class="inline-ltr">\(x_{0II} = 0\)</span>. בנוסף, נרכז את הנתונים שמצאנו בסעיפים הקודמים שבעזרתם נבנה את משוואות התנועה. עבור גוף I: <span class="inline-ltr">\(v_{0I} = 20\text{ m/s}, a_I = -4\text{ m/s}^2\)</span>. עבור גוף II: <span class="inline-ltr">\(v_{0II} = 0\text{ m/s}, a_{II} = 1\text{ m/s}^2\)</span>.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                את המרחק המוחלט בין שני הגופים בנקודת הזמן הספציפית שבה מהירותו של גוף I היא אפס.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( v = v_0 + at \)</span>
+            <span class="formula-badge">\( x = x_0 + v_0t + \frac{1}{2}at^2 \)</span>
+            <span class="formula-badge">\( d = |x_I - x_{II}| \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            
+            <div class="step-label">שלב 1: מציאת רגע העצירה של גוף I</div>
+            <p class="content-paragraph">תחילה עלינו למצוא את נקודת הזמן שבה מהירותו של גוף I מתאפסת. נציב את הנתונים שלו במשוואת המהירות ונדרוש <span class="inline-ltr">\(v_I = 0\)</span>:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 0 = 20 - 4t \implies 4t = 20 \implies t = 5 \text{ s} \]
+            </div>
+            
+            <div class="step-label">שלב 2: בניית משוואות המקום כפונקציה של הזמן</div>
+            <p class="content-paragraph">כדי לדעת היכן נמצא כל גוף ברגע העצירה, נבנה תחילה את משוואת המקום-זמן הכללית לכל אחד מהם. נעשה זאת על ידי הצבת נתוני ההתחלה (<span class="inline-ltr">\(x_0, v_0, a\)</span>) בנוסחה המקורית.</p>
+            <p class="content-paragraph mb-1">הצבה עבור גוף I:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ x_I(t) = 0 + 20 \cdot t + \frac{1}{2} \cdot (-4) \cdot t^2 \implies x_I(t) = 20t - 2t^2 \]
+            </div>
+            <p class="content-paragraph mb-1 mt-3">הצבה עבור גוף II:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ x_{II}(t) = 0 + 0 \cdot t + \frac{1}{2} \cdot (1) \cdot t^2 \implies x_{II}(t) = 0.5t^2 \]
+            </div>
+
+            <div class="step-label">שלב 3: מציאת מיקומי הגופים והמרחק ביניהם</div>
+            <p class="content-paragraph">כעת נציב את הזמן שמצאנו בשלב 1 (<span class="inline-ltr">\(t = 5\text{ s}\)</span>) לתוך משוואות המקום שבנינו הרגע כדי לגלות את המיקומים המדויקים.</p>
+            <p class="content-paragraph mb-1">מיקום גוף I ברגע העצירה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ x_I(5) = 20(5) - 2(5^2) = 100 - 2(25) = 100 - 50 = 50 \text{ m} \]
+            </div>
+            <p class="content-paragraph mb-1 mt-3">מיקום גוף II באותו הרגע:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ x_{II}(5) = 0.5(5^2) = 0.5(25) = 12.5 \text{ m} \]
+            </div>
+            <p class="content-paragraph mt-3">נחשב את המרחק ביניהם כהפרש המיקומים בערך מוחלט:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ d = |x_I - x_{II}| = |50 - 12.5| = 37.5 \text{ m} \]
+            </div>
+            <div class="final-answer">
+                מסקנה: המרחק בין שני הגופים בזמן שגוף I עוצר הוא <span class="inline-ltr">\(37.5\text{ m}\)</span>.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong><br>
+            האם ידעתם שאפשר לפתור זאת גם בעזרת השטחים בגרף? "השטח הכלוא בין גרף מהירות-זמן לבין ציר הזמן שווה להעתק הגוף". נסו לחשב את שטח המשולש הגדול של גוף I עד <span class="inline-ltr">\(t=5\)</span>, ואת שטח המשולש של גוף II עד אותו זמן. תקבלו בדיוק את אותן התוצאות, וזו דרך נהדרת לאמת את הפתרון שלכם בבחינה!
+        </div>
+    </section>
+
+    <!-- סעיף ה' -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה'</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                אנו ממשיכים עם משוואות המקום כפונקציה של הזמן שבנינו בסעיף הקודם:<br>
+                <span class="inline-ltr">\( x_I(t) = 20t - 2t^2 \)</span><br>
+                <span class="inline-ltr">\( x_{II}(t) = 0.5t^2 \)</span>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                מתי (באיזה רגע <span class="inline-ltr">\( t \)</span>) והיכן (באיזה מיקום <span class="inline-ltr">\( x \)</span>) ייפגשו הגופים.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>עקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mb-1">התנאי הקינמטי למפגש בין שני גופים הנעים באותה מערכת צירים הוא שוויון המקומות שלהם באותו הזמן:</p>
+            <span class="formula-badge">\( x_I(t) = x_{II}(t) \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נשווה את שני ביטויי המקום שכתבנו, ונעביר אגפים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 20t - 2t^2 = 0.5t^2 \]
+                \[ 20t - 2.5t^2 = 0 \]
+            </div>
+            <p class="content-paragraph mt-3">נוציא גורם משותף <span class="inline-ltr">\( t \)</span>:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ t(20 - 2.5t) = 0 \]
+            </div>
+            <p class="content-paragraph">המשוואה מתאפסת עבור שני זמנים. הראשון הוא <span class="inline-ltr">\( t=0 \)</span>, שזו נקודת ההתחלה המשותפת הנתונה לנו. הזמן השני ייתן את רגע המפגש הבא:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 2.5t = 20 \implies t = \frac{20}{2.5} = 8 \text{ s} \]
+            </div>
+            <p class="content-paragraph mt-3">כדי למצוא את מיקום המפגש, נציב את הזמן <span class="inline-ltr">\( t=8\text{ s} \)</span> באחת ממשוואות התנועה. נבחר במשוואה של גוף II כי היא קלה יותר לחישוב:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ x_{II}(8) = 0.5 \cdot (8^2) = 0.5 \cdot 64 = 32 \text{ m} \]
+            </div>
+            <p class="content-paragraph mt-3">לשם ביטחון, כדאי להציב גם במשוואה של גוף I לוודא שלא טעינו:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ x_I(8) = 20(8) - 2(8^2) = 160 - 2(64) = 160 - 128 = 32 \text{ m} \]
+            </div>
+            <div class="final-answer">
+                מסקנה: הגופים נפגשים ברגע <span class="inline-ltr">\(t = 8\text{ s}\)</span> ובמיקום <span class="inline-ltr">\(x = 32\text{ m}\)</span>.
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong><br>
+            חשבו על הסיטואציה בצורה פיזיקלית: גוף I זינק קדימה במהירות עצומה של 20 מטר לשנייה אבל מיד החל לאבד ממהירותו. גוף II התחיל ממנוחה אבל צובר מהירות בהתמדה. גוף I מגיע למרחק של 50 מטר (ב-<span class="inline-ltr">\(t=5\)</span>), עוצר שם, ומתחיל "לנסוע רוורס" חזרה. בדיוק בשלב החזרה שלו, הוא פוגש את גוף II העיקש שהמשיך להתקדם קדימה!
+        </div>
+    </section>
+
+    <!-- סעיף ו' -->
+    <section class="section-card" id="part-f">
+        <h3 class="section-header">סעיף ו'</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                כל משוואות הקינמטיקה ונקודות המפתח שמצאנו עד כה:
+                התחלה ב- <span class="inline-ltr">\((0,0)\)</span>, גוף I מגיע למקסימום ב- <span class="inline-ltr">\((5, 50)\)</span>, הגופים נפגשים ב- <span class="inline-ltr">\((8, 32)\)</span>.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                סרטוט מדויק וברור של גרף המקום כפונקציה של הזמן (x-t) עבור שני הגופים באותה מערכת צירים מתחילת התנועה ועד רגע המפגש.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>עקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mb-1">גרף מקום-זמן עבור תנועה בעלת תאוצה קבועה הוא <strong>פרבולה</strong>:</p>
+            <ul class="list-disc list-inside mt-1 space-y-1 text-[#475569]">
+                <li>עבור <span class="inline-ltr">\( a > 0 \)</span> (גוף II), הפרבולה "צוחקת" (קעורה כלפי מעלה).</li>
+                <li>עבור <span class="inline-ltr">\( a < 0 \)</span> (גוף I), הפרבולה "בוכה" (קעורה כלפי מטה).</li>
+            </ul>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">סרטוט הגרף:</h4>
+            <p class="content-paragraph">בנינו את הגרף הבא על פי הנקודות המחושבות. ציר ה-X מייצג את הזמן בשניות, וציר ה-Y את המקום במטרים.</p>
+            
+            <div class="visual-frame">
+                <img
+                    src="image-6.png"
+                    alt="גרף מקום-זמן של שני הגופים"
+                    class="max-w-full h-auto rounded-lg"
+                    onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+                >
+                <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                    <span class="block font-bold mb-1">[גרף מקום-זמן]</span>
+                    <span class="text-sm">לא נמצאה תמונה בשם <code>image-6.png</code> באותה תיקייה.</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>💡 טיפ מורה:</strong><br>
+            הסתכלו על שיפועי הגרפים ששירטטנו! שיפוע של גרף מקום-זמן שווה למהירות.
+            בגרף של גוף I (הכחול), השיפוע בהתחלה גדול וחיובי, הולך ומתמתן עד שהוא מתאפס בדיוק ב-<span class="inline-ltr">\(t=5\text{ s}\)</span> (שם הראנו שהגוף נעצר), ולאחר מכן השיפוע הופך לשלילי (הגוף נע שמאלה). הכל מתחבר לשלמות פיזיקלית!
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
