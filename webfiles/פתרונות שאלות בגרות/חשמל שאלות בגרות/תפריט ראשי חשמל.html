@@ -744,6 +744,42 @@
             background: #f5f3ff;
         }
 
+        .meta-pill.amit-focus-in {
+            border-color: #86efac;
+            color: #166534;
+            background: #f0fdf4;
+        }
+
+        .meta-pill.amit-focus-out {
+            border-color: #fca5a5;
+            color: #991b1b;
+            background: #fef2f2;
+        }
+
+        .meta-pill.amit-focus-na {
+            border-color: #cbd5e1;
+            color: #475569;
+            background: #f8fafc;
+        }
+
+        .meta-pill.amit-note {
+            border-color: #fcd34d;
+            color: #92400e;
+            background: #fffbeb;
+        }
+
+        .meta-pill.amit-year-note {
+            border-color: #bfdbfe;
+            color: #1d4ed8;
+            background: #eff6ff;
+        }
+
+        .meta-line-label {
+            font-weight: 600;
+            color: #334155;
+            margin-inline-end: 0.4rem;
+        }
+
         .empty-state {
             background: var(--green-50);
             border-right: 4px solid var(--green-500);
@@ -1014,7 +1050,7 @@
                     </button>
                     <div class="sort-toolbar">
                         <button id="filterAllBtn" type="button" class="sort-chip is-active" aria-pressed="true">הכל</button>
-                        <button id="filterBagrutBtn" type="button" class="sort-chip" aria-pressed="false">רק בגרות</button>
+                        <button id="filterBagrutBtn" type="button" class="sort-chip" aria-pressed="false">רק שאלות במיקוד</button>
                     </div>
                     <div class="sort-toolbar">
                         <button id="sortYearBtn" type="button" class="sort-chip is-active" aria-pressed="true">מיון לפי שנה ↓</button>
@@ -1102,6 +1138,7 @@
 
     <script>
         const BAGRUT_FOLDER_REPO_PATH = "webfiles/פתרונות שאלות בגרות/חשמל שאלות בגרות";
+        const AMIT_FOCUS_JSON_PATH = "./שאלות במיקוד עמית.json";
         const DISCOVERY_EXCLUDED_FILES = new Set([
             "תפריט ראשי חשמל.html",
             "question-topics.json"
@@ -1157,8 +1194,8 @@
         function syncBagrutFilterButtons() {
             filterAllBtn.classList.toggle("is-active", bagrutFilterMode === "all");
             filterAllBtn.setAttribute("aria-pressed", bagrutFilterMode === "all" ? "true" : "false");
-            filterBagrutBtn.classList.toggle("is-active", bagrutFilterMode === "bagrutOnly");
-            filterBagrutBtn.setAttribute("aria-pressed", bagrutFilterMode === "bagrutOnly" ? "true" : "false");
+            filterBagrutBtn.classList.toggle("is-active", bagrutFilterMode === "focusOnly");
+            filterBagrutBtn.setAttribute("aria-pressed", bagrutFilterMode === "focusOnly" ? "true" : "false");
         }
 
         function isLocalhost() {
@@ -1315,6 +1352,86 @@
                 collectNodePath(node.path);
             });
             return finalize();
+        }
+
+        function buildAmitFocusLookup(rawData) {
+            const rows = Array.isArray(rawData?.rows) ? rawData.rows : [];
+            const lookup = new Map();
+
+            rows.forEach((row) => {
+                const year = Number(row?.bagrutYear);
+                if (!Number.isFinite(year)) return;
+
+                const questions = new Map();
+                const questionList = Array.isArray(row?.questions) ? row.questions : [];
+                questionList.forEach((question) => {
+                    const questionNumber = Number(question?.bagrutQuestionNumber);
+                    if (!Number.isFinite(questionNumber)) return;
+                    questions.set(questionNumber, {
+                        focusStatus: question?.focusStatus || "",
+                        focusNote: question?.focusNote || ""
+                    });
+                });
+
+                lookup.set(year, {
+                    yearNote: row?.yearNote || "",
+                    questions
+                });
+            });
+
+            return lookup;
+        }
+
+        async function loadAmitFocusLookup() {
+            try {
+                const response = await fetch(AMIT_FOCUS_JSON_PATH, { cache: "no-store" });
+                if (!response.ok) return new Map();
+                const rawData = await response.json();
+                return buildAmitFocusLookup(rawData);
+            } catch {
+                return new Map();
+            }
+        }
+
+        function getAmitFocusForSolution(solution) {
+            if (!solution?.isBagrutQuestion || !solution?.bagrutYear || !solution?.bagrutQuestionNumber) {
+                return null;
+            }
+
+            const yearData = amitFocusLookup.get(Number(solution.bagrutYear));
+            const questionData = yearData?.questions?.get(Number(solution.bagrutQuestionNumber));
+            if (!questionData?.focusStatus) {
+                return null;
+            }
+
+            let label = "";
+            let pillClass = "";
+            if (questionData.focusStatus === "inFocus") {
+                label = "מיקוד תשפו";
+                pillClass = "amit-focus-in";
+            } else if (questionData.focusStatus === "outOfFocus") {
+                label = "לא במיקוד תשפו";
+                pillClass = "amit-focus-out";
+            } else if (questionData.focusStatus === "notAsked") {
+                label = "לא הייתה שאלה";
+                pillClass = "amit-focus-na";
+            }
+
+            if (!label) {
+                return null;
+            }
+
+            const note = questionData.focusNote ? String(questionData.focusNote) : "";
+            const yearNote = yearData?.yearNote ? String(yearData.yearNote) : "";
+
+            return {
+                focusStatus: questionData.focusStatus,
+                label,
+                pillClass,
+                note,
+                yearNote,
+                searchText: [label, note, yearNote].filter(Boolean).join(" ")
+            };
         }
 
         async function loadSolutionsFromTopicsJson(discoveredItems) {
@@ -1609,6 +1726,7 @@
             items.forEach((solution) => {
                 const card = document.createElement("article");
                 card.className = "solution-item";
+                const amitFocus = getAmitFocusForSolution(solution);
 
                 const mediaWrap = document.createElement("div");
                 const thumb = document.createElement("img");
@@ -1657,7 +1775,38 @@
                 const skillPills = (solution.skillTags || []).map((tag) => `<span class="meta-pill skill">${tag}</span>`).join(" ");
                 skillsRow.innerHTML = `מיומנויות: ${skillPills || '<span class="meta-pill">ללא תיוג</span>'}`;
 
-                body.append(titleLine, metaRow, topicsRow, skillsRow);
+                let focusRow = null;
+                if (amitFocus) {
+                    focusRow = document.createElement("div");
+                    focusRow.className = "mt-2 text-sm text-slate-600";
+
+                    const appendFocusPill = (className, text) => {
+                        const pill = document.createElement("span");
+                        pill.className = className;
+                        pill.textContent = text;
+                        focusRow.appendChild(document.createTextNode(" "));
+                        focusRow.appendChild(pill);
+                    };
+
+                    const label = document.createElement("span");
+                    label.className = "meta-line-label";
+                    label.textContent = "מיקוד עמית:";
+                    focusRow.appendChild(label);
+
+                    appendFocusPill(`meta-pill ${amitFocus.pillClass}`, amitFocus.label);
+
+                    if (amitFocus.note) {
+                        appendFocusPill("meta-pill amit-note", amitFocus.note);
+                    }
+
+                    if (amitFocus.yearNote) {
+                        appendFocusPill("meta-pill amit-year-note", amitFocus.yearNote);
+                    }
+                }
+
+                body.append(titleLine, metaRow);
+                if (focusRow) body.appendChild(focusRow);
+                body.append(topicsRow, skillsRow);
                 card.append(mediaWrap, body);
                 fragment.appendChild(card);
             });
@@ -1676,17 +1825,19 @@
             const searchTerm = String(searchInput.value || "").trim().toLowerCase();
             let filtered = [...solutions];
 
-            if (bagrutFilterMode === "bagrutOnly") {
-                filtered = filtered.filter((s) => s.isBagrutQuestion);
+            if (bagrutFilterMode === "focusOnly") {
+                filtered = filtered.filter((s) => getAmitFocusForSolution(s)?.focusStatus === "inFocus");
             }
 
             if (searchTerm) {
                 filtered = filtered.filter((s) => {
+                    const amitFocus = getAmitFocusForSolution(s);
                     const haystack = [
                         s.title,
                         s.bagrutYear ? String(s.bagrutYear) : "",
                         s.bagrutQuestionNumber ? `שאלה ${s.bagrutQuestionNumber}` : "",
-                        s.bodySearchText || ""
+                        s.bodySearchText || "",
+                        amitFocus?.searchText || ""
                     ].join(" ").toLowerCase();
                     return haystack.includes(searchTerm);
                 });
@@ -1769,12 +1920,17 @@
         let bodySearchIndexReady = false;
         let topicCatalog = [];
         let skillCatalog = [];
+        let amitFocusLookup = new Map();
         let drawerMode = "topics";
         const selectedTopics = new Set();
         const selectedSkills = new Set();
 
         async function init() {
-            const discovered = await discoverQuestionEntries().catch(() => []);
+            const [discovered, loadedAmitFocusLookup] = await Promise.all([
+                discoverQuestionEntries().catch(() => []),
+                loadAmitFocusLookup()
+            ]);
+            amitFocusLookup = loadedAmitFocusLookup;
             try {
                 solutions = await loadSolutionsFromTopicsJson(discovered);
             } catch {
@@ -1800,7 +1956,7 @@
         sortAddedAtBtn.addEventListener("click", () => { sortMode = "addedAt"; syncSortButtons(); runFilter(); });
         sortTitleBtn.addEventListener("click", () => { sortMode = "title"; syncSortButtons(); runFilter(); });
         filterAllBtn.addEventListener("click", () => { bagrutFilterMode = "all"; syncBagrutFilterButtons(); runFilter(); });
-        filterBagrutBtn.addEventListener("click", () => { bagrutFilterMode = "bagrutOnly"; syncBagrutFilterButtons(); runFilter(); });
+        filterBagrutBtn.addEventListener("click", () => { bagrutFilterMode = "focusOnly"; syncBagrutFilterButtons(); runFilter(); });
         if (openTopicsBtn) openTopicsBtn.addEventListener("click", () => setFilterDrawerOpen(true, "topics"));
         if (openSkillsBtn) openSkillsBtn.addEventListener("click", () => setFilterDrawerOpen(true, "skills"));
         if (closeFiltersBtn) closeFiltersBtn.addEventListener("click", () => setFilterDrawerOpen(false));
