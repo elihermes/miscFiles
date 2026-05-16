@@ -1161,6 +1161,18 @@
             return rows;
         }
 
+        function buildFocusRowKey(year, orderVariant = 0) {
+            return `${Number(year)}-${Number(orderVariant) || 0}`;
+        }
+
+        function buildCoveredQuestionKey(year, orderVariant, questionNumber) {
+            return `${Number(year)}-${Number(orderVariant) || 0}-${Number(questionNumber)}`;
+        }
+
+        function getFocusRowForCoverageRow(focusLookup, row) {
+            return focusLookup.get(buildFocusRowKey(row.year, row.orderVariant));
+        }
+
         function buildFocusLookup(focusData) {
             const focusLookup = new Map();
             const rows = Array.isArray(focusData?.rows) ? focusData.rows : [];
@@ -1170,6 +1182,7 @@
                 if (!Number.isFinite(year)) {
                     return;
                 }
+                const orderVariant = Number(row?.orderVariant) || 0;
 
                 const questionMap = new Map();
                 const questions = Array.isArray(row?.questions) ? row.questions : [];
@@ -1185,7 +1198,9 @@
                     });
                 });
 
-                focusLookup.set(year, {
+                focusLookup.set(buildFocusRowKey(year, orderVariant), {
+                    year,
+                    orderVariant,
                     yearNote: row?.yearNote || "",
                     questions: questionMap
                 });
@@ -1305,7 +1320,7 @@
 
             mobileCoverage.innerHTML = rows.map((row) => {
                 const maxQ = row.maxQuestions || QUESTION_COUNT;
-                const focusRow = row.orderVariant === 0 ? focusLookup.get(row.year) : null;
+                const focusRow = getFocusRowForCoverageRow(focusLookup, row);
                 const yearSubtexts = getRowSubtexts(row, focusRow);
                 const yearMetaHtml = yearSubtexts
                     .map((text) => `<span class="mobile-year-chip">${escapeHtml(text)}</span>`)
@@ -1355,19 +1370,19 @@
                 const maxQ = row.maxQuestions || QUESTION_COUNT;
                 row.questions.slice(0, maxQ).forEach((entry, idx) => {
                     if (entry && entry.exists) {
-                        coveredQuestionKeys.add(`${row.year}-${idx + 1}`);
+                        coveredQuestionKeys.add(buildCoveredQuestionKey(row.year, row.orderVariant, idx + 1));
                     }
                 });
             });
             let totalInFocusCount = 0;
             let coveredInFocusCount = 0;
-            focusLookup.forEach((focusRow, year) => {
+            focusLookup.forEach((focusRow) => {
                 focusRow.questions.forEach((focusEntry, questionNumber) => {
                     if (focusEntry?.focusStatus !== 'inFocus') {
                         return;
                     }
                     totalInFocusCount += 1;
-                    if (coveredQuestionKeys.has(`${year}-${questionNumber}`)) {
+                    if (coveredQuestionKeys.has(buildCoveredQuestionKey(focusRow.year, focusRow.orderVariant, questionNumber))) {
                         coveredInFocusCount += 1;
                     }
                 });
@@ -1376,7 +1391,7 @@
 
             coverageBody.innerHTML = rows.map((row) => {
                 const maxQ = row.maxQuestions || QUESTION_COUNT;
-                const focusRow = row.orderVariant === 0 ? focusLookup.get(row.year) : null;
+                const focusRow = getFocusRowForCoverageRow(focusLookup, row);
                 const cells = row.questions.map((entry, idx) => {
                     const questionNumber = idx + 1;
                     const focusEntry = focusRow?.questions?.get(questionNumber) || null;
@@ -1408,8 +1423,8 @@
 
             renderMobileCoverage(rows, focusLookup);
 
-            const focusYearsCount = focusLookup.size;
-            statusText.textContent = `מוצגות ${rows.length} שורות כיסוי, המייצגות ${yearsCount} שנים במאגר. לחיצה על ✓ ירוק פותחת את הפתרון. בשנים שיש עליהן נתון של עמית (${focusYearsCount} שנים), מופיעה גם אינדיקציית מיקוד תשפו בתוך התא.`;
+            const focusRowsCount = focusLookup.size;
+            statusText.textContent = `מוצגות ${rows.length} שורות כיסוי, המייצגות ${yearsCount} שנים במאגר. לחיצה על ✓ ירוק פותחת את הפתרון. בשורות שיש עליהן נתון של עמית (${focusRowsCount} שורות), מופיעה גם אינדיקציית מיקוד תשפו בתוך התא.`;
             summaryRows.textContent = formatNumber(yearsCount);
             summaryCovered.textContent = formatNumber(coveredCount);
             summaryPercent.textContent = `${percent}%`;
