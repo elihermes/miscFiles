@@ -12,7 +12,7 @@
 	</script>
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
-	<title>טבלת כיסוי שאלות חשמל</title>
+	<title>טבלת כיסוי לשאלות בגרות בחשמל משנת 1990</title>
 	<script src="https://cdn.tailwindcss.com"></script>
 	<style>
 		:root {
@@ -155,7 +155,7 @@
 
 		.summary-grid {
 			display: grid;
-			grid-template-columns: repeat(3, minmax(0, 1fr));
+			grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
 			gap: 0.9rem;
 			margin-top: 1.2rem;
 		}
@@ -499,9 +499,9 @@
 					<span class="inline-block h-2.5 w-2.5 rounded-full bg-green-500"></span>
 					מאגר פתרונות בחשמל
 				</div>
-				<h1 class="text-3xl md:text-5xl font-bold text-blue-900 mt-4 mb-2">מפת הכיסוי של מאגר שאלות החשמל</h1>
+				<h1 class="text-3xl md:text-5xl font-bold text-blue-900 mt-4 mb-2">טבלת כיסוי לשאלות בגרות בחשמל משנת 1990</h1>
 				<h2 class="text-lg md:text-2xl text-slate-600">מבט אחד על כל השנים, כל השאלות, ואילו פתרונות כבר זמינים במאגר</h2>
-				<p class="mt-4 text-slate-600 max-w-3xl md:max-w-none">הדף מציג בצורה חזותית אילו שאלות בגרות בחשמל כבר קיימות במאגר הפתרונות, עם אותם סימונים וטבלת כיסוי כמו במכניקה.</p>
+				<p class="mt-4 text-slate-600 max-w-3xl md:max-w-none">הדף מציג בצורה חזותית אילו שאלות בגרות בחשמל משנת 1990 ואילך כבר קיימות במאגר הפתרונות, יחד עם סימוני המיקוד ומדדי הכיסוי המופיעים בטבלה.</p>
 				<div>
 					<a class="legal-entry-link" href="../../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
 				</div>
@@ -509,7 +509,7 @@
 
 			<div class="summary-grid">
 				<div class="summary-tile">
-					<div class="summary-label">שורות בטבלה</div>
+					<div class="summary-label">מספר שנים במאגר</div>
 					<div id="summaryRows" class="summary-value">--</div>
 				</div>
 				<div class="summary-tile">
@@ -519,6 +519,10 @@
 				<div class="summary-tile">
 					<div class="summary-label">אחוז כיסוי במאגר</div>
 					<div id="summaryPercent" class="summary-value">--</div>
+				</div>
+				<div class="summary-tile">
+					<div class="summary-label">אחוז כיסוי שאלות במיקוד</div>
+					<div id="summaryFocusPercent" class="summary-value">--</div>
 				</div>
 			</div>
 		</section>
@@ -578,6 +582,7 @@
 		const summaryRows = document.getElementById("summaryRows");
 		const summaryCovered = document.getElementById("summaryCovered");
 		const summaryPercent = document.getElementById("summaryPercent");
+		const summaryFocusPercent = document.getElementById("summaryFocusPercent");
 		const QUESTION_COUNT = 6;
 		const START_YEAR = 1990;
 		const END_YEAR = 2025;
@@ -1111,15 +1116,40 @@
 				summaryRows.textContent = '0';
 				summaryCovered.textContent = '0';
 				summaryPercent.textContent = '0%';
+				summaryFocusPercent.textContent = '0%';
 				return;
 			}
 
+			const yearsCount = new Set(rows.map((row) => row.year)).size;
 			const coveredCount = rows.reduce((sum, row) => {
 				const maxQ = row.maxQuestions || QUESTION_COUNT;
 				return sum + row.questions.slice(0, maxQ).filter((entry) => entry && entry.exists).length;
 			}, 0);
 			const totalSlots = rows.reduce((sum, row) => sum + (row.maxQuestions || QUESTION_COUNT), 0);
 			const percent = totalSlots ? Math.round((coveredCount / totalSlots) * 100) : 0;
+			const coveredQuestionKeys = new Set();
+			rows.forEach((row) => {
+				const maxQ = row.maxQuestions || QUESTION_COUNT;
+				row.questions.slice(0, maxQ).forEach((entry, idx) => {
+					if (entry && entry.exists) {
+						coveredQuestionKeys.add(`${row.year}-${idx + 1}`);
+					}
+				});
+			});
+			let totalInFocusCount = 0;
+			let coveredInFocusCount = 0;
+			focusLookup.forEach((focusRow, year) => {
+				focusRow.questions.forEach((focusEntry, questionNumber) => {
+					if (focusEntry?.focusStatus !== 'inFocus') {
+						return;
+					}
+					totalInFocusCount += 1;
+					if (coveredQuestionKeys.has(`${year}-${questionNumber}`)) {
+						coveredInFocusCount += 1;
+					}
+				});
+			});
+			const focusPercent = totalInFocusCount ? Math.round((coveredInFocusCount / totalInFocusCount) * 100) : 0;
 
 			coverageBody.innerHTML = rows.map((row) => {
 				const maxQ = row.maxQuestions || QUESTION_COUNT;
@@ -1155,10 +1185,11 @@
 			}).join('');
 
 			const focusYearsCount = focusLookup.size;
-			statusText.textContent = `מוצגות ${rows.length} שורות בטבלה. לחיצה על ✓ ירוק פותחת את הפתרון. בשנים שיש עליהן נתון של עמית (${focusYearsCount} שנים), מופיעה גם אינדיקציית מיקוד תשפו בתוך התא.`;
-			summaryRows.textContent = formatNumber(rows.length);
+			statusText.textContent = `מוצגות ${rows.length} שורות בטבלה, המייצגות ${yearsCount} שנים במאגר. לחיצה על ✓ ירוק פותחת את הפתרון. בשנים שיש עליהן נתון של עמית (${focusYearsCount} שנים), מופיעה גם אינדיקציית מיקוד תשפו בתוך התא.`;
+			summaryRows.textContent = formatNumber(yearsCount);
 			summaryCovered.textContent = formatNumber(coveredCount);
 			summaryPercent.textContent = `${percent}%`;
+			summaryFocusPercent.textContent = `${focusPercent}%`;
 		}
 
 		async function loadCoverage() {
@@ -1174,7 +1205,12 @@
 
 				const data = await questionTopicsResponse.json();
 				const focusData = focusResponse.ok ? await focusResponse.json() : { rows: [] };
-				const discoveredPaths = await discoverQuestionPaths();
+				let discoveredPaths = [];
+				try {
+					discoveredPaths = await discoverQuestionPaths();
+				} catch (error) {
+					console.warn('question-discovery-unavailable', error);
+				}
 				const questions = mergeQuestionsWithDiscovered(data.questions, discoveredPaths);
 				const rows = buildRows(questions);
 				const focusLookup = buildFocusLookup(focusData);

@@ -1,0 +1,745 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>טבלת מיקוד עמית במכניקה - השוואה זמנית</title>
+	<style>
+		:root {
+			--bg-page: #eef5fb;
+			--bg-card: #ffffff;
+			--text-main: #25364a;
+			--text-soft: #62748a;
+			--border: #d7e3ef;
+			--header-bg: #f6faff;
+			--green: #10b64d;
+			--red: #ef1d1d;
+			--shadow: 0 18px 40px rgba(37, 89, 166, 0.08);
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		html {
+			overflow-x: clip;
+		}
+
+		body {
+			margin: 0;
+			font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+			background:
+				radial-gradient(circle at top right, rgba(37, 99, 235, 0.14), transparent 25%),
+				linear-gradient(180deg, #f8fbff 0%, var(--bg-page) 100%);
+			color: var(--text-main);
+			line-height: 1.5;
+		}
+
+		.page-shell {
+			max-width: 1220px;
+			margin: 0 auto;
+			padding: 24px 18px 56px;
+		}
+
+		.section-card {
+			background: var(--bg-card);
+			border: 1px solid var(--border);
+			border-radius: 20px;
+			padding: 20px;
+			box-shadow: var(--shadow);
+			margin-bottom: 18px;
+		}
+
+		.hero-card {
+			background:
+				radial-gradient(circle at 15% 15%, rgba(16, 182, 77, 0.12), transparent 20%),
+				radial-gradient(circle at 85% 15%, rgba(239, 29, 29, 0.10), transparent 18%),
+				linear-gradient(135deg, #ffffff 0%, #f3f8ff 100%);
+		}
+
+		h1 {
+			margin: 0 0 8px;
+			font-size: clamp(1.8rem, 2.6vw, 2.5rem);
+			color: #1c3f69;
+		}
+
+		h2 {
+			margin: 0 0 10px;
+			font-size: 1.25rem;
+			color: #1c3f69;
+		}
+
+		.lead {
+			margin: 0;
+			color: var(--text-soft);
+			font-size: 1rem;
+		}
+
+		.meta-row {
+			display: flex;
+			flex-wrap: wrap;
+			gap: 10px;
+			margin-top: 16px;
+		}
+
+		.meta-chip {
+			display: inline-flex;
+			align-items: center;
+			gap: 8px;
+			padding: 8px 14px;
+			border-radius: 999px;
+			background: #f8fbff;
+			border: 1px solid var(--border);
+			font-size: 0.94rem;
+		}
+
+		.legend-dot {
+			width: 12px;
+			height: 12px;
+			border-radius: 999px;
+			flex: 0 0 auto;
+		}
+
+		.legend-dot.in-focus {
+			background: var(--green);
+		}
+
+		.legend-dot.out-focus {
+			background: var(--red);
+		}
+
+		.legend-dot.not-asked {
+			background: #ffffff;
+			border: 1px solid #b9c6d6;
+		}
+
+		.summary-grid {
+			display: grid;
+			grid-template-columns: repeat(4, minmax(0, 1fr));
+			gap: 12px;
+			margin-top: 18px;
+		}
+
+		.summary-box {
+			border: 1px solid var(--border);
+			border-radius: 16px;
+			padding: 14px 16px;
+			background: #fbfdff;
+		}
+
+		.summary-label {
+			font-size: 0.88rem;
+			color: var(--text-soft);
+			margin-bottom: 6px;
+		}
+
+		.summary-value {
+			font-size: 1.85rem;
+			font-weight: 800;
+			color: #1c3f69;
+		}
+
+		.status-line {
+			margin: 0 0 14px;
+			color: var(--text-soft);
+			font-size: 0.95rem;
+		}
+
+		.table-wrap {
+			overflow-x: auto;
+			border: 1px solid var(--border);
+			border-radius: 18px;
+			background: #fdfefe;
+		}
+
+		table {
+			width: 100%;
+			min-width: 860px;
+			border-collapse: collapse;
+		}
+
+		th,
+		td {
+			border: 1px solid var(--border);
+			padding: 12px 10px;
+			text-align: center;
+			vertical-align: middle;
+		}
+
+		th {
+			background: var(--header-bg);
+			font-size: 0.95rem;
+			font-weight: 700;
+			white-space: nowrap;
+			position: sticky;
+			top: 0;
+			z-index: 1;
+		}
+
+		.year-cell {
+			min-width: 110px;
+			background: #fafcff;
+			font-weight: 800;
+			font-size: 1rem;
+		}
+
+		.year-note {
+			display: block;
+			margin-top: 4px;
+			font-size: 0.78rem;
+			font-weight: 600;
+			color: var(--text-soft);
+		}
+
+		.focus-cell {
+			min-width: 130px;
+			height: 64px;
+			font-weight: 700;
+			font-size: 0.95rem;
+		}
+
+		.focus-cell.inFocus {
+			background: var(--green);
+			color: #102712;
+		}
+
+		.focus-cell.outOfFocus {
+			background: var(--red);
+			color: #241010;
+		}
+
+		.focus-cell.notAsked {
+			background: #ffffff;
+			color: #8b9aad;
+		}
+
+		.focus-note {
+			display: inline-block;
+			max-width: 100%;
+			line-height: 1.2;
+			word-break: break-word;
+		}
+
+		.image-wrap {
+			background: #fbfdff;
+			border: 1px solid var(--border);
+			border-radius: 18px;
+			padding: 14px;
+		}
+
+		.image-wrap img {
+			display: block;
+			max-width: 100%;
+			height: auto;
+			margin: 0 auto;
+			border-radius: 12px;
+			border: 1px solid var(--border);
+		}
+
+		.image-fallback {
+			display: none;
+			padding: 16px;
+			text-align: center;
+			color: var(--text-soft);
+		}
+
+		.footer-note {
+			margin-top: 12px;
+			font-size: 0.88rem;
+			color: var(--text-soft);
+		}
+
+		@media (max-width: 900px) {
+			.summary-grid {
+				grid-template-columns: repeat(2, minmax(0, 1fr));
+			}
+
+			.focus-cell {
+				min-width: 110px;
+			}
+		}
+
+		@media (max-width: 640px) {
+			.page-shell {
+				padding-inline: 12px;
+			}
+
+			.section-card {
+				padding: 16px;
+				border-radius: 16px;
+			}
+
+			.summary-grid {
+				grid-template-columns: 1fr;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="page-shell">
+		<section class="section-card hero-card">
+			<h1>טבלת מיקוד עמית במכניקה</h1>
+			<p class="lead">דף השוואה זמני למכניקה: כל שורה היא שנה, כל עמודה היא מספר שאלה. ירוק = במיקוד, אדום = לא במיקוד, לבן = לא הייתה שאלה באותה שנה.</p>
+
+			<div class="meta-row">
+				<span class="meta-chip"><span class="legend-dot in-focus"></span><span>מיקוד</span></span>
+				<span class="meta-chip"><span class="legend-dot out-focus"></span><span>לא במיקוד</span></span>
+				<span class="meta-chip"><span class="legend-dot not-asked"></span><span>לא הייתה שאלה</span></span>
+			</div>
+
+			<div class="summary-grid">
+				<div class="summary-box">
+					<div class="summary-label">שנים בטבלה</div>
+					<div id="summaryYears" class="summary-value">--</div>
+				</div>
+				<div class="summary-box">
+					<div class="summary-label">תאים במיקוד</div>
+					<div id="summaryInFocus" class="summary-value">--</div>
+				</div>
+				<div class="summary-box">
+					<div class="summary-label">תאים לא במיקוד</div>
+					<div id="summaryOutOfFocus" class="summary-value">--</div>
+				</div>
+				<div class="summary-box">
+					<div class="summary-label">תאים ללא שאלה</div>
+					<div id="summaryNotAsked" class="summary-value">--</div>
+				</div>
+			</div>
+		</section>
+
+		<section class="section-card">
+			<h2>הטבלה לפי ה־JSON</h2>
+			<p id="statusLine" class="status-line">טוען נתונים...</p>
+			<div class="table-wrap">
+				<table>
+					<thead>
+						<tr>
+							<th>שנה</th>
+							<th>שאלה 1</th>
+							<th>שאלה 2</th>
+							<th>שאלה 3</th>
+							<th>שאלה 4</th>
+							<th>שאלה 5</th>
+							<th>שאלה 6</th>
+						</tr>
+					</thead>
+					<tbody id="focusBody">
+						<tr>
+							<td colspan="7">טוען...</td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+			<p class="footer-note">בתאים שיש בהם הערה מתוך הטבלה המקורית, ההערה מוצגת בתוך התא עצמו.</p>
+		</section>
+
+		<section class="section-card">
+			<h2>תמונת המקור להשוואה</h2>
+			<div class="image-wrap">
+				<img id="sourceImage" alt="טבלת המיקוד המקורית" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+				<div class="image-fallback">לא נמצאה תמונת המקור להשוואה.</div>
+			</div>
+		</section>
+	</main>
+
+	<script id="embeddedFocusData" type="application/json">
+{
+	"sourceImagePath": "webfiles/פתרונות שאלות בגרות/מכניקה שאלות בגרות/שאלות במיוקד עמית יוסוביץ.png",
+	"statusLegend": {
+		"inFocus": {
+			"color": "green",
+			"meaning": "שאלה במיקוד"
+		},
+		"outOfFocus": {
+			"color": "red",
+			"meaning": "שאלה שאינה במיקוד"
+		},
+		"notAsked": {
+			"color": "white",
+			"meaning": "לא הייתה שאלה כזאת באותה שנה"
+		}
+	},
+	"rows": [
+		{
+			"bagrutYear": 2000,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2001,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2002,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2003,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2004,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2005,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2006,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2007,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus", "focusNote": "בלי ד' וה'" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2008,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus", "focusNote": "בלי ג'" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2009,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus", "focusNote": "בלי סעיף ה'" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2010,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2011,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus", "focusNote": "בלי ג'" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2012,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2013,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2014,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2015,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2016,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2017,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2018,
+			"yearNote": "לא רפורמה",
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "notAsked" }
+			]
+		},
+		{
+			"bagrutYear": 2019,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "inFocus" }
+			]
+		},
+		{
+			"bagrutYear": 2020,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "inFocus" }
+			]
+		},
+		{
+			"bagrutYear": 2021,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "inFocus" }
+			]
+		},
+		{
+			"bagrutYear": 2022,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "inFocus", "focusNote": "ללא ג' ו-ו'" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "inFocus" }
+			]
+		},
+		{
+			"bagrutYear": 2023,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "inFocus", "focusNote": "ללא ד' וה'" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "inFocus" }
+			]
+		},
+		{
+			"bagrutYear": 2024,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "inFocus", "focusNote": "בלי ה'" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus", "focusNote": "רק א' ב'" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "inFocus" }
+			]
+		},
+		{
+			"bagrutYear": 2025,
+			"questions": [
+				{ "bagrutQuestionNumber": 1, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 2, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 3, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 4, "focusStatus": "inFocus" },
+				{ "bagrutQuestionNumber": 5, "focusStatus": "outOfFocus" },
+				{ "bagrutQuestionNumber": 6, "focusStatus": "inFocus" }
+			]
+		}
+	]
+}
+	</script>
+
+	<script>
+		const focusBody = document.getElementById("focusBody");
+		const statusLine = document.getElementById("statusLine");
+		const summaryYears = document.getElementById("summaryYears");
+		const summaryInFocus = document.getElementById("summaryInFocus");
+		const summaryOutOfFocus = document.getElementById("summaryOutOfFocus");
+		const summaryNotAsked = document.getElementById("summaryNotAsked");
+		const sourceImage = document.getElementById("sourceImage");
+
+		const embeddedFocusData = JSON.parse(document.getElementById("embeddedFocusData").textContent);
+
+		async function loadFocusData() {
+			try {
+				const response = await fetch("./שאלות במיקוד עמית.json", { cache: "no-store" });
+				if (!response.ok) {
+					throw new Error(`HTTP ${response.status}`);
+				}
+				const data = await response.json();
+				statusLine.textContent = "הנתונים נטענו ישירות מקובץ ה-JSON הנוכחי.";
+				return data;
+			} catch (error) {
+				statusLine.textContent = "לא ניתן היה לטעון את קובץ ה-JSON ישירות בדפדפן הזה, לכן מוצג סנאפשוט מובנה של הנתונים הנוכחיים.";
+				return embeddedFocusData;
+			}
+		}
+
+		function escapeHtml(value) {
+			return String(value)
+				.replace(/&/g, "&amp;")
+				.replace(/</g, "&lt;")
+				.replace(/>/g, "&gt;")
+				.replace(/\"/g, "&quot;")
+				.replace(/'/g, "&#39;");
+		}
+
+		function formatNumber(value) {
+			return Number(value).toLocaleString("he-IL");
+		}
+
+		function buildCell(entry) {
+			const status = entry?.focusStatus || "notAsked";
+			const note = entry?.focusNote ? `<span class="focus-note">${escapeHtml(entry.focusNote)}</span>` : "";
+			const titleParts = [];
+			if (status === "inFocus") titleParts.push("במיקוד");
+			if (status === "outOfFocus") titleParts.push("לא במיקוד");
+			if (status === "notAsked") titleParts.push("לא הייתה שאלה");
+			if (entry?.focusNote) titleParts.push(entry.focusNote);
+			const title = escapeHtml(titleParts.join(" | "));
+
+			return `<td class="focus-cell ${status}" title="${title}">${note}</td>`;
+		}
+
+		function renderTable(data) {
+			const rows = Array.isArray(data?.rows) ? [...data.rows].sort((a, b) => a.bagrutYear - b.bagrutYear) : [];
+			let inFocusCount = 0;
+			let outOfFocusCount = 0;
+			let notAskedCount = 0;
+
+			focusBody.innerHTML = rows.map((row) => {
+				const questionMap = new Map((row.questions || []).map((entry) => [entry.bagrutQuestionNumber, entry]));
+				const yearNoteHtml = row.yearNote ? `<span class="year-note">${escapeHtml(row.yearNote)}</span>` : "";
+
+				const questionCells = Array.from({ length: 6 }, (_, index) => {
+					const questionNumber = index + 1;
+					const entry = questionMap.get(questionNumber) || { bagrutQuestionNumber: questionNumber, focusStatus: "notAsked" };
+					if (entry.focusStatus === "inFocus") inFocusCount += 1;
+					if (entry.focusStatus === "outOfFocus") outOfFocusCount += 1;
+					if (entry.focusStatus === "notAsked") notAskedCount += 1;
+					return buildCell(entry);
+				}).join("");
+
+				return `<tr><td class="year-cell">${escapeHtml(row.bagrutYear)}${yearNoteHtml}</td>${questionCells}</tr>`;
+			}).join("");
+
+			summaryYears.textContent = formatNumber(rows.length);
+			summaryInFocus.textContent = formatNumber(inFocusCount);
+			summaryOutOfFocus.textContent = formatNumber(outOfFocusCount);
+			summaryNotAsked.textContent = formatNumber(notAskedCount);
+
+			const imageFileName = String(data?.sourceImagePath || "").split("/").pop();
+			if (imageFileName) {
+				sourceImage.src = imageFileName;
+			}
+		}
+
+		loadFocusData().then(renderTable).catch((error) => {
+			focusBody.innerHTML = `<tr><td colspan="7">${escapeHtml(error.message || "אירעה שגיאה בטעינת הנתונים")}</td></tr>`;
+			statusLine.textContent = "אירעה שגיאה בטעינת הנתונים.";
+		});
+	</script>
+</body>
+</html>
