@@ -402,6 +402,173 @@
             margin-bottom: 0.9rem;
         }
 
+        .mobile-coverage {
+            display: none;
+            gap: 0.9rem;
+        }
+
+        .mobile-year-card {
+            border: 1px solid rgba(195, 211, 229, 0.95);
+            border-radius: 1rem;
+            background: linear-gradient(180deg, rgba(255,255,255,0.96), rgba(248,250,252,0.94));
+            box-shadow: 0 10px 22px rgba(36, 89, 166, 0.08);
+            padding: 0.95rem;
+        }
+
+        .mobile-year-header {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.8rem;
+            margin-bottom: 0.8rem;
+        }
+
+        .mobile-year-title {
+            font-size: 1.08rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.15;
+        }
+
+        .mobile-year-meta {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.4rem;
+            justify-content: flex-start;
+        }
+
+        .mobile-year-chip {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.22rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: #eff6ff;
+            color: #1d4ed8;
+            font-size: 0.78rem;
+            font-weight: 700;
+            line-height: 1.1;
+        }
+
+        .mobile-question-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+            gap: 0.7rem;
+        }
+
+        .mobile-question-card {
+            display: grid;
+            gap: 0.55rem;
+            padding: 0.82rem;
+            border-radius: 0.9rem;
+            border: 1px solid rgba(195, 211, 229, 0.95);
+            background: #ffffff;
+            color: inherit;
+            text-decoration: none;
+            min-width: 0;
+        }
+
+        .mobile-question-card:focus-visible {
+            outline: 3px solid rgba(36, 89, 166, 0.28);
+            outline-offset: 3px;
+        }
+
+        .mobile-question-card.status-present {
+            background: linear-gradient(180deg, #f5fff8, #ecfbf1);
+            border-color: rgba(34, 197, 94, 0.32);
+        }
+
+        .mobile-question-card.status-missing {
+            background: linear-gradient(180deg, #fbfcfd, #f3f6f8);
+            border-color: rgba(203, 213, 225, 0.95);
+        }
+
+        .mobile-question-card.status-na {
+            background: repeating-linear-gradient(
+                135deg,
+                #f1f5f9,
+                #f1f5f9 4px,
+                #e8edf2 4px,
+                #e8edf2 8px
+            );
+            border-color: rgba(203, 213, 225, 0.95);
+        }
+
+        .mobile-question-top {
+            display: flex;
+            align-items: flex-start;
+            justify-content: space-between;
+            gap: 0.55rem;
+        }
+
+        .mobile-question-label {
+            font-size: 0.95rem;
+            font-weight: 800;
+            color: #0f172a;
+            line-height: 1.2;
+        }
+
+        .mobile-state-pill {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 0.2rem 0.5rem;
+            border-radius: 9999px;
+            font-size: 0.74rem;
+            font-weight: 800;
+            line-height: 1.1;
+            white-space: nowrap;
+            border: 1px solid transparent;
+        }
+
+        .mobile-state-pill.present {
+            background: #16a34a;
+            color: #ffffff;
+        }
+
+        .mobile-state-pill.missing {
+            background: #e2e8f0;
+            color: #475569;
+        }
+
+        .mobile-state-pill.na {
+            background: rgba(255, 255, 255, 0.72);
+            color: #64748b;
+            border-color: rgba(148, 163, 184, 0.45);
+        }
+
+        .mobile-question-meta {
+            display: flex;
+            flex-wrap: wrap;
+            align-items: flex-start;
+            gap: 0.35rem;
+        }
+
+        .mobile-question-card .focus-badge {
+            font-size: 0.72rem;
+        }
+
+        .mobile-question-card .focus-note {
+            max-width: 100%;
+            text-align: right;
+        }
+
+        .mobile-empty-state {
+            border: 1px solid rgba(195, 211, 229, 0.95);
+            border-radius: 0.9rem;
+            padding: 1rem;
+            background: #f8fbff;
+            color: #475569;
+            text-align: center;
+        }
+
+        .mobile-empty-state.error {
+            color: #b91c1c;
+            background: #fff5f5;
+            border-color: #fecaca;
+        }
+
         .legal-entry-link {
             display: inline-flex;
             align-items: center;
@@ -489,6 +656,27 @@
                 font-size: 1.7rem;
             }
         }
+
+        @media (max-width: 760px) {
+            .coverage-desktop {
+                display: none;
+            }
+
+            .mobile-coverage {
+                display: grid;
+            }
+
+            .mobile-year-header {
+                flex-direction: column;
+                align-items: stretch;
+            }
+        }
+
+        @media (max-width: 420px) {
+            .mobile-question-grid {
+                grid-template-columns: 1fr;
+            }
+        }
     </style>
 </head>
 <body>
@@ -544,7 +732,7 @@
         <section class="section-card">
             <h3 class="section-header">טבלת הכיסוי</h3>
             <p id="statusText" class="status-text">טוען נתונים...</p>
-            <div class="table-wrap">
+            <div class="table-wrap coverage-desktop">
                 <table>
                     <thead>
                         <tr>
@@ -564,6 +752,7 @@
                     </tbody>
                 </table>
             </div>
+            <div id="mobileCoverage" class="mobile-coverage" aria-live="polite"></div>
         </section>
 
         <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
@@ -578,6 +767,7 @@
 
     <script>
         const coverageBody = document.getElementById("coverageBody");
+        const mobileCoverage = document.getElementById("mobileCoverage");
         const statusText = document.getElementById("statusText");
         const summaryRows = document.getElementById("summaryRows");
         const summaryCovered = document.getElementById("summaryCovered");
@@ -1050,9 +1240,101 @@
             return escapeHtml(parts.filter(Boolean).join(" | "));
         }
 
+        function getRowSubtexts(row, focusRow) {
+            const yearSubtexts = [];
+            if (row.orderVariant === 1) {
+                yearSubtexts.push("שאלון 2");
+            } else if (row.year === 2016) {
+                yearSubtexts.push("שאלון רגיל");
+            }
+            if (focusRow?.yearNote) {
+                yearSubtexts.push(String(focusRow.yearNote));
+            }
+            return yearSubtexts;
+        }
+
+        function buildMobileQuestionCard(questionNumber, entry, maxQ, focusEntry) {
+            const isRelevant = questionNumber <= maxQ;
+            let stateText = "";
+            let stateClass = "";
+            let statePillClass = "";
+            let title = "";
+
+            if (!isRelevant) {
+                stateText = "לא רלוונטי";
+                stateClass = "status-na";
+                statePillClass = "na";
+                title = buildCellTitle("שנה זו כללה פחות שאלות", focusEntry);
+            } else if (entry && entry.exists && entry.path) {
+                stateText = "יש פתרון";
+                stateClass = "status-present";
+                statePillClass = "present";
+                title = buildCellTitle("יש פתרון במאגר", focusEntry);
+            } else {
+                stateText = "אין פתרון";
+                stateClass = "status-missing";
+                statePillClass = "missing";
+                title = buildCellTitle("עדיין אין פתרון במאגר", focusEntry);
+            }
+
+            const focusHtml = buildFocusInfoHtml(focusEntry);
+            const innerHtml = `
+                <div class="mobile-question-top">
+                    <span class="mobile-question-label">שאלה ${questionNumber}</span>
+                    <span class="mobile-state-pill ${statePillClass}">${stateText}</span>
+                </div>
+                <div class="mobile-question-meta">${focusHtml}</div>
+            `;
+
+            if (isRelevant && entry && entry.exists && entry.path) {
+                return `<a class="mobile-question-card ${stateClass}" href="./${entry.path}" title="${title}" aria-label="פתח פתרון לשאלה ${questionNumber}">${innerHtml}</a>`;
+            }
+
+            return `<div class="mobile-question-card ${stateClass}" title="${title}">${innerHtml}</div>`;
+        }
+
+        function renderMobileCoverage(rows, focusLookup) {
+            if (!mobileCoverage) {
+                return;
+            }
+
+            if (!rows.length) {
+                mobileCoverage.innerHTML = '<div class="mobile-empty-state">לא נמצאו שאלות להצגה.</div>';
+                return;
+            }
+
+            mobileCoverage.innerHTML = rows.map((row) => {
+                const maxQ = row.maxQuestions || QUESTION_COUNT;
+                const focusRow = row.orderVariant === 0 ? focusLookup.get(row.year) : null;
+                const yearSubtexts = getRowSubtexts(row, focusRow);
+                const yearMetaHtml = yearSubtexts
+                    .map((text) => `<span class="mobile-year-chip">${escapeHtml(text)}</span>`)
+                    .join("");
+                const questionCards = Array.from({ length: QUESTION_COUNT }, (_, index) => {
+                    const questionNumber = index + 1;
+                    const entry = row.questions[index] || null;
+                    const focusEntry = focusRow?.questions?.get(questionNumber) || null;
+                    return buildMobileQuestionCard(questionNumber, entry, maxQ, focusEntry);
+                }).join("");
+
+                return `
+                    <section class="mobile-year-card">
+                        <div class="mobile-year-header">
+                            <div class="mobile-year-title">${escapeHtml(row.year)}</div>
+                            <div class="mobile-year-meta">${yearMetaHtml}</div>
+                        </div>
+                        <div class="mobile-question-grid">${questionCards}</div>
+                    </section>
+                `;
+            }).join("");
+        }
+
         function renderTable(rows, focusLookup) {
             if (!rows.length) {
                 coverageBody.innerHTML = '<tr><td colspan="7" class="text-slate-500">לא נמצאו שאלות להצגה.</td></tr>';
+                if (mobileCoverage) {
+                    mobileCoverage.innerHTML = '<div class="mobile-empty-state">לא נמצאו שאלות להצגה.</div>';
+                }
                 statusText.textContent = 'עדיין אין נתונים להצגה.';
                 summaryRows.textContent = '0';
                 summaryCovered.textContent = '0';
@@ -1113,16 +1395,8 @@
                     return `<td class="status-cell status-missing" title="${title}"><div class="status-cell-content"><span class="status-badge missing" aria-label="חסר">−</span>${focusHtml}</div></td>`;
                 }).join('');
 
-                const yearSubtexts = [];
-                if (row.orderVariant === 1) {
-                    yearSubtexts.push('שאלון 2');
-                } else if (row.year === 2016) {
-                    yearSubtexts.push('שאלון רגיל');
-                }
-                if (focusRow?.yearNote) {
-                    yearSubtexts.push(escapeHtml(focusRow.yearNote));
-                }
-                const yearLabel = `${row.year}${yearSubtexts.map((text) => `<span class="year-subtext">${text}</span>`).join('')}`;
+                const yearSubtexts = getRowSubtexts(row, focusRow);
+                const yearLabel = `${row.year}${yearSubtexts.map((text) => `<span class="year-subtext">${escapeHtml(text)}</span>`).join('')}`;
 
                 return `
                     <tr>
@@ -1132,8 +1406,10 @@
                 `;
             }).join('');
 
+            renderMobileCoverage(rows, focusLookup);
+
             const focusYearsCount = focusLookup.size;
-            statusText.textContent = `מוצגות ${rows.length} שורות בטבלה, המייצגות ${yearsCount} שנים במאגר. לחיצה על ✓ ירוק פותחת את הפתרון. בשנים שיש עליהן נתון של עמית (${focusYearsCount} שנים), מופיעה גם אינדיקציית מיקוד תשפו בתוך התא.`;
+            statusText.textContent = `מוצגות ${rows.length} שורות כיסוי, המייצגות ${yearsCount} שנים במאגר. לחיצה על ✓ ירוק פותחת את הפתרון. בשנים שיש עליהן נתון של עמית (${focusYearsCount} שנים), מופיעה גם אינדיקציית מיקוד תשפו בתוך התא.`;
             summaryRows.textContent = formatNumber(yearsCount);
             summaryCovered.textContent = formatNumber(coveredCount);
             summaryPercent.textContent = `${percent}%`;
@@ -1166,6 +1442,9 @@
                 attachStatusLinkPreviewHandlers();
             } catch (error) {
                 coverageBody.innerHTML = '<tr><td colspan="7" class="text-red-700">לא ניתן לטעון כרגע את מאגר הפתרונות.</td></tr>';
+                if (mobileCoverage) {
+                    mobileCoverage.innerHTML = '<div class="mobile-empty-state error">לא ניתן לטעון כרגע את מאגר הפתרונות.</div>';
+                }
                 statusText.textContent = 'אירעה תקלה בטעינת הנתונים. אפשר לנסות לרענן את הדף.';
                 console.error(error);
             }
