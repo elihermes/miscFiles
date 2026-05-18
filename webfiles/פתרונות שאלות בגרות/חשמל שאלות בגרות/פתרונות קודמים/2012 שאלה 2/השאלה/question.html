@@ -1,0 +1,358 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+	<meta charset="UTF-8" />
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+	<title>שאלה 2</title>
+	<style>
+		@page {
+			size: A4 portrait;
+			margin: 0;
+		}
+
+		:root {
+			color-scheme: light;
+		}
+
+		* {
+			box-sizing: border-box;
+		}
+
+		body {
+			margin: 0;
+			padding: 6mm 0;
+			min-height: 100vh;
+			background: #e7e7e7;
+			color: #000;
+			font-family: "Noto Sans Hebrew", "Arial", sans-serif;
+			-webkit-print-color-adjust: exact;
+			print-color-adjust: exact;
+		}
+
+		.page {
+			width: min(210mm, calc(100vw - 8px));
+			max-width: 210mm;
+			min-height: 297mm;
+			margin: 0 auto;
+			padding: 6mm 8.4mm 6mm;
+			background: #fff;
+			border: 1px solid #cfcfcf;
+			box-shadow: 0 2mm 6mm rgba(0, 0, 0, 0.08);
+		}
+
+		@media print {
+			body {
+				padding: 0;
+				min-height: auto;
+				background: #fff;
+			}
+
+			.page {
+				width: 210mm;
+				max-width: none;
+				border: 0;
+				box-shadow: none;
+			}
+		}
+
+		h1 {
+			margin: 0 0 1.4mm;
+			text-align: center;
+			font-size: 21px;
+			font-weight: 700;
+		}
+
+		.question,
+		.part-body,
+		p,
+		.points {
+			text-align: right;
+		}
+
+		p {
+			margin: 0 0 0.75mm;
+			font-size: 14pt;
+			line-height: 1.13;
+		}
+
+		.question p:last-child {
+			margin-bottom: 0;
+		}
+
+		.ltr {
+			direction: ltr;
+			unicode-bidi: isolate;
+			display: inline-block;
+			white-space: nowrap;
+		}
+
+		sup,
+		sub {
+			line-height: 0;
+			font-size: 0.72em;
+		}
+
+		.intro-grid {
+			display: grid;
+			width: 100%;
+			margin-left: 0;
+			grid-template-columns: 76mm minmax(0, 1fr);
+			column-gap: 1.2mm;
+			align-items: start;
+			margin-bottom: 0.7mm;
+			direction: ltr;
+		}
+
+		.intro-copy {
+			grid-column: 2;
+			grid-row: 1;
+			direction: rtl;
+		}
+
+		.intro-copy .part-row {
+			margin-bottom: 0.35mm;
+		}
+
+		.intro-copy .part-row:last-child {
+			margin-bottom: 0;
+		}
+
+		.intro-table {
+			grid-column: 1;
+			grid-row: 1;
+			align-self: start;
+			justify-self: end;
+		}
+
+		.intro-table .table-wrap {
+			text-align: left;
+		}
+
+		.intro-table table {
+			margin: 0;
+		}
+
+		.table-wrap {
+			margin: 0;
+			text-align: center;
+		}
+
+		table {
+			margin: 0 auto;
+			border-collapse: collapse;
+			font-size: 14pt;
+			direction: ltr;
+		}
+
+		th,
+		td {
+			min-width: 24mm;
+			padding: 0.45mm 2.3mm;
+			border: 1px solid #5e5e5e;
+			text-align: center;
+			line-height: 1.05;
+		}
+
+		th {
+			font-weight: 700;
+		}
+
+		.part-row {
+			display: grid;
+			grid-template-columns: 1.55em minmax(0, 1fr);
+			column-gap: 0.35em;
+			align-items: start;
+			margin-bottom: 0.58mm;
+		}
+
+		.part-label {
+			display: block;
+			font-size: 14pt;
+			font-weight: 700;
+			line-height: 1.13;
+			white-space: nowrap;
+			text-align: right;
+		}
+
+		.part-body p {
+			margin: 0 0 0.35mm;
+		}
+
+		.points {
+			margin-top: 0.1mm;
+			font-size: 13.8pt;
+		}
+
+		.points-inline {
+			direction: rtl;
+			unicode-bidi: isolate;
+			display: inline-block;
+			white-space: nowrap;
+		}
+
+		.context-paragraph {
+			margin: 0.15mm 0 0.75mm;
+		}
+
+		.blank-line {
+			height: 1.13em;
+		}
+
+		.statement-list {
+			margin: 0.35mm 0 0;
+		}
+
+		.statement-list p {
+			margin: 0 0 0.28mm;
+		}
+
+		.graph-row {
+			margin: 1.1mm auto 0;
+			text-align: center;
+		}
+
+		.graph-box {
+			display: block;
+			width: 100%;
+			max-width: 182mm;
+			margin: 0 auto;
+			text-align: center;
+			break-inside: avoid;
+			page-break-inside: avoid;
+		}
+
+		.graph-box img {
+			display: block;
+			width: 100%;
+			height: auto;
+			max-height: 73mm;
+			margin: 0 auto;
+			object-fit: contain;
+		}
+
+		.figure-fallback {
+			display: none;
+			align-items: center;
+			justify-content: center;
+			min-height: 73mm;
+			padding: 1.2mm;
+			border: 1px dashed #767676;
+			background: #fafafa;
+			font-size: 12.5pt;
+		}
+
+		@media screen and (max-width: 560px) {
+			.intro-grid {
+				grid-template-columns: 1fr;
+				row-gap: 1.2mm;
+			}
+
+			.intro-copy,
+			.intro-table {
+				grid-column: auto;
+				grid-row: auto;
+			}
+
+			.intro-table {
+				justify-self: center;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="page">
+		<h1>שאלה 2</h1>
+
+		<section class="question">
+			<p>תלמיד רצה למדוד את ההתנגדות של תיל מוליך (תיל א). נתונה טבלה המתארת את הזרם כפונקציה של המתח על התיל.</p>
+
+			<div class="intro-grid">
+				<div class="intro-copy">
+					<div class="part-row">
+						<span class="part-label">א.</span>
+						<div class="part-body">
+							<p>על פי הנתונים המוצגים בטבלה, סרטטו גרף המתאר את המתח כפונקציה של הזרם, וקבעו אם בתחום הנתונים בטבלה התיל מקיים את חוק אוהם. אם כן - חשבו את התנגדות התיל. אם לא - הסבירו מדוע. <span class="points-inline">(<span class="ltr">9</span> נקודות)</span></p>
+						</div>
+					</div>
+
+					<div class="part-row">
+						<span class="part-label">ב.</span>
+						<div class="part-body">
+							<p>בהנחה שאורך התיל <span class="ltr">1m</span> והחתך שלו הוא עיגול בקוטר <span class="ltr">0.5mm</span>, חשבו את ההתנגדות הסגולית <span class="ltr">ρ</span> של החומר שממנו התיל עשוי. בטאו את ההתנגדות הסגולית ביחידות <span class="ltr">Ω x m</span> (אוהם מטר). <span class="points-inline">(<span class="ltr">7</span> נקודות)</span></p>
+						</div>
+					</div>
+				</div>
+
+				<div class="intro-table">
+					<div class="table-wrap">
+						<table aria-label="טבלת זרם ומתח">
+							<tr>
+								<th>I(A)</th>
+								<th>V(V)</th>
+							</tr>
+							<tr>
+								<td>0</td>
+								<td>0</td>
+							</tr>
+							<tr>
+								<td>0.19</td>
+								<td>1</td>
+							</tr>
+							<tr>
+								<td>0.39</td>
+								<td>2</td>
+							</tr>
+							<tr>
+								<td>0.57</td>
+								<td>3</td>
+							</tr>
+							<tr>
+								<td>0.79</td>
+								<td>4</td>
+							</tr>
+							<tr>
+								<td>0.96</td>
+								<td>5</td>
+							</tr>
+						</table>
+					</div>
+				</div>
+			</div>
+
+			<div class="blank-line" aria-hidden="true"></div>
+			<div class="blank-line" aria-hidden="true"></div>
+			<p class="context-paragraph">לתלמיד תיל נוסף (תיל ב) העשוי מאותו חומר שממנו עשוי תיל א, וזהה באורכו לתיל א, אבל שטח החתך שלו גדול יותר.</p>
+
+			<div class="part-row">
+				<span class="part-label">ג.</span>
+				<div class="part-body">
+					<p>קבעו אם ההתנגדות של תיל ב קטנה מהתנגדותו של תיל א, גדולה ממנה או שווה לה. הסבירו את תשובתכם.</p>
+					<p>הוסיפו במערכת הצירים של הגרף ששרטטתם בסעיף א גרף איכותי המתאים לתיל ב. <span class="points-inline">(<span class="ltr">9.33</span> נקודות)</span></p>
+				</div>
+			</div>
+
+			<div class="part-row">
+				<span class="part-label">ד.</span>
+				<div class="part-body">
+					<p>בתרשים שלפניכם מוצג גרף מקורב של הזרם כפונקציה של המתח (אופיין) של רכיב חשמלי הנקרא דיודה.</p>
+					<p>המתחים משתנים בתחום שבין <span class="ltr">-1V</span> ל-<span class="ltr">1V</span>.</p>
+					<p>לפניכם ארבעה היגדים <span class="ltr">(1)-(4)</span>. העתיקו למחברתכם את ההיגדים המתאימים לגרף המתואר, ונמקו את קביעותיכם.</p>
+					<div class="statement-list">
+						<p><span class="ltr">(1)</span> הזרם משתנה ביחס ישר למתח.</p>
+						<p><span class="ltr">(2)</span> הזרם קבוע בלי תלות במתח בין הדקי הדיודה.</p>
+						<p><span class="ltr">(3)</span> כדי שיזרום זרם בדיודה, חשוב לאיזה משני הדקי הדיודה מחובר הפוטנציאל הגבוה של מקור המתח.</p>
+						<p><span class="ltr">(4)</span> כאשר זורם זרם דרך הדיודה, ההתנגדות קטנה ככל שעולה המתח בין הדקי הדיודה.</p>
+					</div>
+					<p class="points">(<span class="ltr">8</span> נקודות)</p>
+					<div class="graph-row">
+						<div class="graph-box">
+							<img src="qimage-1.png" alt="גרף אופיין של דיודה" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" />
+							<div class="figure-fallback">לא ניתן להציג את qimage-1.png</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</section>
+	</main>
+</body>
+</html>
