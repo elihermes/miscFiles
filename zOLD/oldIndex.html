@@ -278,10 +278,13 @@
         const DEFAULT_OWNER = 'elihermes';
         const DEFAULT_REPO = 'miscFiles';
         const REPO_ROOT_PREFIX = '../';
+        const TREE_CACHE_PREFIX = 'miscfiles-tree-cache-v3';
+        const TREE_CACHE_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 5;
         const MAX_CONTENT_FILES_TO_SCAN = 220;
         const MAX_CONTENT_FILE_SIZE = 350000;
         const CONTENT_SEARCH_CONCURRENCY = 8;
         const MAX_LOCAL_DIRS_TO_SCAN = 4000;
+        const JSDELIVR_BRANCH_CANDIDATES = ['main', 'master', 'gh-pages'];
         const SEARCHABLE_EXTENSIONS = new Set([
             'html', 'htm', 'txt', 'md', 'csv', 'json', 'js', 'css', 'xml',
             'py', 'sh', 'ps1', 'cmd', 'yml', 'yaml', 'ts', 'tsx', 'jsx'
@@ -345,9 +348,90 @@
             return window.location.hostname === 'localhost' || window.location.hostname === '127.0.0.1';
         }
 
+        function getTreeCacheKey(ctx) {
+            return `${TREE_CACHE_PREFIX}:${ctx.owner}/${ctx.repo}`;
+        }
+
+        function loadCachedTree(ctx) {
+            try {
+                const raw = localStorage.getItem(getTreeCacheKey(ctx));
+                if (!raw) {
+                    return null;
+                }
+
+                const parsed = JSON.parse(raw);
+                if (!parsed || !Array.isArray(parsed.tree) || typeof parsed.savedAt !== 'number') {
+                    return null;
+                }
+
+                const age = Date.now() - parsed.savedAt;
+                if (age > TREE_CACHE_MAX_AGE_MS) {
+                    return null;
+                }
+
+                return {
+                    tree: parsed.tree,
+                    source: 'cache'
+                };
+            } catch (_err) {
+                return null;
+            }
+        }
+
+        function saveCachedTree(ctx, tree) {
+            try {
+                const payload = {
+                    savedAt: Date.now(),
+                    tree
+                };
+                localStorage.setItem(getTreeCacheKey(ctx), JSON.stringify(payload));
+            } catch (_err) {
+                // Ignore storage failures (private mode/quota).
+            }
+        }
+
         function isIgnoredLocalPath(relPath) {
             const firstPart = relPath.split('/')[0] || '';
             return firstPart === '.git' || firstPart === '__pycache__';
+        }
+
+        function normalizeRepoRelativePath(path) {
+            return decodeURIComponent(path).replace(/^\/+|\/+$/g, '');
+        }
+
+        function buildTreeFromFlatFilePaths(paths) {
+            const map = new Map();
+
+            for (const rawPath of paths) {
+                if (typeof rawPath !== 'string') {
+                    continue;
+                }
+
+                const filePath = normalizeRepoRelativePath(rawPath);
+                if (!filePath || isIgnoredLocalPath(filePath)) {
+                    continue;
+                }
+
+                const parts = filePath.split('/').filter(Boolean);
+                if (!parts.length) {
+                    continue;
+                }
+
+                for (let i = 1; i < parts.length; i += 1) {
+                    const dirPath = parts.slice(0, i).join('/');
+                    const dirKey = 'tree:' + dirPath;
+                    if (!map.has(dirKey)) {
+                        map.set(dirKey, { path: dirPath, type: 'tree' });
+                    }
+                }
+
+                const fileKey = 'blob:' + filePath;
+                if (!map.has(fileKey)) {
+                    map.set(fileKey, { path: filePath, type: 'blob' });
+                }
+            }
+
+            return Array.from(map.values());
         }
 
         async function fetchTreeFromDirectoryListing() {
@@ -424,7 +508,40 @@
             return Array.from(treeMap.values());
         }
 
+        async function fetchTreeFromJsDelivr(ctx) {
+            const base = `https://data.jsdelivr.com/v1/package/gh/${ctx.owner}/${ctx.repo}`;
+            const urls = JSDELIVR_BRANCH_CANDIDATES.map((branch) => `${base}@${branch}/flat`);
+            urls.push(`${base}/flat`);
+
+            for (const url of urls) {
+                try {
+                    const response = await fetch(url, { cache: 'no-store' });
+                    if (!response.ok) {
+                        continue;
+                    }
+
+                    const data = await response.json();
+                    const files = Array.isArray(data.files) ? data.files : [];
+                    const paths = files
+                        .map((f) => (f && typeof f.name === 'string' ? f.name : ''))
+                        .filter(Boolean);
+
+                    if (!paths.length) {
+                        continue;
+                    }
+
+                    return buildTreeFromFlatFilePaths(paths);
+                } catch (_err) {
+                    // Try next candidate URL.
+                }
+            }
+
+            throw new Error('jsdelivr-failed');
+        }
+
         async function fetchTree() {
+            const ctx = getRepoContext();
+
             if (isLocalhost()) {
                 try {
                     const listingTree = await fetchTreeFromDirectoryListing();
@@ -451,18 +568,45 @@
                 }
             }
 
-            const ctx = getRepoContext();
             const treeUrl = `https://api.github.com/repos/${ctx.owner}/${ctx.repo}/git/trees/HEAD?recursive=1`;
-            const response = await fetch(treeUrl, { cache: 'no-store' });
-            if (!response.ok) {
-                throw new Error('api-failed');
+            try {
+                const response = await fetch(treeUrl, { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error('api-failed');
+                }
+
+                const data = await response.json();
+                const tree = Array.isArray(data.tree) ? data.tree : [];
+                if (tree.length) {
+                    saveCachedTree(ctx, tree);
+                }
+                return {
+                    tree,
+                    source: 'github'
+                };
+            } catch (_err) {
+                // Continue with production fallbacks below.
             }
 
-            const data = await response.json();
-            return {
-                tree: Array.isArray(data.tree) ? data.tree : [],
-                source: 'github'
-            };
+            try {
+                const jsDelivrTree = await fetchTreeFromJsDelivr(ctx);
+                if (jsDelivrTree.length) {
+                    saveCachedTree(ctx, jsDelivrTree);
+                }
+                return {
+                    tree: jsDelivrTree,
+                    source: 'jsdelivr'
+                };
+            } catch (_err) {
+                // Use cached tree as a final fallback.
+            }
+
+            const cached = loadCachedTree(ctx);
+            if (cached) {
+                return cached;
+            }
+
+            throw new Error('all-sources-failed');
         }
 
         function makeBreadcrumbs(currentPath) {
@@ -918,6 +1062,10 @@
                     ? 'מקומי (API)'
                     : source === 'local-listing'
                         ? 'מקומי (סריקת תיקיות)'
+                        : source === 'jsdelivr'
+                            ? 'jsDelivr'
+                            : source === 'cache'
+                                ? 'מטמון מקומי'
                         : 'GitHub';
                 if (searchQuery) {
                     if (includeContent) {
