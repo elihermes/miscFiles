@@ -278,6 +278,7 @@
         const DEFAULT_OWNER = 'elihermes';
         const DEFAULT_REPO = 'miscFiles';
         const REPO_ROOT_PREFIX = '../';
+        const JINA_PROXY_PREFIX = 'https://r.jina.ai/http://';
         const TREE_CACHE_PREFIX = 'miscfiles-tree-cache-v3';
         const TREE_CACHE_MAX_AGE_MS = 1000 * 60 * 60 * 24 * 5;
         const MAX_CONTENT_FILES_TO_SCAN = 220;
@@ -539,6 +540,33 @@
             throw new Error('jsdelivr-failed');
         }
 
+        function parseJsonObjectFromText(rawText) {
+            if (typeof rawText !== 'string') {
+                throw new Error('proxy-text-invalid');
+            }
+
+            const start = rawText.indexOf('{');
+            const end = rawText.lastIndexOf('}');
+            if (start === -1 || end === -1 || end <= start) {
+                throw new Error('proxy-json-not-found');
+            }
+
+            return JSON.parse(rawText.slice(start, end + 1));
+        }
+
+        async function fetchTreeViaJinaProxy(treeUrl) {
+            const strippedUrl = treeUrl.replace(/^https?:\/\//, '');
+            const proxyUrl = JINA_PROXY_PREFIX + strippedUrl;
+            const response = await fetch(proxyUrl, { cache: 'no-store' });
+            if (!response.ok) {
+                throw new Error('proxy-failed');
+            }
+
+            const rawText = await response.text();
+            const data = parseJsonObjectFromText(rawText);
+            return Array.isArray(data.tree) ? data.tree : [];
+        }
+
         async function fetchTree() {
             const ctx = getRepoContext();
 
@@ -586,6 +614,19 @@
                 };
             } catch (_err) {
                 // Continue with production fallbacks below.
+            }
+
+            try {
+                const proxyTree = await fetchTreeViaJinaProxy(treeUrl);
+                if (proxyTree.length) {
+                    saveCachedTree(ctx, proxyTree);
+                }
+                return {
+                    tree: proxyTree,
+                    source: 'github-proxy'
+                };
+            } catch (_err) {
+                // Continue with additional fallback sources.
             }
 
             try {
@@ -1062,6 +1103,8 @@
                     ? 'מקומי (API)'
                     : source === 'local-listing'
                         ? 'מקומי (סריקת תיקיות)'
+                        : source === 'github-proxy'
+                            ? 'GitHub (proxy דינמי)'
                         : source === 'jsdelivr'
                             ? 'jsDelivr'
                             : source === 'cache'
