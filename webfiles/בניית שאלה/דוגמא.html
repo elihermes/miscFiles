@@ -29,8 +29,8 @@
 
     <style>
         :root {
-            --line-height: 1.1;
-            --paragraph-spacing: 5px;
+            --line-height: 1.6;
+            --paragraph-spacing: 16px;
         }
         body {
             font-family: 'Assistant', sans-serif; 
@@ -148,27 +148,6 @@
         <!-- Controls Panel (Left side on desktop, top on mobile) - No-print -->
         <div class="w-full lg:w-[450px] bg-white p-6 rounded-xl shadow-md flex flex-col gap-5 no-print border border-gray-200 self-start">
             
-            <!-- API Key Settings -->
-            <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex flex-col gap-2 relative group" id="apiKeyContainer">
-                <div class="flex justify-between items-center">
-                    <h2 class="text-sm font-bold text-indigo-900 flex items-center gap-2">
-                        <i data-lucide="key" class="w-4 h-4"></i>
-                        מפתח API (Gemini)
-                    </h2>
-                    <span class="text-[10px] bg-green-100 text-green-800 px-2 py-0.5 rounded-full hidden" id="apiKeySavedBadge">נשמר בדפדפן</span>
-                </div>
-                <p class="text-[10px] text-indigo-700">המפתח נשמר במחשב שלך בלבד (LocalStorage) ולא מועבר לשום שרת.</p>
-                <div class="flex gap-2 relative">
-                    <input type="password" id="apiKeyValue" class="w-full text-xs border rounded p-2 pr-8 focus:ring-1 focus:ring-indigo-500 outline-none" placeholder="הדבק כאן את מפתח ה-API שלך...">
-                    <button type="button" class="absolute left-[60px] top-1/2 -translate-y-1/2 text-gray-400 hover:text-indigo-600 focus:outline-none hidden transition-colors" id="toggleApiKeyVisibility" onclick="toggleApiKeyShow()" title="הצג/הסתר מפתח">
-                        <i data-lucide="eye" class="w-4 h-4"></i>
-                    </button>
-                    <button type="button" onclick="saveApiKey()" class="bg-indigo-600 text-white px-3 py-1.5 rounded hover:bg-indigo-700 transition font-medium text-xs whitespace-nowrap cursor-pointer z-10">
-                        שמור
-                    </button>
-                </div>
-            </div>
-
             <!-- STEP 0: OCR IMAGE INPUT WITH INSTRUCTIONS -->
             <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex flex-col gap-3">
                 <h2 class="text-sm font-bold text-indigo-900 flex items-center gap-2">
@@ -269,27 +248,27 @@
                     <div>
                         <div class="flex justify-between text-xs mb-1">
                             <span class="text-gray-600">שוליים פנימיים בדף (padding):</span>
-                            <span id="paddingVal" class="font-mono">15mm</span>
+                            <span id="paddingVal" class="font-mono">20mm</span>
                         </div>
-                        <input type="range" id="paddingSlider" min="10" max="30" value="15" class="w-full accent-indigo-600" oninput="adjustPadding(this.value)">
+                        <input type="range" id="paddingSlider" min="10" max="30" value="20" class="w-full accent-indigo-600" oninput="adjustPadding(this.value)">
                     </div>
 
                     <!-- Line Spacing Control -->
                     <div>
                         <div class="flex justify-between text-xs mb-1">
                             <span class="text-gray-600">מרווח בין שורות (Line height):</span>
-                            <span id="lineHeightVal" class="font-mono">1.1</span>
+                            <span id="lineHeightVal" class="font-mono">1.6</span>
                         </div>
-                        <input type="range" id="lineHeightSlider" min="1.0" max="2.5" step="0.1" value="1.1" class="w-full accent-indigo-600" oninput="adjustLineHeight(this.value)">
+                        <input type="range" id="lineHeightSlider" min="1.0" max="2.5" step="0.1" value="1.6" class="w-full accent-indigo-600" oninput="adjustLineHeight(this.value)">
                     </div>
 
                     <!-- Paragraph Spacing Control -->
                     <div>
                         <div class="flex justify-between text-xs mb-1">
                             <span class="text-gray-600">מרווח בין פסקאות וסעיפים:</span>
-                            <span id="paraSpacingVal" class="font-mono">5px</span>
+                            <span id="paraSpacingVal" class="font-mono">16px</span>
                         </div>
-                        <input type="range" id="paraSpacingSlider" min="4" max="32" step="1" value="5" class="w-full accent-indigo-600" oninput="adjustParagraphSpacing(this.value)">
+                        <input type="range" id="paraSpacingSlider" min="4" max="32" step="1" value="16" class="w-full accent-indigo-600" oninput="adjustParagraphSpacing(this.value)">
                     </div>
 
                     <div>
@@ -337,7 +316,7 @@
             </div>
 
             <!-- The A4 Sheet itself -->
-            <div id="a4Sheet" class="a4-sheet p-[15mm] flex flex-col justify-start" style="padding: 15mm;">
+            <div id="a4Sheet" class="a4-sheet p-[20mm] flex flex-col justify-start" style="padding: 20mm;">
                 
                 <!-- Main Content Area -->
                 <div class="preview-content" id="previewContainer">
@@ -369,49 +348,9 @@
 
     <!-- Logic and Gemini API Integration -->
     <script>
+        const apiKey = ""; // Set dynamically by the environment
         let uploadedImageBase64 = null;
         let uploadedImageMimeType = null;
-
-        function initApiKey() {
-            const savedKey = localStorage.getItem('geminiApiKey');
-            if (savedKey) {
-                document.getElementById('apiKeyValue').value = savedKey;
-                document.getElementById('apiKeySavedBadge').classList.remove('hidden');
-                document.getElementById('toggleApiKeyVisibility').classList.remove('hidden');
-            }
-        }
-        
-        function saveApiKey() {
-            const key = document.getElementById('apiKeyValue').value.trim();
-            if (key) {
-                localStorage.setItem('geminiApiKey', key);
-                document.getElementById('apiKeySavedBadge').classList.remove('hidden');
-                document.getElementById('toggleApiKeyVisibility').classList.remove('hidden');
-                showNotification("נשמר!", "מפתח ה-API נשמר בהצלחה בזיכרון המקומי של הדפדפן.", true);
-            } else {
-                localStorage.removeItem('geminiApiKey');
-                document.getElementById('apiKeySavedBadge').classList.add('hidden');
-                document.getElementById('toggleApiKeyVisibility').classList.add('hidden');
-                showNotification("נמחק", "מפתח ה-API הוסר מהמערכת.", true);
-            }
-        }
-        
-        function toggleApiKeyShow() {
-            const input = document.getElementById('apiKeyValue');
-            const icon = document.querySelector('#toggleApiKeyVisibility i');
-            if (input.type === 'password') {
-                input.type = 'text';
-                icon.setAttribute('data-lucide', 'eye-off');
-            } else {
-                input.type = 'password';
-                icon.setAttribute('data-lucide', 'eye');
-            }
-            lucide.createIcons();
-        }
-
-        function getApiKey() {
-            return localStorage.getItem('geminiApiKey') || document.getElementById('apiKeyValue').value.trim();
-        }
 
         const defaultQuestion = `4. במעגל חשמלי קיים מקור מתח בעל כא"מ $\\epsilon = 220V$ והתנגדות פנימית $r = 5\\Omega$.
 לפניך גוף שמסתו $m = 2 kg$ המונח על מסילה. תאוצת הכובד היא $g = 10 m/s^2$.
@@ -426,7 +365,6 @@
 
         window.onload = function() {
             lucide.createIcons();
-            initApiKey();
             document.getElementById('questionInput').value = defaultQuestion;
             parseAndRenderQuestion();
             setupDragAndDrop();
@@ -521,12 +459,6 @@
         }
 
         async function scanUploadedImage() {
-            const activeApiKey = getApiKey();
-            if (!activeApiKey) {
-                showNotification("חסר מפתח", "נא להזין עכשיו מפתח API כדי להשתמש בסריקה, ולשמור אותו.", false);
-                return;
-            }
-
             if (!uploadedImageBase64) {
                 showNotification("שגיאה", "אנא בחרו או הדביקו תמונה קודם לכן.", false);
                 return;
@@ -582,7 +514,7 @@ ${textExtractionRule}
                 }]
             };
 
-            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash:generateContent?key=${activeApiKey}`;
+            const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-09-2025:generateContent?key=${apiKey}`;
 
             try {
                 const textResult = await fetchWithRetry(url, payload);
@@ -943,8 +875,8 @@ ${textExtractionRule}
             });
 
             const paddingVal = document.getElementById('paddingSlider').value + 'mm';
-            const lineHeightVal = document.getElementById('lineHeightSlider').value;
-            const paraSpacingVal = document.getElementById('paraSpacingSlider').value + 'px';
+            const lineHeightVal = document.documentElement.style.getPropertyValue('--line-height') || '1.6';
+            const paraSpacingVal = document.documentElement.style.getPropertyValue('--paragraph-spacing') || '16px';
             const bodyContent = tempContainer.innerHTML.trim();
 
             const completeHTML = `<!DOCTYPE html>
