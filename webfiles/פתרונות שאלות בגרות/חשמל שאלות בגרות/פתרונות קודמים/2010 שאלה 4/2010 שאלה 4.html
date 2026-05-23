@@ -1,0 +1,970 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+        <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+        <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-QZJ7JT80X2');
+        </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - כוח לורנץ בשדה מגנטי</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה: כוח לורנץ בשדה מגנטי</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">בגרות חשמל 2010 שאלה 4</h2>
+        <p class="mt-3 text-slate-500">בשאלה זו נחקור תנועה של כדור טעון בהשפעת שדה מגנטי וכוח הכובד. הבעיה מדגימה עקרונות של שיווי משקל כוחות, תנועה מעגלית קצובה, והפרדת תנועה בצירים (אי-תלות בין צירים).</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200 object-contain"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א' -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א': תנועה בקו ישר (משחק ראשון)</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> מטען הכדור הוא \( Q = 1.26 \text{ C} \), הכדור חיובי. מסת הכדור הנתונה היא \( m = 280 \text{ gr} \). נבצע המרת יחידות (MKS) למסה כדי לעבוד ביחידות התקניות של קילוגרם: \( m = \frac{280}{1000} = 0.28 \text{ kg} \). עוצמת השדה המגנטי היא \( B = 0.5 \text{ T} \). השדה המגנטי מקביל לרצפה. תאוצת הכובד נבחרת להיות כלפי מטה וגודלה \( g = 10 \text{ m/s}^2 \). הכדור נזרק במהירות אופקית \( v_0 \) בניצב לקווי השדה ונע בקו ישר מקביל לרצפה.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> אנו מתבקשים לחשב את גודל המהירות ההתחלתית \( v_0 \) שאיתה נזרק הכדור, כך שינוע בקו ישר (ללא הסטה אנכית).</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+            <span class="formula-badge">\( W = mg \)</span>
+            <span class="formula-badge">\( F_B = qvB\sin\alpha \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">העיקרון המרכזי כאן הוא <strong>החוק הראשון של ניוטון</strong> בציר האנכי. מכיוון שהכדור נע בקו ישר אופקי, אין לו תאוצה בציר האנכי (\( a_y = 0 \)), ולכן שקול הכוחות בציר זה חייב להיות אפס. נשרטט תרשים כוחות (FBD) עבור הכדור בזמן מעופו. נגדיר את ציר \( y \) כחיובי כלפי מעלה. נתון כי המהירות האופקית מכוונת שמאלה, והשדה המגנטי יוצא מן הדף.</p>
+            
+            <div class="visual-frame">
+                <img
+                    src="image-1.png"
+                    alt="תרשים סעיף א"
+                    width="312.5"
+                    height="312.5"
+                    style="width: 312.5px; height: 312.5px; object-fit: contain;"
+                />
+            </div>
+
+            <p class="content-paragraph">כיוון המהירות \( \vec{v_0} \) ניצב לשדה המגנטי \( \vec{B} \), ולכן הזווית ביניהם היא \( \alpha = 90^\circ \). נציב בנוסחת הכוח המגנטי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ F_B = Q \cdot v_0 \cdot B \cdot \sin(90^\circ) = Q \cdot v_0 \cdot B \]
+            </div>
+            <p class="content-paragraph">נרשום את משוואת שקול הכוחות בציר האנכי (\( y \)) ונשווה לאפס מכיוון שאין תאוצה בציר זה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_y = F_B - mg = 0 \quad \Rightarrow \quad F_B = mg \]
+            </div>
+            <p class="content-paragraph">נציב את הביטויים שמצאנו ונבודד את המהירות \( v_0 \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ Q \cdot v_0 \cdot B = mg \quad \Rightarrow \quad v_0 = \frac{mg}{QB} \]
+            </div>
+            <p class="content-paragraph">כעת, נציב את הערכים המספריים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ v_0 = \frac{0.28 \cdot 10}{1.26 \cdot 0.5} = \frac{2.8}{0.63} = 4.444... \text{ m/s} \]
+            </div>
+            <p class="final-answer">מסקנה: גודל המהירות ההתחלתית הוא <span class="inline-ltr">\( v_0 = 4.44 \text{ m/s} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            כפי שלמדנו בכיתה, אנו משתמשים בכלל יד ימין כדי למצוא ולוודא את כיוון הכוח המגנטי: נכוון את האגודל (מהירות) שמאלה, ואת האצבעות (שדה מגנטי) החוצה מן הדף (אלינו). במצב זה, כף היד (המייצגת את הכוח) פונה כלפי מעלה. כך אנו מוודאים שאכן הכוח המגנטי הפועל על הכדור מכוון כלפי מעלה, ולכן מסוגל לאזן את כוח הכובד הפועל מטה.
+        </div>
+    </section>
+
+    <!-- סעיף ב' -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': תנועה מעגלית (משחק שני)</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> כעת השדה המגנטי \( B = 0.5 \text{ T} \) מכוון אנכית כלפי מטה. הכדור מונח על הרצפה מקבל מהירות התחלתית \( v_1 \) במישור הרצפה ונע במסלול מעגלי. נזניח את כוחות החיכוך עם הרצפה. הכוח האנכי (כובד) מאוזן על ידי הכוח הנורמלי מהרצפה, ולכן נתמקד רק במישור האופקי.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> אנו מתבקשים לחשב את משך הזמן שארכה תנועת הכדור במסלולו עד שחזר לידי השחקן - כלומר, אנו מחפשים את זמן המחזור \( T \) של התנועה המעגלית.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( F_B = qvB\sin\alpha \)</span>
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+            <span class="formula-badge">\( a_R = \frac{v^2}{R} \)</span>
+            <span class="formula-badge">\( v = \frac{2\pi R}{T} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">כאשר חלקיק טעון נע במאונך לשדה מגנטי אחיד, הכוח המגנטי פועל ככוח צנטריפטלי מרכזי והחלקיק יבצע תנועה מעגלית קצובה במישור המאונך לשדה. נשרטט תרשים (ממבט על) של הכדור במישור הרצפה.</p>
+            
+            <div class="visual-frame">
+                <img
+                    src="image-2.png"
+                    alt="תרשים סעיף ב"
+                    width="312.5"
+                    height="312.5"
+                    style="width: 312.5px; height: 312.5px; object-fit: contain;"
+                />
+            </div>
+
+            <p class="content-paragraph">נרשום את משוואת החוק השני של ניוטון בציר הרדיאלי (לכיוון מרכז המעגל). הזווית בין המהירות במישור לשדה האנכי היא \( 90^\circ \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_R = m \cdot a_R \quad \Rightarrow \quad Q \cdot v_1 \cdot B = m \frac{v_1^2}{R} \]
+            </div>
+            <p class="content-paragraph">נצמצם את המהירות \( v_1 \) (ששונה מאפס) מכל צד ונבודד את הרדיוס \( R \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ Q \cdot B = \frac{m \cdot v_1}{R} \quad \Rightarrow \quad R = \frac{m \cdot v_1}{Q \cdot B} \]
+            </div>
+            <p class="content-paragraph">נציב את הקשר בין מהירות, רדיוס וזמן מחזור \( v_1 = \frac{2\pi R}{T} \) לתוך המשוואה למעלה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ R = \frac{m \cdot \left(\frac{2\pi R}{T}\right)}{Q \cdot B} \]
+            </div>
+            <p class="content-paragraph">אפשר לצמצם את \( R \) משני האגפים, ולקבל ביטוי לזמן המחזור \( T \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 1 = \frac{2\pi m}{T \cdot Q \cdot B} \quad \Rightarrow \quad T = \frac{2\pi m}{Q \cdot B} \]
+            </div>
+            <p class="content-paragraph">נציב את הנתונים המספריים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ T = \frac{2\pi \cdot 0.28}{1.26 \cdot 0.5} = \frac{0.56\pi}{0.63} \approx 2.7925... \text{ s} \]
+            </div>
+            <p class="final-answer">מסקנה: משך הזמן שארכה תנועת הכדור הוא <span class="inline-ltr">\( T = 2.79 \text{ s} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            שימו לב להפתעה המעניינת! זמן המחזור לא תלוי כלל במהירות ההתחלתית \( v_1 \). אם נזרוק את הכדור מהר יותר, הוא אמנם ישלים מסלול עם רדיוס גדול יותר, אך מכיוון שהוא זז מהר יותר בול באותו יחס, הזמן להשלמת סיבוב יישאר זהה. זוהי "תדירות הציקלוטרון".
+        </div>
+    </section>
+
+    <!-- סעיף ג' -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': עבודת השדה המגנטי</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> הכדור מבצע תנועה במרחב בהשפעת שדה מגנטי. הכוח המגנטי הפועל על חלקיק תלוי במכפלה הווקטורית של המהירות והשדה המגנטי.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> אנו נשאלים האם השדה המגנטי מבצע עבודה על הכדור במהלך תנועתו, ומתבקשים להסביר.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( W = F \cdot \Delta x \cdot \cos\theta \)</span>
+            <span class="formula-badge">משפט עבודה ואנרגיה: \( W_{\text{total}} = \Delta E_k \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">עבודה מוגדרת כמכפלת הכוח בהעתק (או במהירות הרגעית) כפול קוסינוס הזווית שביניהם. על פי הגדרת כוח לורנץ, כיוון הכוח המגנטי \( \vec{F}_B \) תמיד <strong>מאונך</strong> (ניצב) לוקטור המהירות \( \vec{v} \) בכל רגע נתון.</p>
+            <p class="content-paragraph">מכיוון שהזווית בין הכוח למהירות (ולכן גם להעתק האינפיניטסימלי) היא תמיד \( 90^\circ \), הרי ש- \( \cos(90^\circ) = 0 \).</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ W_B = F_B \cdot \Delta x \cdot \cos(90^\circ) = 0 \]
+            </div>
+            <p class="content-paragraph">לכן, העבודה שעושה הכוח המגנטי היא תמיד אפס.</p>
+            <p class="final-answer">מסקנה: לא, <span class="inline-ltr">השדה המגנטי אינו מבצע עבודה על הכדור</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            מסקנה פיזיקלית חשובה הנובעת מכך היא שעל פי משפט עבודה ואנרגיה, מכיוון שהכוח המגנטי תמיד מאונך למהירות הרגעית, הוא אינו מבצע עבודה (\( W = 0 \)). כתוצאה מכך, <strong>הכוח המגנטי כשלעצמו</strong> אינו יכול לשנות את האנרגיה הקינטית של החלקיק באופן ישיר (כלומר, הוא לא ישנה את גודל המהירות המשיקית, אלא רק את כיוונה). עם זאת, חשוב לזכור כי שינוי כיוון התנועה על ידי השדה המגנטי עשוי להשפיע על מסלול הגוף, ובכך להשפיע בעקיפין על מידת ההשפעה של כוחות אחרים הפועלים במערכת (כמו הכוח החשמלי או כח הכובד), שיכולים לבצע עבודה ולשנות את גודל המהירות.
+        </div>
+    </section>
+
+    <!-- סעיף ד' (1) -->
+    <section class="section-card" id="part-d1">
+        <h3 class="section-header">סעיף ד' (1): רכיבי כוח במהלך זריקה באוויר</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> במהלך המשחק השני (שבו השדה המגנטי \( \vec{B} \) מכוון אנכית כלפי מטה), אחד השחקנים זורק את הכדור באוויר מנקודה M לנקודה N.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> האם לכוח המגנטי הפועל על הכדור יש רכיב בכיוון המקביל לכוח הכובד? נדרש הסבר.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">כלל יד ימין (כוח לורנץ)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">כוח הכובד (\( m\vec{g} \)) פועל תמיד בכיוון <strong>אנכי כלפי מטה</strong>. לפי נתוני המשחק השני, גם השדה המגנטי \( \vec{B} \) מכוון בכיוון <strong>אנכי כלפי מטה</strong>.</p>
+            <p class="content-paragraph">הכוח המגנטי \( \vec{F}_B \) נוצר בניצב (בזווית של \( 90^\circ \)) לכיוון השדה המגנטי \( \vec{B} \) (וגם למהירות).</p>
+            <p class="content-paragraph">מכיוון שהשדה המגנטי הוא על הציר האנכי, כל וקטור שמאונך אליו חייב להימצא לחלוטין במישור <strong>האופקי</strong> (המישור המקביל לרצפה). מכאן נובע שלכוח המגנטי אין שום רכיב על הציר האנכי.</p>
+            <p class="final-answer">מסקנה: לא. לכוח המגנטי אין רכיב המקביל לכוח הכובד, <span class="inline-ltr">מאחר שהוא פועל כולו במישור האופקי המאונך לכוח הכובד (הפועל בציר האנכי)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            דמיינו מערכת צירים תלת-ממדית. אם כוח הכובד והשדה המגנטי שניהם נמצאים על ציר \( Z \), אזי הכוח המגנטי חייב להיות מונח איפשהו על מישור \( XY \). אין לו שום דרך להשפיע על מה שקורה בציר \( Z \).
+        </div>
+    </section>
+
+    <!-- סעיף ד' (2) -->
+    <section class="section-card" id="part-d2">
+        <h3 class="section-header">סעיף ד' (2): זמן שהייה באוויר</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> הכדור נזרק באוויר. אנו משווים שני מצבים: מצב ראשון בו יש שדה מגנטי אנכי (כמו במשחק השני), ומצב שני ללא שדה מגנטי בכלל, בו פועל רק כוח הכובד.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> האם משך הזמן שהכדור נמצא באוויר בהשפעת השדה המגנטי ארוך ממשך הזמן, קצר ממנו, או שווה לו (ביחס למצב ללא שדה מגנטי)?</div>
+        </div>
+
+        <!-- חלון הסימולציה -->
+        <div class="visual-frame flex-col items-center mt-6 mb-8 border-2 border-blue-100 p-4">
+            <h4 class="font-bold text-blue-900 mb-3 text-center">סימולציה תלת-ממדית: השפעת השדה המגנטי על מסלול וזמן השהייה</h4>
+            <div class="relative w-full max-w-lg">
+                <canvas id="simCanvas" class="w-full bg-white border border-slate-300 rounded-lg shadow-sm" width="500" height="320"></canvas>
+                <div class="absolute top-3 left-3 bg-white/95 px-3 py-1.5 border border-slate-300 rounded-md text-lg font-mono font-bold text-slate-800 shadow-sm flex items-center gap-2" dir="ltr">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="text-blue-600"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    <span id="simTimer">0.00</span> s
+                </div>
+                <div id="simMessage" class="absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 bg-blue-100 text-blue-800 px-4 py-2 rounded-lg font-bold shadow-lg border border-blue-200 hidden opacity-0 transition-opacity duration-300 pointer-events-none text-center">
+                    הכדור פגע בקרקע!
+                </div>
+            </div>
+            
+            <div class="flex flex-col sm:flex-row flex-wrap gap-4 mt-4 w-full max-w-lg justify-between items-center bg-slate-50 p-4 rounded-lg border border-slate-200">
+                <div class="flex flex-col w-full sm:w-auto flex-1 min-w-[200px]">
+                    <div class="flex justify-between mb-1">
+                        <label for="bSlider" class="font-bold text-sm text-slate-700">עוצמת השדה המגנטי (B):</label>
+                        <span id="bValueDisplay" class="font-mono text-sm font-bold text-blue-700" dir="ltr">0.0 T</span>
+                    </div>
+                    <input type="range" id="bSlider" min="0" max="2" step="0.1" value="0" class="w-full h-2.5 bg-slate-300 rounded-lg appearance-none cursor-pointer accent-blue-600">
+                </div>
+                <div class="flex gap-2 w-full sm:w-auto justify-center">
+                    <button id="simPlayBtn" class="bg-blue-600 hover:bg-blue-700 text-white px-5 py-2 rounded-md font-bold text-sm transition-colors shadow-sm flex items-center gap-1">
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+                        זרוק כדור
+                    </button>
+                    <button id="simResetBtn" class="bg-slate-200 hover:bg-slate-300 text-slate-700 px-4 py-2 rounded-md font-bold text-sm transition-colors shadow-sm">
+                        איפוס
+                    </button>
+                </div>
+            </div>
+            <p class="text-sm text-slate-600 mt-3 text-center w-full max-w-lg leading-snug">
+                שחקו עם מד השדה המגנטי, הפעילו את הזריקה, ושימו לב האם <strong>זמן הפגיעה בקרקע</strong> או המסלול האנכי משתנים כתוצאה מהשדה.
+            </p>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">עקרון אי-תלות בין צירים</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">זמן השהייה של גוף הנזרק באוויר נקבע באופן בלעדי על ידי הנתונים הקינמטיים בציר האנכי בלבד: המיקום ההתחלתי והסופי בציר האנכי, המהירות ההתחלתית האנכית, וסך הכוחות (התאוצה) הפועלים בציר האנכי.</p>
+            <p class="content-paragraph">כפי שהוכחנו בסעיף ד'(1), הכוח המגנטי פועל כולו במישור האופקי ואין לו שום רכיב על הציר האנכי. לכן, משוואת הכוחות בציר האנכי נשארת בשני המקרים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_y = -mg = m a_y \quad \Rightarrow \quad a_y = -g \]
+            </div>
+            <p class="content-paragraph">כלומר, התאוצה האנכית תמיד שווה ל- \( g \) כלפי מטה, בין אם יש שדה מגנטי ובין אם אין. מכיוון שתנאי ההתחלה האנכיים והתאוצה האנכית זהים בשני המקרים, הכדור ישהה באוויר בדיוק אותו משך זמן.</p>
+            <p class="final-answer">מסקנה: משך הזמן שהכדור נמצא באוויר יהיה <span class="inline-ltr">שווה</span> למשך הזמן אילו לא היה שדה מגנטי.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            המסלול התלת-ממדי של הכדור אכן ייראה שונה! עם השדה המגנטי הוא עשוי לנוע במסלול בורגי מסובך, בעוד שבלי שדה מגנטי הוא ינוע בפרבולה רגילה. אבל מבחינת ציר ה-Z, שניהם חווים בדיוק אותה "נפילה חופשית" ויפגעו בקרקע באותו הרגע!
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    // --- סקריפט עבור סימולציית המסלול ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const canvas = document.getElementById('simCanvas');
+        if(!canvas) return;
+        const ctx = canvas.getContext('2d');
+        const playBtn = document.getElementById('simPlayBtn');
+        const resetBtn = document.getElementById('simResetBtn');
+        const bSlider = document.getElementById('bSlider');
+        const bDisplay = document.getElementById('bValueDisplay');
+        const timerDisplay = document.getElementById('simTimer');
+        const msgDisplay = document.getElementById('simMessage');
+
+        let isRunning = false;
+        let animFrameId = null;
+        
+        // פרמטרים פיזיקליים לסימולציה (קנה מידה מותאם לתצוגה)
+        const g = 10;
+        const vz0 = 30; // מהירות התחלתית אנכית
+        const vx0 = 20; // מהירות התחלתית אופקית
+        const flightTime = (2 * vz0) / g; // בדיוק 6 שניות בתיאוריה
+        
+        let t = 0;
+        let trail = [];
+
+        // פונקציית הטלה (Projection) כדי להציג 3D על קנבס 2D
+        function project3D(x, y, z) {
+            const originX = 250; // מיקום ראשית הצירים באמצע הקנבס
+            const originY = 220; // ממוקם מעט למטה כדי לאפשר גובה לזריקה
+            // הטלה איזומטרית מורחבת (X למטה-ימינה, Y למטה-שמאלה, Z למעלה)
+            const screenX = originX + (x * 1.5) - (y * 1.5);
+            const screenY = originY - (z * 2.2) + (x * 0.4) + (y * 0.4);
+            return { sx: screenX, sy: screenY };
+        }
+
+        function drawScene() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            // ציור רשת רצפה (מישור XY) לתחושת עומק מורחבת כולל הצד השלילי
+            ctx.strokeStyle = '#e2e8f0';
+            ctx.lineWidth = 1;
+            for(let i=-150; i<=150; i+=30) {
+                let p1 = project3D(-150, i, 0);
+                let p2 = project3D(150, i, 0);
+                ctx.beginPath(); ctx.moveTo(p1.sx, p1.sy); ctx.lineTo(p2.sx, p2.sy); ctx.stroke();
+                
+                let p3 = project3D(i, -150, 0);
+                let p4 = project3D(i, 150, 0);
+                ctx.beginPath(); ctx.moveTo(p3.sx, p3.sy); ctx.lineTo(p4.sx, p4.sy); ctx.stroke();
+            }
+
+            // צירים X, Y, Z כולל הצדדים השליליים
+            ctx.lineWidth = 2;
+            const orig = project3D(0,0,0);
+            const xAxisPos = project3D(160,0,0);
+            const xAxisNeg = project3D(-160,0,0);
+            const yAxisPos = project3D(0,160,0);
+            const yAxisNeg = project3D(0,-160,0);
+            const zAxis = project3D(0,0,90);
+            
+            ctx.strokeStyle = '#fca5a5'; // ציר X
+            ctx.beginPath(); ctx.moveTo(xAxisNeg.sx, xAxisNeg.sy); ctx.lineTo(xAxisPos.sx, xAxisPos.sy); ctx.stroke();
+            ctx.fillStyle = '#ef4444'; ctx.font = "12px Arial"; ctx.fillText('+X', xAxisPos.sx + 5, xAxisPos.sy + 5);
+
+            ctx.strokeStyle = '#86efac'; // ציר Y
+            ctx.beginPath(); ctx.moveTo(yAxisNeg.sx, yAxisNeg.sy); ctx.lineTo(yAxisPos.sx, yAxisPos.sy); ctx.stroke();
+            ctx.fillStyle = '#22c55e'; ctx.fillText('+Y', yAxisPos.sx - 20, yAxisPos.sy + 10);
+
+            ctx.strokeStyle = '#93c5fd'; // ציר Z
+            ctx.beginPath(); ctx.moveTo(orig.sx, orig.sy); ctx.lineTo(zAxis.sx, zAxis.sy); ctx.stroke();
+            ctx.fillStyle = '#3b82f6'; ctx.fillText('+Z', zAxis.sx, zAxis.sy - 5);
+
+            // ציור המסלול (שובל)
+            if (trail.length > 0) {
+                ctx.beginPath();
+                ctx.strokeStyle = '#3b82f6';
+                ctx.lineWidth = 3;
+                let startP = project3D(trail[0].x, trail[0].y, trail[0].z);
+                ctx.moveTo(startP.sx, startP.sy);
+                for (let i = 1; i < trail.length; i++) {
+                    let p = project3D(trail[i].x, trail[i].y, trail[i].z);
+                    ctx.lineTo(p.sx, p.sy);
+                }
+                ctx.stroke();
+
+                // צל המסלול על הרצפה (z=0)
+                ctx.beginPath();
+                ctx.strokeStyle = 'rgba(59, 130, 246, 0.2)';
+                ctx.lineWidth = 2;
+                let startShadow = project3D(trail[0].x, trail[0].y, 0);
+                ctx.moveTo(startShadow.sx, startShadow.sy);
+                for (let i = 1; i < trail.length; i++) {
+                    let p = project3D(trail[i].x, trail[i].y, 0);
+                    ctx.lineTo(p.sx, p.sy);
+                }
+                ctx.stroke();
+            }
+
+            // ציור הכדור הנוכחי (הנקודה האחרונה בשובל או בראשית)
+            let currentP = trail.length > 0 ? trail[trail.length-1] : {x:0, y:0, z:0};
+            let ballScreen = project3D(currentP.x, currentP.y, currentP.z);
+            
+            // צל של הכדור
+            let shadowScreen = project3D(currentP.x, currentP.y, 0);
+            ctx.beginPath();
+            ctx.fillStyle = 'rgba(0,0,0,0.15)';
+            ctx.ellipse(shadowScreen.sx, shadowScreen.sy, 6, 3, 0, 0, Math.PI*2);
+            ctx.fill();
+
+            // הכדור
+            ctx.beginPath();
+            ctx.fillStyle = '#1d4ed8';
+            ctx.arc(ballScreen.sx, ballScreen.sy, 6, 0, Math.PI*2);
+            ctx.fill();
+            ctx.strokeStyle = '#1e3a8a';
+            ctx.lineWidth = 1;
+            ctx.stroke();
+        }
+
+        function updateSim() {
+            if (!isRunning) return;
+
+            // התקדמות הזמן בסימולציה
+            t += 0.05; 
+            if (t >= flightTime) {
+                t = flightTime; // עצירה מדויקת בזמן התיאורטי כדי להוכיח את העיקרון
+                isRunning = false;
+                
+                // הודעת סיום
+                msgDisplay.classList.remove('hidden');
+                setTimeout(() => msgDisplay.classList.add('opacity-100'), 10);
+                playBtn.disabled = false;
+                playBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            }
+
+            timerDisplay.innerText = t.toFixed(2);
+            
+            let B = parseFloat(bSlider.value);
+            
+            // שימוש במשוואות קינמטיות מדויקות במקום אינטגרציית Euler (מונע שגיאות מצטברות)
+            // ציר Z: נפילה חופשית רגילה (אינה מושפעת מ-B כלל!)
+            let z = (vz0 * t) - (0.5 * g * t * t);
+            
+            // צירים X,Y: תנועה מעגלית בהשפעת שדה B (אם קיים) או קו ישר (אם B=0)
+            let x, y;
+            if (B === 0) {
+                x = vx0 * t;
+                y = 0;
+            } else {
+                let w = B; // פישוט: (q/m)=1 לצורך הסימולציה
+                x = (vx0 / w) * Math.sin(w * t);
+                y = (vx0 / w) * (1 - Math.cos(w * t));
+            }
+
+            // מניעת באג של z שלילי קטנצ'יק בסוף תנועה עקב עיגול
+            if(z < 0) z = 0;
+
+            trail.push({x: x, y: y, z: z});
+            drawScene();
+
+            if (isRunning) {
+                animFrameId = requestAnimationFrame(updateSim);
+            }
+        }
+
+        bSlider.addEventListener('input', function(e) {
+            bDisplay.innerText = parseFloat(e.target.value).toFixed(1) + ' T';
+        });
+
+        playBtn.addEventListener('click', function() {
+            if (isRunning) return;
+            // איפוס מצב לפני זריקה חדשה
+            t = 0;
+            trail = [];
+            timerDisplay.innerText = "0.00";
+            msgDisplay.classList.remove('opacity-100');
+            setTimeout(() => msgDisplay.classList.add('hidden'), 300);
+            
+            isRunning = true;
+            playBtn.disabled = true;
+            playBtn.classList.add('opacity-50', 'cursor-not-allowed');
+            
+            if (animFrameId) cancelAnimationFrame(animFrameId);
+            updateSim();
+        });
+
+        resetBtn.addEventListener('click', function() {
+            isRunning = false;
+            if (animFrameId) cancelAnimationFrame(animFrameId);
+            t = 0;
+            trail = [];
+            timerDisplay.innerText = "0.00";
+            msgDisplay.classList.remove('opacity-100');
+            msgDisplay.classList.add('hidden');
+            playBtn.disabled = false;
+            playBtn.classList.remove('opacity-50', 'cursor-not-allowed');
+            drawScene();
+        });
+
+        // ציור ראשוני
+        drawScene();
+    });
+</script>
+
+<script>
+    // --- סקריפטים כלליים לתבנית (כפתור שאלה צף וזמן עדכון) ---
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
