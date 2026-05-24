@@ -122,21 +122,6 @@
         @media print {
             .image-wrapper.img-error .print-fallback { display: flex !important; }
         }
-
-        .preview-content .image-row {
-            display: flex;
-            gap: 0.75rem;
-            align-items: flex-start;
-            width: 100%;
-            direction: rtl;
-            margin-bottom: var(--paragraph-spacing);
-        }
-
-        .preview-content .image-row .image-wrapper {
-            flex: 1 1 0;
-            min-width: 0;
-            margin-bottom: 0;
-        }
     </style>
 </head>
 <body class="bg-gray-100 min-h-screen flex flex-col">
@@ -756,34 +741,6 @@ ${textExtractionRule}
         }
 
         // Logic split: build DOM element purely in memory to allow clean extraction later
-        function extractImagePlaceholders(text) {
-            return Array.from(text.matchAll(/\[\s*(qimage-\d+)\s*\]|(qimage-\d+)/ig)).map(match => {
-                return ((match[1] || match[2]) || 'qimage-1').toLowerCase() + '.png';
-            });
-        }
-
-        function isImageOnlyLine(text, imageNames) {
-            if (!imageNames.length) return false;
-
-            const textWithoutImages = text
-                .replace(/\[\s*qimage-\d+\s*\]|qimage-\d+/ig, '')
-                .replace(/[\s,]+/g, '')
-                .trim();
-
-            return textWithoutImages === '';
-        }
-
-        function createImageRow(imageNames) {
-            const row = document.createElement('div');
-            row.className = 'image-row';
-
-            imageNames.forEach(imageName => {
-                row.appendChild(createImagePlaceholder(imageName));
-            });
-
-            return row;
-        }
-
         function buildQuestionDOM(containerTarget) {
             const rawText = document.getElementById('questionInput').value;
             const lines = rawText.split('\n');
@@ -822,12 +779,11 @@ ${textExtractionRule}
                 let trimmed = line.trim();
                 if (!trimmed) return;
 
-                const imageNames = extractImagePlaceholders(trimmed);
-                if (isImageOnlyLine(trimmed, imageNames)) {
-                    const imgPlaceholder = imageNames.length === 1
-                        ? createImagePlaceholder(imageNames[0])
-                        : createImageRow(imageNames);
-
+                if (trimmed.toLowerCase().includes('[qimage-') || trimmed.toLowerCase().includes('qimage-')) {
+                    const match = trimmed.match(/qimage-\d+/i);
+                    const imgName = match ? match[0].toLowerCase() + '.png' : 'qimage-1.png';
+                    
+                    const imgPlaceholder = createImagePlaceholder(imgName);
                     if (inSideLayout) {
                         imageBlockForSideLayout.appendChild(imgPlaceholder);
                     } else {
@@ -1103,21 +1059,6 @@ ${textExtractionRule}
         }
         @media print {
             .image-wrapper.img-error .print-fallback { display: flex !important; }
-        }
-
-        .preview-content .image-row {
-            display: flex;
-            gap: 0.75rem;
-            align-items: flex-start;
-            width: 100%;
-            direction: rtl;
-            margin-bottom: var(--paragraph-spacing);
-        }
-
-        .preview-content .image-row .image-wrapper {
-            flex: 1 1 0;
-            min-width: 0;
-            margin-bottom: 0;
         }
     </style>
 </head>

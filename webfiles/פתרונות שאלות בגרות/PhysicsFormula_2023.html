@@ -1,0 +1,290 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>נוסחאות פיזיקה תשפ"ג - מבוסס JSON</title>
+
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-50: #eff6ff;
+            --blue-100: #dbeafe;
+            --blue-700: #1d4ed8;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.6;
+        }
+
+        .page-shell {
+            max-width: 1100px;
+            margin: 0 auto;
+            padding: 1.2rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.8rem;
+            padding: 1.1rem;
+            margin-bottom: 1rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.3rem 0.85rem;
+            margin: 0.2rem 0;
+            font-weight: 700;
+            direction: ltr;
+            unicode-bidi: plaintext;
+        }
+
+        .math-container {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+        }
+
+        .formula-row {
+            border: 1px solid var(--slate-200);
+            border-radius: 0.6rem;
+            padding: 0.75rem;
+            background: #ffffff;
+        }
+
+        .status-ok {
+            background: #ecfdf5;
+            color: #166534;
+            border: 1px solid #86efac;
+        }
+
+        .status-warn {
+            background: #fff7ed;
+            color: #9a3412;
+            border: 1px solid #fdba74;
+        }
+    </style>
+</head>
+<body>
+<div class="page-shell">
+    <header class="text-center mb-6">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">דף נוסחאות פיזיקה - תשפ"ג</h1>
+        <p class="text-slate-600">תצוגת HTML שנבנית מתוך הקובץ <strong dir="ltr">PhysicsFormula_2023.json</strong></p>
+    </header>
+
+    <section class="section-card">
+        <div class="flex flex-col md:flex-row gap-3 md:items-center md:justify-between">
+            <div id="statusBox" class="status-warn rounded-lg px-3 py-2 text-sm">ממתין לטעינת JSON...</div>
+            <div class="flex flex-wrap gap-2">
+                <button id="reloadBtn" type="button" class="px-3 py-2 rounded-lg bg-blue-600 text-white hover:bg-blue-700 transition text-sm font-semibold">טען מחדש מהקובץ</button>
+                <label class="px-3 py-2 rounded-lg border border-slate-300 bg-white hover:bg-slate-50 transition text-sm font-semibold cursor-pointer">
+                    בחר קובץ JSON
+                    <input id="jsonFileInput" type="file" accept="application/json" class="hidden">
+                </label>
+            </div>
+        </div>
+        <p class="text-xs text-slate-500 mt-2">
+            אם פתחת את הקובץ ישירות כ-<span dir="ltr">file://</span> והדפדפן חוסם קריאה אוטומטית ל-JSON, אפשר ללחוץ "בחר קובץ JSON".
+        </p>
+    </section>
+
+    <main id="contentRoot"></main>
+</div>
+
+<script>
+    function escapeHtml(str) {
+        return String(str)
+            .replace(/&/g, '&amp;')
+            .replace(/</g, '&lt;')
+            .replace(/>/g, '&gt;')
+            .replace(/\"/g, '&quot;')
+            .replace(/'/g, '&#39;');
+    }
+
+    function isLongFormula(latex) {
+        return latex.length > 40 || /\\int|\\sum|\\left|\\right|\\frac\{|\\Delta|_\{|\^\{/.test(latex);
+    }
+
+    function getHtmlSnippet(latex, asBlock) {
+        if (asBlock) {
+            return '<div class="math-container text-center" dir="ltr">\\\\[' + latex + '\\\\]</div>';
+        }
+        return '<span class="formula-badge">\\\\(' + latex + '\\\\)</span>';
+    }
+
+    async function copyFormulaHtml(latex, asBlock) {
+        const snippet = getHtmlSnippet(latex, asBlock);
+        try {
+            await navigator.clipboard.writeText(snippet);
+            showStatus('קטע HTML לנוסחה הועתק ללוח.', true);
+        } catch (err) {
+            showStatus('לא הצלחתי להעתיק אוטומטית. אפשר להעתיק ידנית מהתצוגה.', false);
+        }
+    }
+
+    function showStatus(message, ok) {
+        const box = document.getElementById('statusBox');
+        box.textContent = message;
+        box.className = (ok ? 'status-ok' : 'status-warn') + ' rounded-lg px-3 py-2 text-sm';
+    }
+
+    function renderFormulas(data) {
+        const root = document.getElementById('contentRoot');
+        root.innerHTML = '';
+
+        if (!data || !Array.isArray(data.sections) || data.sections.length === 0) {
+            showStatus('ה-JSON נטען אבל לא נמצאו בו sections להצגה.', false);
+            return;
+        }
+
+        const metaCard = document.createElement('section');
+        metaCard.className = 'section-card';
+        const metaTitle = data.meta && data.meta.title ? escapeHtml(data.meta.title) : 'נוסחאות פיזיקה';
+        const metaEdition = data.meta && data.meta.edition ? escapeHtml(data.meta.edition) : '';
+        const metaSource = data.meta && data.meta.source ? escapeHtml(data.meta.source) : '';
+        metaCard.innerHTML =
+            '<h2 class="text-xl font-bold text-blue-900 mb-1">' + metaTitle + '</h2>' +
+            '<p class="text-sm text-slate-600">מהדורה: ' + metaEdition + '</p>' +
+            '<p class="text-sm text-slate-500">מקור: <span dir="ltr">' + metaSource + '</span></p>';
+        root.appendChild(metaCard);
+
+        data.sections.forEach((section, sectionIndex) => {
+            const sectionCard = document.createElement('section');
+            sectionCard.className = 'section-card';
+
+            const sectionHeader = document.createElement('div');
+            sectionHeader.className = 'mb-3 pb-2 border-b border-slate-200';
+            sectionHeader.innerHTML =
+                '<h3 class="text-2xl font-bold text-blue-900">' + escapeHtml(section.topic || ('נושא ' + (sectionIndex + 1))) + '</h3>' +
+                '<p class="text-xs text-slate-500">עמוד מקור: ' + escapeHtml(section.sourcePage || '-') + '</p>';
+            sectionCard.appendChild(sectionHeader);
+
+            const subtopics = Array.isArray(section.subtopics) ? section.subtopics : [];
+            subtopics.forEach((subtopic) => {
+                const subCard = document.createElement('div');
+                subCard.className = 'mb-4 p-3 rounded-xl border border-slate-200 bg-slate-50';
+
+                const subTitle = document.createElement('h4');
+                subTitle.className = 'text-lg font-bold text-slate-800 mb-2';
+                subTitle.textContent = subtopic.name || 'תת-נושא';
+                subCard.appendChild(subTitle);
+
+                const formulas = Array.isArray(subtopic.formulas) ? subtopic.formulas : [];
+                const formulaList = document.createElement('div');
+                formulaList.className = 'space-y-2';
+
+                formulas.forEach((formula, idx) => {
+                    const latex = (formula && formula.latex ? String(formula.latex) : '').trim();
+                    const note = formula && formula.note ? String(formula.note).trim() : '';
+                    const longFormula = isLongFormula(latex);
+
+                    const row = document.createElement('div');
+                    row.className = 'formula-row';
+
+                    const head = document.createElement('div');
+                    head.className = 'flex flex-col sm:flex-row sm:items-center sm:justify-between gap-2 mb-2';
+                    head.innerHTML =
+                        '<div class="text-sm text-slate-700"><strong>נוסחה ' + (idx + 1) + ':</strong> ' + escapeHtml(note) + '</div>';
+
+                    const copyBtn = document.createElement('button');
+                    copyBtn.type = 'button';
+                    copyBtn.className = 'px-2.5 py-1.5 rounded-lg bg-blue-100 text-blue-800 hover:bg-blue-200 transition text-xs font-semibold';
+                    copyBtn.textContent = 'העתק HTML';
+                    copyBtn.addEventListener('click', () => copyFormulaHtml(latex, longFormula));
+                    head.appendChild(copyBtn);
+                    row.appendChild(head);
+
+                    if (longFormula) {
+                        const block = document.createElement('div');
+                        block.className = 'math-container text-center';
+                        block.dir = 'ltr';
+                        block.textContent = '\\[' + latex + '\\]';
+                        row.appendChild(block);
+                    } else {
+                        const chip = document.createElement('span');
+                        chip.className = 'formula-badge';
+                        chip.setAttribute('dir', 'ltr');
+                        chip.textContent = '\\(' + latex + '\\)';
+                        row.appendChild(chip);
+                    }
+
+                    formulaList.appendChild(row);
+                });
+
+                subCard.appendChild(formulaList);
+                sectionCard.appendChild(subCard);
+            });
+
+            root.appendChild(sectionCard);
+        });
+
+        if (window.MathJax && window.MathJax.typesetPromise) {
+            MathJax.typesetClear([root]);
+            MathJax.typesetPromise([root]).catch((err) => console.error(err));
+        }
+
+        showStatus('ה-JSON נטען והנוסחאות הוצגו בהצלחה.', true);
+    }
+
+    async function loadFromDefaultJson() {
+        const url = 'PhysicsFormula_2023.json?ts=' + Date.now();
+        const response = await fetch(url, { cache: 'no-store' });
+        if (!response.ok) {
+            throw new Error('HTTP ' + response.status);
+        }
+        const data = await response.json();
+        renderFormulas(data);
+    }
+
+    async function loadWithStatus() {
+        try {
+            await loadFromDefaultJson();
+        } catch (err) {
+            showStatus('טעינה אוטומטית נכשלה. אפשר לבחור את קובץ ה-JSON ידנית.', false);
+            console.warn(err);
+        }
+    }
+
+    document.getElementById('reloadBtn').addEventListener('click', loadWithStatus);
+    document.getElementById('jsonFileInput').addEventListener('change', async (event) => {
+        const file = event.target.files && event.target.files[0];
+        if (!file) return;
+
+        try {
+            const text = await file.text();
+            const data = JSON.parse(text);
+            renderFormulas(data);
+        } catch (err) {
+            showStatus('הקובץ שנבחר אינו JSON תקין.', false);
+        }
+    });
+
+    loadWithStatus();
+</script>
+</body>
+</html>
