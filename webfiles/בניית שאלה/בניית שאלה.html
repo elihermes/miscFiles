@@ -89,6 +89,42 @@
             text-align: right !important;
         }
 
+        .preview-content .clause-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .preview-content .clause-item .clause-badge {
+            flex: 0 0 auto;
+            font-weight: 700;
+            color: #000;
+            text-align: right;
+            line-height: inherit;
+        }
+
+        .preview-content .clause-item.clause-main .clause-badge {
+            width: 1.5rem;
+        }
+
+        .preview-content .clause-item.sub-clause .clause-badge {
+            width: 3.5rem;
+        }
+
+        .preview-content .clause-item .clause-text {
+            display: block;
+            flex: 1 1 auto;
+            min-width: 0;
+        }
+
+        .preview-content .clause-continuation-main {
+            padding-right: 2rem;
+        }
+
+        .preview-content .clause-continuation-sub {
+            padding-right: 4rem;
+        }
+
         /* Dynamic paragraph & clause spacing control */
         .preview-content p, 
         .preview-content .clause-item, 
@@ -139,7 +175,7 @@
         }
     </style>
 </head>
-<body class="bg-gray-100 min-h-screen flex flex-col">
+<body class="bg-gray-100 min-h-screen flex flex-col lg:h-screen lg:overflow-hidden print:min-h-0 print:h-auto print:overflow-visible">
 
     <!-- Header / Navbar (No-print) -->
     <header class="bg-indigo-900 text-white p-4 shadow-md no-print w-full">
@@ -158,10 +194,10 @@
     </header>
 
     <!-- Main Workspace -->
-    <main class="flex-1 flex flex-col lg:flex-row p-4 gap-6 container mx-auto items-stretch">
+    <main class="flex-1 flex flex-col lg:flex-row p-4 gap-6 container mx-auto items-stretch lg:overflow-hidden print:p-0 print:overflow-visible">
         
         <!-- Controls Panel (Left side on desktop, top on mobile) - No-print -->
-        <div class="w-full lg:w-[450px] bg-white p-6 rounded-xl shadow-md flex flex-col gap-5 no-print border border-gray-200 self-start">
+        <div class="w-full lg:w-[450px] bg-white p-6 rounded-xl shadow-md flex flex-col gap-5 no-print border border-gray-200 lg:overflow-y-auto lg:shrink-0 pb-6">
             
             <!-- API Key Settings -->
             <div class="bg-indigo-50 border border-indigo-200 rounded-xl p-4 flex flex-col gap-2 relative group" id="apiKeyContainer">
@@ -344,7 +380,7 @@
         </div>
 
         <!-- Sheet Preview Wrapper -->
-        <div class="flex-1 flex justify-center items-start overflow-auto p-2 bg-gray-200 rounded-xl border border-gray-300 relative min-h-[600px]">
+        <div class="flex-1 flex justify-center items-start overflow-auto p-2 bg-gray-200 rounded-xl border border-gray-300 relative min-h-[600px] lg:min-h-0 print:border-none print:bg-transparent print:p-0 print:overflow-visible">
             
             <div class="absolute top-2 right-4 bg-gray-700 text-white text-xs px-3 py-1.5 rounded-full shadow opacity-75 no-print flex items-center gap-1 z-20">
                 <i data-lucide="eye" class="w-3.5 h-3.5"></i>
@@ -817,6 +853,20 @@ ${textExtractionRule}
 
             let currentIndentClass = "";
             let forceResetIndentNextLine = true;
+            let activeClauseContentSpan = null;
+            let currentClauseContinuationClass = "";
+
+            const matchClauseHeader = (text) => {
+                return text.match(/^([א-ת])\.\s+(.*)$/)
+                    || text.match(/^\*\*([א-ת])\.\*\*\s+(.*)$/)
+                    || text.match(/^<(?:b|strong)>([א-ת])\.<\/(?:b|strong)>\s+(.*)$/i);
+            };
+
+            const matchSubClauseHeader = (text) => {
+                return text.match(/^(\(\s*[א-תa-zA-Z\d]+\s*\)|\d+\.)\s*(.*)$/)
+                    || text.match(/^\*\*((?:\(\s*[א-תa-zA-Z\d]+\s*\)|\d+\.))\*\*\s*(.*)$/)
+                    || text.match(/^<(?:b|strong)>((?:\(\s*[א-תa-zA-Z\d]+\s*\)|\d+\.))<\/(?:b|strong)>\s*(.*)$/i);
+            };
 
             lines.forEach(line => {
                 let trimmed = line.trim();
@@ -827,6 +877,8 @@ ${textExtractionRule}
                     const imgPlaceholder = imageNames.length === 1
                         ? createImagePlaceholder(imageNames[0])
                         : createImageRow(imageNames);
+
+                    activeClauseContentSpan = null;
 
                     if (inSideLayout) {
                         imageBlockForSideLayout.appendChild(imgPlaceholder);
@@ -844,8 +896,8 @@ ${textExtractionRule}
                 }
 
                 // Identify if it's a clause header
-                const mainClauseMatch = trimmed.match(/^([א-ת])\.\s+(.*)/);
-                const subClauseMatch = trimmed.match(/^(\(\s*[א-תa-zA-Z\d]+\s*\)|\d+\.)\s*(.*)/);
+                const mainClauseMatch = matchClauseHeader(trimmed);
+                const subClauseMatch = matchSubClauseHeader(trimmed);
 
                 // Smart Keyword Detection: Does it look like a preface explicitly? OR did the user use the `<-` code?
                 const isPrefaceExplicit = hasHiddenPrefaceMarker || /^(?:נתון|ידוע|כעת|הנח|במצב|כאשר|הכיתוב|באיור|בתרשים|שים|הערה|לאחר|בשלב|מכאן|לפניך)(?:\s|$)/.test(trimmed);
@@ -853,46 +905,74 @@ ${textExtractionRule}
                 // Check if this line is a Preface 
                 if ((forceResetIndentNextLine || isPrefaceExplicit) && !mainClauseMatch && !subClauseMatch) {
                     currentIndentClass = ""; 
+                    currentClauseContinuationClass = "";
+                    activeClauseContentSpan = null;
                 }
 
                 const p = document.createElement('p');
                 p.className = "text-justify";
+                const lineHasPointsRegex = /[\(\[]\s*\d+(?:\.\d+)?\s*(?:נק|נ'|נקודות|נק\.|נקודה)[^\]\)]*[\)\]]/;
+                const lineHasPoints = lineHasPointsRegex.test(trimmed);
 
                 if (mainClauseMatch) {
                     currentIndentClass = "pr-8";
-                    p.className += " font-normal relative clause-item " + currentIndentClass;
+                    currentClauseContinuationClass = "clause-continuation-main";
+                    p.className += " font-normal clause-item clause-main";
                     
                     const badge = document.createElement('span');
-                    badge.className = "absolute right-0 font-bold text-black";
+                    badge.className = "clause-badge";
                     badge.innerText = mainClauseMatch[1] + '.';
                     p.appendChild(badge);
 
                     const contentSpan = document.createElement('span');
+                    contentSpan.className = "clause-text";
                     contentSpan.innerHTML = formatSpecialStyles(mainClauseMatch[2]);
                     p.appendChild(contentSpan);
+                    activeClauseContentSpan = contentSpan;
                 } else if (subClauseMatch) {
                     currentIndentClass = "pr-16";
-                    p.className += " font-normal relative clause-item sub-clause " + currentIndentClass;
+                    currentClauseContinuationClass = "clause-continuation-sub";
+                    p.className += " font-normal clause-item sub-clause";
                     
                     const badge = document.createElement('span');
-                    badge.className = "absolute right-8 font-bold text-black";
+                    badge.className = "clause-badge";
                     badge.innerText = subClauseMatch[1];
                     p.appendChild(badge);
 
                     const contentSpan = document.createElement('span');
+                    contentSpan.className = "clause-text";
                     contentSpan.innerHTML = formatSpecialStyles(subClauseMatch[2]);
                     p.appendChild(contentSpan);
+                    activeClauseContentSpan = contentSpan;
                 } else {
+                    if (activeClauseContentSpan && currentClauseContinuationClass && !forceResetIndentNextLine && !isPrefaceExplicit) {
+                        activeClauseContentSpan.innerHTML += '<br>' + formatSpecialStyles(trimmed);
+
+                        if (lineHasPoints) {
+                            forceResetIndentNextLine = true;
+                            activeClauseContentSpan = null;
+                            currentClauseContinuationClass = "";
+                        } else {
+                            forceResetIndentNextLine = false;
+                        }
+
+                        return;
+                    }
+
                     if (currentIndentClass) {
                         p.className += " " + currentIndentClass;
                     }
+                    if (currentClauseContinuationClass) {
+                        p.className += " " + currentClauseContinuationClass;
+                    }
                     p.innerHTML = formatSpecialStyles(trimmed);
+                    activeClauseContentSpan = null;
                 }
-
-                const lineHasPointsRegex = /[\(\[]\s*\d+(?:\.\d+)?\s*(?:נק|נ'|נקודות|נק\.|נקודה)[^\]\)]*[\)\]]/;
                 
-                if (lineHasPointsRegex.test(trimmed)) {
+                if (lineHasPoints) {
                     forceResetIndentNextLine = true;
+                    activeClauseContentSpan = null;
+                    currentClauseContinuationClass = "";
                 } else if (mainClauseMatch || subClauseMatch) {
                     forceResetIndentNextLine = false; 
                 } else if (currentIndentClass === "") {
@@ -1075,6 +1155,34 @@ ${textExtractionRule}
         .preview-content .sub-clause, 
         .preview-content .points-display {
             text-align: right !important;
+        }
+
+        .preview-content .clause-item {
+            display: flex;
+            align-items: flex-start;
+            gap: 0.5rem;
+        }
+
+        .preview-content .clause-item .clause-badge {
+            flex: 0 0 auto;
+            font-weight: 700;
+            color: #000;
+            text-align: right;
+            line-height: inherit;
+        }
+
+        .preview-content .clause-item.clause-main .clause-badge {
+            width: 1.5rem;
+        }
+
+        .preview-content .clause-item.sub-clause .clause-badge {
+            width: 3.5rem;
+        }
+
+        .preview-content .clause-item .clause-text {
+            display: block;
+            flex: 1 1 auto;
+            min-width: 0;
         }
 
         .preview-content p, 
