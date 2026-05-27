@@ -1348,6 +1348,33 @@
             return finalize();
         }
 
+        function buildAmitFocusRowKey(year, orderVariant = 0) {
+            return `${Number(year)}-${Number(orderVariant) || 0}`;
+        }
+
+        function getAmitFocusReferenceForSolution(solution) {
+            const year = Number(solution?.bagrutYear);
+            const rawQuestionNumber = Number(solution?.bagrutQuestionNumber);
+            if (!Number.isFinite(year) || !Number.isFinite(rawQuestionNumber)) {
+                return null;
+            }
+
+            const explicitOrderVariant = Number(solution?.orderVariant);
+            const hasExplicitOrderVariant = Number.isFinite(explicitOrderVariant);
+            const isSecondary2016 = year === 2016 && !Number.isInteger(rawQuestionNumber);
+            const orderVariant = hasExplicitOrderVariant ? explicitOrderVariant : (isSecondary2016 ? 1 : 0);
+            const questionNumber = Number.isInteger(rawQuestionNumber) ? rawQuestionNumber : Math.trunc(rawQuestionNumber);
+
+            if (!Number.isFinite(questionNumber)) {
+                return null;
+            }
+
+            return {
+                rowKey: buildAmitFocusRowKey(year, orderVariant),
+                questionNumber
+            };
+        }
+
         function buildAmitFocusLookup(rawData) {
             const rows = Array.isArray(rawData?.rows) ? rawData.rows : [];
             const lookup = new Map();
@@ -1355,6 +1382,7 @@
             rows.forEach((row) => {
                 const year = Number(row?.bagrutYear);
                 if (!Number.isFinite(year)) return;
+                const orderVariant = Number(row?.orderVariant) || 0;
 
                 const questions = new Map();
                 const questionList = Array.isArray(row?.questions) ? row.questions : [];
@@ -1367,7 +1395,7 @@
                     });
                 });
 
-                lookup.set(year, {
+                lookup.set(buildAmitFocusRowKey(year, orderVariant), {
                     yearNote: row?.yearNote || "",
                     questions
                 });
@@ -1388,12 +1416,17 @@
         }
 
         function getAmitFocusForSolution(solution) {
-            if (!solution?.isBagrutQuestion || !solution?.bagrutYear || !solution?.bagrutQuestionNumber) {
+            if (!solution?.isBagrutQuestion) {
                 return null;
             }
 
-            const yearData = amitFocusLookup.get(Number(solution.bagrutYear));
-            const questionData = yearData?.questions?.get(Number(solution.bagrutQuestionNumber));
+            const focusReference = getAmitFocusReferenceForSolution(solution);
+            if (!focusReference) {
+                return null;
+            }
+
+            const yearData = amitFocusLookup.get(focusReference.rowKey);
+            const questionData = yearData?.questions?.get(focusReference.questionNumber);
             if (!questionData?.focusStatus) {
                 return null;
             }
