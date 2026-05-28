@@ -1,0 +1,828 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+        <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+        <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-QZJ7JT80X2');
+        </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מודרך בפיזיקה - השראה אלקטרומגנטית</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Optional: Chart.js (remove if not needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            min-height: 360px;
+            width: 100%;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מודרך: השראה אלקטרומגנטית</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">פיזיקה חשמל / 5 יח"ל</h2>
+        <p class="mt-3 text-slate-500">שלום תלמידים יקרים! לפנינו שאלה מצוינת העוסקת בתנועת מוט מוליך בשדה מגנטי. נעבור על השלבים בצורה מסודרת, שלב אחר שלב.</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית: תמיד מתחת לכותרת -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- Section A -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א': הזרם המושרה באזור 1</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> המוט נכנס לאזור 1 ונע ימינה במהירות קבועה בגודלה \({V_X = 2 \, \frac{m}{s}}\). באזור זה קיים שדה מגנטי שכיוונו לתוך הדף (מסומן בצלבים) וגודלו קבוע.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> לקבוע האם נוצר זרם מושרה דרך הנגד \(R\), ואם כן - מהו כיוונו (מ- \(S_1\) ל- \(P_1\) או ההפך) ולנמק זאת.
+            </div>
+        </div>
+
+        <div class="mt-4 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mb-2">נשתמש בעקרונות הבאים (מתוך חוק פארדיי-לנץ):</p>
+            <span class="formula-badge">\( \Phi_B = B A \cos\alpha \)</span>
+            <span class="formula-badge">\( \varepsilon = -N \frac{d\Phi_B}{dt} \)</span>
+            <p class="content-paragraph mt-2">כמו כן נשתמש ב<strong>חוק לנץ</strong>: הזרם המושרה ייצור שדה מגנטי שיתנגד לשינוי בשטף המגנטי שיצר אותו. נשתמש ב<strong>כלל יד ימין</strong> לקביעת כיוון השדה והזרם.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">כאשר המוט נע ימינה באזור 1, השטח \(A\) של הלולאה הסגורה (הכלואה בין המוט, המסילות והנגד) <strong>גדל</strong>.</p>
+            <p class="content-paragraph">מכיוון שהשדה המגנטי \(B_1\) מכוון אל תוך הדף, השטף המגנטי \(\Phi_B\) אל תוך הדף הולך וגדל.</p>
+            <p class="content-paragraph">על פי חוק לנץ, המערכת "תרצה" להתנגד לגידול בשטף הזה. לכן, ייווצר שדה מגנטי מושרה שכיוונו מנוגד לשדה הקיים - כלומר, <strong>החוצה מן הדף</strong>.</p>
+            <p class="content-paragraph">על פי כלל יד ימין (אגודל החוצה מהדף, אצבעות מראות את כיוון הזרם בלולאה), הזרם המושרה יזרום נגד כיוון השעון.</p>
+            <p class="content-paragraph">נפרט את המסלול נגד כיוון השעון: הזרם יזרום במוט מ- \(N\) ל- \(M\), ימשיך למסילה העליונה אל \(P_1\), ירד דרך הנגד ל- \(S_1\), ויחזור אל המוט.</p>
+            
+            <p class="final-answer">מסקנה: כן, יזרום זרם. כיוון הזרם דרך הנגד \(R\) הוא מ- \(P_1\) ל- <span class="inline-ltr">\(S_1\)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: גישה חלופית בעזרת כוח לורנץ!</strong><br>
+            ניתן להגיע לאותה מסקנה גם בהסתכלות על מטענים חיוביים בתוך המוט. המוט נע ימינה (מהירות \(v\)), והשדה \(B_1\) הוא פנימה. לפי כלל יד ימין (של כוח מגנטי על מטען), יפעל על מטען חיובי במוט כוח כלפי מעלה (מ- \(N\) ל- \(M\)). לכן הקצה \(M\) יהיה בפוטנציאל גבוה מ- \(N\), והמוט מתפקד כסוללה שההדק החיובי שלה למעלה. במעגל החיצוני (הנגד), הזרם תמיד זורם מהפוטנציאל הגבוה לנמוך, ולכן מ- \(P_1\) ל- \(S_1\).
+        </div>
+    </section>
+
+    <!-- Section B -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': כוח חיצוני באזור 1</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> המוט ממשיך לנוע במהירות קבועה. נמיר יחידות ל-MKS:<br>
+                • אורך המוט: \(l = 50 \, \text{cm} \rightarrow l = 0.5 \, \text{m}\).<br>
+                • התנגדות: \(R = 4 \, \Omega\).<br>
+                • שדה מגנטי: \(B_1 = 0.04 \, \text{T}\).<br>
+                • מהירות קבועה: \(v_X = 2 \, \frac{m}{s}\).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> האם נדרש כוח חיצוני כדי שהמוט ינוע במהירות קבועה? אם כן, לחשב את גודלו ולקבוע את כיוונו.
+            </div>
+        </div>
+
+        <div class="mt-4 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mb-2">מאחר והמהירות קבועה, לפי החוק הראשון של ניוטון, שקול הכוחות על המוט חייב להיות אפס (\(a=0\)).</p>
+            <span class="formula-badge">\( \varepsilon = v l_{\perp} B_{\perp} \)</span>
+            <span class="formula-badge">\( V = RI \) (חוק אוהם)</span>
+            <span class="formula-badge">\( F = I l B \sin\alpha \)</span>
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">כאשר זורם זרם מושרה במוט שנמצא בתוך שדה מגנטי, יפעל עליו כוח מגנטי. הזרם במוט הוא כלפי מעלה, והשדה פנימה. לפי כלל יד ימין, הכוח המגנטי \(F_B\) הפועל על המוט מכוון <strong>שמאלה</strong> (נגד כיוון התנועה). כדי לשמור על מהירות קבועה, חייבים להפעיל כוח חיצוני \(F_{\text{ext}}\) <strong>ימינה</strong> שיאזן בדיוק את הכוח המגנטי.</p>
+            
+            <div class="visual-frame flex-col items-center">
+                <span class="text-sm text-slate-500 font-medium mb-2 block text-center w-full">תרשים כוחות (FBD) על המוט באזור 1 (מבט על)</span>
+                <svg width="300" height="150" viewBox="0 0 300 150" class="mx-auto block">
+                    <!-- Axis -->
+                    <line x1="50" y1="130" x2="250" y2="130" stroke="#94a3b8" stroke-width="2" marker-end="url(#arrow-axis)"/>
+                    <text x="240" y="120" font-family="sans-serif" font-size="14" fill="#64748b" text-anchor="middle">+x</text>
+                    
+                    <!-- The Rod -->
+                    <rect x="140" y="20" width="20" height="90" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+                    
+                    <!-- Velocity vector (green, dashed) -->
+                    <line x1="165" y1="40" x2="220" y2="40" stroke="#10b981" stroke-width="2" stroke-dasharray="4" marker-end="url(#arrow-vel)"/>
+                    <text x="190" y="30" font-family="sans-serif" font-size="16" font-style="italic" fill="#10b981" text-anchor="middle">v</text>
+
+                    <!-- Magnetic Force (red) -->
+                    <line x1="140" y1="65" x2="60" y2="65" stroke="#ef4444" stroke-width="3" marker-end="url(#arrow-f-mag)"/>
+                    <text x="100" y="55" font-family="sans-serif" font-size="16" fill="#ef4444" text-anchor="middle">F_B</text>
+
+                    <!-- External Force (blue) -->
+                    <line x1="160" y1="65" x2="240" y2="65" stroke="#3b82f6" stroke-width="3" marker-end="url(#arrow-f-ext)"/>
+                    <text x="200" y="55" font-family="sans-serif" font-size="16" fill="#3b82f6" text-anchor="middle">F_ext</text>
+
+                    <!-- Defs for arrows -->
+                    <defs>
+                        <marker id="arrow-axis" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="5" markerHeight="5" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#94a3b8"/>
+                        </marker>
+                        <marker id="arrow-vel" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#10b981"/>
+                        </marker>
+                        <marker id="arrow-f-mag" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#ef4444"/>
+                        </marker>
+                        <marker id="arrow-f-ext" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#3b82f6"/>
+                        </marker>
+                    </defs>
+                </svg>
+            </div>
+
+            <p class="content-paragraph">נחשב את הכא"מ המושרה (\(\alpha = 90^\circ\) בין המהירות לשדה וכן בין המוט לשדה ולכן \(\sin 90^\circ = 1\)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \varepsilon = v \cdot l \cdot B_1 = 2 \cdot 0.5 \cdot 0.04 = 0.04 \, \text{V} \]
+            </div>
+            
+            <p class="content-paragraph">הזרם במעגל (בהתנגדות המוט אנו מזניחים, ולכן \(R\) הוא ההתנגדות הכוללת):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I = \frac{\varepsilon}{R} = \frac{0.04}{4} = 0.01 \, \text{A} \]
+            </div>
+            
+            <p class="content-paragraph">גודל הכוח המגנטי (\(\alpha = 90^\circ\) בין הזרם במוט לשדה):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ F_B = I \cdot l \cdot B_1 \cdot \sin(90^\circ) = 0.01 \cdot 0.5 \cdot 0.04 \cdot 1 = 0.0002 \, \text{N} \]
+            </div>
+
+            <p class="content-paragraph">נרשום את משוואת הכוחות בציר \(x\) (כיוון חיובי ימינה):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_x = m a_x \]
+                \[ F_{\text{ext}} - F_B = m \cdot 0 \]
+                \[ F_{\text{ext}} = F_B \]
+            </div>
+            
+            <p class="final-answer">מסקנה: כן, דרוש כוח חיצוני. גודלו \(F_{\text{ext}} = 0.0002 \, \text{N}\) וכיוונו ימינה (בכיוון ציר ה- <span class="inline-ltr">\(X\)</span> החיובי).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: חוק לנץ והקסם של חוק שימור האנרגיה!</strong><br>
+            שימו לב כי הכוח המגנטי הנוצר כתוצאה מזרם מושרה <strong>תמיד</strong> יתנגד לתנועה שיצרה אותו. זוהי התגלמות של חוק לנץ במכניקה. אם המוט "יצר" זרם בגלל שנע ימינה, השדה המגנטי יפעיל עליו כוח שמאלה שינסה להאט אותו (להקטין את גודל המהירות).<br><br>
+            <strong>אבל בואו נחשוב על זה רגע לעומק!</strong> יש לנו כאן זרם שזורם במעגל וחום שמתפתח בנגד. תארו לעצמכם מצב בו לא היה פועל שום כוח חיצוני, והמערכת הייתה פשוט ממשיכה לייצר זרם לנצח – היינו מקבלים "מכונת פלא" שמייצרת חשמל יש מאין, ללא שום הפסקה וללא השקעת עבודה! זה כמובן בלתי אפשרי ונוגד לחלוטין את <strong>חוק שימור האנרגיה</strong>. הכוח החיצוני שאנו מפעילים, והעבודה המכנית שהוא מבצע, הם-הם המקור האמיתי לאנרגיה החשמלית ולחום שמתפתח במעגל. אנחנו פשוט ממירים עבודה מכנית לאנרגיה חשמלית – איזו פיזיקה יפהפייה!
+        </div>
+    </section>
+
+    <!-- Section C -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': מעבר לאזור 2</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> המוט עובר לאזור 2. באזור זה השדה המגנטי \(B_2\) מכוון <strong>החוצה</strong> מן הדף (מסומן בנקודות). המוט נע בתאוצה קבועה שגודלה \(a = 5 \, \frac{m}{s^2}\) בכיוון החיובי של ציר \(X\) כתוצאה מכוח חיצוני \(F\).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> לקבוע את כיוון הזרם המושרה דרך הנגד \(R\) במקרה זה (מ- \(P_1\) ל- \(S_1\) או מ- \(S_1\) ל- \(P_1\)) ולנמק.
+            </div>
+        </div>
+
+        <div class="mt-4 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mb-2">נשתמש ב<strong>חוק לנץ</strong> וב<strong>כלל יד ימין</strong> כפי שהוסבר בסעיפים הקודמים.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">כאשר המוט נע באזור 2, הוא ממשיך לנוע ימינה (התאוצה ימינה והמהירות הייתה ימינה, לכן גודל המהירות גדל אבל הכיוון נשאר ימינה).</p>
+            <p class="content-paragraph">כתוצאה מתנועתו ימינה, השטח הכלוא בלולאה ממשיך <strong>לגדול</strong>.</p>
+            <p class="content-paragraph">באזור זה השדה המגנטי מכוון <strong>החוצה</strong> מהדף. לכן, השטף המגנטי <strong>החוצה מהדף</strong> הולך וגדל.</p>
+            <p class="content-paragraph">לפי חוק לנץ, הלולאה תייצר שדה מגנטי מושרה שיתנגד לשינוי הזה, כלומר היא תייצר שדה מגנטי <strong>פנימה</strong> אל תוך הדף.</p>
+            <p class="content-paragraph">על פי כלל יד ימין (אגודל פנימה לדף), הזרם בלולאה יזרום <strong>עם כיוון השעון</strong>.</p>
+            <p class="content-paragraph">במעקב אחרי מסלול הזרם עם כיוון השעון: מהמוט דרך \(S_1\), דרך הנגד ל- \(P_1\), וחזרה למוט. לכן, דרך הנגד הזרם יזרום מ- \(S_1\) ל- \(P_1\).</p>
+            
+            <p class="final-answer">מסקנה: כיוון הזרם דרך הנגד יהיה מ- \(S_1\) ל- <span class="inline-ltr">\(P_1\)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: לבודד משתנים</strong><br>
+            שימו לב שלמרות שהמוט מאיץ במקום לנוע במהירות קבועה כמו בסעיף א', מה שקובע את <strong>כיוון</strong> הזרם זה רק כיוון המהירות (שגורם לשטח לגדול) וכיוון השדה המגנטי. התאוצה תשפיע על <strong>גודל</strong> הזרם (שישתנה עם הזמן), אבל לא על כיוונו. ההבדל היחיד מסעיף א' שגרם לשינוי הכיוון הוא שהשדה התהפך מפנימה להחוצה.
+        </div>
+    </section>
+
+    <!-- Section D -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': ביטוי לזרם כפונקציה של הזמן</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> נגדיר את הרגע בו המוט נכנס לאזור 2 כ- \(t=0\). התאוצה כעת קבועה: \(a = 5 \, \frac{m}{s^2}\). המהירות ההתחלתית ברגע הכניסה לאזור 2 היא \(v_0 = 2 \, \frac{m}{s}\).<br>
+                שאר הנתונים: \(B_2 = 0.04 \, \text{T}\), \(l = 0.5 \, \text{m}\), \(R = 4 \, \Omega\).
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> לפתח ביטוי מתמטי המתאר את הזרם דרך הנגד, \(I(t)\), כפונקציה של הזמן.
+            </div>
+        </div>
+
+        <div class="mt-4 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( v = v_0 + at \) (קינמטיקה)</span>
+            <span class="formula-badge">\( \varepsilon = v(t) l_{\perp} B_{\perp} \)</span>
+            <span class="formula-badge">\( I(t) = \frac{\varepsilon(t)}{R} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">ראשית, נמצא את הביטוי למהירות המוט כפונקציה של הזמן:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ v(t) = v_0 + at = 2 + 5t \]
+            </div>
+            
+            <p class="content-paragraph">נציב ביטוי זה לנוסחת הכא"מ המושרה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \varepsilon(t) = v(t) \cdot l \cdot B_2 \]
+                \[ \varepsilon(t) = (2 + 5t) \cdot 0.5 \cdot 0.04 \]
+                \[ \varepsilon(t) = 0.02 \cdot (2 + 5t) = 0.04 + 0.1t \, [\text{V}] \]
+            </div>
+            
+            <p class="content-paragraph">כעת, נמצא את הזרם בעזרת חוק אוהם:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I(t) = \frac{\varepsilon(t)}{R} \]
+                \[ I(t) = \frac{0.04 + 0.1t}{4} \]
+                \[ I(t) = 0.01 + 0.025t \]
+            </div>
+            
+            <div class="final-answer">
+                מסקנה: הביטוי לזרם כפונקציה של הזמן (ביחידות אמפר):
+                <div class="math-container text-center mt-2" dir="ltr">
+                    \[ I(t) = 0.01 + 0.025t \]
+                </div>
+            </div>
+        </div>
+
+        <div class="step-box" style="margin-top: 1.5rem; background: #fffbeb; border-color: #fde68a;">
+            <h4 class="step-title" style="color: #92400e;">חישוב חלופי: דרך גזירת השטף (למי שאוהב חשבון דיפרנציאלי...)</h4>
+            <p class="content-paragraph">לחלופין, היינו יכולים ללכת בדרך "הארוכה" ולמצוא את השטף כפונקציה של הזמן ואז לגזור אותו (חוק פארדיי המקורי). נסמן את מיקום המוט כפונקציה של הזמן (בהנחה ש- \(x_0 = 0\) בכניסה לאזור 2):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ x(t) = x_0 + v_0 t + \frac{1}{2} a t^2 = 2t + 2.5t^2 \]
+            </div>
+            <p class="content-paragraph">שטח הלולאה הכלוא באזור 2 הוא \( A(t) = l \cdot x(t) \), ולכן השטף המגנטי הוא:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Phi_B(t) = B_2 \cdot A(t) = 0.04 \cdot 0.5 \cdot (2t + 2.5t^2) = 0.04t + 0.05t^2 \]
+            </div>
+            <p class="content-paragraph">הכא"מ המושרה הוא נגזרת השטף לפי הזמן (\(\varepsilon = \frac{d\Phi}{dt}\)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \varepsilon(t) = \frac{d}{dt}(0.04t + 0.05t^2) = 0.04 + 0.1t \]
+            </div>
+            <p class="content-paragraph">נחלק בהתנגדות ונקבל בדיוק את אותו הזרם שמצאנו קודם!</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: זהירות עם משתנים דינמיים!</strong><br>
+            טעות נפוצה היא להציב את המהירות ההתחלתית (\(2 \, \text{m/s}\)) אל תוך הביטוי ולקבל זרם קבוע. זכרו - כאשר גוף מאיץ, המהירות שלו היא <strong>פונקציה</strong> של הזמן \(v(t)\). מכיוון שהכא"מ תלוי במהירות, גם הכא"מ, ובעקבותיו הזרם, הם פונקציות של הזמן והם הולכים וגדלים.<br><br>
+            <strong>והנה הוכחה שהפיזיקה עובדת:</strong> שימו לב לדרך החלופית שהצגנו למעלה. מציאת השטף המלא וגזירתו דורשת קצת יותר עבודה מתמטית (קינמטיקה עם תאוצה), אבל היא מביאה אותנו <strong>בדיוק</strong> לאותה התוצאה! למעגל החשמלי באמת לא אכפת באיזו שיטה מתמטית השתמשנו במחברת, הפיזיקה היא עקבית: שינוי בשטף יוצר כא"מ, נקודה!
+        </div>
+    </section>
+
+    <!-- Section E -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה': שיקולי אנרגיה ועבודה</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> המוט מואץ באזור 2 על ידי הכוח החיצוני \(F\). ישנה עבודה הנעשית על ידי כוח זה \((W_F)\), ובנוסף מתפתחת אנרגיה חשמלית במעגל (חום בנגד) באותו פרק זמן.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> להשוות בין עבודת הכוח \(F\) לבין כמות האנרגיה המתפתחת במעגל (האם העבודה גדולה, קטנה או שווה לה) ולהסביר ללא חישוב.
+            </div>
+        </div>
+
+        <div class="mt-4 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mb-2">נשתמש ב<strong>חוק שימור האנרגיה</strong>. חוק זה קובע כי אנרגיה אינה נוצרת מאין ואינה נעלמת, אלא מומרת מסוג אנרגיה אחד לאחר, כך שהכמות הכוללת שלה תמיד נשארת קבועה.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הסבר והחלת העיקרון:</h4>
+            <p class="content-paragraph">נבחן את התהליכים המתרחשים במערכת וניעזר בחוק שימור האנרגיה. הכוח החיצוני \(F\) משקיע עבודה, המהווה את מקור האנרגיה במערכת.</p>
+            <p class="content-paragraph">האנרגיה המושקעת במערכת על ידי הכוח החיצוני צריכה לספק הן את התוספת לאנרגיה הקינטית של המוט (שכן המוט מאיץ במעברו באזור 2, ורמת המהירות שלו עולה) והן את החום שמתפתח בנגד (כתוצאה מהזרם המושרה).</p>
+            <p class="content-paragraph">מכיוון שהעבודה הכוללת המושקעת מצד הכוח \(F\) צריכה לממן את שני האפיקים במקביל - באותו הזמן - הרי שבהכרח היא גדולה יותר מאשר רק החום שמתפתח בנגד לבדו.</p>
+            
+            <p class="final-answer">מסקנה: עבודת הכוח \(F\) <strong>גדולה</strong> מכמות החום המתפתחת בנגד.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: הבנת המהות של "מהירות קבועה"</strong><br>
+            זהו סעיף קלאסי לבחינת הבנה עמוקה. אם נסתכל אחורה על סעיף ב', שם המוט נע במהירות <strong>קבועה</strong>. במקרה ההוא, האנרגיה הקינטית לא השתנתה (\(\Delta E_k = 0\)). במצב כזה, 100% מעבודת הכוח החיצוני הייתה מומרת ישירות לחום בנגד, והיינו אומרים שהם שווים! ההאצה היא זו שעושה את ההבדל כאן ודורשת עבודה נוספת מהכוח \(F\).
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

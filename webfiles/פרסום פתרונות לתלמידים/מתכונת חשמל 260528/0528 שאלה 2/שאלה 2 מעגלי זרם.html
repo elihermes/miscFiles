@@ -1,0 +1,722 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון שאלת בגרות - מעגלי זרם</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            min-height: 360px;
+            width: 100%;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+
+        .wire {
+            stroke: #374151;
+            stroke-width: 3;
+            fill: none;
+        }
+        .component {
+            fill: white;
+            stroke: #374151;
+            stroke-width: 3;
+        }
+        .text-en {
+            font-family: Arial, sans-serif;
+            fill: #1f2937;
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון שאלת מתכונת - מעגלי זרם</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מתכונת חשמל 28/5 - שאלה 2</h2>
+        <p class="mt-3 text-slate-500">פתרון מלא, מפורט ומוסבר צעד-אחר-צעד.</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א': קביעת מצבי המפסק</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> שלוש נורות בעלות התנגדות זהה. מדידות מהטבלה - במצב 1 זרם של $1.5A$, ובמצב 2 זרם של $1.2A$.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לקבוע איזה מצב (1 או 2) מתאים למפסק סגור ואיזה למפסק פתוח.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש (מהדף):</strong><br>
+            <span class="formula-badge">\( V = \varepsilon - Ir \)</span>
+            <span class="formula-badge">\( I = \frac{V}{R} \)</span>
+            <span class="formula-badge">\( \frac{1}{R_T} = \frac{1}{R_1} + \frac{1}{R_2} + ... \)</span>
+            <span class="formula-badge">\( R_T = R_1 + R_2 + ... \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <div class="step-label">שלב 1: ניתוח ההתנגדות השקולה בכל מצב</div>
+            <p class="content-paragraph">מכיוון שלשלוש הנורות התנגדות זהה, נסמן את ההתנגדות של כל אחת מהן ב-$R$. כעת נמצא את ההתנגדות החיצונית השקולה ($R_T$) עבור שני המצבים:</p>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li class="mb-4"><strong>כאשר המפסק פתוח:</strong> הענף של נורה $L_3$ מנותק, לכן הזרם לא זורם דרכה. הנורות $L_1$ ו-$L_2$ מחוברות בטור. ניעזר בנוסחה לחיבור טורי לקבלת ההתנגדות:
+                <br><span class="inline-block mt-2 mb-2" dir="ltr">\( R_{open} = R + R = 2R \)</span>
+                </li>
+                <li><strong>כאשר המפסק סגור:</strong> הנורות $L_2$ ו-$L_3$ מחוברות במקביל. ניעזר בנוסחה לחיבור במקביל כדי למצוא את ההתנגדות של קבוצה זו:
+                <br><span class="inline-block mt-2 mb-2" dir="ltr">\( \frac{1}{R_{2,3}} = \frac{1}{R} + \frac{1}{R} = \frac{2}{R} \implies R_{2,3} = \frac{R}{2} = 0.5R \)</span>
+                <br>הקבוצה הזו מחוברת בטור לנורה $L_1$, ולכן ההתנגדות החיצונית הכוללת במצב סגור תהיה:
+                <br><span class="inline-block mt-2" dir="ltr">\( R_{closed} = R + 0.5R = 1.5R \)</span>
+                </li>
+            </ul>
+            
+            <div class="step-label">שלב 2: הקשר בין ההתנגדות לזרם לפי חוק אוהם</div>
+            <p class="content-paragraph">קיבלנו שההתנגדות החיצונית במצב פתוח <strong>גדולה יותר</strong> מההתנגדות במצב סגור ($2R > 1.5R$).<br>
+            נשלב את חוק אוהם למעגל חיצוני (\( V = I \cdot R_T \)) עם נוסחת מתח ההדקים (\( V = \varepsilon - Ir \)):<br>
+            <span class="inline-block mt-2 mb-2" dir="ltr">\( I \cdot R_T = \varepsilon - I \cdot r \implies I(R_T + r) = \varepsilon \implies I = \frac{\varepsilon}{R_T + r} \)</span><br>
+            מכאן שהזרם הראשי במעגל נמצא ביחס הפוך לסך ההתנגדות. כלומר, ככל שההתנגדות הכוללת גדולה יותר, כך הזרם שזורם במעגל קטן יותר.</p>
+            
+            <p class="final-answer">מסקנה: מצב 1 בטבלה (זרם גבוה, $1.5A$) שייך להתנגדות הקטנה ולכן זהו ה<span class="inline-ltr">מפסק סגור</span>. מצב 2 (זרם נמוך, $1.2A$) שייך להתנגדות הגדולה, ולכן זהו ה<span class="inline-ltr">מפסק פתוח</span>.</p>
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': חישוב הכא"מ ($\varepsilon$) וההתנגדות הפנימית ($r$)</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> מצב 1 (סגור): $V=9V, I=1.5A$. מצב 2 (פתוח): $V=9.6V, I=1.2A$.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> את הכא"מ $\varepsilon$ ואת ההתנגדות הפנימית $r$ של מקור המתח.</div>
+        </div>
+        
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש (מהדף):</strong><br>
+            <span class="formula-badge">\( V = \varepsilon - Ir \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">מד המתח מתחבר ישירות להדקי המקור ומודד את מתח ההדקים ($V$). נבנה מערכת משוואות על ידי הצבת הנתונים משני המצבים לתוך נוסחת מתח ההדקים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ (1)\ \ 9 = \varepsilon - 1.5r \]
+                \[ (2)\ \ 9.6 = \varepsilon - 1.2r \]
+            </div>
+            <p class="content-paragraph">נחסר את משוואה (1) ממשוואה (2) כדי לבודד את $r$:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 9.6 - 9 = (\varepsilon - 1.2r) - (\varepsilon - 1.5r) \]
+                \[ 0.6 = 0.3r \implies r = 2\,\Omega \]
+            </div>
+            <p class="content-paragraph">כעת, נציב את הערך של ההתנגדות הפנימית באחת המשוואות (נבחר במשוואה 1) כדי למצוא את הכא"מ:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 9 = \varepsilon - 1.5 \cdot 2 \]
+                \[ 9 = \varepsilon - 3 \implies \varepsilon = 12\,\text{V} \]
+            </div>
+            <p class="final-answer">מסקנה: הכא"מ הוא <span class="inline-ltr">12V</span> וההתנגדות הפנימית היא <span class="inline-ltr">2&Omega;</span>.</p>
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': חישוב התנגדות נורה אחת ($R$)</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> במצב 2 (פתוח) הזרם $1.2A$ ומתח ההדקים $9.6V$. כמו כן, מצאנו בסעיף א' שבמצב זה ההתנגדות השקולה היא $R_T = 2R$.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> את התנגדותה של נורה בודדת, $R$.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש (מהדף):</strong><br>
+            <span class="formula-badge">\( I = \frac{V}{R} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">לפי חוק אוהם לחלק מעגל (כאשר מתייחסים למעגל החיצוני בלבד), ניתן לומר שמתח ההדקים $V$ הנופל על המעגל החיצוני קשור לזרם הראשי בו באמצעות הקשר \( V = I \cdot R_T \).<br>
+            נציב את הנתונים הידועים לנו ממצב 2 (מפסק פתוח):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 9.6 = 1.2 \cdot (2R) \]
+                \[ 9.6 = 2.4R \implies R = \frac{9.6}{2.4} = 4\,\Omega \]
+            </div>
+            <p class="final-answer">מסקנה: התנגדותה של כל נורה היא <span class="inline-ltr">4&Omega;</span>.</p>
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': הרישום על הנורות (הספק ומתח נומינליים)</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> במצב בו המפסק סגור (מצב 1), <strong>כל</strong> הנורות מאירות בהתאם לערכים הרשומים עליהן.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> את הערכים שרשומים על כל אחת מהנורות (מתח והספק תקינים מקסימליים).</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש (מהדף):</strong><br>
+            <span class="formula-badge">\( I = \frac{V}{R} \)</span>
+            <span class="formula-badge">\( P = VI \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נתון שבמצב סגור (בו הזרם הראשי הוא $1.5A$) הנורות עובדות בתנאים נומינליים. ננתח את החלוקה של הזרמים והמתחים לכל רכיב במצב זה:</p>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li class="mb-2"><strong>נורה $L_1$:</strong> מחוברת בטור למקור, לכן הזרם הראשי המלא עובר דרכה ($I_1 = 1.5A$). <br>
+                נמצא את המתח עליה בעזרת חוק אוהם: \( V_1 = I_1 \cdot R = 1.5 \cdot 4 = 6\,\text{V} \).<br>
+                נמצא את ההספק שהיא צורכת: \( P_1 = V_1 \cdot I_1 = 6 \cdot 1.5 = 9\,\text{W} \).
+                </li>
+                <li><strong>נורות $L_2, L_3$:</strong> מחוברות במקביל זו לזו ושתיהן בעלות התנגדות זהה ($4\,\Omega$). הזרם הראשי מתפצל שווה בשווה: \( I_2 = I_3 = 0.75A \). <br>
+                המתח עליהן: \( V_2 = V_3 = I_2 \cdot R = 0.75 \cdot 4 = 3\,\text{V} \). <br>
+                ההספק שכל אחת מהן צורכת: \( P_2 = P_3 = V_2 \cdot I_2 = 3 \cdot 0.75 = 2.25\,\text{W} \).
+                </li>
+            </ul>
+            <p class="final-answer">מסקנה: הרישום על נורה L1 הוא <span class="inline-ltr">6V, 9W</span>, והרישום על נורות L2 ו-L3 הוא <span class="inline-ltr">3V, 2.25W</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            שימו לב לדקות הפיזיקלית החשובה! אף על פי שלנורות יש התנגדות זהה, הן <strong>אינן</strong> נורות מאותו דגם (אינן זהות לחלוטין בנתוני היצרן שלהן). מכיוון שנתון שכל הנורות מאירות <strong>בדיוק</strong> בהתאם לרישום שלהן במצב 1, כל נורה צורכת באותו רגע את ההספק הנומינלי שלה. בגלל שהזרם בנורה $L_1$ כפול מהזרם בשאר הנורות, הרישום עליה חייב להיות שונה כדי שהיא תעבוד בצורה תקינה במקביל אליהן ולא תישרף.
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה': נצילות המעגל</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> נתוני המעגל ומכשירי המדידה עבור מצב מפסק פתוח ומצב מפסק סגור.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לקבוע ולהסביר באיזה מצב מבין השניים נצילות המעגל גדולה יותר.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש (מהדף):</strong><br>
+            <span class="formula-badge">\( P = VI \)</span>
+            <span class="formula-badge">עקרון: שימור אנרגיה (הגדרת נצילות)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נצילות המעגל ($\eta$) מוגדרת על פי עקרון שימור האנרגיה כיחס בין ההספק המנוצל במעגל החיצוני ($P_{out}$) לבין ההספק הכולל שמספק המקור ($P_{total}$).<br>
+            מכיוון ש-\( P_{out} = V \cdot I \) ו-\( P_{total} = \varepsilon \cdot I \), ניתן לבטא את הנצילות במעגל פשוט כיחס בין מתח ההדקים לכא"מ המקור: 
+            \( \eta = \frac{V \cdot I}{\varepsilon \cdot I} = \frac{V}{\varepsilon} \).</p>
+            <p class="content-paragraph">נציב את הנתונים שמצאנו עבור שני המצבים:</p>
+            <ul class="list-disc list-inside mb-4 text-slate-700">
+                <li><strong>במצב סגור (מצב 1):</strong> \( \eta = \frac{9}{12} = 0.75 \implies 75\% \)</li>
+                <li><strong>במצב פתוח (מצב 2):</strong> \( \eta = \frac{9.6}{12} = 0.80 \implies 80\% \)</li>
+            </ul>
+            <p class="content-paragraph"><strong>ההסבר הפיזיקלי:</strong> במצב מפסק פתוח, ההתנגדות החיצונית השקולה במעגל גדולה יותר. כתוצאה מכך, הזרם יורד ולכן "מפל המתח הפנימי" (\(I \cdot r\)) בתוך המקור קטן. פחות אנרגיה מתבזבזת על התנגדות המקור, ויותר ממנה עוברת למעגל החיצוני, מה שמעלה את הנצילות.</p>
+            <p class="final-answer">מסקנה: במצב שבו <span class="inline-ltr">המפסק פתוח (מצב 2)</span> נצילות המעגל גדולה יותר.</p>
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

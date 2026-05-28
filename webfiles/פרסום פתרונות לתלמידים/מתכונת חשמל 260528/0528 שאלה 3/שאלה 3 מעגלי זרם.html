@@ -1,0 +1,915 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מוסבר בפיזיקה - מעגלי קומקומים</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            min-height: 360px;
+            width: 100%;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<!--
+STANDARD NOTES FOR FUTURE REUSE
+1. Keep question image filename as: question-image.png
+2. Keep floating button text and icon exactly as in this file.
+3. For each section: What is given -> What to find -> Formula -> Step-by-step solution -> Teacher note.
+3.1 Preferred layout: place "מה נתון" and "מה מחפשים" inside .info-grid using two .info-panel blocks side by side on wide screens.
+4. Keep formulas inside .math-container or .overflow-x-auto dir="ltr".
+5. If a section has a graph, use Chart.js only if needed.
+6. Do not remove Esc/modal-close behavior.
+7. The version stamp must show a masked date code + time only, in the form: "עודכן: CODE HH:MM:SS".
+8. Do not use hash-like version IDs, random letters, or opaque codes in the stamp.
+9. The floating button text must be exactly: "הצג שאלה".
+10. Do not add a visible heading like "נוסח השאלה" above the inline question image block.
+11. The question block must stay a .section-card with border-t-4; do not introduce new card classes.
+12. Section hierarchy: use <h3 class="section-header"> only (no extra number spans); sub-headings are <h4>. Keep aria-label on the version stamp.
+13. Formula chips: use .formula-badge inline; if the math is long, place it in .math-container/.math-scroll dir="ltr" instead of growing the chip.
+13.1 For long explanations, prefer .content-paragraph and split the reasoning into short visual blocks.
+13.2 In .final-answer, if the sentence ends with a short LTR fragment (value + unit, range, symbol-only result), wrap that fragment with .inline-ltr so punctuation stays at the visual end of the Hebrew sentence.
+14. Formula chip shape is fixed: rounded rectangle only (border-radius: 0.5rem). Never use pill/circle style (9999px).
+15. Modal/button IDs are locked: openQuestionModalBtn, questionModal, closeQuestionModalBtn; keep the eye icon SVG + text exactly.
+16. Header lock: keep the stamp inside <header class="text-center mb-8">, directly under the title block and above the inline question image.
+17. Keep the stamp classes/ids exactly: <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ"> + <span id="versionUpdatedAt">.
+18. In JS, always fill versionUpdatedAt from document.lastModified as masked-date CODE + HH:MM:SS (no explicit date).
+-->
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מוסבר: חשמל - מעגלי קומקומים</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">פיזיקה 5 יח"ל / שאלה 3 (מתכונת 28/5)</h2>
+        <p class="mt-3 text-slate-500">צעד אחר צעד, מרמת הבסיס ועד להבנה מלאה</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">מבוא לבעיה</h3>
+        <p class="content-paragraph mb-0">תלמידים יקרים, לפנינו שאלת בגרות קלאסית המשלבת מושגים של מעגלי זרם ישר (DC) עם חוקי שימור אנרגיה ותהליכי חימום. בשאלה זו ננתח קומקום חשמלי המחובר למקור מתח אמיתי (בעל התנגדות פנימית), ולאחר מכן נבדוק מה קורה כאשר מחברים מספר קומקומים יחד. ניגש לכל סעיף בצורה שיטתית ומסודרת.</p>
+    </section>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א' -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א': הבנת מושג הכא"מ</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <p class="content-paragraph mt-1 mb-0">נתון כי למקור המתח יש כא"מ של <span class="inline-ltr">\( \varepsilon = 220\text{V} \)</span>.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                <p class="content-paragraph mt-1 mb-0">אנו מתבקשים להסביר במילים ברורות את משמעות המשפט "הכא"מ של מקור המתח הוא 220 וולט", תוך התייחסות למושגים: אנרגיה, עבודה, מטען, מתח/פוטנציאל והדקי הסוללה.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mt-1 mb-1">העיקרון הפיזיקלי עליו נשען הסעיף קשור לעבודת הכוח החשמלי. מתוך נוסחה זו בדף הנוסחאות, הכא"מ מתאר את העבודה ליחידת מטען.</p>
+            <span class="formula-badge">\( W_{A \to B} = V_{AB} I t = q V_{AB} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הסבר פיזיקלי מקיף:</h4>
+            <p class="content-paragraph">אם נבודד את המתח מהנוסחה, נקבל \( V_{AB} = \frac{W_{A \to B}}{q} \). הכוח האלקטרו-מניע (כא"מ) מסמל את האנרגיה המקסימלית שמקור המתח מסוגל להעניק ליחידת מטען.</p>
+            <p class="content-paragraph mb-0">המשמעות של \( \varepsilon = 220\text{V} \) היא שמקור המתח מבצע עבודה של 220 ג'אול על מנת להעביר מטען חשמלי של 1 קולון מההדק השלילי להדק החיובי בתוך הסוללה (כנגד השדה החשמלי). במילים אחרות, זהו מתח ההדקים (הפרש הפוטנציאלים המקסימלי) של הסוללה כאשר היא מנותקת ממעגל חשמלי ואינו זורם בה זרם.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: אל תתבלבלו מהשם!</strong><br>
+            השם "כוח אלקטרו-מניע" הוא שם היסטורי מטעה. הכא"מ נמדד בוולטים (ג'אול לקולון) ולא בניוטונים. הוא איננו מתאר "כוח" במשמעות המכנית, אלא אנרגיה פוטנציאלית המוענקת לכל יחידת מטען.
+        </div>
+    </section>
+
+    <!-- סעיף ב' 1 -->
+    <section class="section-card" id="part-b1">
+        <h3 class="section-header">סעיף ב' (1): חישוב האנרגיה לחימום המים</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong> 
+                <ul class="list-disc list-inside mt-2 text-slate-700 space-y-1">
+                    <li>נפח המים: \( 200\text{ ml} \). נבצע המרת יחידות לליטרים כדי להתאים לנתון שבשאלה: \( V = 0.2\text{ Liter} \).</li>
+                    <li>טמפרטורה התחלתית: \( T_1 = 25^\circ\text{C} \).</li>
+                    <li>טמפרטורת רתיחה (סופית): \( T_2 = 100^\circ\text{C} \).</li>
+                    <li>הפרש הטמפרטורות: \( \Delta T = 100 - 25 = 75^\circ\text{C} \).</li>
+                    <li>אנרגיה דרושה לחימום 1 ליטר במעלת צלזיוס אחת היא \( 4186\text{ J} \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                <p class="content-paragraph mt-1 mb-0">אנו מחפשים את כמות האנרגיה הכוללת \( \Delta E \) שיש להשקיע כדי לחמם 0.2 ליטר מים ב- 75 מעלות צלזיוס.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mt-1 mb-1"><strong>עקרון יחס ישר:</strong> על פי הנתון המופיע בשאלה (לא בדף נוסחאות), קיימת תלות ליניארית (יחס ישר) בין כמות האנרגיה המושקעת, נפח המים והפרש הטמפרטורות הדרוש.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">נבנה את משוואת היחס הישר ונציב את הנתונים:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ 
+                \begin{aligned}
+                \Delta E &= V \cdot 4186 \cdot \Delta T \\
+                \Delta E &= 0.2 \cdot 4186 \cdot 75 \\
+                \Delta E &= 0.2 \cdot 313950 \\
+                \Delta E &= 62790\text{ J}
+                \end{aligned}
+                \]
+            </div>
+            <p class="final-answer">מסקנה: כמות האנרגיה שיש להשקיע היא <span class="inline-ltr">\( \Delta E = 6.28 \cdot 10^4\text{ J} \) (או \( 62790\text{ J} \))</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: המרת יחידות זה הסוד!</strong><br>
+            שימו לב! נתנו לנו מים ביחידות של מ"ל. מיד המרנו לליטרים (חילקנו ב-1000) כי הנתון של התרמודינמיקה בשאלה התייחס לליטרים. עבודה עם יחידות תואמות מונעת טעויות חישוב נפוצות.
+        </div>
+    </section>
+
+    <!-- סעיף ב' 2 -->
+    <section class="section-card" id="part-b2">
+        <h3 class="section-header">סעיף ב' (2): מציאת הזרם וההתנגדות של הקומקום</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 text-slate-700 space-y-1">
+                    <li>אנרגיה שהושקעה (מסעיף קודם): \( \Delta W = 62790\text{ J} \) בנצילות של 100%.</li>
+                    <li>זמן הפעולה: 2.5 דקות. נמיר יחידות לשניות: \( \Delta t = 2.5 \cdot 60 = 150\text{ s} \).</li>
+                    <li>התנגדות פנימית של המקור: \( r = 5\Omega \).</li>
+                    <li>כא"מ המקור: \( \varepsilon = 220\text{V} \).</li>
+                    <li>אילוץ חשוב: הקומקום יכול לעמוד <strong>רק בזרמים הנמוכים מ-4 אמפר</strong> (\( I < 4\text{A} \)).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="content-paragraph mt-1 mb-0">אנו מחפשים לחשב את ההספק החשמלי של הקומקום \( P \), ולאחר מכן למצוא את עוצמת הזרם הזורם בו \( I \) ואת התנגדותו הפנימית \( R \).</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mt-1 mb-1">נוסחאות מדף הנוסחאות שישמשו אותנו לשם מציאת ההספק, המתח והזרם:</p>
+            <span class="formula-badge">\( \overline{P} = \frac{\Delta W}{\Delta t} \)</span>
+            <span class="formula-badge">\( W_{A \to B} = V_{AB} I t = q V_{AB} \)</span>
+            <span class="formula-badge">\( V_{ab} = \varepsilon - rI \)</span>
+            <span class="formula-badge">\( V = RI \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            
+            <div class="step-label">שלב 1: מציאת ההספק החשמלי</div>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ P = \frac{62790}{150} = 418.6\text{ W} \]
+            </div>
+            
+            <div class="step-label">שלב 2: בניית משוואה לזרם במעגל</div>
+            <p class="content-paragraph">הקומקום הוא הצרכן היחיד במעגל, ולכן מתח ההדקים של הסוללה נופל במלואו עליו. מתוך נוסחת העבודה נפתח את ביטוי ההספק להמשך: \( P = \frac{V_{ab} \cdot I \cdot t}{t} = V_{ab} \cdot I \).</p>
+            <p class="content-paragraph">נציב את מתח ההדקים בביטוי שפיתחנו עבור ההספק:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ 
+                \begin{aligned}
+                P &= V_{ab} \cdot I = (\varepsilon - rI) \cdot I = \varepsilon I - rI^2 \\
+                418.6 &= 220I - 5I^2
+                \end{aligned}
+                \]
+            </div>
+            <p class="content-paragraph mt-3 mb-1">נסדר את המשוואה הריבועית ונפתור בעזרת נוסחת השורשים:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ 
+                \begin{aligned}
+                5I^2 - 220I + 418.6 &= 0 \\
+                I_{1,2} &= \frac{220 \pm \sqrt{(-220)^2 - 4 \cdot 5 \cdot 418.6}}{2 \cdot 5} \\
+                I_{1,2} &= \frac{220 \pm \sqrt{48400 - 8372}}{10} = \frac{220 \pm \sqrt{40028}}{10} \\
+                I_1 &= 42.0\text{ A} \quad , \quad I_2 = 1.993\text{ A}
+                \end{aligned}
+                \]
+            </div>
+            <p class="content-paragraph mt-3">היות ונתון כי הקומקום עומד בזרמים הנמוכים מ-4 אמפר, נפסול את התשובה של 42 אמפר ונקבל כי הזרם הוא 1.993 אמפר.</p>
+
+            <div class="step-label">שלב 3: מציאת התנגדות הקומקום</div>
+            <p class="content-paragraph">נחשב תחילה את מתח ההדקים ולאחר מכן בעזרת חוק אוהם נמצא את ההתנגדות:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ 
+                \begin{aligned}
+                V_{ab} &= 220 - 5 \cdot 1.993 = 210.035\text{ V} \\
+                R &= \frac{V_{ab}}{I} = \frac{210.035}{1.993} = 105.38 \Omega
+                \end{aligned}
+                \]
+            </div>
+
+            <div class="final-answer flex flex-col gap-1 text-right">
+                <div>מסקנה 1: ההספק הוא <span class="inline-ltr">\( P = 419\text{ W} \)</span></div>
+                <div>מסקנה 2: עוצמת הזרם בקומקום היא <span class="inline-ltr">\( I = 1.99\text{ A} \)</span></div>
+                <div>מסקנה 3: התנגדות הקומקום היא <span class="inline-ltr">\( R = 105 \Omega \)</span></div>
+                <div class="text-sm font-normal text-green-800 mt-2">* התוצאות הסופיות עוגלו ל-3 ספרות מהותיות כמקובל.</div>
+            </div>
+        </div>
+
+        <div class="teacher-highlight block">
+            <strong class="text-lg block mb-2">רגע של לימוד: למה מתמטיקה נותנת שני פתרונות?</strong>
+            <p class="content-paragraph mb-2">בפתרון פסלנו את התשובה של <span class="inline-ltr">\( I = 42\text{ A} \)</span> רק בגלל אילוץ טכני של הקומקום בשאלה, אבל מבחינה פיזיקלית יש כאן תובנה מדהימה! המשוואה הריבועית מראה לנו שיש <strong>שתי התנגדויות שונות לחלוטין</strong> של קומקום שיתנו לנו בדיוק את אותו קצב חימום (הספק של \( 419\text{ W} \)):</p>
+            <ul class="list-disc list-inside text-slate-700 space-y-1 mb-2">
+                <li><strong>האפשרות שבחרנו:</strong> זרם קטן (\( \sim 2\text{ A} \)) והתנגדות קומקום גדולה (\( 105 \Omega \)).</li>
+                <li><strong>האפשרות שפסלנו:</strong> זרם עצום (\( 42\text{ A} \)) והתנגדות קומקום זעירה (שאם נחשב אותה מתוך חוק אוהם, תהיה בערך \( 0.24 \Omega \)).</li>
+            </ul>
+            <p class="content-paragraph mb-0"><strong>אז מה ההבדל ומי יעילה יותר?</strong> ההבדל טמון <em>בבזבוז האנרגיה על מקור המתח עצמו</em>! כאשר זורם זרם של \( 42\text{ A} \), ההספק שמתבזבז על ההתנגדות הפנימית של מקור המתח (לפי \( P = I^2 r \)) הוא עצום - כמעט \( 9,000\text{ W} \) שמתבזבזים על חימום הסוללה, לעומת פחות מ- \( 20\text{ W} \) באפשרות שבחרנו. לכן, לשם יעילות אנרגטית וצריכה ביתית בטוחה, תמיד נעדיף צרכנים עם התנגדות גדולה ששואבים זרם קטן ממקור המתח. זרם גבוה מאוד מבזבז את רוב האנרגיה בתוך קווי החשמל ועלול אף לגרום לשריפה.</p>
+        </div>
+    </section>
+
+    <!-- סעיף ג' -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': זמן ההרתחה במעגל החדש</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="content-paragraph mt-1 mb-0">מחברים 3 קומקומים זהים (בעלי התנגדות \( R = 105.38\Omega \)) למעגל. קומקום 1 מחובר במקביל לענף ובו קומקומים 2 ו-3 המחוברים בטור.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="content-paragraph mt-1 mb-0">לקבוע ולנמק: האם הזמן שיקח להרתיח את המים בקומקום מספר 1 במצב החדש גדול מ- 2.5 דקות, קטן מ- 2.5 דקות, או בדיוק 2.5 דקות.</p>
+            </div>
+        </div>
+
+        <div class="visual-frame">
+            <div class="w-full overflow-x-auto flex justify-center">
+                <img
+                    src="image-3.png"
+                    alt="תרשים סעיף ג"
+                    class="max-w-full h-auto"
+                    style="width: 400px;"
+                />
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mt-1 mb-1">ניעזר בנוסחאות חיבור נגדים במקביל ונוסחת מתח ההדקים מדף הנוסחאות:</p>
+            <span class="formula-badge">\( \frac{1}{R_T} = \Sigma\frac{1}{R_i} \)</span>
+            <span class="formula-badge">\( V_{ab} = \varepsilon - rI \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">ניתוח לוגי של המעגל:</h4>
+            <ol class="list-decimal list-inside text-slate-700 space-y-3 mt-2">
+                <li>במצב ההתחלתי, ההתנגדות החיצונית הייתה מורכבת מקומקום 1 בלבד: \( R_{ext} = R \).</li>
+                <li>במצב החדש, חיברנו ענף נוסף במקביל לקומקום 1. על פי הנוסחה לחיבור במקביל, הוספת ענף <strong>מקטינה</strong> את ההתנגדות השקולה. כעת \( R_{ext\_new} < R \).</li>
+                <li>מכיוון שההתנגדות הכוללת של המעגל קטנה, הזרם הכולל דרך הסוללה \( I \) <strong>גדל</strong>.</li>
+                <li>נביט בנוסחת מתח ההדקים: \( V_{ab} = \varepsilon - rI \). מכיוון ש- \( I \) גדל, מפל המתח על ההתנגדות הפנימית (\( rI \)) גדל, ולכן מתח ההדקים \( V_{ab} \) <strong>קטן</strong>.</li>
+                <li>ההספק על קומקום 1 תלוי במתח הנופל עליו (מתח ההדקים). פיתוח נוסחת ההספק נותן: \( P_1 = \frac{V_{ab}^2}{R_1} \). מכיוון שמתח ההדקים ירד והתנגדות הקומקום קבועה, הספקו <strong>קטן</strong>.</li>
+                <li>אם קצב החום (ההספק) קטן, ייקח יותר זמן לספק את אותה כמות אנרגיה הנדרשת לרתיחה.</li>
+            </ol>
+            <p class="final-answer">מסקנה: הזמן שייקח למים בקומקום 1 לרתוח יהיה <strong>גדול</strong> מ- 2.5 דקות.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: המלכודת של חיבור במקביל!</strong><br>
+            תלמידים רבים טועים וחושבים שבגלל שחיברנו במקביל, הקומקום "לא מרגיש" את השינוי וממשיך לקבל את אותו מתח. זה נכון רק עבור מקור מתח אידיאלי (ללא התנגדות פנימית)! ברגע שיש לסוללה התנגדות פנימית \( r \), שאיבת זרם גדולה יותר מהסוללה מפילה את מתח ההדקים שהיא מסוגלת לספק.
+        </div>
+    </section>
+
+    <!-- סעיף ד' -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': חישוב הזמן לקומקום 2</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="content-paragraph mt-1 mb-0">המעגל כולל 3 קומקומים עם התנגדות \( R = 105.38 \Omega \). קומקום 2 ו-3 מחוברים בטור בענף התחתון. האנרגיה לחימום נותרה \( \Delta W = 62790\text{ J} \).</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="content-paragraph mt-1 mb-0">לחשב מספרית כמה זמן בדיוק ייקח למים בקומקום מספר 2 להגיע לרתיחה במצב החדש.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <p class="content-paragraph mt-1 mb-1">נשתמש בנוסחאות חיבור הנגדים, חוקי קירכהוף והספק מדף הנוסחאות:</p>
+            <span class="formula-badge">\( R_T = \Sigma R_i \)</span>
+            <span class="formula-badge">\( \frac{1}{R_T} = \Sigma\frac{1}{R_i} \)</span>
+            <span class="formula-badge">\( \Sigma \varepsilon = \Sigma I R \)</span>
+            <span class="formula-badge">\( \overline{P} = \frac{\Delta W}{\Delta t} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            
+            <div class="step-label">שלב 1: חישוב התנגדות שקולה של המעגל החיצוני</div>
+            <p class="content-paragraph">ענף עליון (קומקום 1): \( R_1 = R \). ענף תחתון (קומקומים 2+3 בטור): נשתמש ב-\( R_T = \Sigma R_i \) ונקבל \( R_{23} = 2R \).</p>
+            <p class="content-paragraph mb-1">כעת נחשב התנגדות שקולה לשני הענפים במקביל:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ 
+                \begin{aligned}
+                \frac{1}{R_{ext}} &= \frac{1}{R} + \frac{1}{2R} = \frac{3}{2R} \\
+                R_{ext} &= \frac{2}{3}R = \frac{2}{3} \cdot 105.38 = 70.25 \Omega
+                \end{aligned}
+                \]
+            </div>
+
+            <div class="step-label">שלב 2: חישוב זרם כולל ומתח הדקים</div>
+            <p class="content-paragraph mb-1">מתוך חוק קירכהוף (או חוק אוהם למעגל שלם), נחשב את הזרם דרך הסוללה ואת מתח ההדקים:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ 
+                \begin{aligned}
+                I_{tot} &= \frac{\varepsilon}{R_{ext} + r} = \frac{220}{70.25 + 5} = 2.923\text{ A} \\
+                V_{ab} &= \varepsilon - r \cdot I_{tot} = 220 - 5 \cdot 2.923 = 205.385\text{ V}
+                \end{aligned}
+                \]
+            </div>
+
+            <div class="step-label">שלב 3: הספק על קומקום 2</div>
+            <p class="content-paragraph mb-1">מתח ההדקים מתחלק שווה בשווה בין שני הקומקומים שבענף התחתון (כיוון שיש להם התנגדות זהה). נפתח את נוסחת ההספק ונציב:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ 
+                \begin{aligned}
+                V_2 &= \frac{V_{ab}}{2} = 102.69\text{ V} \\
+                P_2 &= \frac{V_2^2}{R} = \frac{102.69^2}{105.38} = 100.06\text{ W}
+                \end{aligned}
+                \]
+            </div>
+
+            <div class="step-label">שלב 4: הזמן הדרוש</div>
+            <p class="content-paragraph mb-1">מתוך נוסחת ההספק הממוצע \( \overline{P} = \frac{\Delta W}{\Delta t} \) נבודד את \( \Delta t \):</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ \Delta t = \frac{\Delta W}{P_2} = \frac{62790}{100.06} = 627.5\text{ s} \]
+            </div>
+
+            <p class="final-answer">מסקנה: הזמן שייקח למים בקומקום 2 לרתוח הוא <span class="inline-ltr">\( \Delta t = 628\text{ s} \)</span> (כ- 10.5 דקות).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: שליטה במפל מתח ושימוש בסימטריה!</strong><br>
+            היכולת לזהות באופן מיידי ששני נגדים זהים בטור "חולקים" את המתח שווה בשווה מקצרת מאוד את החישוב (במקום לחשב קודם את הזרם בענף). זהו בעצם ניצול של <strong>סימטריה פיזיקלית</strong>: מכיוון ששני הקומקומים בענף הם בעלי התנגדות זהה לחלוטין, למעגל אין "העדפה" לאחד מהם ולכן מפל המתח חייב להתחלק ביניהם באופן זהה. שימוש מושכל בפיצולי מתחים ובשיקולי סימטריה הוא כלי אלגנטי נהדר שחוסך זמן, מפתח אינטואיציה ומונע טעויות אלגבריות בדרך.
+        </div>
+    </section>
+
+    <!-- סעיף ה' -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה': נצילות המעגל החשמלי</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="content-paragraph mt-1 mb-0">אנו משווים בין שני מצבים: מצב ראשון ובו קומקום אחד, ומצב שני ובו שלושה קומקומים.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="content-paragraph mt-1 mb-0">להחליט ולהסביר האם נצילות המעגל גדולה יותר כאשר קומקום אחד מחובר או כאשר שלושה קומקומים מחוברים.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \eta = \frac{P_{eff}}{P_{in}} \)</span>
+            <p class="content-paragraph mt-2 mb-0">כאשר \( P_{eff} \) הוא ההספק המנוצל על הרכיבים החיצוניים, ו- \( P_{in} \) הוא ההספק המושקע על ידי המקור.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">ניתוח הנצילות:</h4>
+            <p class="content-paragraph mb-1">נפתח את ביטוי הנצילות כדי להבין במה הוא תלוי:</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ \eta = \frac{V_{ab} \cdot I_{tot}}{\varepsilon \cdot I_{tot}} = \frac{V_{ab}}{\varepsilon} \]
+            </div>
+            <p class="content-paragraph mt-3 mb-1">נמשיך לפתח על סמך הקשרים \( V_{ab} = I_{tot} R_{ext} \) ו- \( \varepsilon = I_{tot} (R_{ext} + r) \):</p>
+            <div class="overflow-x-auto text-center" dir="ltr">
+                \[ \eta = \frac{I_{tot} \cdot R_{ext}}{I_{tot} (R_{ext} + r)} = \frac{R_{ext}}{R_{ext} + r} \]
+            </div>
+            <p class="content-paragraph mt-3">מביטוי זה ניתן לראות כי הנצילות עולה ככל שההתנגדות החיצונית (\( R_{ext} \)) גדולה יותר יחסית להתנגדות הפנימית. הוספת קומקומים במקביל במצב השני הקטינה את ההתנגדות החיצונית, ולכן יותר מן ההספק מתבזבז על הסוללה עצמה והנצילות <strong>יורדת</strong>.</p>
+            
+            <p class="final-answer">מסקנה: הנצילות <strong>גדולה יותר</strong> כאשר מחובר קומקום אחד בלבד.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה: מהי משמעות הנצילות?</strong><br>
+            הנצילות מבטאת "כמה קיבלתי מתוך מה שהשקעתי". במעגל חשמלי, הסוללה מייצרת הספק כולל, אך חלק ממנו נבלע בהתנגדות הפנימית. ככל שנחבר צרכנים במקביל, ההתנגדות השקולה של המעגל תקטן, הזרם יגדל מאוד, והסוללה תתבזבז על עצמה (ותתחמם). לכן מעגלים חסכוניים הם מעגלים בעלי התנגדות חיצונית גדולה ככל הניתן.
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>

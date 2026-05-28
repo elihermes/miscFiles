@@ -1,0 +1,798 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+        <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+        <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-QZJ7JT80X2');
+        </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מתכונת 1 פיזיקה - שאלה 5 ציקלוטרון</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- Phosphor Icons for Simulation -->
+    <script src="https://unpkg.com/@phosphor-icons/web"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+
+        .fbd-svg {
+            width: 100%;
+            max-width: 500px;
+            height: auto;
+            margin: 0 auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון שאלה 5 - ציקלוטרון</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מתכונת 1 בפיזיקה - חשמל ומגנטיות</h2>
+        <p class="mt-3 text-slate-500">הכנת פתרון מוסבר לתלמידים, שלב אחר שלב.</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- הקדמה -->
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">הקדמה: הכנת הנתונים</h3>
+        <p class="content-paragraph">לפני שנתחיל לפתור, נזכור כלל ברזל בפיזיקה: <strong>אנו עובדים תמיד במערכת יחידות MKS</strong> (מטר, קילוגרם, שנייה, קולון). נציג את הנתונים החדשים בכל סעיף, אך כבר עכשיו נרשום את נתוני החלקיק שלנו.</p>
+        
+        <ul class="list-disc list-inside space-y-2 text-slate-700">
+            <li>החלקיק הוא <strong>דאוטריום</strong> (מורכב מפרוטון אחד ונויטרון אחד).</li>
+            <li>מטען החלקיק חיובי ושווה למטען פרוטון: <span class="inline-ltr">\( q = +e = 1.6 \cdot 10^{-19} \text{ C} \)</span></li>
+            <li>מסת החלקיק נתונה: <span class="inline-ltr">\( m = 3.34 \cdot 10^{-27} \text{ kg} \)</span></li>
+        </ul>
+    </section>
+
+    <!-- סעיף א(1) -->
+    <section class="section-card" id="part-a1">
+        <h3 class="section-header">סעיף א' (1): הוכחת זמן השהייה ב-D</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> חלקיק טעון חיובי נכנס לשדה מגנטי אחיד המאונך לכיוון תנועתו בתוך חצי קופסה (D).</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> להוכיח שהזמן שלוקח לחלקיק להשלים חצי מעגל (\( t \)) אינו תלוי בגודל מהירותו (\( v \)) וברדיוס מסלולו (\( r \)).</div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( \Sigma\vec{F}=m\vec{a} \)</span>
+            <span class="formula-badge">\( a_R=\frac{v^2}{r} \)</span>
+            <span class="formula-badge">\( F=qvB\sin\alpha \)</span>
+            <span class="formula-badge">\( v=\frac{2\pi r}{T} \)</span>
+        </div>
+
+        <h4 class="font-bold text-center mb-2">תרשים כוחות חופשי (FBD) ומסלול החלקיק</h4>
+        <div class="visual-frame">
+            <img src="image-1.png" alt="תרשים סעיף א(1)" class="fbd-svg">
+        </div>
+        <p class="text-sm text-center text-slate-500 mb-4">החלקיק נע בחצי מעגל. הכוח המגנטי מכוון תמיד למרכז המעגל ומהווה כוח צנטריפטלי.</p>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">החלקיק נע בתוך ה-D. כיוון המהירות מאונך לכיוון השדה המגנטי, לכן הזווית \(\alpha = 90^\circ\) ו- \(\sin(90^\circ) = 1\).</p>
+            <p class="content-paragraph">נרשום את החוק השני של ניוטון עבור ציר הרדיוס (פנימה מוגדר כחיובי):</p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_R = m \cdot a_R \]
+                \[ qvB = m \frac{v^2}{r} \]
+            </div>
+            
+            <p class="content-paragraph">נצמצם ב-\(v\) (מותר כי \(v \neq 0\)) ונבודד את הרדיוס \(r\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ r = \frac{mv}{qB} \]
+            </div>
+            
+            <p class="content-paragraph">זמן של הקפה <strong>מלאה</strong> (\(T\)) קשור למהירות דרך הנוסחה מהדף \(v = \frac{2\pi r}{T}\). נבודד את \(T\) ונקבל \(T = \frac{2\pi r}{v}\).</p>
+            <p class="content-paragraph">נציב את הביטוי שמצאנו עבור הרדיוס \(r\) אל תוך הנוסחה של \(T\):</p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ T = \frac{2\pi \left(\frac{mv}{qB}\right)}{v} = \frac{2\pi m}{qB} \]
+            </div>
+
+            <p class="content-paragraph">הזמן המבוקש הוא חצי מהקפה (זמן ל"חצי מעגל"), שנסמנו \(t\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ t = \frac{T}{2} = \frac{\pi m}{qB} \]
+            </div>
+
+            <p class="final-answer"><strong>מ.ש.ל:</strong> רואים מהמשוואה הסופית שהזמן \(t\) תלוי אך ורק במספר \(\pi\), במסת החלקיק \(m\), במטען \(q\), ובעוצמת השדה המגנטי \(B\). ביטוי זה אינו כולל את המהירות \(v\) או את הרדיוס \(r\).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            זהו "הקסם" של הציקלוטרון! ככל שהחלקיק משיג מהירות גדולה יותר (גודל המהירות גדל), הוא מבצע מסלול ברדיוס גדול יותר. שני האפקטים הללו מבטלים זה את זה בדיוק! ולכן החלקיק ישהה בתוך ה-D תמיד את אותו פרק הזמן, לא משנה מה גודל מהירותו. עובדה זו מאפשרת לנו להשתמש במקור מתח חילופין בעל תדירות קבועה.
+        </div>
+    </section>
+
+    <!-- סעיף א(2) -->
+    <section class="section-card" id="part-a2">
+        <h3 class="section-header">סעיף א' (2): חישוב זמן המחזור מתוך הגרף</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> גרף המתח כפונקציה של הזמן (איור ב'). ציר הזמן הוא ביחידות של <span class="inline-ltr">\(10^{-7} \text{ sec}\)</span>.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> את זמן המחזור השלם (\(T\)) של מקור המתח, והסבר על הזנחת מרווח ה-D.</div>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון והסבר:</h4>
+            <p class="content-paragraph">כדי שהחלקיק יואץ באופן רציף, כיוון השדה החשמלי (סימן המתח) חייב להתהפך בכל פעם שהחלקיק עובר במרווח. <strong>זמן מחזור שלם</strong> משמעותו הזמן שלוקח לחלקיק להשלים סיבוב מלא (360 מעלות) – כלומר שהייה בשני חצאי המעגלים (גם ב-D הראשון וגם ב-D השני) וחזרה לאותו כיוון תנועה.</p>
+            <p class="content-paragraph">מכיוון שבכל סיבוב שלם החלקיק חוצה את המרווח פעמיים (מ-D1 ל-D2 ובחזרה), <strong>המתח חייב להשתנות פעמיים במהלך מחזור אחד שלם</strong>. המשמעות היא שהחלקיק <strong>מואץ פעמיים בכל מחזור</strong> (פעם אחת בכל כיוון של השדה החשמלי). הבנה זו בונה לנו את הבסיס להמשך כשנרצה לקשר בין מספר הסיבובים הכולל למספר ההאצות שהחלקיק חווה.</p>
+            <p class="content-paragraph">מתוך הגרף אנו רואים שמחזור שלם של המתח (מנקודת ההתחלה החיובית ב-\(t=0\) ועד תחילת המחזור הבא ב-\(t=4\)) אורך 4 יחידות. לכן, זמן המחזור השלם הוא:</p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ T = 4 \cdot 10^{-7} \text{ s} \]
+            </div>
+
+            <p class="final-answer">זמן המחזור השלם הוא <span class="inline-ltr">\( 4 \cdot 10^{-7} \text{ s} \)</span>.</p>
+            
+            <h4 class="font-bold text-slate-800 mt-4 mb-2">מדוע ניתן להזניח את זמן השהייה במרווח?</h4>
+            <ol class="list-decimal list-inside space-y-1 text-slate-700">
+                <li>המרווח הפיזי בין שני ה-D-ים הוא קטן מאוד ביחס לרדיוס המסלול הכולל. מכיוון שהמרחק קטן והמהירות עצומה, זמן המעבר שם שואף לאפס ביחס לזמן השהייה בתוך ה-D.</li>
+                <li>מבחינה אידיאלית בגרף הנתון, אנו רואים שינוי מתח בקווים מאונכים לחלוטין (זמן שינוי אפס), מה שמרמז שהמעבר במודל התיאורטי שלנו נחשב רגעי.</li>
+            </ol>
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': חישוב עוצמת השדה המגנטי</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> זמן מחזור שלם: <span class="inline-ltr">\(T = 4 \cdot 10^{-7} \text{ s}\)</span> (ולכן זמן לשהייה בחצי מעגל אחד הוא <span class="inline-ltr">\(t = \frac{T}{2} = 2 \cdot 10^{-7} \text{ s}\)</span>), מסה <span class="inline-ltr">\(m = 3.34 \cdot 10^{-27} \text{ kg}\)</span>, מטען <span class="inline-ltr">\(q = 1.6 \cdot 10^{-19} \text{ C}\)</span>.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> את גודל השדה המגנטי האחיד \(B\).</div>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">נשתמש בנוסחה שפיתחנו בסעיף א(1) עבור זמן השהייה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ t = \frac{\pi m}{qB} \]
+            </div>
+            <p class="content-paragraph">נבודד את המשתנה שאנו מחפשים, עוצמת השדה המגנטי \(B\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ B = \frac{\pi m}{q \cdot t} \]
+            </div>
+            <p class="content-paragraph">נציב את הנתונים המספריים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ B = \frac{\pi \cdot 3.34 \cdot 10^{-27}}{1.6 \cdot 10^{-19} \cdot 2 \cdot 10^{-7}} \]
+                \[ B = \frac{3.14159 \cdot 3.34 \cdot 10^{-27}}{3.2 \cdot 10^{-26}} \]
+            </div>
+            <p class="final-answer">עוצמת השדה המגנטי היא <span class="inline-ltr">\( B \approx 0.3279 \text{ T} \)</span>.</p>
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': חישוב קוטר הציקלוטרון</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> אנרגיה קינטית מרבית: <span class="inline-ltr">\(E_{k,max} = 1.5 \cdot 10^6 \text{ eV}\)</span>. נתון ההמרה <span class="inline-ltr">\(1\text{eV} = 1.6 \cdot 10^{-19}\text{J}\)</span>.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> את קוטר הציקלוטרון, \(d\) (\(d = 2R_{max}\)).</div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( E_k = \frac{1}{2}mv^2 \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב צעד-אחר-צעד:</h4>
+            
+            <div class="step-label">שלב 1: המרת יחידות</div>
+            <p class="content-paragraph">כדי להשתמש בנוסחאות מכניקה, האנרגיה חייבת להיות בג'אולים (J). נבצע המרה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{k,max} = 1.5 \cdot 10^6 \cdot 1.6 \cdot 10^{-19} = 2.4 \cdot 10^{-13} \text{ J} \]
+            </div>
+
+            <div class="step-label">שלב 2: מציאת המהירות המרבית</div>
+            <p class="content-paragraph">נחלץ את המהירות מהנוסחה לאנרגיה קינטית:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{k,max} = \frac{1}{2}mv_{max}^2 \quad \Rightarrow \quad v_{max} = \sqrt{\frac{2E_{k,max}}{m}} \]
+                \[ v_{max} = \sqrt{\frac{2 \cdot 2.4 \cdot 10^{-13}}{3.34 \cdot 10^{-27}}} = \sqrt{1.437 \cdot 10^{14}} \approx 1.198 \cdot 10^7 \text{ m/s} \]
+            </div>
+
+            <div class="step-label">שלב 3: מציאת הרדיוס המרבי והקוטר</div>
+            <p class="content-paragraph">הרדיוס המרבי שאליו מגיע החלקיק שווה לרדיוס הציקלוטרון. נשתמש בקשר שפיתחנו: \(r = \frac{mv}{qB}\).</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ R_{max} = \frac{m \cdot v_{max}}{q \cdot B} \]
+                \[ R_{max} = \frac{3.34 \cdot 10^{-27} \cdot 1.198 \cdot 10^7}{1.6 \cdot 10^{-19} \cdot 0.3279} \approx 0.762 \text{ m} \]
+            </div>
+            <p class="content-paragraph">הקוטר הוא פעמיים הרדיוס:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ d = 2 \cdot R_{max} = 2 \cdot 0.762 = 1.524 \text{ m} \]
+            </div>
+
+            <p class="final-answer">קוטר הציקלוטרון הוא <span class="inline-ltr">\( 1.524 \text{ m} \)</span>.</p>
+        </div>
+        
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            החלקיק מסיים את תנועתו בציקלוטרון ו"נפלט" ממנו בדיוק כשהרדיוס של התנועה שלו שווה לרדיוס הפיזי של קופסאות ה-D. לכן המהירות המרבית והאנרגיה המרבית תמיד תלויים בגודל הפיזי של המכשיר!
+        </div>
+    </section>
+
+    <!-- סעיף ד(1) -->
+    <section class="section-card" id="part-d1">
+        <h3 class="section-header">סעיף ד' (1): האנרגיה המתווספת בכל חצייה</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> החלקיק משלים 400 סיבובים מלאים מרגע תחילת תנועתו ועד פליטתו.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> תוספת האנרגיה בכל מעבר במרווח וציון מקור האנרגיה.</div>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">סיבוב אחד מלא מורכב מתנועה בשני ה-D-ים, כלומר <strong>שני</strong> מעברים במרווח שביניהם. לכן, מספר המעברים הכולל שמבצע החלקיק הוא:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ N_{crossings} = 400 \cdot 2 = 800 \text{ crossings} \]
+            </div>
+            <p class="content-paragraph">החלקיק מגיע לאנרגיה המרבית של \(1.5 \cdot 10^6 \text{ eV}\) בסוף כל התהליך. נניח שהוא מתחיל ממנוחה (אנרגיה אפס). תוספת האנרגיה בכל חצייה (נסמן \(\Delta E\)) שווה לסך האנרגיה חלקי מספר החציות:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Delta E = \frac{E_{k,max}}{N_{crossings}} = \frac{1.5 \cdot 10^6 \text{ eV}}{800} = 1875 \text{ eV} \]
+            </div>
+            <p class="content-paragraph">ביחידות ג'אול (במידה ונרצה):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Delta E = 1875 \cdot 1.6 \cdot 10^{-19} = 3 \cdot 10^{-16} \text{ J} \]
+            </div>
+            <p class="content-paragraph mt-3"><strong>מקור האנרגיה:</strong> האנרגיה הקינטית של החלקיק גדלה עקב העבודה שעושה <strong>השדה החשמלי</strong> שנוצר על ידי מקור המתח בזמן המעבר במרווח שבין ה-D-ים.</p>
+
+            <p class="final-answer">תוספת האנרגיה היא <span class="inline-ltr">\( 1875 \text{ eV} \)</span> (<span class="inline-ltr">\( 3 \cdot 10^{-16} \text{ J} \)</span>).</p>
+        </div>
+    </section>
+
+    <!-- סעיף ד(2) -->
+    <section class="section-card" id="part-d2">
+        <h3 class="section-header">סעיף ד' (2): חישוב ערך המתח המירבי</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> תוספת האנרגיה בכל מעבר \(\Delta E = 3 \cdot 10^{-16} \text{ J}\). מרווח המתח מחובר למקור שערכו המירבי הוא \(V\).</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> את ערך המתח המירבי \(V\).</div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( W_{A \rightarrow B} = qV_{AB} \)</span>
+            <span class="formula-badge">\( W_{total} = \Delta E_k \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">השדה היחיד שעושה עבודה הוא השדה החשמלי. (השדה המגנטי לא מבצע עבודה כי הכוח המגנטי תמיד מאונך לכיוון התנועה). לכן העבודה החשמלית שווה לתוספת האנרגיה הקינטית.</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Delta E_k = W = q \cdot V \]
+            </div>
+            <p class="content-paragraph">נבודד את המתח \(V\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V = \frac{\Delta E_k}{q} = \frac{3 \cdot 10^{-16} \text{ J}}{1.6 \cdot 10^{-19} \text{ C}} = 1875 \text{ V} \]
+            </div>
+
+            <p class="final-answer">ערך המתח המירבי הוא <span class="inline-ltr">\( 1875 \text{ V} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            קיצור דרך מחשבתי: שמתם לב שהמתח בוולטים (1875V) זהה מספרית לאנרגיה באלקטרון-וולט (1875eV)? זה לא צירוף מקרים! יחידת האלקטרון-וולט (eV) מוגדרת בדיוק כך: האנרגיה שמקבל חלקיק בעל מטען יסודי \(e\) כאשר הוא מואץ דרך מתח של 1 וולט. מכיוון שהדאוטריום נושא מטען של \(+1e\), תוספת של \(1875\text{eV}\) משמעה שהוא עבר מפל מתח של \(1875\text{V}\).
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה': שאלת הבנה - שינוי במקור המתח</h3>
+        
+        <div class="info-grid md:grid-cols-1">
+            <div class="info-panel"><strong>תיאור המצב:</strong> אנו בוחנים מצב היפותטי שבו מחליפים את מקור המתח למקור בעל מתח מירבי <strong>שונה</strong> (גדול יותר או קטן יותר).</div>
+        </div>
+
+        <div class="step-box">
+            <div class="step-label">(1) האם המהירות המרבית איתה נפלט החלקיק תשתנה?</div>
+            <p class="content-paragraph text-lg"><strong>קביעה:</strong> לא, המהירות המרבית לא תשתנה.</p>
+            <p class="content-paragraph"><strong>נימוק:</strong> המהירות המרבית תלויה אך ורק ברדיוס הפיזי המקסימלי של הציקלוטרון \(R_{max}\), בשדה המגנטי \(B\), ובחלקיק עצמו (\(q,m\)). כפי שראינו: \(v_{max} = \frac{qBR_{max}}{m}\). הנוסחה אינה כוללת את מתח המקור \(V\). החלקיק תמיד ייפלט כאשר הוא יגיע לקצה ה-D, ובנקודה זו תהיה לו אותה מהירות, ללא קשר לשאלה כמה מתח הושקע בכל סיבוב.</p>
+        </div>
+
+        <div class="step-box mt-4">
+            <div class="step-label">(2) האם מספר הסיבובים עד ליציאתו ישתנה?</div>
+            <p class="content-paragraph text-lg"><strong>קביעה:</strong> כן, מספר הסיבובים ישתנה.</p>
+            <p class="content-paragraph"><strong>נימוק:</strong> האנרגיה הקינטית הסופית היא קבועה למכשיר נתון. עם זאת, האנרגיה שהחלקיק צובר <strong>בכל מעבר</strong> תלויה ישירות במתח (\(\Delta E = qV\)).<br>
+            אם לדוגמה המתח המירבי יהיה גבוה יותר, החלקיק יצבור יותר אנרגיה (וגודל מהירותו יגדל במידה רבה יותר) בכל פעם שהוא חוצה את המרווח. כתוצאה מכך, הוא יגיע לאנרגיה הסופית הדרושה בפחות מעברים, כלומר ב<strong>פחות סיבובים</strong> (ולהיפך אם המתח יקטן).</p>
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+
+    });
+</script>
+
+</body>
+</html>

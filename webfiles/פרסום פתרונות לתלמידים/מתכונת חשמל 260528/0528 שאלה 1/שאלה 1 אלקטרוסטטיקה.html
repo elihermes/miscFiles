@@ -1,0 +1,860 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+        <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+        <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
+
+            gtag('config', 'G-QZJ7JT80X2');
+        </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מלא: מתכונת באלקטרוסטטיקה</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <!-- Header/stamp structure is locked to keep visual consistency across all questionnaires. -->
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מלא: מתכונת באלקטרוסטטיקה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">פיזיקה 5 יח"ל | שדות, כוחות ותנועת מטענים</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך ומתקדם המציג ניתוח כוחות וגרפים בפירוט צעד-אחר-צעד</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">מבט כללי על השאלה</h3>
+        <p class="content-paragraph">השאלה מעמתת בין שני מקורות שונים של שדה חשמלי: שדה רדיאלי משתנה של כדור מוליך ושדה אחיד של לוח אינסופי.</p>
+        <p class="content-paragraph">נבחן כיצד משפיע סוג השדה על כוחות, תאוצות, ועל אופי התנועה של חלקיק טעון (אלקטרון) המשוחרר ממנוחה או נזרק במהירות התחלתית בכיוונים שונים.</p>
+        <p class="content-paragraph mb-0">זהו תרגול מצוין להבנת הקשר שבין שדה חשמלי לבין קינמטיקה וחוקי ניוטון.</p>
+    </section>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א': מציאת המטען וצפיפות המטען</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 text-slate-700">
+                    <li>רדיוס הכדור המוליך: <span class="inline-ltr">\( R = 10 \text{ cm} = 0.1 \text{ m} \)</span></li>
+                    <li>מרחק הנקודות מהשפה: <span class="inline-ltr">\( d = 80 \text{ cm} = 0.8 \text{ m} \)</span></li>
+                    <li>גודל השדה החשמלי: <span class="inline-ltr">\( E_A = E_B = 10 \text{ N/C} \)</span></li>
+                    <li>כיוון השדה: שמאלה בשתי הנקודות.</li>
+                    <li>קבועים: <span class="inline-ltr">\( k = 9 \cdot 10^9 \frac{\text{N}\cdot\text{m}^2}{\text{C}^2} \)</span>, <span class="inline-ltr">\( \epsilon_0 = 8.85 \cdot 10^{-12} \frac{\text{C}^2}{\text{N}\cdot\text{m}^2} \)</span></li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-700">את גודלו וסימנו של מטען הכדור \( Q \), ואת גודלה וסימנה של צפיפות המטען של הלוח \( \sigma \).</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( E = k \frac{q}{r^2} \)</span>
+            <span class="formula-badge">\( E = \frac{\sigma}{2\epsilon_0} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            
+            <div class="step-label">שלב 1: עבור הכדור המוליך</div>
+            <p class="content-paragraph">נקודה A נמצאת משמאל לכדור, וכיוון השדה בה הוא שמאלה. השדה מצביע הלאה מן הכדור, ולכן זהו מטען <strong>חיובי</strong>.</p>
+            <p class="content-paragraph">נחשב את המרחק ממרכז הכדור אל נקודה A (נוסחת השדה מתייחסת למרכז המטען):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ r_A = R + d = 0.1 + 0.8 = 0.9 \text{ m} \]
+            </div>
+            <p class="content-paragraph">נציב בנוסחת השדה ונחלץ את המטען \( Q \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_A = k \frac{Q}{r_A^2} \implies 10 = 9 \cdot 10^9 \cdot \frac{Q}{(0.9)^2} \]
+            </div>
+            <div class="math-container text-center" dir="ltr">
+                \[ Q = \frac{10 \cdot 0.81}{9 \cdot 10^9} = 0.9 \cdot 10^{-9} \text{ C} \]
+            </div>
+
+            <div class="step-label mt-4">שלב 2: עבור הלוח האינסופי</div>
+            <p class="content-paragraph">נקודה B נמצאת משמאל ללוח, וכיוון השדה בה שמאלה (הרחק מהלוח). לכן גם הלוח טעון במטען <strong>חיובי</strong>.</p>
+            <p class="content-paragraph">נציב בנוסחת השדה של לוח אינסופי ונחלץ את צפיפות המטען \( \sigma \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_B = \frac{\sigma}{2\epsilon_0} \implies 10 = \frac{\sigma}{2 \cdot 8.85 \cdot 10^{-12}} \]
+            </div>
+            <div class="math-container text-center" dir="ltr">
+                \[ \sigma = 10 \cdot 2 \cdot 8.85 \cdot 10^{-12} = 1.77 \cdot 10^{-10} \text{ C/m}^2 \]
+            </div>
+
+            <p class="final-answer">מסקנה: מטען הכדור הוא <span class="inline-ltr">\( Q = +0.9 \text{ nC} \)</span>, וצפיפות המטען של הלוח היא <span class="inline-ltr">\( \sigma = +1.77 \cdot 10^{-10} \frac{\text{C}}{\text{m}^2} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            קראו את השאלה בדקדקנות ובסבלנות! תלמידים רבים נוטים להציב את הנתון \( d \) כמייצג את המרחק \( r \) במשוואת השדה של מוליך כדורי. 
+            שימו לב להבדל העקרוני: שדה הכדור תלוי במרחק ממרכזו ולכן הוספנו את הרדיוס \( R \) למרחק \( d \). שדה של לוח אינסופי הוא אחיד ואינו תלוי כלל במרחק, ולכן הנתון \( d = 80 \text{ cm} \) אינו נכנס לחישוב של \( \sigma \).
+        </div>
+    </section>
+
+    <!-- סעיף ב(1) -->
+    <section class="section-card" id="part-b1">
+        <h3 class="section-header">סעיף ב(1): גרף התנועה של האלקטרון מנקודה B</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 text-slate-700">
+                    <li>אלקטרון משוחרר ממנוחה (<span class="inline-ltr">\( v_0 = 0 \)</span>) מנקודה B.</li>
+                    <li>מטען האלקטרון הוא שלילי.</li>
+                    <li>השדה החשמלי באזור הלוח הוא אחיד וקבוע.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-700">לקבוע איזה מבין 4 הגרפים מתאר נכונה את גודל מהירות האלקטרון כתלות בזמן, ולנמק.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( \vec{F} = q\vec{E} \)</span>
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+            <span class="formula-badge">\( v = v_0 + at \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            
+            <p class="content-paragraph">נצייר תרשים כוחות לאלקטרון המשוחרר ליד הלוח:</p>
+            
+            <div class="visual-frame">
+                <svg width="250" height="120" viewBox="0 0 250 120" class="max-w-full h-auto">
+                    <!-- E Field Lines -->
+                    <line x1="180" y1="30" x2="60" y2="30" stroke="#9ca3af" stroke-width="2" stroke-dasharray="5,5"/>
+                    <polygon points="60,30 68,26 68,34" fill="#9ca3af" />
+                    <line x1="180" y1="90" x2="60" y2="90" stroke="#9ca3af" stroke-width="2" stroke-dasharray="5,5"/>
+                    <polygon points="60,90 68,86 68,94" fill="#9ca3af" />
+                    <text x="50" y="25" fill="#9ca3af" font-size="12">E</text>
+
+                    <!-- Electron -->
+                    <circle cx="120" cy="60" r="10" fill="#3b82f6" />
+                    <text x="116" y="65" fill="white" font-size="14" font-weight="bold">-</text>
+
+                    <!-- Force Vector -->
+                    <line x1="130" y1="60" x2="190" y2="60" stroke="#ef4444" stroke-width="3" />
+                    <polygon points="190,60 182,55 182,65" fill="#ef4444" />
+                    <text x="180" y="50" fill="#ef4444" font-weight="bold" font-size="14">Fe</text>
+                </svg>
+            </div>
+
+            <p class="content-paragraph">השדה החשמלי (\( E \)) שנוצר על ידי הלוח האינסופי הוא שדה אחיד, כלומר קבוע בגודלו ובכיוונו בכל נקודה במרחב. מכיוון שמטען האלקטרון (\( q \)) קבוע, הכוח החשמלי הפועל עליו מחושב לפי \( F_e = |q|E \) וגם הוא <strong>קבוע בגודלו</strong> (ופועל ימינה, נגד כיוון השדה).</p>
+            <p class="content-paragraph">על פי החוק השני של ניוטון, הכוח השקול קבוע ולכן מייצר תאוצה קבועה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ a = \frac{|q|E}{m} = \text{const} \]
+            </div>
+            <p class="content-paragraph">תנועה בתאוצה קבועה שמתחילה ממנוחה מתוארת בקינמטיקה על ידי המשוואה הליניארית \( v = at \). בגרף של מהירות זמן (v-t), השיפוע מייצג את התאוצה. שיפוע קבוע מתבטא כקו ישר עולה.</p>
+
+            <p class="final-answer">מסקנה: הגרף המתאים הוא <strong>גרף I</strong>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            מכיוון שהאלקטרון טעון במטען שלילי, הכוח החשמלי יפעל בכיוון מנוגד לשדה החשמלי. השדה שמאלה, לכן הכוח ימינה - האלקטרון נמשך אל הלוח החיובי. כוח קבוע \(\leftarrow\) תאוצה קבועה \(\leftarrow\) שיפוע קבוע בגרף V-t.
+        </div>
+    </section>
+
+    <!-- סעיף ב(2) -->
+    <section class="section-card" id="part-b2">
+        <h3 class="section-header">סעיף ב(2): גרף התנועה של האלקטרון מנקודה A</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 text-slate-700">
+                    <li>אלקטרון משוחרר ממנוחה (<span class="inline-ltr">\( v_0 = 0 \)</span>) מנקודה A.</li>
+                    <li>השדה סביב הכדור איננו אחיד ותלוי במרחק: \( E = \frac{kQ}{r^2} \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-700">לקבוע איזה מבין 4 הגרפים מתאר נכונה את מהירות האלקטרון כתלות בזמן, ולנמק.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( E = k \frac{Q}{r^2} \)</span>
+            <span class="formula-badge">\( \Sigma\vec{F} = m\vec{a} \)</span>
+            <span class="formula-badge">\( a = \frac{\Delta v}{\Delta t} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב והסבר:</h4>
+            
+            <p class="content-paragraph">נצייר תרשים חשיבה על האלקטרון באזור הכדור:</p>
+
+            <div class="visual-frame">
+                <svg width="250" height="120" viewBox="0 0 250 120" class="max-w-full h-auto">
+                    <!-- Sphere abstract -->
+                    <circle cx="230" cy="60" r="40" fill="#fca5a5" opacity="0.5"/>
+                    <text x="225" y="65" font-size="20" fill="#b91c1c">+</text>
+                    
+                    <!-- E Field Lines -->
+                    <line x1="180" y1="60" x2="60" y2="60" stroke="#9ca3af" stroke-width="2" stroke-dasharray="5,5"/>
+                    <polygon points="60,60 68,56 68,64" fill="#9ca3af" />
+                    
+                    <!-- Electron -->
+                    <circle cx="90" cy="60" r="10" fill="#3b82f6" />
+                    <text x="86" y="65" fill="white" font-size="14" font-weight="bold">-</text>
+
+                    <!-- Force Vector -->
+                    <line x1="100" y1="60" x2="150" y2="60" stroke="#ef4444" stroke-width="3" />
+                    <polygon points="150,60 142,55 142,65" fill="#ef4444" />
+                    <text x="140" y="50" fill="#ef4444" font-weight="bold" font-size="14">Fe</text>
+                    
+                    <path d="M 90 90 L 230 90" stroke="#6b7280" stroke-width="1.5"/>
+                    <text x="140" y="105" font-size="12" fill="#6b7280">r קטן</text>
+                </svg>
+            </div>
+
+            <p class="content-paragraph">כאשר האלקטרון משוחרר מנקודה A, הוא נמשך ימינה אל עבר הכדור החיובי. משמעות הדבר היא שהמרחק \( r \) בין האלקטרון למרכז הכדור <strong>הולך וקטן</strong>.</p>
+            <p class="content-paragraph">ככל שהמרחק \( r \) קטן, עוצמת השדה החשמלי הולכת וגדלה בהתאם למשוואה \( E = \frac{kQ}{r^2} \).</p>
+            <p class="content-paragraph">על פי החוק השני של ניוטון:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ a = \frac{F_e}{m} = \frac{|q|E}{m} = \frac{|q|kQ}{m \cdot r^2} \]
+            </div>
+            <p class="content-paragraph">התאוצה של האלקטרון הולכת וגדלה עם הזמן. שיפוע המשיק לגרף בכל נקודה שווה לתאוצה הרגעית, ולכן שיפוע הגרף חייב להיות הולך וגדל. צורה של עקומה המתחילה ממנוחה וששיפועה עולה בהתמדה היא הגרף השני.</p>
+
+            <p class="final-answer">מסקנה: הגרף המתאים הוא <strong>גרף II</strong>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            זכרו היטב את הקשר הגרפי והפיזיקלי: בגרף מהירות-זמן, השיפוע מייצג ישירות את גודל התאוצה, והתאוצה נמצאת תמיד ביחס ישר לכוח השקול הפועל על הגוף (\( \Sigma F = ma \)). ככל שהאלקטרון קרב אל הגוף הטעון חיובית, כוח המשיכה החשמלי ביניהם הולך וגדל. כתוצאה מכך – תאוצת האלקטרון עולה בהתמדה, ושיפוע הגרף הופך תלול יותר ויותר ככל שחולף הזמן!
+            <br class="mb-2">
+            מצב זה שונה מנפילה חופשית על פני כדור הארץ בה אנו מזניחים את השינוי ב-g. כאן, המרחקים הם קטנים משמעותית ביחס לשינויים בשדה, ולכן כוח המשיכה מתחזק בצורה בולטת ככל שהאלקטרון מתקרב למקור!
+        </div>
+    </section>
+
+    <!-- סעיף ג(1) -->
+    <section class="section-card" id="part-c1">
+        <h3 class="section-header">סעיף ג(1): תנועה מעגלית אפשרית</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <p class="mt-2 text-slate-700">מקנים לאלקטרון מהירות התחלתית \( v_0 \) כלפי מטה במישור הדף בשתי הנקודות A ו-B.</p>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-700">באיזה משני המקרים (לוח או כדור) ייתכן שהאלקטרון יבצע תנועה מעגלית קצובה.</p>
+            </div>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הסבר והנמקה:</h4>
+            <p class="content-paragraph"><strong>תנאי הכרחי לתנועה מעגלית קצובה:</strong> חייב לפעול כוח שקול שכיוונו תמיד למרכז מסלול מעגלי קבוע, וניצב בכל רגע לווקטור המהירות.</p>
+            <p class="content-paragraph"><strong>במקרה של הלוח (נקודה B):</strong> השדה הוא אחיד ואופקי. הכוח החשמלי הפועל על האלקטרון הוא תמיד בכיוון אופקי ללא תלות במיקומו. כוח ששומר תמיד על כיוון קבוע אינו יכול לשמש ככוח רדיאלי (צנטריפטלי) המכוון תמיד אל מרכז מעגל משותף. תנועה מעגלית סביב הלוח אינה אפשרית.</p>
+            <p class="content-paragraph"><strong>במקרה של הכדור (נקודה A):</strong> קווי השדה הם רדיאליים ויוצאים ממרכז הכדור \( O \). הכוח החשמלי מצביע תמיד אל מרכז הכדור \( O \). כאשר נותנים לאלקטרון מהירות \( v_0 \) במשיק, אם המהירות היא בדיוק בגודל המתאים (\( F_e = m\frac{v^2}{r} \)), האלקטרון יבצע תנועה מעגלית קצובה סביב המרכז.</p>
+
+            <p class="final-answer">מסקנה: תנועה מעגלית תיתכן במקרה של <strong>הכדור (נקודה A)</strong>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            זכרו שכוח צנטריפטלי הוא לא "כוח חדש", אלא תפקיד שממלא הכוח החשמלי במקרה זה. שדה רדיאלי של כדור מתאים בדיוק לדרישה של כוח המכוון אל מרכז יחיד!
+        </div>
+    </section>
+
+    <!-- סעיף ג(2) -->
+    <section class="section-card" id="part-c2">
+        <h3 class="section-header">סעיף ג(2): חישוב המהירות ההתחלתית לתנועה המעגלית</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 text-slate-700">
+                    <li>מרחק ממרכז הכדור: <span class="inline-ltr">\( r_A = 0.9 \text{ m} \)</span></li>
+                    <li>גודל השדה החשמלי: <span class="inline-ltr">\( E_A = 10 \text{ N/C} \)</span></li>
+                    <li>מטען האלקטרון (בערך מוחלט): <span class="inline-ltr">\( e = 1.6 \cdot 10^{-19} \text{ C} \)</span></li>
+                    <li>מסת האלקטרון: <span class="inline-ltr">\( m_e = 9.11 \cdot 10^{-31} \text{ kg} \)</span></li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-700">לחשב את גודל המהירות \( v_0 \) הנדרשת כדי שהאלקטרון יבצע תנועה מעגלית ברדיוס זה.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( \Sigma F_R = m a_R \)</span>
+            <span class="formula-badge">\( a_R = \frac{v^2}{r} \)</span>
+            <span class="formula-badge">\( F_e = |q|E \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <p class="content-paragraph">הכוח היחיד שפועל על האלקטרון בציר הרדיאלי הוא הכוח החשמלי \( F_e \). נרכיב את משוואת הכוחות בציר הרדיאלי (החוק השני של ניוטון בתנועה מעגלית):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ F_e = m_e a_R \implies |q_e|E_A = m_e \frac{v_0^2}{r_A} \]
+            </div>
+            <p class="content-paragraph">נבודד את המהירות הריבועית \( v_0^2 \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ v_0^2 = \frac{|q_e| \cdot E_A \cdot r_A}{m_e} \]
+            </div>
+            <p class="content-paragraph">נציב את כל הנתונים המספריים ונוציא שורש:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ v_0^2 = \frac{(1.6 \cdot 10^{-19}) \cdot 10 \cdot 0.9}{9.11 \cdot 10^{-31}} \approx 1.58 \cdot 10^{12} \]
+            </div>
+            <div class="math-container text-center" dir="ltr">
+                \[ v_0 = \sqrt{1.58 \cdot 10^{12}} = 1.257 \cdot 10^6 \text{ m/s} \]
+            </div>
+            <p class="final-answer">מסקנה: גודל המהירות הנדרשת הוא <span class="inline-ltr">\( v_0 = 1.26 \cdot 10^6 \text{ m/s} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            כאשר אנו מחשבים מהירויות של חלקיקים תת-אטומיים (כמו אלקטרונים), אין צורך להיבהל כשאנו מקבלים תוצאות גבוהות מסדר גודל של <span class="inline-ltr">\( 10^6 \text{ m/s} \)</span>. זהו בהחלט טווח הגיוני ורגיל! עם זאת, יש לזכור תמיד סף עליון קריטי: אף חלקיק אינו יכול להגיע למהירות האור בריק או לעבור אותה, כלומר מהירותו חייבת להיות קטנה מ- <span class="inline-ltr">\( c = 3 \cdot 10^8 \text{ m/s} \)</span>. אם החישוב שלכם מניב תוצאה שגדולה ממהירות האור, זוהי נורת אזהרה ברורה המעידה על טעות (לרוב חלוקה שגויה, שכחת העלאה בריבוע או אי-הוצאת שורש), ומומלץ לחזור ולבדוק היטב את הפתרון.
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': צורת המסלול של הגוף השני</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 text-slate-700">
+                    <li>אלקטרון משוחרר ליד לוח עם מהירות התחלתית \( v_0 \) מטה (ציר y).</li>
+                    <li>פועל עליו כוח חשמלי כתוצאה משדה אחיד, הכוח הוא ימינה בלבד (ציר x).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-2 text-slate-700">לקבוע ולהסביר מה תהיה צורת המסלול שיבצע האלקטרון במקרה זה.</p>
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">עקרון אי תלות התנועות בצירים</span>
+            <span class="formula-badge">\( v_x = at \)</span>
+            <span class="formula-badge">\( y = v_0 t \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון והסבר:</h4>
+            <p class="content-paragraph">נפרק את תנועת האלקטרון לשני צירים:</p>
+            <ul class="list-disc list-inside space-y-2 mb-4 text-slate-700">
+                <li><strong>ציר אופקי (x):</strong> פועל עליו כוח חשמלי אופקי קבוע. לכן יש לאלקטרון <strong>תאוצה קבועה</strong>, והמהירות שלו ימינה הולכת וגדלה ליניארית עם הזמן.</li>
+                <li><strong>ציר אנכי (y):</strong> לא פועל שום כוח בכיוון האנכי (כבידה נזנחת). לכן התאוצה בציר y היא אפס והאלקטרון יתמיד בתנועתו במהירות קבועה מטה.</li>
+            </ul>
+            <p class="content-paragraph">שילוב של תנועה קצובה בציר אחד ותנועה שוות-תאוצה בציר השני יוצר מסלול עקום שהפונקציה שלו היא פרבולה (בדומה לזריקה אופקית בשדה הכבידה).</p>
+
+            <p class="final-answer">מסקנה: צורת המסלול שיבצע האלקטרון תהיה <strong>פרבולה</strong>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            תופעה זו היא בסיס לפעולה של מכשירים רבים כמו שפופרת קרן קתודית (CRT), שבו קרן אלקטרונים עוברת בין לוחות טעונים, והמסלול הפרבולי גורם להסטה של הקרן על המסך!
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
