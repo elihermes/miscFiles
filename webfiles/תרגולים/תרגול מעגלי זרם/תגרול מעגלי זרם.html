@@ -1,0 +1,478 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תרגול אינטראקטיבי: מעגלי זרם ישר מתקדמים</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <script>
+        window.MathJax = {
+            tex: { inlineMath: [['$', '$'], ['\\(', '\\)']] },
+            svg: { fontCache: 'global' }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap');
+        body { font-family: 'Assistant', sans-serif; }
+        .input-correct { border-color: #22c55e !important; background-color: #f0fdf4 !important; color: #166534 !important; }
+        .input-wrong { border-color: #ef4444 !important; background-color: #fef2f2 !important; color: #991b1b !important; }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col text-slate-800">
+
+    <header class="bg-white shadow-sm border-b border-slate-200 py-3 px-4 sticky top-0 z-50">
+        <div class="max-w-6xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <h1 class="text-xl md:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+                <span class="p-1.5 bg-blue-600 text-white rounded-lg text-sm">⚡</span>
+                מעגלי זרם ישר: התנגדות וערכי מעגל
+            </h1>
+            <div id="header-stats" class="hidden flex items-center gap-3 text-sm font-semibold">
+                <span id="question-counter" class="bg-slate-100 px-3 py-1.5 rounded-full text-slate-600">שאלה 1 מתוך 20</span>
+                <span class="bg-blue-50 px-3 py-1.5 rounded-full text-blue-800 border border-blue-200">
+                    ציון: <span id="score-display">0</span>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <main class="max-w-6xl w-full mx-auto p-4 md:p-6 flex-grow flex items-center justify-center">
+        
+        <div id="start-screen" class="bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center max-w-3xl w-full border border-slate-200 transition-all">
+            <div class="text-6xl mb-6">⚙️</div>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-4">מוכנים לתרגול מעגלים?</h2>
+            <p class="text-lg text-slate-600 mb-10">בחרו את רמת הקושי שלכם כדי להתחיל. המערכת תבנה עבורכם 20 מעגלים בהתאמה אישית.</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <button onclick="startQuiz(1)" class="flex flex-col items-center p-6 bg-emerald-50 hover:bg-emerald-100 border-2 border-emerald-200 rounded-2xl transition-all hover:scale-105 hover:shadow-lg group">
+                    <span class="text-4xl mb-3">🌱</span>
+                    <span class="text-xl font-bold text-emerald-800 mb-1">מתחילים</span>
+                    <span class="text-sm text-emerald-600 font-semibold">טיפוס איטי (עד 5 נגדים)</span>
+                </button>
+                
+                <button onclick="startQuiz(2)" class="flex flex-col items-center p-6 bg-blue-50 hover:bg-blue-100 border-2 border-blue-200 rounded-2xl transition-all hover:scale-105 hover:shadow-lg group">
+                    <span class="text-4xl mb-3">🎓</span>
+                    <span class="text-xl font-bold text-blue-800 mb-1">רמת בגרות</span>
+                    <span class="text-sm text-blue-600 font-semibold">הסטנדרט (עד 6 נגדים)</span>
+                </button>
+
+                <button onclick="startQuiz(3)" class="flex flex-col items-center p-6 bg-purple-50 hover:bg-purple-100 border-2 border-purple-200 rounded-2xl transition-all hover:scale-105 hover:shadow-lg group">
+                    <span class="text-4xl mb-3">🔥</span>
+                    <span class="text-xl font-bold text-purple-800 mb-1">PRO MAX</span>
+                    <span class="text-sm text-purple-600 font-semibold">למתקדמים! (עד 8 נגדים)</span>
+                </button>
+            </div>
+        </div>
+
+        <div id="quiz-container" class="hidden bg-white rounded-2xl shadow-xl p-4 md:p-6 w-full border border-slate-100 transition-all">
+            <div class="flex flex-col lg:flex-row gap-6">
+                
+                <div class="lg:w-3/5 flex flex-col items-center bg-slate-50 p-3 rounded-xl border border-slate-200 shadow-inner overflow-hidden">
+                    <div id="phase-badge" class="text-xs font-bold px-3 py-1 rounded-full mb-2 bg-blue-100 text-blue-800 self-start"></div>
+                    <div class="w-full overflow-x-auto flex justify-center">
+                        <canvas id="circuitCanvas" width="600" height="380" class="bg-white rounded-xl border border-slate-300 shadow-sm max-w-full"></canvas>
+                    </div>
+                </div>
+
+                <div class="lg:w-2/5 flex flex-col justify-between">
+                    <div>
+                        <h2 class="text-lg font-bold mb-3 text-slate-800">התבונן בתרשים המעגל וענה:</h2>
+                        <div id="questions-area" class="space-y-2.5">
+                            </div>
+                    </div>
+
+                    <div class="mt-4 pt-3 border-t border-slate-100 text-left">
+                        <button id="action-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-base md:text-lg font-bold px-6 py-2.5 rounded-xl transition-all shadow-md w-full sm:w-auto">
+                            בדוק תשובות
+                        </button>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+
+        <div id="end-screen" class="hidden bg-white rounded-2xl shadow-xl p-10 text-center max-w-lg w-full border border-slate-200">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-3xl font-extrabold text-slate-900 mb-2">אלופים! התרגול הושלם!</h2>
+            <div class="text-slate-600 mb-6">כל הכבוד על ההשקעה וההתמדה.</div>
+            <div class="bg-slate-50 p-6 rounded-xl border border-slate-200 mb-8">
+                <div class="text-lg font-semibold text-slate-700">הציון הסופי שלך:</div>
+                <div id="final-percentage" class="text-5xl font-black text-blue-600 my-2">0%</div>
+                <div id="final-score-text" class="text-slate-500 font-medium">0 נקודות</div>
+            </div>
+            <button onclick="location.reload()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold px-8 py-4 rounded-xl w-full shadow-lg text-lg transition-all">
+                חזור למסך הראשי
+            </button>
+        </div>
+
+    </main>
+
+    <script>
+        const NICE_P2 = [[3,6,2], [4,12,3], [6,6,3], [10,10,5], [8,8,4], [12,24,8], [20,5,4], [2,2,1], [15,10,6]]; 
+        const NICE_P3 = [[3,3,3,1], [6,6,6,2], [9,9,9,3], [6,3,2,1], [12,6,4,2], [18,9,6,3], [24,12,8,4]]; 
+
+        let questionsList = [];
+        let currentIndex = 0;
+        let score = 0;
+        let totalPossible = 0;
+        let currentLevel = 1;
+
+        function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+        function shuffleArray(array) {
+            let newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        function getBlocksForComplexity(cl) {
+            let options = [];
+            if(cl === 1) options = [ ['s','s'], ['p2'] ]; 
+            else if(cl === 2) options = [ ['s','p2'], ['p3'] ]; 
+            else if(cl === 3) options = [ ['s','s','p2'], ['p2','p2'] ]; 
+            else if(cl === 4) options = [ ['s','p2','p2'], ['s','s','p3'], ['p2','p3'] ]; 
+            else if(cl === 5) options = [ ['s','p2','p3'], ['p3','p3'], ['p2','p2','p2'] ]; 
+            else if(cl === 6) options = [ ['s','p3','p3'], ['p2','p2','p3'] ]; 
+            else if(cl === 7) options = [ ['p3','p2','p3'] ]; 
+
+            let chosenStructure = pick(options);
+            let blocks = [];
+            let reqTotal = 0;
+
+            chosenStructure.forEach(type => {
+                if(type === 's') {
+                    let r = randInt(1, 8);
+                    blocks.push({type: 's', r: [r]});
+                    reqTotal += r;
+                } else if(type === 'p2') {
+                    let p = pick(NICE_P2);
+                    blocks.push({type: 'p2', r: [p[0], p[1]]});
+                    reqTotal += p[2];
+                } else if(type === 'p3') {
+                    let p = pick(NICE_P3);
+                    blocks.push({type: 'p3', r: [p[0], p[1], p[2]]});
+                    reqTotal += p[3];
+                }
+            });
+
+            return { blocks: shuffleArray(blocks), reqTotal };
+        }
+
+        // מנוע יצירת שאלות תיאורטיות מותאמות הקשר
+        function generateDynamicTheoryQuestion(qData) {
+            let options = [];
+            let resistors = [];
+            
+            // מיפוי כל הנגדים במעגל
+            qData.blocks.forEach(b => {
+                if(b.type === 's') {
+                    resistors.push({label: b.labels[0], type: 's'});
+                } else {
+                    b.labels.forEach(lbl => resistors.push({label: lbl, type: 'p'}));
+                }
+            });
+
+            let targetR = pick(resistors);
+
+            // שאלה על מקור מתח (רק אם יש התנגדות פנימית)
+            if (qData.r > 0) {
+                options.push({
+                    q: 'אילו מקור המתח היה אידיאלי (ללא התנגדות פנימית), מה היה קורה לזרם הכולל במעגל?',
+                    ans: 'הזרם יגדל',
+                    opts: ['הזרם יגדל', 'הזרם יקטן', 'יישאר ללא שינוי']
+                });
+            }
+
+            // שאלה על ניתוק
+            if (targetR.type === 'p') {
+                options.push({
+                    q: `אם ננתק את הנגד ${targetR.label}, מה יקרה לזרם הכולל היוצא ממקור המתח?`,
+                    ans: 'הזרם יקטן',
+                    opts: ['הזרם יגדל', 'הזרם יקטן', 'יישאר ללא שינוי', 'הזרם יתאפס']
+                });
+            } else if (targetR.type === 's') {
+                options.push({
+                    q: `אם ננתק את הנגד ${targetR.label}, מה יקרה לזרם הכולל במעגל?`,
+                    ans: 'הזרם יתאפס',
+                    opts: ['הזרם יגדל', 'הזרם יקטן', 'יישאר ללא שינוי', 'הזרם יתאפס']
+                });
+            }
+
+            // שאלה על קצר (חוט עוקף)
+            options.push({
+                q: `אם נקצר את הנגד ${targetR.label} (נחבר אליו חוט עוקף מקביל), מה יקרה להתנגדות השקולה של המעגל?`,
+                ans: 'ההתנגדות תקטן',
+                opts: ['ההתנגדות תגדל', 'ההתנגדות תקטן', 'תישאר ללא שינוי']
+            });
+
+            // שאלה על שינוי ערך הנגד
+            let action = Math.random() > 0.5 ? 'נגדיל' : 'נקטין';
+            let currentAns = action === 'נגדיל' ? 'הזרם יקטן' : 'הזרם יגדל';
+            options.push({
+                q: `אם ${action} את ערכו של הנגד ${targetR.label}, מה יקרה לזרם הכולל במעגל?`,
+                ans: currentAns,
+                opts: ['הזרם יגדל', 'הזרם יקטן', 'יישאר ללא שינוי']
+            });
+
+            return pick(options);
+        }
+
+        function generateQuizData(level) {
+            questionsList = [];
+            for(let i = 1; i <= 20; i++) {
+                let cl = 1;
+                if(level === 1) { 
+                    if(i <= 5) cl = 1; else if(i <= 10) cl = 2; else if(i <= 15) cl = 3; else cl = 4;
+                } else if(level === 2) { 
+                    if(i <= 4) cl = 2; else if(i <= 8) cl = 3; else if(i <= 13) cl = 4; else cl = 5;
+                } else { 
+                    if(i <= 4) cl = 4; else if(i <= 9) cl = 5; else if(i <= 15) cl = 6; else cl = 7;
+                }
+
+                let data = getBlocksForComplexity(cl);
+                
+                let rIdx = 1;
+                data.blocks.forEach(b => {
+                    b.labels = [];
+                    b.r.forEach(() => { b.labels.push(`R${rIdx++}`); });
+                });
+
+                let totalResistors = rIdx - 1;
+                let q = { num: i, blocks: data.blocks, subQs: [], phase: `מורכבות ${cl}: ${totalResistors} נגדים` };
+
+                if(level === 1) q.r = (i > 10) ? randInt(1,2) : 0;
+                else if(level === 2) q.r = (i > 5) ? randInt(1,3) : 0;
+                else q.r = randInt(1, 4); 
+
+                let i_tot = randInt(2, 6);
+                let rtot = data.reqTotal + q.r;
+                q.emf = rtot * i_tot;
+                let v_term = q.emf - (i_tot * q.r);
+
+                q.subQs.push({ id:'req', text: 'מהי ההתנגדות השקולה ($R_{total}$) של המעגל החיצוני?', ans: data.reqTotal, type: 'num', unit: 'Ω' });
+                q.subQs.push({ id:'i', text: 'מהו הזרם הכולל ($I$) היוצא ממקור המתח?', ans: i_tot, type: 'num', unit: 'A' });
+                
+                if (q.r > 0) {
+                    q.subQs.push({ id:'vterm', text: 'מהו מתח ההדקים ($V$) של המקור?', ans: v_term, type: 'num', unit: 'V' });
+                }
+
+                // שאלות תיאורטיות מותאמות אישית למעגל
+                if (i > 4 && Math.random() > 0.4) {
+                    let mc = generateDynamicTheoryQuestion(q);
+                    q.subQs.push({ id:'mc', text: mc.q, ans: mc.ans, type: 'select', options: mc.opts });
+                }
+                
+                questionsList.push(q);
+            }
+            totalPossible = questionsList.reduce((sum, q) => sum + q.subQs.length, 0);
+        }
+
+        function startQuiz(level) {
+            currentLevel = level;
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('header-stats').classList.remove('hidden');
+            document.getElementById('header-stats').classList.add('flex');
+            
+            generateQuizData(level);
+            currentIndex = 0;
+            score = 0;
+            updateUI();
+        }
+
+        function updateUI() {
+            const q = questionsList[currentIndex];
+            document.getElementById('question-counter').innerText = `שאלה ${q.num} מתוך 20`;
+            document.getElementById('score-display').innerText = `${score} / ${totalPossible}`;
+            
+            let extraLabel = currentLevel === 3 ? " (PRO MAX 🏆)" : "";
+            document.getElementById('phase-badge').innerText = q.phase + extraLabel;
+
+            const qArea = document.getElementById('questions-area');
+            qArea.innerHTML = '';
+            
+            q.subQs.forEach((sq, i) => {
+                let inputHtml = sq.type === 'num' ? 
+                    `<div class="relative w-32 shrink-0">
+                        <input type="number" id="input-${i}" step="any" class="block w-full pl-7 pr-2 py-1 bg-white border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 font-bold outline-none" placeholder="0">
+                        <div class="absolute inset-y-0 left-0 pl-2 flex items-center pointer-events-none text-slate-500 font-bold text-sm">${sq.unit}</div>
+                    </div>` : 
+                    `<select id="input-${i}" class="block w-full px-2 py-1 bg-white border border-slate-300 rounded-md focus:ring-2 focus:ring-blue-500 text-sm font-semibold outline-none">
+                        <option value="">-- בחר --</option>
+                        ${sq.options.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                    </select>`;
+
+                qArea.innerHTML += `
+                    <div class="bg-slate-50 border border-slate-200 rounded-lg p-2.5">
+                        <label class="block text-[14px] text-slate-700 font-bold mb-1.5">${i+1}. ${sq.text}</label>
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-2">
+                            ${inputHtml}
+                            <span id="feedback-${i}" class="hidden text-sm font-bold"></span>
+                        </div>
+                    </div>`;
+            });
+
+            drawModularCircuit(q);
+            
+            const btn = document.getElementById('action-btn');
+            btn.innerText = "בדוק תשובות";
+            btn.className = "bg-blue-600 hover:bg-blue-700 text-white text-base md:text-lg font-bold px-6 py-2.5 rounded-xl transition-all shadow-md w-full sm:w-auto";
+            btn.onclick = checkAnswers;
+
+            if (typeof MathJax !== 'undefined' && MathJax.typesetPromise) {
+                MathJax.typesetPromise([document.getElementById('questions-area')]).catch(err => console.error(err));
+            }
+        }
+
+        function drawModularCircuit(q) {
+            const canvas = document.getElementById('circuitCanvas');
+            const ctx = canvas.getContext('2d');
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 3;
+            ctx.font = 'bold 14px Assistant, sans-serif';
+            ctx.textAlign = 'center';
+            ctx.textBaseline = 'middle';
+
+            const startX = 60;
+            const endX = 540;
+            const baseY = 110; 
+
+            ctx.beginPath();
+            ctx.moveTo(startX, baseY); ctx.lineTo(endX, baseY);
+            ctx.lineTo(endX, 290); ctx.lineTo(startX, 290);
+            ctx.closePath(); ctx.stroke();
+
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(startX - 10, 180, 20, 40);
+            
+            ctx.beginPath(); ctx.moveTo(startX - 15, 195); ctx.lineTo(startX + 15, 195); ctx.stroke(); 
+            ctx.lineWidth = 5;
+            ctx.beginPath(); ctx.moveTo(startX - 8, 205); ctx.lineTo(startX + 8, 205); ctx.stroke(); 
+            ctx.lineWidth = 3;
+            
+            ctx.fillStyle = '#0f172a';
+            ctx.textAlign = 'left';
+            ctx.fillText(`ε = ${q.emf}V`, startX + 15, 190);
+            if(q.r > 0) ctx.fillText(`r = ${q.r}Ω`, startX + 15, 210);
+            ctx.textAlign = 'center';
+
+            function drawResistorRect(x, y, labelMain, labelVal) {
+                ctx.fillStyle = '#ffffff'; ctx.strokeStyle = '#1e293b';
+                ctx.fillRect(x-20, y-10, 40, 20);
+                ctx.strokeRect(x-20, y-10, 40, 20);
+                ctx.fillStyle = '#0f172a';
+                ctx.fillText(labelMain, x, y-22);
+                ctx.fillText(labelVal, x, y+22);
+            }
+
+            let blockCount = q.blocks.length;
+            let spacing = (endX - startX) / blockCount;
+
+            for(let i=0; i<blockCount; i++) {
+                let cx = startX + (spacing * i) + (spacing / 2);
+                let b = q.blocks[i];
+
+                if(b.type === 's') {
+                    drawResistorRect(cx, baseY, b.labels[0], `${b.r[0]}Ω`);
+                } 
+                else if(b.type === 'p2') {
+                    ctx.fillStyle = '#1e293b';
+                    ctx.beginPath(); ctx.arc(cx - 35, baseY, 4, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(cx + 35, baseY, 4, 0, Math.PI*2); ctx.fill();
+                    
+                    ctx.strokeStyle = '#ffffff'; ctx.lineWidth = 5;
+                    ctx.beginPath(); ctx.moveTo(cx - 32, baseY); ctx.lineTo(cx + 32, baseY); ctx.stroke();
+                    ctx.strokeStyle = '#1e293b'; ctx.lineWidth = 3;
+
+                    ctx.beginPath();
+                    ctx.moveTo(cx - 35, baseY); ctx.lineTo(cx - 35, baseY - 45); ctx.lineTo(cx + 35, baseY - 45); ctx.lineTo(cx + 35, baseY);
+                    ctx.moveTo(cx - 35, baseY); ctx.lineTo(cx - 35, baseY + 45); ctx.lineTo(cx + 35, baseY + 45); ctx.lineTo(cx + 35, baseY);
+                    ctx.stroke();
+
+                    drawResistorRect(cx, baseY - 45, b.labels[0], `${b.r[0]}Ω`);
+                    drawResistorRect(cx, baseY + 45, b.labels[1], `${b.r[1]}Ω`);
+                }
+                else if(b.type === 'p3') {
+                    ctx.fillStyle = '#1e293b';
+                    ctx.beginPath(); ctx.arc(cx - 40, baseY, 4, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(cx + 40, baseY, 4, 0, Math.PI*2); ctx.fill();
+
+                    ctx.beginPath();
+                    ctx.moveTo(cx - 40, baseY); ctx.lineTo(cx - 40, baseY - 60); ctx.lineTo(cx + 40, baseY - 60); ctx.lineTo(cx + 40, baseY);
+                    ctx.moveTo(cx - 40, baseY); ctx.lineTo(cx - 40, baseY + 60); ctx.lineTo(cx + 40, baseY + 60); ctx.lineTo(cx + 40, baseY);
+                    ctx.stroke();
+
+                    drawResistorRect(cx, baseY - 60, b.labels[0], `${b.r[0]}Ω`);
+                    drawResistorRect(cx, baseY,      b.labels[1], `${b.r[1]}Ω`);
+                    drawResistorRect(cx, baseY + 60, b.labels[2], `${b.r[2]}Ω`);
+                }
+            }
+        }
+
+        function checkAnswers() {
+            const q = questionsList[currentIndex];
+
+            q.subQs.forEach((sq, i) => {
+                const input = document.getElementById(`input-${i}`);
+                const feedback = document.getElementById(`feedback-${i}`);
+                let isCorrect = false;
+
+                if(sq.type === 'num') {
+                    let userVal = parseFloat(input.value);
+                    if(Math.abs(userVal - sq.ans) < 0.15) isCorrect = true;
+                } else {
+                    if(input.value === sq.ans) isCorrect = true;
+                }
+
+                input.disabled = true;
+                feedback.style.display = 'inline-block';
+                
+                if(isCorrect) {
+                    score++;
+                    input.classList.add('input-correct');
+                    feedback.innerHTML = '✔️ נכון';
+                    feedback.className = 'inline-block text-sm font-bold text-green-600 mt-1 sm:mt-0';
+                } else {
+                    input.classList.add('input-wrong');
+                    let showAns = sq.type === 'num' ? Number(sq.ans.toFixed(2)) + " " + sq.unit : sq.ans;
+                    feedback.innerHTML = `❌ שגוי. התשובה: ${showAns}`;
+                    feedback.className = 'inline-block text-sm font-bold text-red-600 mt-1 sm:mt-0';
+                }
+            });
+
+            document.getElementById('score-display').innerText = `${score} / ${totalPossible}`;
+
+            const btn = document.getElementById('action-btn');
+            if(currentIndex < questionsList.length - 1) {
+                btn.innerText = "המשך לשאלה הבאה ←";
+                btn.className = "bg-green-600 hover:bg-green-700 text-white text-base md:text-lg font-bold px-6 py-2.5 rounded-xl transition-all shadow-md w-full sm:w-auto";
+                btn.onclick = () => { currentIndex++; updateUI(); };
+            } else {
+                btn.innerText = "סיים וצפה בציון הסופי";
+                btn.className = "bg-purple-600 hover:bg-purple-700 text-white text-base md:text-lg font-bold px-6 py-2.5 rounded-xl transition-all shadow-md w-full sm:w-auto";
+                btn.onclick = showEndScreen;
+            }
+        }
+
+        function showEndScreen() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('header-stats').classList.add('hidden');
+            const end = document.getElementById('end-screen');
+            end.classList.remove('hidden');
+            
+            let perc = Math.round((score / totalPossible) * 100);
+            document.getElementById('final-percentage').innerText = perc + '%';
+            document.getElementById('final-score-text').innerText = `${score} מתוך ${totalPossible} סעיפים נכונים`;
+        }
+    </script>
+</body>
+</html>
