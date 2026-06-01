@@ -7,7 +7,7 @@
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght=300;400;600;700;800&display=swap');
         body {
             font-family: 'Assistant', sans-serif;
         }
@@ -105,7 +105,6 @@
                     </div>
                     <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-center">
                         <span class="block text-slate-500 text-xs sm:text-sm mb-1 font-bold">חלקיק פעיל</span>
-                        <!-- התיקון בוצע כאן - יוזן דינמית ללא חיתוך של היחידות -->
                         <span id="sim-particle" class="font-extrabold text-base sm:text-lg text-slate-800 leading-tight">-</span>
                     </div>
                 </div>
@@ -139,7 +138,6 @@
                     <h2 id="scenario-title" class="text-2xl font-extrabold text-slate-800 mt-1">מערכת דינמית</h2>
                 </div>
                 <div class="lg:w-1/2">
-                    <!-- הגדלת גופן ההסבר הכללי של המצב לפי בקשתך (text-base) -->
                     <p id="scenario-desc" class="text-base text-slate-700 leading-relaxed bg-blue-50/40 p-4 rounded-xl border border-blue-100/30 font-semibold">
                         <!-- יוזן דינמית -->
                     </p>
@@ -343,7 +341,6 @@
                 let T = T_us * 1e-6; // שניות
                 
                 // שלב ב': חישוב השדה המגנטי הנדרש בהתאם לזמן המחזור העגול
-                // B = 2*pi*m / (q*T)
                 let bField = (2 * Math.PI * particle.m) / (particle.q * T);
                 bField = Number(bField.toFixed(3)); // עיגול השדה המגנטי ל-3 ספרות לדיוק
 
@@ -511,7 +508,6 @@
             
             document.getElementById('sim-voltage').innerHTML = `<span class="phys-var">V</span> = ${sc.voltage} kV`;
             
-            // המסה של החלקיק מוצגת כעת בגופן ענק ובולט עם כיווניות שמאלית מתמטית, כולל היחידות!
             document.getElementById('sim-particle').innerHTML = `${sc.particleName} <br><span class="text-sm sm:text-base font-bold text-slate-700 leading-tight inline-block mt-1" dir="ltr"><span class="phys-var">m</span> = ${sc.massLabel}</span>`;
 
             document.getElementById('scenario-desc').innerHTML = `מערכת האצה דינמית הוגרלה עבורכם! חלקיק מסוג ${sc.particleName} משוחרר במרכז הציקלוטרון. השדה המגנטי והמתח הותאמו אישית לתכונות החלקיק שמוצגות בלוח המידע.`;
@@ -718,6 +714,147 @@
             drawLoop();
         }
 
+        // פונקציית עזר לחישוב נקודות המסלול הפיזיקלי המדויק עם מרכזים מתנודדים
+        function computePathPoints(cx, cy, gap, steps, direction) {
+            let path = [];
+            
+            let currX = cx;
+            let currY = cy;
+            
+            // המעבר הראשוני מהמרכז לDee הימני
+            path.push({
+                type: 'line',
+                startX: cx,
+                startY: cy,
+                endX: cx + gap/2,
+                endY: cy
+            });
+            currX = cx + gap/2;
+            currY = cy;
+            
+            for (let i = 0; i < steps; i++) {
+                const r = 16 + i * 19; 
+                const isRightDee = (i % 2 === 0);
+                
+                if (isRightDee) {
+                    // קשת בDee הימני. כיוון התנועה קובע אם יוצאים למעלה או למטה
+                    let centerY = currY + direction * r;
+                    
+                    path.push({
+                        type: 'arc',
+                        cx: cx + gap/2,
+                        cy: centerY,
+                        r: r,
+                        startAngle: direction === 1 ? -Math.PI/2 : Math.PI/2,
+                        endAngle: direction === 1 ? Math.PI/2 : -Math.PI/2,
+                        counterClockwise: (direction !== 1)
+                    });
+                    
+                    currY = currY + 2 * direction * r;
+                    currX = cx + gap/2;
+                    
+                    // מעבר אופקי ישר לחלוטין שמאלה
+                    path.push({
+                        type: 'line',
+                        startX: currX,
+                        startY: currY,
+                        endX: cx - gap/2,
+                        endY: currY
+                    });
+                    currX = cx - gap/2;
+                } else {
+                    // קשת בDee השמאלי. כיוון מנוגד לשמירה על ספירלה
+                    let centerY = currY - direction * r;
+                    
+                    path.push({
+                        type: 'arc',
+                        cx: cx - gap/2,
+                        cy: centerY,
+                        r: r,
+                        startAngle: direction === 1 ? Math.PI/2 : -Math.PI/2,
+                        endAngle: direction === 1 ? -Math.PI/2 : Math.PI/2,
+                        counterClockwise: (direction !== 1)
+                    });
+                    
+                    currY = currY - 2 * direction * r;
+                    currX = cx - gap/2;
+                    
+                    // מעבר אופקי ישר לחלוטין ימינה
+                    path.push({
+                        type: 'line',
+                        startX: currX,
+                        startY: currY,
+                        endX: cx + gap/2,
+                        endY: currY
+                    });
+                    currX = cx + gap/2;
+                }
+            }
+            return path;
+        }
+
+        function getSegmentAngleDelta(seg) {
+            let diffAngle = seg.endAngle - seg.startAngle;
+            if (seg.counterClockwise && diffAngle > 0) diffAngle -= 2 * Math.PI;
+            if (!seg.counterClockwise && diffAngle < 0) diffAngle += 2 * Math.PI;
+            return diffAngle;
+        }
+
+        function getSegmentLength(seg) {
+            if (seg.type === 'arc') {
+                return Math.abs(getSegmentAngleDelta(seg)) * seg.r;
+            }
+
+            return Math.hypot(seg.endX - seg.startX, seg.endY - seg.startY);
+        }
+
+        function buildMotionTimeline(pathSegments) {
+            const segmentLengths = pathSegments.map(getSegmentLength);
+            const durationWeights = pathSegments.map((seg, idx) => {
+                if (seg.type === 'arc') {
+                    // בכל חצי מעגל זמן התנועה כמעט קבוע, בעוד שהמהירות גדלה עם הרדיוס.
+                    return 1;
+                }
+
+                const neighboringArcLengths = [];
+                for (let prevIdx = idx - 1; prevIdx >= 0; prevIdx--) {
+                    if (pathSegments[prevIdx].type === 'arc') {
+                        neighboringArcLengths.push(segmentLengths[prevIdx]);
+                        break;
+                    }
+                }
+
+                for (let nextIdx = idx + 1; nextIdx < pathSegments.length; nextIdx++) {
+                    if (pathSegments[nextIdx].type === 'arc') {
+                        neighboringArcLengths.push(segmentLengths[nextIdx]);
+                        break;
+                    }
+                }
+
+                const referenceSpeed = neighboringArcLengths.length
+                    ? neighboringArcLengths.reduce((sum, len) => sum + len, 0) / neighboringArcLengths.length
+                    : segmentLengths[idx] * 4;
+
+                return Math.max(0.04, Math.min(0.24, segmentLengths[idx] / referenceSpeed));
+            });
+
+            const totalWeight = durationWeights.reduce((sum, weight) => sum + weight, 0);
+            let accumulatedWeight = 0;
+
+            return pathSegments.map((seg, idx) => {
+                const startT = accumulatedWeight / totalWeight;
+                accumulatedWeight += durationWeights[idx];
+                const endT = accumulatedWeight / totalWeight;
+
+                return {
+                    ...seg,
+                    startT,
+                    endT
+                };
+            });
+        }
+
+        // ציור הציקלוטרון - תוקן פיזיקלית וגיאומטרית! משיקים רציפים ללא שברים, המרכז נע אנכית.
         function drawCyclotron(ctx, width, height, sc) {
             ctx.clearRect(0, 0, width, height);
             ctx.fillStyle = '#0f172a'; 
@@ -747,6 +884,7 @@
                 }
             }
 
+            // שני ה-Dees הראשיים
             ctx.fillStyle = 'rgba(30, 41, 59, 0.85)';
             ctx.strokeStyle = '#3b82f6';
             ctx.lineWidth = 5;
@@ -755,55 +893,59 @@
 
             ctx.strokeStyle = '#f43f5e';
             ctx.lineWidth = 4;
+            
+            let direction = sc.bDirection === 'out' ? -1 : 1;
+            const steps = 15;
+            
+            // חישוב מסלול משיק חלק ורציף
+            const pathSegments = computePathPoints(cx, cy, gap, steps, direction);
+            const motionTimeline = buildMotionTimeline(pathSegments);
+            
+            // ציור המסלול השלם
             ctx.beginPath();
             ctx.moveTo(cx, cy);
-
-            let direction = sc.bDirection === 'out' ? -1 : 1;
             
-            const steps = 15;
-            for (let i = 0; i < steps; i++) {
-                const r = 16 + i * 19; 
-                if (r > radius) break;
-                const isRightDee = (i % 2 === 0);
-                if (isRightDee) {
-                    if (direction === 1) ctx.arc(cx + gap/2, cy, r, -Math.PI/2, Math.PI/2, false);
-                    else ctx.arc(cx + gap/2, cy, r, Math.PI/2, -Math.PI/2, true);
-                } else {
-                    if (direction === 1) ctx.arc(cx - gap/2, cy, r, Math.PI/2, -Math.PI/2, false);
-                    else ctx.arc(cx - gap/2, cy, r, -Math.PI/2, Math.PI/2, true);
+            pathSegments.forEach(seg => {
+                if (seg.type === 'arc') {
+                    ctx.arc(seg.cx, seg.cy, seg.r, seg.startAngle, seg.endAngle, seg.counterClockwise);
+                } else if (seg.type === 'line') {
+                    ctx.lineTo(seg.endX, seg.endY);
                 }
-            }
+            });
             ctx.stroke();
 
-            const totalAnimCycle = 6; 
+            // אנימציה חלקה של כדור החלקיק לאורך המסלול המשיק החדש
+            const totalAnimCycle = 7; // משך מחזור אנימציה בשניות
             const tParam = (animTime % totalAnimCycle) / totalAnimCycle;
-            const particleProgress = tParam * steps;
             
-            let pX = cx; let pY = cy;
+            let pX = cx;
+            let pY = cy;
 
-            for (let i = 0; i < steps; i++) {
-                const r = 16 + i * 19;
-                if (r > radius) break;
-                const isRightDee = (i % 2 === 0);
-                if (particleProgress >= i && particleProgress < i + 1) {
-                    const localT = particleProgress - i;
-                    let angle;
-                    if (isRightDee) {
-                        angle = direction === 1 ? -Math.PI/2 + localT * Math.PI : Math.PI/2 - localT * Math.PI;
-                        pX = cx + gap/2 + r * Math.cos(angle); pY = cy + r * Math.sin(angle);
-                    } else {
-                        angle = direction === 1 ? Math.PI/2 + localT * Math.PI : -Math.PI/2 - localT * Math.PI;
-                        pX = cx - gap/2 + r * Math.cos(angle); pY = cy + r * Math.sin(angle); 
-                    }
-                    break;
+            const activeSeg = motionTimeline.find((seg) => tParam >= seg.startT && tParam < seg.endT) || motionTimeline[motionTimeline.length - 1];
+            const activeSpan = Math.max(activeSeg.endT - activeSeg.startT, 1e-6);
+            const segT = Math.min(1, Math.max(0, (tParam - activeSeg.startT) / activeSpan));
+
+            if (activeSeg) {
+                const seg = activeSeg;
+                if (seg.type === 'arc') {
+                    // תנועה מעגלית חלקה לאורך הקשת
+                    const diffAngle = getSegmentAngleDelta(seg);
+                    
+                    const angle = seg.startAngle + segT * diffAngle;
+                    pX = seg.cx + seg.r * Math.cos(angle);
+                    pY = seg.cy + seg.r * Math.sin(angle);
+                } else if (seg.type === 'line') {
+                    // תנועה אופקית ישרה מושלמת במרווח
+                    pX = seg.startX + segT * (seg.endX - seg.startX);
+                    pY = seg.startY; // נשאר בגובה קבוע אופקי
                 }
             }
 
+            // ציור כדור החלקיק הזוהר
             ctx.fillStyle = '#ffffff';
             ctx.shadowColor = '#f43f5e'; ctx.shadowBlur = 15;
             ctx.beginPath(); ctx.arc(pX, pY, 10, 0, 2 * Math.PI); ctx.fill(); ctx.shadowBlur = 0;
 
-            // הגדלת גופן כיתוב השדה המגנטי בהדמיה (מ-20px ל-32px)
             ctx.fillStyle = '#cbd5e1'; ctx.font = 'bold 32px Assistant';
             ctx.fillText(sc.bDirection === 'in' ? '⊗ שדה B פנימה' : '⊙ שדה B החוצה', 30, 55);
         }
@@ -813,11 +955,10 @@
             ctx.clearRect(0, 0, width, height);
             ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, width, height);
 
-            // שוליים גדולים ונדיבים למניעת גלישת טקסט מוגדל
             const paddingLeft = 160; 
             const paddingRight = 60;
             const paddingTop = 50; 
-            const paddingBottom = 120; // מוגדל על מנת להרחיק את השנתות הענקיות למטה
+            const paddingBottom = 120; 
 
             const graphWidth = width - paddingLeft - paddingRight; 
             const graphHeight = height - paddingTop - paddingBottom;
@@ -849,7 +990,6 @@
                 ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.5; ctx.beginPath();
                 ctx.moveTo(paddingLeft, yZero); ctx.lineTo(width - paddingRight, yZero); ctx.stroke();
 
-                // הגדלת תוויות ציר ה-Y ל-30px
                 ctx.fillStyle = '#475569'; ctx.font = 'bold 30px Assistant'; ctx.textAlign = 'right';
                 ctx.fillText(`+${sc.voltage}`, paddingLeft - 20, paddingTop + 10);
                 ctx.fillText('0', paddingLeft - 20, yZero + 10);
@@ -869,7 +1009,6 @@
                 }
                 ctx.stroke();
 
-                // ציור שנתות ציר ה-X עם גופנים מוגדלים משמעותית (24px - 26px) ומספרים עגולים
                 ctx.textAlign = 'center'; 
                 const totalTimeOnGraph = T_us * 2.5;
                 for (let i = 1; i <= 10; i++) {
@@ -887,8 +1026,7 @@
                         ctx.stroke();
                         
                         ctx.fillStyle = '#1e293b'; 
-                        ctx.font = 'bold 26px Assistant'; // הוגדל ל-26px
-                        // שימוש קפדני ב-toFixed(2) כדי לוודא שאין יותר מ-2 ספרות לעולם
+                        ctx.font = 'bold 26px Assistant'; 
                         ctx.fillText(Number(t_val.toFixed(2)).toString(), x_tick, height - paddingBottom + 45);
                     } else {
                         ctx.strokeStyle = '#64748b'; ctx.lineWidth = 2.5; 
@@ -897,12 +1035,11 @@
                         ctx.stroke();
                         
                         ctx.fillStyle = '#475569'; 
-                        ctx.font = '600 22px Assistant'; // הוגדל ל-22px
+                        ctx.font = '600 22px Assistant'; 
                         ctx.fillText(Number(t_val.toFixed(2)).toString(), x_tick, height - paddingBottom + 40);
                     }
                 }
             } else {
-                // גרף מהירות
                 ctx.fillStyle = '#475569'; ctx.font = 'bold 30px Assistant'; ctx.textAlign = 'right';
                 const vMaxLabel = (sc.vMax / 1e6).toFixed(1);
                 ctx.fillText(vMaxLabel, paddingLeft - 20, paddingTop + 10);
@@ -935,7 +1072,7 @@
                         ctx.stroke();
                         
                         ctx.fillStyle = '#1e293b'; 
-                        ctx.font = 'bold 26px Assistant'; // הוגדל ל-26px
+                        ctx.font = 'bold 26px Assistant'; 
                         ctx.fillText(Number(t_val.toFixed(2)).toString(), x_tick, height - paddingBottom + 45);
                     } else {
                         ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2.5; 
@@ -944,7 +1081,7 @@
                         ctx.stroke();
                         
                         ctx.fillStyle = '#475569'; 
-                        ctx.font = '600 22px Assistant'; // הוגדל ל-22px
+                        ctx.font = '600 22px Assistant'; 
                         ctx.fillText(Number(t_val.toFixed(2)).toString(), x_tick, height - paddingBottom + 40);
                     }
                     ctx.stroke();
