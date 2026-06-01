@@ -1,0 +1,541 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תרגול מעגלים: מדידות דינמיות</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap');
+        body { font-family: 'Assistant', sans-serif; }
+        .canvas-container { position: relative; width: 100%; max-width: 750px; margin: 0 auto; background: #fff; border-radius: 1rem; border: 1px solid #e2e8f0; overflow: hidden; }
+        canvas { width: 100%; height: auto; display: block; }
+        input[type="number"], select { transition: all 0.2s; outline: none; }
+        input[type="number"]:disabled, select:disabled { background-color: #f1f5f9; cursor: not-allowed; opacity: 0.8; }
+        input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        .input-correct { border-color: #22c55e !important; background-color: #f0fdf4 !important; color: #166534 !important; }
+        .input-wrong { border-color: #ef4444 !important; background-color: #fef2f2 !important; color: #991b1b !important; }
+    </style>
+</head>
+<body class="bg-slate-100 text-slate-800 min-h-screen py-8">
+
+<div id="app" class="max-w-5xl mx-auto px-4">
+    <header class="bg-white rounded-2xl shadow-sm p-6 mb-6 flex justify-between items-center border border-slate-200">
+        <div>
+            <h1 class="text-2xl font-extrabold text-blue-900 flex items-center gap-2">
+                <span class="p-1.5 bg-blue-600 text-white rounded-lg text-sm">⚡</span>
+                מעגלי זרם ישר: מדידות דינמיות
+            </h1>
+            <div id="phase-badge" class="mt-2 inline-block px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800"></div>
+        </div>
+        <div class="text-left flex flex-col items-end">
+            <div class="bg-blue-50 px-4 py-2 rounded-xl border border-blue-200 font-bold text-blue-800 mb-1">
+                ציון: <span id="scoreDisplay">0 / 0</span>
+            </div>
+            <div class="text-sm text-slate-500 font-semibold bg-slate-100 px-3 py-1 rounded-full" id="questionCounter">שאלה 1 מתוך 20</div>
+        </div>
+    </header>
+
+    <main id="questionArea" class="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-slate-200 mb-6 flex flex-col lg:flex-row gap-8">
+        
+        <div class="lg:w-3/5">
+            <h2 class="text-lg font-bold mb-3 text-slate-800">תרשים המעגל:</h2>
+            <div class="canvas-container shadow-inner bg-slate-50 p-2 border border-slate-200">
+                <canvas id="circuitCanvas" width="700" height="420" class="bg-white rounded-xl shadow-sm border border-slate-200"></canvas>
+            </div>
+        </div>
+
+        <div class="lg:w-2/5 flex flex-col">
+            <h2 class="text-lg font-bold mb-3 text-slate-800">שאלות ניתוח:</h2>
+            <div id="questionsContainer" class="space-y-4 flex-grow">
+                </div>
+
+            <div class="mt-6 border-t border-slate-100 pt-6">
+                <button id="checkBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all text-lg" onclick="checkAnswers()">
+                    בדוק תשובות
+                </button>
+                <button id="nextBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all text-lg hidden" onclick="nextQuestion()">
+                    המשך לשאלה הבאה ←
+                </button>
+            </div>
+        </div>
+    </main>
+
+    <div id="endScreen" class="bg-white rounded-2xl shadow-lg p-10 border border-slate-200 text-center hidden max-w-2xl mx-auto">
+        <div class="text-6xl mb-4">🏆</div>
+        <h2 class="text-3xl font-extrabold text-slate-800 mb-2">התרגול הסתיים בהצלחה!</h2>
+        <div class="flex justify-center gap-6 mb-8 mt-6">
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 flex-1">
+                <div class="text-5xl font-black text-blue-600 mb-2" id="finalScorePercent">0%</div>
+                <div class="text-sm font-bold text-slate-500">ציון סופי</div>
+            </div>
+            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 flex-1">
+                <div class="text-4xl font-bold text-slate-700 mb-2 mt-1" id="finalCorrectCount">0</div>
+                <div class="text-sm font-bold text-slate-500">סעיפים נכונים</div>
+            </div>
+        </div>
+        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-md transition-all text-lg w-full" onclick="location.reload()">
+            התחל תרגול חדש
+        </button>
+    </div>
+</div>
+
+<script>
+    // --- מנוע פיזיקלי ---
+    function calcState(topology, c) {
+        let Rp = 0, Req = 0, I_main = 0;
+        let V_term = 0, V_Rm = 0, V_parallel = 0;
+        let I_b1 = 0, I_b2 = 0, I_b3 = 0;
+        let eff = 100;
+        let condP = 0;
+
+        if (topology === 1) {
+            if(c.S1) condP += 1/c.R1;
+            if(c.S2) condP += 1/c.R2;
+            if(c.S3) condP += 1/c.R3;
+            Rp = condP > 0 ? 1/condP : 999999;
+            Req = c.Rm + Rp;
+            I_main = condP > 0 ? c.E / (Req + c.r) : 0;
+            
+            V_parallel = I_main * Rp;
+            V_Rm = I_main * c.Rm;
+            
+            if(c.S1) I_b1 = V_parallel / c.R1;
+            if(c.S2) I_b2 = V_parallel / c.R2;
+            if(c.S3) I_b3 = V_parallel / c.R3;
+        } 
+        else if (topology === 2) {
+            let R_bot = c.R2 + c.R3;
+            if(c.S1) condP += 1/c.R1;
+            if(c.S2) condP += 1/R_bot;
+            Rp = condP > 0 ? 1/condP : 999999;
+            Req = Rp;
+            I_main = condP > 0 ? c.E / (Req + c.r) : 0;
+            
+            V_parallel = I_main * Rp;
+            V_Rm = 0; 
+            
+            if(c.S1) I_b1 = V_parallel / c.R1;
+            if(c.S2) I_b2 = V_parallel / R_bot;
+            I_b3 = I_b2; 
+        }
+        else if (topology === 3) {
+            if(c.S1) condP += 1/c.R1;
+            if(c.S2) condP += 1/c.R2;
+            Rp = condP > 0 ? 1/condP : 999999;
+            Req = c.Rm + Rp;
+            I_main = condP > 0 ? c.E / (Req + c.r) : 0;
+            
+            V_parallel = I_main * Rp;
+            V_Rm = I_main * c.Rm;
+            
+            if(c.S1) I_b1 = V_parallel / c.R1;
+            if(c.S2) I_b2 = V_parallel / c.R2;
+        }
+
+        V_term = c.E - I_main * c.r;
+        let Rtot = Req + c.r;
+        eff = condP > 0 ? (Req / Rtot) * 100 : 100;
+
+        let I_A1 = 0, V_p = 0;
+        
+        if (c.A_pos === 0) I_A1 = I_main;
+        else if (c.A_pos === 1) I_A1 = I_b1;
+        else if (c.A_pos === 2) I_A1 = I_b2;
+        else if (c.A_pos === 3) I_A1 = I_b3;
+
+        if (c.V_pos === 0) V_p = V_term;        
+        else if (c.V_pos === 1) V_p = V_Rm;     
+        else if (c.V_pos === 2) V_p = V_parallel; 
+
+        return { I_A1, V_p, V_term, eff };
+    }
+
+    function compareValues(val1, val2, isFemale = false) {
+        const diff = val2 - val1;
+        if (Math.abs(diff) < 0.005) return "ללא שינוי";
+        if (isFemale) return diff > 0 ? "תגדל" : "תקטן";
+        return diff > 0 ? "יגדל" : "יקטן";
+    }
+
+    let scenarios = [];
+    const TOTAL_SCENARIOS = 20;
+
+    // --- פילטר מתמטי חכם לבחירת מספרים יפים בלבד ---
+    function generateScenarios() {
+        scenarios = [];
+        for (let i = 0; i < TOTAL_SCENARIOS; i++) {
+            let topology, A_pos, V_pos, c, stateA, stateB, targetSwitch, actionText;
+            let isMathClean = false;
+            let safetyCounter = 0;
+
+            // לולאה שממשיכה להגריל רכיבים עד שכל התוצאות יוצאות שלמות או עם ספרה אחת אחרי הנקודה
+            while (!isMathClean && safetyCounter < 3000) {
+                safetyCounter++;
+                topology = Math.floor(Math.random() * 3) + 1;
+                let max_A_pos = topology === 1 ? 3 : 2; 
+                A_pos = Math.floor(Math.random() * (max_A_pos + 1));
+                
+                let randV = Math.random();
+                if (topology === 2) V_pos = randV < 0.20 ? 0 : 2; 
+                else V_pos = randV < 0.15 ? 0 : randV < 0.575 ? 1 : 2;
+
+                // מאגר ערכים נקיים להתחלה טובה
+                const E_pool = [12, 18, 20, 24, 30, 36, 40, 48, 60];
+                const r_pool = [1, 2];
+                const Rm_pool = [2, 4, 6, 8];
+                const R_pool = [6, 12, 18, 24];
+
+                c = {
+                    E: E_pool[Math.floor(Math.random() * E_pool.length)],
+                    r: r_pool[Math.floor(Math.random() * r_pool.length)],
+                    Rm: Rm_pool[Math.floor(Math.random() * Rm_pool.length)],
+                    R1: R_pool[Math.floor(Math.random() * R_pool.length)],
+                    R2: R_pool[Math.floor(Math.random() * R_pool.length)],
+                    R3: R_pool[Math.floor(Math.random() * R_pool.length)],
+                    S1: 1, S2: 1, S3: 1,
+                    A_pos: A_pos, V_pos: V_pos
+                };
+
+                targetSwitch = "";
+                actionText = "נפתח";
+                if (topology === 1) {
+                    if(Math.random() > 0.5) { c.S3 = 0; targetSwitch = "S3"; actionText = "נסגור"; }
+                    else { targetSwitch = "S2"; }
+                } else {
+                    if(Math.random() > 0.5) { c.S2 = 0; targetSwitch = "S2"; actionText = "נסגור"; }
+                    else { targetSwitch = "S1"; }
+                }
+
+                stateA = calcState(topology, c);
+                
+                let modC = {...c};
+                if(targetSwitch === "S1") modC.S1 = modC.S1 ? 0 : 1;
+                if(targetSwitch === "S2") modC.S2 = modC.S2 ? 0 : 1;
+                if(targetSwitch === "S3") modC.S3 = modC.S3 ? 0 : 1;
+                stateB = calcState(topology, modC);
+
+                // פונקציית בדיקה: האם ההפרש בין המספר המקורי למספר המעוגל לעשירית קטן מ-0.001?
+                const checkClean = (val) => Math.abs(val * 10 - Math.round(val * 10)) < 0.01;
+
+                if (checkClean(stateA.I_A1) && checkClean(stateA.V_p) && checkClean(stateA.V_term) && checkClean(stateA.eff) && checkClean(stateB.eff)) {
+                    isMathClean = true;
+                }
+            }
+
+            let topoName = topology === 1 ? "נגד טורי ו-3 ענפים מקבילים" : topology === 2 ? "2 ענפים מקבילים ישירים" : "נגד טורי ו-2 ענפים מקבילים";
+
+            let questions = [
+                { type: "numeric", text: `מהי הוריית מד הזרם A1?`, ans: Number(stateA.I_A1.toFixed(1)), tol: 0.05, unit: "A" },
+                { type: "numeric", text: `מהי הוריית מד המתח Vp?`, ans: Number(stateA.V_p.toFixed(1)), tol: 0.1, unit: "V" }
+            ];
+
+            if (V_pos !== 0) {
+                questions.push({ type: "numeric", text: `מהו מתח ההדקים של המקור כעת?`, ans: Number(stateA.V_term.toFixed(1)), tol: 0.1, unit: "V" });
+            }
+
+            questions.push({ type: "numeric", text: `מהי נצילות המעגל כעת?`, ans: Number(stateA.eff.toFixed(1)), tol: 0.1, unit: "%" });
+            questions.push({ type: "qualitative", text: `לאחר ש${actionText} את ${targetSwitch}, מה יקרה לנצילות המעגל?`, ans: compareValues(stateA.eff, stateB.eff, true), opts: ['תגדל', 'תקטן', 'ללא שינוי'] });
+
+            scenarios.push({ topology, circuit: c, questions, topoName });
+        }
+    }
+
+    // --- מנוע שירטוט מבוסס מרחקים יחסיים ---
+    function drawModularCleanCircuit(topology, c) {
+        const canvas = document.getElementById('circuitCanvas');
+        const ctx = canvas.getContext('2d');
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        
+        ctx.strokeStyle = '#0f172a';
+        ctx.lineWidth = 3;
+        ctx.font = 'bold 15px Assistant, sans-serif';
+        ctx.textAlign = 'center';
+        ctx.textBaseline = 'middle';
+
+        const startX = 140;
+        const endX = 620;
+        const topY = 150;
+        const botY = 330;
+
+        ctx.beginPath();
+        ctx.moveTo(startX, topY); ctx.lineTo(startX, botY); ctx.lineTo(endX, botY);
+        ctx.stroke();
+
+        ctx.fillStyle = '#ffffff';
+        ctx.fillRect(startX - 15, 220, 30, 40);
+        ctx.beginPath(); ctx.moveTo(startX - 15, 235); ctx.lineTo(startX + 15, 235); ctx.stroke(); 
+        ctx.lineWidth = 5;
+        ctx.beginPath(); ctx.moveTo(startX - 8, 245); ctx.lineTo(startX + 8, 245); ctx.stroke(); 
+        ctx.lineWidth = 3;
+        
+        ctx.fillStyle = '#0f172a';
+        ctx.textAlign = 'left';
+        ctx.fillText(`ε = ${c.E}V`, startX + 25, 230);
+        ctx.fillText(`r = ${c.r}Ω`, startX + 25, 255);
+
+        const drawAmmeter = (x, y) => {
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath(); ctx.arc(x, y, 16, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#0f172a';
+            ctx.textAlign = 'center'; ctx.fillText('A1', x, y);
+        };
+
+        const drawRectResistor = (x, y, isVert, label, val) => {
+            ctx.fillStyle = '#ffffff';
+            if (isVert) {
+                ctx.fillRect(x - 12, y - 22, 24, 44); ctx.strokeRect(x - 12, y - 22, 24, 44);
+                ctx.fillStyle = '#0f172a';
+                ctx.textAlign = 'right'; ctx.fillText(label, x - 18, y - 10);
+                ctx.textAlign = 'right'; ctx.fillText(val, x - 18, y + 10);
+            } else {
+                ctx.fillRect(x - 22, y - 12, 44, 24); ctx.strokeRect(x - 22, y - 12, 44, 24);
+                ctx.fillStyle = '#0f172a';
+                ctx.textAlign = 'center';
+                ctx.fillText(label, x, y - 25);
+                ctx.fillText(val, x, y + 25);
+            }
+        };
+
+        const drawSwitch = (x, y, isClosed, label) => {
+            ctx.fillStyle = '#ffffff';
+            ctx.fillRect(x - 10, y - 15, 20, 30);
+            ctx.fillStyle = '#0f172a';
+            ctx.beginPath(); ctx.arc(x, y - 12, 3, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(x, y + 12, 3, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath();
+            if (isClosed) { ctx.moveTo(x, y - 12); ctx.lineTo(x, y + 12); }
+            else { ctx.moveTo(x, y - 12); ctx.lineTo(x + 12, y + 2); }
+            ctx.stroke();
+            ctx.textAlign = 'left'; ctx.fillText(label, x + 15, y);
+        };
+
+        const drawVoltmeter = (type, refX, nextX) => {
+            let vX, vY, n1X, n1Y, n2X, n2Y;
+            ctx.fillStyle = '#1e293b';
+
+            if (type === 'terminal') {
+                n1X = startX; n1Y = topY; n2X = startX; n2Y = botY;
+                vX = startX - 75; 
+                vY = (topY + botY) / 2;
+                
+                ctx.beginPath(); ctx.arc(n1X, n1Y, 4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(n2X, n2Y, 4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(n1X, n1Y); ctx.lineTo(vX, n1Y); ctx.lineTo(vX, n2Y); ctx.lineTo(n2X, n2Y);
+                ctx.stroke();
+            } 
+            else if (type === 'series') {
+                n1X = 230; n1Y = topY; n2X = 300; n2Y = topY;
+                vX = 265; vY = topY - 70; 
+                
+                ctx.beginPath(); ctx.arc(n1X, n1Y, 4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(n2X, n2Y, 4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(n1X, n1Y); ctx.lineTo(n1X, vY); ctx.lineTo(n2X, vY); ctx.lineTo(n2X, n2Y);
+                ctx.stroke();
+            } 
+            else if (type === 'parallel') {
+                n1X = refX; n1Y = topY; n2X = refX; n2Y = botY;
+                vX = nextX ? (refX + nextX) / 2 : refX + 80; // מחשב אמצע מדויק ומרווח
+                vY = (topY + botY) / 2; 
+                
+                ctx.beginPath(); ctx.arc(n1X, n1Y, 4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(n2X, n2Y, 4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath();
+                ctx.moveTo(n1X, n1Y); ctx.lineTo(vX, n1Y); ctx.lineTo(vX, n2Y); ctx.lineTo(n2X, n2Y);
+                ctx.stroke();
+            }
+
+            ctx.fillStyle = '#ffffff';
+            ctx.beginPath(); ctx.arc(vX, vY, 18, 0, Math.PI*2); ctx.fill(); ctx.stroke();
+            ctx.fillStyle = '#0f172a'; ctx.textAlign = 'center'; ctx.fillText('Vp', vX, vY + 2);
+        };
+
+        let pStart = 0;
+        const bX = [];
+
+        if (topology === 1) {
+            pStart = 360;
+            // התיקון כאן: הוספת .ctx לפני ה-stroke
+            ctx.beginPath(); ctx.moveTo(startX, topY); ctx.lineTo(pStart, topY); ctx.stroke();
+            
+            drawRectResistor(265, topY, false, 'Rm', `${c.Rm}Ω`);
+            if(c.A_pos === 0) drawAmmeter(190, topY);
+
+            let spacing = (endX - pStart) / 2;
+            bX.push(pStart, pStart + spacing, endX);
+            ctx.beginPath(); ctx.moveTo(bX[0], topY); ctx.lineTo(bX[2], topY); ctx.stroke();
+
+            for(let i=0; i<3; i++) {
+                ctx.beginPath(); ctx.moveTo(bX[i], topY); ctx.lineTo(bX[i], botY); ctx.stroke();
+                if(c.A_pos === i + 1) drawAmmeter(bX[i], topY + 25);
+                drawRectResistor(bX[i], topY + 75, true, `R${i+1}`, `${i===0?c.R1:i===1?c.R2:c.R3}Ω`);
+                drawSwitch(bX[i], topY + 150, i===0?c.S1:i===1?c.S2:c.S3, `S${i+1}`);
+                
+                ctx.fillStyle = '#1e293b';
+                ctx.beginPath(); ctx.arc(bX[i], topY, 4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(bX[i], botY, 4, 0, Math.PI*2); ctx.fill();
+            }
+
+            if(c.V_pos === 0) drawVoltmeter('terminal', pStart);
+            if(c.V_pos === 1) drawVoltmeter('series', pStart);
+            if(c.V_pos === 2) drawVoltmeter('parallel', bX[0], bX[1]);
+        }
+        else if (topology === 2) {
+            pStart = 290;
+            ctx.beginPath(); ctx.moveTo(startX, topY); ctx.lineTo(pStart, topY); ctx.stroke();
+            
+            if(c.A_pos === 0) drawAmmeter(210, topY);
+            
+            bX.push(pStart, endX);
+            ctx.beginPath(); ctx.moveTo(bX[0], topY); ctx.lineTo(bX[1], topY); ctx.stroke();
+
+            ctx.beginPath(); ctx.moveTo(bX[0], topY); ctx.lineTo(bX[0], botY); ctx.stroke();
+            if(c.A_pos === 1) drawAmmeter(bX[0], topY + 25);
+            drawRectResistor(bX[0], topY + 75, true, 'R1', `${c.R1}Ω`);
+            drawSwitch(bX[0], topY + 150, c.S1, 'S1');
+
+            ctx.beginPath(); ctx.moveTo(bX[1], topY); ctx.lineTo(bX[1], botY); ctx.stroke();
+            if(c.A_pos === 2) drawAmmeter(bX[1], topY + 25);
+            drawRectResistor(bX[1], topY + 65, true, 'R2', `${c.R2}Ω`);
+            drawRectResistor(bX[1], topY + 125, true, 'R3', `${c.R3}Ω`);
+            drawSwitch(bX[1], topY + 165, c.S2, 'S2');
+
+            for(let i=0; i<2; i++) {
+                ctx.fillStyle = '#1e293b';
+                ctx.beginPath(); ctx.arc(bX[i], topY, 4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(bX[i], botY, 4, 0, Math.PI*2); ctx.fill();
+            }
+
+            if(c.V_pos === 0) drawVoltmeter('terminal', pStart);
+            if(c.V_pos === 2) drawVoltmeter('parallel', bX[0], bX[1]);
+        }
+        else if (topology === 3) {
+            pStart = 400;
+            ctx.beginPath(); ctx.moveTo(startX, topY); ctx.lineTo(pStart, topY); ctx.stroke();
+            
+            drawRectResistor(265, topY, false, 'Rm', `${c.Rm}Ω`);
+            if(c.A_pos === 0) drawAmmeter(190, topY);
+
+            bX.push(pStart, endX);
+            ctx.beginPath(); ctx.moveTo(bX[0], topY); ctx.lineTo(bX[1], topY); ctx.stroke();
+
+            for(let i=0; i<2; i++) {
+                ctx.beginPath(); ctx.moveTo(bX[i], topY); ctx.lineTo(bX[i], botY); ctx.stroke();
+                if(c.A_pos === i + 1) drawAmmeter(bX[i], topY + 25);
+                drawRectResistor(bX[i], topY + 75, true, `R${i+1}`, `${i===0?c.R1:c.R2}Ω`);
+                drawSwitch(bX[i], topY + 150, i===0?c.S1:c.S2, `S${i+1}`);
+                
+                ctx.fillStyle = '#1e293b';
+                ctx.beginPath(); ctx.arc(bX[i], topY, 4, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(bX[i], botY, 4, 0, Math.PI*2); ctx.fill();
+            }
+
+            if(c.V_pos === 0) drawVoltmeter('terminal', pStart);
+            if(c.V_pos === 1) drawVoltmeter('series', pStart);
+            if(c.V_pos === 2) drawVoltmeter('parallel', bX[0], bX[1]);
+        }
+    }
+
+    let currentIdx = 0, score = 0, maxScore = 0;
+
+    function init() {
+        generateScenarios(); currentIdx = 0; score = 0; maxScore = 0;
+        document.getElementById('scoreDisplay').innerText = `0 / 0`;
+        renderScenario();
+    }
+
+    function renderScenario() {
+        const sc = scenarios[currentIdx];
+        document.getElementById('questionCounter').innerText = `מעגל ${currentIdx + 1} מתוך ${TOTAL_SCENARIOS}`;
+        document.getElementById('phase-badge').innerText = `מבנה: ${sc.topoName}`;
+        
+        drawModularCleanCircuit(sc.topology, sc.circuit);
+
+        const container = document.getElementById('questionsContainer');
+        container.innerHTML = '';
+
+        sc.questions.forEach((q, i) => {
+            let inputHTML = q.type === 'numeric' ? 
+                `<div class="relative w-32 shrink-0">
+                    <input type="number" step="any" id="q_${i}" class="block w-full pl-8 pr-2 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-bold" placeholder="0">
+                    <div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 font-bold text-sm">${q.unit}</div>
+                </div>` : 
+                `<select id="q_${i}" class="block w-36 px-2 py-2 bg-white border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 font-bold">
+                    <option value="" disabled selected>-- בחר --</option>
+                    ${q.opts.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                </select>`;
+
+            container.innerHTML += `
+                <div class="bg-slate-50 border border-slate-200 rounded-xl p-3 flex flex-col sm:flex-row justify-between items-start sm:items-center gap-3">
+                    <label class="font-bold text-slate-700 text-sm w-full sm:w-auto">${i + 1}. ${q.text}</label>
+                    <div class="flex items-center gap-2">
+                        ${inputHTML}
+                        <div id="fb_${i}" class="hidden w-max text-sm font-bold whitespace-nowrap"></div>
+                    </div>
+                </div>`;
+        });
+
+        document.getElementById('checkBtn').classList.remove('hidden');
+        document.getElementById('nextBtn').classList.add('hidden');
+    }
+
+    function checkAnswers() {
+        const sc = scenarios[currentIdx];
+        maxScore += sc.questions.length;
+
+        sc.questions.forEach((q, i) => {
+            const input = document.getElementById(`q_${i}`);
+            const fb = document.getElementById(`fb_${i}`);
+            let isCorrect = false;
+
+            if (input.value !== null && input.value !== "") {
+                if (q.type === 'numeric') {
+                    const studentAns = parseFloat(input.value);
+                    const trueAns = q.ans;
+                    const absoluteError = Math.abs(studentAns - trueAns);
+                    let relativeError = Infinity;
+                    if (trueAns !== 0) relativeError = absoluteError / Math.abs(trueAns);
+                    
+                    if (absoluteError <= q.tol || relativeError <= 0.01) isCorrect = true;
+                }
+                else if (q.type !== 'numeric' && input.value.trim() === q.ans.trim()) {
+                    isCorrect = true;
+                }
+            }
+
+            input.disabled = true;
+            fb.classList.remove('hidden');
+            
+            if (isCorrect) {
+                fb.innerHTML = '✔️ נכון';
+                fb.className = 'w-max text-sm font-bold text-green-600';
+                score++;
+            } else {
+                fb.innerHTML = `❌ התשובה: ${q.ans}`;
+                fb.className = 'w-max text-sm font-bold text-red-600';
+            }
+            input.classList.add(isCorrect ? 'input-correct' : 'input-wrong');
+        });
+
+        document.getElementById('scoreDisplay').innerText = `${score} / ${maxScore}`;
+        document.getElementById('checkBtn').classList.add('hidden');
+        document.getElementById('nextBtn').classList.remove('hidden');
+        if(currentIdx === TOTAL_SCENARIOS - 1) document.getElementById('nextBtn').innerText = "סיים וצפה בציון ←";
+    }
+
+    function nextQuestion() {
+        if (++currentIdx < TOTAL_SCENARIOS) renderScenario();
+        else {
+            document.getElementById('questionArea').classList.add('hidden');
+            document.getElementById('endScreen').classList.remove('hidden');
+            document.getElementById('finalScorePercent').innerText = `${Math.round((score/maxScore)*100)}%`;
+            document.getElementById('finalCorrectCount').innerText = `${score} / ${maxScore}`;
+        }
+    }
+
+    window.onload = init;
+</script>
+</body>
+</html>
