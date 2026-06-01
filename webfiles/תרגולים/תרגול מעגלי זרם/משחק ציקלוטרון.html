@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>משחק הציקלוטרון הגדול - פיזיקה תיכונית</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@300;400;600;700;800&display=swap');
+        body {
+            font-family: 'Assistant', sans-serif;
+        }
+        /* מניעת בחירת טקסט באלמנטים מסוימים */
+        .no-select {
+            user-select: none;
+        }
+        /* עיצוב משתנים פיזיקליים לטיניים למראה מקצועי וברור */
+        .phys-var {
+            font-family: 'Times New Roman', Times, serif;
+            font-style: italic;
+            font-weight: bold;
+            padding: 0 2px;
+        }
+    </style>
+</head>
+<body class="bg-slate-100 min-h-screen flex flex-col justify-between">
+
+    <!-- הודעת התראה מעוצבת (במקום alert) -->
+    <div id="toast-message" class="fixed top-5 left-1/2 transform -translate-x-1/2 bg-amber-500 text-white px-6 py-3 rounded-xl shadow-lg font-bold text-center z-50 hidden transition-all duration-300">
+        הודעה
+    </div>
+
+    <!-- דף כניסה - רישום שם שחקן -->
+    <div id="welcome-screen" class="fixed inset-0 bg-slate-900 bg-opacity-95 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-2xl p-8 max-w-md w-full text-center shadow-2xl border border-blue-500/20">
+            <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center mx-auto mb-6 text-4xl">
+                ⚛️
+            </div>
+            <h1 class="text-3xl font-extrabold text-slate-800 mb-2">משחק הציקלוטרון הגדול</h1>
+            <p class="text-slate-600 mb-6 text-sm">תרגול מקיף ואינטראקטיבי בפיזיקה תיכונית (מגנטיות וחשמל). המערכת מייצרת עבורכם תרחישים ייחודיים בכל פעם מחדש!</p>
+            
+            <div class="mb-6 text-right">
+                <label for="player-name" class="block text-sm font-semibold text-slate-700 mb-2">שם התלמיד/ה:</label>
+                <input type="text" id="player-name" placeholder="הקלידו את שמכם המלא" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:outline-none focus:ring-2 focus:ring-blue-500 text-lg">
+                <p id="name-error" class="text-red-500 text-xs mt-1 hidden">חובה להזין שם כדי להתחיל במשחק!</p>
+            </div>
+            
+            <button onclick="startGame()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition duration-200 shadow-md hover:shadow-lg text-lg">
+                התחל במשחק 🚀
+            </button>
+        </div>
+    </div>
+
+    <!-- בר עליון / כותרת ראשית -->
+    <header class="bg-white border-b border-slate-200 shadow-sm py-4 px-6 sticky top-0 z-40">
+        <div class="max-w-7xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-4">
+            <div class="flex items-center gap-3">
+                <span class="text-3xl">🌀</span>
+                <div>
+                    <h2 class="text-xl font-bold text-slate-800">מאיצי חלקיקים: הציקלוטרון</h2>
+                    <p class="text-xs text-slate-500">מורה וירטואלי אינטראקטיבי לפיזיקה 5 יח"ל</p>
+                </div>
+            </div>
+            <div class="flex items-center gap-4 bg-slate-50 px-4 py-2 rounded-xl border border-slate-100">
+                <div class="text-right">
+                    <span class="text-xs text-slate-500 block">שחקן/ית פעיל/ה:</span>
+                    <span id="display-player-name" class="font-bold text-slate-700">-</span>
+                </div>
+                <div class="h-8 w-px bg-slate-200"></div>
+                <div class="text-center">
+                    <span class="text-xs text-slate-500 block">ציון מצטבר</span>
+                    <span id="score-badge" class="font-extrabold text-blue-600 text-lg">0 / 20</span>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <!-- התוכן המרכזי -->
+    <main class="max-w-7xl mx-auto p-4 sm:p-6 w-full flex-grow flex flex-col gap-6">
+        
+        <!-- שורה עליונה: לוח בקרה ויזואלי (הדמיה + גרפים מורחבים) -->
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-6">
+            
+            <!-- כרטיסיית ההדמיה של הציקלוטרון -->
+            <div class="bg-white rounded-2xl p-4 shadow-md border border-slate-100 flex flex-col justify-between">
+                <div class="flex justify-between items-center mb-3 border-b border-slate-100 pb-2">
+                    <h3 class="font-bold text-slate-800 flex items-center gap-2">
+                        <span class="inline-block w-2.5 h-2.5 bg-blue-500 rounded-full animate-pulse"></span>
+                        הדמיה דינמית (מערכת <span id="mode-number">1</span>/5)
+                    </h3>
+                    <span id="particle-tag" class="text-xs bg-blue-100 text-blue-800 font-bold px-3 py-1 rounded-full">-</span>
+                </div>
+                <div class="relative w-full aspect-square max-w-[350px] mx-auto bg-slate-950 rounded-xl overflow-hidden shadow-inner flex items-center justify-center">
+                    <canvas id="cyclotronCanvas" width="800" height="800" class="w-full h-full"></canvas>
+                </div>
+                <div class="grid grid-cols-3 gap-3 mt-4 text-center text-slate-700">
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-center">
+                        <span class="block text-slate-500 text-xs sm:text-sm mb-1 font-bold">שדה מגנטי</span>
+                        <span id="sim-b-field" class="font-extrabold text-base sm:text-lg text-slate-800 leading-tight">-</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-center">
+                        <span class="block text-slate-500 text-xs sm:text-sm mb-1 font-bold">מתח האצה</span>
+                        <span id="sim-voltage" class="font-extrabold text-base sm:text-lg text-slate-800 leading-tight">-</span>
+                    </div>
+                    <div class="bg-slate-50 p-3 rounded-xl border border-slate-100 shadow-sm flex flex-col justify-center">
+                        <span class="block text-slate-500 text-xs sm:text-sm mb-1 font-bold">חלקיק פעיל</span>
+                        <!-- התיקון בוצע כאן - יוזן דינמית ללא חיתוך של היחידות -->
+                        <span id="sim-particle" class="font-extrabold text-base sm:text-lg text-slate-800 leading-tight">-</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- כרטיסיית הגרף המשתנה בהתאם לשאלה -->
+            <div class="bg-white rounded-2xl p-4 shadow-md border border-slate-100 flex flex-col justify-between">
+                <div>
+                    <h3 class="font-bold text-slate-800 mb-2 flex items-center gap-2">
+                        📊 ניתוח גרף פיזיקלי
+                    </h3>
+                    <p id="graph-description" class="text-sm text-slate-500 mb-4 bg-slate-50 p-2 rounded-lg border border-slate-100">
+                        <!-- יוזן דינמית -->
+                    </p>
+                </div>
+                <!-- שטח גרף עם רזולוציה גבוהה (לגופנים גדולים ברורים) -->
+                <div class="relative w-full flex-grow min-h-[250px] bg-white rounded-xl flex items-center justify-center border border-slate-200 shadow-sm overflow-hidden p-2">
+                    <canvas id="graphCanvas" width="900" height="400" class="w-full h-full object-contain"></canvas>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- שורה תחתונה: השאלות (פריסה אנכית רחבה ומאובטחת מחפיפות לחלוטין) -->
+        <div class="bg-white rounded-2xl p-6 shadow-md border border-slate-100 w-full">
+            
+            <!-- כותרת המצב והתיאור הפיזיקלי שלו -->
+            <div class="mb-6 pb-4 border-b border-slate-200 flex flex-col lg:flex-row lg:items-center justify-between gap-4">
+                <div>
+                    <span class="text-xs bg-amber-100 text-amber-800 font-bold px-3 py-1 rounded-full uppercase tracking-wider mb-2 inline-block">מערכת מוגרלת <span id="progress-indicator">1 מתוך 5</span></span>
+                    <h2 id="scenario-title" class="text-2xl font-extrabold text-slate-800 mt-1">מערכת דינמית</h2>
+                </div>
+                <div class="lg:w-1/2">
+                    <!-- הגדלת גופן ההסבר הכללי של המצב לפי בקשתך (text-base) -->
+                    <p id="scenario-desc" class="text-base text-slate-700 leading-relaxed bg-blue-50/40 p-4 rounded-xl border border-blue-100/30 font-semibold">
+                        <!-- יוזן דינמית -->
+                    </p>
+                </div>
+            </div>
+
+            <!-- פריסה אנכית מלאה ונקייה: כל שאלה מקבלת כרטיס רחב בגובה דינמי חופשי -->
+            <div class="space-y-6">
+                
+                <!-- סעיף א' -->
+                <div class="question-block border-r-4 border-blue-500 pr-5 py-5 bg-slate-50/70 rounded-l-xl flex flex-col justify-between h-auto shadow-sm">
+                    <div class="w-full">
+                        <h4 class="font-bold text-slate-800 mb-3 text-lg flex items-start gap-2">
+                            <span class="bg-blue-100 text-blue-700 text-xs min-w-[24px] h-6 rounded-full flex items-center justify-center font-bold mt-0.5">א</span>
+                            <span id="q-a-text" class="leading-relaxed text-slate-800">...</span>
+                        </h4>
+                    </div>
+                    <div class="mt-2 w-full">
+                        <div id="q-a-input-container"></div>
+                        <div id="feedback-a" class="mt-4 text-sm font-semibold hidden"></div>
+                    </div>
+                </div>
+
+                <!-- סעיף ב' -->
+                <div class="question-block border-r-4 border-emerald-500 pr-5 py-5 bg-slate-50/70 rounded-l-xl flex flex-col justify-between h-auto shadow-sm">
+                    <div class="w-full">
+                        <h4 class="font-bold text-slate-800 mb-3 text-lg flex items-start gap-2">
+                            <span class="bg-emerald-100 text-emerald-700 text-xs min-w-[24px] h-6 rounded-full flex items-center justify-center font-bold mt-0.5">ב</span>
+                            <span id="q-b-text" class="leading-relaxed text-slate-800">...</span>
+                        </h4>
+                    </div>
+                    <div class="mt-2 w-full">
+                        <div id="q-b-input-container"></div>
+                        <div id="feedback-b" class="mt-4 text-sm font-semibold hidden"></div>
+                    </div>
+                </div>
+
+                <!-- סעיף ג' -->
+                <div class="question-block border-r-4 border-purple-500 pr-5 py-5 bg-slate-50/70 rounded-l-xl flex flex-col justify-between h-auto shadow-sm">
+                    <div class="w-full">
+                        <h4 class="font-bold text-slate-800 mb-3 text-lg flex items-start gap-2">
+                            <span class="bg-purple-100 text-purple-700 text-xs min-w-[24px] h-6 rounded-full flex items-center justify-center font-bold mt-0.5">ג</span>
+                            <span id="q-c-text" class="leading-relaxed text-slate-800">...</span>
+                        </h4>
+                    </div>
+                    <div class="mt-2 w-full">
+                        <div id="q-c-input-container"></div>
+                        <div id="feedback-c" class="mt-4 text-sm font-semibold hidden"></div>
+                    </div>
+                </div>
+
+                <!-- סעיף ד' -->
+                <div class="question-block border-r-4 border-pink-500 pr-5 py-5 bg-slate-50/70 rounded-l-xl flex flex-col justify-between h-auto shadow-sm">
+                    <div class="w-full">
+                        <h4 class="font-bold text-slate-800 mb-3 text-lg flex items-start gap-2">
+                            <span class="bg-pink-100 text-pink-700 text-xs min-w-[24px] h-6 rounded-full flex items-center justify-center font-bold mt-0.5">ד</span>
+                            <span id="q-d-text" class="leading-relaxed text-slate-800">...</span>
+                        </h4>
+                    </div>
+                    <div class="mt-2 w-full">
+                        <div id="q-d-input-container"></div>
+                        <div id="feedback-d" class="mt-4 text-sm font-semibold hidden"></div>
+                    </div>
+                </div>
+
+            </div>
+
+            <!-- כפתורי שליטה ותנועה -->
+            <div class="mt-8 pt-6 border-t border-slate-100 flex justify-center items-center">
+                <button id="check-btn" onclick="checkAnswers()" class="w-full md:w-auto md:min-w-[300px] bg-blue-600 hover:bg-blue-700 text-white font-bold py-3.5 px-10 rounded-xl transition duration-200 shadow-md text-lg">
+                    בדוק תשובות למצב זה 🔍
+                </button>
+                <button id="next-btn" onclick="nextScenario()" class="w-full md:w-auto md:min-w-[300px] bg-emerald-600 hover:bg-emerald-700 text-white font-bold py-3.5 px-10 rounded-xl transition duration-200 shadow-md text-lg hidden animate-pulse">
+                    המשך למערכת הבאה ➔
+                </button>
+            </div>
+
+        </div>
+
+    </main>
+
+    <!-- מסך סיכום משחק -->
+    <div id="end-screen" class="fixed inset-0 bg-slate-900 bg-opacity-95 z-50 flex items-center justify-center p-4 hidden">
+        <div class="bg-white rounded-3xl p-8 max-w-2xl w-full text-center shadow-2xl border-2 border-emerald-500/20 max-h-[90vh] overflow-y-auto">
+            <div class="w-20 h-20 bg-emerald-100 text-emerald-600 rounded-full flex items-center justify-center mx-auto mb-4 text-4xl">
+                🏆
+            </div>
+            <h1 class="text-3xl font-extrabold text-slate-800 mb-1">כל הכבוד! סיימתם את המשחק!</h1>
+            <p class="text-slate-500 mb-6">פתרתם בהצלחה מגוון תרחישים אקראיים ודינמיים במאיצי חלקיקים!</p>
+            
+            <!-- תוצאות השחקן -->
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-4 mb-6 text-right">
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    <h3 class="text-sm font-semibold text-slate-500">פרטי המשתמש והמשחק</h3>
+                    <p class="text-lg font-bold text-slate-800 mt-1">שם התלמיד/ה: <span id="end-player-name" class="text-blue-600">ישראל ישראלי</span></p>
+                    <p class="text-sm text-slate-600 mt-2">📅 תאריך וזמן: <span id="end-timestamp" class="font-mono text-slate-800">-</span></p>
+                    <p class="text-sm text-slate-600">🔑 מזהה משחק ייחודי: <span id="end-game-id" class="font-mono text-emerald-700 font-bold">-</span></p>
+                </div>
+                
+                <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 flex flex-col justify-center items-center text-center">
+                    <h3 class="text-sm font-semibold text-slate-500 mb-1">ציון סופי</h3>
+                    <div class="text-5xl font-extrabold text-emerald-600" id="end-score-percent">0%</div>
+                    <p class="text-sm font-bold text-slate-700 mt-2" id="end-score-fraction">עניתם נכון על 0 מתוך 20 סעיפים</p>
+                </div>
+            </div>
+
+            <!-- משוב פדגוגי מותאם אישית -->
+            <div id="pedagogical-feedback" class="mb-6 p-4 bg-blue-50 text-blue-900 rounded-xl border border-blue-100 text-right text-sm leading-relaxed font-sans font-semibold">
+            </div>
+
+            <p class="text-xs text-red-500 mb-6 font-bold">שימו לב: מומלץ לצלם מסך זה (כולל מזהה המשחק והשם) ולשלוח למורה כהוכחה לביצוע המשימה!</p>
+            
+            <button onclick="restartGame()" class="bg-slate-800 hover:bg-slate-700 text-white font-bold py-3 px-8 rounded-xl transition duration-200 shadow-md">
+                התחל תרחישים חדשים 🔄
+            </button>
+        </div>
+    </div>
+
+    <!-- פוטר תחתון -->
+    <footer class="bg-white border-t border-slate-200 py-5 text-center text-sm sm:text-base text-slate-700 font-bold shadow-inner">
+        נבנה בהתאמה מחמירה לתוכנית הלימודים בפיזיקה תיכונית של משרד החינוך. שימוש בקבועי יסוד תקניים: <span class="phys-var">e</span> = 1.6 &times; 10<sup>-19</sup> C, <span class="phys-var">m<sub>p</sub></span> = 1.67 &times; 10<sup>-27</sup> kg.
+    </footer>
+
+    <!-- לוגיקה פיזיקלית ומחולל התרחישים הדינמי המלא -->
+    <script>
+        // מאגר חלקיקים אפשריים (במערכת SI)
+        const PARTICLES = [
+            { name: "פרוטון", m: 1.67e-27, q: 1.6e-19, mLabel: "1.67 &times; 10<sup>-27</sup> kg", qLabel: "1.6 &times; 10<sup>-19</sup> C" },
+            { name: "חלקיק אלפא", m: 6.64e-27, q: 3.2e-19, mLabel: "6.64 &times; 10<sup>-27</sup> kg", qLabel: "3.2 &times; 10<sup>-19</sup> C" },
+            { name: "גרעין דאוטריום", m: 3.34e-27, q: 1.6e-19, mLabel: "3.34 &times; 10<sup>-27</sup> kg", qLabel: "1.6 &times; 10<sup>-19</sup> C" },
+            { name: "יון ליתיום (+Li)", m: 9.96e-27, q: 1.6e-19, mLabel: "9.96 &times; 10<sup>-27</sup> kg", qLabel: "1.6 &times; 10<sup>-19</sup> C" },
+            { name: "יון פחמן (+C)", m: 1.99e-26, q: 1.6e-19, mLabel: "1.99 &times; 10<sup>-26</sup> kg", qLabel: "1.6 &times; 10<sup>-19</sup> C" }
+        ];
+
+        // תדרי זמן מחזור אופטימליים לחלוקה נקייה ב-4 לקבלת מקסימום 2 ספרות אחרי הנקודה (כפולות של 0.04 מיקרו-שנייה)
+        const ROUND_PERIODS = [0.12, 0.16, 0.20, 0.24, 0.28, 0.32, 0.36, 0.40, 0.44, 0.48, 0.52, 0.56, 0.60, 0.64, 0.68, 0.72, 0.76, 0.80];
+
+        let scenarios = [];
+        let currentScenarioIdx = 0;
+        let score = 0; 
+        let checkedThisScenario = false;
+        let animFrameId = null;
+        let animTime = 0;
+        let gameUniqueId = '';
+
+        window.onload = function() {
+            generateGameId();
+            generateDynamicScenarios();
+        };
+
+        function showToast(text, isError = false) {
+            const toast = document.getElementById('toast-message');
+            toast.innerText = text;
+            toast.className = `fixed top-5 left-1/2 transform -translate-x-1/2 px-6 py-3 rounded-xl shadow-lg font-bold text-center z-50 transition-all duration-300 ${isError ? 'bg-amber-500 text-white' : 'bg-blue-600 text-white'}`;
+            toast.classList.remove('hidden');
+            setTimeout(() => {
+                toast.classList.add('hidden');
+            }, 4000);
+        }
+
+        function generateGameId() {
+            const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789';
+            let id = 'CY-';
+            const now = new Date();
+            const year = now.getFullYear();
+            const month = String(now.getMonth() + 1).padStart(2, '0');
+            const day = String(now.getDate()).padStart(2, '0');
+            id += `${year}${month}${day}-`;
+            for (let i = 0; i < 6; i++) id += chars.charAt(Math.floor(Math.random() * chars.length));
+            gameUniqueId = id;
+        }
+
+        function startGame() {
+            const nameInput = document.getElementById('player-name').value.trim();
+            if (!nameInput) {
+                document.getElementById('name-error').classList.remove('hidden');
+                return;
+            }
+            document.getElementById('welcome-screen').classList.add('hidden');
+            document.getElementById('display-player-name').innerText = nameInput;
+            document.getElementById('end-player-name').innerText = nameInput;
+            
+            currentScenarioIdx = 0;
+            score = 0;
+            updateScoreDisplay();
+            loadScenario(currentScenarioIdx);
+        }
+
+        function pickRandom(arr) {
+            return arr[Math.floor(Math.random() * arr.length)];
+        }
+
+        // מחולל התרחישים הדינמי המלא
+        function generateDynamicScenarios() {
+            scenarios = [];
+            for (let i = 0; i < 5; i++) {
+                let particle = pickRandom(PARTICLES);
+                
+                // שלב א': הגרלת זמן מחזור עגול שלם כדי שכל שנתות ה-X בגרף יצאו עד 2 ספרות אחרי הנקודה!
+                let T_us = pickRandom(ROUND_PERIODS);
+                let T = T_us * 1e-6; // שניות
+                
+                // שלב ב': חישוב השדה המגנטי הנדרש בהתאם לזמן המחזור העגול
+                // B = 2*pi*m / (q*T)
+                let bField = (2 * Math.PI * particle.m) / (particle.q * T);
+                bField = Number(bField.toFixed(3)); // עיגול השדה המגנטי ל-3 ספרות לדיוק
+
+                let voltage = Math.floor(10 + Math.random() * 90); 
+                let radiusMax = Number((0.2 + Math.random() * 0.6).toFixed(2)); 
+                let graphType = Math.random() > 0.5 ? 'V_t' : 'v_t'; 
+
+                let v_max = (particle.q * bField * radiusMax) / particle.m;
+                let v_max_6 = Number((v_max / 1e6).toFixed(2)); 
+                
+                let Ek_J = 0.5 * particle.m * Math.pow(v_max, 2);
+                let power_Ek = Math.floor(Math.log10(Ek_J));
+                let coeff_Ek = Number((Ek_J / Math.pow(10, power_Ek)).toFixed(2));
+                
+                let energy_per_turn = 2 * particle.q * (voltage * 1000);
+                let total_turns = Math.ceil(Ek_J / energy_per_turn);
+
+                let sc = {
+                    particleName: particle.name,
+                    particleMass: particle.m,
+                    particleCharge: particle.q,
+                    massLabel: particle.mLabel,
+                    chargeLabel: particle.qLabel,
+                    bField: bField,
+                    bDirection: Math.random() > 0.5 ? 'in' : 'out',
+                    voltage: voltage,
+                    radiusMax: radiusMax,
+                    graphType: graphType,
+                    periodUs: T_us,
+                    vMax: v_max,
+                    hiddenVar: 'none', 
+                    questions: {}
+                };
+
+                // שאלה א' (קריאת גרף)
+                if (graphType === 'V_t') {
+                    sc.questions.a = {
+                        text: `לפי גרף מקור המתח משמאל, קראו את זמן המחזור <span class="phys-var">T</span> במיקרו-שניות (&mu;s).`,
+                        type: 'number', ans: T_us, tolerance: 0.05, placeholder: 'לדוגמה: 0.135',
+                        expl: `זמן המחזור של השדה החשמלי חייב להיות מסונכרן עם תנועת החלקיק. ניתן לראות בגרף כי מחזור שלם (גל חיובי ושלילי) נמשך בדיוק ${T_us} &mu;s.`
+                    };
+                } else {
+                    sc.questions.a = {
+                        text: `לפי גרף המהירות משמאל, מהי המהירות המקסימלית <span class="phys-var">v<sub>max</sub></span> אליה מגיע החלקיק (ביחידות 10<sup>6</sup> m/s)?`,
+                        type: 'number', ans: v_max_6, tolerance: 0.2, placeholder: 'לדוגמה: 4.5',
+                        expl: `הגרף מתאר את התגברות מהירות החלקיק בכל מעבר. הערך העליון ביותר שאליו מגיע הגרף הוא ${v_max_6} &times; 10<sup>6</sup> m/s.`
+                    };
+                }
+
+                // שאלה ב' (חישוב)
+                let calcPool = [];
+                if (graphType === 'V_t') {
+                    calcPool.push('calc_B');
+                    calcPool.push('calc_Ek'); 
+                } else {
+                    calcPool.push('calc_R');
+                    calcPool.push('calc_turns');
+                }
+
+                let pickedCalc = pickRandom(calcPool);
+
+                if (pickedCalc === 'calc_B') {
+                    sc.hiddenVar = 'B'; 
+                    sc.questions.b = {
+                        text: `בהינתן שקראתם מהגרף את זמן המחזור, חשבו את עצמת השדה המגנטי <span class="phys-var">B</span> הדרושה לפעולת המאיץ, ביחידות טסלה (T).`,
+                        type: 'number', ans: bField, tolerance: 0.05, placeholder: 'לדוגמה: 1.25',
+                        expl: `לפי הקשר <span class="phys-var">T</span> = 2&pi;<span class="phys-var">m</span> / (<span class="phys-var">qB</span>), נבודד את השדה: <span class="phys-var">B</span> = 2&pi;<span class="phys-var">m</span> / (<span class="phys-var">qT</span>). נציב את הנתונים והמסה לקבלת ${bField} T.`
+                    };
+                } else if (pickedCalc === 'calc_R') {
+                    sc.hiddenVar = 'R'; 
+                    sc.questions.b = {
+                        text: `לפי המהירות המקסימלית בגרף ובהינתן ש- <span class="phys-var">B</span> = ${bField} T, מהו רדיוס הציקלוטרון <span class="phys-var">R</span> ביחידות מטרים (m)?`,
+                        type: 'number', ans: radiusMax, tolerance: 0.05, placeholder: 'לדוגמה: 0.45',
+                        expl: `מהירות החלקיק היא <span class="phys-var">v</span> = <span class="phys-var">qBR</span> / <span class="phys-var">m</span>. נבודד את הרדיוס: <span class="phys-var">R</span> = <span class="phys-var">mv</span> / (<span class="phys-var">qB</span>). הצבת הנתונים תיתן ${radiusMax} m.`
+                    };
+                } else if (pickedCalc === 'calc_Ek') {
+                    sc.questions.b = {
+                        text: `חשבו את האנרגיה הקינטית המקסימלית של החלקיק ביציאתו ביחידות ג'אול. (הזינו רק את המקדם של 10<sup>${power_Ek}</sup> J)`,
+                        type: 'number', ans: coeff_Ek, tolerance: 0.15, placeholder: `לדוגמה: ${coeff_Ek}`,
+                        expl: `אנרגיה קינטית <span class="phys-var">E<sub>k</sub></span> = 0.5&middot;<span class="phys-var">m</span>&middot;<span class="phys-var">v</span><sup>2</sup>. לאחר חישוב המהירות והצבת המסה נקבל ${Ek_J.toExponential(2)} J.`
+                    };
+                } else if (pickedCalc === 'calc_turns') {
+                    sc.questions.b = {
+                        text: `בהינתן שהחלקיק מואץ על ידי המתח הנתון בלוח, כמה סיבובים שלמים הוא יבצע עד שיגיע למהירותו המקסימלית?`,
+                        type: 'number', ans: total_turns, tolerance: 3, placeholder: 'מספר שלם',
+                        expl: `בכל סיבוב החלקיק עובר פעמיים בריווח ומקבל אנרגיה של 2&times;<span class="phys-var">qV</span>. חלוקת האנרגיה הכוללת באנרגיה לסיבוב נותנת כ-${total_turns} סיבובים.`
+                    };
+                }
+
+                // שאלה ג' (הבנה)
+                let conceptPool = [
+                    {
+                        type: 'select', 
+                        text: `מה יקבע את כיוון תנועת החלקיק בספירלה (עם או נגד כיוון השעון)?`,
+                        options: ['רק מטען החלקיק', 'רק כיוון השדה המגנטי', 'שילוב של סימן המטען וכיוון השדה המגנטי', 'משקלו של החלקיק'],
+                        ans: 2,
+                        expl: `לפי חוק יד ימין לכוח לורנץ, כיוון הכוח (ומכאן כיוון הסיבוב) תלוי גם בסימן המטען (<span class="phys-var">q</span>) וגם בכיוון וקטור השדה המגנטי (<span class="phys-var">B</span>).`
+                    },
+                    {
+                        type: 'select', 
+                        text: `מהו תפקידו הבלעדי של השדה המגנטי בציקלוטרון?`,
+                        options: ['להגדיל את האנרגיה הקינטית של החלקיק', 'להאיץ את החלקיק בקו ישר', 'לשנות את כיוון תנועת החלקיק ולעקמו למסלול מעגלי', 'להקטין את מסת החלקיק'],
+                        ans: 2,
+                        expl: `השדה המגנטי מפעיל כוח לורנץ הניצב תמיד למהירות החלקיק, ולכן אינו מבצע עבודה ואינו משנה את גודל המהירות, אלא משמש ככוח צנטריפטלי המשנה את כיוון התנועה.`
+                    },
+                    {
+                        type: 'select', 
+                        text: `מדוע תדירות מקור המתח החילופי (<span class="phys-var">f</span>) נשארת קבועה לאורך כל תהליך ההאצה?`,
+                        options: ['כי רדיוס המסלול נשאר קבוע', 'כי למרות שהרדיוס גדל, גם מהירות החלקיק גדלה באותו יחס, כך שזמן המחזור נותר קבוע', 'כי השדה החשמלי הולך וקטן', 'כי מסת החלקיק גדלה'],
+                        ans: 1,
+                        expl: `התדר הוא <span class="phys-var">f</span> = <span class="phys-var">qB</span> / (2&pi;<span class="phys-var">m</span>). הוא תלוי רק במטען, שדה ומסה. כשהחלקיק מאיץ, הרדיוס והמהירות גדלים יחד, וזמן השלמת חצי מעגל נשאר קבוע לחלוטין!`
+                    }
+                ];
+                sc.questions.c = pickRandom(conceptPool);
+
+                // שאלה ד' (מה יקרה אם)
+                let whatIfPool = [
+                    {
+                        type: 'select', 
+                        text: `אם נגדיל את מתח ההאצה <span class="phys-var">V</span> שבין הגלילים פי 2, מה יקרה למהירות הסופית של החלקיק בצאתו מהמאיץ?`,
+                        options: ['היא תוכפל פי 2', 'היא תגדל פי 4', 'היא תקטן', 'היא תישאר ללא שינוי (רק ידרשו פחות סיבובים)'],
+                        ans: 3,
+                        expl: `המהירות הסופית תלויה רק ברדיוס הפיזי של המאיץ ובשדה המגנטי (<span class="phys-var">v</span> = <span class="phys-var">qBR</span>/<span class="phys-var">m</span>). מתח גבוה יותר פשוט נותן מכות אנרגיה חזקות יותר, ולכן החלקיק יגיע לאותה מהירות סופית אך בפחות מעברים.`
+                    },
+                    {
+                        type: 'select', 
+                        text: `אם נחתוך את עצמת השדה המגנטי בחצי (הקטנה פי 2), מה יקרה לרדיוס המסלול עבור אותה מהירות נתונה?`,
+                        options: ['הרדיוס יקטן פי 2', 'הרדיוס יישאר ללא שינוי', 'הרדיוס יגדל פי 2 (יוכפל)', 'הרדיוס יגדל פי 4'],
+                        ans: 2,
+                        expl: `לפי הקשר <span class="phys-var">R</span> = <span class="phys-var">mv</span> / (<span class="phys-var">qB</span>), הרדיוס נמצא ביחס הפוך לעצמת השדה המגנטי. לכן הקטנת השדה פי 2 תגדיל את הרדיוס פי 2.`
+                    },
+                    {
+                        type: 'select', 
+                        text: `נניח שמכניסים חלקיק בעל מסה גדולה פי 2 ומטען זהה. מה יקרה לתדר המתח החילופי (<span class="phys-var">f</span>) הנדרש כדי לשמור על סנכרון?`,
+                        options: ['הוא יוכפל פי 2', 'הוא יקטן פי 2 (ייחצה)', 'הוא יישאר ללא שינוי', 'הוא יהפוך לאפס'],
+                        ans: 1,
+                        expl: `תדר הסיבוב הוא <span class="phys-var">f</span> = <span class="phys-var">qB</span> / (2&pi;<span class="phys-var">m</span>). היות והמסה <span class="phys-var">m</span> (שבמכנה) גדלה פי 2, התדר כולו קטן פי 2.`
+                    }
+                ];
+                sc.questions.d = pickRandom(whatIfPool);
+
+                scenarios.push(sc);
+            }
+        }
+
+        function loadScenario(index) {
+            checkedThisScenario = false;
+            document.getElementById('check-btn').classList.remove('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+            
+            const sc = scenarios[index];
+            
+            document.getElementById('mode-number').innerText = (index + 1);
+            document.getElementById('progress-indicator').innerText = `${index + 1} מתוך 5`;
+            document.getElementById('particle-tag').innerText = sc.particleName;
+            document.getElementById('scenario-title').innerText = `מערכת מוגרלת: האצת ${sc.particleName}`;
+            
+            const dirText = sc.bDirection === 'in' ? 'פנימה (X)' : 'החוצה (•)';
+            
+            if (sc.hiddenVar === 'B') {
+                document.getElementById('sim-b-field').innerHTML = `<span class="phys-var">B</span> = ? <br><span class="text-[11px] text-amber-500 font-bold">(נדרש בחישוב)</span>`;
+            } else {
+                document.getElementById('sim-b-field').innerHTML = `<span class="phys-var">B</span> = ${sc.bField} T <br><span class="text-[12px] font-semibold">(${dirText})</span>`;
+            }
+            
+            document.getElementById('sim-voltage').innerHTML = `<span class="phys-var">V</span> = ${sc.voltage} kV`;
+            
+            // המסה של החלקיק מוצגת כעת בגופן ענק ובולט עם כיווניות שמאלית מתמטית, כולל היחידות!
+            document.getElementById('sim-particle').innerHTML = `${sc.particleName} <br><span class="text-sm sm:text-base font-bold text-slate-700 leading-tight inline-block mt-1" dir="ltr"><span class="phys-var">m</span> = ${sc.massLabel}</span>`;
+
+            document.getElementById('scenario-desc').innerHTML = `מערכת האצה דינמית הוגרלה עבורכם! חלקיק מסוג ${sc.particleName} משוחרר במרכז הציקלוטרון. השדה המגנטי והמתח הותאמו אישית לתכונות החלקיק שמוצגות בלוח המידע.`;
+            
+            if (sc.graphType === 'V_t') {
+                document.getElementById('graph-description').innerHTML = `בגרף שלפניכם מוצג מקור המתח החילופי המפעיל את המרווח בין ה-Dees כפונקציה של הזמן. שימו לב לזמן מחזור אחד שלם.`;
+            } else {
+                document.getElementById('graph-description').innerHTML = `בגרף שלפניכם מוצגת מהירותו של ה-${sc.particleName} כפונקציה של הזמן בתוך הציקלוטרון. המדרגות מייצגות את רגעי המעבר וההאצה בריווח.`;
+            }
+
+            buildQuestionsUI(sc);
+            initDrawings(sc);
+        }
+
+        function buildQuestionsUI(sc) {
+            const keys = ['a', 'b', 'c', 'd'];
+            keys.forEach(key => {
+                const q = sc.questions[key];
+                const container = document.getElementById(`q-${key}-input-container`);
+                const feedback = document.getElementById(`feedback-${key}`);
+                
+                feedback.classList.add('hidden');
+                feedback.innerHTML = '';
+                
+                document.getElementById(`q-${key}-text`).innerHTML = q.text;
+
+                if (q.type === 'number') {
+                    container.innerHTML = `
+                        <div class="flex flex-col sm:flex-row items-start sm:items-center gap-3 mt-1 w-full">
+                            <input type="number" step="any" id="input-${key}" placeholder="${q.placeholder}" class="w-full sm:w-56 px-4 py-2.5 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-sm font-semibold shadow-sm transition-all bg-white text-base">
+                            <span class="text-sm text-slate-500 bg-white px-2.5 py-1.5 rounded-lg border border-slate-200 shadow-sm">הזינו ערך מספרי</span>
+                        </div>
+                    `;
+                } else if (q.type === 'select') {
+                    let optionsHTML = `<option value="" disabled selected>בחרו תשובה מהרשימה...</option>`;
+                    q.options.forEach((opt, idx) => {
+                        optionsHTML += `<option value="${idx}">${opt}</option>`;
+                    });
+                    container.innerHTML = `
+                        <select id="input-${key}" class="w-full mt-1 px-4 py-2.5 border border-slate-300 rounded-xl focus:outline-none focus:ring-2 focus:ring-blue-500 text-base font-semibold bg-white shadow-sm transition-all">
+                            ${optionsHTML}
+                        </select>
+                    `;
+                }
+            });
+        }
+
+        function checkAnswers() {
+            if (checkedThisScenario) return;
+
+            const sc = scenarios[currentScenarioIdx];
+            const keys = ['a', 'b', 'c', 'd'];
+            let anyEmpty = false;
+
+            keys.forEach(key => {
+                const inputEl = document.getElementById(`input-${key}`);
+                if (!inputEl || inputEl.value === "") anyEmpty = true;
+            });
+
+            if (anyEmpty) {
+                showToast("בדקנו את תשובותיך. סעיפים שלא ענית עליהם סומנו כשגויים ותוכל ללמוד מההסבר.", true);
+            } else {
+                showToast("מעולה! כל התשובות נבדקו.", false);
+            }
+
+            checkedThisScenario = true;
+            let scenarioScore = 0;
+
+            keys.forEach(key => {
+                const q = sc.questions[key];
+                const inputEl = document.getElementById(`input-${key}`);
+                const feedbackEl = document.getElementById(`feedback-${key}`);
+                
+                let isCorrect = false;
+                let userValStr = inputEl ? inputEl.value.trim() : "";
+
+                if (inputEl) {
+                    inputEl.disabled = true; 
+                    inputEl.classList.add('bg-slate-100', 'text-slate-500'); 
+                }
+
+                if (userValStr !== "") {
+                    if (q.type === 'number') {
+                        const userVal = parseFloat(userValStr);
+                        const diff = Math.abs(userVal - q.ans);
+                        const maxAllowedTolerance = q.tolerance || (Math.abs(q.ans) * 0.05);
+                        if (diff <= maxAllowedTolerance) {
+                            isCorrect = true;
+                        }
+                    } else if (q.type === 'select') {
+                        const userVal = parseInt(userValStr);
+                        if (userVal === q.ans) {
+                            isCorrect = true;
+                        }
+                    }
+                }
+
+                feedbackEl.classList.remove('hidden');
+                if (isCorrect) {
+                    feedbackEl.className = "mt-3 text-sm font-semibold text-emerald-700 flex items-start gap-2 bg-emerald-50 p-4 rounded-xl border border-emerald-200 shadow-sm leading-relaxed";
+                    feedbackEl.innerHTML = `<span class="text-xl">✅</span> <div><b>נכון מאוד!</b> <div class="mt-2 font-normal text-slate-700 font-sans">${q.expl}</div></div>`;
+                    scenarioScore++;
+                    score++;
+                } else {
+                    feedbackEl.className = "mt-3 text-sm font-semibold text-red-700 flex items-start gap-2 bg-red-50 p-4 rounded-xl border border-red-200 shadow-sm leading-relaxed";
+                    let correctLabel = q.type === 'select' ? q.options[q.ans] : q.ans;
+                    
+                    if (userValStr === "") {
+                        feedbackEl.innerHTML = `
+                            <span class="text-xl">⚠️</span> 
+                            <div class="w-full">
+                                <b>לא הוזנה תשובה.</b> התשובה הנכונה היא: <br><span class="inline-block bg-white px-3 py-1 rounded-lg border border-red-100 mt-2 mb-2 text-red-600 font-bold text-base">${correctLabel}</span>
+                                <div class="text-slate-700 font-normal border-t border-red-200/50 pt-2 mt-2 leading-relaxed font-sans">${q.expl}</div>
+                            </div>
+                        `;
+                    } else {
+                        feedbackEl.innerHTML = `
+                            <span class="text-xl">❌</span> 
+                            <div class="w-full">
+                                <b>שגוי.</b> התשובה הנכונה היא: <br><span class="inline-block bg-white px-3 py-1 rounded-lg border border-red-100 mt-2 mb-2 text-red-600 font-bold text-base">${correctLabel}</span>
+                                <div class="text-slate-700 font-normal border-t border-red-200/50 pt-2 mt-2 leading-relaxed font-sans">${q.expl}</div>
+                            </div>
+                        `;
+                    }
+                }
+            });
+
+            updateScoreDisplay();
+
+            document.getElementById('check-btn').classList.add('hidden');
+            document.getElementById('next-btn').classList.remove('hidden');
+        }
+
+        function updateScoreDisplay() {
+            document.getElementById('score-badge').innerText = `${score} / 20`;
+        }
+
+        function nextScenario() {
+            currentScenarioIdx++;
+            if (currentScenarioIdx < 5) {
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+                loadScenario(currentScenarioIdx);
+            } else {
+                showEndScreen();
+            }
+        }
+
+        function showEndScreen() {
+            document.getElementById('end-screen').classList.remove('hidden');
+            
+            const percent = Math.round((score / 20) * 100);
+            document.getElementById('end-score-percent').innerText = `${percent}%`;
+            document.getElementById('end-score-fraction').innerText = `עניתם נכון על ${score} מתוך 20 סעיפים`;
+
+            const now = new Date();
+            const timestampStr = now.toLocaleDateString('he-IL') + ' ' + now.toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit'});
+            document.getElementById('end-timestamp').innerText = timestampStr;
+            document.getElementById('end-game-id').innerText = gameUniqueId;
+
+            const feedbackEl = document.getElementById('pedagogical-feedback');
+            if (percent === 100) {
+                feedbackEl.innerHTML = `<b>מצוין! ציון מושלם! 🌟</b><br>הפגנתם שליטה פנומנלית בכל היבטי הציקלוטרון!`;
+            } else if (percent >= 80) {
+                feedbackEl.innerHTML = `<b>עבודה מעולה! כל הכבוד! 🎉</b><br>הבנתכם את עקרונות הפעולה גבוהה מאוד. טעויות קלות בחישובים הן חלק מהלמידה.`;
+            } else if (percent >= 55) {
+                feedbackEl.innerHTML = `<b>עברתם בהצלחה, אך יש מקום לשיפור 👍</b><br>הבנתם את הבסיס, אך כדאי לחזור על הנוסחאות המקשרות בין זמן המחזור, השדה והמסה.`;
+            } else {
+                feedbackEl.innerHTML = `<b>נדרש תרגול נוסף 📚</b><br>הנושא משלב מספר מושגים מאתגרים. קראו שוב את חומר הלימוד ונסו שוב.`;
+            }
+        }
+
+        function restartGame() {
+            document.getElementById('end-screen').classList.add('hidden');
+            document.getElementById('welcome-screen').classList.remove('hidden');
+            document.getElementById('player-name').value = '';
+            document.getElementById('name-error').classList.add('hidden');
+            generateGameId();
+            generateDynamicScenarios(); 
+        }
+
+        // =====================================================================
+        // לוח הציור והגרפיקה
+        // =====================================================================
+        function initDrawings(sc) {
+            if (animFrameId) {
+                cancelAnimationFrame(animFrameId);
+            }
+
+            const canvas = document.getElementById('cyclotronCanvas');
+            const ctx = canvas.getContext('2d');
+            
+            const graphCanvas = document.getElementById('graphCanvas');
+            const gCtx = graphCanvas.getContext('2d');
+
+            animTime = 0;
+
+            function drawLoop() {
+                drawCyclotron(ctx, canvas.width, canvas.height, sc);
+                drawGraph(gCtx, graphCanvas.width, graphCanvas.height, sc);
+                animTime += 0.015;
+                animFrameId = requestAnimationFrame(drawLoop);
+            }
+
+            drawLoop();
+        }
+
+        function drawCyclotron(ctx, width, height, sc) {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#0f172a'; 
+            ctx.fillRect(0, 0, width, height);
+
+            const cx = width / 2;
+            const cy = height / 2;
+            const radius = 300; 
+            const gap = 28;
+
+            ctx.strokeStyle = 'rgba(255, 255, 255, 0.06)';
+            ctx.lineWidth = 2.5;
+            const spacing = 60;
+            for (let x = spacing/2; x < width; x += spacing) {
+                for (let y = spacing/2; y < height; y += spacing) {
+                    if (sc.bDirection === 'in') {
+                        ctx.beginPath();
+                        ctx.moveTo(x - 8, y - 8); ctx.lineTo(x + 8, y + 8);
+                        ctx.moveTo(x + 8, y - 8); ctx.lineTo(x - 8, y + 8);
+                        ctx.stroke();
+                    } else {
+                        ctx.beginPath();
+                        ctx.arc(x, y, 3, 0, 2 * Math.PI);
+                        ctx.fillStyle = 'rgba(255, 255, 255, 0.15)';
+                        ctx.fill();
+                    }
+                }
+            }
+
+            ctx.fillStyle = 'rgba(30, 41, 59, 0.85)';
+            ctx.strokeStyle = '#3b82f6';
+            ctx.lineWidth = 5;
+            ctx.beginPath(); ctx.arc(cx + gap/2, cy, radius, -Math.PI/2, Math.PI/2, false); ctx.closePath(); ctx.fill(); ctx.stroke();
+            ctx.beginPath(); ctx.arc(cx - gap/2, cy, radius, Math.PI/2, -Math.PI/2, false); ctx.closePath(); ctx.fill(); ctx.stroke();
+
+            ctx.strokeStyle = '#f43f5e';
+            ctx.lineWidth = 4;
+            ctx.beginPath();
+            ctx.moveTo(cx, cy);
+
+            let direction = sc.bDirection === 'out' ? -1 : 1;
+            
+            const steps = 15;
+            for (let i = 0; i < steps; i++) {
+                const r = 16 + i * 19; 
+                if (r > radius) break;
+                const isRightDee = (i % 2 === 0);
+                if (isRightDee) {
+                    if (direction === 1) ctx.arc(cx + gap/2, cy, r, -Math.PI/2, Math.PI/2, false);
+                    else ctx.arc(cx + gap/2, cy, r, Math.PI/2, -Math.PI/2, true);
+                } else {
+                    if (direction === 1) ctx.arc(cx - gap/2, cy, r, Math.PI/2, -Math.PI/2, false);
+                    else ctx.arc(cx - gap/2, cy, r, -Math.PI/2, Math.PI/2, true);
+                }
+            }
+            ctx.stroke();
+
+            const totalAnimCycle = 6; 
+            const tParam = (animTime % totalAnimCycle) / totalAnimCycle;
+            const particleProgress = tParam * steps;
+            
+            let pX = cx; let pY = cy;
+
+            for (let i = 0; i < steps; i++) {
+                const r = 16 + i * 19;
+                if (r > radius) break;
+                const isRightDee = (i % 2 === 0);
+                if (particleProgress >= i && particleProgress < i + 1) {
+                    const localT = particleProgress - i;
+                    let angle;
+                    if (isRightDee) {
+                        angle = direction === 1 ? -Math.PI/2 + localT * Math.PI : Math.PI/2 - localT * Math.PI;
+                        pX = cx + gap/2 + r * Math.cos(angle); pY = cy + r * Math.sin(angle);
+                    } else {
+                        angle = direction === 1 ? Math.PI/2 + localT * Math.PI : -Math.PI/2 - localT * Math.PI;
+                        pX = cx - gap/2 + r * Math.cos(angle); pY = cy + r * Math.sin(angle); 
+                    }
+                    break;
+                }
+            }
+
+            ctx.fillStyle = '#ffffff';
+            ctx.shadowColor = '#f43f5e'; ctx.shadowBlur = 15;
+            ctx.beginPath(); ctx.arc(pX, pY, 10, 0, 2 * Math.PI); ctx.fill(); ctx.shadowBlur = 0;
+
+            // הגדלת גופן כיתוב השדה המגנטי בהדמיה (מ-20px ל-32px)
+            ctx.fillStyle = '#cbd5e1'; ctx.font = 'bold 32px Assistant';
+            ctx.fillText(sc.bDirection === 'in' ? '⊗ שדה B פנימה' : '⊙ שדה B החוצה', 30, 55);
+        }
+
+        // ציור הגרף הפיזיקלי - גרסה עם גופנים מוגדלים משמעותית ושנתות עגולות של 2 ספרות
+        function drawGraph(ctx, width, height, sc) {
+            ctx.clearRect(0, 0, width, height);
+            ctx.fillStyle = '#ffffff'; ctx.fillRect(0, 0, width, height);
+
+            // שוליים גדולים ונדיבים למניעת גלישת טקסט מוגדל
+            const paddingLeft = 160; 
+            const paddingRight = 60;
+            const paddingTop = 50; 
+            const paddingBottom = 120; // מוגדל על מנת להרחיק את השנתות הענקיות למטה
+
+            const graphWidth = width - paddingLeft - paddingRight; 
+            const graphHeight = height - paddingTop - paddingBottom;
+
+            ctx.strokeStyle = '#64748b'; ctx.lineWidth = 3; ctx.beginPath();
+            ctx.moveTo(paddingLeft, paddingTop); ctx.lineTo(paddingLeft, height - paddingBottom);
+            ctx.moveTo(paddingLeft, height - paddingBottom); ctx.lineTo(width - paddingRight, height - paddingBottom); ctx.stroke();
+
+            ctx.fillStyle = '#334155'; ctx.font = 'bold 34px Assistant'; 
+
+            ctx.save(); ctx.translate(55, paddingTop + graphHeight / 2); ctx.rotate(-Math.PI / 2); ctx.textAlign = 'center';
+            if (sc.graphType === 'V_t') {
+                ctx.fillText('מתח V (קילו-וולט)', 0, 0);
+            } else {
+                ctx.fillText('מהירות v (מיליוני מ"ש)', 0, 0);
+            }
+            ctx.restore();
+
+            ctx.textAlign = 'center';
+            if (sc.graphType === 'V_t') {
+                ctx.fillText('זמן t (מיקרו-שניות)', paddingLeft + graphWidth / 2, height - 15); 
+            } else {
+                ctx.fillText('זמן t (\u03BCs)', paddingLeft + graphWidth / 2, height - 15);
+            }
+
+            if (sc.graphType === 'V_t') {
+                const yZero = paddingTop + graphHeight / 2;
+                
+                ctx.strokeStyle = '#cbd5e1'; ctx.lineWidth = 1.5; ctx.beginPath();
+                ctx.moveTo(paddingLeft, yZero); ctx.lineTo(width - paddingRight, yZero); ctx.stroke();
+
+                // הגדלת תוויות ציר ה-Y ל-30px
+                ctx.fillStyle = '#475569'; ctx.font = 'bold 30px Assistant'; ctx.textAlign = 'right';
+                ctx.fillText(`+${sc.voltage}`, paddingLeft - 20, paddingTop + 10);
+                ctx.fillText('0', paddingLeft - 20, yZero + 10);
+                ctx.fillText(`-${sc.voltage}`, paddingLeft - 20, height - paddingBottom + 10);
+
+                const T_us = sc.periodUs;
+
+                ctx.strokeStyle = '#2563eb'; ctx.lineWidth = 4.5; ctx.beginPath();
+                let firstPoints = true;
+                for (let xPixel = paddingLeft; xPixel <= width - paddingRight; xPixel++) {
+                    const xProgress = (xPixel - paddingLeft) / graphWidth;
+                    const totalTimeOnGraph = T_us * 2.5;
+                    const t = xProgress * totalTimeOnGraph;
+                    const V_t = (t % T_us) < (T_us / 2) ? sc.voltage : -sc.voltage;
+                    const yPixel = yZero - (V_t / sc.voltage) * (graphHeight / 2.1); 
+                    if (firstPoints) { ctx.moveTo(xPixel, yPixel); firstPoints = false; } else { ctx.lineTo(xPixel, yPixel); }
+                }
+                ctx.stroke();
+
+                // ציור שנתות ציר ה-X עם גופנים מוגדלים משמעותית (24px - 26px) ומספרים עגולים
+                ctx.textAlign = 'center'; 
+                const totalTimeOnGraph = T_us * 2.5;
+                for (let i = 1; i <= 10; i++) {
+                    const t_val = i * (T_us / 4);
+                    const x_tick = paddingLeft + (t_val / totalTimeOnGraph) * graphWidth;
+                    
+                    ctx.strokeStyle = 'rgba(203, 213, 225, 0.5)'; ctx.lineWidth = 1.5; ctx.beginPath();
+                    ctx.moveTo(x_tick, paddingTop); ctx.lineTo(x_tick, height - paddingBottom); ctx.stroke();
+
+                    ctx.beginPath();
+                    if (i % 2 === 0) {
+                        ctx.strokeStyle = '#334155'; ctx.lineWidth = 3.5; 
+                        ctx.moveTo(x_tick, height - paddingBottom); 
+                        ctx.lineTo(x_tick, height - paddingBottom + 15); 
+                        ctx.stroke();
+                        
+                        ctx.fillStyle = '#1e293b'; 
+                        ctx.font = 'bold 26px Assistant'; // הוגדל ל-26px
+                        // שימוש קפדני ב-toFixed(2) כדי לוודא שאין יותר מ-2 ספרות לעולם
+                        ctx.fillText(Number(t_val.toFixed(2)).toString(), x_tick, height - paddingBottom + 45);
+                    } else {
+                        ctx.strokeStyle = '#64748b'; ctx.lineWidth = 2.5; 
+                        ctx.moveTo(x_tick, height - paddingBottom); 
+                        ctx.lineTo(x_tick, height - paddingBottom + 10); 
+                        ctx.stroke();
+                        
+                        ctx.fillStyle = '#475569'; 
+                        ctx.font = '600 22px Assistant'; // הוגדל ל-22px
+                        ctx.fillText(Number(t_val.toFixed(2)).toString(), x_tick, height - paddingBottom + 40);
+                    }
+                }
+            } else {
+                // גרף מהירות
+                ctx.fillStyle = '#475569'; ctx.font = 'bold 30px Assistant'; ctx.textAlign = 'right';
+                const vMaxLabel = (sc.vMax / 1e6).toFixed(1);
+                ctx.fillText(vMaxLabel, paddingLeft - 20, paddingTop + 10);
+                ctx.fillText('0', paddingLeft - 20, height - paddingBottom + 10);
+
+                ctx.strokeStyle = '#cbd5e1'; ctx.setLineDash([5, 5]); ctx.lineWidth = 2; ctx.beginPath();
+                ctx.moveTo(paddingLeft, paddingTop + 5); ctx.lineTo(width - paddingRight, paddingTop + 5); ctx.stroke(); ctx.setLineDash([]);
+
+                ctx.strokeStyle = '#10b981'; ctx.lineWidth = 4.5; ctx.beginPath();
+                let cx_p = paddingLeft; let cy_p = height - paddingBottom; ctx.moveTo(cx_p, cy_p);
+                const numSteps = 10; const stepWidth = graphWidth / numSteps; const stepHeight = (graphHeight - 10) / numSteps;
+
+                for (let i = 0; i < numSteps; i++) {
+                    ctx.lineTo(cx_p + stepWidth * 0.8, cy_p); cx_p += stepWidth * 0.8;
+                    ctx.lineTo(cx_p + stepWidth * 0.2, cy_p - stepHeight); cx_p += stepWidth * 0.2; cy_p -= stepHeight;
+                }
+                ctx.stroke();
+
+                ctx.textAlign = 'center'; 
+                const sc_T_us = sc.periodUs;
+                for (let i = 1; i <= 10; i++) {
+                    const x_tick = paddingLeft + (i / 10) * graphWidth;
+                    const t_val = i * (sc_T_us / 2);
+                    
+                    ctx.beginPath();
+                    if (i % 2 === 0) {
+                        ctx.strokeStyle = '#334155'; ctx.lineWidth = 3.5; 
+                        ctx.moveTo(x_tick, height - paddingBottom); 
+                        ctx.lineTo(x_tick, height - paddingBottom + 15);
+                        ctx.stroke();
+                        
+                        ctx.fillStyle = '#1e293b'; 
+                        ctx.font = 'bold 26px Assistant'; // הוגדל ל-26px
+                        ctx.fillText(Number(t_val.toFixed(2)).toString(), x_tick, height - paddingBottom + 45);
+                    } else {
+                        ctx.strokeStyle = '#94a3b8'; ctx.lineWidth = 2.5; 
+                        ctx.moveTo(x_tick, height - paddingBottom); 
+                        ctx.lineTo(x_tick, height - paddingBottom + 10);
+                        ctx.stroke();
+                        
+                        ctx.fillStyle = '#475569'; 
+                        ctx.font = '600 22px Assistant'; // הוגדל ל-22px
+                        ctx.fillText(Number(t_val.toFixed(2)).toString(), x_tick, height - paddingBottom + 40);
+                    }
+                    ctx.stroke();
+                }
+            }
+        }
+    </script>
+</body>
+</html>

@@ -22,6 +22,11 @@ class ReusableTCPServer(socketserver.TCPServer):
     allow_reuse_address = True
 
 
+class ReusableThreadingTCPServer(socketserver.ThreadingMixIn, socketserver.TCPServer):
+    allow_reuse_address = True
+    daemon_threads = True
+
+
 def build_local_tree(root: Path):
     tree = []
     for dirpath, dirnames, filenames in os.walk(root):
@@ -150,7 +155,7 @@ class LocalAwareHandler(http.server.SimpleHTTPRequestHandler):
 
 Handler = LocalAwareHandler
 
-with ReusableTCPServer(("", PORT), Handler) as httpd:
+with ReusableThreadingTCPServer(("", PORT), Handler) as httpd:
     url = f"http://localhost:{PORT}"
     print(f"Serving at {url} (directory: {DIRECTORY})")
 
