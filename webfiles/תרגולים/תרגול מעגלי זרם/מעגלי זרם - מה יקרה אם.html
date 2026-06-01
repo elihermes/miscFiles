@@ -1,6 +1,16 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>משחק המעגלים: מדידות דינמיות</title>
@@ -15,11 +25,16 @@
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         .input-correct { border-color: #22c55e !important; background-color: #f0fdf4 !important; color: #166534 !important; }
         .input-wrong { border-color: #ef4444 !important; background-color: #fef2f2 !important; color: #991b1b !important; }
+        .legal-entry-link { display: inline-flex; align-items: center; justify-content: center; margin-top: 0.7rem; font-size: 0.86rem; color: #64748b; text-decoration: underline; text-underline-offset: 2px; }
+        .legal-entry-link:hover { color: #1d4ed8; }
     </style>
 </head>
 <body class="bg-slate-100 text-slate-800 min-h-screen py-8">
 
 <div id="app" class="max-w-5xl mx-auto px-4">
+    <div class="text-center mb-4">
+        <a class="legal-entry-link" data-legal-link href="../../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </div>
     
     <div id="startScreen" class="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-slate-200 text-center max-w-xl mx-auto my-12">
         <div class="text-6xl mb-4">⚡</div>
@@ -626,6 +641,26 @@
             document.getElementById('finalCorrectCount').innerText = `${score} / ${maxScore}`;
         }
     }
+
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (!legalLinks.length) {
+            return;
+        }
+
+        const marker = '/webfiles/';
+        const pathname = window.location.pathname || '';
+        const markerIndex = pathname.indexOf(marker);
+        if (markerIndex < 0) {
+            return;
+        }
+
+        const prefix = pathname.slice(0, markerIndex);
+        const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+        legalLinks.forEach((link) => {
+            link.setAttribute('href', resolvedLegalPath);
+        });
+    });
 </script>
 </body>
 </html>
