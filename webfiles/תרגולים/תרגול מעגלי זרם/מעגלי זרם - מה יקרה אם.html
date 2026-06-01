@@ -3,14 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>תרגול מעגלים: מדידות דינמיות</title>
+    <title>משחק המעגלים: מדידות דינמיות</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap');
         body { font-family: 'Assistant', sans-serif; }
         .canvas-container { position: relative; width: 100%; max-width: 750px; margin: 0 auto; background: #fff; border-radius: 1rem; border: 1px solid #e2e8f0; overflow: hidden; }
         canvas { width: 100%; height: auto; display: block; }
-        input[type="number"], select { transition: all 0.2s; outline: none; }
+        input[type="number"], select, input[type="text"] { transition: all 0.2s; outline: none; }
         input[type="number"]:disabled, select:disabled { background-color: #f1f5f9; cursor: not-allowed; opacity: 0.8; }
         input[type=number]::-webkit-inner-spin-button, input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
         .input-correct { border-color: #22c55e !important; background-color: #f0fdf4 !important; color: #166534 !important; }
@@ -20,67 +20,139 @@
 <body class="bg-slate-100 text-slate-800 min-h-screen py-8">
 
 <div id="app" class="max-w-5xl mx-auto px-4">
-    <header class="bg-white rounded-2xl shadow-sm p-6 mb-6 flex justify-between items-center border border-slate-200">
-        <div>
-            <h1 class="text-2xl font-extrabold text-blue-900 flex items-center gap-2">
-                <span class="p-1.5 bg-blue-600 text-white rounded-lg text-sm">⚡</span>
-                מעגלי זרם ישר: מדידות דינמיות
-            </h1>
-            <div id="phase-badge" class="mt-2 inline-block px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800"></div>
-        </div>
-        <div class="text-left flex flex-col items-end">
-            <div class="bg-blue-50 px-4 py-2 rounded-xl border border-blue-200 font-bold text-blue-800 mb-1">
-                ציון: <span id="scoreDisplay">0 / 0</span>
-            </div>
-            <div class="text-sm text-slate-500 font-semibold bg-slate-100 px-3 py-1 rounded-full" id="questionCounter">שאלה 1 מתוך 20</div>
-        </div>
-    </header>
-
-    <main id="questionArea" class="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-slate-200 mb-6 flex flex-col lg:flex-row gap-8">
+    
+    <div id="startScreen" class="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-slate-200 text-center max-w-xl mx-auto my-12">
+        <div class="text-6xl mb-4">⚡</div>
+        <h1 class="text-3xl font-extrabold text-blue-900 mb-2">משחק המעגלים החשמליים</h1>
+        <p class="text-slate-500 mb-8 font-semibold">פיצוח מעגלי זרם ישר ומדידות דינמיות – 20 שלבים מאתגרים</p>
         
-        <div class="lg:w-3/5">
-            <h2 class="text-lg font-bold mb-3 text-slate-800">תרשים המעגל:</h2>
-            <div class="canvas-container shadow-inner bg-slate-50 p-2 border border-slate-200">
-                <canvas id="circuitCanvas" width="700" height="420" class="bg-white rounded-xl shadow-sm border border-slate-200"></canvas>
-            </div>
+        <div class="max-w-sm mx-auto text-right mb-6">
+            <label for="playerNameInput" class="block text-sm font-bold text-slate-700 mb-2">שם השחקן / השחקנית:</label>
+            <input type="text" id="playerNameInput" class="w-full px-4 py-3 border border-slate-300 rounded-xl focus:ring-2 focus:ring-blue-500 font-bold text-lg" placeholder="הקלד שם מלא...">
+            <p id="nameError" class="text-red-500 text-xs font-bold mt-1 hidden">חובה להזין שם כדי להתחיל במשחק!</p>
         </div>
 
-        <div class="lg:w-2/5 flex flex-col">
-            <h2 class="text-lg font-bold mb-3 text-slate-800">שאלות ניתוח:</h2>
-            <div id="questionsContainer" class="space-y-4 flex-grow">
+        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-10 rounded-xl shadow-md transition-all text-xl w-full max-w-sm" onclick="startGame()">
+            התחל משחק 🚀
+        </button>
+    </div>
+
+    <div id="gameZone" class="hidden">
+        <header class="bg-white rounded-2xl shadow-sm p-6 mb-6 flex justify-between items-center border border-slate-200">
+            <div>
+                <h1 class="text-2xl font-extrabold text-blue-900 flex items-center gap-2">
+                    <span class="p-1.5 bg-blue-600 text-white rounded-lg text-sm">⚡</span>
+                    מעגלי זרם ישר: משחק המדידות
+                </h1>
+                <div id="phase-badge" class="mt-2 inline-block px-3 py-1 rounded-full text-xs font-bold bg-blue-100 text-blue-800"></div>
+            </div>
+            <div class="text-left flex flex-col items-end">
+                <div class="bg-blue-50 px-4 py-2 rounded-xl border border-blue-200 font-bold text-blue-800 mb-1">
+                    ניקוד: <span id="scoreDisplay">0 / 0</span>
                 </div>
-
-            <div class="mt-6 border-t border-slate-100 pt-6">
-                <button id="checkBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all text-lg" onclick="checkAnswers()">
-                    בדוק תשובות
-                </button>
-                <button id="nextBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all text-lg hidden" onclick="nextQuestion()">
-                    המשך לשאלה הבאה ←
-                </button>
+                <div class="text-sm text-slate-500 font-semibold bg-slate-100 px-3 py-1 rounded-full" id="questionCounter">שלב 1 מתוך 20</div>
             </div>
-        </div>
-    </main>
+        </header>
 
-    <div id="endScreen" class="bg-white rounded-2xl shadow-lg p-10 border border-slate-200 text-center hidden max-w-2xl mx-auto">
+        <main id="questionArea" class="bg-white rounded-2xl shadow-lg p-6 md:p-8 border border-slate-200 mb-6 flex flex-col lg:flex-row gap-8">
+            <div class="lg:w-3/5">
+                <h2 class="text-lg font-bold mb-3 text-slate-800">תרשים המעגל הנוכחי:</h2>
+                <div class="canvas-container shadow-inner bg-slate-50 p-2 border border-slate-200">
+                    <canvas id="circuitCanvas" width="700" height="420" class="bg-white rounded-xl shadow-sm border border-slate-200"></canvas>
+                </div>
+            </div>
+
+            <div class="lg:w-2/5 flex flex-col">
+                <h2 class="text-lg font-bold mb-3 text-slate-800">משימות ניתוח ומדידה:</h2>
+                <div id="questionsContainer" class="space-y-4 flex-grow">
+                    </div>
+
+                <div class="mt-6 border-t border-slate-100 pt-6">
+                    <button id="checkBtn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all text-lg" onclick="checkAnswers()">
+                        בדוק תשובות בשלב זה
+                    </button>
+                    <button id="nextBtn" class="w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all text-lg hidden" onclick="nextQuestion()">
+                        המשך לשלב הבא ←
+                    </button>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <div id="endScreen" class="bg-white rounded-2xl shadow-lg p-8 md:p-12 border border-slate-200 text-center hidden max-w-2xl mx-auto my-6 relative overflow-hidden">
+        <div class="absolute top-0 inset-x-0 h-2 bg-gradient-to-r from-blue-500 via-purple-500 to-green-500"></div>
         <div class="text-6xl mb-4">🏆</div>
-        <h2 class="text-3xl font-extrabold text-slate-800 mb-2">התרגול הסתיים בהצלחה!</h2>
-        <div class="flex justify-center gap-6 mb-8 mt-6">
-            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 flex-1">
-                <div class="text-5xl font-black text-blue-600 mb-2" id="finalScorePercent">0%</div>
-                <div class="text-sm font-bold text-slate-500">ציון סופי</div>
+        <h2 class="text-3xl font-extrabold text-slate-800 mb-1">המשחק הסתיים בהצלחה!</h2>
+        <p class="text-slate-500 font-bold text-lg mb-6">כל הכבוד, המשחק הושלם במלואו</p>
+        
+        <div class="bg-slate-50 border border-slate-200 rounded-2xl p-6 text-right space-y-3 mb-8 max-w-md mx-auto shadow-inner">
+            <div class="flex justify-between border-b border-slate-200 pb-2">
+                <span class="text-slate-500 font-bold">שם השחקן:</span>
+                <span id="finalPlayerName" class="text-slate-800 font-black text-lg"></span>
             </div>
-            <div class="bg-slate-50 p-6 rounded-2xl border border-slate-200 flex-1">
-                <div class="text-4xl font-bold text-slate-700 mb-2 mt-1" id="finalCorrectCount">0</div>
-                <div class="text-sm font-bold text-slate-500">סעיפים נכונים</div>
+            <div class="flex justify-between border-b border-slate-200 pb-2">
+                <span class="text-slate-500 font-bold">זמן סיום:</span>
+                <span id="finalDateTime" class="text-slate-700 font-bold"></span>
+            </div>
+            <div class="flex justify-between pt-1">
+                <span class="text-slate-500 font-bold">קוד משחק ייחודי:</span>
+                <span id="finalGameUID" class="text-blue-700 font-mono font-bold tracking-wider"></span>
             </div>
         </div>
-        <button class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-8 rounded-xl shadow-md transition-all text-lg w-full" onclick="location.reload()">
-            התחל תרגול חדש
+
+        <div class="flex justify-center gap-6 mb-8 max-w-md mx-auto">
+            <div class="bg-blue-50 p-5 rounded-2xl border border-blue-100 flex-1">
+                <div class="text-5xl font-black text-blue-600 mb-1" id="finalScorePercent">0%</div>
+                <div class="text-xs font-bold text-slate-500 uppercase tracking-wide">ציון סופי במערכת</div>
+            </div>
+            <div class="bg-slate-50 p-5 rounded-2xl border border-slate-200 flex-1">
+                <div class="text-4xl font-bold text-slate-700 mb-1 mt-1" id="finalCorrectCount">0</div>
+                <div class="text-xs font-bold text-slate-500 uppercase tracking-wide">סעיפים פתורים נכון</div>
+            </div>
+        </div>
+
+        <button class="bg-slate-800 hover:bg-slate-900 text-white font-bold py-4 px-8 rounded-xl shadow-md transition-all text-lg w-full max-w-md" onclick="location.reload()">
+            התחל משחק חדש
         </button>
     </div>
 </div>
 
 <script>
+    let playerName = "";
+    let gameUniqueID = "";
+    let currentIdx = 0, score = 0, maxScore = 0;
+    let scenarios = [];
+    const TOTAL_SCENARIOS = 20;
+
+    function generateGameUID() {
+        const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+        let result = 'GM-2026-';
+        for (let i = 0; i < 4; i++) {
+            result += chars.charAt(Math.floor(Math.random() * chars.length));
+        }
+        return result;
+    }
+
+    function startGame() {
+        const input = document.getElementById('playerNameInput');
+        const error = document.getElementById('nameError');
+        playerName = input.value.trim();
+
+        if (!playerName) {
+            error.classList.remove('hidden');
+            input.classList.add('border-red-500');
+            return;
+        }
+
+        error.classList.add('hidden');
+        gameUniqueID = generateGameUID();
+        
+        document.getElementById('startScreen').classList.add('hidden');
+        document.getElementById('gameZone').classList.remove('hidden');
+        
+        init();
+    }
+
     // --- מנוע פיזיקלי ---
     function calcState(topology, c) {
         let Rp = 0, Req = 0, I_main = 0;
@@ -148,7 +220,7 @@
         else if (c.V_pos === 1) V_p = V_Rm;     
         else if (c.V_pos === 2) V_p = V_parallel; 
 
-        return { I_A1, V_p, V_term, eff };
+        return { I_A1, V_p, V_term, eff, Req };
     }
 
     function compareValues(val1, val2, isFemale = false) {
@@ -158,9 +230,6 @@
         return diff > 0 ? "יגדל" : "יקטן";
     }
 
-    let scenarios = [];
-    const TOTAL_SCENARIOS = 20;
-
     // --- פילטר מתמטי חכם לבחירת מספרים יפים בלבד ---
     function generateScenarios() {
         scenarios = [];
@@ -169,7 +238,6 @@
             let isMathClean = false;
             let safetyCounter = 0;
 
-            // לולאה שממשיכה להגריל רכיבים עד שכל התוצאות יוצאות שלמות או עם ספרה אחת אחרי הנקודה
             while (!isMathClean && safetyCounter < 3000) {
                 safetyCounter++;
                 topology = Math.floor(Math.random() * 3) + 1;
@@ -180,7 +248,6 @@
                 if (topology === 2) V_pos = randV < 0.20 ? 0 : 2; 
                 else V_pos = randV < 0.15 ? 0 : randV < 0.575 ? 1 : 2;
 
-                // מאגר ערכים נקיים להתחלה טובה
                 const E_pool = [12, 18, 20, 24, 30, 36, 40, 48, 60];
                 const r_pool = [1, 2];
                 const Rm_pool = [2, 4, 6, 8];
@@ -215,7 +282,6 @@
                 if(targetSwitch === "S3") modC.S3 = modC.S3 ? 0 : 1;
                 stateB = calcState(topology, modC);
 
-                // פונקציית בדיקה: האם ההפרש בין המספר המקורי למספר המעוגל לעשירית קטן מ-0.001?
                 const checkClean = (val) => Math.abs(val * 10 - Math.round(val * 10)) < 0.01;
 
                 if (checkClean(stateA.I_A1) && checkClean(stateA.V_p) && checkClean(stateA.V_term) && checkClean(stateA.eff) && checkClean(stateB.eff)) {
@@ -235,7 +301,28 @@
             }
 
             questions.push({ type: "numeric", text: `מהי נצילות המעגל כעת?`, ans: Number(stateA.eff.toFixed(1)), tol: 0.1, unit: "%" });
-            questions.push({ type: "qualitative", text: `לאחר ש${actionText} את ${targetSwitch}, מה יקרה לנצילות המעגל?`, ans: compareValues(stateA.eff, stateB.eff, true), opts: ['תגדל', 'תקטן', 'ללא שינוי'] });
+
+            // מאגר שאלות מגוונות לסעיף ה"מה יקרה"
+            let qualOptions = [
+                { key: 'eff', text: 'לנצילות המעגל', isFemale: true, opts: ['תגדל', 'תקטן', 'ללא שינוי'] },
+                { key: 'I_A1', text: 'להוריית מד הזרם A1', isFemale: true, opts: ['תגדל', 'תקטן', 'ללא שינוי'] },
+                { key: 'V_p', text: 'להוריית מד המתח Vp', isFemale: true, opts: ['תגדל', 'תקטן', 'ללא שינוי'] },
+                { key: 'V_term', text: 'למתח ההדקים של המקור', isFemale: false, opts: ['יגדל', 'יקטן', 'ללא שינוי'] },
+                { key: 'Req', text: 'להתנגדות החיצונית השקולה של המעגל', isFemale: true, opts: ['תגדל', 'תקטן', 'ללא שינוי'] }
+            ];
+
+            // בחירה באופציה אקראית מתוך המאגר
+            let chosenQual = qualOptions[Math.floor(Math.random() * qualOptions.length)];
+            let valA = stateA[chosenQual.key];
+            let valB = stateB[chosenQual.key];
+            let qualAns = compareValues(valA, valB, chosenQual.isFemale);
+
+            questions.push({ 
+                type: "qualitative", 
+                text: `לאחר ש${actionText} את ${targetSwitch}, מה יקרה ${chosenQual.text}?`, 
+                ans: qualAns, 
+                opts: chosenQual.opts 
+            });
 
             scenarios.push({ topology, circuit: c, questions, topoName });
         }
@@ -337,7 +424,7 @@
             } 
             else if (type === 'parallel') {
                 n1X = refX; n1Y = topY; n2X = refX; n2Y = botY;
-                vX = nextX ? (refX + nextX) / 2 : refX + 80; // מחשב אמצע מדויק ומרווח
+                vX = nextX ? (refX + nextX) / 2 : refX + 80;
                 vY = (topY + botY) / 2; 
                 
                 ctx.beginPath(); ctx.arc(n1X, n1Y, 4, 0, Math.PI*2); ctx.fill();
@@ -357,7 +444,6 @@
 
         if (topology === 1) {
             pStart = 360;
-            // התיקון כאן: הוספת .ctx לפני ה-stroke
             ctx.beginPath(); ctx.moveTo(startX, topY); ctx.lineTo(pStart, topY); ctx.stroke();
             
             drawRectResistor(265, topY, false, 'Rm', `${c.Rm}Ω`);
@@ -438,8 +524,6 @@
         }
     }
 
-    let currentIdx = 0, score = 0, maxScore = 0;
-
     function init() {
         generateScenarios(); currentIdx = 0; score = 0; maxScore = 0;
         document.getElementById('scoreDisplay').innerText = `0 / 0`;
@@ -448,7 +532,7 @@
 
     function renderScenario() {
         const sc = scenarios[currentIdx];
-        document.getElementById('questionCounter').innerText = `מעגל ${currentIdx + 1} מתוך ${TOTAL_SCENARIOS}`;
+        document.getElementById('questionCounter').innerText = `שלב ${currentIdx + 1} מתוך ${TOTAL_SCENARIOS}`;
         document.getElementById('phase-badge').innerText = `מבנה: ${sc.topoName}`;
         
         drawModularCleanCircuit(sc.topology, sc.circuit);
@@ -522,20 +606,26 @@
         document.getElementById('scoreDisplay').innerText = `${score} / ${maxScore}`;
         document.getElementById('checkBtn').classList.add('hidden');
         document.getElementById('nextBtn').classList.remove('hidden');
-        if(currentIdx === TOTAL_SCENARIOS - 1) document.getElementById('nextBtn').innerText = "סיים וצפה בציון ←";
+        if(currentIdx === TOTAL_SCENARIOS - 1) document.getElementById('nextBtn').innerText = "סיים וצפה בציון המשחק ←";
     }
 
     function nextQuestion() {
         if (++currentIdx < TOTAL_SCENARIOS) renderScenario();
         else {
-            document.getElementById('questionArea').classList.add('hidden');
+            const now = new Date();
+            const formattedDate = now.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: 'numeric' }) + ' ' + now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit' });
+
+            document.getElementById('gameZone').classList.add('hidden');
             document.getElementById('endScreen').classList.remove('hidden');
+            
+            document.getElementById('finalPlayerName').innerText = playerName;
+            document.getElementById('finalDateTime').innerText = formattedDate;
+            document.getElementById('finalGameUID').innerText = gameUniqueID;
+
             document.getElementById('finalScorePercent').innerText = `${Math.round((score/maxScore)*100)}%`;
             document.getElementById('finalCorrectCount').innerText = `${score} / ${maxScore}`;
         }
     }
-
-    window.onload = init;
 </script>
 </body>
 </html>
