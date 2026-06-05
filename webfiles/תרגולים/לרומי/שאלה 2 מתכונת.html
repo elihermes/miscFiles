@@ -1,711 +1,942 @@
 <!DOCTYPE html>
 <html lang="he" dir="rtl">
 <head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>פתרון מודרך בפיזיקה - דינמיקה של מערכת גופים</title>
-    
+
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
-    
-    <!-- MathJax for rendering formulas -->
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- MathJax for formulas -->
     <script>
         window.MathJax = {
             tex: {
-                inlineMath: [['\\(', '\\)']],
-                displayMath: [['\\[', '\\]']]
-            },
-            chtml: {
-                matchFontHeight: false
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
             }
         };
     </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Optional: Chart.js (remove if not needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
-        /* Custom styles integrated into Tailwind classes where possible, avoiding raw CSS as requested */
-        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
-        body { font-family: 'Rubik', sans-serif; }
-        
-        .math-scroll {
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            min-height: 360px;
+            width: 100%;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
             overflow-x: auto;
             overflow-y: hidden;
-            padding-bottom: 0.5rem;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
         }
-        
-        /* Tooltip style for modal */
-        #imageModal {
-            transition: opacity 0.3s ease-in-out;
-            background-color: rgba(15, 23, 42, 0.85);
-            backdrop-filter: blur(4px);
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
         }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-800 antialiased min-h-screen pb-20">
+<body>
 
-    <main class="max-w-4xl mx-auto px-4 py-8 md:px-8">
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מודרך: תנועת מערכת גופים עם חיכוך</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">דינמיקה - 5 יח"ל</h2>
+        <p class="mt-3 text-slate-500">פתרון מלא, מודרך ופדגוגי לשאלת מערכת גופים עם חיכוך</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">מבט כללי על השאלה</h3>
+        <p class="content-paragraph">לפנינו בעיה קלאסית בדינמיקה העוסקת בשני גופים הקשורים בחוט הנעים יחד על משטח אופקי עם חיכוך.</p>
+        <p class="content-paragraph mb-0">ננתח את הכוחות, נבנה משוואות תנועה, ונשתמש בגרף כדי לחלץ נתונים פיזיקליים.</p>
+    </section>
+
+    <!-- תמונת השאלה המקורית מותאמת באופן פרופורציונאלי לרוחב המסגרת -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+        />
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א' -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א': תרשים כוחות חופשי (FBD)</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> שני גופים בעלי מסות \( m \) ו-\( M \) (כאשר נתון \( M = 2m \)) מונחים על משטח אופקי. הגופים קשורים בחוט חסר מסה. כוח חיצוני \( F \) מושך את המסה \( M \) שמאלה. מקדם החיכוך הקינטי בין הגופים למשטח הוא \( \mu \). המערכת נעה שמאלה.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לשרטט תרשים כוחות חופשי עבור כל אחד משני הגופים בנפרד, ולציין מי (איזה גוף/סביבה) מפעיל כל כוח.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( F_g = mg \)</span>
+            <span class="formula-badge">\( f_k = \mu_k N \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נשרטט את הכוחות עבור כל גוף בנפרד. כיוון כוח החיכוך הוא תמיד מנוגד לכיוון התנועה (במקרה שלנו, התנועה שמאלה ולכן החיכוך ימינה).</p>
+            
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4 visual-frame bg-transparent border-none shadow-none">
+                <!-- FBD for m -->
+                <div class="flex flex-col items-center bg-white p-4 rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-blue-700 mb-4">תרשים כוחות לגוף \( m \)</h4>
+                    <svg width="240" height="240" viewBox="0 0 240 240" class="w-full max-w-[200px] h-auto">
+                        <defs>
+                            <marker id="arrow1" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#1e293b" />
+                            </marker>
+                        </defs>
+                        <!-- Body -->
+                        <rect x="90" y="90" width="60" height="60" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
+                        <text x="120" y="125" text-anchor="middle" font-family="serif" font-size="20" fill="#1e293b">m</text>
+                        <!-- Normal Force -->
+                        <line x1="120" y1="90" x2="120" y2="30" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow1)" />
+                        <text x="135" y="40" font-family="serif" font-size="16" fill="#1e293b">N₁</text>
+                        <!-- Gravity -->
+                        <line x1="120" y1="150" x2="120" y2="210" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow1)" />
+                        <text x="135" y="210" font-family="serif" font-size="16" fill="#1e293b">mg</text>
+                        <!-- Tension -->
+                        <line x1="90" y1="120" x2="30" y2="120" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow1)" />
+                        <text x="40" y="110" font-family="serif" font-size="16" fill="#1e293b">T</text>
+                        <!-- Friction -->
+                        <line x1="150" y1="140" x2="200" y2="140" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow1)" />
+                        <text x="180" y="130" font-family="serif" font-size="16" fill="#1e293b">f_k1</text>
+                    </svg>
+                    <ul class="text-sm text-slate-600 mt-4 list-disc list-inside w-full text-right leading-relaxed">
+                        <li>\( N_1 \): כוח נורמלי המופעל ע"י המשטח.</li>
+                        <li>\( mg \): כוח הכובד (ע"י כדור הארץ).</li>
+                        <li>\( T \): כוח מתיחות (ע"י החוט).</li>
+                        <li>\( f_{k1} \): חיכוך קינטי (ע"י המשטח).</li>
+                    </ul>
+                </div>
+
+                <!-- FBD for M -->
+                <div class="flex flex-col items-center bg-white p-4 rounded-xl border border-slate-200">
+                    <h4 class="font-bold text-blue-700 mb-4">תרשים כוחות לגוף \( M \)</h4>
+                    <svg width="240" height="240" viewBox="0 0 240 240" class="w-full max-w-[200px] h-auto">
+                        <defs>
+                            <marker id="arrow2" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#1e293b" />
+                            </marker>
+                        </defs>
+                        <!-- Body -->
+                        <rect x="80" y="80" width="80" height="80" fill="#94a3b8" stroke="#334155" stroke-width="2"/>
+                        <text x="120" y="125" text-anchor="middle" font-family="serif" font-size="20" fill="#0f172a">M</text>
+                        <!-- Normal Force -->
+                        <line x1="120" y1="80" x2="120" y2="10" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow2)" />
+                        <text x="135" y="25" font-family="serif" font-size="16" fill="#1e293b">N₂</text>
+                        <!-- Gravity -->
+                        <line x1="120" y1="160" x2="120" y2="230" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow2)" />
+                        <text x="135" y="225" font-family="serif" font-size="16" fill="#1e293b">Mg</text>
+                        <!-- External Force F -->
+                        <line x1="80" y1="120" x2="10" y2="120" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow2)" />
+                        <text x="20" y="110" font-family="serif" font-size="16" fill="#1e293b">F</text>
+                        <!-- Tension -->
+                        <line x1="160" y1="110" x2="210" y2="110" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow2)" />
+                        <text x="190" y="100" font-family="serif" font-size="16" fill="#1e293b">T</text>
+                        <!-- Friction -->
+                        <line x1="160" y1="150" x2="230" y2="150" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow2)" />
+                        <text x="210" y="140" font-family="serif" font-size="16" fill="#1e293b">f_k2</text>
+                    </svg>
+                    <ul class="text-sm text-slate-600 mt-4 list-disc list-inside w-full text-right leading-relaxed">
+                        <li>\( N_2 \): כוח נורמלי (ע"י המשטח).</li>
+                        <li>\( Mg \): כוח הכובד (ע"י כדור הארץ).</li>
+                        <li>\( F \): כוח חיצוני (ע"י התלמידות).</li>
+                        <li>\( T \): כוח מתיחות (ע"י החוט).</li>
+                        <li>\( f_{k2} \): חיכוך קינטי (ע"י המשטח).</li>
+                    </ul>
+                </div>
+            </div>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            שימו לב לכיוון כוחות החיכוך! כוח החיכוך הקינטי מתנגד תמיד לכיוון התנועה היחסית של הגוף על המשטח. מכיוון שהגופים נעים שמאלה, החיכוך פועל עליהם ימינה. בנוסף, לאורך כל הפתרון נבחר את הכיוון החיובי (ציר ה-x) שמאלה – עם כיוון התנועה.
+        </div>
+    </section>
+
+    <!-- סעיף ב' -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': השוואת הכוח השקול</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> שני הגופים קשורים יחד בחוט מתוח ונעים כאחת. ידוע כי המסה של הגוף הגדול היא \( M = 2m \), כפול מהמסה של הגוף הקטן \( m \).</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לקבוע האם הכוח השקול הפועל על הגוף שמסתו \( M \) גדול, קטן או שווה לכוח השקול הפועל על הגוף שמסתו \( m \), ולנמק.</div>
+        </div>
         
-        <!-- Header Section -->
-        <header class="mb-10 text-center">
-            <h1 class="text-3xl md:text-4xl font-bold text-indigo-900 mb-4 tracking-tight">פתרון מודרך: תנועת מערכת גופים עם חיכוך</h1>
+        <div class="mt-2">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( \Sigma F = ma \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נרשום את גודל הכוח השקול עבור כל גוף בנפרד, בהתבסס על כך שלשניהם יש בדיוק את אותה התאוצה \( a \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_m = m \cdot a \]
+                \[ \Sigma F_M = M \cdot a = (2m) \cdot a = 2 \cdot (m \cdot a) \]
+            </div>
+            <p class="final-answer">מסקנה: מכיוון ש-\( \Sigma F_M = 2 \cdot \Sigma F_m \), הכוח השקול הפועל על הגוף בעל המסה \( M \) גדול (פי 2) מהכוח השקול הפועל על הגוף בעל המסה \( m \).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            פעמים רבות תלמידים מתבלבלים וחושבים ש"כוח שקול" הוא כוח פיזי שמישהו מפעיל. הכוח השקול הוא אינו כוח נוסף, אלא הסכום הוקטורי של כל הכוחות הפועלים על הגוף! לפי החוק השני, סכום זה עומד ביחס ישר למסה כאשר התאוצה שווה.
+        </div>
+    </section>
+
+    <!-- סעיף ג' -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': ביטוי לתאוצה ולמתיחות</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> הפרמטרים הבאים נתונים לשימוש: \( F, m, g, \mu \). נזכור כי המסה הגדולה היא \( M = 2m \). נגדיר ציר x חיובי שמאלה.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> למצוא שני ביטויים אלגבריים: (1) עבור תאוצת הגופים \( a \), ו-(2) עבור המתיחות בחוט \( T \).</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( \Sigma F_x = ma \)</span>
+            <span class="formula-badge">\( \Sigma F_y = 0 \)</span>
+            <span class="formula-badge">\( f_k = \mu N \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <div class="step-label">שלב 1: מציאת התאוצה \( a \)</div>
+            <p class="content-paragraph">נסתכל על הגוף בעל המסה \( m \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_y = N_1 - mg = 0 \implies N_1 = mg \]
+                \[ f_{k1} = \mu N_1 = \mu mg \]
+                \[ T - f_{k1} = ma \implies T - \mu mg = ma \quad \text{(משוואה 1)} \]
+            </div>
             
-            <div class="version-stamp inline-flex items-center gap-2 bg-indigo-50 border border-indigo-100 text-indigo-700 px-4 py-2 rounded-full text-sm font-medium shadow-sm mb-6" id="versionStamp">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z" />
-                </svg>
-                <span class="version-label">עודכן:</span>
-                <span id="versionUpdatedAt">05.06.26 14:24:00</span>
+            <p class="content-paragraph mt-4">נסתכל על הגוף בעל המסה \( M = 2m \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F_y = N_2 - Mg = 0 \implies N_2 = 2mg \]
+                \[ f_{k2} = \mu N_2 = 2\mu mg \]
+                \[ F - T - f_{k2} = Ma \implies F - T - 2\mu mg = 2ma \quad \text{(משוואה 2)} \]
             </div>
 
-            <!-- Original Question Image -->
-            <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full md:w-3/4 h-auto rounded-xl shadow-md border border-slate-200 mx-auto mb-6 object-contain bg-white" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
-            <div style="display:none;" class="bg-red-50 text-red-600 p-4 rounded-lg border border-red-200 w-3/4 mx-auto mb-6">
-                תמונת השאלה (question-image.png) לא נמצאה בנתיב.
+            <p class="content-paragraph mt-4">נחבר אלגברית את שתי המשוואות כדי להעלים את המתיחות \( T \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ (T - \mu mg) + (F - T - 2\mu mg) = ma + 2ma \]
+                \[ F - 3\mu mg = 3ma \]
+                \[ a = \frac{F - 3\mu mg}{3m} \quad \text{או} \quad a = \frac{F}{3m} - \mu g \]
             </div>
+
+            <div class="step-label mt-6">שלב 2: מציאת המתיחות \( T \)</div>
+            <p class="content-paragraph">נציב את הביטוי שמצאנו לתאוצה חזרה לתוך משוואה 1:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ T = m(a + \mu g) \]
+                \[ T = m \left( \left[ \frac{F}{3m} - \mu g \right] + \mu g \right) \]
+                \[ T = m \cdot \left( \frac{F}{3m} \right) = \frac{F}{3} \]
+            </div>
+
+            <p class="final-answer">מסקנה: התאוצה היא \( a = \frac{F}{3m} - \mu g \), והמתיחות בחוט היא \( T = \frac{F}{3} \).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            התבוננו בתוצאה היפהפייה למתיחות: היא תלויה רק בכוח המושך \( F \) ובחלוקת המסות בתוך המערכת! מקדם החיכוך התבטל כליל. מדוע? משום שהחיכוך "מעניש" את שני הגופים במידה שווה ביחס למסה שלהם, ולכן ההפרש שגורם למתיחות מושפע רק מהכוח הקידמי החיצוני.
+        </div>
+    </section>
+
+    <!-- סעיף ד' -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': סרטוט גרף מגמת הנתונים</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel md:col-span-2">
+                <strong>מה נתון:</strong> טבלת נתונים מהניסוי של התלמידות:
+                <div class="overflow-x-auto mt-3">
+                    <table class="min-w-full text-center border-collapse border border-slate-300">
+                        <thead>
+                            <tr class="bg-slate-100">
+                                <th class="border border-slate-300 px-4 py-2 text-slate-700">F (N)</th>
+                                <th class="border border-slate-300 px-4 py-2 font-mono">4</th>
+                                <th class="border border-slate-300 px-4 py-2 font-mono">6</th>
+                                <th class="border border-slate-300 px-4 py-2 font-mono">8</th>
+                                <th class="border border-slate-300 px-4 py-2 font-mono">10</th>
+                                <th class="border border-slate-300 px-4 py-2 font-mono">12</th>
+                                <th class="border border-slate-300 px-4 py-2 font-mono">14</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td class="border border-slate-300 px-4 py-2 font-medium text-slate-700 bg-white">a (m/s²)</td>
+                                <td class="border border-slate-300 px-4 py-2 font-mono text-slate-600 bg-white">0.7</td>
+                                <td class="border border-slate-300 px-4 py-2 font-mono text-slate-600 bg-white">2.1</td>
+                                <td class="border border-slate-300 px-4 py-2 font-mono text-slate-600 bg-white">3.5</td>
+                                <td class="border border-slate-300 px-4 py-2 font-mono text-slate-600 bg-white">4.5</td>
+                                <td class="border border-slate-300 px-4 py-2 font-mono text-slate-600 bg-white">6.1</td>
+                                <td class="border border-slate-300 px-4 py-2 font-mono text-slate-600 bg-white">7.5</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div class="info-panel md:col-span-2"><strong>מה מחפשים:</strong> לסרטט גרף המתאר את הקשר בין תאוצת המערכת (\( a \)) לכוח החיצוני המופעל (\( F \)). בציר האנכי נציב את התאוצה, ובציר האופקי את הכוח.</div>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">המחשה גרפית של התוצאות:</h4>
+            <p class="content-paragraph">נפזר את הנקודות על פי הטבלה ונעביר קו מגמה ליניארי מתאים (Best-fit line) שעובר קרוב ככל האפשר לכל הנקודות.</p>
             
-            <p class="text-slate-600 leading-relaxed max-w-2xl mx-auto">
-                לפנינו בעיה קלאסית בדינמיקה העוסקת בשני גופים הקשורים בחוט הנעים יחד על משטח אופקי עם חיכוך. ננתח את הכוחות, נבנה משוואות תנועה, ונשתמש בגרף כדי לחלץ נתונים פיזיקליים.
-            </p>
-        </header>
-
-        <!-- Section A -->
-        <div class="section-card bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-            <div class="bg-indigo-600 text-white px-6 py-4 flex items-center justify-between">
-                <h2 class="text-xl font-bold">סעיף א': תרשים כוחות חופשי (FBD)</h2>
-                <span class="bg-indigo-800 text-indigo-100 text-xs px-2 py-1 rounded font-semibold tracking-wider">4 נק'</span>
-            </div>
-            <div class="p-6 space-y-6">
-                
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">1</span> מה נתון
-                    </h3>
-                    <p class="text-slate-700">שני גופים בעלי מסות \( m \) ו-\( M \) (כאשר נתון \( M = 2m \)) מונחים על משטח אופקי. הגופים קשורים בחוט חסר מסה. כוח חיצוני \( F \) מושך את המסה \( M \) שמאלה. מקדם החיכוך הקינטי בין הגופים למשטח הוא \( \mu \). המערכת נעה שמאלה.</p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">2</span> מה מחפשים
-                    </h3>
-                    <p class="text-slate-700">לשרטט תרשים כוחות חופשי עבור כל אחד משני הגופים בנפרד, ולציין מי (איזה גוף/סביבה) מפעיל כל כוח.</p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">3</span> נוסחאות ועקרונות בשימוש
-                    </h3>
-                    <p class="text-slate-700 leading-relaxed">
-                        שימוש בכוחות הבסיסיים: כוח הכובד <span class="formula-badge bg-indigo-50 text-indigo-800 px-2 py-1 rounded font-mono text-sm border border-indigo-100">\( F_g = mg \)</span> המופעל על ידי כדור הארץ, כוח נורמלי המופעל על ידי המשטח, מתיחות בחוט, וכוח חיכוך קינטי <span class="formula-badge bg-indigo-50 text-indigo-800 px-2 py-1 rounded font-mono text-sm border border-indigo-100">\( f_k = \mu_k N \)</span>. כיוון כוח החיכוך הוא תמיד מנוגד לכיוון התנועה (במקרה שלנו, התנועה שמאלה ולכן החיכוך ימינה).
-                    </p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">4</span> הצבה ופתרון
-                    </h3>
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-8 mt-4">
-                        <!-- FBD for m -->
-                        <div class="flex flex-col items-center bg-slate-50 p-4 rounded-xl border border-slate-100">
-                            <h4 class="font-bold text-indigo-700 mb-4">תרשים כוחות לגוף בעל מסה \( m \)</h4>
-                            <svg width="240" height="240" viewBox="0 0 240 240" class="w-full max-w-[200px] h-auto">
-                                <defs>
-                                    <marker id="arrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
-                                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#1e293b" />
-                                    </marker>
-                                </defs>
-                                <!-- Body -->
-                                <rect x="90" y="90" width="60" height="60" fill="#cbd5e1" stroke="#475569" stroke-width="2"/>
-                                <text x="120" y="125" text-anchor="middle" font-family="serif" font-size="20" fill="#1e293b">m</text>
-                                
-                                <!-- Normal Force -->
-                                <line x1="120" y1="90" x2="120" y2="30" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow)" />
-                                <text x="135" y="40" font-family="serif" font-size="16" fill="#1e293b">N₁</text>
-                                
-                                <!-- Gravity -->
-                                <line x1="120" y1="150" x2="120" y2="210" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow)" />
-                                <text x="135" y="210" font-family="serif" font-size="16" fill="#1e293b">mg</text>
-                                
-                                <!-- Tension -->
-                                <line x1="90" y1="120" x2="30" y2="120" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow)" />
-                                <text x="40" y="110" font-family="serif" font-size="16" fill="#1e293b">T</text>
-                                
-                                <!-- Friction -->
-                                <line x1="150" y1="140" x2="200" y2="140" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow)" />
-                                <text x="180" y="130" font-family="serif" font-size="16" fill="#1e293b">f_k1</text>
-                            </svg>
-                            <ul class="text-sm text-slate-600 mt-4 list-disc list-inside w-full text-right leading-relaxed">
-                                <li>\( N_1 \): כוח נורמלי המופעל ע"י המשטח האופקי.</li>
-                                <li>\( mg \): כוח הכובד המופעל ע"י כדור הארץ.</li>
-                                <li>\( T \): כוח מתיחות המופעל ע"י החוט.</li>
-                                <li>\( f_{k1} \): כוח חיכוך קינטי המופעל ע"י המשטח.</li>
-                            </ul>
-                        </div>
-
-                        <!-- FBD for M -->
-                        <div class="flex flex-col items-center bg-slate-50 p-4 rounded-xl border border-slate-100">
-                            <h4 class="font-bold text-indigo-700 mb-4">תרשים כוחות לגוף בעל מסה \( M \)</h4>
-                            <svg width="240" height="240" viewBox="0 0 240 240" class="w-full max-w-[200px] h-auto">
-                                <!-- Body -->
-                                <rect x="80" y="80" width="80" height="80" fill="#94a3b8" stroke="#334155" stroke-width="2"/>
-                                <text x="120" y="125" text-anchor="middle" font-family="serif" font-size="20" fill="#0f172a">M</text>
-                                
-                                <!-- Normal Force -->
-                                <line x1="120" y1="80" x2="120" y2="10" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow)" />
-                                <text x="135" y="25" font-family="serif" font-size="16" fill="#1e293b">N₂</text>
-                                
-                                <!-- Gravity -->
-                                <line x1="120" y1="160" x2="120" y2="230" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow)" />
-                                <text x="135" y="225" font-family="serif" font-size="16" fill="#1e293b">Mg</text>
-                                
-                                <!-- External Force F -->
-                                <line x1="80" y1="120" x2="10" y2="120" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow)" />
-                                <text x="20" y="110" font-family="serif" font-size="16" fill="#1e293b">F</text>
-
-                                <!-- Tension -->
-                                <line x1="160" y1="110" x2="210" y2="110" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow)" />
-                                <text x="190" y="100" font-family="serif" font-size="16" fill="#1e293b">T</text>
-                                
-                                <!-- Friction -->
-                                <line x1="160" y1="150" x2="230" y2="150" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow)" />
-                                <text x="210" y="140" font-family="serif" font-size="16" fill="#1e293b">f_k2</text>
-                            </svg>
-                            <ul class="text-sm text-slate-600 mt-4 list-disc list-inside w-full text-right leading-relaxed">
-                                <li>\( N_2 \): כוח נורמלי המופעל ע"י המשטח האופקי.</li>
-                                <li>\( Mg \): כוח הכובד המופעל ע"י כדור הארץ.</li>
-                                <li>\( F \): כוח חיצוני המופעל ע"י התלמידות.</li>
-                                <li>\( T \): כוח מתיחות המופעל ע"י החוט (זהה בגודלו ל-T הפועל על הגוף הקטן).</li>
-                                <li>\( f_{k2} \): כוח חיכוך קינטי המופעל ע"י המשטח.</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="teacher-highlight bg-amber-50 border-r-4 border-amber-400 p-4 rounded-l-lg mt-4 shadow-sm">
-                    <h4 class="font-bold text-amber-900 mb-1 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
-                        </svg>
-                        טיפ מורה
-                    </h4>
-                    <p class="text-amber-900 text-sm">שימו לב לכיוון כוחות החיכוך! כוח החיכוך הקינטי מתנגד תמיד לכיוון התנועה היחסית של הגוף על המשטח. מכיוון שהגופים נעים שמאלה, החיכוך פועל עליהם ימינה. בנוסף, לאורך כל הפתרון נבחר את הכיוון החיובי (ציר ה-x) שמאלה – עם כיוון התנועה.</p>
+            <div class="visual-frame">
+                <div class="overflow-x-auto w-full flex justify-center" dir="ltr">
+                    <svg width="600" height="400" viewBox="-50 -50 650 450" class="min-w-[500px] h-auto">
+                        <!-- Background & Grid -->
+                        <rect x="0" y="0" width="550" height="350" fill="#fafafa" stroke="#e2e8f0" stroke-width="1"/>
+                        <!-- Grid Lines y-axis (a) -->
+                        <g stroke="#cbd5e1" stroke-dasharray="4,4" stroke-width="1">
+                            <line x1="0" y1="315" x2="550" y2="315" />
+                            <line x1="0" y1="280" x2="550" y2="280" />
+                            <line x1="0" y1="245" x2="550" y2="245" />
+                            <line x1="0" y1="210" x2="550" y2="210" />
+                            <line x1="0" y1="175" x2="550" y2="175" />
+                            <line x1="0" y1="140" x2="550" y2="140" />
+                            <line x1="0" y1="105" x2="550" y2="105" />
+                            <line x1="0" y1="70"  x2="550" y2="70" />
+                            <line x1="0" y1="35"  x2="550" y2="35" />
+                        </g>
+                        <!-- Grid Lines x-axis (F) -->
+                        <g stroke="#cbd5e1" stroke-dasharray="4,4" stroke-width="1">
+                            <line x1="68.75" y1="0" x2="68.75" y2="350" />
+                            <line x1="137.5" y1="0" x2="137.5" y2="350" />
+                            <line x1="206.25" y1="0" x2="206.25" y2="350" />
+                            <line x1="275" y1="0" x2="275" y2="350" />
+                            <line x1="343.75" y1="0" x2="343.75" y2="350" />
+                            <line x1="412.5" y1="0" x2="412.5" y2="350" />
+                            <line x1="481.25" y1="0" x2="481.25" y2="350" />
+                        </g>
+                        <!-- Axes -->
+                        <defs>
+                            <marker id="axisArrow" viewBox="0 0 10 10" refX="5" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                                <path d="M 0 0 L 10 5 L 0 10 z" fill="#1e293b" />
+                            </marker>
+                        </defs>
+                        <line x1="0" y1="350" x2="570" y2="350" stroke="#1e293b" stroke-width="2.5" marker-end="url(#axisArrow)" />
+                        <line x1="0" y1="350" x2="0" y2="-20" stroke="#1e293b" stroke-width="2.5" marker-end="url(#axisArrow)" />
+                        <!-- Axes Labels -->
+                        <text x="275" y="400" font-family="sans-serif" font-size="18" fill="#1e293b" text-anchor="middle" font-weight="bold">F (N)</text>
+                        <text x="-30" y="175" font-family="sans-serif" font-size="18" fill="#1e293b" text-anchor="middle" font-weight="bold" transform="rotate(-90, -30, 175)">a (m/s²)</text>
+                        <!-- x-axis ticks -->
+                        <g font-family="monospace" font-size="14" fill="#475569" text-anchor="middle">
+                            <text x="0" y="370">0</text>
+                            <text x="68.75" y="370">2</text>
+                            <text x="137.5" y="370">4</text>
+                            <text x="206.25" y="370">6</text>
+                            <text x="275" y="370">8</text>
+                            <text x="343.75" y="370">10</text>
+                            <text x="412.5" y="370">12</text>
+                            <text x="481.25" y="370">14</text>
+                            <text x="550" y="370">16</text>
+                        </g>
+                        <!-- y-axis ticks -->
+                        <g font-family="monospace" font-size="14" fill="#475569" text-anchor="end">
+                            <text x="-10" y="315" dominant-baseline="middle">1</text>
+                            <text x="-10" y="280" dominant-baseline="middle">2</text>
+                            <text x="-10" y="245" dominant-baseline="middle">3</text>
+                            <text x="-10" y="210" dominant-baseline="middle">4</text>
+                            <text x="-10" y="175" dominant-baseline="middle">5</text>
+                            <text x="-10" y="140" dominant-baseline="middle">6</text>
+                            <text x="-10" y="105" dominant-baseline="middle">7</text>
+                            <text x="-10" y="70" dominant-baseline="middle">8</text>
+                            <text x="-10" y="35" dominant-baseline="middle">9</text>
+                        </g>
+                        <!-- Data Points -->
+                        <g fill="#2563eb" stroke="#1e3a8a" stroke-width="2">
+                            <circle cx="137.5" cy="325.5" r="5" />
+                            <circle cx="206.25" cy="276.5" r="5" />
+                            <circle cx="275" cy="227.5" r="5" />
+                            <circle cx="343.75" cy="192.5" r="5" />
+                            <circle cx="412.5" cy="136.5" r="5" />
+                            <circle cx="481.25" cy="87.5" r="5" />
+                        </g>
+                        <!-- Best Fit Line -->
+                        <line x1="103.125" y1="350" x2="530" y2="50" stroke="#e11d48" stroke-width="2.5" stroke-dasharray="5,5" />
+                        <text x="500" y="40" font-family="sans-serif" font-size="14" fill="#e11d48" font-weight="bold">קו מגמה</text>
+                    </svg>
                 </div>
             </div>
         </div>
 
-        <!-- Section B -->
-        <div class="section-card bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-            <div class="bg-indigo-600 text-white px-6 py-4 flex items-center justify-between">
-                <h2 class="text-xl font-bold">סעיף ב': השוואת הכוח השקול הפועל על הגופים</h2>
-                <span class="bg-indigo-800 text-indigo-100 text-xs px-2 py-1 rounded font-semibold tracking-wider">4 נק'</span>
-            </div>
-            <div class="p-6 space-y-6">
-                
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">1</span> מה נתון
-                    </h3>
-                    <p class="text-slate-700">שני הגופים קשורים יחד בחוט מתוח ונעים כאחת. ידוע כי המסה של הגוף הגדול היא \( M = 2m \), כפול מהמסה של הגוף הקטן \( m \).</p>
-                </div>
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            שימו לב שקו המגמה לא עובר בראשית הצירים (0,0). מדוע? מכיוון שנדרש כוח התחלתי מסוים רק כדי להתגבר על כוח החיכוך ולהתחיל להניע את המערכת. כל עוד הכוח \( F \) קטן מערך זה, התאוצה היא אפס.
+        </div>
+    </section>
 
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">2</span> מה מחפשים
-                    </h3>
-                    <p class="text-slate-700">לקבוע האם הכוח השקול הפועל על הגוף שמסתו \( M \) גדול, קטן או שווה לכוח השקול הפועל על הגוף שמסתו \( m \), ולנמק.</p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">3</span> נוסחאות ועקרונות בשימוש
-                    </h3>
-                    <p class="text-slate-700 leading-relaxed">
-                        נשתמש בחוק השני של ניוטון: <span class="formula-badge bg-indigo-50 text-indigo-800 px-2 py-1 rounded font-mono text-sm border border-indigo-100">\( \sum F = ma \)</span>. מאחר והגופים מחוברים בחוט מתוח (שאינו נמתח אלא נשאר באורך קבוע), לשניהם יש בדיוק את אותה התאוצה \( a \).
-                    </p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">4</span> הצבה ופתרון
-                    </h3>
-                    <div class="math-scroll mt-2 text-slate-800 text-lg">
-                        <p class="mb-4">נרשום את גודל הכוח השקול עבור כל גוף בנפרד:</p>
-                        \[ \sum F_m = m \cdot a \]
-                        \[ \sum F_M = M \cdot a = (2m) \cdot a = 2 \cdot (m \cdot a) \]
-                    </div>
-                    <div class="final-answer bg-emerald-50 border-r-4 border-emerald-500 p-4 mt-6 rounded-l-lg shadow-sm">
-                        <p class="font-bold text-emerald-900 text-lg">מכיוון ש-\( \sum F_M = 2 \cdot \sum F_m \), הכוח השקול הפועל על הגוף בעל המסה \( M \) גדול (פי 2) מהכוח השקול הפועל על הגוף בעל המסה \( m \).</p>
-                    </div>
-                </div>
-
-                <div class="teacher-highlight bg-amber-50 border-r-4 border-amber-400 p-4 rounded-l-lg mt-4 shadow-sm">
-                    <h4 class="font-bold text-amber-900 mb-1 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
-                        </svg>
-                        טיפ מורה
-                    </h4>
-                    <p class="text-amber-900 text-sm">פעמים רבות תלמידים מתבלבלים וחושבים ש"כוח שקול" הוא כוח פיזי שמישהו מפעיל. הכוח השקול הוא אינו כוח נוסף, אלא הסכום הוקטורי של כל הכוחות הפועלים על הגוף! לפי החוק השני, סכום זה עומד ביחס ישר למסה כאשר התאוצה שווה.</p>
-                </div>
-            </div>
+    <!-- סעיף ה' -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה': מציאת המסה ומקדם החיכוך</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> הגרף שיצרנו בסעיף ד', והקשר התיאורטי \( a = \frac{1}{3m} \cdot F - \mu g \). כמו כן \( g = 10 \text{ m/s}^2 \).</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> למצוא ערכים מספריים מתוך הגרף עבור המסה \( m \) ומקדם החיכוך הקינטי \( \mu \).</div>
         </div>
 
-        <!-- Section C -->
-        <div class="section-card bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-            <div class="bg-indigo-600 text-white px-6 py-4 flex items-center justify-between">
-                <h2 class="text-xl font-bold">סעיף ג': ביטוי לתאוצה ולמתיחות</h2>
-                <span class="bg-indigo-800 text-indigo-100 text-xs px-2 py-1 rounded font-semibold tracking-wider">8 נק' (4+4)</span>
-            </div>
-            <div class="p-6 space-y-6">
-                
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">1</span> מה נתון
-                    </h3>
-                    <p class="text-slate-700">הפרמטרים הבאים נתונים לשימוש: \( F, m, g, \mu \). נזכור כי המסה הגדולה היא \( M = 2m \). נגדיר את ציר ה-x חיובי שמאלה, בכיוון התנועה. לכן נציב את תאוצת הכובד \( g \) כגודל חיובי תמיד במסגרת המשוואות בנפילה חופשית או כוחות כובד.</p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">2</span> מה מחפשים
-                    </h3>
-                    <p class="text-slate-700">למצוא שני ביטויים אלגבריים הנשענים אך ורק על הפרמטרים המותרים: (1) עבור תאוצת הגופים \( a \), (2) עבור המתיחות בחוט \( T \).</p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">3</span> נוסחאות ועקרונות בשימוש
-                    </h3>
-                    <p class="text-slate-700 leading-relaxed">
-                        נשתמש בחוק השני של ניוטון עבור כל ציר בנפרד:
-                        <span class="formula-badge bg-indigo-50 text-indigo-800 px-2 py-1 rounded font-mono text-sm border border-indigo-100">\( \sum F_x = ma \)</span> בציר האופקי,
-                        ו- <span class="formula-badge bg-indigo-50 text-indigo-800 px-2 py-1 rounded font-mono text-sm border border-indigo-100">\( \sum F_y = 0 \)</span> בציר האנכי (אין תנועה מעלה ומטה). נחשב את כוחות החיכוך לפי <span class="formula-badge bg-indigo-50 text-indigo-800 px-2 py-1 rounded font-mono text-sm border border-indigo-100">\( f_k = \mu N \)</span>.
-                    </p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">4</span> הצבה ופתרון
-                    </h3>
-                    <div class="math-scroll mt-2 text-slate-800 text-lg space-y-4">
-                        <p class="font-semibold text-indigo-700">שלב 1: מציאת התאוצה \( a \)</p>
-                        <p class="text-base text-slate-600">נסתכל על הגוף בעל המסה \( m \):</p>
-                        <p class="text-base">בציר ה-y: \( \sum F_y = N_1 - mg = 0 \implies N_1 = mg \)</p>
-                        <p class="text-base">מכאן נובע כוח החיכוך: \( f_{k1} = \mu N_1 = \mu mg \)</p>
-                        <p class="text-base">בציר ה-x (חיובי שמאלה):</p>
-                        \[ T - f_{k1} = ma \implies T - \mu mg = ma \quad \text{(משוואה 1)} \]
-                        
-                        <div class="border-t border-slate-100 my-4"></div>
-                        
-                        <p class="text-base text-slate-600">נסתכל על הגוף בעל המסה \( M = 2m \):</p>
-                        <p class="text-base">בציר ה-y: \( \sum F_y = N_2 - Mg = 0 \implies N_2 = Mg = 2mg \)</p>
-                        <p class="text-base">מכאן נובע כוח החיכוך: \( f_{k2} = \mu N_2 = \mu (2mg) = 2\mu mg \)</p>
-                        <p class="text-base">בציר ה-x (חיובי שמאלה):</p>
-                        \[ F - T - f_{k2} = Ma \implies F - T - 2\mu mg = 2ma \quad \text{(משוואה 2)} \]
-                        
-                        <div class="border-t border-slate-100 my-4"></div>
-                        
-                        <p class="text-base text-slate-600">נחבר כעת אלגברית את משוואות (1) ו-(2) כדי להעלים את המתיחות \( T \):</p>
-                        \[ (T - \mu mg) + (F - T - 2\mu mg) = ma + 2ma \]
-                        \[ F - 3\mu mg = 3ma \]
-                        \[ a = \frac{F - 3\mu mg}{3m} \]
-                        <p class="text-base mt-2">אפשר גם לכתוב זאת כ- \( a = \frac{F}{3m} - \mu g \).</p>
-
-                        <div class="final-answer bg-emerald-50 border-r-4 border-emerald-500 p-4 mt-4 rounded-l-lg shadow-sm">
-                            <p class="font-bold text-emerald-900 text-lg">\( a = \frac{F}{3m} - \mu g \)</p>
-                        </div>
-
-                        <div class="border-t border-slate-200 my-8 border-dashed"></div>
-
-                        <p class="font-semibold text-indigo-700">שלב 2: מציאת המתיחות \( T \)</p>
-                        <p class="text-base text-slate-600">נציב את הביטוי שמצאנו לתאוצה חזרה לתוך משוואה 1:</p>
-                        \[ T = ma + \mu mg = m(a + \mu g) \]
-                        \[ T = m \left( \left[ \frac{F}{3m} - \mu g \right] + \mu g \right) \]
-                        <p class="text-base">גורמי ה-\( \mu g \) מתבטלים ואנו מקבלים:</p>
-                        \[ T = m \cdot \left( \frac{F}{3m} \right) = \frac{F}{3} \]
-
-                        <div class="final-answer bg-emerald-50 border-r-4 border-emerald-500 p-4 mt-4 rounded-l-lg shadow-sm">
-                            <p class="font-bold text-emerald-900 text-lg">\( T = \frac{F}{3} \)</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="teacher-highlight bg-amber-50 border-r-4 border-amber-400 p-4 rounded-l-lg mt-4 shadow-sm">
-                    <h4 class="font-bold text-amber-900 mb-1 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
-                        </svg>
-                        טיפ מורה
-                    </h4>
-                    <p class="text-amber-900 text-sm">התבוננו בתוצאה היפהפייה למתיחות: היא תלויה רק בכוח המושך \( F \) ובחלוקת המסות בתוך המערכת! מקדם החיכוך התבטל כליל. מדוע? משום שהחיכוך "מעניש" את שני הגופים במידה שווה ביחס למסה שלהם, ולכן ההפרש שגורם למתיחות מושפע רק מהכוח הקידמי החיצוני.</p>
-                </div>
-            </div>
+        <div class="mt-2">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( y = Sx + b \)</span>
+            <span class="formula-badge">\( S = \frac{\Delta y}{\Delta x} \)</span>
         </div>
 
-        <!-- Section D -->
-        <div class="section-card bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-            <div class="bg-indigo-600 text-white px-6 py-4 flex items-center justify-between">
-                <h2 class="text-xl font-bold">סעיף ד': סרטוט גרף מגמת הנתונים</h2>
-                <span class="bg-indigo-800 text-indigo-100 text-xs px-2 py-1 rounded font-semibold tracking-wider">8 נק'</span>
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            
+            <div class="step-label">שלב 1: חישוב המסה \( m \) מתוך השיפוע</div>
+            <p class="content-paragraph">נבחר שתי נקודות שיושבות היטב על קו המגמה, למשל: \( (6, 2.1) \) ו-\( (12, 6.1) \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ S = \frac{\Delta a}{\Delta F} = \frac{6.1 - 2.1}{12 - 6} = \frac{4.0}{6.0} = \frac{2}{3} \approx 0.667 \text{ kg}^{-1} \]
             </div>
-            <div class="p-6 space-y-6">
-                
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">1</span> מה נתון
-                    </h3>
-                    <p class="text-slate-700">טבלת נתונים מהניסוי של התלמידות:</p>
-                    <div class="overflow-x-auto mt-3">
-                        <table class="min-w-full text-center border-collapse border border-slate-300">
-                            <thead>
-                                <tr class="bg-slate-100">
-                                    <th class="border border-slate-300 px-4 py-2 text-slate-700">F (N)</th>
-                                    <th class="border border-slate-300 px-4 py-2 font-mono">4</th>
-                                    <th class="border border-slate-300 px-4 py-2 font-mono">6</th>
-                                    <th class="border border-slate-300 px-4 py-2 font-mono">8</th>
-                                    <th class="border border-slate-300 px-4 py-2 font-mono">10</th>
-                                    <th class="border border-slate-300 px-4 py-2 font-mono">12</th>
-                                    <th class="border border-slate-300 px-4 py-2 font-mono">14</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <tr>
-                                    <td class="border border-slate-300 px-4 py-2 font-medium text-slate-700 bg-slate-50">a (m/s²)</td>
-                                    <td class="border border-slate-300 px-4 py-2 font-mono text-slate-600">0.7</td>
-                                    <td class="border border-slate-300 px-4 py-2 font-mono text-slate-600">2.1</td>
-                                    <td class="border border-slate-300 px-4 py-2 font-mono text-slate-600">3.5</td>
-                                    <td class="border border-slate-300 px-4 py-2 font-mono text-slate-600">4.5</td>
-                                    <td class="border border-slate-300 px-4 py-2 font-mono text-slate-600">6.1</td>
-                                    <td class="border border-slate-300 px-4 py-2 font-mono text-slate-600">7.5</td>
-                                </tr>
-                            </tbody>
-                        </table>
-                    </div>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">2</span> מה מחפשים
-                    </h3>
-                    <p class="text-slate-700">לסרטט גרף המתאר את הקשר בין תאוצת המערכת (\( a \)) לכוח החיצוני המופעל (\( F \)). בציר האנכי (y) נציב את התאוצה התלויה, ובציר האופקי (x) את הכוח הבלתי תלוי.</p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">3</span> נוסחאות ועקרונות בשימוש
-                    </h3>
-                    <p class="text-slate-700 leading-relaxed">
-                        גרף פיזיקלי תקני. יש להקפיד על הוספת שנתות במרווחים שווים, כותרות לצירים כולל יחידות מידה, פיזור הנקודות על פי הטבלה והעברת <strong>קו מגמה ליניארי מתאים (Best-fit line)</strong> שעובר קרוב ככל האפשר לכל הנקודות (אין להעביר קו "זיגזג" מנקודה לנקודה).
-                    </p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">4</span> הצבה ופתרון
-                    </h3>
-                    <div class="flex justify-center mt-6 p-4 bg-white rounded-xl border border-slate-100 shadow-sm overflow-x-auto">
-                        <svg width="600" height="400" viewBox="-50 -50 650 450" class="min-w-[500px] h-auto">
-                            <!-- Background & Grid -->
-                            <rect x="0" y="0" width="550" height="350" fill="#fafafa" stroke="#e2e8f0" stroke-width="1"/>
-                            
-                            <!-- Grid Lines y-axis (a) from 0 to 10 step 1 -->
-                            <!-- y mapping: 0 -> 350, 10 -> 0. scale = 35 pixels per unit -->
-                            <g stroke="#cbd5e1" stroke-dasharray="4,4" stroke-width="1">
-                                <line x1="0" y1="315" x2="550" y2="315" /> <!-- y=1 -->
-                                <line x1="0" y1="280" x2="550" y2="280" /> <!-- y=2 -->
-                                <line x1="0" y1="245" x2="550" y2="245" /> <!-- y=3 -->
-                                <line x1="0" y1="210" x2="550" y2="210" /> <!-- y=4 -->
-                                <line x1="0" y1="175" x2="550" y2="175" /> <!-- y=5 -->
-                                <line x1="0" y1="140" x2="550" y2="140" /> <!-- y=6 -->
-                                <line x1="0" y1="105" x2="550" y2="105" /> <!-- y=7 -->
-                                <line x1="0" y1="70"  x2="550" y2="70" />  <!-- y=8 -->
-                                <line x1="0" y1="35"  x2="550" y2="35" />  <!-- y=9 -->
-                            </g>
-                            
-                            <!-- Grid Lines x-axis (F) from 0 to 16 step 2 -->
-                            <!-- x mapping: 0 -> 0, 16 -> 550. scale = 34.375 pixels per unit -->
-                            <g stroke="#cbd5e1" stroke-dasharray="4,4" stroke-width="1">
-                                <line x1="68.75" y1="0" x2="68.75" y2="350" /> <!-- x=2 -->
-                                <line x1="137.5" y1="0" x2="137.5" y2="350" /> <!-- x=4 -->
-                                <line x1="206.25" y1="0" x2="206.25" y2="350" /> <!-- x=6 -->
-                                <line x1="275" y1="0" x2="275" y2="350" />     <!-- x=8 -->
-                                <line x1="343.75" y1="0" x2="343.75" y2="350" /> <!-- x=10 -->
-                                <line x1="412.5" y1="0" x2="412.5" y2="350" /> <!-- x=12 -->
-                                <line x1="481.25" y1="0" x2="481.25" y2="350" /> <!-- x=14 -->
-                            </g>
-
-                            <!-- Axes -->
-                            <line x1="0" y1="350" x2="570" y2="350" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow)" />
-                            <line x1="0" y1="350" x2="0" y2="-20" stroke="#1e293b" stroke-width="2.5" marker-end="url(#arrow)" />
-
-                            <!-- Axes Labels -->
-                            <text x="275" y="400" font-family="sans-serif" font-size="18" fill="#1e293b" text-anchor="middle" font-weight="bold">F (N)</text>
-                            <text x="-30" y="175" font-family="sans-serif" font-size="18" fill="#1e293b" text-anchor="middle" font-weight="bold" transform="rotate(-90, -30, 175)">a (m/s²)</text>
-
-                            <!-- x-axis ticks text -->
-                            <g font-family="monospace" font-size="14" fill="#475569" text-anchor="middle">
-                                <text x="0" y="370">0</text>
-                                <text x="68.75" y="370">2</text>
-                                <text x="137.5" y="370">4</text>
-                                <text x="206.25" y="370">6</text>
-                                <text x="275" y="370">8</text>
-                                <text x="343.75" y="370">10</text>
-                                <text x="412.5" y="370">12</text>
-                                <text x="481.25" y="370">14</text>
-                                <text x="550" y="370">16</text>
-                            </g>
-
-                            <!-- y-axis ticks text -->
-                            <g font-family="monospace" font-size="14" fill="#475569" text-anchor="end">
-                                <text x="-10" y="315" dominant-baseline="middle">1</text>
-                                <text x="-10" y="280" dominant-baseline="middle">2</text>
-                                <text x="-10" y="245" dominant-baseline="middle">3</text>
-                                <text x="-10" y="210" dominant-baseline="middle">4</text>
-                                <text x="-10" y="175" dominant-baseline="middle">5</text>
-                                <text x="-10" y="140" dominant-baseline="middle">6</text>
-                                <text x="-10" y="105" dominant-baseline="middle">7</text>
-                                <text x="-10" y="70" dominant-baseline="middle">8</text>
-                                <text x="-10" y="35" dominant-baseline="middle">9</text>
-                            </g>
-
-                            <!-- Data Points (F, a) -->
-                            <!-- (4, 0.7) => x: 137.5, y: 350 - 0.7*35 = 325.5 -->
-                            <!-- (6, 2.1) => x: 206.25, y: 350 - 2.1*35 = 276.5 -->
-                            <!-- (8, 3.5) => x: 275, y: 350 - 3.5*35 = 227.5 -->
-                            <!-- (10, 4.5) => x: 343.75, y: 350 - 4.5*35 = 192.5 -->
-                            <!-- (12, 6.1) => x: 412.5, y: 350 - 6.1*35 = 136.5 -->
-                            <!-- (14, 7.5) => x: 481.25, y: 350 - 7.5*35 = 87.5 -->
-                            <g fill="#4f46e5" stroke="#312e81" stroke-width="2">
-                                <circle cx="137.5" cy="325.5" r="5" />
-                                <circle cx="206.25" cy="276.5" r="5" />
-                                <circle cx="275" cy="227.5" r="5" />
-                                <circle cx="343.75" cy="192.5" r="5" />
-                                <circle cx="412.5" cy="136.5" r="5" />
-                                <circle cx="481.25" cy="87.5" r="5" />
-                            </g>
-
-                            <!-- Best Fit Line -->
-                            <!-- Based on analysis, line equation is roughly a = (2/3)F - 2 -->
-                            <!-- If F=3, a=0. -> x: 103.125, y: 350 -->
-                            <!-- If F=15, a=8. -> x: 515.625, y: 350 - 8*35 = 70 -->
-                            <!-- Draw slightly beyond to show intercept on x axis -->
-                            <line x1="103.125" y1="350" x2="530" y2="50" stroke="#f43f5e" stroke-width="2.5" stroke-dasharray="5,5" />
-                            <text x="500" y="40" font-family="serif" font-size="14" fill="#f43f5e" font-weight="bold">קו מגמה</text>
-
-                            <!-- Extrapolation back to y-axis to show negative intercept logically, 
-                                 though standard graphs start at (0,0) and cut off at axis -->
-                        </svg>
-                    </div>
-                </div>
-
-                <div class="teacher-highlight bg-amber-50 border-r-4 border-amber-400 p-4 rounded-l-lg mt-4 shadow-sm">
-                    <h4 class="font-bold text-amber-900 mb-1 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
-                        </svg>
-                        טיפ מורה
-                    </h4>
-                    <p class="text-amber-900 text-sm">שימו לב שקו המגמה לא עובר בראשית הצירים (0,0). מדוע? מכיוון שנדרש כוח התחלתי מסוים רק כדי להתגבר על כוח החיכוך ולהתחיל להניע את המערכת. כל עוד הכוח \( F \) קטן מערך זה, התאוצה היא אפס.</p>
-                </div>
+            <p class="content-paragraph">נשווה לשיפוע התיאורטי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \frac{1}{3m} = \frac{2}{3} \implies 6m = 3 \implies m = 0.5 \text{ kg} \]
             </div>
+
+            <div class="step-label mt-4">שלב 2: חישוב מקדם החיכוך \( \mu \)</div>
+            <p class="content-paragraph">נשתמש בנקודה על קו המגמה ובמשוואת הקו למציאת נקודת החיתוך \( b \). נציב את \( (6, 2.1) \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 2.1 = \frac{2}{3}(6) + b \implies 2.1 = 4 + b \implies b = -1.9 \text{ m/s}^2 \]
+            </div>
+            <p class="content-paragraph">נשווה לחיתוך התיאורטי (לשם הקירוב נניח שהישר האידיאלי הוא בעל \( b = -2.0 \)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ -\mu g = -2.0 \implies \mu \cdot 10 = 2.0 \implies \mu = 0.2 \]
+            </div>
+
+            <p class="final-answer">מסקנה: המסה היא <span class="inline-ltr">\( m = 0.500 \text{ kg} \)</span> ומקדם החיכוך הוא <span class="inline-ltr">\( \mu = 0.200 \)</span>.</p>
         </div>
 
-        <!-- Section E -->
-        <div class="section-card bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-            <div class="bg-indigo-600 text-white px-6 py-4 flex items-center justify-between">
-                <h2 class="text-xl font-bold">סעיף ה': מציאת המסה \( m \) ומקדם החיכוך \( \mu \)</h2>
-                <span class="bg-indigo-800 text-indigo-100 text-xs px-2 py-1 rounded font-semibold tracking-wider">6 נק' (3+3)</span>
-            </div>
-            <div class="p-6 space-y-6">
-                
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">1</span> מה נתון
-                    </h3>
-                    <p class="text-slate-700">הגרף שיצרנו בסעיף ד', והקשר התיאורטי שמצאנו בסעיף ג': \( a = \frac{1}{3m} \cdot F - \mu g \). כמו כן ידוע כי תאוצת הכובד \( g = 10 \text{ m/s}^2 \).</p>
-                </div>
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            הקפידו לבחור נקודות שנמצאות על <strong>קו המגמה ששרטטתם</strong>, ולאו דווקא נקודות מתוך הטבלה, אלא אם כן הן נופלות בדיוק על הקו. הסיבה היא שלנקודות מהניסוי תמיד יש שגיאות קטנות, וקו המגמה "מחליק" וממצע את השגיאות הללו.
+        </div>
+    </section>
 
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">2</span> מה מחפשים
-                    </h3>
-                    <p class="text-slate-700">למצוא ערכים מספריים מתוך הגרף עבור: (1) המסה \( m \), ו-(2) מקדם החיכוך הקינטי \( \mu \).</p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">3</span> נוסחאות ועקרונות בשימוש
-                    </h3>
-                    <p class="text-slate-700 leading-relaxed">
-                        נשווה את המשוואה הפיזיקלית למשוואת קו ישר מתמטי מהצורה <span class="formula-badge bg-indigo-50 text-indigo-800 px-2 py-1 rounded font-mono text-sm border border-indigo-100">\( y = Sx + b \)</span> (כאשר S מסמן שיפוע). 
-                        ציר \( y \) הוא התאוצה \( a \), וציר \( x \) הוא הכוח \( F \). 
-                        מכאן מזהים את השיפוע: <span class="formula-badge bg-indigo-50 text-indigo-800 px-2 py-1 rounded font-mono text-sm border border-indigo-100">\( S = \frac{1}{3m} \)</span> ואת נקודת החיתוך עם ציר ה-y: <span class="formula-badge bg-indigo-50 text-indigo-800 px-2 py-1 rounded font-mono text-sm border border-indigo-100">\( b = -\mu g \)</span>. 
-                        נחשב את שיפוע הגרף לפי <span class="formula-badge bg-indigo-50 text-indigo-800 px-2 py-1 rounded font-mono text-sm border border-indigo-100">\( S = \frac{\Delta y}{\Delta x} \)</span> בין שתי נקודות על קו המגמה.
-                    </p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">4</span> הצבה ופתרון
-                    </h3>
-                    <div class="math-scroll mt-2 text-slate-800 text-lg space-y-4">
-                        <p class="font-semibold text-indigo-700">חלק 1: חישוב המסה \( m \) מתוך השיפוע</p>
-                        <p class="text-base text-slate-600">נבחר שתי נקודות שיושבות היטב על קו המגמה. למשל, ניקח את הנקודות \( (6, 2.1) \) ו-\( (12, 6.1) \) (או נקודות הקרובות אליהן מאד שמצאנו):</p>
-                        \[ S = \frac{\Delta a}{\Delta F} = \frac{6.1 - 2.1}{12 - 6} = \frac{4.0}{6.0} = \frac{2}{3} \approx 0.667 \text{ kg}^{-1} \]
-                        <p class="text-base">נשווה לשיפוע התיאורטי:</p>
-                        \[ \frac{1}{3m} = \frac{2}{3} \implies 3m \cdot 2 = 3 \cdot 1 \implies 6m = 3 \implies m = \frac{3}{6} = 0.5 \text{ kg} \]
-                        <div class="final-answer bg-emerald-50 border-r-4 border-emerald-500 p-4 mt-2 mb-6 rounded-l-lg shadow-sm">
-                            <p class="font-bold text-emerald-900 text-lg">המסה היא \( m = 0.500 \text{ kg} \).</p>
-                        </div>
-
-                        <div class="border-t border-slate-200 my-6 border-dashed"></div>
-
-                        <p class="font-semibold text-indigo-700">חלק 2: חישוב מקדם החיכוך \( \mu \)</p>
-                        <p class="text-base text-slate-600">נשתמש בנקודה על קו המגמה ובמשוואת הקו \( a = \frac{2}{3}F + b \) למציאת \( b \). נציב לדוגמה את הנקודה \( (6, 2.1) \):</p>
-                        \[ 2.1 = \frac{2}{3}(6) + b \implies 2.1 = 4 + b \implies b = 2.1 - 4 = -1.9 \text{ m/s}^2 \]
-                        <p class="text-base">נשווה לחיתוך התיאורטי (כאשר ניקח נקודות אחרות אולי נקבל מינוס 2 מדויק, נניח שהישר האידיאלי הוא בעל \( b=-2.0 \)):</p>
-                        \[ -\mu g = -2.0 \implies \mu \cdot 10 = 2.0 \implies \mu = \frac{2.0}{10} = 0.2 \]
-                        <div class="final-answer bg-emerald-50 border-r-4 border-emerald-500 p-4 mt-2 rounded-l-lg shadow-sm">
-                            <p class="font-bold text-emerald-900 text-lg">מקדם החיכוך הוא \( \mu = 0.200 \).</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="teacher-highlight bg-amber-50 border-r-4 border-amber-400 p-4 rounded-l-lg mt-4 shadow-sm">
-                    <h4 class="font-bold text-amber-900 mb-1 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
-                        </svg>
-                        טיפ מורה
-                    </h4>
-                    <p class="text-amber-900 text-sm">הקפידו לבחור נקודות שנמצאות על <strong>קו המגמה ששרטטתם</strong>, ולאו דווקא נקודות מתוך הטבלה, אלא אם כן הן נופלות בדיוק על הקו. הסיבה היא שלנקודות מהניסוי תמיד יש שגיאות קטנות, וקו המגמה "מחליק" וממצע את השגיאות הללו.</p>
-                </div>
-            </div>
+    <!-- סעיף ו' -->
+    <section class="section-card" id="part-f">
+        <h3 class="section-header">סעיף ו': כוח למהירות קבועה</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> המערכת נעה במהירות קבועה (כלומר תאוצתה שווה לאפס). לרשותנו הגרף שסרטטנו בסעיף ד', ומשוואת התנועה מסעיפים קודמים \( a = \frac{2}{3}F - 2 \).</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> למצוא בעזרת התבוננות בגרף את גודל הכוח \( F \) שיש להפעיל כדי להבטיח תנועה במהירות קבועה, ולבדוק את התשובה אלגברית לאחר מכן.</div>
         </div>
 
-        <!-- Section F -->
-        <div class="section-card bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden mb-8">
-            <div class="bg-indigo-600 text-white px-6 py-4 flex items-center justify-between">
-                <h2 class="text-xl font-bold">סעיף ו': כוח למהירות קבועה</h2>
-                <span class="bg-indigo-800 text-indigo-100 text-xs px-2 py-1 rounded font-semibold tracking-wider">3 נק'</span>
-            </div>
-            <div class="p-6 space-y-6">
-                
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">1</span> מה נתון
-                    </h3>
-                    <p class="text-slate-700">המערכת צריכה לנוע במהירות קבועה. מהגרף ומחישובים קודמים, משוואת התנועה היא \( a = \frac{2}{3}F - 2 \).</p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">2</span> מה מחפשים
-                    </h3>
-                    <p class="text-slate-700">את גודל הכוח \( F \) שיש להפעיל כדי להבטיח את תנועת המערכת במהירות קבועה, תוך הסתמכות על הגרף.</p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">3</span> נוסחאות ועקרונות בשימוש
-                    </h3>
-                    <p class="text-slate-700 leading-relaxed">
-                        על פי החוק הראשון של ניוטון, כאשר גוף נע במהירות קבועה (ללא שינוי במהירות), תאוצתו שווה לאפס. לכן נדרוש <span class="formula-badge bg-indigo-50 text-indigo-800 px-2 py-1 rounded font-mono text-sm border border-indigo-100">\( a = 0 \)</span>. בגרף, מצב זה תואם לנקודת החיתוך של קו המגמה עם ציר ה-x (ציר הכוח).
-                    </p>
-                </div>
-
-                <div class="step-container">
-                    <h3 class="font-bold text-slate-800 text-lg mb-2 flex items-center gap-2">
-                        <span class="bg-slate-100 text-slate-500 rounded-full w-6 h-6 flex items-center justify-center text-sm">4</span> הצבה ופתרון
-                    </h3>
-                    <div class="math-scroll mt-2 text-slate-800 text-lg space-y-4">
-                        <p class="text-base text-slate-600">נסתכל בגרף ששרטטנו ונאתר את הנקודה שבה התאוצה מתאפסת. אלגברית, נציב \( a = 0 \) במשוואת הקו שמצאנו:</p>
-                        \[ 0 = \frac{2}{3}F - 2 \]
-                        \[ \frac{2}{3}F = 2 \]
-                        \[ F = 2 \cdot \frac{3}{2} = 3 \text{ N} \]
-                        <p class="text-base">התוצאה זהה למה שנראה בגרף בחיתוך עם ציר ה-x האופקי באזור ה-3 ניוטון.</p>
-                        
-                        <div class="final-answer bg-emerald-50 border-r-4 border-emerald-500 p-4 mt-4 rounded-l-lg shadow-sm">
-                            <p class="font-bold text-emerald-900 text-lg">הכוח הדרוש לתנועה במהירות קבועה הוא \( F = 3.00 \text{ N} \).</p>
-                        </div>
-                    </div>
-                </div>
-
-                <div class="teacher-highlight bg-amber-50 border-r-4 border-amber-400 p-4 rounded-l-lg mt-4 shadow-sm">
-                    <h4 class="font-bold text-amber-900 mb-1 flex items-center gap-2">
-                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                            <path d="M11 3a1 1 0 10-2 0v1a1 1 0 102 0V3zM15.657 5.757a1 1 0 00-1.414-1.414l-.707.707a1 1 0 001.414 1.414l.707-.707zM18 10a1 1 0 01-1 1h-1a1 1 0 110-2h1a1 1 0 011 1zM5.05 6.464A1 1 0 106.464 5.05l-.707-.707a1 1 0 00-1.414 1.414l.707.707zM5 10a1 1 0 01-1 1H3a1 1 0 110-2h1a1 1 0 011 1zM8 16v-1h4v1a2 2 0 11-4 0zM12 14c.015-.34.208-.646.477-.859a4 4 0 10-4.954 0c.27.213.462.519.476.859h4.002z" />
-                        </svg>
-                        טיפ מורה
-                    </h4>
-                    <p class="text-amber-900 text-sm">המשמעות הפיזיקלית פשוטה: במצב זה הכוח החיצוני המושך מאזן בדיוק את סך כוחות החיכוך הפועלים על שני הגופים המרכיבים את המערכת יחד (חיכוך כולל שווה ל-3N). לכן סכום הכוחות על המערכת מתאפס, והיא נעה בהתמדה (מהירות קבועה, ללא תאוצה).</p>
-                </div>
-            </div>
+        <div class="mt-2">
+            <strong>נוסחאות מהדף:</strong><br>
+            <span class="formula-badge">\( a = 0 \)</span> (חוק ראשון של ניוטון)
         </div>
 
-    </main>
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            
+            <div class="step-label">שלב 1: חילוץ הכוח מתוך הגרף</div>
+            <p class="content-paragraph">על פי החוק הראשון של ניוטון, עבור תנועה במהירות קבועה נדרוש כי התאוצה תתאפס (\( a = 0 \)). נסתכל על הגרף שסרטטנו ונחפש את נקודת החיתוך של קו המגמה עם הציר האופקי (ציר הכוח \( F \), בו התאוצה היא אפס). על פי השרטוט, קו המגמה חותך את הציר בדיוק בערך של \( F = 3 \text{ N} \).</p>
+            
+            <div class="step-label mt-4">שלב 2: בדיקה עצמית אלגברית</div>
+            <p class="content-paragraph">כדי להיות בטוחים שקראנו נכון את הגרף, נציב \( a = 0 \) בתוך משוואת התנועה האלגברית שמצאנו:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 0 = \frac{2}{3}F - 2 \]
+                \[ \frac{2}{3}F = 2 \implies F = 3 \text{ N} \]
+            </div>
+            <p class="content-paragraph">החישוב תואם לחלוטין לערך שקראנו מהגרף!</p>
 
-    <!-- Floating Action Button for Original Image -->
-    <button id="showImageBtn" class="fixed bottom-6 right-6 bg-indigo-600 hover:bg-indigo-700 text-white p-4 rounded-full shadow-lg hover:shadow-xl transition-all duration-300 z-40 focus:outline-none ring-4 ring-indigo-200">
-        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-        </svg>
-    </button>
+            <p class="final-answer">מסקנה: הכוח הדרוש לתנועה במהירות קבועה הוא <span class="inline-ltr">\( F = 3.00 \text{ N} \)</span>.</p>
+        </div>
 
-    <!-- Modal for Original Image -->
-    <div id="imageModal" class="fixed inset-0 z-50 flex items-center justify-center hidden opacity-0">
-        <div class="absolute inset-0 bg-slate-900/80 cursor-pointer" id="closeModalBg"></div>
-        <div class="relative bg-white rounded-xl shadow-2xl p-4 m-4 max-w-4xl max-h-[90vh] overflow-auto transform scale-95 transition-transform duration-300" id="modalContent">
-            <button id="closeModalBtn" class="absolute top-2 left-2 bg-slate-100 hover:bg-slate-200 text-slate-700 p-2 rounded-full transition-colors focus:outline-none">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
-                    <path fill-rule="evenodd" d="M4.293 4.293a1 1 0 011.414 0L10 8.586l4.293-4.293a1 1 0 111.414 1.414L11.414 10l4.293 4.293a1 1 0 01-1.414 1.414L10 11.414l-4.293 4.293a1 1 0 01-1.414-1.414L8.586 10 4.293 5.707a1 1 0 010-1.414z" clip-rule="evenodd" />
-                </svg>
-            </button>
-            <h3 class="text-xl font-bold text-center mb-4 text-slate-800 pr-8">תמונת השאלה (מקור)</h3>
-            <img src="question-image.png" alt="תמונת השאלה - מבט מוגדל" class="w-full h-auto object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"/>
-            <div style="display:none;" class="bg-red-50 text-red-600 p-4 rounded-lg border border-red-200 text-center">
-                לא ניתן לטעון את תמונת השאלה.
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            מצוין להתרגל להוציא נתונים מהגרף לפני שניגשים למשוואות. המשמעות הפיזיקלית של החיתוך עם הציר היא הפעלת כוח חיצוני שמאזן בדיוק את סך כוחות החיכוך הפועלים על שני הגופים המרכיבים את המערכת יחד. במקרה שלנו, סך כוחות החיכוך שווה ל-3N, ולכן כוח מושך של 3N מאפס את הכוח השקול והמערכת נעה בהתמדה ללא תאוצה.
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
             </div>
         </div>
     </div>
+</div>
 
-    <script>
-        // Modal logic
-        const modal = document.getElementById('imageModal');
-        const showBtn = document.getElementById('showImageBtn');
-        const closeBg = document.getElementById('closeModalBg');
-        const closeBtn = document.getElementById('closeModalBtn');
-        const modalContent = document.getElementById('modalContent');
-
-        function openModal() {
-            modal.classList.remove('hidden');
-            // Small delay to allow display:block to apply before changing opacity for transition
-            setTimeout(() => {
-                modal.classList.remove('opacity-0');
-                modalContent.classList.remove('scale-95');
-                modalContent.classList.add('scale-100');
-            }, 10);
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
         }
 
-        function closeModal() {
-            modal.classList.add('opacity-0');
-            modalContent.classList.remove('scale-100');
-            modalContent.classList.add('scale-95');
-            // Wait for transition to finish before hiding
-            setTimeout(() => {
-                modal.classList.add('hidden');
-            }, 300);
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
         }
 
-        showBtn.addEventListener('click', openModal);
-        closeBg.addEventListener('click', closeModal);
-        closeBtn.addEventListener('click', closeModal);
-        
-        // Escape key to close modal
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Escape' && !modal.classList.contains('hidden')) {
-                closeModal();
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
             }
         });
-    </script>
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
 </body>
 </html>
