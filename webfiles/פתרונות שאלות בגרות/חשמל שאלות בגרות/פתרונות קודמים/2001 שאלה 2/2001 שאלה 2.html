@@ -1,0 +1,781 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"><head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מודרך בפיזיקה - מעגלי זרם ישר</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            },
+            svg: {
+                fontCache: 'global'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        @import url('https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;600;700&display=swap');
+
+        body {
+            font-family: "Heebo", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+            padding-bottom: 0.5rem;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+
+        /* SVG styling specific to this solution */
+        .circuit-svg {
+            width: 100%;
+            max-width: 400px;
+            height: auto;
+            margin: 0 auto;
+            display: block;
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מודרך בפיזיקה: מעגל חשמלי</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">בגרות חשמל 2001, שאלה 2 | מעגלי זרם ישר</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך מבוסס חוקי קירכהוף ואוהם, צעד-אחר-צעד</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link="" href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">מבט כללי על השאלה</h3>
+        <p class="content-paragraph">
+            <strong>תלמידים יקרים,</strong> לפנינו בעיה קלאסית במעגלי זרם ישר. נפרק את המעגל לשלבים פשוטים, נבין כיצד הזרם מתפצל וכיצד מחושבים פוטנציאלים.
+        </p>
+        <p class="content-paragraph mb-0">
+            זכרו: עבודה מסודרת עם חוקי קירכהוף וחוק אוהם היא המפתח להצלחה. כל היחידות בשאלה נתונות במערכת התקנית (MKS) ולכן אין צורך בהמרות מקדימות.
+        </p>
+    </section>
+
+    <!-- תמונת השאלה המקורית: תמיד מתחת לכותרת -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- Section א (1) -->
+    <section class="section-card" id="part-a1">
+        <h3 class="section-header">סעיף א' (1) - חישוב הזרם הכולל</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 text-slate-700 text-sm space-y-1">
+                    <li>כא"מ מקור המתח: \( \varepsilon = 15 \text{ V} \)</li>
+                    <li>התנגדות פנימית זניחה: \( r = 0 \ \Omega \)</li>
+                    <li>נגד שמאלי עליון: \( R_{AB} = 3 \ \Omega \)</li>
+                    <li>נגד ימני עליון: \( R_{BD} = 5 \ \Omega \)</li>
+                    <li>נגד שמאלי תחתון: \( R_{AC} = 2 \ \Omega \)</li>
+                    <li>נגד ימני תחתון: \( R_{CD} = 6 \ \Omega \)</li>
+                    <li>נגד ליד המקור: \( R_E = 1 \ \Omega \)</li>
+                    <li>המפסק \( S \) <strong>פתוח</strong>, כלומר לא זורם זרם בענף בין B ו-C.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                <br>את הזרם הכולל הזורם דרך מקור המתח, אותו נסמן כ- \( I_{total} \).
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( R_T = \sum_i R_i \)</span>
+            <span class="formula-badge">\( \frac{1}{R_T} = \sum_i \frac{1}{R_i} \)</span>
+            <span class="formula-badge">\( V = IR \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">כאשר המפסק פתוח, המעגל מורכב משני ענפים מקבילים המחוברים בטור לנגד נוסף. נחשב תחילה את ההתנגדות של כל ענף בנפרד:</p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ R_{upper} = R_{AB} + R_{BD} = 3 + 5 = 8 \ \Omega \]
+                \[ R_{lower} = R_{AC} + R_{CD} = 2 + 6 = 8 \ \Omega \]
+            </div>
+
+            <p class="content-paragraph mt-4">כעת נחשב את ההתנגדות השקולה של החלק המקביל (בין צומת A לצומת D):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \frac{1}{R_{AD}} = \frac{1}{R_{upper}} + \frac{1}{R_{lower}} = \frac{1}{8} + \frac{1}{8} = \frac{2}{8} = \frac{1}{4} \ \Omega^{-1} \]
+                \[ R_{AD} = 4 \ \Omega \]
+            </div>
+
+            <div class="visual-frame">
+                <div class="w-full text-center">
+                    <p class="text-sm font-bold text-slate-600 mb-2">תרשים עזר: המעגל השקול</p>
+                    <div class="circuit-svg physics-diagram-wrapper" style="display: inline-block; direction: ltr; vertical-align: middle; text-align: center;"><img src="data:image/png;base64,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CEDGNd56S4AAAQIECBAgQGCvAgKQvfI7OQECBAgQIECAAIFxCQhAxjXeekuAAAECBAgQIEBgrwICkL3yOzkBAgQIECBAgACBcQn4S+jjGm+9JUBgWAL+4viwxlNvCBAgMAoBMyCjGGadJECAAAECBAgQIFCGgACkjHHQCgIECBAgQIAAAQKjEBCAjGKYdZIAAQIECBAgQIBAGQICkDLGQSsIECBAgAABAgQIjEJAADKKYdZJAgQIECBAgAABAmUICEDKGAetIECAAAECBAgQIDAKAQHIKIZZJwkQIECAAAECBAiUISAAKWMctIIAAQIECBAgQIDAKAQEIKMYZp0kQIAAAQIECBAgUIaAAKSMcdAKAgQIECBAgAABAqMQEICMYph1kgABAgQIECBAgEAZAgKQMsZBKwgQIECAAAECBAiMQkAAMoph1kkCBAgQIECAAAECZQgIQMoYB60gQIAAAQIECBAgMAoBAcgohlknCRAgQIAAAQIECJQhIAApYxy0ggABAgQIECBAgMAoBAQgoxhmnSRAgAABAgQIECBQhoAApIxx0AoCBAgQIECAAAECoxAQgIximHWSAAECBAgQIECAQBkCApAyxkErCBAgQIAAAQIECIxCQAAyimHWSQIECBAgQIAAAQJlCAhAyhgHrSBAgAABAgQIECAwCgEByCiGWScJECBAgAABAgQIlCEgACljHLSCAAECBAgQIECAwCgEBCCjGGadJECAAAECBAgQIFCGgACkjHHQCgIECBAgQIAAAQKjEBCAjGKYdZIAAQIECBAgQIBAGQICkDLGQSsIECBAgAABAgQIjEJAADKKYdZJAgQIECBAgAABAmUICEDKGAetIECAAAECBAgQIDAKAQHIKIZZJwkQIECAAAECBAiUISAAKWMctIIAAQIECBAgQIDAKAQEIKMYZp0kQIAAAQIECBAgUIaAAKSMcdAKAgQIECBAgAABAqMQEICMYph1kgABAgQIECBAgEAZAgKQMsZBKwgQIECAAAECBAiMQkAAMoph1kkCBAgQIECAAAECZQgIQMoYB60gQIAAAQIECBAgMAoBAcgohlknCRAgQIAAAQIECJQhIAApYxy0ggABAgQIECBAgMAoBAQgoxhmnSRAgAABAgQIECBQhoAApIxx0AoCBAgQIECAAAECoxB4bxS91EkCwxSYRLemt3TtKvbN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DqtOESBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIbFvg/wPIP08sVbctJgAAAABJRU5ErkJggg==" class="replaced-physics-diagram" style="width: 100%; height: auto; display: inline-block; margin: 0px auto;"></div>
+                </div>
+            </div>
+
+            <p class="content-paragraph mt-4">ההתנגדות הכוללת של המעגל היא סכום ההתנגדות השקולה \( R_{AD} \) והנגד הטורי \( R_E \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ R_{total} = R_{AD} + R_E = 4 + 1 = 5 \ \Omega \]
+            </div>
+
+            <p class="content-paragraph mt-4">נשתמש בחוק אוהם כדי למצוא את הזרם הכולל מהמקור:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I_{total} = \frac{\varepsilon}{R_{total}} = \frac{15}{5} = 3 \text{ A} \]
+            </div>
+
+            <p class="final-answer">תשובה סופית: הזרם הכולל הזורם דרך מקור המתח הוא <span class="inline-ltr">3 A</span>.</p>
+        </div>
+
+        <div class="teacher-highlight mt-6">
+            <strong>טיפ מורה:</strong> שימו לב שלמרות שיש צומת בנקודות B ו-C, העובדה שהמפסק פתוח אומרת שאין מעבר אלקטרונים בין העליון לתחתון בנקודה זו. לכן, הזרם שנכנס לענף העליון בצומת A חייב להמשיך בשלמותו דרך שני הנגדים בענף העליון עד לצומת D. כך זיהינו שמדובר בחיבור טורי פשוט בתוך כל ענף.
+        </div>
+    </section>
+
+    <!-- Section א (2) -->
+    <section class="section-card" id="part-a2">
+        <h3 class="section-header">סעיף א' (2) - המתח על המפסק</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 text-slate-700 text-sm space-y-1">
+                    <li>הזרם הכולל במעגל: \( I_{total} = 3 \text{ A} \)</li>
+                    <li>התנגדות הענף העליון: \( R_{upper} = 8 \ \Omega \)</li>
+                    <li>התנגדות הענף התחתון: \( R_{lower} = 8 \ \Omega \)</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                <br>את המתח החשמלי בין הדקי המפסק הפתוח, כלומר את הפרש הפוטנציאלים בין נקודה B לנקודה C המסומן כ- \( V_{BC} \).
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( V_{AB} = V_A - V_B \)</span>
+            <span class="formula-badge">\( V = IR \)</span>
+        </div>
+
+        <div class="bg-red-50 border-r-4 border-red-500 p-4 mt-4 mb-2 rounded-l-lg text-red-800">
+            <strong class="font-bold flex items-center mb-1">
+                <svg class="w-5 h-5 ml-2" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"></path></svg>
+                אזהרת תפיסה שגויה
+            </strong>
+            <p class="text-sm">
+                תלמידים רבים מניחים שאם אין זרם דרך המפסק הפתוח (\( I=0 \)), אז לפי חוק אוהם המתח עליו חייב להיות אפס. 
+                <strong>מדוע זו טעות?</strong> מפסק פתוח מהווה נתק פיזי במעגל, כלומר אין שום מוליכות בין שני קצותיו. במצב כזה, מטען חשמלי אינו יכול לעבור מצד לצד <strong>אפילו אם קיים ביניהם מתח</strong>. חוק אוהם מתאר כיצד מתח דוחף זרם רק כאשר קיים מסלול מוליך. במצב של נתק המטען פשוט חסום, ולכן יכול להתקיים הפרש פוטנציאלים (מתח) שונה מאפס בין הדקי המפסק גם כשאין כלל מעבר זרם.
+            </p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">כיוון שההתנגדות של שני הענפים (העליון והתחתון) שווה, הזרם הכולל המגיע לצומת A מתפצל שווה בשווה בין שניהם:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I_{upper} = I_{lower} = \frac{I_{total}}{2} = \frac{3}{2} = 1.5 \text{ A} \]
+            </div>
+
+            <p class="content-paragraph mt-4">כדי למצוא את המתח בין B ל-C, נחשב את המתח (הפרש הפוטנציאלים) מנקודה A המשותפת, לכל אחת מהנקודות. המתח על נגד מחושב לפי: \( V = IR \).</p>
+            
+            <p class="content-paragraph">המתח מ-A ל-B:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_A - V_B = I_{upper} \cdot R_{AB} = 1.5 \cdot 3 = 4.5 \text{ V} \]
+            </div>
+
+            <p class="content-paragraph mt-4">המתח מ-A ל-C:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_A - V_C = I_{lower} \cdot R_{AC} = 1.5 \cdot 2 = 3 \text{ V} \]
+            </div>
+
+            <p class="content-paragraph mt-4">אנו רוצים למצוא את ההפרש בין B ל-C, כלומר \( V_B - V_C \). נחסר את שתי המשוואות (נחסר את המשוואה הראשונה מהשנייה):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ (V_A - V_C) - (V_A - V_B) = 3 - 4.5 \]
+                \[ V_B - V_C = -1.5 \text{ V} \]
+            </div>
+            <p class="content-paragraph mt-2">גודל המתח על המפסק (הערך המוחלט של הפרש הפוטנציאלים) הוא לכן 1.5 וולט.</p>
+
+            <p class="final-answer">תשובה סופית: המתח על המפסק \( S \) הוא <span class="inline-ltr">1.5 V</span>.</p>
+        </div>
+
+        <div class="teacher-highlight mt-6">
+            <strong>טיפ מורה:</strong> כאשר אנו מחשבים מתח, אנו בעצם מודדים "הפרש גבהים חשמלי". אפשר לדמיין שאנחנו בבניין - התחלנו מאותה קומה עליונה (נקודה A). במסלול העליון ירדנו 4.5 קומות (וולט) כדי להגיע ל-B, ובמסלול התחתון ירדנו רק 3 קומות (וולט) כדי להגיע ל-C. לכן, טבעי שנקודה C תהיה בגובה חשמלי (פוטנציאל) שונה מנקודה B, ונוכל לחשב את ההפרש ביניהן בקלות.
+        </div>
+    </section>
+
+    <!-- Section א (3) -->
+    <section class="section-card" id="part-a3">
+        <h3 class="section-header">סעיף א' (3) - השוואת פוטנציאלים</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 text-slate-700 text-sm space-y-1">
+                    <li>מפל המתח מ-A ל-B הוא 4.5 וולט.</li>
+                    <li>מפל המתח מ-A ל-C הוא 3 וולט.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                <br>לקבוע איזו מבין הנקודות, B או C, נמצאת בפוטנציאל גבוה יותר ולהסביר.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>עקרונות בשימוש:</strong><br>
+            <span class="formula-badge">מפל מתח בכיוון הזרם</span>
+            <p class="content-paragraph text-sm text-slate-600 mt-1">כאשר זרם חיובי זורם דרך נגד, הפוטנציאל החשמלי קטן בכיוון הזרם. הנקודה ממנה נכנס הזרם נמצאת בפוטנציאל גבוה יותר מהנקודה ממנה הוא יוצא.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">בסעיף הקודם מצאנו את הקשרים הבאים עבור הפוטנציאלים, כאשר \( V_A \) הוא פוטנציאל משותף (והמקסימלי בחלק זה של המעגל):</p>
+            
+            <div class="math-container text-center" dir="ltr">
+                \[ V_B = V_A - 4.5 \]
+                \[ V_C = V_A - 3 \]
+            </div>
+
+            <p class="content-paragraph mt-4">אנו רואים שעל מנת להגיע לפוטנציאל בנקודה B, אנו מחסרים ערך גדול יותר (4.5) מהפוטנציאל בנקודה A, לעומת הערך שמחסרים כדי להגיע לפוטנציאל בנקודה C (שהוא 3 בלבד).</p>
+            <p class="content-paragraph">מתמטית, מכיוון ש- \( 4.5 &gt; 3 \), ברור ש:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_A - 3 &gt; V_A - 4.5 \implies V_C &gt; V_B \]
+            </div>
+
+            <p class="final-answer">תשובה סופית: נקודה C נמצאת בפוטנציאל גבוה יותר מנקודה B. ההסבר הוא שמפל המתח מהצומת המשותף A לנקודה C קטן יותר ממפל המתח לנקודה B.</p>
+        </div>
+
+        <div class="teacher-highlight mt-6">
+            <strong>טיפ מורה:</strong> נמשיך עם דימוי הבניין מהסעיף הקודם: נדמיין שצומת A נמצא בקומה גבוהה, למשל קומה 100. במסלול אחד ירדנו 3 קומות (וולט) כדי להגיע ל"קומה" C. במסלול השני ירדנו 4.5 קומות כדי להגיע ל"קומה" B. מכיוון שיצאנו מאותו גובה התחלתי, ברור שמי שירד רק 3 קומות נשאר גבוה יותר ממי שירד 4.5 קומות (הוא גבוה ממנו בדיוק ב-1.5 קומות). כך קל מאוד להבין ולהרגיש מדוע הפוטנציאל בנקודה C גבוה יותר!
+        </div>
+    </section>
+
+    <!-- Section ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב' - סכום מתחים לאורך מסלולים</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside mt-2 text-slate-700 text-sm space-y-1">
+                    <li>מסלול 1: \( A \rightarrow B \rightarrow C \rightarrow D \rightarrow E \)</li>
+                    <li>מסלול 2: \( A \rightarrow C \rightarrow B \rightarrow D \rightarrow E \)</li>
+                    <li>\( V_{AB} = 4.5 \text{ V} \)</li>
+                    <li>\( V_{CD} = I_{lower} \cdot R_{CD} = 1.5 \cdot 6 = 9 \text{ V} \)</li>
+                    <li>\( V_{BD} = I_{upper} \cdot R_{BD} = 1.5 \cdot 5 = 7.5 \text{ V} \)</li>
+                    <li>\( V_{DE} = I_{total} \cdot R_E = 3 \cdot 1 = 3 \text{ V} \)</li>
+                    <li>\( V_{BC} = V_B - V_C = -1.5 \text{ V} \)</li>
+                    <li>\( V_{CB} = V_C - V_B = 1.5 \text{ V} \)</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong> 
+                <br>את סכום מפוחי המתח לאורך כל אחד מהמסלולים, ולהסביר את הקשר בין שני הסכומים הללו.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \Sigma V_{path} = V_{start} - V_{end} \)</span>
+            <p class="content-paragraph text-sm text-slate-600 mt-1">השדה החשמלי הסטטי הוא <strong>שדה משמר</strong>. המשמעות היא שהעבודה הנעשית בהעברת מטען בין שתי נקודות, ולכן גם הפרש הפוטנציאלים (המתח) בין שתי נקודות, אינם תלויים במסלול המעבר, אלא אך ורק בנקודות ההתחלה והסיום.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">נחשב את סכום המתחים (הפרשי הפוטנציאלים) לאורך המסלול הראשון. סכום המתחים מוגדר כסכום הירידות בפוטנציאל בכל מקטע:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \text{Path 1: } V_{AB} + V_{BC} + V_{CD} + V_{DE} \]
+                \[ = 4.5 + (-1.5) + 9 + 3 = 15 \text{ V} \]
+            </div>
+            
+            <p class="content-paragraph mt-4">כעת נחשב את סכום המתחים לאורך המסלול השני:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \text{Path 2: } V_{AC} + V_{CB} + V_{BD} + V_{DE} \]
+                \[ = 3 + 1.5 + 7.5 + 3 = 15 \text{ V} \]
+            </div>
+
+            <p class="content-paragraph mt-4">שימו לב ששני המסלולים מתחילים בנקודה \( A \) ומסתיימים בנקודה \( E \). אלגברית, כאשר מסכמים את הפרשי הפוטנציאלים לאורך מסלול, כל נקודות הביניים מצטמצמות:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ (V_A - V_B) + (V_B - V_C) + (V_C - V_D) + (V_D - V_E) = V_A - V_E \]
+            </div>
+            <p class="content-paragraph mt-2">והפרש הפוטנציאלים הכולל בין צומת \( A \) לצומת \( E \) הוא בדיוק המתח שנופל על כלל הנגדים במעגל, אשר שווה לכא"מ המקור (\( 15\text{ V} \)), בהנחה שההתנגדות הפנימית זניחה.</p>
+
+            <p class="final-answer">תשובה סופית: סכום המתחים בשני המסלולים הוא <span class="inline-ltr">15 V</span>. הקשר נובע מכך שהשדה החשמלי הוא שדה משמר, ולכן המתח (הפרש הפוטנציאלים) בין נקודה A לנקודה E אינו תלוי במסלול הנבחר.</p>
+        </div>
+
+        <div class="teacher-highlight mt-6">
+            <strong>טיפ מורה:</strong> נחתום את דימוי הבניין שלנו: תארו לעצמכם שאתם נמצאים בקומה 10 ורוצים להגיע לקומה 25. האם זה משנה אם תעלו לשם ישירות, או שאולי תעלו קודם לקומה 30 ורק אז תרדו חזרה ל-25? ממש לא. בסופו של דבר, הפרש הגבהים הכולל שעברתם הוא תמיד 15 קומות בדיוק. זוהי המשמעות המעשית של "שדה משמר" בפיזיקה! הפרש הפוטנציאלים (המתח) בין צומת A ל-E תלוי אך ורק בנקודת ההתחלה ובנקודת הסיום, ולא ב"טיול" שעשינו בתוך הענפים השונים של המעגל. חוק הלולאות של קירכהוף מבוסס בדיוק על העיקרון הפשוט הזה.
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link="" href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"></path>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"></circle>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+
