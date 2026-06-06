@@ -1,0 +1,694 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"><head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פיזיקה 5 יח"ל: זרם ישר - נורות והספקים</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פיזיקה 5 יח"ל: זרם ישר - נורות והספקים</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">בגרות 2000 שאלה 2</h2>
+        <p class="mt-3 text-slate-500">פתרון מודרך, מוסבר וצעד-אחר-צעד לניתוח מעגלי זרם</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link="" href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">מבוא לפתרון</h3>
+        <p class="content-paragraph">שלום תלמידים יקרים! לפנינו שאלת בגרות קלאסית העוסקת בהספקים של נורות וחיבורן במעגל. זכרו את כלל הזהב: נתונים הרשומים על נורה (הספק ומתח נומינלי) מתארים את תנאי העבודה האופטימליים שלה. תפקידנו הוא לנתח מה קורה כאשר הנורות משולבות יחד במעגל.</p>
+    </section>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א': חישוב הזרם המקסימלי לכל נורה</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong><br>
+                עבור הנורה הראשונה (נסמנה באות L1): ההספק הנומינלי הוא <span class="inline-ltr">\( P_1 = 2 \text{ W} \)</span> והמתח הנומינלי הוא <span class="inline-ltr">\( V_1 = 3 \text{ V} \)</span>.<br>
+                עבור הנורה השנייה (נסמנה באות L2): ההספק הנומינלי הוא <span class="inline-ltr">\( P_2 = 3 \text{ W} \)</span> והמתח הנומינלי הוא <span class="inline-ltr">\( V_2 = 6 \text{ V} \)</span>.<br>
+                <span class="text-sm text-slate-500 mt-1">* כל הנתונים הם כבר ביחידות תקניות (MKS: וואט ווולט), לכן אין צורך בהמרה.</span>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong><br>
+                אנו נדרשים למצוא את הזרם המקסימלי המותר דרך כל אחת מהנורות בנפרד, כלומר את הזרמים הנומינליים <span class="inline-ltr">\( I_1 \)</span> ו- <span class="inline-ltr">\( I_2 \)</span>.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( P = I V_{AB} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">נבודד את הזרם \( I \) מהנוסחה: מתוך הקשר \( P = I V \) נקבל כי הזרם שווה ל- \( I = \frac{P}{V} \).</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I_1 = \frac{P_1}{V_1} = \frac{2}{3} \approx 0.667 \text{ A} \]
+            </div>
+            <div class="math-container text-center" dir="ltr">
+                \[ I_2 = \frac{P_2}{V_2} = \frac{3}{6} = 0.5 \text{ A} \]
+            </div>
+            <p class="final-answer">הזרם המקסימלי המותר דרך הנורה הראשונה הוא <span class="inline-ltr">\( 0.667 \text{ A} \)</span>, ודרך הנורה השנייה הוא <span class="inline-ltr">\( 0.5 \text{ A} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            חשוב לדייק במשמעות של "ערכים נומינליים". אלו הם הערכים הנדרשים כדי שהנורה תאיר ב"אורה המלא" על פי הגדרת היצרן. אם נחבר אותה למתח נמוך יותר, ההספק שיתפתח יהיה קטן יותר והיא פשוט תאיר חלש יותר מ"אורה המלא". ומה יקרה אם נחבר אותה למתח גבוה יותר? הנורה לא בהכרח תישרף מיד! כל עוד היא לא נשרפת, היא תפיק הספק גדול יותר ותאיר באור חזק יותר מ"אורה המלא". עם זאת, במצב זה אין אחריות יצרן וקיימת סבירות גבוהה שחוט הלהט יתחמם יתר על המידה והנורה תישרף. לכן, בפתרון תרגילים אנו מתייחסים לזרם הנומינלי כגבול העליון המותר לעבודה תקינה.
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': ניתוח הנורות בחיבור טורי</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong><br>
+                הנורות חוברו בטור יחד עם נגד של <span class="inline-ltr">\( R = 1.5 \Omega \)</span>. אנו יודעים מהסעיף הקודם שהזרמים המקסימליים הם <span class="inline-ltr">\( I_1 = 0.667 \text{ A} \)</span> ו- <span class="inline-ltr">\( I_2 = 0.5 \text{ A} \)</span>. מתח הספק מכוון כך שהנורות מפיקות את עוצמת האור המקסימלית האפשרית מבלי להישרף.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong><br>
+                לזהות איזו משתי הנורות תקבל את המתח הרשום עליה (הנומינלי), ועל איזו נורה יתפתח מתח קטן מזה הרשום עליה.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">תכונת החיבור הטורי: הזרם שווה בכל רכיבי המעגל</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">כיוון שהנורות מחוברות בטור, זורם בהן בדיוק אותו הזרם: <span class="inline-ltr">\( I_{total} = I_{L1} = I_{L2} \)</span>.</p>
+            <p class="content-paragraph">היות ואסור לנו לשרוף אף אחת מהנורות, עלינו להגביל את זרם המעגל לפי הנורה ה"רגישה" יותר, כלומר זו שהזרם המקסימלי שלה הוא הקטן יותר. נשווה בין הזרמים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I_{total} \le 0.5 \text{ A} \quad \text{and} \quad I_{total} \le 0.667 \text{ A} \]
+            </div>
+            <p class="content-paragraph">לכן, הזרם המקסימלי שיכול לזרום במעגל הוא הזרם הקטן מבין השניים, שהוא <span class="inline-ltr">\( I = 0.5 \text{ A} \)</span>.</p>
+            <p class="content-paragraph">זרם זה שווה בדיוק לזרם הנומינלי של הנורה השנייה (של ה- <span class="inline-ltr">\( 3\text{W}, 6\text{V} \)</span>). מכיוון שזורם בה הזרם הנומינלי שלה, יתפתח עליה המתח הנומינלי שלה (<span class="inline-ltr">\( 6\text{V} \)</span>).</p>
+            <p class="content-paragraph">לעומת זאת, בנורה הראשונה (של ה- <span class="inline-ltr">\( 2\text{W}, 3\text{V} \)</span>) זורם זרם של <span class="inline-ltr">\( 0.5 \text{ A} \)</span>, שהוא קטן מהזרם הנומינלי שלה הדרוש לתאורה מלאה (<span class="inline-ltr">\( 0.667 \text{ A} \)</span>). מכיוון שהזרם קטן מהרצוי, גם המתח שיתפתח עליה יהיה קטן מהמתח הנומינלי הרשום עליה.</p>
+            
+            <p class="final-answer">הנורה של ה- <span class="inline-ltr">\( 6\text{V}, 3\text{W} \)</span> תעבוד במתח הרשום עליה. על הנורה של ה- <span class="inline-ltr">\( 3\text{V}, 2\text{W} \)</span> יתפתח מתח קטן מן הרשום עליה.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            חשבו על חיבור טורי כמו על שרשרת אנשים. החוזק המקסימלי של השרשרת כולה נקבע אך ורק על ידי החוליה החלשה ביותר! במקרה שלנו, ה"חוליה החלשה" היא הנורה שיכולה לשאת זרם קטן יותר.
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': חישוב מתח ההדקים של הספק</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong><br>
+                אנו במצב המתואר בסעיף ב', כלומר הזרם במעגל הטורי הוא <span class="inline-ltr">\( I = 0.5 \text{ A} \)</span>. ההתנגדות הנתונה של הנגד היא <span class="inline-ltr">\( R_3 = 1.5 \Omega \)</span>.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong><br>
+                את מתח ההדקים של הספק (מתח המקור). מאחר שלא נתון שיש למקור התנגדות פנימית, מתח ההדקים שווה למתח הכולל הנופל על המעגל החיצוני.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( V = I R \)</span>
+            <span class="formula-badge">\( R_T = \sum_i R_i \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">ראשית, נמצא את ההתנגדות של כל נורה. ההתנגדות היא תכונה פיזיקלית קבועה של חוט הלהט, והיא מחושבת על פי הנתונים הנומינליים (כי המתח והזרם הנומינליים מקיימים את חוק אוהם יחד): מתוך <span class="inline-ltr">\( V = I R \)</span> נבודד את ההתנגדות ונקבל <span class="inline-ltr">\( R = \frac{V}{I} \)</span>.</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ R_1 = \frac{V_1}{I_1} = \frac{3}{2/3} = 4.5 \Omega \]
+            </div>
+            <div class="math-container text-center" dir="ltr">
+                \[ R_2 = \frac{V_2}{I_2} = \frac{6}{0.5} = 12 \Omega \]
+            </div>
+            <p class="content-paragraph">כעת, המעגל שלנו הוא מעגל טורי טהור הכולל את שתי הנורות והנגד. ההתנגדות השקולה של המעגל היא סכום ההתנגדויות:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ R_T = R_1 + R_2 + R_3 = 4.5 + 12 + 1.5 = 18 \Omega \]
+            </div>
+            <p class="content-paragraph">לבסוף, נמצא את מתח ההדקים של הספק לפי חוק אוהם הכללי למעגל:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_{T} = I \cdot R_T = 0.5 \cdot 18 = 9 \text{ V} \]
+            </div>
+            
+            <p class="final-answer">מתח ההדקים של הספק במצב זה הוא <span class="inline-ltr">\( 9 \text{ V} \)</span>.</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה 1:</strong>
+            דרך נוספת לפתרון היא חישוב המתח על כל רכיב בנפרד וחיבורם: על הנגד נופל מתח של <span class="inline-ltr">\( V_R = 0.5 \cdot 1.5 = 0.75\text{V} \)</span>. על הנורה השנייה נופל מתח נומינלי של <span class="inline-ltr">\( 6\text{V} \)</span>. על הנורה הראשונה נופל מתח של <span class="inline-ltr">\( V_{L1} = I \cdot R_1 = 0.5 \cdot 4.5 = 2.25\text{V} \)</span>. סכום המתחים במעגל טורי הוא מתח המקור: <span class="inline-ltr">\( V_T = 0.75 + 6 + 2.25 = 9\text{V} \)</span>. שתי הדרכים נכונות ומצוינות!
+            <br><br>
+            <strong>טיפ מורה 2 - קריטי להבנה:</strong>
+            מדוע חישבנו את התנגדות הנורה בעזרת הערכים הנומינליים (המתח והזרם על פי נתוני היצרן) ולא בעזרת הזרם בפועל שזורם כרגע במעגל? תלמידים רבים מתבלבלים כאן וחושבים שמדובר בטעות! חשוב להבין שהתנגדות היא תכונה פיזיקלית מבנית של חוט הלהט (נקבעת לפי אורכו, עוויו והחומר ממנו הוא עשוי), ולכן היא נשארת קבועה. הערכים הנומינליים מהווים מעין "תעודת זהות" שממנה אנו מחלצים את התנגדות הנורה פעם אחת בלבד. משלב זה, נשתמש בהתנגדות הקבועה הזו כנתון אמין כדי לנתח מה קורה לנורה בכל מעגל חדש שאליו היא תחובר, גם אם הזרמים והמתחים בו שונים לחלוטין.
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': הוספת נגד במקביל לאחת הנורות</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong><br>
+                המטרה החדשה שלנו היא ש<strong>שתי</strong> הנורות יאירו בעוצמה מקסימלית. לשם כך, אנו חייבים להזרים בכל אחת מהן את הזרם הנומינלי המדויק שלה: <span class="inline-ltr">\( I_1 = 0.667 \text{ A} \)</span> דרך נורה 1, ו- <span class="inline-ltr">\( I_2 = 0.5 \text{ A} \)</span> דרך נורה 2. נתון שהתלמיד מחבר נגד נוסף במקביל לאחת מהן.
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong><br>
+                להסביר באופן פיזיקלי לאיזו מהנורות (L1 או L2) יש לחבר את הנגד הנוסף במקביל, כדי לאפשר את המצב הרצוי.
+            </div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\( \sum I_{in} = \sum I_{out} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">ראינו שבחיבור טורי (ללא הנגד הנוסף), הזרם זהה בשתי הנורות. אך כעת נדרש שדרכן יעברו זרמים שונים!</p>
+            <p class="content-paragraph">נורה 1 צריכה לקבל זרם גדול יותר (<span class="inline-ltr">\( 0.667 \text{ A} \)</span>) לעומת נורה 2 שזקוקה לזרם קטן יותר (<span class="inline-ltr">\( 0.5 \text{ A} \)</span>).</p>
+            <p class="content-paragraph">איך ייתכן שייכנס למערכת זרם גדול של <span class="inline-ltr">\( 0.667 \text{ A} \)</span>, אך רק חלק ממנו יעבור בנורה 2? התשובה היא שעלינו לייצר "מסלול עוקף" סביב נורה 2. כך הזרם הראשי יזרום בשלמותו דרך נורה 1, וכשיגיע לאזור של נורה 2 הוא יתפצל לשני ענפים: ענף אחד עבור נורה 2 (שייקח בדיוק <span class="inline-ltr">\( 0.5 \text{ A} \)</span>), וענף שני עבור הנגד המקביל שייקח את שארית הזרם.</p>
+            
+            <!-- המחשה גרפית (SVG) -->
+            <div class="visual-frame">
+                <div class="w-full flex justify-center">
+                    <div class="w-full max-w-md bg-white border border-slate-200 rounded-lg shadow-sm physics-diagram-wrapper" style="display: inline-block; direction: ltr; vertical-align: middle; text-align: center;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAAGOCAYAAABv+WffAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAADIKADAAQAAAABAAABjgAAAABCS03DAABAAElEQVR4Ae3dfYwc533Y8Wf27igKscU1YIpyHEtLWKQYUYJOSJwmhgMv6xZw4RQk0wJGjRpcvTiwFaA8AS5gwAVuCcSugbggGaSyYUviKUGMBChCCogB/+NwhbpGkPyhM/Rivgm3kqOYMlVoSVm1xNvdp7/f7M7d7NzM7uzevszLd6DlvD0z8zyfmQea3z3PzBjDgAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACMxNwZnZkDowAAmkTKEmGy75MN2T6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AggggAACCCCAQLYEqlIcf2CwFlG8YDrdphxIe0bm/fvSeW8oy4R/nQY0g54l8bZljAACCCCAAAIIIIAAAhkRqEo5/IHBWkS5BrWCHAnsR/dZCuzrbCDNmcB6ZhFAAAEEEEAAAQQQQCDjAlUpX5wARBm025Q/rU6X5afDmvz866q6MDCUZD7YlascSMMsAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIpddQewAACX9JREFUIIAAAggggAACCCCAQEIEnITkg2wggAACCCDQV+CeR68tWWOKhWZz5cLKh+p9E09xZWnpreItN5qVtmMfcIxTtI6pz83Pn77w7Q8MnUdvX7Zgim1jalee3F3rV5QDj14rt4w57FhTssY2jDXPXX769pXgNqXKW8Ud882l4PKo+UtP7q4G1x344luldrNZ0eU3m/On6isfaATTMI8AAgjEEZiPk4g0CCCAAAIIzFrAWue43GSXmvPzNclLfdb50ePvf+TNY/bt1qm2Y4rGOHL/L4P801pvLu1/+Fr10tO7T+iiOIMGE+23W2dkXyXdR6HzJ8Ja2LYaDMgxzrSsKet697hyfPmvsu+RN5dNoX308ndvX/W23WneLbbs/LI3H2NcDaZprbc0gDmuyxcWWnUZrciPAQEEEBhagABkaDI2QAABBBBAwJhuELCiFm1jTzuOc85xpBWiZRaN45yUlpDqPQ9fvX7x6TtO9fPSVo+FG81lCSbkBt8NJRqSvthvm/Z667ysL0nAUWtb53Sh0K5LgFYsWKNB2hHTds5L/h70WmHeNTsbC7b1UL99SvhUkjxHBikS3hx2c6c7adtj8u+KTjIggAACwwoQgAwrRnoEEEAAAQREoBsEGOu0T7zy5J6qD2X17kev1aVb1Pm2M7cs3Z9W+nVX2vF263m58S9J8FG3jvNQwdqKNY7e4IcO+x7+hay3Jenude7Skx88GkhU2/fItfOyrNxaX5eARoMaaS7qdJda0emoQVpOznQCIGclmMbt6mWtBjyrEiOVZH1Zu3X1K1dwH8wjgAACnkDBm2CMAAIIIIAAAvEE9IZcgwANGq70Bh/uDvTZDWkxOCcz8uzFTTcIiNqz7kdbUNZb7zw46JkP3YfjFJZ1XGitP67j4CDBzAkJTuqS8JPBdVHz2pojZano+rnW+gkd+4eW7QZEbXtacvCMrhtULv/2TCOAAAJ+AVpA/BpMI4AAAghkSkC7N+18991inEJd+Hb8B9vlhvxIp7WgUIvatzzLcVpaQY5YUzgsaapR6SRgOPTKk7fXotb7l3stEY5pPxv1IH43iNnr327QtDzf4QY1ElxEPOAv3bpkmGu3as15R1t3jltbiB3gDDo+6xFAIF8CBCD5Ot+UFgEEEMiVwM5fNhfl4evzcQot3aYOxWmB6OzLPqBjaeV4Nmrfzeb86sJcU+OUxag0ujz+Md2Qx92XtILUdFs3wNIytp2S45hGYWFu1XvuQ9fHGbrPslQ0bVjrh3b5klVFKWytG/TUpZtXQ5aVxaw8TP5lGwYEEEDAEIBwESCAAAIIZFdgfr4ur6RaiVNACSb0pjreoG+9svIciD50HjHo8xHylqy6drE68MWfl4ZpYYnYpbHWSgDiyHPuZtV7A5dMS3AgR5GN5M1YZt+j106tN+dPxH0+Y2Drh7PR/crteqV5k2DntLVm2bFuy0hNlzEggAACcQUIQOJKkQ4BBBBAIHUC3daAh8adcUfeOKW3/PPzzXqcfc+15opx0g1KIw+n36VpNt525QZN7hu4GhKclCQ0OCbZWpKWl7Ike1B+fYdBrR/d9WXdyXp74Zy3s7Z8o0QCtmX3eN0H3b11jBFAAIFBAjyEPkiI9QgggAACCGxT4D0JWLa5i57NpbXjiLR6rK63frn38lO3L+mHA2VcmWs198rrdOuSeHH/o29UezYKmRnU+tG6uV7ubOb0vMmr2+2qJuuK2g2rk4Z/EUAAgXgCtIDEcyIVAggggEAKBSb1EPqwFLf06ao17L689HPN1tHLK3sb3ryO9RkNCQge0lcAy0Pi+tHAqi4PGzZbP2xdApcTYWn0jVva0iOtHVuedZFuWM9JN6yytsbItrWw7VmGAAIIhAkQgISpsAwBBBBAIBMCk3oI3WpAIc0Q7fWFRYGqR2HJzXtJ172zvlDX8XYHCQQaclgJCPq/Bav7kHix37MnXuuHlOWZsDdq7fvCLxZtu5N/KevJ/Q+/ebIn/9IPq/vsCd8E6YFhBgEEBgkQgAwSYj0CCCCAQGoFWm7Lg1OLUwD3K+ZxEkoaefj6J9IusCjblKI20Rt4ozfpEjTEfSA8al/ecjnmq+67sJzCqrcsbCzfAZFAxUZ2+/K3fsw32yth+zBtbUHRcEf+7VNOWV28Zb5ZkfEp+TEggAACAwUIQAYSkQABBBBAIK0Cl797u96oHxp3/h3HWZXuR8fa1hyWfYffeLfk9bvSZCGtFc+N7fhWvkQu+5RjfzJqn/qFcmuaJV3/7rs7G2HpBrV+6DZymLKGH/qdkqhX7d7z6LUlMTjZ1yEsAyxDAIFcC/AQeq5PP4VHAAEEEBhF4L3m/Ipspzf37rcwwvbhfbHcWudc2PpRlq2353Rf7nG1FSNsHzsKbX0mQyOI1bCWl852+tVzW49q/fjoI28e6XQf0y+9767p7sIGv4N29wpLwzIEEEAgKEAAEhRhHgEEEEAAgQECemOv38LQZPJK3jP+YEAffN/38JtnvBv4y0/fvuLfna6T5ynW7nn46pJ/eZxp/3GlFeO8/7i6vfttEKdddffVtm7+3GnfP3FaP+TmQFt2dNjy8HlnceffboCzqnPtZqHSWcq/CCCAQH8BumD192EtAggggAACoQI3m/On5HsbcqNuF+UDgGv7H7l2ToKOhnm7pa/ILcpGjblW65B/4wOVn5fkuZSK27XJzGtLxSn/+jjTwePKA+c1bc2QUGhRjr+o+7BO+8SVp/as6LR/0IBF8lrp1/qxmUa/jN4amD/ponVC3rpVtnbumByr6j8e0wgggECYAC0gYSosQwABBBBAYICA/vV/vTUvAYZ9RpNKUHFEgoCKTBWl+1NNXm37YPDtUu+anY3udzokSGi52w04zJbVetzLT+1+0L3x73zzo9w5rjxzIkGPLH/8ypN7qls2lAVxWj82vv0hXbiC+Q/bZ7M5vyrLG1LuEt8ECRNiGQIIBAWc4ALmEUAAAQQQQGA4gVJlrTg//z4NAEyz+Ut59qL3+xzBvfV7PW4w7aB593W58qFD/Sr7hW9/qD4oPesRQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAAEEEEAAAQQQQAABBBBAAIHYAv8fXhE886XVk6IAAAAASUVORK5CYII=" class="replaced-physics-diagram" style="width: 100%; height: auto; display: inline-block; margin: 0px auto;"></div>
+                </div>
+            </div>
+
+            <p class="content-paragraph">חישוב הזרם העודף שצריך "לעקוף" את נורה 2:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I_{R} = I_{L1} - I_{L2} = 0.667 - 0.5 = 0.167 \text{ A} \]
+            </div>
+            
+            <p class="final-answer">כדי שנורה L1 תוכל לקבל את הזרם הגדול שהיא צריכה מבלי לשרוף את L2, יש לחבר את הנגד הנוסף במקביל לנורה השנייה (זו שרשום עליה <span class="inline-ltr">\( 3\text{W}, 6\text{V} \)</span>).</p>
+        </div>
+
+        <div class="teacher-highlight">
+            <strong>טיפ מורה:</strong>
+            חישבו על זרם חשמלי כמו על זרימת מים בצינורות. יש לנו משאבה הדוחפת מים. הצינור הראשון (נורה 1) חייב להעביר כמות גדולה של מים בשנייה כדי לעבוד היטב. הצינור השני (נורה 2) צר יותר, ויכול להעביר רק כמות קטנה יותר. אם נכריח את כל המים לעבור גם בצינור השני, הצינור השני יתפוצץ! הפתרון? להוסיף צינור עוקף (מעקף - מקביל) סביב הצינור הצר, דרכו יזרמו המים העודפים.
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link="" href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"></path>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"></circle>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+
+</body></html>
