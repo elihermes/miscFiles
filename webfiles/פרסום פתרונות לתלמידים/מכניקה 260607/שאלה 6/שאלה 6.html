@@ -1,0 +1,437 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בפיזיקה - כבידה</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .solution-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-top: 4px solid #3b82f6;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .formula-badge {
+            display: inline-block;
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0.25rem;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: #dcfce7;
+            border: 1px solid #86efac;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .math-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.5rem 0;
+            direction: ltr;
+        }
+
+        .version-stamp {
+            text-align: center;
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <div class="solution-container">
+        
+        <header class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">פתרון שאלה במכניקה: חוק הכבידה העולמי</h1>
+            
+            <div class="version-stamp" id="versionStamp">
+                <span class="version-label">עודכן:</span>
+                <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+            </div>
+
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full md:w-3/4 h-auto rounded-lg border border-slate-200 mx-auto mb-6 shadow-sm" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <div style="display:none;" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mx-auto w-3/4 mb-6">
+                תמונת השאלה (question-image.png) לא נמצאה בתיקייה. עליך להעלות אותה.
+            </div>
+        </header>
+
+        <!-- תרשים כוחות ותנועה כללי -->
+        <div class="section-card">
+            <h3 class="text-xl font-bold mb-4 text-slate-800">תרשים כוחות ותנועה מעגלית של הירח (Phobos) סביב מאדים</h3>
+            <p class="text-slate-700 mb-4">באיור מטה מוצג כוכב הלכת מאדים במרכז, והירח פובוס המקיף אותו במסלול מעגלי. הכוח היחיד הפועל על הירח הוא כוח הכבידה המכוון למרכז מאדים, והוא משמש ככוח הצנטריפטלי (רדיאלי).</p>
+            <div class="flex justify-center my-4 overflow-x-auto">
+                <svg width="400" height="400" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Orbit -->
+                    <circle cx="200" cy="200" r="140" fill="none" stroke="#cbd5e1" stroke-width="2" stroke-dasharray="8,8" />
+                    
+                    <!-- Mars -->
+                    <circle cx="200" cy="200" r="30" fill="#dc2626" stroke="#991b1b" stroke-width="2" />
+                    <text x="210" y="245" font-family="Arial" font-size="14" font-weight="bold" fill="#7f1d1d">Mars (M)</text>
+                    
+                    <!-- Phobos -->
+                    <circle cx="340" cy="200" r="10" fill="#94a3b8" stroke="#475569" stroke-width="2" />
+                    <text x="355" y="205" font-family="Arial" font-size="14" fill="#334155">m</text>
+
+                    <!-- Radius (r) -->
+                    <line x1="200" y1="200" x2="330" y2="200" stroke="#64748b" stroke-width="2" stroke-dasharray="4,4" />
+                    <text x="260" y="190" font-family="Arial" font-size="16" fill="#475569">r</text>
+
+                    <!-- Gravitational Force (Fg) -->
+                    <line x1="340" y1="200" x2="270" y2="200" stroke="#dc2626" stroke-width="3" />
+                    <path d="M 270 200 L 280 195 L 280 205 Z" fill="#dc2626" />
+                    <text x="285" y="185" font-family="Arial" font-size="16" font-weight="bold" fill="#dc2626">F&#x209C;</text>
+
+                    <!-- Velocity Vector (v) -->
+                    <line x1="340" y1="200" x2="340" y2="120" stroke="#2563eb" stroke-width="3" />
+                    <path d="M 340 120 L 335 130 L 345 130 Z" fill="#2563eb" />
+                    <text x="350" y="150" font-family="Arial" font-size="16" font-weight="bold" fill="#2563eb">v</text>
+
+                    <!-- Positive Radial Axis -->
+                    <line x1="400" y1="200" x2="200" y2="200" stroke="#94a3b8" stroke-width="1" stroke-dasharray="2,2" />
+                    <text x="220" y="220" font-family="Arial" font-size="12" fill="#64748b">+R</text>
+                    <path d="M 200 200 L 210 196 L 210 204 Z" fill="#94a3b8" />
+                </svg>
+            </div>
+        </div>
+
+        <!-- סעיף א -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">סעיף א</h2>
+            
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">1</span> מה נתון:</div>
+                <p class="text-slate-700">רדיוס המסלול של הירח נתון בקילומטרים ונדרש להמירו למערכת MKS (מטרים): \( r = 9400 \text{ km} = 9400 \cdot 10^3 \text{ m} = 9.4 \cdot 10^6 \text{ m} \). זמן המחזור נתון בשניות: \( T = 2.75 \cdot 10^4 \text{ s} \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">2</span> מה מחפשים:</div>
+                <p class="text-slate-700">את גודל המהירות המשיקית \( v \) שבה הירח סובב את מאדים.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">3</span> נוסחאות ועקרונות בשימוש:</div>
+                <p class="text-slate-700">הקשר בין מהירות משיקית לזמן מחזור בתנועה מעגלית קצובה: <span class="formula-badge">\( v = \frac{2\pi r}{T} \)</span>.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">4</span> הצבה ופתרון:</div>
+                <p class="text-slate-700">נציב את הנתונים המומרים אל תוך הנוסחה:</p>
+                <div class="math-scroll">
+                    \[ v = \frac{2\pi \cdot 9.4 \cdot 10^6}{2.75 \cdot 10^4} = 2147.46 \text{ m/s} \]
+                </div>
+                <p class="text-slate-700">נעגל את התוצאה ל-3 ספרות מהותיות.</p>
+                <div class="final-answer">
+                    מהירות הירח במסלולו היא \( 2150 \text{ m/s} \) (או \( 2.15 \cdot 10^3 \text{ m/s} \)).
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ב -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">סעיף ב</h2>
+            
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">1</span> מה נתון:</div>
+                <p class="text-slate-700">גודל המהירות שחישבנו בסעיף הקודם (מומלץ להשתמש בערך המדויק להמשך חישובים): \( v = 2147.46 \text{ m/s} \). רדיוס המסלול במטרים: \( r = 9.4 \cdot 10^6 \text{ m} \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">2</span> מה מחפשים:</div>
+                <p class="text-slate-700">את גודל התאוצה הרדיאלית (הצנטריפטלית) \( a_R \) של הירח.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">3</span> נוסחאות ועקרונות בשימוש:</div>
+                <p class="text-slate-700">הנוסחה לתאוצה רדיאלית: <span class="formula-badge">\( a_R = \frac{v^2}{r} \)</span>.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">4</span> הצבה ופתרון:</div>
+                <p class="text-slate-700">נציב את הנתונים:</p>
+                <div class="math-scroll">
+                    \[ a_R = \frac{2147.46^2}{9.4 \cdot 10^6} \approx 0.4905 \text{ m/s}^2 \]
+                </div>
+                <div class="final-answer">
+                    גודל התאוצה הרדיאלית של הירח הוא \( 0.491 \text{ m/s}^2 \).
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ג -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">סעיף ג</h2>
+            
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">1</span> מה נתון:</div>
+                <p class="text-slate-700">התאוצה הרדיאלית: \( a_R = 0.4905 \text{ m/s}^2 \), רדיוס המסלול \( r = 9.4 \cdot 10^6 \text{ m} \), וקבוע הכבידה העולמי מתוך דף הנוסחאות: \( G = 6.67 \cdot 10^{-11} \frac{\text{N}\cdot\text{m}^2}{\text{kg}^2} \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">2</span> מה מחפשים:</div>
+                <p class="text-slate-700">את המסה של מאדים \( M \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">3</span> נוסחאות ועקרונות בשימוש:</div>
+                <p class="text-slate-700">חוק הכבידה העולמי של ניוטון: <span class="formula-badge">\( F_G = G\frac{m_1 m_2}{r^2} \)</span>, והחוק השני של ניוטון לתנועה מעגלית: <span class="formula-badge">\( \sum F_R = m a_R \)</span> כאשר הכיוון החיובי מוגדר למרכז המעגל.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">4</span> הצבה ופתרון:</div>
+                <p class="text-slate-700">הכוח היחיד שפועל בציר הרדיאלי הוא כוח הכבידה \( F_G \) שמפעיל מאדים על הירח שמסתו \( m \). נפתח את המשוואה ההדרגתית מתוך החוק השני של ניוטון:</p>
+                <div class="math-scroll">
+                    \[ \sum F_R = m a_R \]
+                    \[ G\frac{M \cdot m}{r^2} = m \cdot a_R \]
+                </div>
+                <p class="text-slate-700">מסת הירח \( m \) מצטמצמת בשני אגפי המשוואה (הכוח הפנימי של הכבידה פועל ביחס ישר למסה ולכן תאוצת הנפילה אינה תלויה בה). נחלץ את מסת מאדים \( M \):</p>
+                <div class="math-scroll">
+                    \[ G\frac{M}{r^2} = a_R \implies M = \frac{a_R \cdot r^2}{G} \]
+                </div>
+                <p class="text-slate-700">נציב את הנתונים:</p>
+                <div class="math-scroll">
+                    \[ M = \frac{0.4905 \cdot (9.4 \cdot 10^6)^2}{6.67 \cdot 10^{-11}} = \frac{0.4905 \cdot 88.36 \cdot 10^{12}}{6.67 \cdot 10^{-11}} \approx 6.498 \cdot 10^{23} \text{ kg} \]
+                </div>
+                <div class="final-answer">
+                    מסת מאדים היא \( 6.50 \cdot 10^{23} \text{ kg} \).
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ד -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">סעיף ד</h2>
+            
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">1</span> מה נתון:</div>
+                <p class="text-slate-700">רדיוס מאדים הוא \( R = 3400 \text{ km} \), שיש להמירו ל- \( R = 3.4 \cdot 10^6 \text{ m} \). מסת המדען היא \( m_s = 70 \text{ kg} \), ומסת מאדים שמצאנו: \( M = 6.50 \cdot 10^{23} \text{ kg} \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">2</span> מה מחפשים:</div>
+                <p class="text-slate-700">את גודל כוח הכובד שפועל על המדען כשהוא נמצא על פני מאדים.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">3</span> נוסחאות ועקרונות בשימוש:</div>
+                <p class="text-slate-700">גודל כוח הכבידה העולמי על פני כוכב לכת מתקבל מנוסחת ניוטון: <span class="formula-badge">\( F_G = G\frac{M m_s}{R^2} \)</span> כאשר המרחק מחושב ממרכז מסת הכוכב.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">4</span> הצבה ופתרון:</div>
+                <p class="text-slate-700">נציב ישירות לנוסחת כוח הכבידה כדי למצוא את הכוח שהכוכב מפעיל על המדען שעל פני השטח:</p>
+                <div class="math-scroll">
+                    \[ F_G = \frac{6.67 \cdot 10^{-11} \cdot 6.50 \cdot 10^{23} \cdot 70}{(3.4 \cdot 10^6)^2} \]
+                    \[ F_G = \frac{3034.85 \cdot 10^{12}}{11.56 \cdot 10^{12}} = 262.53 \text{ N} \]
+                </div>
+                <div class="final-answer">
+                    כוח הכובד הפועל על המדען על פני מאדים הוא \( 263 \text{ N} \).
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ה -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">סעיף ה</h2>
+            
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">1</span> מה נתון:</div>
+                <p class="text-slate-700">גובה הלוויין מעל פני השטח הוא \( h = 2600 \text{ km} \), שלאחר המרה שווה ל- \( h = 2.6 \cdot 10^6 \text{ m} \). רדיוס המסלול הכולל ממרכז מאדים יהיה \( r_{sat} = R + h = 3.4 \cdot 10^6 + 2.6 \cdot 10^6 = 6.0 \cdot 10^6 \text{ m} \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">2</span> מה מחפשים:</div>
+                <p class="text-slate-700">את גודל כוח הכובד שפועל על המדען בגובה זה.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">3</span> נוסחאות ועקרונות בשימוש:</div>
+                <p class="text-slate-700">אותה נוסחת כבידה, אך כעת המרחק הוא רדיוס המסלול הכולל: <span class="formula-badge">\( F_G = G\frac{M m_s}{r_{sat}^2} \)</span>.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">4</span> הצבה ופתרון:</div>
+                <p class="text-slate-700">נחשב את הכוח תוך שימוש ברדיוס המסלול החדש \( r_{sat} \):</p>
+                <div class="math-scroll">
+                    \[ F_G = \frac{6.67 \cdot 10^{-11} \cdot 6.50 \cdot 10^{23} \cdot 70}{(6.0 \cdot 10^6)^2} \]
+                    \[ F_G = \frac{3034.85 \cdot 10^{12}}{36.0 \cdot 10^{12}} = 84.30 \text{ N} \]
+                </div>
+                <div class="final-answer">
+                    כוח הכובד הפועל על המדען בלוויין הוא \( 84.3 \text{ N} \).
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ו -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">סעיף ו</h2>
+            
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">1</span> מה נתון:</div>
+                <p class="text-slate-700">המדען נמצא בתוך הלוויין המקיף את מאדים. שניהם נעים באותו רדיוס מסלול \( r_{sat} = 6.0 \cdot 10^6 \text{ m} \) ובאותה תאוצה צנטריפטלית.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">2</span> מה מחפשים:</div>
+                <p class="text-slate-700">את הוראת המאזניים (הכוח הנורמלי \( N \)) שעליהם עומד המדען והסבר פיזיקלי לכך.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">3</span> נוסחאות ועקרונות בשימוש:</div>
+                <p class="text-slate-700">החוק השני של ניוטון בציר הרדיאלי הפונה למרכז הכוכב: <span class="formula-badge">\( \sum F_R = m a_R \)</span>, וכן העיקרון שלפיו מאזניים מודדים את הכוח הנורמלי שמפעיל המשטח.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">4</span> הצבה ופתרון:</div>
+                <p class="text-slate-700">נבנה את משוואת הכוחות עבור המדען: כוח הכבידה \( F_G \) מושך אותו כלפי מרכז מאדים (בכיוון החיובי של הציר הרדיאלי), והכוח הנורמלי \( N \) שמפעילים עליו המאזניים דוחף אותו החוצה (בכיוון השלילי). המשוואה היא:</p>
+                <div class="math-scroll">
+                    \[ F_G - N = m_s a_R \]
+                </div>
+                <p class="text-slate-700">הלוויין והמדען שבתוכו שניהם נמצאים בתנועה מעגלית במרחק זהה, ולכן הם חווים את אותה תאוצה רדיאלית, הנגרמת אך ורק מכוח הכבידה, כך שמתקיים עבור שניהם \( a_R = \frac{F_G}{m_s} \). אם נציב זאת למשוואה נקבל:</p>
+                <div class="math-scroll">
+                    \[ F_G - N = m_s \left( \frac{F_G}{m_s} \right) \]
+                    \[ F_G - N = F_G \implies N = 0 \]
+                </div>
+                <p class="text-slate-700">המדען נמצא למעשה במצב של נפילה חופשית מתמדת לעבר מרכז מאדים, בדיוק כמו המאזניים והלוויין שסביבו. לכן לא נוצר ביניהם שום כוח מגע.</p>
+                <div class="final-answer">
+                    המאזניים יראו אפס (מצב של חוסר משקל), שכן המדען והמאזניים נופלים שניהם באותה תאוצה ולכן אין ביניהם כוח נורמלי מגע הדדי.
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- כפתור צף להצגת תמונה -->
+    <button onclick="toggleModal()" class="fixed bottom-6 left-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-transform hover:scale-105 z-50 flex items-center justify-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <span class="font-medium hidden md:inline">הצג שאלה</span>
+    </button>
+
+    <!-- מודל התמונה -->
+    <div id="imageModal" class="fixed inset-0 z-[100] hidden items-center justify-center modal-overlay p-4 opacity-0 transition-opacity duration-300">
+        <div class="relative max-w-5xl w-full bg-white rounded-xl shadow-2xl p-2 transform scale-95 transition-transform duration-300" id="modalContent">
+            <button onclick="toggleModal()" class="absolute -top-4 -right-4 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow-lg z-10 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <div class="overflow-auto max-h-[90vh] rounded-lg">
+                <img src="question-image.png" alt="תמונת השאלה" class="w-full h-auto object-contain" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set update time
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: '2-digit' }) + ' ' + 
+                              now.toLocaleTimeString('he-IL', { hour: '2-digit', minute:'2-digit', second:'2-digit' });
+        document.getElementById('versionUpdatedAt').textContent = formattedDate;
+
+        // Modal Logic
+        const modal = document.getElementById('imageModal');
+        const modalContent = document.getElementById('modalContent');
+        let isModalOpen = false;
+
+        function toggleModal() {
+            isModalOpen = !isModalOpen;
+            if (isModalOpen) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                // Trigger reflow
+                void modal.offsetWidth;
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                document.body.style.overflow = 'hidden';
+            } else {
+                modal.classList.add('opacity-0');
+                modalContent.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+        }
+
+        // Close on outside click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                toggleModal();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isModalOpen) {
+                toggleModal();
+            }
+        });
+    </script>
+</body>
+</html>
