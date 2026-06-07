@@ -1,0 +1,473 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בפיזיקה - התנגשויות ותנע</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']],
+                processEscapes: true,
+                processEnvironments: true
+            },
+            options: {
+                skipHtmlTags: ['script', 'noscript', 'style', 'textarea', 'pre']
+            }
+        };
+    </script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f8fafc;
+            color: #0f172a;
+        }
+
+        .solution-container {
+            max-width: 1000px;
+            margin: 0 auto;
+            padding: 2rem 1rem;
+        }
+
+        .section-card {
+            background: white;
+            border-radius: 1rem;
+            box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+            padding: 2rem;
+            margin-bottom: 2rem;
+            border-top: 4px solid #3b82f6;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .formula-badge {
+            display: inline-block;
+            background-color: #eff6ff;
+            border: 1px solid #bfdbfe;
+            color: #1d4ed8;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-family: 'Courier New', Courier, monospace;
+            margin: 0.25rem;
+            direction: ltr;
+        }
+
+        .final-answer {
+            background-color: #dcfce7;
+            border: 1px solid #86efac;
+            color: #166534;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 1rem;
+            font-size: 1.1rem;
+        }
+
+        .math-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.5rem 0;
+            direction: ltr;
+        }
+
+        .version-stamp {
+            text-align: center;
+            font-size: 0.875rem;
+            color: #64748b;
+            margin-bottom: 2rem;
+        }
+
+        .modal-overlay {
+            background-color: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(4px);
+        }
+    </style>
+</head>
+<body class="bg-slate-50">
+
+    <div class="solution-container">
+        
+        <header class="text-center mb-10">
+            <h1 class="text-3xl md:text-4xl font-bold text-slate-800 mb-4">פתרון שאלה במכניקה: התנגשויות ושימור תנע</h1>
+            
+            <div class="version-stamp" id="versionStamp">
+                <span class="version-label">עודכן:</span>
+                <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+            </div>
+
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full md:w-3/4 h-auto rounded-lg border border-slate-200 mx-auto mb-6 shadow-sm" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <div style="display:none;" class="bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded relative mx-auto w-3/4 mb-6">
+                תמונת השאלה (question-image.png) לא נמצאה בתיקייה.
+            </div>
+        </header>
+
+        <!-- תרשים כוחות ותנועה כללי -->
+        <div class="section-card">
+            <h3 class="text-xl font-bold mb-4 text-slate-800">תרשים מערכת לפני ההתנגשות</h3>
+            <div class="flex justify-center my-4 overflow-x-auto">
+                <svg width="600" height="200" viewBox="0 0 600 200" xmlns="http://www.w3.org/2000/svg">
+                    <!-- Surface -->
+                    <line x1="50" y1="150" x2="550" y2="150" stroke="#334155" stroke-width="4" />
+                    <!-- Axis -->
+                    <line x1="550" y1="170" x2="50" y2="170" stroke="#64748b" stroke-width="2" stroke-dasharray="5,5"/>
+                    <path d="M 550 170 L 540 165 L 540 175 Z" fill="#64748b" />
+                    <text x="560" y="175" font-family="Arial" font-size="16" fill="#64748b">+X</text>
+                    
+                    <!-- Mass 1 -->
+                    <rect x="200" y="90" width="60" height="60" fill="#e2e8f0" stroke="#1e293b" stroke-width="2" />
+                    <text x="230" y="125" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="#0f172a">m&#8321;</text>
+                    <!-- Vector V1 -->
+                    <line x1="190" y1="120" x2="130" y2="120" stroke="#dc2626" stroke-width="3" />
+                    <path d="M 130 120 L 140 115 L 140 125 Z" fill="#dc2626" />
+                    <text x="160" y="110" font-family="Arial" font-size="16" fill="#dc2626">v&#8321;</text>
+
+                    <!-- Mass 2 -->
+                    <rect x="400" y="90" width="60" height="60" fill="#e2e8f0" stroke="#1e293b" stroke-width="2" />
+                    <text x="430" y="125" font-family="Arial" font-size="20" font-weight="bold" text-anchor="middle" fill="#0f172a">m&#8322;</text>
+                    <!-- Vector V2 -->
+                    <line x1="390" y1="120" x2="300" y2="120" stroke="#2563eb" stroke-width="3" />
+                    <path d="M 300 120 L 310 115 L 310 125 Z" fill="#2563eb" />
+                    <text x="345" y="110" font-family="Arial" font-size="16" fill="#2563eb">v&#8322;</text>
+                </svg>
+            </div>
+        </div>
+
+        <!-- סעיף א.1 -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">סעיף א.1</h2>
+            
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">1</span> מה נתון:</div>
+                <p class="text-slate-700">מהגרף ניתן לראות כי עבור זמנים \( t < 1 \text{ sec} \) שתי המהירויות שליליות: ערך גרף I הוא \( -20 \text{ m/s} \) וערך גרף II הוא \( -10 \text{ m/s} \). כמו כן נתון כי הכיוון החיובי נקבע ימינה.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">2</span> מה מחפשים:</div>
+                <p class="text-slate-700">לאיזה כיוון (ימינה או שמאלה) נעים שני הגופים לפני ההתנגשות.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">3</span> נוסחאות ועקרונות בשימוש:</div>
+                <p class="text-slate-700">הגדרת וקטור המהירות בקינמטיקה. הסימן של המהירות מעיד על כיוון התנועה ביחס לציר הייחוס.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">4</span> הצבה ופתרון:</div>
+                <p class="text-slate-700">מכיוון שהציר החיובי מוגדר ימינה, ומהירויות שני הגופים לפני ההתנגשות בעלות סימן שלילי, הרי ששני הגופים נעים נגד הכיוון החיובי.</p>
+                <div class="final-answer">
+                    שני הגופים נעים שמאלה.
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף א.2 -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">סעיף א.2</h2>
+            
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">1</span> מה נתון:</div>
+                <p class="text-slate-700">מסה \( m_1 = 2 \text{ kg} \) נמצאת משמאל למסה \( m_2 = 3 \text{ kg} \). שני הגופים נעים שמאלה, וידוע כי הם מתנגשים.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">2</span> מה מחפשים:</div>
+                <p class="text-slate-700">לקבוע איזה גרף (I או II) מתאים לאיזו מסה.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">3</span> נוסחאות ועקרונות בשימוש:</div>
+                <p class="text-slate-700">עקרון התנועה היחסית: כדי שגוף ישיג גוף אחר שנע באותו כיוון ויתנגש בו, עליו לנוע במהירות גדולה יותר.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">4</span> הצבה ופתרון:</div>
+                <p class="text-slate-700">שני הגופים נעים שמאלה. כדי שתתרחש התנגשות, הגוף שנמצא מאחור (מימין) חייב לנוע שמאלה מהר יותר מהגוף שנמצא מלפנים (משמאל). כלומר, המהירות של \( m_2 \) חייבת להיות גדולה בערכה המוחלט מהמהירות של \( m_1 \). מכאן נובע כי המהירות של \( m_2 \) היא זו ששווה ל- \( -20 \text{ m/s} \) והמהירות של \( m_1 \) היא זו ששווה ל- \( -10 \text{ m/s} \).</p>
+                <div class="final-answer">
+                    גרף I מתאים למסה \( m_2 \).<br>גרף II מתאים למסה \( m_1 \).
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ב.1 -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">סעיף ב.1</h2>
+            
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">1</span> מה נתון:</div>
+                <p class="text-slate-700">אנו בוחנים את תנועת מסה \( m_1 \) במהלך כל 2 השניות המתוארות בגרף, הכוללות את זמן ההתנגשות מ- \( t = 1.00 \text{ s} \) עד \( t = 1.01 \text{ s} \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">2</span> מה מחפשים:</div>
+                <p class="text-slate-700">האם התנע של \( m_1 \) נשמר במהלך פרק זמן זה.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">3</span> נוסחאות ועקרונות בשימוש:</div>
+                <p class="text-slate-700">הגדרת התנע: <span class="formula-badge">\( p = mv \)</span> ועקרון שימור התנע במערכת: התנע של גוף נשמר רק אם שקול הכוחות החיצוניים הפועלים עליו שווה לאפס.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">4</span> הצבה ופתרון:</div>
+                <p class="text-slate-700">במהלך ההתנגשות, מסה \( m_2 \) מפעילה כוח על מסה \( m_1 \). לגבי מסה \( m_1 \) בפני עצמה, כוח זה מהווה כוח חיצוני. מכיוון שפועל עליה כוח חיצוני שאינו אפס, המהירות שלה משתנה (כפי שניתן לראות בבירור בגרף), ולכן התנע שלה (\( p = mv \)) לא שווה לפני ואחרי פרק זמן זה.</p>
+                <div class="final-answer">
+                    לא. התנע של \( m_1 \) אינו נשמר כיוון שפועל עליה כוח חיצוני ממסה \( m_2 \) בזמן ההתנגשות.
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ב.2 -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">סעיף ב.2</h2>
+            
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">1</span> מה נתון:</div>
+                <p class="text-slate-700">מהירויות התחלתיות מתוך הגרפים וסעיפים קודמים: \( v_1 = -10 \text{ m/s} \), \( v_2 = -20 \text{ m/s} \). מסות: \( m_1 = 2 \text{ kg} \), \( m_2 = 3 \text{ kg} \). ההתנגשות היא אלסטית לחלוטין חד-ממדית.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">2</span> מה מחפשים:</div>
+                <p class="text-slate-700">שתי משוואות דרושות, וחישוב מהירויות שני הגופים לאחר ההתנגשות שנסמן ב- \( u_1 \) ו- \( u_2 \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">3</span> נוסחאות ועקרונות בשימוש:</div>
+                <p class="text-slate-700">חוק שימור התנע למערכת מבודדת: <span class="formula-badge">\( m_A v_A + m_B v_B = m_A u_A + m_B u_B \)</span> ומשוואת התנגשות אלסטית חד-ממדית: <span class="formula-badge">\( v_B - v_A = -(u_B - u_A) \)</span>.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">4</span> הצבה ופתרון:</div>
+                <p class="text-slate-700">משוואה ראשונה - שימור תנע:</p>
+                <div class="math-scroll">
+                    \[ m_1 v_1 + m_2 v_2 = m_1 u_1 + m_2 u_2 \]
+                    \[ 2 \cdot (-10) + 3 \cdot (-20) = 2u_1 + 3u_2 \]
+                    \[ -20 - 60 = 2u_1 + 3u_2 \]
+                    \[ -80 = 2u_1 + 3u_2 \]
+                </div>
+                <p class="text-slate-700">משוואה שנייה - התנגשות אלסטית:</p>
+                <div class="math-scroll">
+                    \[ v_2 - v_1 = -(u_2 - u_1) \]
+                    \[ -20 - (-10) = -u_2 + u_1 \]
+                    \[ -10 = u_1 - u_2 \implies u_2 = u_1 + 10 \]
+                </div>
+                <p class="text-slate-700">נציב את המשוואה השנייה בתוך הראשונה:</p>
+                <div class="math-scroll">
+                    \[ 2u_1 + 3(u_1 + 10) = -80 \]
+                    \[ 2u_1 + 3u_1 + 30 = -80 \]
+                    \[ 5u_1 = -110 \]
+                    \[ u_1 = -22 \text{ m/s} \]
+                </div>
+                <p class="text-slate-700">נמצא את המהירות של הגוף השני:</p>
+                <div class="math-scroll">
+                    \[ u_2 = -22 + 10 = -12 \text{ m/s} \]
+                </div>
+                <div class="final-answer">
+                    מהירות מסה 1 לאחר ההתנגשות: \( u_1 = -22 \text{ m/s} \)<br>
+                    מהירות מסה 2 לאחר ההתנגשות: \( u_2 = -12 \text{ m/s} \)
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ג -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">סעיף ג</h2>
+            
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">1</span> מה נתון:</div>
+                <p class="text-slate-700">מהירויות מסה 2: התחלתית \( v_2 = -20 \text{ m/s} \) וסופית \( u_2 = -12 \text{ m/s} \). מסתה היא \( m_2 = 3 \text{ kg} \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">2</span> מה מחפשים:</div>
+                <p class="text-slate-700">את גודל וכיוון השינוי בתנע של מסה 2.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">3</span> נוסחאות ועקרונות בשימוש:</div>
+                <p class="text-slate-700">הגדרת שינוי התנע: <span class="formula-badge">\( \Delta p = p_{final} - p_{initial} = m \cdot v_{final} - m \cdot v_{initial} \)</span>.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">4</span> הצבה ופתרון:</div>
+                <p class="text-slate-700">נחשב את השינוי בתנע של גוף 2:</p>
+                <div class="math-scroll">
+                    \[ \Delta p_2 = m_2 u_2 - m_2 v_2 \]
+                    \[ \Delta p_2 = 3 \cdot (-12) - 3 \cdot (-20) \]
+                    \[ \Delta p_2 = -36 - (-60) \]
+                    \[ \Delta p_2 = -36 + 60 = 24 \text{ kg} \cdot \text{m/s} \]
+                </div>
+                <p class="text-slate-700">מכיוון שהתוצאה חיובית, כיוון השינוי בתנע הוא ימינה (בכיוון הציר החיובי).</p>
+                <div class="final-answer">
+                    השינוי בתנע הוא בגודל \( 24 \text{ kg} \cdot \text{m/s} \) וכיוונו ימינה.
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ד -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">סעיף ד</h2>
+            
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">1</span> מה נתון:</div>
+                <p class="text-slate-700">מהירויות הגופים לאחר ההתנגשות: גוף 1 (השמאלי) נע במהירות \( -22 \text{ m/s} \) וגוף 2 (הימני) נע במהירות \( -12 \text{ m/s} \).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">2</span> מה מחפשים:</div>
+                <p class="text-slate-700">האם יתנגשו שוב? ונמק.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">3</span> נוסחאות ועקרונות בשימוש:</div>
+                <p class="text-slate-700">ניתוח קינמטי אינטואיטיבי של מיקום יחסי ומהירות יחסית.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">4</span> הצבה ופתרון:</div>
+                <p class="text-slate-700">שני הגופים נעים שמאלה לאחר ההתנגשות. הגוף השמאלי (\( m_1 \)) נע מהר יותר מהגוף הימני (\( m_2 \)) מכיוון ש- \( |-22| > |-12| \). מאחר והגוף המוביל נע מהר יותר מהגוף שעוקב אחריו, המרחק ביניהם ילך ויגדל עם הזמן.</p>
+                <div class="final-answer">
+                    לא, הם לא יתנגשו שוב כי המרחק ביניהם גדל.
+                </div>
+            </div>
+        </div>
+
+        <!-- סעיף ה -->
+        <div class="section-card">
+            <h2 class="text-2xl font-bold mb-4 text-slate-800">סעיף ה</h2>
+            
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">1</span> מה נתון:</div>
+                <p class="text-slate-700">התנגשות מתרחשת בפרק הזמן שבין \( 1.00 \text{ s} \) לבין \( 1.01 \text{ s} \). התנע הכולל של המערכת הוא \( p_{total} = -80 \text{ kg} \cdot \text{m/s} \) (מתוך סעיף ב.2).</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">2</span> מה מחפשים:</div>
+                <p class="text-slate-700">האם הגופים נעצרים באופן רגעי במהלך ההתנגשות. ואם לא, מתי יש להם מהירות שווה.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">3</span> נוסחאות ועקרונות בשימוש:</div>
+                <p class="text-slate-700">חוק שימור התנע למערכת, וקינמטיקה של תנועה שוות תאוצה: <span class="formula-badge">\( v = v_0 + at \)</span> כאשר התאוצה במהלך ההתנגשות מחושבת מהגרף.</p>
+            </div>
+
+            <div class="mb-4">
+                <div class="step-title"><span class="bg-blue-100 text-blue-800 p-1 rounded">4</span> הצבה ופתרון:</div>
+                <p class="text-slate-700">תחילה נבדוק את טענת התלמיד: אם שני הגופים נעצרים באותו רגע, מהירותם המשותפת היא 0, ולכן התנע הכולל יהיה 0. מאחר שהתנע במערכת נשמר ושווה ל- \( -80 \text{ kg} \cdot \text{m/s} \), מצב זה בלתי אפשרי וטענתו אינה נכונה.</p>
+                <p class="text-slate-700 mt-2">הרגע שבו מהירויות שני הגופים שוות מתרחש בשיא ההתעוותות (רגע ההתנגשות הפלסטית הרגעית). נסמן מהירות זו ב- \( v_c \) ונשתמש בשימור תנע:</p>
+                <div class="math-scroll">
+                    \[ (m_1 + m_2) v_c = p_{total} \]
+                    \[ (2 + 3) v_c = -80 \]
+                    \[ 5v_c = -80 \implies v_c = -16 \text{ m/s} \]
+                </div>
+                <p class="text-slate-700">נחשב את תאוצת אחד הגופים (למשל \( m_1 \)) מתוך הגרף בזמן ההתנגשות (משך ההתנגשות הוא \( 0.01 \text{ s} \)):</p>
+                <div class="math-scroll">
+                    \[ a_1 = \frac{u_1 - v_1}{\Delta t} = \frac{-22 - (-10)}{0.01} = \frac{-12}{0.01} = -1200 \text{ m/s}^2 \]
+                </div>
+                <p class="text-slate-700">נשתמש במשוואת המהירות כדי למצוא את פרק הזמן הדרוש ל- \( m_1 \) להגיע ממהירות של \( -10 \text{ m/s} \) למהירות של \( -16 \text{ m/s} \):</p>
+                <div class="math-scroll">
+                    \[ v(t) = v_0 + a_1 t \]
+                    \[ -16 = -10 - 1200 \cdot \Delta t \]
+                    \[ -6 = -1200 \cdot \Delta t \]
+                    \[ \Delta t = \frac{-6}{-1200} = 0.005 \text{ s} \]
+                </div>
+                <p class="text-slate-700">נוסיף זמן זה לזמן תחילת ההתנגשות:</p>
+                <div class="math-scroll">
+                    \[ t = 1.00 + 0.005 = 1.005 \text{ s} \]
+                </div>
+                <div class="final-answer">
+                    הטענה אינה נכונה. לגופים יש מהירות שווה ברגע \( t = 1.005 \text{ s} \).
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <!-- כפתור צף להצגת תמונה -->
+    <button onclick="toggleModal()" class="fixed bottom-6 left-6 bg-blue-600 hover:bg-blue-700 text-white p-4 rounded-full shadow-lg transition-transform hover:scale-105 z-50 flex items-center justify-center gap-2">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+        </svg>
+        <span class="font-medium hidden md:inline">הצג שאלה</span>
+    </button>
+
+    <!-- מודל התמונה -->
+    <div id="imageModal" class="fixed inset-0 z-[100] hidden items-center justify-center modal-overlay p-4 opacity-0 transition-opacity duration-300">
+        <div class="relative max-w-5xl w-full bg-white rounded-xl shadow-2xl p-2 transform scale-95 transition-transform duration-300" id="modalContent">
+            <button onclick="toggleModal()" class="absolute -top-4 -right-4 bg-red-500 hover:bg-red-600 text-white rounded-full p-2 shadow-lg z-10 transition-colors">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+                </svg>
+            </button>
+            <div class="overflow-auto max-h-[90vh] rounded-lg">
+                <img src="question-image.png" alt="תמונת השאלה" class="w-full h-auto object-contain" />
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Set update time
+        const now = new Date();
+        const formattedDate = now.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit', year: '2-digit' }) + ' ' + 
+                              now.toLocaleTimeString('he-IL', { hour: '2-digit', minute:'2-digit', second:'2-digit' });
+        document.getElementById('versionUpdatedAt').textContent = formattedDate;
+
+        // Modal Logic
+        const modal = document.getElementById('imageModal');
+        const modalContent = document.getElementById('modalContent');
+        let isModalOpen = false;
+
+        function toggleModal() {
+            isModalOpen = !isModalOpen;
+            if (isModalOpen) {
+                modal.classList.remove('hidden');
+                modal.classList.add('flex');
+                // Trigger reflow
+                void modal.offsetWidth;
+                modal.classList.remove('opacity-0');
+                modalContent.classList.remove('scale-95');
+                document.body.style.overflow = 'hidden';
+            } else {
+                modal.classList.add('opacity-0');
+                modalContent.classList.add('scale-95');
+                setTimeout(() => {
+                    modal.classList.add('hidden');
+                    modal.classList.remove('flex');
+                    document.body.style.overflow = '';
+                }, 300);
+            }
+        }
+
+        // Close on outside click
+        modal.addEventListener('click', (e) => {
+            if (e.target === modal) {
+                toggleModal();
+            }
+        });
+
+        // Close on Escape key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && isModalOpen) {
+                toggleModal();
+            }
+        });
+    </script>
+</body>
+</html>
