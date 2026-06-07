@@ -1,0 +1,528 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון מלא - מעגל עם תיל התנגדותי</title>
+    
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    <!-- MathJax for rendering equations -->
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)']],
+                displayMath: [['\\[', '\\]']]
+            },
+            chtml: {
+                matchFontHeight: false
+            }
+        };
+    </script>
+
+    <!-- Custom CSS based on requirements -->
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Rubik', sans-serif;
+            background-color: #f8fafc;
+        }
+        
+        .section-card {
+            background: white;
+            border-radius: 0.75rem;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            padding: 1.5rem;
+            margin-bottom: 2rem;
+            border-right: 4px solid #3b82f6;
+        }
+
+        .step-title {
+            font-weight: 600;
+            color: #1e40af;
+            margin-bottom: 0.5rem;
+            margin-top: 1rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .formula-badge {
+            display: inline-block;
+            background-color: #dbeafe;
+            color: #1e3a8a;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-family: monospace;
+            font-size: 0.9em;
+            margin: 0.25rem;
+            border: 1px solid #bfdbfe;
+        }
+
+        .final-answer {
+            background-color: #ecfdf5;
+            border: 1px solid #6ee7b7;
+            color: #065f46;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            font-weight: 600;
+            text-align: center;
+            margin-top: 1rem;
+            box-shadow: inset 0 2px 4px 0 rgba(0, 0, 0, 0.06);
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            background-color: #f1f5f9;
+            color: #64748b;
+            padding: 0.25rem 0.75rem;
+            border-radius: 9999px;
+            font-size: 0.875rem;
+            margin-bottom: 2rem;
+        }
+
+        .version-label {
+            font-weight: 600;
+        }
+
+        /* Floating Button */
+        #floatingBtn {
+            position: fixed;
+            bottom: 2rem;
+            left: 2rem;
+            background-color: #2563eb;
+            color: white;
+            border: none;
+            border-radius: 9999px;
+            padding: 0.75rem 1.5rem;
+            font-weight: 600;
+            box-shadow: 0 4px 6px -1px rgba(0, 0, 0, 0.1), 0 2px 4px -1px rgba(0, 0, 0, 0.06);
+            cursor: pointer;
+            transition: background-color 0.2s, transform 0.1s;
+            z-index: 50;
+        }
+
+        #floatingBtn:hover {
+            background-color: #1d4ed8;
+            transform: scale(1.05);
+        }
+
+        #imageModal {
+            display: none;
+            position: fixed;
+            inset: 0;
+            background-color: rgba(0, 0, 0, 0.75);
+            z-index: 100;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .modal-content {
+            background-color: white;
+            padding: 1rem;
+            border-radius: 0.5rem;
+            max-width: 90vw;
+            max-height: 90vh;
+            overflow: auto;
+            position: relative;
+        }
+
+        #closeModal {
+            position: absolute;
+            top: 0.5rem;
+            right: 0.5rem;
+            background-color: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 50%;
+            width: 2rem;
+            height: 2rem;
+            cursor: pointer;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        
+        .math-scroll {
+            overflow-x: auto;
+            overflow-y: hidden;
+            padding: 0.5rem 0;
+        }
+    </style>
+</head>
+<body class="text-slate-800">
+
+    <div class="max-w-4xl mx-auto p-4 md:p-8">
+        <h1 class="text-3xl font-bold text-center text-slate-900 mb-6">פתרון מוסבר: מעגל עם תיל התנגדותי</h1>
+        
+        <!-- תמונת השאלה המקורית מורחבת לרוחב מלא -->
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200 mx-auto mb-6" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+        <div style="display:none;" class="text-center text-red-500 mb-6 font-semibold">לא ניתן לטעון את התמונה המקורית (question-image.png)</div>
+
+        <!-- חותמת זמן -->
+        <div class="text-center">
+            <div class="version-stamp" id="versionStamp">
+                <span class="version-label">עודכן:</span>
+                <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+            </div>
+        </div>
+
+        <!-- סעיף א -->
+        <div class="section-card" id="section-a">
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-slate-100 pb-2 mb-4">סעיף א': פיתוח ביטוי מתמטי לגרף</h2>
+            
+            <div class="step-title">א. מה נתון:</div>
+            <ul class="list-disc list-inside space-y-1">
+                <li>מקור מתח לא אידיאלי בעל כוח אלקטרו-מניע \(\varepsilon\) והתנגדות פנימית \(r\).</li>
+                <li>נגד קבוע בעל התנגדות \(R_0 = 2 \text{ }\Omega\).</li>
+                <li>וולטמטר \(V_1\) מחובר במקביל למקור המתח ומודד את מתח ההדקים (\(V_{ab}\)).</li>
+                <li>וולטמטר \(V_2\) מחובר במקביל לנגד \(R_0\) ומודד את המתח עליו.</li>
+            </ul>
+
+            <div class="step-title">ב. מה מחפשים:</div>
+            <p>לפתח ביטוי של הוריית מד המתח \(V_1\) כפונקציה של הוריית מד המתח \(V_2\), כלומר \(V_1(V_2)\), תוך שימוש בקבועים \(\varepsilon, r, R_0\).</p>
+
+            <div class="step-title">ג. נוסחאות ועקרונות בשימוש:</div>
+            <div class="flex flex-wrap gap-2 mb-2">
+                <span class="formula-badge">\( V_{ab} = \varepsilon - Ir \)</span>
+                <span class="formula-badge">\( V = IR \)</span>
+            </div>
+            <p>עקרון: מכיוון שמכשירי המדידה אידיאליים, הזרם הראשי \(I\) היוצא מהסוללה הוא בדיוק אותו הזרם שעובר דרך הנגד הקבוע \(R_0\).</p>
+
+            <div class="step-title">ד. הצבה ופתרון:</div>
+            <p>לפי חוק אוהם עבור הנגד \(R_0\), נבטא את הזרם במעגל \(I\) באמצעות הוריית הוולטמטר \(V_2\):</p>
+            <div class="math-scroll">
+                \[ I = \frac{V_2}{R_0} \]
+            </div>
+            <p>נציב את הביטוי שקיבלנו לזרם אל תוך משוואת מתח ההדקים של הסוללה, אשר נמדד על ידי \(V_1\):</p>
+            <div class="math-scroll">
+                \[ V_1 = \varepsilon - I \cdot r = \varepsilon - \left(\frac{V_2}{R_0}\right) \cdot r \]
+            </div>
+            <p>נסדר את המשוואה בצורה של פונקציה ליניארית (תבנית של \(y = mx + b\)):</p>
+            <div class="math-scroll">
+                \[ V_1 = -\frac{r}{R_0}V_2 + \varepsilon \]
+            </div>
+            <div class="final-answer">
+                הביטוי המבוקש הוא: \( V_1 = -\frac{r}{R_0}V_2 + \varepsilon \)
+            </div>
+        </div>
+
+        <!-- סעיף ב -->
+        <div class="section-card" id="section-b">
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-slate-100 pb-2 mb-4">סעיף ב': שרטוט הגרף</h2>
+            
+            <div class="step-title">א. מה נתון:</div>
+            <ul class="list-disc list-inside space-y-1">
+                <li>טבלת ערכים מתוך הניסוי. עבור \(V_2\) הערכים נעים בין \(5.5\text{ V}\) ל-\(12\text{ V}\). עבור \(V_1\) הערכים נעים בין \(12.1\text{ V}\) ל-\(13.6\text{ V}\).</li>
+                <li>בסעיף א' הוכחנו שהקשר בין המשתנים הוא ליניארי.</li>
+            </ul>
+
+            <div class="step-title">ב. מה מחפשים:</div>
+            <p>לשרטט גרף מדויק המציג את המשתנה התלוי \(V_1\) כפונקציה של המשתנה הבלתי תלוי \(V_2\), הכולל קו מגמה.</p>
+
+            <div class="step-title">ג. נוסחאות ועקרונות בשימוש:</div>
+            <p>בניית גרף פיזיקלי דורשת סימון צירים ברור (כולל יחידות מידה), קנה מידה אחיד, פיזור נקודות לפי הטבלה והעברת קו ישר (קו מגמה) העובר קרוב ככל האפשר לכל הנקודות.</p>
+
+            <div class="step-title">ד. הצבה ופתרון:</div>
+            <p>להלן שרטוט הגרף מתוך נתוני הטבלה. ציר ה-X מייצג את \(V_2\) וציר ה-Y מייצג את \(V_1\).</p>
+            
+            <div class="flex justify-center w-full overflow-x-auto mt-4">
+                <svg width="600" height="400" viewBox="0 0 600 400" class="bg-white border rounded-lg shadow-sm">
+                    <defs>
+                        <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                            <path d="M 0 0 L 10 5 L 0 10 z" fill="#333" />
+                        </marker>
+                        <style>
+                            .axis { stroke: #333; stroke-width: 2; }
+                            .grid { stroke: #e5e7eb; stroke-width: 1; stroke-dasharray: 4; }
+                            .trendline { stroke: #2563eb; stroke-width: 2; }
+                            .data-point { fill: #ef4444; stroke: #fff; stroke-width: 1; }
+                            .text-label { font-family: sans-serif; font-size: 14px; fill: #333; }
+                        </style>
+                    </defs>
+
+                    <!-- Grid X (V2 from 0 to 14, step 2. width: 560. 1 unit = 40px) -->
+                    <!-- 50 is the x origin -->
+                    <line x1="130" y1="50" x2="130" y2="350" class="grid"/> <!-- 2 -->
+                    <line x1="210" y1="50" x2="210" y2="350" class="grid"/> <!-- 4 -->
+                    <line x1="290" y1="50" x2="290" y2="350" class="grid"/> <!-- 6 -->
+                    <line x1="370" y1="50" x2="370" y2="350" class="grid"/> <!-- 8 -->
+                    <line x1="450" y1="50" x2="450" y2="350" class="grid"/> <!-- 10 -->
+                    <line x1="530" y1="50" x2="530" y2="350" class="grid"/> <!-- 12 -->
+                    
+                    <!-- Grid Y (V1 from 0 to 16, step 2. height: 320. 1 unit = 20px) -->
+                    <!-- 350 is the y origin -->
+                    <line x1="50" y1="310" x2="590" y2="310" class="grid"/> <!-- 2 -->
+                    <line x1="50" y1="270" x2="590" y2="270" class="grid"/> <!-- 4 -->
+                    <line x1="50" y1="230" x2="590" y2="230" class="grid"/> <!-- 6 -->
+                    <line x1="50" y1="190" x2="590" y2="190" class="grid"/> <!-- 8 -->
+                    <line x1="50" y1="150" x2="590" y2="150" class="grid"/> <!-- 10 -->
+                    <line x1="50" y1="110" x2="590" y2="110" class="grid"/> <!-- 12 -->
+                    <line x1="50" y1="70" x2="590" y2="70" class="grid"/> <!-- 14 -->
+                    <line x1="50" y1="30" x2="590" y2="30" class="grid"/> <!-- 16 -->
+
+                    <!-- Axes -->
+                    <line x1="50" y1="350" x2="600" y2="350" class="axis" marker-end="url(#arrow)"/> <!-- X -->
+                    <line x1="50" y1="350" x2="50" y2="20" class="axis" marker-end="url(#arrow)"/> <!-- Y -->
+
+                    <!-- Labels -->
+                    <text x="560" y="380" class="text-label" font-weight="bold">V2 (V)</text>
+                    <text x="20" y="15" class="text-label" font-weight="bold">V1 (V)</text>
+
+                    <!-- X ticks -->
+                    <text x="45" y="370" class="text-label">0</text>
+                    <text x="125" y="370" class="text-label">2</text>
+                    <text x="205" y="370" class="text-label">4</text>
+                    <text x="285" y="370" class="text-label">6</text>
+                    <text x="365" y="370" class="text-label">8</text>
+                    <text x="440" y="370" class="text-label">10</text>
+                    <text x="520" y="370" class="text-label">12</text>
+                    
+                    <!-- Y ticks -->
+                    <text x="30" y="275" class="text-label">4</text>
+                    <text x="30" y="195" class="text-label">8</text>
+                    <text x="22" y="115" class="text-label">12</text>
+                    <text x="22" y="75" class="text-label">14</text>
+
+                    <!-- Trendline y = -0.25x + 15 -->
+                    <!-- At x=0, y=15 -> (50, 350 - 15*20) = (50, 50) -->
+                    <!-- At x=14, y=11.5 -> (50 + 14*40, 350 - 11.5*20) = (610, 120) -->
+                    <line x1="50" y1="50" x2="590" y2="117.5" class="trendline"/>
+
+                    <!-- Data Points -->
+                    <!-- (5.5, 13.6) -> px(270, 78) -->
+                    <circle cx="270" cy="78" r="4" class="data-point"/>
+                    <!-- (7, 13.2) -> px(330, 86) -->
+                    <circle cx="330" cy="86" r="4" class="data-point"/>
+                    <!-- (8, 13) -> px(370, 90) -->
+                    <circle cx="370" cy="90" r="4" class="data-point"/>
+                    <!-- (9, 12.7) -> px(410, 96) -->
+                    <circle cx="410" cy="96" r="4" class="data-point"/>
+                    <!-- (10, 12.5) -> px(450, 100) -->
+                    <circle cx="450" cy="100" r="4" class="data-point"/>
+                    <!-- (12, 12.1) -> px(530, 108) -->
+                    <circle cx="530" cy="108" r="4" class="data-point"/>
+                </svg>
+            </div>
+            <div class="final-answer">
+                הגרף מעלה מציג את פיזור הנקודות מתוך הטבלה ואת הקו הישר המייצג את המגמה (התאמה ליניארית).
+            </div>
+        </div>
+
+        <!-- סעיף ג -->
+        <div class="section-card" id="section-c">
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-slate-100 pb-2 mb-4">סעיף ג': מציאת פרמטרי הסוללה מהגרף</h2>
+            
+            <div class="step-title">א. מה נתון:</div>
+            <ul class="list-disc list-inside space-y-1">
+                <li>תבנית המשוואה שפיתחנו: \( V_1 = -\frac{r}{R_0}V_2 + \varepsilon \).</li>
+                <li>התנגדות הנגד הקבוע: \(R_0 = 2 \text{ }\Omega\).</li>
+                <li>נקודות מהגרף (ניתן לבחור זוג נקודות נוחות לחשוב). נבחר למשל את הנקודות \((8, 13)\) ו-\((10, 12.5)\).</li>
+            </ul>
+
+            <div class="step-title">ב. מה מחפשים:</div>
+            <p>את התנגדותה הפנימית של הסוללה (\(r\)) ואת הכא"מ שלה (\(\varepsilon\)).</p>
+
+            <div class="step-title">ג. נוסחאות ועקרונות בשימוש:</div>
+            <div class="flex flex-wrap gap-2 mb-2">
+                <span class="formula-badge">\( m = \frac{y_2 - y_1}{x_2 - x_1} \)</span>
+            </div>
+            <p>עקרון: בגרף ליניארי, שיפוע הגרף מייצג את המקדם של המשתנה הבלתי תלוי, ונקודת חיתוך ציר ה-Y מייצגת את האיבר החופשי.</p>
+
+            <div class="step-title">ד. הצבה ופתרון:</div>
+            <p>תחילה, נחשב את שיפוע הישר מתוך שתי הנקודות שבחרנו:</p>
+            <div class="math-scroll">
+                \[ m = \frac{12.5 - 13}{10 - 8} = \frac{-0.5}{2} = -0.25 \]
+            </div>
+            <p>נשווה את השיפוע שמצאנו לביטוי התיאורטי של השיפוע מהנוסחה בסעיף א' (\(-\frac{r}{R_0}\)):</p>
+            <div class="math-scroll">
+                \[ -\frac{r}{2} = -0.25 \]
+                \[ r = 0.25 \cdot 2 = 0.5 \text{ }\Omega \]
+            </div>
+            <p>כעת, כדי למצוא את הכא"מ (\(\varepsilon\)) המהווה את נקודת החיתוך עם ציר ה-Y, נציב את אחת הנקודות במשוואת הישר יחד עם השיפוע:</p>
+            <div class="math-scroll">
+                \[ 13 = -0.25 \cdot 8 + \varepsilon \]
+                \[ 13 = -2 + \varepsilon \implies \varepsilon = 15 \text{ V} \]
+            </div>
+            <div class="final-answer">
+                התנגדותה הפנימית של הסוללה היא \( r = 0.500 \text{ }\Omega \) והכא"מ שלה הוא \( \varepsilon = 15.0 \text{ V} \).
+            </div>
+        </div>
+
+        <!-- סעיף ד -->
+        <div class="section-card" id="section-d">
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-slate-100 pb-2 mb-4">סעיף ד': חישוב התנגדות התיל ליחידת אורך</h2>
+            
+            <div class="step-title">א. מה נתון:</div>
+            <ul class="list-disc list-inside space-y-1">
+                <li>מיקום הגררה P נמצא במרחק \(x = 25 \text{ cm}\). מיד נבצע המרת יחידות למטרים: \(x = 0.25 \text{ m}\).</li>
+                <li>במצב זה נמדדו המתחים: \(V_2 = 8 \text{ V}\), \(V_1 = 13 \text{ V}\).</li>
+                <li>ידוע לנו ש-\(R_0 = 2 \text{ }\Omega\).</li>
+            </ul>
+
+            <div class="step-title">ב. מה מחפשים:</div>
+            <p>את הערך של \(\lambda\), שהיא ההתנגדות החשמלית של התיל ליחידת אורך (ביחידות של \(\Omega/\text{m}\)).</p>
+
+            <div class="step-title">ג. נוסחאות ועקרונות בשימוש:</div>
+            <div class="flex flex-wrap gap-2 mb-2">
+                <span class="formula-badge">\( V = IR \)</span>
+                <span class="formula-badge">\( R_T = R_1 + R_2 + \dots \)</span>
+                <span class="formula-badge">\( R_x = \lambda \cdot x \)</span>
+            </div>
+            <p>עקרון: הזרם במעגל הטורי אחיד. מתח ההדקים \(V_1\) הוא המתח הכולל הנופל על הרכיבים החיצוניים של המעגל: הנגד \(R_0\) וחלק התיל שאורכו \(x\) (התנגדותו נסמן כ-\(R_x\)).</p>
+
+            <div class="step-title">ד. הצבה ופתרון:</div>
+            <p>ראשית, נמצא את הזרם במעגל \(I\) באמצעות המדידה על הנגד \(R_0\):</p>
+            <div class="math-scroll">
+                \[ I = \frac{V_2}{R_0} = \frac{8}{2} = 4 \text{ A} \]
+            </div>
+            <p>אנו יודעים שהמתח הכולל על המעגל החיצוני (מתח ההדקים) הוא \(13 \text{ V}\). מתח זה מתחלק בין הנגד הקבוע לבין התיל (\(R_x\)):</p>
+            <div class="math-scroll">
+                \[ V_1 = I \cdot (R_0 + R_x) \]
+                \[ 13 = 4 \cdot (2 + R_x) \]
+                \[ 13 = 8 + 4R_x \]
+                \[ 4R_x = 5 \implies R_x = 1.25 \text{ }\Omega \]
+            </div>
+            <p>התנגדות זו שייכת למקטע שאורכו \(0.25 \text{ m}\). נשתמש בקשר של התנגדות לאורך כדי לחלץ את \(\lambda\):</p>
+            <div class="math-scroll">
+                \[ R_x = \lambda \cdot x \]
+                \[ 1.25 = \lambda \cdot 0.25 \]
+                \[ \lambda = \frac{1.25}{0.25} = 5 \text{ }\Omega/\text{m} \]
+            </div>
+            <div class="final-answer">
+                ההתנגדות ליחידת אורך של התיל היא: \( \lambda = 5.00 \text{ }\Omega/\text{m} \).
+            </div>
+        </div>
+
+        <!-- סעיף ה -->
+        <div class="section-card" id="section-e">
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-slate-100 pb-2 mb-4">סעיף ה': הגררה בנקודה N</h2>
+            
+            <div class="step-title">א. מה נתון:</div>
+            <ul class="list-disc list-inside space-y-1">
+                <li>הגררה P ממוקמת בנקודה N. משמעות הדבר היא שמרחק הגררה הוא \(x = 0 \text{ m}\).</li>
+                <li>לפיכך, חלק התיל הכלול במעגל אורכו אפס, והתנגדותו היא \(R_x = 0 \text{ }\Omega\).</li>
+                <li>נתוני המעגל: \(\varepsilon = 15 \text{ V}, r = 0.5 \text{ }\Omega, R_0 = 2 \text{ }\Omega\).</li>
+            </ul>
+
+            <div class="step-title">ב. מה מחפשים:</div>
+            <p>מה תהיה הוריית מד המתח \(V_1\) ומד הזרם \(A\) במצב זה.</p>
+
+            <div class="step-title">ג. נוסחאות ועקרונות בשימוש:</div>
+            <div class="flex flex-wrap gap-2 mb-2">
+                <span class="formula-badge">\( I = \frac{\varepsilon}{R_{total}} \)</span>
+                <span class="formula-badge">\( V_{ab} = \varepsilon - Ir \)</span>
+            </div>
+            <p>עקרון: בהיעדר התנגדות של התיל, ההתנגדות השקולה של המעגל מורכבת אך ורק מהנגד הקבוע וההתנגדות הפנימית של המקור.</p>
+
+            <div class="step-title">ד. הצבה ופתרון:</div>
+            <p>נחשב תחילה את ההתנגדות הכוללת של המעגל, ואת הזרם (הוריית מד הזרם \(A\)):</p>
+            <div class="math-scroll">
+                \[ R_{total} = R_0 + R_x + r = 2 + 0 + 0.5 = 2.5 \text{ }\Omega \]
+                \[ I = \frac{\varepsilon}{R_{total}} = \frac{15}{2.5} = 6 \text{ A} \]
+            </div>
+            <p>כעת, נחשב את מתח ההדקים (הוריית מד המתח \(V_1\)):</p>
+            <div class="math-scroll">
+                \[ V_1 = \varepsilon - I \cdot r = 15 - 6 \cdot 0.5 = 15 - 3 = 12 \text{ V} \]
+            </div>
+            <p>הסבר: כאשר הגררה מוצבת בנקודה N, זרם המעגל עוקף לחלוטין את התיל ההתנגדותי. במצב זה הנגד היחיד המהווה צרכן במעגל הוא הנגד הקבוע \(R_0\). לכן מתקבל זרם מקסימלי במעגל ומתח ההדקים הוא פשוט המתח על הנגד הקבוע (\(V = I \cdot R_0 = 6 \cdot 2 = 12\text{V}\)).</p>
+            <div class="final-answer">
+                הוריית מד הזרם תהיה \( 6.00 \text{ A} \) והוריית מד המתח \(V_1\) תהיה \( 12.0 \text{ V} \).
+            </div>
+        </div>
+
+        <!-- סעיף ו -->
+        <div class="section-card" id="section-f">
+            <h2 class="text-2xl font-bold text-slate-800 border-b-2 border-slate-100 pb-2 mb-4">סעיף ו': החלפת הנגד בנורה</h2>
+            
+            <div class="step-title">א. מה נתון:</div>
+            <ul class="list-disc list-inside space-y-1">
+                <li>התלמידה החליפה את הנגד \(R_0\) בנורה בעלת הנתונים הנומינליים: \(V_L = 2 \text{ V}\) ו- \(P_L = 2 \text{ W}\).</li>
+                <li>אורכו הכולל של התיל בניסוי (מנקודה N עד M) נתון כ- \(60 \text{ cm}\). לאחר המרה: \(L = 0.6 \text{ m}\).</li>
+                <li>ההתנגדות ליחידת אורך: \(\lambda = 5 \text{ }\Omega/\text{m}\).</li>
+            </ul>
+
+            <div class="step-title">ב. מה מחפשים:</div>
+            <p>לבדוק האם קיימת נקודה \(x\) על התיל כך שהנורה תאיר באורה המלא (הספק נומינלי). אם כן, יש למצוא את \(x\). אם לא, יש לנמק מדוע.</p>
+
+            <div class="step-title">ג. נוסחאות ועקרונות בשימוש:</div>
+            <div class="flex flex-wrap gap-2 mb-2">
+                <span class="formula-badge">\( P = IV \)</span>
+                <span class="formula-badge">\( R = \frac{V}{I} \)</span>
+                <span class="formula-badge">\( I = \frac{\varepsilon}{R_T} \)</span>
+            </div>
+
+            <div class="step-title">ד. הצבה ופתרון:</div>
+            <p>תחילה, נחשב מהו הזרם הדרוש לנורה כדי שתאיר באורה המלא (זרם נומינלי), ואת התנגדותה הפנימית:</p>
+            <div class="math-scroll">
+                \[ I_L = \frac{P_L}{V_L} = \frac{2}{2} = 1 \text{ A} \]
+                \[ R_L = \frac{V_L}{I_L} = \frac{2}{1} = 2 \text{ }\Omega \]
+            </div>
+            <p>אנו רואים שהתנגדות הנורה שווה בדיוק להתנגדות הנגד שהיה קודם לכן (\(2\Omega\)). כעת, נחשב מה צריכה להיות ההתנגדות הכוללת של המעגל כדי שהזרם בו יהיה בדיוק \(1 \text{ A}\):</p>
+            <div class="math-scroll">
+                \[ I = \frac{\varepsilon}{R_{total}} \implies 1 = \frac{15}{R_L + R_x + r} \]
+                \[ 1 = \frac{15}{2 + R_x + 0.5} \implies 2.5 + R_x = 15 \]
+                \[ R_x = 12.5 \text{ }\Omega \]
+            </div>
+            <p>מצאנו כי דרוש קטע תיל בעל התנגדות של \(12.5\Omega\). נחשב מהו אורך התיל \(x\) הדרוש לשם כך:</p>
+            <div class="math-scroll">
+                \[ x = \frac{R_x}{\lambda} = \frac{12.5}{5} = 2.5 \text{ m} \]
+            </div>
+            <p><strong>מסקנה:</strong> כדי שהזרם ירד לערך של \(1\text{A}\) כך שהנורה תאיר בדיוק לפי הגדרות היצרן, נדרש תיל באורך של \(2.5\text{m}\). מכיוון שאורכו המקסימלי של התיל במערכת הוא רק \(0.6\text{m}\), הדבר אינו אפשרי. הזרם המינימלי האפשרי במעגל (כאשר הגררה בקצה M, \(x=0.6\text{m}\)) גדול משמעותית מ-\(1\text{A}\), ולכן הנורה תישרף בכל נקודה על פני התיל.</p>
+            <div class="final-answer">
+                לא. לא קיימת נקודה כזו. (האורך הנדרש לירידת הזרם הוא \(2.5\text{m}\), בעוד שהתיל כולו באורך של \(0.6\text{m}\) בלבד).
+            </div>
+        </div>
+
+    </div>
+
+    <!-- כפתור צף לפתיחת תמונת השאלה -->
+    <button id="floatingBtn" onclick="document.getElementById('imageModal').style.display='flex'">
+        <span class="flex items-center gap-2">
+            <svg xmlns="http://www.w3.org/2000/svg" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect><circle cx="8.5" cy="8.5" r="1.5"></circle><polyline points="21 15 16 10 5 21"></polyline></svg>
+            הצג שאלה
+        </span>
+    </button>
+
+    <!-- מודל (Modal) לתמונה -->
+    <div id="imageModal">
+        <div class="modal-content">
+            <button id="closeModal" onclick="document.getElementById('imageModal').style.display='none'">X</button>
+            <img src="question-image.png" alt="תמונת השאלה המקורית - מוגדלת" class="max-w-full h-auto rounded" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <div style="display:none;" class="text-center text-red-500 font-semibold p-4">לא ניתן לטעון את התמונה המקורית.</div>
+        </div>
+    </div>
+
+    <script>
+        // Set current date and time for the version stamp
+        function updateVersionStamp() {
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('he-IL', {day: '2-digit', month: '2-digit', year: '2-digit'}).replace(/\./g, '/');
+            const timeStr = now.toLocaleTimeString('he-IL', {hour: '2-digit', minute:'2-digit', second:'2-digit'});
+            document.getElementById('versionUpdatedAt').innerText = `${dateStr} ${timeStr}`;
+        }
+        updateVersionStamp();
+
+        // Close modal when clicking outside the image
+        document.getElementById('imageModal').addEventListener('click', function(e) {
+            if(e.target === this) {
+                this.style.display = 'none';
+            }
+        });
+        
+        // Escape key to close modal
+        document.addEventListener('keydown', function(e) {
+            if(e.key === 'Escape') {
+                document.getElementById('imageModal').style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>
