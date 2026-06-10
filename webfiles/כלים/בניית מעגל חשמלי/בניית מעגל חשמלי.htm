@@ -1,0 +1,920 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Smart Circuit Builder</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        body { font-family: system-ui, -apple-system, sans-serif; }
+        .canvas-bg {
+            background-image: linear-gradient(#e2e8f0 1px, transparent 1px), linear-gradient(90deg, #e2e8f0 1px, transparent 1px);
+            background-size: 20px 20px;
+        }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: transparent; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
+    </style>
+</head>
+<body class="flex flex-col h-screen bg-white overflow-hidden" onclick="window.selectSlot(event, null)">
+
+    <!-- סרגל עליון -->
+    <div class="bg-slate-800 text-white shadow-md p-4 flex items-center gap-3 z-20">
+        <div class="bg-blue-500 p-2 rounded-lg"><i data-lucide="activity"></i></div>
+        <h1 class="font-bold text-xl tracking-wide">Smart Circuit Builder</h1>
+    </div>
+
+    <div class="flex flex-1 overflow-hidden">
+        <!-- ארגז כלים שמאלי (פאנל שליטה) -->
+        <div class="w-80 bg-white border-l shadow-xl z-10 flex flex-col">
+            <!-- טאבים -->
+            <div class="flex border-b border-slate-200">
+                <button onclick="window.setActiveTab('structure')" id="tab-structure" class="flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 transition-colors border-b-2 border-blue-600 text-blue-600 bg-blue-50">
+                    <i data-lucide="grip-horizontal" class="w-4 h-4"></i> בקרת מבנה
+                </button>
+                <button onclick="window.setActiveTab('components')" id="tab-components" class="flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 transition-colors text-slate-500 hover:bg-slate-50">
+                    <i data-lucide="component" class="w-4 h-4"></i> רכיבים
+                </button>
+            </div>
+
+            <!-- תוכן הטאבים -->
+            <div class="flex-1 overflow-y-auto p-4" id="sidebar-content">
+                <!-- Content injected by JS -->
+            </div>
+        </div>
+
+        <!-- משטח השרטוט (קנבס) מחושב אוטומטית -->
+        <div class="flex-1 overflow-hidden bg-slate-50 relative flex">
+            <div class="flex-1 overflow-auto p-8 flex items-start justify-center relative canvas-bg">
+                <div id="canvas-container" class="relative shadow-lg bg-white border border-slate-200 rounded-xl" style="width: 800px; height: 400px; direction: ltr;">
+                    <svg id="canvas-svg" class="absolute top-0 left-0 w-full h-full pointer-events-none z-0"></svg>
+                    <div id="canvas-slots"></div>
+                </div>
+            </div>
+            
+            <!-- פאנל מאפיינים שמופיע בלחיצה על רכיב -->
+            <div id="properties-panel" class="absolute left-0 top-0 h-full z-30 pointer-events-none"></div>
+        </div>
+    </div>
+
+<script>
+    // --- State and Constants ---
+    const COMPONENT_TYPES = {
+        EMPTY: 'empty',
+        SOURCE: 'source',
+        RESISTOR: 'resistor',
+        SWITCH: 'switch',
+        LAMP: 'lamp',
+        GENERIC: 'generic',
+        WIRE: 'wire',
+        POTENTIOMETER: 'potentiometer', // זה ריאוסטט כשהוא ברכיבים
+        VOLTMETER: 'voltmeter',
+        AMMETER: 'ammeter'
+    };
+
+    const generateId = () => Math.random().toString(36).substr(2, 9);
+
+    const initialTree = [
+        { id: generateId(), elements: [{ id: generateId(), type: 'slot', componentType: COMPONENT_TYPES.EMPTY }] },
+        { 
+            id: generateId(), 
+            elements: [
+                { id: generateId(), type: 'slot', componentType: COMPONENT_TYPES.EMPTY },
+                { 
+                    id: generateId(), type: 'parallel', paths: [
+                        { id: generateId(), elements: [{ id: generateId(), type: 'slot', componentType: COMPONENT_TYPES.EMPTY }] },
+                        { id: generateId(), elements: [{ id: generateId(), type: 'slot', componentType: COMPONENT_TYPES.EMPTY }] }
+                    ]
+                },
+                { id: generateId(), type: 'slot', componentType: COMPONENT_TYPES.EMPTY }
+            ] 
+        },
+        { id: generateId(), elements: [{ id: generateId(), type: 'slot', componentType: COMPONENT_TYPES.EMPTY }] }
+    ];
+
+    let state = {
+        tree: initialTree,
+        leftWall: [[], []], 
+        rightWall: [[], []],
+        activeTab: 'structure',
+        selectedSlotId: null
+    };
+
+    // --- Math Engine ---
+    const ELEMENT_SPACING = 100;
+    const PARALLEL_PADDING = 50;
+    const WALL_SLOT_SPACING = 80;
+
+    const calcWidth = (elements) => {
+        return elements.reduce((sum, el) => {
+            if (el.type === 'slot') return sum + ELEMENT_SPACING;
+            if (el.type === 'parallel' || el.type === 'potentiometer_split') {
+                const innerMax = Math.max(...el.paths.map(p => calcWidth(p.elements)));
+                return sum + innerMax + PARALLEL_PADDING * 2;
+            }
+            return sum;
+        }, 0);
+    };
+
+    const calcHeight = (elements) => {
+        let max = 60; 
+        elements.forEach(el => {
+            if (el.type === 'parallel') {
+                const pHeight = el.paths.reduce((sum, p) => sum + calcHeight(p.elements) + 40, 0) - 40;
+                if (pHeight > max) max = pHeight;
+            }
+            if (el.type === 'potentiometer_split') {
+                // לפוטנציומטר יש נתיב ראשי (העליון) ונתיב גררה (התחתון)
+                const mainHeight = calcHeight(el.paths[0].elements);
+                const wiperHeight = calcHeight(el.paths[1].elements);
+                const totalH = mainHeight + wiperHeight + 60; // 60 is padding between them
+                if (totalH > max) max = totalH;
+            }
+        });
+        return max;
+    };
+
+    // --- State Mutators ---
+    window.setActiveTab = (tab) => {
+        state.activeTab = tab;
+        render();
+    };
+
+    window.addBranch = () => {
+        state.tree.push({ id: generateId(), elements: [{ id: generateId(), type: 'slot', componentType: COMPONENT_TYPES.EMPTY }] });
+        if (state.tree.length > 1) {
+            state.leftWall.push([]);
+            state.rightWall.push([]);
+        }
+        render();
+    };
+
+    window.addWallSlot = (wallSide, index) => {
+        const targetList = wallSide === 'left' ? state.leftWall[index] : state.rightWall[index];
+        targetList.push({ id: generateId(), type: 'slot', componentType: COMPONENT_TYPES.EMPTY });
+        render();
+    };
+
+    window.removeWallSlot = (wallSide, index, slotId) => {
+        if (wallSide === 'left') {
+            state.leftWall[index] = state.leftWall[index].filter(s => s.id !== slotId);
+        } else {
+            state.rightWall[index] = state.rightWall[index].filter(s => s.id !== slotId);
+        }
+        if (state.selectedSlotId === slotId) state.selectedSlotId = null;
+        render();
+    };
+
+    const mutateTree = (nodes, action, targetId) => {
+        return nodes.map(node => {
+            if (node.id === targetId) {
+                if (action === 'ADD_SLOT') {
+                    node.elements.push({ id: generateId(), type: 'slot', componentType: COMPONENT_TYPES.EMPTY });
+                } else if (action === 'ADD_PARALLEL') {
+                    node.elements.push({
+                        id: generateId(), type: 'parallel', paths: [
+                            { id: generateId(), elements: [{ id: generateId(), type: 'slot', componentType: COMPONENT_TYPES.EMPTY }] },
+                            { id: generateId(), elements: [{ id: generateId(), type: 'slot', componentType: COMPONENT_TYPES.EMPTY }] }
+                        ]
+                    });
+                } else if (action === 'ADD_POTENTIOMETER_SPLIT') {
+                    // מוסיפים בלוק חדש מסוג פיצול פוטנציומטר
+                    node.elements.push({
+                        id: generateId(), 
+                        type: 'potentiometer_split', 
+                        // תמיד 2 נתיבים: הראשון זה המשך ישיר, השני זה הגררה שיורדת למטה
+                        paths: [
+                            { id: generateId(), type: 'main_path', elements: [] }, 
+                            { id: generateId(), type: 'wiper_path', elements: [{ id: generateId(), type: 'slot', componentType: COMPONENT_TYPES.EMPTY }] }
+                        ],
+                        // מאפייני הפוטנציומטר עצמו
+                        potLabel: 'RV' + Math.floor(Math.random() * 100),
+                        potValue: '1KΩ'
+                    });
+                } else if (action === 'ADD_PATH') {
+                    node.paths.push({ id: generateId(), elements: [{ id: generateId(), type: 'slot', componentType: COMPONENT_TYPES.EMPTY }] });
+                }
+                return { ...node };
+            }
+            const newNode = { ...node };
+            if (newNode.elements) newNode.elements = mutateTree(newNode.elements, action, targetId);
+            if (newNode.paths) newNode.paths = mutateTree(newNode.paths, action, targetId);
+            return newNode;
+        });
+    };
+
+    const removeNode = (nodes, targetId) => {
+        return nodes.filter(n => n.id !== targetId).map(node => {
+            const newNode = { ...node };
+            if (newNode.elements) newNode.elements = removeNode(newNode.elements, targetId);
+            if (newNode.paths) newNode.paths = removeNode(newNode.paths, targetId);
+            return newNode;
+        });
+    };
+
+    window.handleStructureAction = (action, targetId) => {
+        state.tree = mutateTree(state.tree, action, targetId);
+        render();
+    };
+
+    window.handleRemoveNode = (targetId) => {
+        const index = state.tree.findIndex(b => b.id === targetId);
+        if (index !== -1) {
+            state.tree.splice(index, 1);
+            if (state.leftWall.length > 0) {
+                const segmentToRemove = Math.min(index, state.leftWall.length - 1);
+                state.leftWall.splice(segmentToRemove, 1);
+                state.rightWall.splice(segmentToRemove, 1);
+            }
+            render();
+            return;
+        }
+        state.tree = removeNode(state.tree, targetId);
+        render();
+    };
+
+    window.selectSlot = (e, id) => {
+        if(e) e.stopPropagation();
+        state.selectedSlotId = id;
+        render();
+    };
+
+    const findSlotById = (id) => {
+        let found = null;
+        const search = (elements) => {
+            if(!elements) return;
+            for (let el of elements) {
+                if (el.id === id) found = el;
+                // עדכון חיפוש גם לתוך פיצולי פוטנציומטר
+                if (el.type === 'parallel' || el.type === 'potentiometer_split') {
+                    el.paths.forEach(p => search(p.elements));
+                }
+            }
+        };
+        state.leftWall.forEach(seg => search(seg));
+        state.rightWall.forEach(seg => search(seg));
+        state.tree.forEach(b => search(b.elements));
+        return found;
+    };
+
+    window.updateProperty = (id, prop, value) => {
+        const slot = findSlotById(id);
+        if (slot) {
+            slot[prop] = value;
+            render();
+        }
+    };
+
+    window.removeComponent = (e, slotId) => {
+        if(e) e.stopPropagation();
+        const slot = findSlotById(slotId);
+        if (slot) {
+            slot.componentType = COMPONENT_TYPES.EMPTY;
+            slot.label = '';
+            slot.value = '';
+            slot.state = '';
+        }
+        state.selectedSlotId = null;
+        render();
+    };
+
+    // --- Drag and Drop ---
+    window.handleDragStart = (e, type) => {
+        e.dataTransfer.setData('componentType', type);
+    };
+
+    window.handleDrop = (e, slotId) => {
+        e.preventDefault(); 
+        e.stopPropagation();
+        const type = e.dataTransfer.getData('componentType');
+        if (!type) return;
+
+        const slot = findSlotById(slotId);
+        if (slot) {
+            slot.componentType = type;
+            
+            // Assign defaults
+            const prefix = {
+                'source': 'V', 'resistor': 'R', 'switch': 'SW', 'lamp': 'L',
+                'generic': 'U', 'wire': 'W', 'potentiometer': 'RV',
+                'voltmeter': 'VM', 'ammeter': 'AM'
+            }[type] || 'C';
+            slot.label = prefix + Math.floor(Math.random() * 100);
+            
+            let val = '';
+            if (['resistor', 'potentiometer'].includes(type)) val = '1KΩ';
+            if (type === 'source') val = '5V';
+            if (type === 'voltmeter') val = '0V';
+            if (type === 'ammeter') val = '0A';
+            if (type === 'lamp') val = '10W';
+            slot.value = val;
+            
+            if (type === 'switch') slot.state = 'open';
+            else if (type === 'source') slot.state = 'ideal';
+            else if (type === 'lamp') slot.state = 'off';
+            else slot.state = '';
+
+            state.selectedSlotId = slotId;
+        }
+
+        render();
+    };
+
+    window.handleDragOver = (e) => {
+        e.preventDefault();
+    };
+
+
+    // --- Rendering Visuals ---
+    const getComponentVisualHTML = (slot, orientation = 'horizontal') => {
+        const type = slot.componentType;
+        const isVertical = orientation === 'vertical';
+        const wrapperClass = `relative flex items-center justify-center w-full h-full transition-transform duration-200 ${isVertical ? 'rotate-90' : ''}`;
+
+        if (type === COMPONENT_TYPES.RESISTOR) return `
+            <div class="${wrapperClass}">
+                <div class="w-full h-0.5 bg-slate-800 absolute left-0 right-0 z-0"></div>
+                <div class="w-16 h-6 border-2 border-slate-800 bg-white z-10 flex items-center justify-center font-bold text-[10px] text-slate-800" dir="ltr">${slot.value || ''}</div>
+            </div>`;
+        else if (type === COMPONENT_TYPES.POTENTIOMETER) innerHTML = `
+            <div class="${wrapperClass}">
+                <div class="absolute top-1 left-1/2 -translate-x-1/2 flex flex-col items-center z-20">
+                    <div class="w-0.5 h-3 bg-slate-800"></div>
+                    <div class="w-0 h-0 border-l-[4px] border-r-[4px] border-t-[5px] border-l-transparent border-r-transparent border-t-slate-800"></div>
+                </div>
+                <div class="w-full flex items-center justify-center relative mt-3">
+                    <div class="w-full h-0.5 bg-slate-800 absolute left-0 right-0 z-0"></div>
+                    <div class="w-16 h-6 border-2 border-slate-800 bg-white z-10 flex items-center justify-center font-bold text-[10px] text-slate-800" dir="ltr">${slot.value || ''}</div>
+                </div>
+            </div>`;
+        else if (type === COMPONENT_TYPES.GENERIC) innerHTML = `
+            <div class="${wrapperClass}">
+                <div class="w-full h-0.5 bg-slate-800 absolute left-0 right-0 z-0"></div>
+                <div class="w-16 h-10 border-2 border-dashed border-slate-500 bg-white z-10 flex items-center justify-center text-[10px] font-bold text-center leading-tight overflow-hidden p-1">${slot.label || ''}</div>
+            </div>`;
+        else if (type === COMPONENT_TYPES.WIRE) innerHTML = `
+            <div class="${wrapperClass}">
+                <div class="w-full h-1 bg-slate-800 absolute left-0 right-0 z-0"></div>
+                <div class="absolute left-0 w-2 h-2 bg-slate-800 rounded-full"></div>
+                <div class="absolute right-0 w-2 h-2 bg-slate-800 rounded-full"></div>
+            </div>`;
+        else if (type === COMPONENT_TYPES.VOLTMETER || type === COMPONENT_TYPES.AMMETER) innerHTML = `
+            <div class="${wrapperClass}">
+                <div class="w-full h-0.5 bg-slate-800 absolute left-0 right-0 z-0"></div>
+                <div class="w-10 h-10 rounded-full border-2 border-slate-800 flex items-center justify-center relative z-10 bg-white shadow-sm">
+                    <span class="font-bold text-lg text-slate-800 transition-transform duration-200 ${isVertical ? '-rotate-90' : ''}">${type === COMPONENT_TYPES.VOLTMETER ? 'V' : 'A'}</span>
+                </div>
+            </div>`;
+        else if (type === COMPONENT_TYPES.SOURCE) innerHTML = `
+            <div class="${wrapperClass}">
+                <div class="w-[calc(50%-4px)] h-0.5 bg-slate-800 absolute left-0"></div>
+                <div class="w-[calc(50%-4px)] h-0.5 bg-slate-800 absolute right-0"></div>
+                <div class="flex gap-1 items-center justify-center z-10 bg-white px-1">
+                    <div class="w-1 h-10 bg-slate-800 relative"><span class="absolute -top-4 -right-3 text-sm font-bold ${isVertical ? '-rotate-90' : ''}">+</span></div>
+                    <div class="w-1 h-5 bg-slate-800"></div>
+                </div>
+            </div>`;
+        else if (type === COMPONENT_TYPES.SWITCH) innerHTML = `
+            <div class="${wrapperClass}">
+                <div class="absolute left-[16px] right-[16px] top-[calc(50%-3px)] h-[6px] bg-white z-0"></div>
+                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-[16px] h-0.5 bg-slate-800 z-10"></div>
+                <div class="absolute left-[14px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full border-2 border-slate-800 bg-white z-20"></div>
+                <div class="absolute left-[18px] top-1/2 -translate-y-1/2 w-[24px] h-0.5 bg-slate-800 origin-left transition-transform duration-300 z-30 ${slot.state === 'open' ? '-rotate-[30deg]' : 'rotate-0'}"></div>
+                <div class="absolute right-[14px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full border-2 border-slate-800 bg-white z-20"></div>
+                <div class="absolute right-0 top-1/2 -translate-y-1/2 w-[16px] h-0.5 bg-slate-800 z-10"></div>
+            </div>`;
+        else if (type === COMPONENT_TYPES.LAMP) innerHTML = `
+            <div class="${wrapperClass}">
+                <div class="w-full h-0.5 bg-slate-800 absolute left-0 right-0 z-0"></div>
+                <div class="w-8 h-8 rounded-full border-2 border-slate-800 flex items-center justify-center relative z-10 transition-colors ${slot.state === 'on' ? 'bg-yellow-300 shadow-[0_0_15px_rgba(253,224,71,0.8)]' : 'bg-white'}">
+                    <div class="w-full h-full absolute flex items-center justify-center transform rotate-45">
+                        <div class="w-5 h-0.5 bg-slate-800 absolute"></div>
+                        <div class="w-0.5 h-5 bg-slate-800 absolute"></div>
+                    </div>
+                </div>
+            </div>`;
+
+        // Labels mapping outside the rotation
+        const labelHTML = (type !== COMPONENT_TYPES.GENERIC && type !== COMPONENT_TYPES.WIRE) ? `<div class="absolute -top-6 left-1/2 -translate-x-1/2 text-xs font-bold text-blue-800 whitespace-nowrap bg-white/90 px-1 rounded pointer-events-none z-40">${slot.label || ''}</div>` : '';
+        const valHTML = (!['generic', 'wire', 'switch'].includes(type) && slot.value) ? `<div class="absolute -bottom-6 left-1/2 -translate-x-1/2 text-xs text-slate-600 whitespace-nowrap bg-white/90 px-1 rounded pointer-events-none z-40" dir="ltr">${slot.value || ''}</div>` : '';
+        
+        return `${labelHTML}${innerHTML}${valHTML}`;
+    };
+
+    const renderTreeUI = (elements) => {
+        return elements.map((el, idx) => {
+            if (el.type === 'slot') {
+                return `
+                <div class="pr-4 border-r-2 border-slate-200 mt-2">
+                    <div class="flex items-center justify-between bg-slate-50 p-2 rounded text-sm border border-slate-100">
+                        <span class="flex items-center gap-2"><i data-lucide="arrow-right" class="text-blue-500 w-3 h-3"></i> תושבת ${idx+1}</span>
+                        <button onclick="handleRemoveNode('${el.id}')" class="text-slate-400 hover:text-red-500"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                    </div>
+                </div>`;
+            } else if (el.type === 'parallel') {
+                let pathsHtml = el.paths.map((path, pIdx) => `
+                    <div class="mt-2 pr-2">
+                        <div class="text-xs text-slate-500 mb-1 flex items-center justify-between">
+                            <span>נתיב ${pIdx + 1}</span>
+                            <div class="flex gap-1">
+                                <button onclick="handleStructureAction('ADD_SLOT', '${path.id}')" class="text-blue-600 hover:bg-blue-100 px-1 rounded" title="הוסף תושבת">+<i data-lucide="arrow-right" class="inline w-2 h-2"></i></button>
+                                <button onclick="handleStructureAction('ADD_PARALLEL', '${path.id}')" class="text-purple-600 hover:bg-purple-100 px-1 rounded" title="הוסף פיצול">+<i data-lucide="git-merge" class="inline w-2 h-2"></i></button>
+                            </div>
+                        </div>
+                        ${renderTreeUI(path.elements)}
+                    </div>
+                `).join('');
+
+                return `
+                <div class="pr-4 border-r-2 border-slate-200 mt-2">
+                    <div class="bg-slate-100 p-2 rounded text-sm border border-slate-200">
+                        <div class="flex items-center justify-between mb-2 font-semibold text-slate-700">
+                            <span class="flex items-center gap-2"><i data-lucide="git-merge" class="text-purple-500 w-3 h-3"></i> פיצול מקבילי</span>
+                            <div class="flex items-center gap-1">
+                                <button onclick="handleStructureAction('ADD_PATH', '${el.id}')" class="text-purple-600 hover:bg-purple-200 px-2 py-1 rounded text-xs">+ נתיב</button>
+                                <button onclick="handleRemoveNode('${el.id}')" class="text-slate-400 hover:text-red-500 px-1"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                            </div>
+                        </div>
+                        ${pathsHtml}
+                    </div>
+                </div>`;
+            } else if (el.type === 'potentiometer_split') {
+                 // UI עבור פיצול הפוטנציומטר המיוחד
+                 let pathsHtml = el.paths.map((path, pIdx) => `
+                    <div class="mt-2 pr-2">
+                        <div class="text-xs ${pIdx === 0 ? 'text-slate-500' : 'text-blue-600'} mb-1 flex items-center justify-between font-semibold">
+                            <span>${pIdx === 0 ? 'המשך הזרם הראשי' : 'נתיב צרכן (גררה)'}</span>
+                            <div class="flex gap-1">
+                                <button onclick="handleStructureAction('ADD_SLOT', '${path.id}')" class="text-blue-600 hover:bg-blue-100 px-1 rounded" title="הוסף תושבת">+<i data-lucide="arrow-right" class="inline w-2 h-2"></i></button>
+                            </div>
+                        </div>
+                        ${renderTreeUI(path.elements)}
+                    </div>
+                `).join('');
+
+                return `
+                <div class="pr-4 border-r-2 border-slate-200 mt-2">
+                    <div class="bg-blue-50 p-2 rounded text-sm border border-blue-200">
+                        <div class="flex items-center justify-between mb-2 font-bold text-blue-800">
+                            <span class="flex items-center gap-2"><i data-lucide="sliders-horizontal" class="text-blue-500 w-3 h-3"></i> פוטנציומטר (מחלק מתח)</span>
+                            <div class="flex items-center gap-1">
+                                <button onclick="handleRemoveNode('${el.id}')" class="text-slate-400 hover:text-red-500 px-1"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                            </div>
+                        </div>
+                        ${pathsHtml}
+                    </div>
+                </div>`;
+            }
+        }).join('');
+    };
+
+    // --- Main Render Function ---
+    const render = () => {
+        document.getElementById('tab-structure').className = state.activeTab === 'structure' 
+            ? "flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 transition-colors border-b-2 border-blue-600 text-blue-600 bg-blue-50"
+            : "flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 transition-colors text-slate-500 hover:bg-slate-50";
+        document.getElementById('tab-components').className = state.activeTab === 'components' 
+            ? "flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 transition-colors border-b-2 border-blue-600 text-blue-600 bg-blue-50"
+            : "flex-1 py-3 text-sm font-bold flex items-center justify-center gap-2 transition-colors text-slate-500 hover:bg-slate-50";
+
+        const sidebar = document.getElementById('sidebar-content');
+        if (state.activeTab === 'structure') {
+            let treeHtml = '';
+            
+            state.tree.forEach((branch, i) => {
+                treeHtml += `
+                    <div class="border border-slate-200 rounded-lg overflow-hidden shadow-sm mb-2">
+                        <div class="bg-slate-100 p-2 font-bold text-slate-700 flex flex-col gap-2">
+                            <div class="flex items-center justify-between">
+                                <span>ענף ${i + 1} (אופקי)</span>
+                                <button onclick="handleRemoveNode('${branch.id}')" class="text-slate-400 hover:text-red-500 px-2"><i data-lucide="trash-2" class="w-4 h-4"></i></button>
+                            </div>
+                            <div class="flex gap-1 flex-wrap">
+                                <button onclick="handleStructureAction('ADD_SLOT', '${branch.id}')" class="bg-white text-blue-600 hover:bg-blue-50 px-2 py-1 border border-slate-200 rounded text-xs shadow-sm">+ תושבת</button>
+                                <button onclick="handleStructureAction('ADD_PARALLEL', '${branch.id}')" class="bg-white text-purple-600 hover:bg-purple-50 px-2 py-1 border border-slate-200 rounded text-xs shadow-sm">+ פיצול מקבילי</button>
+                                <button onclick="handleStructureAction('ADD_POTENTIOMETER_SPLIT', '${branch.id}')" class="bg-white text-emerald-600 hover:bg-emerald-50 px-2 py-1 border border-slate-200 rounded text-xs shadow-sm">+ פוטנציומטר</button>
+                            </div>
+                        </div>
+                        <div class="p-2 pl-4">
+                            ${renderTreeUI(branch.elements)}
+                        </div>
+                    </div>
+                `;
+
+                if (i < state.tree.length - 1) {
+                    treeHtml += `
+                    <div class="flex gap-2 mb-2 pr-4 relative">
+                        <div class="absolute top-0 bottom-0 right-8 w-0.5 bg-slate-200 z-0"></div>
+                        
+                        <div class="flex-1 bg-emerald-50 rounded border border-emerald-100 p-2 z-10 mr-10 shadow-sm">
+                            <div class="flex justify-between items-center text-xs font-bold text-emerald-800 mb-2">
+                                <span>קיר שמאלי (מקטע ${i+1})</span>
+                                <button onclick="addWallSlot('left', ${i})" class="text-emerald-600 hover:bg-emerald-100 px-1 border border-emerald-200 bg-white rounded shadow-sm">+</button>
+                            </div>
+                            ${state.leftWall[i].map((slot, sIdx) => `
+                                <div class="flex justify-between items-center bg-white border border-emerald-100 rounded px-2 py-1 mb-1 text-xs">
+                                   <span>תושבת ${sIdx+1}</span>
+                                   <button onclick="removeWallSlot('left', ${i}, '${slot.id}')" class="text-slate-400 hover:text-red-500"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                                </div>
+                            `).join('')}
+                        </div>
+                        
+                        <div class="flex-1 bg-orange-50 rounded border border-orange-100 p-2 z-10 shadow-sm">
+                            <div class="flex justify-between items-center text-xs font-bold text-orange-800 mb-2">
+                                <span>קיר ימני (מקטע ${i+1})</span>
+                                <button onclick="addWallSlot('right', ${i})" class="text-orange-600 hover:bg-orange-100 px-1 border border-orange-200 bg-white rounded shadow-sm">+</button>
+                            </div>
+                            ${state.rightWall[i].map((slot, sIdx) => `
+                                <div class="flex justify-between items-center bg-white border border-orange-100 rounded px-2 py-1 mb-1 text-xs">
+                                   <span>תושבת ${sIdx+1}</span>
+                                   <button onclick="removeWallSlot('right', ${i}, '${slot.id}')" class="text-slate-400 hover:text-red-500"><i data-lucide="trash-2" class="w-3 h-3"></i></button>
+                                </div>
+                            `).join('')}
+                        </div>
+                    </div>
+                    `;
+                }
+            });
+
+            sidebar.innerHTML = `
+                <div class="space-y-2 pb-6">
+                    <div class="bg-blue-50 p-3 rounded text-sm text-blue-800 border border-blue-100 mb-4 flex gap-2">
+                        <i data-lucide="info" class="w-8 h-8 shrink-0"></i>
+                        בנה את שלד המעגל. הוסף ענפים אופקיים או תושבות אנכיות בקירות שביניהם.
+                    </div>
+                    ${treeHtml}
+                    <button onclick="addBranch()" class="w-full mt-4 py-3 border-2 border-dashed border-slate-300 text-slate-500 hover:border-blue-500 hover:text-blue-600 rounded-lg font-bold flex items-center justify-center gap-2 transition-colors">
+                        <i data-lucide="plus" class="w-4 h-4"></i> הוסף ענף אופקי
+                    </button>
+                </div>`;
+        } else {
+            // Components Tab - Grid layout with all components
+            const getDraggableHtml = (type, label, visualHtml) => `
+                <div draggable="true" ondragstart="handleDragStart(event, '${type}')" class="p-3 border-2 border-slate-200 rounded-lg cursor-grab hover:border-blue-500 hover:shadow-md transition-all flex flex-col items-center gap-2 bg-white">
+                    <div class="flex items-center gap-1 w-full justify-center h-8">${visualHtml}</div>
+                    <span class="text-xs font-bold text-center leading-tight">${label}</span>
+                </div>`;
+
+            sidebar.innerHTML = `
+                <div class="space-y-4 pb-6">
+                    <div class="bg-blue-50 p-3 rounded text-sm text-blue-800 border border-blue-100 mb-4">
+                        גרור רכיבים לתוך התושבות הריקות. לחיצה על רכיב מונח תפתח את מאפייניו.
+                    </div>
+                    <div class="grid grid-cols-2 gap-2">
+                        ${getDraggableHtml(COMPONENT_TYPES.SOURCE, 'מקור מתח', `
+                            <div class="w-4 h-0.5 bg-black"></div>
+                            <div class="flex gap-1 items-center">
+                                <div class="w-1 h-8 bg-black relative"><span class="absolute -top-3 right-1.5 text-[10px] font-bold">+</span></div>
+                                <div class="w-1 h-4 bg-black"></div>
+                            </div>
+                            <div class="w-4 h-0.5 bg-black"></div>
+                        `)}
+                        ${getDraggableHtml(COMPONENT_TYPES.RESISTOR, 'נגד', `
+                            <div class="w-4 h-0.5 bg-black"></div>
+                            <div class="w-12 h-5 border-2 border-black bg-white"></div>
+                            <div class="w-4 h-0.5 bg-black"></div>
+                        `)}
+                        ${getDraggableHtml(COMPONENT_TYPES.SWITCH, 'מפסק', `
+                            <div class="w-[60px] h-8 relative flex items-center justify-center">
+                                <div class="absolute left-0 top-1/2 -translate-y-1/2 w-[16px] h-0.5 bg-slate-800 z-10"></div>
+                                <div class="absolute left-[14px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full border-2 border-slate-800 bg-white z-20"></div>
+                                <div class="absolute left-[18px] top-1/2 -translate-y-1/2 w-[24px] h-0.5 bg-slate-800 origin-left -rotate-[30deg] z-30"></div>
+                                <div class="absolute right-[14px] top-1/2 -translate-y-1/2 w-2.5 h-2.5 rounded-full border-2 border-slate-800 bg-white z-20"></div>
+                                <div class="absolute right-0 top-1/2 -translate-y-1/2 w-[16px] h-0.5 bg-slate-800 z-10"></div>
+                            </div>
+                        `)}
+                        ${getDraggableHtml(COMPONENT_TYPES.LAMP, 'נורה', `
+                            <div class="w-4 h-0.5 bg-black"></div>
+                            <div class="w-8 h-8 rounded-full border-2 border-black flex items-center justify-center relative bg-yellow-50">
+                                <div class="w-full h-full absolute flex items-center justify-center transform rotate-45">
+                                    <div class="w-6 h-0.5 bg-black absolute"></div>
+                                    <div class="w-0.5 h-6 bg-black absolute"></div>
+                                </div>
+                            </div>
+                            <div class="w-4 h-0.5 bg-black"></div>
+                        `)}
+                        ${getDraggableHtml(COMPONENT_TYPES.POTENTIOMETER, 'פוטנציומטר', `
+                            <div class="flex flex-col items-center w-full justify-center relative h-10">
+                                <div class="absolute top-0 left-1/2 -translate-x-1/2 flex flex-col items-center z-20">
+                                    <div class="w-0.5 h-3 bg-black"></div>
+                                    <div class="w-0 h-0 border-l-[3px] border-r-[3px] border-t-[4px] border-l-transparent border-r-transparent border-t-black"></div>
+                                </div>
+                                <div class="flex items-center w-full justify-center absolute bottom-2">
+                                    <div class="w-4 h-0.5 bg-black"></div>
+                                    <div class="w-12 h-5 border-2 border-black bg-white"></div>
+                                    <div class="w-4 h-0.5 bg-black"></div>
+                                </div>
+                            </div>
+                        `)}
+                        ${getDraggableHtml(COMPONENT_TYPES.GENERIC, 'צרכן גנרי', `
+                            <div class="flex items-center w-full justify-center">
+                                <div class="w-4 h-0.5 bg-black"></div>
+                                <div class="w-10 h-6 border-2 border-dashed border-slate-500 bg-white flex items-center justify-center"><i data-lucide="help-circle" class="w-4 h-4"></i></div>
+                                <div class="w-4 h-0.5 bg-black"></div>
+                            </div>
+                        `)}
+                        ${getDraggableHtml(COMPONENT_TYPES.VOLTMETER, 'מד מתח', `
+                            <div class="flex items-center w-full justify-center">
+                                <div class="w-4 h-0.5 bg-black"></div>
+                                <div class="w-8 h-8 rounded-full border-2 border-black flex items-center justify-center relative bg-white"><span class="font-bold text-sm">V</span></div>
+                                <div class="w-4 h-0.5 bg-black"></div>
+                            </div>
+                        `)}
+                        ${getDraggableHtml(COMPONENT_TYPES.AMMETER, 'מד זרם', `
+                            <div class="flex items-center w-full justify-center">
+                                <div class="w-4 h-0.5 bg-black"></div>
+                                <div class="w-8 h-8 rounded-full border-2 border-black flex items-center justify-center relative bg-white"><span class="font-bold text-sm">A</span></div>
+                                <div class="w-4 h-0.5 bg-black"></div>
+                            </div>
+                        `)}
+                        ${getDraggableHtml(COMPONENT_TYPES.WIRE, 'תיל קצר', `
+                            <div class="flex items-center w-full justify-center h-8 relative">
+                                <div class="w-full h-1 bg-black"></div>
+                                <div class="absolute left-2 w-2 h-2 bg-black rounded-full"></div>
+                                <div class="absolute right-2 w-2 h-2 bg-black rounded-full"></div>
+                            </div>
+                        `)}
+                    </div>
+                </div>`;
+        }
+
+        // --- Render Canvas Engine ---
+        const svgContainer = document.getElementById('canvas-svg');
+        const slotsContainer = document.getElementById('canvas-slots');
+        let svgHtml = '';
+        let htmlSlots = '';
+
+        const LEFT_WALL = 100;
+        const maxBranchWidth = state.tree.length > 0 ? Math.max(...state.tree.map(b => calcWidth(b.elements))) : 0;
+        const RIGHT_WALL = Math.max(700, LEFT_WALL + maxBranchWidth + 200);
+
+        const branchYs = [];
+        let currentY = 100;
+        for (let i = 0; i < state.tree.length; i++) {
+            const h = calcHeight(state.tree[i].elements);
+            if (i === 0) {
+                branchYs.push(currentY + h/2);
+            } else {
+                const prevH = calcHeight(state.tree[i-1].elements);
+                const leftSlotsCount = state.leftWall[i-1] ? state.leftWall[i-1].length : 0;
+                const rightSlotsCount = state.rightWall[i-1] ? state.rightWall[i-1].length : 0;
+                const maxSlots = Math.max(leftSlotsCount, rightSlotsCount);
+                
+                const naturalGap = prevH/2 + 80 + h/2;
+                const wallGap = (maxSlots + 1) * WALL_SLOT_SPACING;
+                
+                branchYs.push(branchYs[i-1] + Math.max(naturalGap, wallGap));
+            }
+        }
+
+        if (state.tree.length > 0) {
+            const createSlotHtml = (slot, x, y, isVertical = false) => {
+                const size = 60;
+                const isOccupied = slot.componentType !== COMPONENT_TYPES.EMPTY;
+                const isSelected = state.selectedSlotId === slot.id;
+                const activeClass = isSelected ? 'ring-2 ring-blue-500 bg-blue-50' : '';
+
+                if (isOccupied) {
+                    return `
+                        <div class="absolute z-20" style="left: ${x - size/2}px; top: ${y - size/2}px; width: ${size}px; height: ${size}px;" ondrop="handleDrop(event, '${slot.id}')" ondragover="handleDragOver(event)" onclick="selectSlot(event, '${slot.id}')">
+                            <div class="w-full h-full cursor-pointer hover:bg-blue-50/50 rounded transition-colors ${activeClass}">
+                                ${getComponentVisualHTML(slot, isVertical ? 'vertical' : 'horizontal')}
+                            </div>
+                        </div>`;
+                } else {
+                    return `
+                        <div class="absolute z-20" style="left: ${x - size/2}px; top: ${y - size/2}px; width: ${size}px; height: ${size}px;" ondrop="handleDrop(event, '${slot.id}')" ondragover="handleDragOver(event)">
+                            <div class="w-full h-full border-2 border-dashed border-blue-300 bg-blue-50/30 flex items-center justify-center text-blue-400 rounded-md cursor-pointer hover:border-blue-500 hover:bg-blue-100 transition-all">
+                                <i data-lucide="plus" class="w-5 h-5"></i>
+                            </div>
+                        </div>`;
+                }
+            };
+
+            if (state.tree.length > 1) {
+                for (let i = 0; i < state.tree.length - 1; i++) {
+                    const topY = branchYs[i];
+                    const bottomY = branchYs[i+1];
+
+                    svgHtml += `<path d="M ${LEFT_WALL} ${topY} L ${LEFT_WALL} ${bottomY}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+                    svgHtml += `<path d="M ${RIGHT_WALL} ${topY} L ${RIGHT_WALL} ${bottomY}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+
+                    const leftSeg = state.leftWall[i] || [];
+                    const leftStep = (bottomY - topY) / (leftSeg.length + 1);
+                    leftSeg.forEach((slot, idx) => {
+                        const sy = topY + leftStep * (idx + 1);
+                        htmlSlots += createSlotHtml(slot, LEFT_WALL, sy, true);
+                    });
+
+                    const rightSeg = state.rightWall[i] || [];
+                    const rightStep = (bottomY - topY) / (rightSeg.length + 1);
+                    rightSeg.forEach((slot, idx) => {
+                        const sy = topY + rightStep * (idx + 1);
+                        htmlSlots += createSlotHtml(slot, RIGHT_WALL, sy, true);
+                    });
+                }
+            }
+
+            const renderElements = (elements, startX, yBase) => {
+                let currX = startX;
+                elements.forEach(el => {
+                    if (el.type === 'slot') {
+                        svgHtml += `<path d="M ${currX} ${yBase} L ${currX + ELEMENT_SPACING} ${yBase}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+                        htmlSlots += createSlotHtml(el, currX + ELEMENT_SPACING/2, yBase);
+                        currX += ELEMENT_SPACING;
+                    } 
+                    else if (el.type === 'parallel') {
+                        const innerWidth = Math.max(...el.paths.map(p => calcWidth(p.elements)));
+                        const endX = currX + innerWidth + PARALLEL_PADDING * 2;
+                        const splitX = currX + PARALLEL_PADDING;
+                        const mergeX = endX - PARALLEL_PADDING;
+
+                        const totalH = el.paths.reduce((sum, p) => sum + calcHeight(p.elements) + 40, 0) - 40;
+                        let pathStartY = yBase - totalH / 2;
+
+                        svgHtml += `<path d="M ${currX} ${yBase} L ${splitX} ${yBase}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+                        svgHtml += `<path d="M ${mergeX} ${yBase} L ${endX} ${yBase}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+
+                        el.paths.forEach(path => {
+                            const ph = calcHeight(path.elements);
+                            const py = pathStartY + ph / 2;
+
+                            svgHtml += `<path d="M ${splitX} ${yBase} L ${splitX} ${py}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+                            svgHtml += `<path d="M ${mergeX} ${yBase} L ${mergeX} ${py}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+
+                            const pWidth = calcWidth(path.elements);
+                            const pStartX = splitX + (innerWidth - pWidth) / 2;
+
+                            svgHtml += `<path d="M ${splitX} ${py} L ${pStartX} ${py}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+                            const pEndX = renderElements(path.elements, pStartX, py);
+                            svgHtml += `<path d="M ${pEndX} ${py} L ${mergeX} ${py}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+
+                            pathStartY += ph + 40;
+                        });
+                        currX = endX;
+                    }
+                    else if (el.type === 'potentiometer_split') {
+                        // רינדור ויזואלי של הפוטנציומטר שמפצל זרם
+                        const innerWidth = Math.max(...el.paths.map(p => calcWidth(p.elements)));
+                        const endX = currX + innerWidth + PARALLEL_PADDING * 2;
+                        const splitX = currX + PARALLEL_PADDING;
+                        const mergeX = endX - PARALLEL_PADDING;
+
+                        // 1. צייר את הקו הראשי והפוטנציומטר באמצע
+                        svgHtml += `<path d="M ${currX} ${yBase} L ${splitX - 30} ${yBase}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+                        
+                        // ציור הגוף של הנגד המשתנה (קבוע על התיל)
+                        const potHtml = `
+                            <div class="absolute z-10" style="left: ${splitX - 30}px; top: ${yBase - 30}px; width: 60px; height: 60px;">
+                                <div class="relative flex flex-col items-center justify-center w-full h-full">
+                                    <div class="absolute -top-4 left-1/2 -translate-x-1/2 text-xs font-bold text-blue-800 whitespace-nowrap">${el.potLabel}</div>
+                                    <div class="w-full flex items-center justify-center relative mt-3">
+                                        <div class="w-full h-0.5 bg-slate-800 absolute left-0 right-0 z-0"></div>
+                                        <div class="w-12 h-6 border-2 border-slate-800 bg-white z-10 flex items-center justify-center font-bold text-[10px] text-slate-800" dir="ltr">${el.potValue}</div>
+                                    </div>
+                                </div>
+                            </div>
+                        `;
+                        htmlSlots += potHtml;
+                        svgHtml += `<path d="M ${splitX + 30} ${yBase} L ${endX} ${yBase}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+
+                        // 2. צייר את החץ (הגררה) שיורד מהאמצע
+                        const wiperStartY = yBase + 10;
+                        svgHtml += `<path d="M ${splitX} ${wiperStartY} L ${splitX} ${yBase + 50}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+                        // ראש החץ המצביע על הנגד
+                        svgHtml += `<polygon points="${splitX-4},${wiperStartY+8} ${splitX+4},${wiperStartY+8} ${splitX},${wiperStartY}" fill="#1e293b" />`;
+
+                        // 3. רינדור הנתיבים
+                        // נתיב ראשי (פשוט ממשיך ישר אחרי הנגד)
+                        const mainPathX = renderElements(el.paths[0].elements, splitX + 30, yBase);
+                        // svgHtml += `<path d="M ${mainPathX} ${yBase} L ${mergeX} ${yBase}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+
+                        // נתיב הגררה (מתחיל למטה)
+                        const wiperY = yBase + 50;
+                        const pWidth = calcWidth(el.paths[1].elements);
+                        const pStartX = splitX + (innerWidth - pWidth) / 2;
+                        
+                        svgHtml += `<path d="M ${splitX} ${wiperY} L ${pStartX} ${wiperY}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+                        const pEndX = renderElements(el.paths[1].elements, pStartX, wiperY);
+                        svgHtml += `<path d="M ${pEndX} ${wiperY} L ${mergeX} ${wiperY}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+                        
+                        // העלאת חוט הגררה חזרה למעלה להתמזגות (כדי לסגור מעגל מקבילי)
+                        svgHtml += `<path d="M ${mergeX} ${wiperY} L ${mergeX} ${yBase}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+
+                        currX = endX;
+                    }
+                });
+                return currX;
+            };
+
+            state.tree.forEach((branch, i) => {
+                const yBase = branchYs[i];
+                const bWidth = calcWidth(branch.elements);
+                const startX = LEFT_WALL + (RIGHT_WALL - LEFT_WALL - bWidth) / 2;
+
+                if (state.tree.length > 1) {
+                    svgHtml += `<path d="M ${LEFT_WALL} ${yBase} L ${startX} ${yBase}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+                    svgHtml += `<circle cx="${LEFT_WALL}" cy="${yBase}" r="4" fill="#1e293b" />`;
+                }
+                
+                const endX = renderElements(branch.elements, startX, yBase);
+                
+                if (state.tree.length > 1) {
+                    svgHtml += `<path d="M ${endX} ${yBase} L ${RIGHT_WALL} ${yBase}" stroke="#1e293b" stroke-width="2" fill="none" />`;
+                    svgHtml += `<circle cx="${RIGHT_WALL}" cy="${yBase}" r="4" fill="#1e293b" />`;
+                }
+            });
+
+            const finalHeight = branchYs.length > 0 ? branchYs[branchYs.length - 1] + calcHeight(state.tree[state.tree.length - 1].elements) / 2 + 100 : 400;
+            document.getElementById('canvas-container').style.width = `${RIGHT_WALL + 100}px`;
+            document.getElementById('canvas-container').style.height = `${finalHeight}px`;
+        } else {
+             document.getElementById('canvas-container').style.width = `800px`;
+             document.getElementById('canvas-container').style.height = `400px`;
+        }
+
+        svgContainer.innerHTML = svgHtml;
+        slotsContainer.innerHTML = htmlSlots;
+
+        // --- Properties Panel Rendering ---
+        const propertiesContainer = document.getElementById('properties-panel');
+        const selectedSlot = findSlotById(state.selectedSlotId);
+
+        if (selectedSlot && selectedSlot.componentType !== COMPONENT_TYPES.EMPTY) {
+            propertiesContainer.classList.remove('pointer-events-none');
+            let extraFieldsHtml = '';
+            const t = selectedSlot.componentType;
+
+            if (['resistor', 'source', 'lamp', 'potentiometer', 'voltmeter', 'ammeter'].includes(t)) {
+                extraFieldsHtml += `
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">ערך</label>
+                        <input type="text" value="${selectedSlot.value || ''}" onchange="updateProperty('${selectedSlot.id}', 'value', this.value)" class="w-full border border-slate-300 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none" dir="ltr">
+                    </div>`;
+            }
+
+            if (t === COMPONENT_TYPES.SWITCH) {
+                extraFieldsHtml += `
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">מצב התחלתי</label>
+                        <select onchange="updateProperty('${selectedSlot.id}', 'state', this.value)" class="w-full border border-slate-300 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="open" ${selectedSlot.state === 'open' ? 'selected' : ''}>פתוח (נתק)</option>
+                            <option value="closed" ${selectedSlot.state === 'closed' ? 'selected' : ''}>סגור (קצר)</option>
+                        </select>
+                    </div>`;
+            } else if (t === COMPONENT_TYPES.LAMP) {
+                 extraFieldsHtml += `
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">מצב נורה</label>
+                        <select onchange="updateProperty('${selectedSlot.id}', 'state', this.value)" class="w-full border border-slate-300 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="off" ${selectedSlot.state === 'off' ? 'selected' : ''}>כבויה</option>
+                            <option value="on" ${selectedSlot.state === 'on' ? 'selected' : ''}>דלוקה</option>
+                        </select>
+                    </div>`;
+            } else if (t === COMPONENT_TYPES.SOURCE) {
+                 extraFieldsHtml += `
+                    <div>
+                        <label class="block text-sm font-semibold text-slate-700 mb-1">סוג מקור</label>
+                        <select onchange="updateProperty('${selectedSlot.id}', 'state', this.value)" class="w-full border border-slate-300 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                            <option value="ideal" ${selectedSlot.state === 'ideal' ? 'selected' : ''}>אידיאלי</option>
+                            <option value="real" ${selectedSlot.state === 'real' ? 'selected' : ''}>כולל התנגדות פנימית</option>
+                        </select>
+                    </div>`;
+            }
+
+            propertiesContainer.innerHTML = `
+                <div class="h-full w-72 bg-white border-r shadow-2xl flex flex-col pointer-events-auto" onclick="event.stopPropagation()">
+                    <div class="p-4 bg-slate-800 text-white flex justify-between items-center">
+                        <span class="font-bold flex items-center gap-2"><i data-lucide="settings" class="w-4 h-4"></i> מאפייני רכיב</span>
+                        <button onclick="selectSlot(event, null)" class="hover:text-slate-300"><i data-lucide="x" class="w-5 h-5"></i></button>
+                    </div>
+                    <div class="p-6 flex flex-col gap-4">
+                        <div>
+                            <label class="block text-sm font-semibold text-slate-700 mb-1">שם/תווית</label>
+                            <input type="text" value="${selectedSlot.label || ''}" onchange="updateProperty('${selectedSlot.id}', 'label', this.value)" class="w-full border border-slate-300 rounded p-2 focus:ring-2 focus:ring-blue-500 outline-none">
+                        </div>
+                        ${extraFieldsHtml}
+                        <hr class="my-2 border-slate-200" />
+                        <button onclick="removeComponent(event, '${selectedSlot.id}')" class="mt-auto bg-red-50 hover:bg-red-100 text-red-600 border border-red-200 py-2 px-4 rounded-lg flex items-center justify-center gap-2 font-medium">
+                            <i data-lucide="trash-2" class="w-4 h-4"></i> מחק רכיב
+                        </button>
+                    </div>
+                </div>
+            `;
+        } else {
+            propertiesContainer.innerHTML = '';
+            propertiesContainer.classList.add('pointer-events-none');
+        }
+
+        lucide.createIcons();
+    };
+
+    document.addEventListener('DOMContentLoaded', () => { render(); });
+
+</script>
+</body>
+</html>
