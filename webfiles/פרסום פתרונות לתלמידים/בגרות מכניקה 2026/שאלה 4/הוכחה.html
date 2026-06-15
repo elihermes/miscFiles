@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>הוכחה פיזיקלית - תאוצה במדרון לעומת תאוצה במישור</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            min-height: 360px;
+            width: 100%;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .info-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">הוכחה פיזיקלית</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">תאוצה במדרון לעומת תאוצה במישור</h2>
+        <p class="mt-3 text-slate-500">הוכחה מתמטית לכך שלא קיים "נתיב מילוט" המאפשר לגוף להאיץ במדרון אם הואט במישור</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- פתיח -->
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">מבוא: שאלת תאוצה בלתי אפשרית</h3>
+        <p class="content-paragraph">זוהי שאלה פיזיקלית עמוקה ומרתקת המציגה חשיבה אנליטית מצוינת. נשאלת השאלה: האם קיים "נתיב מילוט" מתמטי – שילוב ערכים קיצוני כלשהו של זווית <span class="inline-ltr">\(\alpha\)</span>, מקדם חיכוך <span class="inline-ltr">\(\mu\)</span> וכוח <span class="inline-ltr">\(F\)</span> – שיגרום לגוף להאט על המישור האופקי אך להאיץ ברגע שהוא עולה על השיפוע?</p>
+        <p class="content-paragraph font-bold text-blue-800">
+            התשובה החד-משמעית היא: אין שילוב כזה. זהו מצב בלתי אפשרי מבחינה פיזיקלית ומתמטית.
+        </p>
+        <p class="content-paragraph mb-0">
+            לא זו בלבד שהגוף לא יכול להאיץ במעלה המדרון אם הוא האט במישור, אלא שניתן להוכיח מתמטית כי התאוצה במעלה המדרון תמיד תהיה קטנה (אלגברית) מהתאוצה במישור האופקי, עבור כל כוח <span class="inline-ltr">\( F \ge 0 \)</span>, כל זווית <span class="inline-ltr">\( 0 < \alpha < 90^\circ \)</span>, וכל מקדם חיכוך <span class="inline-ltr">\( 0 \le \mu \le 1 \)</span>. 
+            <br>להלן ההוכחה המתמטית המלאה והחלקה שמראות מדוע החוקים הללו נעולים הרמטית.
+        </p>
+    </section>
+
+    <!-- תמונת השאלה המקורית (שומר על התבנית) -->
+    <section class="section-card border-t-4 border-slate-300" style="display: none;" id="question-image-section">
+        <!-- הוסתר באמצעות CSS מכיוון שזו הוכחה תיאורטית, אך הלוגיקה נשמרה -->
+        <img
+            src="question-image.png"
+            alt="תמונת השאלה המקורית"
+            class="w-full h-auto rounded-lg border border-slate-200"
+            onerror="this.parentElement.style.display='none';"
+            onload="this.parentElement.style.display='block';"
+        />
+    </section>
+
+    <!-- שלב 1 -->
+    <section class="section-card" id="step-1">
+        <h3 class="section-header">שלב 1: פיתוח משוואות התאוצה (לפי החוק השני של ניוטון)</h3>
+        
+        <p class="content-paragraph">נניח גוף בעל מסה <span class="inline-ltr">\(m\)</span>, עליו פועל כוח אופקי <span class="inline-ltr">\(F\)</span> שמאלה (בכיוון התנועה).</p>
+
+        <div class="step-box">
+            <h4 class="step-title">1. במישור האופקי הראשון:</h4>
+            <ul class="list-disc list-inside mb-4 text-[#475569] space-y-1">
+                <li>הכוח הנורמלי הוא: <span class="inline-ltr">\(N_1 = mg\)</span></li>
+                <li>כוח החיכוך המעכב הוא: <span class="inline-ltr">\(f_1 = \mu mg\)</span></li>
+                <li>משוואת הכוחות בציר התנועה: <span class="inline-ltr">\(\Sigma F = F - \mu mg = ma_{\text{horiz}}\)</span></li>
+            </ul>
+            <p class="content-paragraph">לכן התאוצה במישור האופקי היא:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ a_{\text{horiz}} = \frac{F}{m} - \mu g \]
+            </div>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">2. במעלה המדרון (זווית \(\alpha\)):</h4>
+            <p class="content-paragraph">כאשר הגוף עולה על המדרון, הכוח האופקי <span class="inline-ltr">\(F\)</span> (שממשיך לפעול אופקית שמאלה) יוצר זווית <span class="inline-ltr">\(\alpha\)</span> עם המדרון.</p>
+            <ul class="list-disc list-inside mb-4 text-[#475569] space-y-1">
+                <li><strong>בציר המאונך למדרון:</strong> הרכיב של <span class="inline-ltr">\(F\)</span> דוחף את הגוף לתוך המשטח (<span class="inline-ltr">\(F\sin\alpha\)</span>), בנוסף לרכיב כוח הכובד (<span class="inline-ltr">\(mg\cos\alpha\)</span>). לכן הנורמל החדש גדל: <span class="inline-ltr">\(N_2 = mg\cos\alpha + F\sin\alpha\)</span></li>
+                <li><strong>כוח החיכוך החדש הוא:</strong> <span class="inline-ltr">\(f_2 = \mu(mg\cos\alpha + F\sin\alpha)\)</span></li>
+                <li><strong>בציר המקביל למדרון:</strong> הרכיב המניע של הכוח הוא <span class="inline-ltr">\(F\cos\alpha\)</span>, ומולו פועלים רכיב כוח הכובד (<span class="inline-ltr">\(mg\sin\alpha\)</span>) והחיכוך (<span class="inline-ltr">\(f_2\)</span>).</li>
+            </ul>
+            <p class="content-paragraph">משוואת הכוחות:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Sigma F = F\cos\alpha - mg\sin\alpha - \mu(mg\cos\alpha + F\sin\alpha) = ma_{\text{slope}} \]
+            </div>
+            <p class="content-paragraph">נחלץ את התאוצה במדרון ונוציא את <span class="inline-ltr">\(F\)</span> ו-<span class="inline-ltr">\(g\)</span> כגורמים משותפים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ a_{\text{slope}} = \frac{F}{m}(\cos\alpha - \mu \sin\alpha) - g(\sin\alpha + \mu \cos\alpha) \]
+            </div>
+        </div>
+    </section>
+
+    <!-- שלב 2 -->
+    <section class="section-card" id="step-2">
+        <h3 class="section-header">שלב 2: מדוע הגוף לא יכול להאיץ במדרון אם האט במישור?</h3>
+        
+        <p class="content-paragraph">כדי שהגוף יאבד מהירות במישור האופקי, תאוצתו שם חייבת להיות שלילית (<span class="inline-ltr">\( a_{\text{horiz}} < 0 \)</span>).<br>
+        מתוך המשוואה הראשונה, תנאי זה אומר בהכרח:</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ \frac{F}{m} - \mu g < 0 \implies \frac{F}{m} < \mu g \]
+        </div>
+        
+        <p class="content-paragraph">כעת נבחן מהו הערך המקסימלי האפשרי של התאוצה במדרון (<span class="inline-ltr">\(a_{\text{slope}}\)</span>) תחת מגבלה זו.</p>
+        <ul class="list-disc list-inside mb-4 text-[#475569] space-y-2">
+            <li>אם הביטוי <span class="inline-ltr">\((\cos\alpha - \mu \sin\alpha)\)</span> הוא שלילי או אפס, אז ברור ש-<span class="inline-ltr">\(a_{\text{slope}}\)</span> שלילי לחלוטין (כי נשארנו רק עם איברים שליליים).</li>
+            <li>אם הביטוי <span class="inline-ltr">\((\cos\alpha - \mu \sin\alpha)\)</span> הוא חיובי, אז <span class="inline-ltr">\(a_{\text{slope}}\)</span> היא פונקציה עולה של <span class="inline-ltr">\(F\)</span>. כדי למצוא את הגבול העליון (הערך הכי גבוה שהתאוצה הזו יכולה לשאוף אליו), נציב את ערך הקצה המקסימלי של הכוח, כלומר המקרה שבו <span class="inline-ltr">\(\frac{F}{m} = \mu g\)</span>:</li>
+        </ul>
+        
+        <div class="math-container text-center" dir="ltr">
+            \[ a_{\text{slope}} < \mu g (\cos\alpha - \mu \sin\alpha) - g(\sin\alpha + \mu \cos\alpha) \]
+        </div>
+        
+        <p class="content-paragraph">נפתח סוגריים:</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ a_{\text{slope}} < \mu g \cos\alpha - \mu^2 g \sin\alpha - g \sin\alpha - \mu g \cos\alpha \]
+        </div>
+        
+        <div class="teacher-highlight">
+            <strong>קסם אלגברי:</strong> נשים לב שהאיברים <span class="inline-ltr">\(\mu g \cos\alpha\)</span> ו- <span class="inline-ltr">\(-\mu g \cos\alpha\)</span> מצטמצמים ומבטלים זה את זה לחלוטין!
+        </div>
+        
+        <p class="content-paragraph mt-4">נשארנו עם:</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ a_{\text{slope}} < -\mu^2 g \sin\alpha - g \sin\alpha = -g\sin\alpha(1 + \mu^2) \]
+        </div>
+        
+        <p class="content-paragraph">מכיוון ש-<span class="inline-ltr">\(g > 0\)</span>, הזווית בתחום <span class="inline-ltr">\(0 < \alpha < 90^\circ\)</span> (ולכן <span class="inline-ltr">\(\sin\alpha > 0\)</span>), והביטוי <span class="inline-ltr">\((1+\mu^2)\)</span> תמיד חיובי וגדול או שווה ל-1, הרי שהאגף הימני הוא <strong>שלילי באופן מוחלט</strong>.</p>
+        
+        <div class="math-container text-center font-bold text-xl text-blue-800" dir="ltr">
+            \[ a_{\text{slope}} < 0 \]
+        </div>
+        
+        <div class="final-answer">
+            מסקנת ביניים: אם הגוף מאיט במישור האופקי, הוא מתמטית חייב להמשיך להאיט במעלה המדרון, ובקצב עוד יותר חריף.
+        </div>
+    </section>
+
+    <!-- שלב 3 -->
+    <section class="section-card" id="step-3">
+        <h3 class="section-header">שלב 3: ההוכחה הכללית – מדוע תמיד \(a_{\text{slope}} < a_{\text{horiz}}\)?</h3>
+        
+        <p class="content-paragraph">נבדוק את ההפרש בין התאוצה במדרון לתאוצה במישור (<span class="inline-ltr">\(a_{\text{slope}} - a_{\text{horiz}}\)</span>) עבור כל כוח <span class="inline-ltr">\(F\)</span> כלשהו, ונראה אם ההפרש הזה יכול אי פעם להיות חיובי:</p>
+        
+        <div class="math-container text-center" dir="ltr">
+            \[ a_{\text{slope}} - a_{\text{horiz}} = \left[\frac{F}{m}(\cos\alpha - \mu \sin\alpha) - g(\sin\alpha + \mu \cos\alpha)\right] - \left[\frac{F}{m} - \mu g\right] \]
+        </div>
+        
+        <p class="content-paragraph">נקבץ איברים לפי <span class="inline-ltr">\(\frac{F}{m}\)</span> ולפי <span class="inline-ltr">\(g\)</span>:</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ a_{\text{slope}} - a_{\text{horiz}} = \frac{F}{m}(\cos\alpha - \mu \sin\alpha - 1) - g(\sin\alpha + \mu \cos\alpha - \mu) \]
+        </div>
+
+        <p class="content-paragraph font-bold mt-4">ננתח את הסימן של שני חלקי המשוואה תחת התנאים הנתונים בשאלה (<span class="inline-ltr">\( 0 < \alpha < 90^\circ \)</span> ו-<span class="inline-ltr">\( 0 \le \mu \le 1 \)</span>):</p>
+        
+        <div class="step-box">
+            <h4 class="step-title">1. המקדם של \(\frac{F}{m}\):</h4>
+            <p class="content-paragraph">הביטוי הוא <span class="inline-ltr">\((\cos\alpha - 1) - \mu\sin\alpha\)</span>.</p>
+            <p class="content-paragraph">בתחום הזוויות שלנו, הקוסינוס תמיד קטן מ-1 (כלומר <span class="inline-ltr">\(\cos\alpha - 1 < 0\)</span>) והסינוס תמיד חיובי (כלומר <span class="inline-ltr">\(-\mu\sin\alpha \le 0\)</span>). סכום של שני מספרים שליליים/אפסים אלו הוא <strong>שלילי לחלוטין</strong>. מכיוון ש-<span class="inline-ltr">\(F/m \ge 0\)</span>, כל האיבר הראשון הוא פחות או שווה לאפס.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">2. האיבר החופשי המוכפל ב-\(g\):</h4>
+            <p class="content-paragraph">נבחן את הביטוי <span class="inline-ltr">\((\sin\alpha + \mu \cos\alpha - \mu)\)</span>, או בצורה מסודרת יותר: <span class="inline-ltr">\(\sin\alpha - \mu(1 - \cos\alpha)\)</span>.</p>
+            <p class="content-paragraph">נשתמש בזהויות של זווית חצי (<span class="inline-ltr">\(\sin\alpha = 2\sin\frac{\alpha}{2}\cos\frac{\alpha}{2}\)</span> ו-<span class="inline-ltr">\(1-\cos\alpha = 2\sin^2\frac{\alpha}{2}\)</span>):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \sin\alpha - \mu(1 - \cos\alpha) = 2\sin\frac{\alpha}{2}\cos\frac{\alpha}{2} - 2\mu\sin^2\frac{\alpha}{2} = 2\sin\frac{\alpha}{2}\left(\cos\frac{\alpha}{2} - \mu\sin\frac{\alpha}{2}\right) \]
+            </div>
+            <p class="content-paragraph">מכיוון ש-<span class="inline-ltr">\(\alpha\)</span> בין <span class="inline-ltr">\(0\)</span> ל-<span class="inline-ltr">\(90^\circ\)</span>, זווית החצי <span class="inline-ltr">\(\frac{\alpha}{2}\)</span> נמצאת בין <span class="inline-ltr">\(0\)</span> ל-<span class="inline-ltr">\(45^\circ\)</span>. בתחום זה, הקוסינוס תמיד גדול מהסינוס (<span class="inline-ltr">\(\cos\frac{\alpha}{2} > \sin\frac{\alpha}{2}\)</span>). ומכיוון ש-<span class="inline-ltr">\(\mu \le 1\)</span>, אז בטוח ש-<span class="inline-ltr">\(\mu\sin\frac{\alpha}{2} \le \sin\frac{\alpha}{2} < \cos\frac{\alpha}{2}\)</span>.</p>
+            <p class="content-paragraph">משמעות הדבר היא שהסוגריים <span class="inline-ltr">\(\left(\cos\frac{\alpha}{2} - \mu\sin\frac{\alpha}{2}\right)\)</span> הם <strong>חיוביים תמיד</strong>.</p>
+            <p class="content-paragraph">לכן, כל הביטוי <span class="inline-ltr">\((\sin\alpha + \mu \cos\alpha - \mu)\)</span> הוא <strong>חיובי תמיד</strong>. כשהוא מוכפל ב-<span class="inline-ltr">\(-g\)</span>, הוא הופך ל<strong>שלילי לחלוטין</strong>.</p>
+        </div>
+
+        <div class="step-box bg-blue-50 border-blue-200">
+            <h4 class="step-title text-blue-900">סיכום מתמטי:</h4>
+            <p class="content-paragraph">קיבלנו שסך ההפרש מורכב מחיבור של שני גורמים שליליים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ a_{\text{slope}} - a_{\text{horiz}} = (\text{שלילי}) + (\text{שלילי}) < 0 \]
+                \[ \Downarrow \]
+                \[ a_{\text{slope}} < a_{\text{horiz}} \]
+            </div>
+        </div>
+        
+        <div class="final-answer">
+            הוכח הדבר: לא קיים שום שילוב פיזיקלי ביקום, תחת תנאי השאלה, שמאפשר לגוף לקבל במדרון תאוצה גדולה יותר מאשר במישור האופקי. המעבר למדרון תמיד גוזר עליו ירידה בתאוצה (או האצה חלשה יותר, או האטה חריפה יותר).
+        </div>
+
+        <div class="teacher-highlight mt-6">
+            <strong>סיכום והשלכה על ניסוי 3 ו-4:</strong><br>
+            <p class="mt-2 mb-2">ולכן, אם בניסוי 3 הגוף מגיע לנקודה <span class="inline-ltr">\( A_1 \)</span> במהירות ההתחלתית, ניתן להסיק שהגוף הגדיל את גודל מהירותו בקטע CB וגודל מהירותו קטן במעלה המדרון עד לנקודה <span class="inline-ltr">\( A_1 \)</span>.</p>
+            <p class="mb-2">בניסוי הרביעי ברור לנו שהגוף יגדיל את גודל מהירותו בקטע CB (שכן כל התנאים זהים במקטע זה), ואם הוא הגיע למהירותו המקורית במעלה המדרון, המסקנה היא שתאוצתו במעלה המדרון שלילית.</p>
+            <p class="mb-0">אם סיכמנו משיקולי אנרגיה כי בגובה <span class="inline-ltr">\( A_1 \)</span> מהירותו של הגוף תהיה נמוכה ממהירותו ההתחלתית, ובנקודה B מהירותו הייתה גדולה ממהירותו ההתחלתית, ברור כי הוא יגיע למהירותו ההתחלתית בין הנקודה B לנקודה <span class="inline-ltr">\( A_1 \)</span> (ולפניה).</p>
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<!-- כפתור צף לפתיחת השאלה (נשאר לצורך עקביות תבנית) -->
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
