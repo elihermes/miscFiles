@@ -1,0 +1,829 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - אלקטרוסטטיקה ומעטפות כדוריות</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <!-- אין להוסיף polyfill.io או polyfill חיצוני אחר -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מודרך בפיזיקה: אלקטרוסטטיקה ומעטפות כדוריות</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">בגרות חשמל 2026, שאלה 2</h2>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- מבט כללי -->
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">מבט כללי על השאלה</h3>
+        <p class="content-paragraph mb-0">תלמידים יקרים, בבעיה זו נעסוק במושגים החשובים של פוטנציאל חשמלי, עבודה ואנרגיה, וחלוקת מטען בין מוליכים. נקפיד על עבודה מסודרת עם יחידות בסיס (MKS) והצבה הדרגתית.</p>
+    </section>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <div class="flex justify-center">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg border border-slate-200"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            />
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+                <span class="block font-bold mb-1">תמונת השאלה המקורית</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א' - חישוב המטען על המעטפת</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside text-slate-600 space-y-1 mt-1">
+                    <li>רדיוס המעטפת הכדורית: \( R_1 = 10 \text{ cm} \). נמיר מיד למטרים (MKS): \( R_1 = 0.1 \text{ m} \).</li>
+                    <li>המרחק של המשטח שווה הפוטנציאל <strong>מפני המעטפת</strong> הוא \( d = 5 \text{ cm} = 0.05 \text{ m} \).</li>
+                    <li>הפוטנציאל על המשטח המרוחק הוא: \( V = 120 \text{ V} \).</li>
+                    <li>המרחק ממרכז המעטפת לנקודה זו הוא: \( r = R_1 + d = 0.1 + 0.05 = 0.15 \text{ m} \).</li>
+                    <li>קבוע קולון: \( k = 9 \cdot 10^9 \frac{\text{N}\cdot\text{m}^2}{\text{C}^2} \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1 text-slate-600">את גודל וסימן המטען החשמלי \( Q_1 \) המפוזר על המעטפת הכדורית.</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">פוטנציאל סביב כדור טעון: \( V = k \frac{q}{r} \)</span>
+            <p class="text-sm text-slate-500 mt-1">הערה: מחוץ למעטפת כדורית טעונה, הפוטנציאל זהה לפוטנציאל של מטען נקודתי הנמצא במרכז המעטפת.</p>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">נציב את הנתונים בנוסחת הפוטנציאל:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 120 = 9 \cdot 10^9 \cdot \frac{Q_1}{0.15} \]
+            </div>
+            <p class="content-paragraph mt-2">נבודד את המטען \( Q_1 \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ Q_1 = \frac{120 \cdot 0.15}{9 \cdot 10^9} \]
+                \[ Q_1 = \frac{18}{9 \cdot 10^9} = 2 \cdot 10^{-9} \text{ C} \]
+            </div>
+            <p class="final-answer"><strong>תשובה סופית:</strong> מטען המעטפת הוא \( Q_1 = 2 \cdot 10^{-9} \text{ C} \), כלומר <span class="inline-ltr">\( 2 \text{ nC} \)</span>. המטען <strong>חיובי</strong> (כיוון שהפוטנציאל הנתון חיובי).</p>
+        </div>
+        
+        <div class="visual-frame">
+            <svg width="300" height="300" viewBox="0 0 300 300">
+                <defs>
+                    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#475569" />
+                    </marker>
+                </defs>
+                <!-- Center Point -->
+                <circle cx="150" cy="150" r="3" fill="#1e293b" />
+                <!-- Shell A -->
+                <circle cx="150" cy="150" r="60" fill="none" stroke="#3b82f6" stroke-width="3" />
+                <text x="150" y="140" text-anchor="middle" font-size="12" fill="#3b82f6" font-family="sans-serif">מעטפת א'</text>
+                <!-- Equipotential Surface -->
+                <circle cx="150" cy="150" r="90" fill="none" stroke="#94a3b8" stroke-width="2" stroke-dasharray="6,4" />
+                <!-- Radius R1 -->
+                <line x1="150" y1="150" x2="210" y2="150" stroke="#475569" stroke-width="1.5" marker-end="url(#arrow)" />
+                <text x="180" y="145" text-anchor="middle" font-size="12" fill="#475569" font-family="sans-serif">R₁=10cm</text>
+                <!-- Distance d -->
+                <line x1="210" y1="150" x2="240" y2="150" stroke="#ef4444" stroke-width="1.5" marker-end="url(#arrow)" marker-start="url(#arrow)" />
+                <text x="225" y="165" text-anchor="middle" font-size="12" fill="#ef4444" font-family="sans-serif">d=5cm</text>
+                <!-- Voltage Label -->
+                <text x="150" y="50" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b" font-family="sans-serif">V = 120 V</text>
+            </svg>
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב' - מהירות התחלתית מינימלית לפרוטון</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside text-slate-600 space-y-1 mt-1">
+                    <li>מטען הפרוטון: \( q_p = e = 1.6 \cdot 10^{-19} \text{ C} \).</li>
+                    <li>מסת הפרוטון: \( m_p = 1.67 \cdot 10^{-27} \text{ kg} \).</li>
+                    <li>הפרוטון משוחרר ממרחק גדול מאוד (אינסוף), לכן הפוטנציאל ההתחלתי: \( V_i = V_\infty = 0 \).</li>
+                    <li>הפרוטון מגיע עד למעטפת הכדורית (\( R_1 = 0.1 \text{ m} \)).</li>
+                    <li>השפעת הכבידה זניחה.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1 text-slate-600">את הגודל המינימלי של המהירות ההתחלתית, \( v_0 \), שיש להעניק לפרוטון באינסוף כדי שיצליח להגיע אל פני המעטפת הכדורית.</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">חוק שימור אנרגיה מכנית: \( \Sigma E_{initial} = \Sigma E_{final} \)</span>
+            <span class="formula-badge">אנרגיה פוטנציאלית חשמלית: \( U = qV \)</span>
+            <span class="formula-badge">אנרגיה קינטית: \( E_k = \frac{1}{2}mv^2 \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">כדי שהפרוטון יגיע למעטפת ב<strong>מהירות מינימלית</strong>, הוא צריך להגיע אליה ולהיעצר בדיוק על פניה. כלומר, המהירות הסופית שלו על פני המעטפת תהיה אפס (\( v_f = 0 \)). לכן התאוצה של הפרוטון לא מעניינת אותנו (גודל המהירות קטן ככל שהוא מתקרב), אלא רק שיקולי אנרגיה.</p>
+            <p class="content-paragraph mt-2">נחשב תחילה את הפוטנציאל החשמלי על פני המעטפת (\( r = R_1 = 0.1 \text{ m} \)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_f = V(R_1) = k\frac{Q_1}{R_1} = 9 \cdot 10^9 \cdot \frac{2 \cdot 10^{-9}}{0.1} = 180 \text{ V} \]
+            </div>
+            <p class="content-paragraph mt-2">כעת נרשום את משוואת שימור האנרגיה בין האינסוף לבין פני המעטפת ונציב את הביטויים עבור כל איבר:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ E_{k,i} + U_i = E_{k,f} + U_f \]
+                \[ \frac{1}{2}m_p v_0^2 + q_p V_\infty = 0 + q_p V_f \]
+                \[ \frac{1}{2} \cdot (1.67 \cdot 10^{-27}) \cdot v_0^2 + 0 = (1.6 \cdot 10^{-19}) \cdot 180 \]
+            </div>
+            <p class="content-paragraph mt-2">נבודד את \( v_0^2 \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ v_0^2 = \frac{2 \cdot 1.6 \cdot 10^{-19} \cdot 180}{1.67 \cdot 10^{-27}} = \frac{5.76 \cdot 10^{-17}}{1.67 \cdot 10^{-27}} \approx 3.449 \cdot 10^{10} \]
+            </div>
+            <p class="content-paragraph mt-2">נוציא שורש ריבועי:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ v_0 = \sqrt{3.449 \cdot 10^{10}} \approx 185717 \text{ m/s} \]
+            </div>
+            <p class="final-answer"><strong>תשובה סופית:</strong> המהירות ההתחלתית המינימלית הנדרשת היא <span class="inline-ltr">\( v_0 = 1.86 \cdot 10^5 \text{ m/s} \)</span> (ב-3 ספרות מהותיות).</p>
+        </div>
+
+        <div class="visual-frame">
+            <svg width="400" height="150" viewBox="0 0 400 150">
+                <defs>
+                    <marker id="arrow-v" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#16a34a" />
+                    </marker>
+                    <marker id="arrow-f" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#dc2626" />
+                    </marker>
+                </defs>
+                <!-- Shell Edge -->
+                <path d="M 350 20 Q 330 75 350 130" fill="none" stroke="#3b82f6" stroke-width="4" />
+                <text x="360" y="75" text-anchor="start" font-size="14" font-weight="bold" fill="#3b82f6" font-family="sans-serif">מעטפת A</text>
+                <text x="360" y="95" text-anchor="start" font-size="12" fill="#3b82f6" font-family="sans-serif">(Q₁ > 0)</text>
+                
+                <!-- Infinity line -->
+                <line x1="50" y1="20" x2="50" y2="130" stroke="#94a3b8" stroke-width="2" stroke-dasharray="4,4" />
+                <text x="50" y="15" text-anchor="middle" font-size="14" fill="#64748b" font-family="sans-serif">אינסוף (V=0)</text>
+                
+                <!-- Proton -->
+                <circle cx="150" cy="75" r="8" fill="#f87171" stroke="#b91c1c" stroke-width="2" />
+                <text x="150" y="79" text-anchor="middle" font-size="12" font-weight="bold" fill="white" font-family="sans-serif">+</text>
+                <text x="150" y="55" text-anchor="middle" font-size="12" font-weight="bold" fill="#b91c1c" font-family="sans-serif">פרוטון</text>
+                
+                <!-- Velocity Vector -->
+                <line x1="162" y1="75" x2="210" y2="75" stroke="#16a34a" stroke-width="3" marker-end="url(#arrow-v)" />
+                <text x="185" y="65" text-anchor="middle" font-size="14" font-weight="bold" fill="#16a34a" font-family="sans-serif">v</text>
+
+                <!-- Force Vector (FBD) -->
+                <line x1="138" y1="75" x2="90" y2="75" stroke="#dc2626" stroke-width="3" marker-end="url(#arrow-f)" />
+                <text x="110" y="65" text-anchor="middle" font-size="14" font-weight="bold" fill="#dc2626" font-family="sans-serif">F_E</text>
+
+                <text x="200" y="130" text-anchor="middle" font-size="12" fill="#64748b" font-family="sans-serif">תרשים כוחות (FBD) על הפרוטון בתנועתו</text>
+            </svg>
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג' - מטען על כל מעטפת לאחר החיבור</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside text-slate-600 space-y-1 mt-1">
+                    <li>מעטפת ב' בעלת רדיוס: \( R_2 = 60 \text{ cm} = 0.6 \text{ m} \).</li>
+                    <li>מטען התחלתי של מעטפת ב': \( Q_2 = 10 \text{ nC} = 10 \cdot 10^{-9} \text{ C} \).</li>
+                    <li>מטען התחלתי של מעטפת א' (מחושב בסעיף א'): \( Q_1 = 2 \text{ nC} = 2 \cdot 10^{-9} \text{ C} \).</li>
+                    <li>המעטפות נמצאות במרחק גדול מאוד זו מזו ומחוברות בתיל מוליך.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1 text-slate-600">את המטען החדש על כל אחת מהמעטפות (\( q_1' \), \( q_2' \)) זמן רב לאחר החיבור.</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">חוק שימור המטען: \( \Sigma Q_{initial} = \Sigma Q_{final} \)</span>
+            <span class="formula-badge">שוויון פוטנציאלים במוליך מחובר: \( V_1' = V_2' \)</span>
+            <span class="formula-badge">פוטנציאל מעטפת: \( V = k \frac{q}{r} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph">נשתמש בשני העקרונות כדי לבנות מערכת של שתי משוואות בשני נעלמים.</p>
+            <p class="content-paragraph mb-2"><strong>משוואה 1 - שימור המטען הכולל:</strong> המטען הכולל במערכת לפני החיבור שווה למטען הכולל אחריו.</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ Q_{\text{tot}} = Q_1 + Q_2 = 2 \text{ nC} + 10 \text{ nC} = 12 \text{ nC} \]
+                \[ q_1' + q_2' = 12 \]
+            </div>
+            <p class="content-paragraph mt-4 mb-2"><strong>משוואה 2 - שוויון פוטנציאלים:</strong> זמן רב לאחר החיבור, זרם המטענים פוסק, ושתי המעטפות (והתיל המחבר) מהוות גוף מוליך אחד שווה-פוטנציאל.</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_1' = V_2' \]
+                \[ k\frac{q_1'}{R_1} = k\frac{q_2'}{R_2} \]
+            </div>
+            <p class="content-paragraph mt-4">קבוע קולון (\( k \)) מצטמצם משני האגפים. נציב את הרדיוסים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \frac{q_1'}{0.1} = \frac{q_2'}{0.6} \]
+            </div>
+            <p class="content-paragraph mt-4">נכפיל את המשוואה ב-0.6 ונקבל קשר בין המטענים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ q_2' = \frac{0.6}{0.1} q_1' \Rightarrow q_2' = 6 q_1' \]
+            </div>
+            <p class="content-paragraph mt-4">כעת נציב את הקשר שקיבלנו לתוך משוואת שימור המטען:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ q_1' + 6 q_1' = 12 \]
+                \[ 7 q_1' = 12 \]
+                \[ q_1' = \frac{12}{7} \approx 1.714 \text{ nC} \]
+            </div>
+            <p class="content-paragraph mt-4">נמצא את המטען על המעטפת השנייה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ q_2' = 6 \cdot \left(\frac{12}{7}\right) = \frac{72}{7} \approx 10.286 \text{ nC} \]
+            </div>
+            <p class="content-paragraph mt-2">נוודא: \( 1.714 + 10.286 = 12 \). הסכום נשמר.</p>
+            
+            <p class="final-answer"><strong>תשובה סופית:</strong> לאחר זמן רב, המטען על מעטפת א' יהיה <span class="inline-ltr">\( q_1' = 1.71 \text{ nC} \)</span>, והמטען על מעטפת ב' יהיה <span class="inline-ltr">\( q_2' = 10.3 \text{ nC} \)</span> (ב-3 ספרות מהותיות).</p>
+        </div>
+        
+        <div class="visual-frame">
+            <svg width="400" height="200" viewBox="0 0 400 200">
+                <!-- Wire -->
+                <line x1="120" y1="100" x2="240" y2="100" stroke="#475569" stroke-width="2" />
+                <!-- Shell A -->
+                <circle cx="80" cy="100" r="40" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" />
+                <text x="80" y="95" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b" font-family="sans-serif">מעטפת א'</text>
+                <text x="80" y="115" text-anchor="middle" font-size="12" fill="#3b82f6" font-family="sans-serif">q₁' = 1.71 nC</text>
+                <!-- Shell B -->
+                <circle cx="310" cy="100" r="70" fill="#eff6ff" stroke="#3b82f6" stroke-width="2" />
+                <text x="310" y="95" text-anchor="middle" font-size="14" font-weight="bold" fill="#1e293b" font-family="sans-serif">מעטפת ב'</text>
+                <text x="310" y="115" text-anchor="middle" font-size="12" fill="#3b82f6" font-family="sans-serif">q₂' = 10.3 nC</text>
+            </svg>
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד' - תנועת אלקטרונים בין המעטפות</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside text-slate-600 space-y-1 mt-1">
+                    <li>מטעני מעטפת א': לפני חיבור \( Q_1 = 2 \text{ nC} \), אחרי חיבור \( q_1' = \frac{12}{7} \approx 1.71 \text{ nC} \).</li>
+                    <li>מטעני מעטפת ב': לפני חיבור \( Q_2 = 10 \text{ nC} \), אחרי חיבור \( q_2' = \frac{72}{7} \approx 10.3 \text{ nC} \).</li>
+                    <li>מטען יסודי של אלקטרון: \( e = 1.6 \cdot 10^{-19} \text{ C} \). האלקטרונים הם נושאי המטען הניידים במוליכים מתכתיים.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1 text-slate-600">לציין את כיוון תנועת האלקטרונים (מ-א' ל-ב' או מ-ב' ל-א') ולחשב את מספר האלקטרונים שעברו.</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">קשר בין מטען למספר אלקטרונים: \( \Delta Q = N \cdot e \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון:</h4>
+            <p class="content-paragraph"><strong>קביעת הכיוון:</strong> נסתכל על השינוי במטען של מעטפת א'. המטען שלה ירד מ-\( 2 \text{ nC} \) ל-\( 1.71 \text{ nC} \). כלומר, היא הפכה להיות <em>פחות חיובית</em>. כדי שגוף יאבד מטען חיובי (נטו), עליו לקבל מטען שלילי שינטרל חלק מהמטען החיובי. מכאן שאלקטרונים (בעלי מטען שלילי) זרמו <strong>ממעטפת ב' אל מעטפת א'</strong>.</p>
+            
+            <p class="content-paragraph mt-4">נחשב את כמות המטען שעברה. השינוי במטען של מעטפת א' הוא:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Delta Q = Q_{1,\text{initial}} - Q_{1,\text{final}} = 2 - \frac{12}{7} = \frac{14}{7} - \frac{12}{7} = \frac{2}{7} \text{ nC} \]
+            </div>
+            <p class="content-paragraph mt-4">נעביר ליחידות קולון:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \Delta Q = \frac{2}{7} \cdot 10^{-9} \text{ C} \approx 2.857 \cdot 10^{-10} \text{ C} \]
+            </div>
+            <p class="content-paragraph mt-4">נחשב את מספר האלקטרונים \( N \) המרכיבים את המטען הזה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ N = \frac{\Delta Q}{e} = \frac{\frac{2}{7} \cdot 10^{-9}}{1.6 \cdot 10^{-19}} \]
+                \[ N = \frac{2}{7 \cdot 1.6} \cdot 10^{10} = \frac{2}{11.2} \cdot 10^{10} \approx 0.17857 \cdot 10^{10} = 1.7857 \cdot 10^9 \]
+            </div>
+            
+            <p class="final-answer"><strong>תשובה סופית:</strong> האלקטרונים עברו <strong>ממעטפת ב' למעטפת א'</strong>. מספר האלקטרונים שעברו הוא <span class="inline-ltr">\( N = 1.79 \cdot 10^9 \)</span> אלקטרונים (ב-3 ספרות מהותיות).</p>
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה' - משמעות ההנחה שהמרחק גדול מאוד</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside text-slate-600 space-y-1 mt-1">
+                    <li>משפט מהשאלה: "מעטפת ב' נמצאת במרחק גדול מאוד ממעטפת א'".</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1 text-slate-600">הסבר פיזיקלי מדוע הנחה זו נדרשת כדי שהחישובים שעשינו בסעיף ג' יהיו תקפים.</p>
+            </div>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הסבר:</h4>
+            <p class="content-paragraph">בסעיף ג' השתמשנו בנוסחה לפוטנציאל על פני כדור טעון: <span class="inline-ltr">\( V = k\frac{q}{R} \)</span>. נוסחה זו מבוססת על ההנחה שהמטען החשמלי מפוזר באופן אחיד וסימטרי לחלוטין על פני כל שטח המעטפת הכדורית.</p>
+            <p class="content-paragraph">אילו המעטפות היו קרובות זו לזו, המטען החיובי על מעטפת א' היה מפעיל כוח דחייה חשמלי על המטען החיובי שעל מעטפת ב', ולהפך. כתוצאה מכך, נושאי המטען (האלקטרונים) בכל אחת מהמעטפות היו מסתדרים מחדש כדי למזער את האנרגיה הפוטנציאלית (תופעה הנקראת השראה אלקטרוסטטית או קיטוב מוליכים). חלוקת המטען על פני המעטפות לא הייתה עוד אחידה (המטענים החיוביים היו מצטברים בצדדים המרוחקים יותר זה מזה).</p>
+            <p class="content-paragraph">כאשר המרחק גדול מאוד, השפעת השדה החשמלי של מעטפת אחת על חברתה הופכת להיות זניחה לחלוטין, מה שמאפשר למטען להישאר מפוזר באחידות כמעט מושלמת, ולנוסחה <span class="inline-ltr">\( V = k\frac{q}{R} \)</span> להיות מדויקת.</p>
+            
+            <p class="final-answer"><strong>תשובה סופית:</strong> ההנחה נדרשת כדי למנוע תופעות של השראה אלקטרוסטטית (קיטוב) בין שתי המעטפות. מרחק רב מבטיח שהשדה של מעטפת אחת לא ישפיע על פילוג המטען של השנייה, וכך המטען נשאר מפוזר באחידות וניתן להשתמש בנוסחת הפוטנציאל של כדור יחיד <span class="inline-ltr">\( V = k\frac{q}{R} \)</span>.</p>
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">תמונת השאלה המקורית</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
