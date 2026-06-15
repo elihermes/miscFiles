@@ -1,0 +1,767 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון בגרות בפיזיקה - מעגלי זרם ישר ואופייני נגדים</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <!-- אין להוסיף polyfill.io או polyfill חיצוני אחר -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון מודרך בפיזיקה: מעגלי זרם ישר ואופייני נגדים</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">בגרות חשמל 2026, שאלה 3</h2>
+        <p class="mt-3 text-slate-500">פתרון מלא המשלב ניתוח גרפי, חוק אוהם ופתרון מעגלים בטור ובמקביל</p>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- מבט כללי -->
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">מבט כללי על השאלה</h3>
+        <p class="content-paragraph mb-0">בשאלה זו ננתח התנהגות של שני רכיבים שונים דרך גרף האופיין שלהם (זרם כתלות במתח). אחד הרכיבים מקיים את חוק אוהם והשני אינו אוהמי. נשתמש בנתוני הגרף כדי לנתח מעגלים חשמליים הכוללים חיבורי טור ומקביל יחד עם מקור מתח בעל התנגדות פנימית.</p>
+    </section>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <div class="flex justify-center">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית"
+                class="max-w-full h-auto rounded-lg border border-slate-200"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            />
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+                <span class="block font-bold mb-1">תמונת השאלה המקורית</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+            </div>
+        </div>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א' - זיהוי רכיב בעל התנגדות קבועה</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside text-slate-600 space-y-1 mt-1">
+                    <li>גרף של הזרם \( I \) כתלות במתח \( V \) עבור שני רכיבים, A ו-B.</li>
+                    <li>הגרף של רכיב A הוא קו ישר שעובר בראשית הצירים.</li>
+                    <li>הגרף של רכיב B הוא עקומה.</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1 text-slate-600">לקבוע לאיזה מן הרכיבים יש התנגדות קבועה ולנמק את הבחירה.</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">חוק אוהם: \( R = \frac{V}{I} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון ונימוק:</h4>
+            <p class="content-paragraph">על פי חוק אוהם, עבור נגד אופמי (בעל התנגדות קבועה), היחס בין המתח לזרם הוא גודל קבוע. בייצוג גרפי שבו הזרם \( I \) משורטט כתלות במתח \( V \), המשוואה המתקבלת היא קו ישר מסוג \( I = \frac{1}{R} \cdot V \), כאשר השיפוע שווה ל-\( \frac{1}{R} \).</p>
+            <p class="content-paragraph">גרף המציג קו ישר העובר בראשית הצירים מעיד על יחס ישר בין הזרם למתח, כלומר ההתנגדות אינה משתנה בתלות במתח המופעל. הגרף של רכיב A מקיים תנאי זה בדיוק, בעוד שהגרף של רכיב B אינו לינארי ולכן התנגדותו משתנה (הוא רכיב לא-אוהמי).</p>
+            <p class="final-answer"><strong>תשובה סופית:</strong> לרכיב <strong>A</strong> יש התנגדות קבועה. הנימוק הוא שגרף הזרם-מתח שלו הוא קו ישר העובר דרך ראשית הצירים, המעיד על כך שהיחס \( V/I \) (ההתנגדות) נשאר קבוע.</p>
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב' - חישוב התנגדות סגולית</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside text-slate-600 space-y-1 mt-1">
+                    <li>רכיב A הוא תיל מוליך גלילי.</li>
+                    <li>אורך התיל: \( \ell = 2 \text{ m} \).</li>
+                    <li>שטח חתך התיל: \( A = 0.45 \text{ mm}^2 \). נבצע המרת יחידות (MKS): \( A = 0.45 \cdot 10^{-6} \text{ m}^2 \).</li>
+                    <li>מהגרף: ב-\( V = 4.0 \text{ V} \), הזרם של רכיב A עומד על \( I = 0.8 \text{ A} \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1 text-slate-600">לחשב את ההתנגדות הסגולית, \( \rho \), של חומר התיל.</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">התנגדות על פי חוק אוהם: \( R = \frac{V}{I} \)</span>
+            <span class="formula-badge">התנגדות של תיל: \( R = \rho\frac{\ell}{A} \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון צעד-אחר-צעד:</h4>
+            <div class="step-label">שלב 1: חישוב התנגדות רכיב A מהגרף</div>
+            <p class="content-paragraph">נבחר נקודה על הישר של גרף A כדי למצוא את ההתנגדות:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ R_A = \frac{V}{I} = \frac{4.0}{0.8} = 5\ \Omega \]
+            </div>
+
+            <div class="step-label mt-4">שלב 2: שימוש בנוסחת ההתנגדות הסגולית</div>
+            <p class="content-paragraph">נציב את הנתונים בנוסחה המקשרת בין התנגדות, אורך, שטח חתך והתנגדות סגולית. נבודד תחילה את \( \rho \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ R = \rho\frac{\ell}{A} \implies \rho = \frac{R \cdot A}{\ell} \]
+                \[ \rho = \frac{5 \cdot 0.45 \cdot 10^{-6}}{2} \]
+                \[ \rho = \frac{2.25 \cdot 10^{-6}}{2} = 1.125 \cdot 10^{-6}\ \Omega\cdot\text{m} \]
+            </div>
+            <p class="final-answer"><strong>תשובה סופית:</strong> ההתנגדות הסגולית של התיל היא <span class="inline-ltr">\( \rho = 1.13 \cdot 10^{-6}\ \Omega\cdot\text{m} \)</span> (ב-3 ספרות מהותיות).</p>
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג' - חישוב מתח ההדקים בחיבור טורי</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside text-slate-600 space-y-1 mt-1">
+                    <li>רכיבים A ו-B חוברו בטור (תרשים 2) למקור מתח בעל כא"מ \( \varepsilon \) והתנגדות פנימית \( r \).</li>
+                    <li>נמדד מתח באמצעות וולטמטר אידיאלי על כל אחד מהרכיבים בנפרד.</li>
+                    <li>תוצאת המדידה: המתח על רכיב A <strong>שווה</strong> למתח על רכיב B (\( V_A = V_B \)).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1 text-slate-600">את מתח הדקי המקור \( V_{MN} \) במעגל זה.</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">זרם בחיבור טורי: \( I_A = I_B = I_{tot} \)</span>
+            <span class="formula-badge">מתח כולל בחיבור טורי: \( V_{tot} = V_A + V_B \)</span>
+            <span class="formula-badge">מתח הדקים: \( V_{MN} = V_{tot} \) (מתח על המעגל החיצוני)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">ניתוח הגרף וחישוב:</h4>
+            <p class="content-paragraph">בחיבור טורי, אותו זרם זורם דרך כל הרכיבים, ולכן בהכרח \( I_A = I_B \). בנוסף, הנתון אומר לנו במפורש שהמתחים עליהם שווים, כלומר \( V_A = V_B \). כדי ששני התנאים האלו יתקיימו בו-זמנית, אנו מחפשים בגרף נקודה שבה לשני הרכיבים יש גם את אותו המתח וגם את אותו הזרם. נקודה זו היא <strong>נקודת החיתוך</strong> של שני הגרפים.</p>
+            <p class="content-paragraph">מבחינה מדוקדקת של הגרף, שני הגרפים נחתכים בנקודה שבה הזרם הוא \( I = 0.46 \text{ A} \) והמתח הוא \( V = 2.3 \text{ V} \). נציב ערכים אלה במשוואת המתח הכולל של המעגל החיצוני (שהוא מתח ההדקים של המקור):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_{MN} = V_A + V_B \]
+                \[ V_{MN} = 2.3 + 2.3 = 4.6\text{ V} \]
+            </div>
+            
+            <p class="final-answer"><strong>תשובה סופית:</strong> מתח הדקי המקור, \( V_{MN} \), במעגל הטורי הוא <span class="inline-ltr">\( 4.6\text{ V} \)</span>.</p>
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד' - הזרם הכולל דרך המקור בחיבור מקביל</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside text-slate-600 space-y-1 mt-1">
+                    <li>רכיבים A ו-B חוברו במקביל (תרשים 3) לאותו מקור מתח.</li>
+                    <li>המתח שנמדד על רכיב A באמצעות וולטמטר אידיאלי הוא \( V_A = 3.5 \text{ V} \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1 text-slate-600">את הזרם הכולל הזורם דרך מקור המתח במעגל זה.</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">מתח בחיבור במקביל: \( V_A = V_B = V_{tot} \)</span>
+            <span class="formula-badge">זרם כולל בחיבור במקביל: \( I_{tot} = I_A + I_B \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">במעגל מקבילי כפי שמתואר בתרשים 3, שני הרכיבים מחוברים לאותן נקודות צומת, ולכן המתח עליהם שווה. על פי הנתון על רכיב A מתקיים גם:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ V_A = V_B = 3.5\text{ V} \]
+            </div>
+            
+            <p class="content-paragraph mt-4">נוציא כעת מהגרף את ערכי הזרם המתאימים למתח של \( 3.5\text{ V} \) עבור כל אחד מהרכיבים:</p>
+            <ul class="list-disc list-inside text-slate-700 mb-4 px-2">
+                <li>עבור רכיב A: מהגרף הלינארי (או על ידי חישוב \( I = V/R = 3.5/5 \)), הזרם ב-\( 3.5\text{ V} \) הוא \( I_A = 0.7\text{ A} \).</li>
+                <li>עבור רכיב B: מהגרף, ב-\( V = 3.5\text{ V} \), הזרם הוא \( I_B = 0.52\text{ A} \).</li>
+            </ul>
+            
+            <p class="content-paragraph">נחשב את הזרם הכולל שיוצא מהמקור (על פי חוק צמתים של קירכהוף):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I_{tot} = I_A + I_B \]
+                \[ I_{tot} = 0.7 + 0.52 = 1.22\text{ A} \]
+            </div>
+            
+            <p class="final-answer"><strong>תשובה סופית:</strong> הזרם הכולל שזורם דרך מקור המתח הוא <span class="inline-ltr">\( 1.22\text{ A} \)</span>.</p>
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה' - חישוב הכא"מ וההתנגדות הפנימית</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון (סיכום נתוני סעיפים קודמים):</strong>
+                <ul class="list-disc list-inside text-slate-600 space-y-1 mt-1">
+                    <li>מצב 1 (מעגל טורי): מתח הדקים \( V_{MN} = 4.6 \text{ V} \), זרם כולל \( I_1 = 0.46 \text{ A} \).</li>
+                    <li>מצב 2 (מעגל מקבילי): מתח הדקים שווה למתח הרכיבים ולכן \( V_{MN} = 3.5 \text{ V} \), זרם כולל דרך המקור \( I_2 = 1.22 \text{ A} \).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1 text-slate-600">את הכא"מ (\( \varepsilon \)) ואת ההתנגדות הפנימית (\( r \)) של מקור המתח.</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">משוואת מתח הדקים: \( V_{MN} = \varepsilon - Ir \)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הצבה ופתרון מערכת משוואות:</h4>
+            <p class="content-paragraph">נרשום את משוואת מתח ההדקים עבור כל אחד משני המעגלים (המצבים), כך שנקבל מערכת של שתי משוואות לינאריות עם שני נעלמים (\( \varepsilon \) ו- \( r \)):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ 4.6 = \varepsilon - 0.46r \quad \text{(מצב 1: מעגל הטור)} \]
+                \[ 3.5 = \varepsilon - 1.22r \quad \text{(מצב 2: מעגל המקביל)} \]
+            </div>
+            
+            <p class="content-paragraph mt-4">נחסר את המשוואה השנייה מהמשוואה הראשונה כדי להעלים את הנעלם \( \varepsilon \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ (4.6 - 3.5) = (\varepsilon - 0.46r) - (\varepsilon - 1.22r) \]
+                \[ 1.1 = 0.76r \]
+                \[ r = \frac{1.1}{0.76} = \frac{110}{76} \approx 1.447\ \Omega \]
+            </div>
+            
+            <p class="content-paragraph mt-4">כעת נציב את הערך של \( r \) חזרה לאחת המשוואות (לדוגמה למשוואה של מצב 1) כדי למצוא את הכא"מ \( \varepsilon \):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \varepsilon = 4.6 + 0.46r \]
+                \[ \varepsilon = 4.6 + 0.46 \cdot \left(\frac{110}{76}\right) = 4.6 + \frac{50.6}{76} \approx 5.266\text{ V} \]
+            </div>
+            
+            <p class="final-answer"><strong>תשובה סופית:</strong> הכא"מ הוא <span class="inline-ltr">\( \varepsilon = 5.27\text{ V} \)</span> וההתנגדות הפנימית היא <span class="inline-ltr">\( r = 1.45\ \Omega \)</span> (ב-3 ספרות מהותיות).</p>
+        </div>
+    </section>
+
+    <!-- סעיף ו -->
+    <section class="section-card" id="part-f">
+        <h3 class="section-header">סעיף ו' - השפעת וולטמטר לא אידיאלי</h3>
+        
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>מה נתון:</strong>
+                <ul class="list-disc list-inside text-slate-600 space-y-1 mt-1">
+                    <li>מעגל 1 (טורי) בוצע מחדש.</li>
+                    <li>מדידת המתח על הרכיב בעל ההתנגדות הקבועה (רכיב A) נעשית הפעם בעזרת <strong>וולטמטר לא אידיאלי</strong> (בעל התנגדות פנימית סופית \( R_v \)).</li>
+                </ul>
+            </div>
+            <div class="info-panel">
+                <strong>מה מחפשים:</strong>
+                <p class="mt-1 text-slate-600">לקבוע האם המתח שיימדד כעת יהיה גדול, קטן או שווה למתח שנמדד בעזרת וולטמטר אידיאלי, ולנמק.</p>
+            </div>
+        </div>
+
+        <div class="mt-2 mb-4">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">התנגדות שקולה במקביל</span>
+            <span class="formula-badge">חלוקת מתח במעגל טורי</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">נימוק התשובה:</h4>
+            <p class="content-paragraph">וולטמטר לא אידיאלי מתאפיין בהתנגדות חשמלית פנימית סופית. כאשר מחברים אותו במקביל לרכיב A, הוא מהווה מסלול נוסף למעבר זרם. כתוצאה מכך, ההתנגדות השקולה של המקטע המכיל את רכיב A יחד עם הוולטמטר, הופכת להיות קטנה יותר מההתנגדות המקורית של רכיב A לבדו (\( R_p < R_A \)).</p>
+            <p class="content-paragraph">כיוון שההתנגדות השקולה של מקטע זה קטנה, ההתנגדות הכוללת של המעגל הטורי כולו פוחתת גם היא. התנגדות קטנה יותר מובילה להגדלת הזרם הכולל היוצא מהמקור (או להישארותו בערך המקסימלי האפשרי). זרם כולל גדול יותר (או זהה) גורם למפל מתח גדול יותר (או זהה) על ההתנגדות הפנימית \( r \) ועל רכיב B (\( I_{tot}r \) ו- \( V_B \)).</p>
+            <p class="content-paragraph">על פי חוק קירכהוף למתחים במסלול סגור: \( \varepsilon = I_{tot}r + V_B + V_A \). מאחר שסכום המתחים על המקור ועל רכיב B גדל, החלק היחסי מהמתח שנותר ליפול על המקטע המקבילי (שכולל את רכיב A) חייב לרדת. לכן, המתח שיימדד על רכיב A יהיה קטן יותר.</p>
+            
+            <p class="final-answer"><strong>תשובה סופית:</strong> המתח שנמדד באמצעות הוולטמטר הלא-אידיאלי יהיה <strong>קטן</strong> מהמתח שנמדד באמצעות הוולטמטר האידיאלי.</p>
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200 flex-col gap-4">
+            <img
+                src="question-image.png"
+                alt="תמונת השאלה המקורית - חלק 1"
+                class="max-w-full h-auto rounded-lg"
+                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
+            >
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">תמונת השאלה המקורית</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code so date details are not exposed.
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+</body>
+</html>
