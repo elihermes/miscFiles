@@ -1,0 +1,693 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl"><head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>פתרון שאלה בפיזיקה - תנועת מוט בשדה מגנטי</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .svg-container {
+            width: 100%;
+            max-width: 450px;
+            display: block;
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        @media (max-width: 640px) {
+            .math-scroll mjx-container[display="true"],
+            .math-container mjx-container[display="true"],
+            .math-block mjx-container[display="true"],
+            .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+                font-size: 0.9em;
+            }
+
+            .page-shell {
+                padding-bottom: 8.5rem;
+            }
+
+            .question-modal-header {
+                flex-wrap: wrap;
+            }
+
+            .question-modal-title {
+                width: 100%;
+                text-align: right;
+                font-size: 1rem;
+                order: 2;
+            }
+
+            .question-modal-close {
+                order: 1;
+            }
+        }
+
+        .floating-question-btn {
+            position: fixed;
+            right: 1rem;
+            bottom: 1rem;
+            z-index: 50;
+            height: 3rem;
+            padding: 0 0.9rem;
+            gap: 0.45rem;
+            border: 1px solid var(--blue-border);
+            border-radius: 9999px;
+            background: var(--blue-50);
+            color: var(--blue-700);
+            box-shadow: 0 8px 20px rgba(30, 64, 175, 0.2);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: transform 0.2s ease, background-color 0.2s ease;
+        }
+
+        .floating-question-btn:hover {
+            background: var(--blue-100);
+            transform: scale(1.05);
+        }
+
+        .question-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(15, 23, 42, 0.7);
+            z-index: 60;
+            display: none;
+            align-items: center;
+            justify-content: center;
+            padding: 1rem;
+        }
+
+        .question-modal.is-open {
+            display: flex;
+        }
+
+        .question-modal-card {
+            background: white;
+            width: min(1100px, 96vw);
+            max-width: 100%;
+            max-height: 92vh;
+            border-radius: 1rem;
+            border: 1px solid var(--slate-300);
+            box-shadow: 0 18px 40px rgba(0, 0, 0, 0.3);
+            overflow: auto;
+            padding: 1rem;
+        }
+
+        .question-modal-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 0.5rem;
+            margin-bottom: 0.75rem;
+        }
+
+        .question-modal-title {
+            min-width: 0;
+            flex: 1;
+            font-weight: 700;
+            color: #1f2937;
+        }
+
+        .question-modal-close {
+            flex-shrink: 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-entry-link {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            margin-top: 0.7rem;
+            font-size: 0.86rem;
+            color: #64748b;
+            text-decoration: underline;
+            text-underline-offset: 2px;
+        }
+
+        .legal-entry-link:hover {
+            color: #1d4ed8;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+
+        .legal-footer a {
+            color: #1d4ed8;
+            font-weight: 600;
+            text-underline-offset: 2px;
+        }
+
+        .legal-footer a:hover {
+            color: #1e3a8a;
+        }
+
+        body.modal-open {
+            overflow: hidden;
+        }
+
+        @media (min-width: 768px) {
+            .floating-question-btn {
+                right: 1.5rem;
+                bottom: 1.5rem;
+            }
+
+            .page-shell {
+                padding: 1.5rem;
+                padding-bottom: 7rem;
+            }
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות פיזיקה (חשמל)</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">תנועת מוט מוליך בשדה מגנטי (שאלה 6)</h2>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+        <div>
+            <a class="legal-entry-link" data-legal-link="" href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        </div>
+    </header>
+
+    <!-- תמונת השאלה המקורית -->
+    <section class="section-card border-t-4 border-slate-300">
+        <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+        </div>
+    </section>
+
+    <!-- חילוץ השאלה -->
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">נוסח השאלה המלא</h3>
+        <p class="content-paragraph">נתונה מערכת הכוללת מוט מוליך CD שיכול לנוע על מסילה אופקית ארוכה מאוד שמורכבת משני פסים מוליכים מקבילים.<br>המרחק בין הפסים הוא \(\ell\).</p>
+        <p class="content-paragraph">בין קצות הפסים מחוברת סוללה בעלת כא"מ \(\varepsilon\) והתנגדות פנימית \(r\).<br>קיים שדה מגנטי אחיד שגודלו \(B\) המאונך למישור המסילה.<br>למוט קשור חוט אופקי הכרוך על גלגלת ובקצה האחר של החוט תלויה משקולת שמסתה \(m\) (ראו תרשים).</p>
+        <p class="content-paragraph">כל כוחות החיכוך והתנגדויות פסי המסילה והמוט CD ניתנים להזנחה.</p>
+        <p class="content-paragraph font-bold mt-2">משחררים את המוט CD ממנוחה, והמוט נשאר במקומו ולא זז.</p>
+        <ul class="list-none space-y-2 mt-2">
+            <li><strong>א.</strong> קבעו את כיוון השדה המגנטי \(B\). נמקו את קביעתכם. (6 נקודות)</li>
+            <li><strong>ב.</strong> בטאו את מסת המשקולת \(m\) בעזרת נתוני השאלה (\(\varepsilon, r, \ell, B\)) וקבועים פיזיקליים ידועים. (7 נקודות)</li>
+        </ul>
+        <p class="content-paragraph mt-4">מחליפים את הסוללה בנורה שהתנגדותה \(R\). משחררים את המוט CD ממנוחה, והמוט מתחיל לנוע.</p>
+        <ul class="list-none space-y-2 mt-2">
+            <li><strong>ג.</strong> הסבירו באופן מפורט את התהליך שגורם לזרם בנורה בזמן תנועת המוט. (8 נקודות)</li>
+        </ul>
+        <p class="content-paragraph mt-4">לאחר זמן מה הגיע המוט למהירות קבועה.<br>נתון: \(R = 7.2\ \Omega\), \(\ell = 0.8\text{ m}\), \(m = 0.05\text{ kg}\), \(B = 1.8\text{ T}\).</p>
+        <ul class="list-none space-y-2 mt-2">
+            <li><strong>ד.</strong> חשבו את גודל המהירות הקבועה של המוט CD. (7 נקודות)</li>
+            <li><strong>ה.</strong> קבעו את כיוון הזרם במוט CD. נמקו את קביעתכם. (5 1/3 נקודות)</li>
+        </ul>
+    </section>
+
+    <!-- סעיף א -->
+    <section class="section-card" id="part-a">
+        <h3 class="section-header">סעיף א': קביעת כיוון השדה המגנטי</h3>
+
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> המערכת במנוחה. המשקולת התלויה, דרך החוט, מפעילה על המוט מתיחות \(T\) ימינה. סוללה מחוברת כך שההדק החיובי (+) מצד פס \(C\) וההדק השלילי (-) מצד פס \(D\).</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> את כיוונו של השדה המגנטי \(B\) המאונך למישור המסילה.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\Sigma F = 0\)</span>
+            <span class="formula-badge">\(F_B = I\ell B\sin\alpha\)</span>
+            <span class="formula-badge">כלל יד ימין (כוח מגנטי)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+            <p class="content-paragraph">נבחר את ציר התנועה האופקי כך שכיוון ימינה הוא החיובי. מכיוון שהמוט אינו זז למרות שהחוט מושך אותו ימינה בכוח \(T\), חייב לפעול עליו כוח מגנטי \(F_B\) שמאלה אשר מאזן אותו (\(\Sigma F = 0\)).</p>
+            <p class="content-paragraph">כדי לקבוע את כיוון הזרם במוט: הזרם יוצא מההדק החיובי של הסוללה, עובר דרך הפס המוליך אל הנקודה \(C\), זורם לאורך המוט מ-\(C\) אל \(D\), וחוזר להדק השלילי. לכן, הזרם במוט זורם מכיוון \(C\) לכיוון \(D\).</p>
+            
+            <div class="visual-frame">
+                <div class="svg-container physics-diagram-wrapper" style="display: inline-block; direction: ltr; vertical-align: middle; text-align: center;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAyAAAAG4CAYAAAC92oNvAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAADIKADAAQAAAABAAABuAAAAABsKgDlAABAAElEQVR4Ae3dXYxc130g+HuruhXZnsSthUjZC0QurU2ZijMr8mUxa3mhJpCFs04Wph78MEgcNkUZsIFZkHraPARgE8hD3kQBAyRAJLEZZ2cWyIOoZONNsAFYxkjB7L6wPYgjjihDJXsGkUV51BPZlsLuumfP7e7qrqqu7q6qru/7K6hV9/N8/E6zbv/r3HNukngRIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQIECAAAECBAgQ2BVIdxctESBAoJgClV/90mJXNd+Yq9VuV2tdHesgAgQIECBAoKOAAKQji40ECBRJ4OHHnghd1zdN1tIQqllSvv6j1//dja7PcyABAgQIECCwKSAA8YtAgEDhBXoKQFq1aqUwf0avSCuKNQIECBAgcJBA6aCd9hEgQIDAgQKVLF1/q3LyiXMHHmUnAQIECBAgsCMgANmhsECAAIH+BLI0Wel6HEl/WTiLAAECBAjMjIBbsGamKVWEAIF+BTrdgvXD119r+XysVBYXkvs3TmVpWIr5dOrxqJU+nD9dq1XX+i2H8wgQIECAQBEE9IAUoZXVkQCBIwvkgUXt9qvVGJgslUrhdBoHo7clWsk+vnGpbZtVAgQIECBAoE1AANIGYpUAAQKHCdS+/7eraSid33NcCBf3bLOBAAECBAgQaBEQgLRwWCFAgEB3ArWtKXhrbUcvVL7wxVNt26wSIECAAAECTQICkCYMiwQIEOhNIH2l/fgsSxfbt1knQIAAAQIEdgUEILsWlggQINCTQChlq3tPSCt7t9lCgAABAgQINAQEIA0J7wQIEOhRoFwv1fackoZP7tlmAwECBAgQILAjIADZobBAgAABAgQIECBAgMCwBQQgwxaWPgECBAgQIECAAAECOwICkB0KCwQIEOhRIA0dZrxK3+4xFYcTIECAAIFCCQhACtXcKkuAwCAFsjR5vD29Ukg7DExvP8o6AQIECBAoroAApLhtr+YECBxVICSLe5IIZQHIHhQbCBAgQIDAroAAZNfCEgECBLoWePjkFy/HgyvNJ6RJWq3drtaat1kmQIAAAQIEWgUEIK0e1ggQIHCowGbwkabL7Qem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E7KfAAECBKZZIF53vQgQIFBcgcqJOO3uXHqrTWAtjvl4oG2bVQIECBAgQGAAAm7BGgCiJAgQmGKBcmnPeI0429XqFNdI0QkQIECAwEQLCEAmunkUjgCBYQvUy3tvlwppqA07X+kTIECAAIGiCghAitry6k2AAAECBAgQIEBgDAICkDGgy5IAAQIECBAgQIBAUQUEIEVtefUmQGBToFwv1dop4uwcp9q3WSdAgAABAgQGIyAAGYyjVAgQmFqBjVp70UNIKh4m2K5inQABAgQIDEbANLyDcZQKAQJTLPDwY0+8FYtfaa5CqZyeqf3dq9XmbZ2WH37sS1eTJFzc2Zcma0maXPnh91+L270IECBAgACBdgE9IO0i1gkQKKBA+kp7pbN6uNZdL0j4asu5IVkopabxbTGxQoAAAQIEmgQEBBS3eQAABeJJREFUIE0YFgkQKKZAKWx06q2oZB9ff+4gkYd/5YlrcX+l+ZjYrVzrpuek+RzLBAgQIECgSALlIlVWXQkQINBJYO29/7T2yWOfyZ98/i/a9p/65LGHl37poV/+r//N8V9O1u7+6J3KycXKLz7035594MGH8+DkbNvxSSmEZ9fe+9Fq+3brBAgQIECAwJaAMSB+EwgQIBAFKqcWF8I/rd8KbT0aveDEJ6hX33791TO9nONYAgQIECBQNAG3YBWtxdWXAIGOArXV6loa6mfyW6g6HnDIxnjeavrh3FOHHGY3AQIECBAovIAApPC/AgAIEGgI1G7/+1oehMT1641t3b2nz6cfzp+p1apr3R3vKAIECBAgUFyB+KWdFwECBAi0C1ROfmkxS8NSmiZfjc8FWWjfH7evhZBeL4XkRu32q9X2/dYJECBAgACBzgICkM4uthIgQGBHoPKFL55K6qWFejmrbD05fa5Wu12t7RxggQABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAocJ/P+OQ2ZMFUeH8gAAAABJRU5ErkJggg==" class="replaced-physics-diagram" style="width: 100%; height: auto; display: inline-block; margin: 0px auto;"></div>
+            </div>
+
+            <p class="content-paragraph">נשתמש בכלל יד ימין לקביעת כיוון השדה המגנטי: האגודל מצביע בכיוון הזרם (מ-\(C\) ל-\(D\), כלומר "למעלה" במבט מלמעלה), וכף היד פונה בכיוון הכוח המגנטי הדרוש (שמאלה). כדי שמנח זה יתקיים, אצבעות היד חייבות להצביע אל תוך מישור המסילה (פנימה).</p>
+            <p class="final-answer">מסקנה: כיוון השדה המגנטי \(B\) הוא <span class="inline-ltr">פנימה אל תוך הדף</span>.</p>
+        </div>
+    </section>
+
+    <!-- סעיף ב -->
+    <section class="section-card" id="part-b">
+        <h3 class="section-header">סעיף ב': ביטוי למסת המשקולת</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> המערכת נמצאת בשיווי משקל סטטי. התנגדות המעגל מורכבת אך ורק מההתנגדות הפנימית \(r\) של הסוללה (התנגדויות פסי המסילה והמוט מוזנחות). תאוצת הכובד היא \(g = 10\text{ m/s}^2\).</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לבטא את המסה \(m\) של המשקולת באמצעות הפרמטרים הנתונים: \(\varepsilon, r, \ell, B\), והקבוע \(g\).</div>
+        </div>
+        
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\Sigma F = 0\)</span>
+            <span class="formula-badge">\(V = IR\) (חוק אוהם למעגל שלם)</span>
+            <span class="formula-badge">\(F_g = mg\)</span>
+            <span class="formula-badge">\(F_B = I\ell B\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב:</h4>
+            <div class="step-label">שלב 1: מציאת הזרם במעגל</div>
+            <p class="content-paragraph">על פי חוק אוהם למעגל השלם, בהזנחת כל ההתנגדויות מלבד \(r\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I = \frac{\varepsilon}{r} \]
+            </div>
+
+            <div class="step-label">שלב 2: שיווי משקל של הכוחות</div>
+            <p class="content-paragraph">על המשקולת התלויה פועל שיווי משקל בציר האנכי, לכן המתיחות בחוט שווה לכוח הכובד: \(T = mg\).</p>
+            <p class="content-paragraph">על המוט פועל שיווי משקל בציר האופקי, ולכן הכוח המגנטי שווה בגודלו למתיחות החוט:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ F_B = T \]
+                \[ I\ell B = mg \]
+            </div>
+
+            <div class="step-label">שלב 3: הצבה ובידוד המסה</div>
+            <p class="content-paragraph">נציב את הביטוי לזרם אל תוך משוואת שיווי המשקל ונחלץ את \(m\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \left(\frac{\varepsilon}{r}\right)\ell B = mg \]
+                \[ m = \frac{\varepsilon\ell B}{gr} \]
+            </div>
+            <p class="final-answer">מסקנה: הביטוי למסת המשקולת הוא <span class="inline-ltr">\(m = \frac{\varepsilon\ell B}{gr}\)</span>.</p>
+        </div>
+    </section>
+
+    <!-- סעיף ג -->
+    <section class="section-card" id="part-c">
+        <h3 class="section-header">סעיף ג': היווצרות הזרם בנורה</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> הסוללה הוחלפה בנורה (נגד \(R\)). המוט משוחרר ממנוחה ומתחיל לנוע ימינה תחת השפעת משיכת המשקולת.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> הסבר פיזיקלי מפורט על אופן היווצרות הזרם בנורה במהלך תנועת המוט.</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>עקרונות בשימוש:</strong><br>
+            <span class="formula-badge">חוק פאראדיי (\(\varepsilon = -N\frac{d\Phi_B}{dt}\))</span>
+            <span class="formula-badge">כא"מ מושרה בתיל מוליך (\(\varepsilon = B\ell v\))</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">הסבר התהליך:</h4>
+            <p class="content-paragraph">כאשר המשקולת נופלת ומושכת את המוט, המוט המוליך \(CD\) מתחיל לנוע במהירות \(v\) ימינה על גבי המסילה. תנועה זו גורמת לשתי תופעות מקבילות שניתן לתאר בשתי דרכים שקולות:</p>
+            <ul class="list-disc list-inside text-[#475569] mb-4 space-y-2">
+                <li><strong>דרך א' (חוק פאראדיי):</strong> המסילה, הנורה והמוט הנע יוצרים מסגרת מוליכה סגורה. ככל שהמוט נע ימינה, שטח המסגרת גדל. כתוצאה מכך, השטף המגנטי (\(\Phi_B\)) של השדה המגנטי החיצוני העובר דרך מסגרת זו משתנה (גדל). על פי חוק פאראדיי, שינוי בשטף המגנטי בזמן יוצר כא"מ מושרה המזרים זרם במעגל הסגור.</li>
+                <li><strong>דרך ב' (כוח לורנץ / מוט נע בשדה):</strong> המוט \(CD\) מכיל מטענים חופשיים ונע בתוך שדה מגנטי \(B\). על המטענים שבתוך המוט פועל כוח מגנטי המניע אותם לאורך המוט. פעולה זו יוצרת הפרש פוטנציאלים (כא"מ מושרה \(\varepsilon = B\ell v\)) בין קצות המוט, אשר מתפקד כעת כמקור מתח ומזרים זרם דרך הנורה במעגל הסגור.</li>
+            </ul>
+            <p class="final-answer">מסקנה: תנועת המוט משנה את השטף המגנטי במסגרת ויוצרת כא"מ מושרה, המזרים זרם דרך הנורה.</p>
+        </div>
+    </section>
+
+    <!-- סעיף ד -->
+    <section class="section-card" id="part-d">
+        <h3 class="section-header">סעיף ד': חישוב המהירות הקבועה</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> המוט הגיע למהירות קבועה (שיווי משקל קינמטי). הנתונים המספריים: <span class="inline-ltr">\(R = 7.2\ \Omega\)</span>, <span class="inline-ltr">\(\ell = 0.8\text{ m}\)</span>, <span class="inline-ltr">\(m = 0.05\text{ kg}\)</span>, <span class="inline-ltr">\(B = 1.8\text{ T}\)</span>.</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> את גודלה של מהירות זו, \(v\).</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+            <span class="formula-badge">\(\Sigma F = 0\)</span>
+            <span class="formula-badge">\(\varepsilon = B\ell v\)</span>
+            <span class="formula-badge">\(I = \frac{\varepsilon}{R}\)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">חישוב צעד-אחר-צעד:</h4>
+            <div class="step-label">שלב 1: תנאי למהירות קבועה</div>
+            <p class="content-paragraph">כשהמוט נע במהירות קבועה, תאוצתו אפס, כלומר שקול הכוחות הפועלים עליו מתאפס. הכוח המגנטי המעכב מאזן בדיוק את מתיחות החוט:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I\ell B = mg \implies I = \frac{mg}{\ell B} \]
+            </div>
+            
+            <div class="step-label">שלב 2: קשר בין זרם למהירות</div>
+            <p class="content-paragraph">הזרם המושרה נוצר מהכא"מ המושרה לפי חוק אוהם:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ I = \frac{\varepsilon_{ind}}{R} = \frac{B\ell v}{R} \]
+            </div>
+
+            <div class="step-label">שלב 3: חילוץ המהירות והצבת הנתונים</div>
+            <p class="content-paragraph">נשווה את שני הביטויים של הזרם כדי לבודד את המהירות \(v\):</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ \frac{B\ell v}{R} = \frac{mg}{\ell B} \]
+                \[ v = \frac{mgR}{B^2\ell^2} \]
+            </div>
+            <p class="content-paragraph">כעת נציב את הנתונים המספריים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ v = \frac{0.05 \cdot 10 \cdot 7.2}{(1.8)^2 \cdot (0.8)^2} \]
+                \[ v = \frac{3.6}{3.24 \cdot 0.64} = \frac{3.6}{2.0736} \approx 1.736\text{ m/s} \]
+            </div>
+            <p class="final-answer">מסקנה: גודל המהירות הקבועה של המוט הוא <span class="inline-ltr">\(1.74\text{ m/s}\)</span>.</p>
+        </div>
+    </section>
+
+    <!-- סעיף ה -->
+    <section class="section-card" id="part-e">
+        <h3 class="section-header">סעיף ה': קביעת כיוון הזרם המושרה</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel"><strong>מה נתון:</strong> המוט נע ימינה במהירות קבועה בשדה המגנטי המכוון פנימה אל תוך הדף (כפי שקבענו בסעיף א').</div>
+            <div class="info-panel"><strong>מה מחפשים:</strong> לקבוע האם הזרם המושרה במוט זורם מ-\(C\) ל-\(D\) או מ-\(D\) ל-\(C\).</div>
+        </div>
+
+        <div class="mt-2">
+            <strong>עקרונות בשימוש:</strong><br>
+            <span class="formula-badge">חוק לנץ</span>
+            <span class="formula-badge">כלל יד ימין (כוח לורנץ)</span>
+        </div>
+
+        <div class="step-box">
+            <h4 class="step-title">נימוק פיזיקלי:</h4>
+            <p class="content-paragraph">ניתן לנמק את כיוון הזרם באמצעות חוק לנץ: הזרם המושרה יזרום בכיוון כזה שיתנגד לגורם שיצר אותו (תנועת המוט ימינה). לכן, הכוח המגנטי הפועל על המוט חייב לפעול שמאלה כדי לעכב את תנועתו. ידוע לנו שכיוון השדה המגנטי \(B\) הוא פנימה אל תוך הדף. על פי כלל יד ימין (כף יד שמאלה, אצבעות פנימה), האגודל המייצג את כיוון הזרם יצביע מכיוון \(C\) אל כיוון \(D\).</p>
+            <p class="content-paragraph">לחלופין, בעזרת ניתוח השטף: המוט נע ימינה, ולכן שטח המסגרת גדל. השטף המגנטי החיצוני (המכוון פנימה אל תוך הדף) גדל. לפי חוק לנץ, המעגל ייצור שדה מגנטי מושרה בכיוון הפוך – כלומר, החוצה מן הדף – כדי להתנגד לגידול בשטף. שדה מושרה החוצה מן הדף מחייב הזרמת זרם נגד כיוון השעון במעגל הסגור. כיוון זה אומר זרימה לאורך המוט מ-\(C\) ל-\(D\).</p>
+            <p class="final-answer">מסקנה: כיוון הזרם המושרה במוט הוא מנקודה <span class="inline-ltr">C</span> לנקודה <span class="inline-ltr">D</span>.</p>
+        </div>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link="" href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<!-- כפתור "הצג שאלה" צף ומודאל -->
+<button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
+    <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"></path>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"></circle>
+    </svg>
+    <span class="font-semibold text-sm">הצג שאלה</span>
+</button>
+
+<div id="questionModal" class="question-modal" role="dialog" aria-modal="true" aria-labelledby="questionModalTitle">
+    <div class="question-modal-card">
+        <div class="question-modal-header">
+            <h3 id="questionModalTitle" class="question-modal-title text-lg">נוסח השאלה המקורית</h3>
+            <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
+        </div>
+
+        <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
+                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+        if (versionStamp) {
+            versionStamp.title = 'עודכן לאחרונה';
+        }
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+
+            // Mask the calendar date into a short code
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+
+        const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
+        const closeQuestionModalBtn = document.getElementById('closeQuestionModalBtn');
+        const questionModal = document.getElementById('questionModal');
+
+        function openQuestionModal() {
+            questionModal.classList.add('is-open');
+            document.body.classList.add('modal-open');
+        }
+
+        function closeQuestionModal() {
+            questionModal.classList.remove('is-open');
+            document.body.classList.remove('modal-open');
+        }
+
+        openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+
+        questionModal.addEventListener('click', function(event) {
+            if (event.target === questionModal) {
+                closeQuestionModal();
+            }
+        });
+
+        document.addEventListener('keydown', function(event) {
+            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+                closeQuestionModal();
+            }
+        });
+    });
+</script>
+
+
+</body></html>
