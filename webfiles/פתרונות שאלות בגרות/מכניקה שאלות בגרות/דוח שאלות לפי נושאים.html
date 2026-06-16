@@ -1,0 +1,901 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+      window.dataLayer = window.dataLayer || [];
+      function gtag(){dataLayer.push(arguments);}
+      gtag('js', new Date());
+      gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>דוח שאלות לפי נושאים - מכניקה</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        :root {
+            --bg-page: #eef5ff;
+            --bg-card: rgba(255, 255, 255, 0.92);
+            --text-main: #1f3553;
+            --text-soft: #60728a;
+            --slate-100: #f8fafc;
+            --slate-200: #dbe5f0;
+            --slate-300: #cbd5e1;
+            --blue-900: #173a63;
+            --blue-700: #2459a6;
+            --blue-100: #d9e9ff;
+            --blue-50: #eef6ff;
+            --green-50: #effcf4;
+            --green-500: #22c55e;
+            --green-700: #15803d;
+            --red-50: #fef2f2;
+            --red-500: #ef4444;
+            --red-700: #b91c1c;
+            --amber-50: #fffbeb;
+            --amber-600: #d97706;
+            --shadow-soft: 0 20px 45px rgba(36, 89, 166, 0.10);
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            margin: 0;
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            color: var(--text-main);
+            line-height: 1.65;
+            overflow-x: clip;
+            background:
+                radial-gradient(circle at 15% 10%, rgba(36, 89, 166, 0.14), transparent 24%),
+                radial-gradient(circle at 85% 15%, rgba(34, 197, 94, 0.12), transparent 22%),
+                radial-gradient(circle at 78% 88%, rgba(245, 158, 11, 0.10), transparent 20%),
+                linear-gradient(180deg, #f6faff 0%, var(--bg-page) 42%, #eaf2fb 100%);
+        }
+
+        body::before {
+            content: "";
+            position: fixed;
+            inset: 0;
+            pointer-events: none;
+            background-image:
+                linear-gradient(rgba(255,255,255,0.42) 1px, transparent 1px),
+                linear-gradient(90deg, rgba(255,255,255,0.42) 1px, transparent 1px);
+            background-size: 44px 44px;
+            mask-image: linear-gradient(180deg, rgba(0,0,0,0.32), transparent 80%);
+        }
+
+        .page-shell {
+            max-width: 1560px;
+            margin: 0 auto;
+            padding: 1.15rem;
+            padding-bottom: 4rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid rgba(195, 211, 229, 0.95);
+            border-radius: 1.15rem;
+            padding: 1.2rem;
+            margin-bottom: 1rem;
+            box-shadow: var(--shadow-soft);
+            backdrop-filter: blur(12px);
+        }
+
+        .hero-card {
+            position: relative;
+            overflow: hidden;
+            background:
+                radial-gradient(circle at 20% 18%, rgba(34, 197, 94, 0.16), transparent 22%),
+                radial-gradient(circle at 82% 12%, rgba(37, 99, 235, 0.18), transparent 28%),
+                linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(239,246,255,0.96) 50%, rgba(255,255,255,0.92) 100%);
+        }
+
+        .hero-card::after {
+            content: "";
+            position: absolute;
+            left: -8%;
+            right: -8%;
+            bottom: -55px;
+            height: 120px;
+            background: linear-gradient(90deg, rgba(36, 89, 166, 0.10), rgba(34, 197, 94, 0.12));
+            filter: blur(28px);
+            pointer-events: none;
+        }
+
+        .section-header {
+            font-size: 1.25rem;
+            font-weight: 800;
+            color: var(--blue-900);
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.55rem;
+            margin-bottom: 0.95rem;
+        }
+
+        .content-paragraph {
+            margin: 0;
+            color: var(--text-soft);
+        }
+
+        .summary-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+            gap: 0.9rem;
+            margin-top: 1rem;
+        }
+
+        .summary-tile {
+            background: rgba(255, 255, 255, 0.88);
+            border: 1px solid rgba(195, 211, 229, 0.95);
+            border-radius: 1rem;
+            padding: 1rem 1.05rem;
+            box-shadow: 0 14px 28px rgba(36, 89, 166, 0.08);
+        }
+
+        .summary-label {
+            font-size: 0.9rem;
+            color: var(--text-soft);
+            margin-bottom: 0.35rem;
+        }
+
+        .summary-value {
+            font-size: 1.95rem;
+            line-height: 1;
+            font-weight: 800;
+            color: var(--blue-900);
+        }
+
+        .toolbar-grid {
+            display: grid;
+            grid-template-columns: minmax(280px, 1.5fr) minmax(220px, 0.8fr) minmax(220px, 0.8fr);
+            gap: 0.9rem;
+            align-items: end;
+        }
+
+        .control-label {
+            display: block;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: #334155;
+            margin-bottom: 0.35rem;
+        }
+
+        .control,
+        .search-input {
+            width: 100%;
+            border: 1px solid var(--slate-300);
+            border-radius: 0.85rem;
+            background: #fff;
+            color: var(--text-main);
+            padding: 0.68rem 0.85rem;
+            font: inherit;
+        }
+
+        .control:focus,
+        .search-input:focus {
+            outline: 2px solid rgba(36, 89, 166, 0.18);
+            outline-offset: 1px;
+            border-color: #93c5fd;
+        }
+
+        .table-wrap {
+            overflow: auto;
+            border: 1px solid rgba(195, 211, 229, 0.95);
+            border-radius: 1rem;
+            background: linear-gradient(180deg, rgba(255,255,255,0.94), rgba(248,250,252,0.92));
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.82);
+            max-height: 76vh;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: separate;
+            border-spacing: 0;
+            min-width: 1120px;
+            table-layout: fixed;
+        }
+
+        thead th {
+            position: sticky;
+            top: 0;
+            z-index: 3;
+            background: linear-gradient(180deg, #fbfdff, #eef5fd);
+            border-bottom: 1px solid var(--slate-200);
+        }
+
+        th,
+        td {
+            border-bottom: 1px solid var(--slate-200);
+            padding: 0.55rem 0.45rem;
+            text-align: center;
+            vertical-align: middle;
+            font-size: 0.9rem;
+        }
+
+        tbody tr {
+            transition: background-color 0.18s ease, transform 0.18s ease;
+        }
+
+        tbody tr:hover {
+            background: rgba(239, 246, 255, 0.64);
+        }
+
+        .sticky-left {
+            position: sticky;
+            right: 0;
+            z-index: 2;
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
+            width: 52px;
+        }
+
+        thead .sticky-left {
+            z-index: 4;
+        }
+
+        .sticky-left-2 {
+            position: sticky;
+            right: 52px;
+            z-index: 2;
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
+            width: 130px;
+        }
+
+        thead .sticky-left-2 {
+            z-index: 4;
+        }
+
+        .question-title {
+            text-align: right;
+            font-weight: 700;
+            white-space: nowrap;
+            min-width: 130px;
+        }
+
+        .question-path {
+            text-align: right;
+            color: var(--text-soft);
+            white-space: nowrap;
+            min-width: 160px;
+        }
+
+        .question-link {
+            color: var(--blue-700);
+            text-decoration: none;
+            font-weight: 700;
+        }
+
+        .question-link:hover {
+            text-decoration: underline;
+        }
+
+        .topic-header {
+            min-width: 92px;
+            white-space: normal;
+            text-align: center;
+        }
+
+        .topic-name {
+            display: block;
+            font-size: 0.78rem;
+            font-weight: 800;
+            color: var(--blue-900);
+            line-height: 1.35;
+            margin-bottom: 0.3rem;
+        }
+
+        .topic-filter {
+            width: 100%;
+            border: 1px solid #cbd5e1;
+            border-radius: 0.6rem;
+            background: white;
+            color: var(--text-main);
+            padding: 0.22rem 0.35rem;
+            font: inherit;
+            font-size: 0.76rem;
+        }
+
+        .topic-filter:focus {
+            outline: 2px solid rgba(36, 89, 166, 0.16);
+            outline-offset: 1px;
+        }
+
+        .sort-btn {
+            border: 0;
+            background: transparent;
+            padding: 0;
+            margin: 0;
+            cursor: pointer;
+            color: var(--blue-900);
+            font-weight: 800;
+        }
+
+        .sort-btn:hover {
+            color: var(--blue-700);
+        }
+
+        .badge {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            min-width: 2rem;
+            padding: 0.18rem 0.45rem;
+            border-radius: 9999px;
+            font-weight: 800;
+            font-size: 0.82rem;
+        }
+
+        .badge-yes {
+            background: var(--green-50);
+            color: var(--green-700);
+            border: 1px solid rgba(34, 197, 94, 0.25);
+        }
+
+        .badge-no {
+            background: var(--red-50);
+            color: var(--red-700);
+            border: 1px solid rgba(239, 68, 68, 0.25);
+        }
+
+        .legend-row {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 0.75rem;
+            margin-top: 0.75rem;
+        }
+
+        .legend-chip {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.45rem;
+            padding: 0.42rem 0.85rem;
+            border-radius: 9999px;
+            border: 1px solid var(--slate-200);
+            background: rgba(255, 255, 255, 0.88);
+            font-size: 0.92rem;
+            box-shadow: 0 10px 24px rgba(36, 89, 166, 0.06);
+        }
+
+        .chip-dot {
+            width: 0.82rem;
+            height: 0.82rem;
+            border-radius: 9999px;
+            flex-shrink: 0;
+        }
+
+        .chip-dot.yes {
+            background: var(--green-500);
+        }
+
+        .chip-dot.no {
+            background: var(--red-500);
+        }
+
+        .chip-dot.any {
+            background: #94a3b8;
+        }
+
+        .status-line {
+            margin-top: 0.8rem;
+            color: var(--text-soft);
+            min-height: 1.4rem;
+        }
+
+        .topic-summary-cell {
+            font-size: 0.82rem;
+        }
+
+        .question-meta {
+            display: flex;
+            flex-direction: column;
+            gap: 0.08rem;
+            align-items: flex-start;
+        }
+
+        .question-meta small {
+            color: var(--text-soft);
+            font-weight: 600;
+        }
+
+        .desktop-only {
+            display: table-cell;
+        }
+
+        .mobile-only {
+            display: none;
+        }
+
+        .empty-state {
+            padding: 2rem 1rem;
+            text-align: center;
+            color: var(--text-soft);
+        }
+
+        .footer-note {
+            color: var(--text-soft);
+            font-size: 0.92rem;
+            margin-top: 0.6rem;
+        }
+
+        @media (max-width: 1100px) {
+            .toolbar-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .page-shell {
+                padding: 0.85rem;
+                padding-bottom: 3rem;
+            }
+
+            .section-card {
+                padding: 1rem;
+            }
+
+            table {
+                min-width: 0;
+                width: 100%;
+                table-layout: auto;
+            }
+
+            .table-wrap {
+                max-height: none;
+            }
+
+            thead {
+                display: none;
+            }
+
+            table,
+            tbody,
+            tr,
+            td {
+                display: block;
+                width: 100%;
+            }
+
+            tbody tr {
+                border-bottom: 1px solid var(--slate-200);
+                padding: 0.8rem 0;
+            }
+
+            tbody td {
+                border-bottom: 0;
+                text-align: right;
+                padding: 0.3rem 0.1rem;
+            }
+
+            .sticky-left,
+            .sticky-left-2 {
+                position: static;
+                width: auto;
+                min-width: 0;
+                display: block;
+            }
+
+            .question-title,
+            .question-path {
+                white-space: normal;
+                min-width: 0;
+            }
+
+            .desktop-only {
+                display: none;
+            }
+
+            .mobile-only {
+                display: block;
+            }
+
+            .topic-cell-row {
+                display: flex;
+                justify-content: space-between;
+                align-items: center;
+                gap: 0.5rem;
+                padding: 0.2rem 0;
+            }
+
+            .topic-cell-row .topic-name-inline {
+                font-weight: 700;
+                color: var(--text-main);
+                overflow-wrap: anywhere;
+            }
+
+            .topic-cell-row .topic-value-inline {
+                flex-shrink: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="page-shell">
+        <header class="section-card hero-card">
+            <div class="relative z-10">
+                <h1 class="text-3xl md:text-4xl font-black text-blue-900 mb-2">דוח שאלות לפי נושאים</h1>
+                <p class="text-lg md:text-xl text-slate-600">כל שורה היא שאלה, וכל עמודה היא נושא. אפשר לסנן, למיין, ולמצוא במהירות שאלות עם או בלי נושא מסוים.</p>
+                <div class="legend-row">
+                    <span class="legend-chip"><span class="chip-dot yes"></span>יש בשאלה</span>
+                    <span class="legend-chip"><span class="chip-dot no"></span>אין בשאלה</span>
+                    <span class="legend-chip"><span class="chip-dot any"></span>הכול</span>
+                </div>
+                <div class="summary-grid" id="summaryGrid"></div>
+            </div>
+        </header>
+
+        <section class="section-card">
+            <h2 class="section-header">בקרות דוח</h2>
+            <div class="toolbar-grid">
+                <label>
+                    <span class="control-label">חיפוש חופשי</span>
+                    <input id="searchInput" class="search-input" type="search" placeholder="חיפוש לפי שאלה, קובץ, נושא או skill">
+                </label>
+                <label>
+                    <span class="control-label">מסנן נושאים</span>
+                    <select id="topicPresenceFilter" class="control">
+                        <option value="all">כל השאלות</option>
+                        <option value="any">שאלות עם לפחות נושא אחד</option>
+                        <option value="none">שאלות בלי נושאים בכלל</option>
+                    </select>
+                </label>
+                <label>
+                    <span class="control-label">מיין לפי</span>
+                    <select id="sortSelect" class="control">
+                        <option value="year-desc">שנה יורד</option>
+                        <option value="year-asc">שנה עולה</option>
+                        <option value="number-asc">מספר שאלה</option>
+                        <option value="number-desc">מספר שאלה יורד</option>
+                        <option value="title-asc">כותרת א-ת</option>
+                        <option value="title-desc">כותרת ת-א</option>
+                    </select>
+                </label>
+            </div>
+            <p class="footer-note">בכותרת של כל נושא יש מסנן מהיר: <strong>הכול</strong>, <strong>יש</strong> או <strong>אין</strong>. לחיצה על שם הנושא ממיינת לפי אותו נושא.</p>
+            <div id="statusLine" class="status-line"></div>
+        </section>
+
+        <section class="section-card">
+            <h2 class="section-header">טבלת הדוח</h2>
+            <div class="table-wrap">
+                <table aria-label="דוח שאלות לפי נושאים">
+                    <thead id="tableHead"></thead>
+                    <tbody id="tableBody"></tbody>
+                </table>
+            </div>
+            <div id="emptyState" class="empty-state hidden">לא נמצאו שאלות לפי המסננים הנוכחיים.</div>
+        </section>
+    </div>
+
+    <script>
+        const DATA_URL = './question-topics.json';
+        const topicNamePattern = /^\s*$/;
+        const tableHead = document.getElementById('tableHead');
+        const tableBody = document.getElementById('tableBody');
+        const emptyState = document.getElementById('emptyState');
+        const statusLine = document.getElementById('statusLine');
+        const summaryGrid = document.getElementById('summaryGrid');
+        const searchInput = document.getElementById('searchInput');
+        const topicPresenceFilter = document.getElementById('topicPresenceFilter');
+        const sortSelect = document.getElementById('sortSelect');
+
+        let rawData = null;
+        let topicFilters = {};
+        let currentSort = 'year-desc';
+        let currentTopicSort = null;
+        let currentTopicSortDir = 'desc';
+
+        function normalizeText(value) {
+            return String(value ?? '')
+                .replace(/\u200f/g, '')
+                .replace(/\u200e/g, '')
+                .trim()
+                .toLowerCase();
+        }
+
+        function escapeHtml(value) {
+            return String(value ?? '')
+                .replace(/&/g, '&amp;')
+                .replace(/</g, '&lt;')
+                .replace(/>/g, '&gt;')
+                .replace(/"/g, '&quot;')
+                .replace(/'/g, '&#39;');
+        }
+
+        function getQuestionYear(question) {
+            return Number(question.bagrutYear ?? question.id?.split('-')[0] ?? 0);
+        }
+
+        function getQuestionNumber(question) {
+            return Number(question.bagrutQuestionNumber ?? question.id?.split('-')[1] ?? 0);
+        }
+
+        function getQuestionTopics(question) {
+            return Array.isArray(question.topics) ? question.topics : [];
+        }
+
+        function getQuestionSkills(question) {
+            return Array.isArray(question.skills) ? question.skills : [];
+        }
+
+        function getTopicNames(data) {
+            return (data?.topics || []).map((topic) => topic.name).filter(Boolean);
+        }
+
+        function initializeTopicFilters(data) {
+            const names = getTopicNames(data);
+            topicFilters = Object.fromEntries(names.map((name) => [name, 'all']));
+        }
+
+        function renderSummary(data, visibleRows) {
+            const questions = data.questions || [];
+            const topicNames = getTopicNames(data);
+            const linkedQuestions = questions.filter((question) => getQuestionTopics(question).length > 0).length;
+            const visibleCount = visibleRows.length;
+            const totalLinks = questions.reduce((sum, question) => sum + getQuestionTopics(question).length, 0);
+            const averageTopics = questions.length ? (totalLinks / questions.length) : 0;
+
+            const tiles = [
+                { label: 'סה"כ שאלות', value: questions.length },
+                { label: 'שאלות מוצגות', value: visibleCount },
+                { label: 'שאלות עם נושא', value: linkedQuestions },
+                { label: 'מספר נושאים', value: topicNames.length },
+                { label: 'ממוצע נושאים לשאלה', value: averageTopics.toFixed(2) }
+            ];
+
+            summaryGrid.innerHTML = tiles.map((tile) => `
+                <div class="summary-tile">
+                    <div class="summary-label">${escapeHtml(tile.label)}</div>
+                    <div class="summary-value">${escapeHtml(tile.value)}</div>
+                </div>
+            `).join('');
+        }
+
+        function compareBySortMode(a, b, mode) {
+            const titleA = normalizeText(a.title);
+            const titleB = normalizeText(b.title);
+            const yearA = getQuestionYear(a);
+            const yearB = getQuestionYear(b);
+            const numberA = getQuestionNumber(a);
+            const numberB = getQuestionNumber(b);
+
+            switch (mode) {
+                case 'year-asc':
+                    return yearA - yearB || numberA - numberB || titleA.localeCompare(titleB, 'he');
+                case 'year-desc':
+                    return yearB - yearA || numberA - numberB || titleA.localeCompare(titleB, 'he');
+                case 'number-asc':
+                    return numberA - numberB || yearA - yearB || titleA.localeCompare(titleB, 'he');
+                case 'number-desc':
+                    return numberB - numberA || yearB - yearA || titleA.localeCompare(titleB, 'he');
+                case 'title-desc':
+                    return titleB.localeCompare(titleA, 'he');
+                case 'title-asc':
+                default:
+                    return titleA.localeCompare(titleB, 'he');
+            }
+        }
+
+        function compareTopicPresence(a, b, topicName, direction) {
+            const hasA = getQuestionTopics(a).includes(topicName) ? 1 : 0;
+            const hasB = getQuestionTopics(b).includes(topicName) ? 1 : 0;
+            if (hasA !== hasB) {
+                return direction === 'asc' ? hasA - hasB : hasB - hasA;
+            }
+            return compareBySortMode(a, b, currentSort);
+        }
+
+        function getVisibleQuestions(data) {
+            const searchTerm = normalizeText(searchInput.value);
+            const topicPresence = topicPresenceFilter.value;
+            const allQuestions = Array.isArray(data.questions) ? [...data.questions] : [];
+            const topicNames = getTopicNames(data);
+
+            let visible = allQuestions.filter((question) => {
+                const topics = getQuestionTopics(question);
+                const skills = getQuestionSkills(question);
+                const haystack = [
+                    question.title,
+                    question.id,
+                    question.path,
+                    question.bagrutYear,
+                    question.bagrutQuestionNumber,
+                    topics.join(' '),
+                    skills.join(' ')
+                ].map(normalizeText).join(' ');
+
+                if (searchTerm && !haystack.includes(searchTerm)) {
+                    return false;
+                }
+
+                if (topicPresence === 'any' && topics.length === 0) {
+                    return false;
+                }
+
+                if (topicPresence === 'none' && topics.length > 0) {
+                    return false;
+                }
+
+                for (const topicName of topicNames) {
+                    const filterValue = topicFilters[topicName] || 'all';
+                    const hasTopic = topics.includes(topicName);
+                    if (filterValue === 'yes' && !hasTopic) {
+                        return false;
+                    }
+                    if (filterValue === 'no' && hasTopic) {
+                        return false;
+                    }
+                }
+
+                return true;
+            });
+
+            visible.sort((a, b) => {
+                if (currentTopicSort) {
+                    return compareTopicPresence(a, b, currentTopicSort, currentTopicSortDir);
+                }
+                return compareBySortMode(a, b, currentSort);
+            });
+
+            return visible;
+        }
+
+        function topicFilterOptionsHtml(selectedValue) {
+            return `
+                <option value="all" ${selectedValue === 'all' ? 'selected' : ''}>הכול</option>
+                <option value="yes" ${selectedValue === 'yes' ? 'selected' : ''}>יש</option>
+                <option value="no" ${selectedValue === 'no' ? 'selected' : ''}>אין</option>
+            `;
+        }
+
+        function renderHeader(data) {
+            const topics = getTopicNames(data);
+            const topicHeaders = topics.map((topicName) => {
+                const sortIndicator = currentTopicSort === topicName ? (currentTopicSortDir === 'asc' ? ' ▲' : ' ▼') : '';
+                return `
+                    <th class="topic-header">
+                        <button class="sort-btn" type="button" data-topic-sort="${escapeHtml(topicName)}" title="מיון לפי נושא">
+                            <span class="topic-name">${escapeHtml(topicName)}${escapeHtml(sortIndicator)}</span>
+                        </button>
+                        <select class="topic-filter" data-topic-filter="${escapeHtml(topicName)}" aria-label="סינון ${escapeHtml(topicName)}">
+                            ${topicFilterOptionsHtml(topicFilters[topicName] || 'all')}
+                        </select>
+                    </th>
+                `;
+            }).join('');
+
+            tableHead.innerHTML = `
+                <tr>
+                    <th class="sticky-left">#</th>
+                    <th class="sticky-left-2">שאלה</th>
+                    ${topicHeaders}
+                    <th class="desktop-only">skills</th>
+                    <th class="desktop-only">קובץ</th>
+                </tr>
+            `;
+
+            tableHead.querySelectorAll('[data-topic-filter]').forEach((select) => {
+                select.addEventListener('change', (event) => {
+                    const topicName = event.currentTarget.getAttribute('data-topic-filter');
+                    topicFilters[topicName] = event.currentTarget.value;
+                    updateTable();
+                });
+            });
+
+            tableHead.querySelectorAll('[data-topic-sort]').forEach((button) => {
+                button.addEventListener('click', (event) => {
+                    const topicName = event.currentTarget.getAttribute('data-topic-sort');
+                    if (currentTopicSort === topicName) {
+                        currentTopicSortDir = currentTopicSortDir === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        currentTopicSort = topicName;
+                        currentTopicSortDir = 'desc';
+                    }
+                    updateTable();
+                });
+            });
+        }
+
+        function renderRows(data, visibleQuestions) {
+            const topics = getTopicNames(data);
+            if (!visibleQuestions.length) {
+                tableBody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                return;
+            }
+
+            emptyState.classList.add('hidden');
+            tableBody.innerHTML = visibleQuestions.map((question, index) => {
+                const questionTopics = new Set(getQuestionTopics(question));
+                const topicCells = topics.map((topicName) => {
+                    const hasTopic = questionTopics.has(topicName);
+                    return `<td class="topic-summary-cell"><div class="topic-cell-row"><span class="topic-name-inline mobile-only">${escapeHtml(topicName)}</span><span class="badge ${hasTopic ? 'badge-yes' : 'badge-no'} topic-value-inline">${hasTopic ? 'יש' : 'אין'}</span></div></td>`;
+                }).join('');
+
+                const skills = getQuestionSkills(question);
+                const skillsText = skills.length ? skills.join(' • ') : '—';
+                const filePath = question.path || '';
+                const linkText = question.path ? 'פתח' : '—';
+                const linkHref = question.path ? `./${question.path}` : '#';
+
+                return `
+                    <tr>
+                        <td class="sticky-left">${index + 1}</td>
+                        <td class="sticky-left-2 question-title">
+                            <div class="question-meta">
+                                <span>${escapeHtml(question.title || question.id || '—')}</span>
+                                <small>${escapeHtml(question.id || '')}</small>
+                            </div>
+                        </td>
+                        ${topicCells}
+                        <td class="desktop-only">${escapeHtml(skillsText)}</td>
+                        <td class="question-path desktop-only">${question.path ? `<a class="question-link" href="${escapeHtml(linkHref)}" target="_blank" rel="noopener noreferrer">${escapeHtml(linkText)}</a>` : '—'}</td>
+                    </tr>
+                `;
+            }).join('');
+        }
+
+        function updateStatus(data, visibleQuestions) {
+            const total = data.questions?.length || 0;
+            const visible = visibleQuestions.length;
+            const activeTopicFilters = Object.entries(topicFilters)
+                .filter(([, value]) => value !== 'all')
+                .map(([name, value]) => `${name}: ${value === 'yes' ? 'יש' : 'אין'}`);
+
+            const parts = [`מוצגות ${visible} מתוך ${total} שאלות`, `מיון: ${sortSelect.selectedOptions[0]?.textContent || ''}`];
+            if (currentTopicSort) {
+                parts.push(`מיון נושא: ${currentTopicSort} (${currentTopicSortDir === 'asc' ? 'עולה' : 'יורד'})`);
+            }
+            if (activeTopicFilters.length) {
+                parts.push(`סינון נושאים: ${activeTopicFilters.join(' | ')}`);
+            }
+            statusLine.textContent = parts.join(' • ');
+        }
+
+        function updateTable() {
+            if (!rawData) {
+                return;
+            }
+
+            currentSort = sortSelect.value;
+            if (!currentTopicSort) {
+                currentTopicSortDir = 'desc';
+            }
+
+            renderHeader(rawData);
+            const visibleQuestions = getVisibleQuestions(rawData);
+            renderRows(rawData, visibleQuestions);
+            renderSummary(rawData, visibleQuestions);
+            updateStatus(rawData, visibleQuestions);
+        }
+
+        async function loadData() {
+            try {
+                const response = await fetch(DATA_URL, { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error(`Failed to load ${DATA_URL}: ${response.status}`);
+                }
+                rawData = await response.json();
+                initializeTopicFilters(rawData);
+                updateTable();
+            } catch (error) {
+                tableHead.innerHTML = '';
+                tableBody.innerHTML = '';
+                emptyState.classList.remove('hidden');
+                emptyState.textContent = 'לא ניתן לטעון את קובץ הנתונים. יש לפתוח את הדף דרך השרת המקומי ולוודא ש-question-topics.json קיים.';
+                statusLine.textContent = error.message;
+                summaryGrid.innerHTML = '';
+            }
+        }
+
+        searchInput.addEventListener('input', updateTable);
+        topicPresenceFilter.addEventListener('change', updateTable);
+        sortSelect.addEventListener('change', () => {
+            currentSort = sortSelect.value;
+            currentTopicSort = null;
+            updateTable();
+        });
+
+        loadData();
+    </script>
+</body>
+</html>
