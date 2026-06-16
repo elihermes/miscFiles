@@ -83,27 +83,6 @@
             backdrop-filter: blur(12px);
         }
 
-        .hero-card {
-            position: relative;
-            overflow: hidden;
-            background:
-                radial-gradient(circle at 20% 18%, rgba(34, 197, 94, 0.16), transparent 22%),
-                radial-gradient(circle at 82% 12%, rgba(37, 99, 235, 0.18), transparent 28%),
-                linear-gradient(135deg, rgba(255,255,255,0.96) 0%, rgba(239,246,255,0.96) 50%, rgba(255,255,255,0.92) 100%);
-        }
-
-        .hero-card::after {
-            content: "";
-            position: absolute;
-            left: -8%;
-            right: -8%;
-            bottom: -55px;
-            height: 120px;
-            background: linear-gradient(90deg, rgba(36, 89, 166, 0.10), rgba(34, 197, 94, 0.12));
-            filter: blur(28px);
-            pointer-events: none;
-        }
-
         .section-header {
             font-size: 1.25rem;
             font-weight: 800;
@@ -118,39 +97,104 @@
             color: var(--text-soft);
         }
 
-        .summary-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-            gap: 0.9rem;
-            margin-top: 1rem;
+        .report-headline {
+            margin-bottom: 0;
         }
 
-        .summary-tile {
-            background: rgba(255, 255, 255, 0.88);
-            border: 1px solid rgba(195, 211, 229, 0.95);
-            border-radius: 1rem;
-            padding: 1rem 1.05rem;
-            box-shadow: 0 14px 28px rgba(36, 89, 166, 0.08);
+        .report-title {
+            margin: 0;
+            font-size: clamp(1.15rem, 2.1vw, 1.65rem);
+            color: var(--blue-900);
+            font-weight: 900;
+            line-height: 1.3;
         }
 
-        .summary-label {
+        .report-count {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            border: 1px solid var(--slate-200);
+            border-radius: 9999px;
+            background: rgba(255, 255, 255, 0.92);
+            color: var(--text-main);
+            padding: 0.35rem 0.8rem;
             font-size: 0.9rem;
-            color: var(--text-soft);
-            margin-bottom: 0.35rem;
+            font-weight: 800;
+            white-space: nowrap;
         }
 
-        .summary-value {
-            font-size: 1.95rem;
-            line-height: 1;
+        .topic-filters-table-wrap {
+            overflow: auto;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.95rem;
+            background: linear-gradient(180deg, #ffffff, #f8fbff);
+            box-shadow: inset 0 1px 0 rgba(255,255,255,0.85);
+            padding: 0.2rem 0.35rem;
+        }
+
+        .topic-filters-table {
+            width: max-content;
+            border-collapse: separate;
+            border-spacing: 0;
+            table-layout: auto;
+            min-width: 0;
+        }
+
+        .topic-filters-table th,
+        .topic-filters-table td {
+            border-bottom: 1px solid var(--slate-200);
+            padding: 0.34rem 0.42rem;
+            font-size: 0.86rem;
+            text-align: center;
+            vertical-align: middle;
+        }
+
+        .topic-filters-table thead th {
+            position: sticky;
+            top: 0;
+            z-index: 1;
+            background: linear-gradient(180deg, #fbfdff, #eef5fd);
             font-weight: 800;
             color: var(--blue-900);
         }
 
-        .toolbar-grid {
-            display: grid;
-            grid-template-columns: minmax(280px, 1.5fr) minmax(220px, 0.8fr) minmax(220px, 0.8fr);
-            gap: 0.9rem;
-            align-items: end;
+        .topic-filter-topic {
+            text-align: right;
+            font-weight: 800;
+            color: var(--text-main);
+            width: auto;
+            min-width: 220px;
+            max-width: 420px;
+            white-space: normal;
+            overflow-wrap: anywhere;
+        }
+
+        .topic-filter-option {
+            width: auto;
+            min-width: 110px;
+        }
+
+        .topic-filter-choice {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            gap: 0.3rem;
+            white-space: nowrap;
+            cursor: pointer;
+            width: auto;
+            font-weight: 700;
+        }
+
+        .topic-filter-choice input {
+            margin: 0;
+            accent-color: var(--blue-700);
+            width: 0.95rem;
+            height: 0.95rem;
+            flex-shrink: 0;
+        }
+
+        .topic-filter-choice span {
+            line-height: 1.15;
         }
 
         .control-label {
@@ -161,8 +205,7 @@
             margin-bottom: 0.35rem;
         }
 
-        .control,
-        .search-input {
+        .control {
             width: 100%;
             border: 1px solid var(--slate-300);
             border-radius: 0.85rem;
@@ -172,8 +215,7 @@
             font: inherit;
         }
 
-        .control:focus,
-        .search-input:focus {
+        .control:focus {
             outline: 2px solid rgba(36, 89, 166, 0.18);
             outline-offset: 1px;
             border-color: #93c5fd;
@@ -381,6 +423,12 @@
             min-height: 1.4rem;
         }
 
+        .filters-summary-row {
+            margin-top: 0.65rem;
+            display: flex;
+            justify-content: flex-start;
+        }
+
         .topic-summary-cell {
             font-size: 0.82rem;
         }
@@ -415,12 +463,6 @@
             color: var(--text-soft);
             font-size: 0.92rem;
             margin-top: 0.6rem;
-        }
-
-        @media (max-width: 1100px) {
-            .toolbar-grid {
-                grid-template-columns: 1fr;
-            }
         }
 
         @media (max-width: 768px) {
@@ -488,70 +530,88 @@
                 display: block;
             }
 
-            .topic-cell-row {
-                display: flex;
-                justify-content: space-between;
-                align-items: center;
-                gap: 0.5rem;
-                padding: 0.2rem 0;
+            .topic-filters-table {
+                min-width: 0;
+                width: 100%;
             }
 
-            .topic-cell-row .topic-name-inline {
-                font-weight: 700;
-                color: var(--text-main);
-                overflow-wrap: anywhere;
+            .topic-filters-table thead {
+                display: none;
             }
 
-            .topic-cell-row .topic-value-inline {
-                flex-shrink: 0;
+            .topic-filters-table,
+            .topic-filters-table tbody,
+            .topic-filters-table tr,
+            .topic-filters-table th,
+            .topic-filters-table td {
+                display: block;
+            }
+
+            .topic-filters-table tr {
+                margin-bottom: 0.55rem;
+                border: 1px solid var(--slate-200);
+                border-radius: 0.85rem;
+                overflow: hidden;
+                background: #fff;
+                display: grid;
+                grid-template-columns: minmax(0, 1.8fr) repeat(3, minmax(0, 1fr));
+            }
+
+            .topic-filters-table th,
+            .topic-filters-table td {
+                border-bottom: 0;
+                padding: 0.4rem 0.3rem;
+                font-size: 0.8rem;
+            }
+
+            .topic-filter-topic {
+                grid-column: 1 / -1;
+                border-bottom: 1px solid var(--slate-200);
+                padding: 0.45rem 0.55rem;
+                font-size: 0.88rem;
+            }
+
+            .topic-filter-choice {
+                font-size: 0.75rem;
+                flex-direction: column;
+                gap: 0.2rem;
+                white-space: normal;
+                min-height: 3rem;
+            }
+
+            .topic-filter-choice span {
+                text-align: center;
             }
         }
     </style>
 </head>
 <body>
     <div class="page-shell">
-        <header class="section-card hero-card">
-            <div class="relative z-10">
-                <h1 class="text-3xl md:text-4xl font-black text-blue-900 mb-2">דוח שאלות לפי נושאים</h1>
-                <p class="text-lg md:text-xl text-slate-600">כל שורה היא שאלה, וכל עמודה היא נושא. אפשר לסנן, למיין, ולמצוא במהירות שאלות עם או בלי נושא מסוים.</p>
-                <div class="legend-row">
-                    <span class="legend-chip"><span class="chip-dot yes"></span>יש בשאלה</span>
-                    <span class="legend-chip"><span class="chip-dot no"></span>אין בשאלה</span>
-                    <span class="legend-chip"><span class="chip-dot any"></span>הכל</span>
-                </div>
-                <div class="summary-grid" id="summaryGrid"></div>
+        <section class="section-card">
+            <div class="report-headline">
+                <h1 id="reportTitle" class="report-title">דוח שאלות בגרות מכניקה</h1>
             </div>
-        </header>
+        </section>
 
         <section class="section-card">
-            <h2 class="section-header">בקרות דוח</h2>
-            <div class="toolbar-grid">
-                <label>
-                    <span class="control-label">חיפוש חופשי</span>
-                    <input id="searchInput" class="search-input" type="search" placeholder="חיפוש לפי שאלה, קובץ, נושא או skill">
-                </label>
-                <label>
-                    <span class="control-label">מסנן נושאים</span>
-                    <select id="topicPresenceFilter" class="control">
-                        <option value="all">הכל</option>
-                        <option value="any">רק שאלות עם</option>
-                        <option value="none">רק שאלות בלי</option>
-                    </select>
-                </label>
-                <label>
-                    <span class="control-label">מיין לפי</span>
-                    <select id="sortSelect" class="control">
-                        <option value="year-desc">שנה יורד</option>
-                        <option value="year-asc">שנה עולה</option>
-                        <option value="number-asc">מספר שאלה</option>
-                        <option value="number-desc">מספר שאלה יורד</option>
-                        <option value="title-asc">כותרת א-ת</option>
-                        <option value="title-desc">כותרת ת-א</option>
-                    </select>
-                </label>
+            <h2 class="section-header">סינון נושאים</h2>
+            <div class="topic-filters-table-wrap">
+                <table class="topic-filters-table" aria-label="סינון נושאים">
+                    <thead>
+                        <tr>
+                            <th scope="col" class="topic-filter-topic">נושא</th>
+                            <th scope="col" class="topic-filter-option">הכל</th>
+                            <th scope="col" class="topic-filter-option">רק שאלות עם</th>
+                            <th scope="col" class="topic-filter-option">רק שאלות בלי</th>
+                        </tr>
+                    </thead>
+                    <tbody id="topicFiltersBody"></tbody>
+                </table>
             </div>
-            <p class="footer-note">בכותרת של כל נושא יש מסנן מהיר: <strong>הכל</strong>, <strong>רק שאלות עם</strong> או <strong>רק שאלות בלי</strong>. לחיצה על שם הנושא ממיינת לפי אותו נושא.</p>
-            <div id="statusLine" class="status-line"></div>
+            <p class="footer-note">בכל שורה אפשר לבחור אפשרות אחת בלבד.</p>
+            <div class="filters-summary-row">
+                <div id="visibleCountText" class="report-count">מוצגות כעת: 0 שאלות</div>
+            </div>
         </section>
 
         <section class="section-card">
@@ -572,15 +632,13 @@
         const tableHead = document.getElementById('tableHead');
         const tableBody = document.getElementById('tableBody');
         const emptyState = document.getElementById('emptyState');
-        const statusLine = document.getElementById('statusLine');
-        const summaryGrid = document.getElementById('summaryGrid');
-        const searchInput = document.getElementById('searchInput');
-        const topicPresenceFilter = document.getElementById('topicPresenceFilter');
-        const sortSelect = document.getElementById('sortSelect');
+        const reportTitle = document.getElementById('reportTitle');
+        const visibleCountText = document.getElementById('visibleCountText');
+        const topicFiltersBody = document.getElementById('topicFiltersBody');
 
         let rawData = null;
         let topicFilters = {};
-        let currentSort = 'year-desc';
+        let currentSort = 'title-asc';
         let currentTopicSort = null;
         let currentTopicSortDir = 'desc';
 
@@ -626,28 +684,29 @@
             topicFilters = Object.fromEntries(names.map((name) => [name, 'all']));
         }
 
-        function renderSummary(data, visibleRows) {
-            const questions = data.questions || [];
-            const topicNames = getTopicNames(data);
-            const linkedQuestions = questions.filter((question) => getQuestionTopics(question).length > 0).length;
-            const visibleCount = visibleRows.length;
-            const totalLinks = questions.reduce((sum, question) => sum + getQuestionTopics(question).length, 0);
-            const averageTopics = questions.length ? (totalLinks / questions.length) : 0;
+        function getDataYearRange(data) {
+            const years = (data?.questions || [])
+                .map((question) => getQuestionYear(question))
+                .filter((year) => Number.isFinite(year) && year > 0);
 
-            const tiles = [
-                { label: 'סה"כ שאלות', value: questions.length },
-                { label: 'שאלות מוצגות', value: visibleCount },
-                { label: 'שאלות עם נושא', value: linkedQuestions },
-                { label: 'מספר נושאים', value: topicNames.length },
-                { label: 'ממוצע נושאים לשאלה', value: averageTopics.toFixed(2) }
-            ];
+            if (!years.length) {
+                return null;
+            }
 
-            summaryGrid.innerHTML = tiles.map((tile) => `
-                <div class="summary-tile">
-                    <div class="summary-label">${escapeHtml(tile.label)}</div>
-                    <div class="summary-value">${escapeHtml(tile.value)}</div>
-                </div>
-            `).join('');
+            return {
+                min: Math.min(...years),
+                max: Math.max(...years)
+            };
+        }
+
+        function updateReportTitle(data) {
+            const range = getDataYearRange(data);
+            if (!range) {
+                reportTitle.textContent = 'דוח שאלות בגרות מכניקה';
+                return;
+            }
+
+            reportTitle.textContent = `דוח שאלות בגרות מכניקה משנת ${range.min} עד ${range.max}`;
         }
 
         function compareBySortMode(a, b, mode) {
@@ -659,10 +718,6 @@
             const numberB = getQuestionNumber(b);
 
             switch (mode) {
-                case 'year-asc':
-                    return yearA - yearB || numberA - numberB || titleA.localeCompare(titleB, 'he');
-                case 'year-desc':
-                    return yearB - yearA || numberA - numberB || titleA.localeCompare(titleB, 'he');
                 case 'number-asc':
                     return numberA - numberB || yearA - yearB || titleA.localeCompare(titleB, 'he');
                 case 'number-desc':
@@ -685,35 +740,11 @@
         }
 
         function getVisibleQuestions(data) {
-            const searchTerm = normalizeText(searchInput.value);
-            const topicPresence = topicPresenceFilter.value;
             const allQuestions = Array.isArray(data.questions) ? [...data.questions] : [];
             const topicNames = getTopicNames(data);
 
             let visible = allQuestions.filter((question) => {
                 const topics = getQuestionTopics(question);
-                const skills = getQuestionSkills(question);
-                const haystack = [
-                    question.title,
-                    question.id,
-                    question.path,
-                    question.bagrutYear,
-                    question.bagrutQuestionNumber,
-                    topics.join(' '),
-                    skills.join(' ')
-                ].map(normalizeText).join(' ');
-
-                if (searchTerm && !haystack.includes(searchTerm)) {
-                    return false;
-                }
-
-                if (topicPresence === 'any' && topics.length === 0) {
-                    return false;
-                }
-
-                if (topicPresence === 'none' && topics.length > 0) {
-                    return false;
-                }
 
                 for (const topicName of topicNames) {
                     const filterValue = topicFilters[topicName] || 'all';
@@ -739,12 +770,44 @@
             return visible;
         }
 
-        function topicFilterOptionsHtml(selectedValue) {
-            return `
-                <option value="all" ${selectedValue === 'all' ? 'selected' : ''}>הכל</option>
-                <option value="yes" ${selectedValue === 'yes' ? 'selected' : ''}>רק שאלות עם</option>
-                <option value="no" ${selectedValue === 'no' ? 'selected' : ''}>רק שאלות בלי</option>
-            `;
+        function renderTopicFiltersTable(data) {
+            const topics = getTopicNames(data);
+            topicFiltersBody.innerHTML = topics.map((topicName, index) => {
+                const groupName = `topic-filter-${index}`;
+                const currentValue = topicFilters[topicName] || 'all';
+
+                return `
+                    <tr>
+                        <th scope="row" class="topic-filter-topic">${escapeHtml(topicName)}</th>
+                        <td class="topic-filter-option">
+                            <label class="topic-filter-choice">
+                                <input type="radio" name="${groupName}" value="all" data-topic-name="${escapeHtml(topicName)}" ${currentValue === 'all' ? 'checked' : ''}>
+                                <span>הכל</span>
+                            </label>
+                        </td>
+                        <td class="topic-filter-option">
+                            <label class="topic-filter-choice">
+                                <input type="radio" name="${groupName}" value="yes" data-topic-name="${escapeHtml(topicName)}" ${currentValue === 'yes' ? 'checked' : ''}>
+                                <span>רק שאלות עם</span>
+                            </label>
+                        </td>
+                        <td class="topic-filter-option">
+                            <label class="topic-filter-choice">
+                                <input type="radio" name="${groupName}" value="no" data-topic-name="${escapeHtml(topicName)}" ${currentValue === 'no' ? 'checked' : ''}>
+                                <span>רק שאלות בלי</span>
+                            </label>
+                        </td>
+                    </tr>
+                `;
+            }).join('');
+
+            topicFiltersBody.querySelectorAll('input[type="radio"][data-topic-name]').forEach((radio) => {
+                radio.addEventListener('change', (event) => {
+                    const topicName = event.currentTarget.getAttribute('data-topic-name');
+                    topicFilters[topicName] = event.currentTarget.value;
+                    updateTable();
+                });
+            });
         }
 
         function renderHeader(data) {
@@ -756,9 +819,6 @@
                         <button class="sort-btn" type="button" data-topic-sort="${escapeHtml(topicName)}" title="מיון לפי נושא">
                             <span class="topic-name">${escapeHtml(topicName)}${escapeHtml(sortIndicator)}</span>
                         </button>
-                        <select class="topic-filter" data-topic-filter="${escapeHtml(topicName)}" aria-label="סינון ${escapeHtml(topicName)}">
-                            ${topicFilterOptionsHtml(topicFilters[topicName] || 'all')}
-                        </select>
                     </th>
                 `;
             }).join('');
@@ -772,14 +832,6 @@
                     <th class="desktop-only">קובץ</th>
                 </tr>
             `;
-
-            tableHead.querySelectorAll('[data-topic-filter]').forEach((select) => {
-                select.addEventListener('change', (event) => {
-                    const topicName = event.currentTarget.getAttribute('data-topic-filter');
-                    topicFilters[topicName] = event.currentTarget.value;
-                    updateTable();
-                });
-            });
 
             tableHead.querySelectorAll('[data-topic-sort]').forEach((button) => {
                 button.addEventListener('click', (event) => {
@@ -834,21 +886,9 @@
             }).join('');
         }
 
-        function updateStatus(data, visibleQuestions) {
-            const total = data.questions?.length || 0;
+        function updateVisibleCount(visibleQuestions) {
             const visible = visibleQuestions.length;
-            const activeTopicFilters = Object.entries(topicFilters)
-                .filter(([, value]) => value !== 'all')
-                .map(([name, value]) => `${name}: ${value === 'yes' ? 'רק שאלות עם' : 'רק שאלות בלי'}`);
-
-            const parts = [`מוצגות ${visible} מתוך ${total} שאלות`, `מיון: ${sortSelect.selectedOptions[0]?.textContent || ''}`];
-            if (currentTopicSort) {
-                parts.push(`מיון נושא: ${currentTopicSort} (${currentTopicSortDir === 'asc' ? 'עולה' : 'יורד'})`);
-            }
-            if (activeTopicFilters.length) {
-                parts.push(`סינון נושאים: ${activeTopicFilters.join(' | ')}`);
-            }
-            statusLine.textContent = parts.join(' • ');
+            visibleCountText.textContent = `מוצגות כעת: ${visible} שאלות`;
         }
 
         function updateTable() {
@@ -856,7 +896,6 @@
                 return;
             }
 
-            currentSort = sortSelect.value;
             if (!currentTopicSort) {
                 currentTopicSortDir = 'desc';
             }
@@ -864,8 +903,7 @@
             renderHeader(rawData);
             const visibleQuestions = getVisibleQuestions(rawData);
             renderRows(rawData, visibleQuestions);
-            renderSummary(rawData, visibleQuestions);
-            updateStatus(rawData, visibleQuestions);
+            updateVisibleCount(visibleQuestions);
         }
 
         async function loadData() {
@@ -875,25 +913,20 @@
                     throw new Error(`Failed to load ${DATA_URL}: ${response.status}`);
                 }
                 rawData = await response.json();
+                updateReportTitle(rawData);
                 initializeTopicFilters(rawData);
+                renderTopicFiltersTable(rawData);
                 updateTable();
             } catch (error) {
                 tableHead.innerHTML = '';
                 tableBody.innerHTML = '';
                 emptyState.classList.remove('hidden');
                 emptyState.textContent = 'לא ניתן לטעון את קובץ הנתונים. יש לפתוח את הדף דרך השרת המקומי ולוודא ש-question-topics.json קיים.';
-                statusLine.textContent = error.message;
-                summaryGrid.innerHTML = '';
+                reportTitle.textContent = 'דוח שאלות בגרות מכניקה';
+                visibleCountText.textContent = 'מוצגות כעת: 0 שאלות';
+                topicFiltersBody.innerHTML = '';
             }
         }
-
-        searchInput.addEventListener('input', updateTable);
-        topicPresenceFilter.addEventListener('change', updateTable);
-        sortSelect.addEventListener('change', () => {
-            currentSort = sortSelect.value;
-            currentTopicSort = null;
-            updateTable();
-        });
 
         loadData();
     </script>
