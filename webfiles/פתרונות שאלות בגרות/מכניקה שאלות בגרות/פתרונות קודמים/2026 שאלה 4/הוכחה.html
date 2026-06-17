@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+
+        gtag('config', 'G-QZJ7JT80X2');
+    </script>
+    
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>חישוב אנליטי - חזרה למהירות התחלתית</title>
+
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+
+    <!-- MathJax for formulas -->
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['\\(', '\\)'], ['$', '$']],
+                displayMath: [['\\[', '\\]'], ['$$', '$$']],
+                processEscapes: true
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        :root {
+            --bg-page: #f8fafc;
+            --bg-card: #ffffff;
+            --text-main: #334155;
+            --blue-600: #2563eb;
+            --blue-700: #1d4ed8;
+            --blue-100: #dbeafe;
+            --blue-50: #eff6ff;
+            --blue-border: #93c5fd;
+            --green-50: #f0fdf4;
+            --green-500: #22c55e;
+            --slate-200: #e2e8f0;
+            --slate-300: #cbd5e1;
+        }
+
+        body {
+            font-family: "Rubik", "Segoe UI", Tahoma, Arial, sans-serif;
+            background-color: var(--bg-page);
+            color: var(--text-main);
+            line-height: 1.65;
+        }
+
+        html {
+            overflow-x: clip;
+        }
+
+        body {
+            overflow-x: clip;
+        }
+
+        .page-shell {
+            max-width: 980px;
+            margin: 0 auto;
+            padding: 1rem;
+            padding-bottom: 7rem;
+        }
+
+        .section-card {
+            background: var(--bg-card);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 1.25rem;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 2px 8px rgba(15, 23, 42, 0.05);
+        }
+
+        .section-header {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: #1e3a8a;
+            border-bottom: 2px solid var(--slate-200);
+            padding-bottom: 0.5rem;
+            margin-bottom: 0.9rem;
+        }
+
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        @media (min-width: 768px) {
+            .info-grid {
+                grid-template-columns: repeat(2, minmax(0, 1fr));
+            }
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
+        .step-title {
+            font-weight: 700;
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
+            display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .final-answer {
+            background-color: var(--green-50);
+            color: #166534;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
+            font-weight: 700;
+            margin-top: 1rem;
+        }
+
+        .visual-frame {
+            display: flex;
+            justify-content: center;
+            margin: 1rem 0;
+            padding: 0.75rem;
+            background: #ffffff;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.8);
+        }
+
+        .formula-badge {
+            background-color: var(--blue-50);
+            color: #1e40af;
+            border: 1px solid #bfdbfe;
+            border-radius: 0.5rem;
+            display: inline-block;
+            padding: 0.25rem 0.8rem;
+            margin: 0.25rem 0.25rem 0.25rem 0;
+            font-weight: 700;
+            direction: ltr;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
+        }
+
+        .teacher-highlight {
+            background-color: var(--green-50);
+            border-right: 4px solid var(--green-500);
+            border-radius: 0.5rem 0 0 0.5rem;
+            padding: 0.9rem;
+            margin-top: 1rem;
+            color: #166534;
+        }
+
+        .step-box {
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+            border: 1px solid var(--slate-200);
+            border-radius: 0.85rem;
+            padding: 1rem;
+            margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        /* Unified MathJax mobile handling */
+        .math-scroll,
+        .math-container,
+        .math-block,
+        .overflow-x-auto[dir="ltr"] {
+            overflow-x: auto;
+            overflow-y: hidden;
+            -webkit-overflow-scrolling: touch;
+            touch-action: pan-x pan-y;
+        }
+
+        .math-scroll mjx-container[display="true"],
+        .math-container mjx-container[display="true"],
+        .math-block mjx-container[display="true"],
+        .overflow-x-auto[dir="ltr"] mjx-container[display="true"] {
+            display: inline-block;
+            min-width: max-content;
+            max-width: none;
+            margin: 0.25rem 0;
+        }
+
+        .version-stamp {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.35rem;
+            padding: 0.28rem 0.55rem;
+            border-radius: 9999px;
+            border: 1px solid #bfdbfe;
+            background: rgba(239, 246, 255, 0.95);
+            color: #1e3a8a;
+            font-size: 0.72rem;
+            font-weight: 600;
+            line-height: 1;
+            backdrop-filter: blur(2px);
+            margin-top: 0.45rem;
+        }
+
+        .version-stamp .version-label {
+            color: #1d4ed8;
+            font-weight: 700;
+            text-transform: uppercase;
+        }
+
+        .legal-footer {
+            margin-top: 1.5rem;
+            padding-top: 1rem;
+            border-top: 1px solid var(--slate-200);
+            text-align: center;
+            font-size: 0.9rem;
+            color: #64748b;
+        }
+    </style>
+</head>
+<body>
+
+<div class="page-shell">
+    <header class="text-center mb-8">
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">חישוב מבוסס אנרגיה</h1>
+        <h2 class="text-xl md:text-2xl text-slate-600">מציאת נקודת החזרה למהירות ההתחלתית</h2>
+        <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
+            <span class="version-label">עודכן:</span>
+            <span id="versionUpdatedAt">--- --:--:--</span>
+        </div>
+    </header>
+
+    <!-- פתיח לוגי -->
+    <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+        <h3 class="text-xl font-bold text-blue-900 mb-4">העיקרון הפיזיקלי המוביל: "קיצור דרך" של עבודה ואנרגיה</h3>
+        <p class="content-paragraph">במקום להשתמש במשוואות קינמטיקה, נמצא את המיקום בו המהירות חוזרת ל-<span class="inline-ltr">\(v_0\)</span> באמצעות <strong>משפט עבודה-אנרגיה</strong> (<span class="inline-ltr">\(W_{\text{nc}} = \Delta E\)</span>).</p>
+        <p class="content-paragraph font-bold">הטריק האלגנטי:</p>
+        <ul class="list-disc list-inside mb-4 text-[#475569] space-y-1">
+            <li>מכיוון שאנו מחפשים את הנקודה שבה המהירות שווה בדיוק למהירות ההתחלתית (<span class="inline-ltr">\(v_{final} = v_{initial} = 4\text{ m/s}\)</span>), השינוי באנרגיה הקינטית הוא אפס (<span class="inline-ltr">\(\Delta E_k = 0\)</span>).</li>
+            <li>לכן, כל השינוי באנרגיה המכנית הוא רק באנרגיה הפוטנציאלית (הגובה): <span class="inline-ltr">\(\Delta E = \Delta U_g = mgh\)</span>.</li>
+            <li>המסקנה: סך העבודה של הכוחות הלא משמרים (הכוח <span class="inline-ltr">\(F\)</span> והחיכוך) בשני המישורים יחד שווה בדיוק לאנרגיית הגובה הנצברת!</li>
+        </ul>
+    </section>
+
+    <!-- נתונים -->
+    <section class="section-card" id="data">
+        <h3 class="section-header">ריכוז נתוני הסימולציה</h3>
+        <div class="info-grid md:grid-cols-2">
+            <div class="info-panel">
+                <strong>נתוני הגוף והמסלול:</strong><br>
+                מסה: <span class="inline-ltr">\(m = 0.1\text{ kg}\)</span><br>
+                מהירות התחלתית: <span class="inline-ltr">\(v_0 = 4\text{ m/s}\)</span><br>
+                אורך מישור אופקי: <span class="inline-ltr">\(L = 2.5\text{ m}\)</span><br>
+                זווית המדרון: <span class="inline-ltr">\(\alpha = 15^\circ\)</span>
+            </div>
+            <div class="info-panel">
+                <strong>הכוחות במערכת:</strong><br>
+                כוח דוחף: <span class="inline-ltr">\(F = 0.5\text{ N}\)</span><br>
+                חיכוך אופקי: <span class="inline-ltr">\(\mu_1 = 0.70\)</span><br>
+                חיכוך במדרון: <span class="inline-ltr">\(\mu_2 = 0.10\)</span><br>
+                תאוצת כובד: <span class="inline-ltr">\(g = 10\text{ m/s}^2\)</span>
+            </div>
+        </div>
+        
+        <div class="mt-2">
+            <strong>משוואת המפתח שתנחה אותנו:</strong><br>
+            <span class="formula-badge">\(W_{\text{horizontal}} + W_{\text{incline}} = \Delta U_g = mgh\)</span>
+            <span class="formula-badge">\(h = d \cdot \sin\alpha\)</span>
+            (כאשר <span class="inline-ltr">\(d\)</span> הוא המרחק שעבר הגוף <strong>על גבי המדרון</strong>).
+        </div>
+    </section>
+
+    <!-- שלב 1 משותף -->
+    <section class="section-card" id="step-common">
+        <h3 class="section-header">שלב 1: העבודה במישור האופקי (משותף לשני המצבים)</h3>
+        <p class="content-paragraph">נחשב את סך העבודה של הכוחות הלא משמרים במישור האופקי לאורך מרחק <span class="inline-ltr">\(L\)</span>. בחלק זה, הכוח <span class="inline-ltr">\(F\)</span> פועל במקביל לתנועה והנורמל הוא <span class="inline-ltr">\(N = mg\)</span>.</p>
+        
+        <div class="step-box">
+            <div class="math-container text-center" dir="ltr">
+                \[ W_{\text{horizontal}} = W_F + W_{f1} = F \cdot L - \mu_1 mg \cdot L = L(F - \mu_1 mg) \]
+            </div>
+            <p class="content-paragraph">נציב את המספרים שלנו:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ W_{\text{horizontal}} = 2.5 \cdot (0.5 - 0.7 \cdot 0.1 \cdot 10) = 2.5 \cdot (0.5 - 0.7) = 2.5 \cdot (-0.2) = -0.5\text{ J} \]
+            </div>
+            <p class="content-paragraph font-bold text-[#475569]">
+                משמעות פיזיקלית: הגוף איבד <span class="inline-ltr">\(0.5\text{ J}\)</span> של אנרגיה במישור האופקי. כעת עליו "לייצר" עודף עבודה חיובית במדרון כדי לפצות על כך ולטפס לגובה.
+            </p>
+        </div>
+    </section>
+
+    <!-- מצב 1 -->
+    <section class="section-card" id="step-mode1">
+        <h3 class="section-header">מצב 1: כוח F מקביל למדרון</h3>
+        <p class="content-paragraph">נחשב את עבודת הכוחות במדרון לאורך מרחק <span class="inline-ltr">\(d_1\)</span>. במקרה זה הכוח דוחף במלואו קדימה, והנורמל הוא רק מרכיב המשקל <span class="inline-ltr">\(N = mg\cos\alpha\)</span>.</p>
+        
+        <div class="step-box">
+            <h4 class="step-title">עבודת הכוחות במדרון:</h4>
+            <div class="math-container text-center" dir="ltr">
+                \[ W_{\text{incline}} = F \cdot d_1 - \mu_2 (mg\cos\alpha) \cdot d_1 = d_1(F - \mu_2 mg\cos 15^\circ) \]
+            </div>
+            <p class="content-paragraph">נציב ערכים לביטוי שבתוך הסוגריים:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ F - \mu_2 mg\cos 15^\circ = 0.5 - 0.1 \cdot 0.1 \cdot 10 \cdot 0.9659 = 0.5 - 0.0966 = 0.4034\text{ N} \]
+            </div>
+            <div class="math-container text-center" dir="ltr">
+                \[ W_{\text{incline}} = 0.4034 \cdot d_1 \]
+            </div>
+            
+            <h4 class="step-title mt-6">השוואה לשינוי האנרגיה:</h4>
+            <p class="content-paragraph">אנרגיית הגובה היא <span class="inline-ltr">\(\Delta U_g = mgd_1\sin 15^\circ = 0.1 \cdot 10 \cdot d_1 \cdot 0.2588 = 0.2588 \cdot d_1\)</span></p>
+            <p class="content-paragraph">נשווה את סך העבודה (<span class="inline-ltr">\(-0.5 + W_{\text{incline}}\)</span>) לאנרגיית הגובה:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ -0.5 + 0.4034 \cdot d_1 = 0.2588 \cdot d_1 \]
+                \[ 0.4034 \cdot d_1 - 0.2588 \cdot d_1 = 0.5 \]
+                \[ 0.1446 \cdot d_1 = 0.5 \quad \implies \quad d_1 = \frac{0.5}{0.1446} \approx 3.458\text{ m} \]
+            </div>
+            
+            <p class="final-answer">
+                המיקום במצב 1: המרחק מתחילת המישור המשופע הוא <span class="inline-ltr">\(d_1 = \mathbf{3.46\text{ m}}\)</span>.
+            </p>
+        </div>
+    </section>
+
+    <!-- מצב 2 -->
+    <section class="section-card" id="step-mode2">
+        <h3 class="section-header">מצב 2: כוח F אופקי שמאלה</h3>
+        <p class="content-paragraph">כעת הכוח <span class="inline-ltr">\(F\)</span> אופקי. הרכיב המקביל הוא <span class="inline-ltr">\(F\cos\alpha\)</span>, והוא לוחץ אל תוך המדרון עם <span class="inline-ltr">\(F\sin\alpha\)</span> ולכן מגדיל את הנורמל והחיכוך.</p>
+        
+        <div class="step-box">
+            <h4 class="step-title">חישוב הכוח השקול הדוחף:</h4>
+            <p class="content-paragraph">הנורמל החדש הוא <span class="inline-ltr">\(N = mg\cos 15^\circ + F\sin 15^\circ\)</span>:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ N = (0.1 \cdot 10 \cdot 0.9659) + (0.5 \cdot 0.2588) = 0.9659 + 0.1294 = 1.0953\text{ N} \]
+            </div>
+            <p class="content-paragraph">כוח החיכוך הוא <span class="inline-ltr">\(f_k = \mu_2 N = 0.1 \cdot 1.0953 = 0.1095\text{ N}\)</span>.</p>
+            <p class="content-paragraph">הרכיב המניע של <span class="inline-ltr">\(F\)</span> הוא <span class="inline-ltr">\(F\cos 15^\circ = 0.5 \cdot 0.9659 = 0.4830\text{ N}\)</span>.</p>
+            <p class="content-paragraph">עבודת הכוחות במדרון:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ W_{\text{incline}} = (F\cos 15^\circ - f_k) \cdot d_2 = (0.4830 - 0.1095) \cdot d_2 = 0.3735 \cdot d_2 \]
+            </div>
+            
+            <h4 class="step-title mt-6">השוואה לשינוי האנרגיה:</h4>
+            <p class="content-paragraph">אנרגיית הגובה נשארת <span class="inline-ltr">\(\Delta U_g = 0.2588 \cdot d_2\)</span>. נשווה שוב:</p>
+            <div class="math-container text-center" dir="ltr">
+                \[ -0.5 + 0.3735 \cdot d_2 = 0.2588 \cdot d_2 \]
+                \[ 0.3735 \cdot d_2 - 0.2588 \cdot d_2 = 0.5 \]
+                \[ 0.1147 \cdot d_2 = 0.5 \quad \implies \quad d_2 = \frac{0.5}{0.1147} \approx 4.359\text{ m} \]
+            </div>
+            
+            <p class="final-answer">
+                המיקום במצב 2: המרחק מתחילת המישור המשופע הוא <span class="inline-ltr">\(d_2 = \mathbf{4.36\text{ m}}\)</span>.
+            </p>
+        </div>
+    </section>
+
+    <!-- סיכום -->
+    <section class="section-card border-t-4 border-green-500">
+        <h3 class="text-xl font-bold text-green-800 mb-2">מסקנה מתמטית מהחישוב</h3>
+        <p class="content-paragraph text-[#475569]">
+            כפי שראינו בסימולציה, בשני המצבים הגוף אכן מצליח להאיץ במעלה המדרון ולהחזיר לעצמו את המהירות ההתחלתית שאבדה. אולם, מכיוון שבמצב האופקי חלק מהכוח "מתבזבז" על לחיצת הגוף למשטח (מה שמגדיל חיכוך ומקטין דחיפה קדימה), נדרש לו מרחק ארוך יותר במדרון (<span class="inline-ltr">\(4.36\text{ m}\)</span> לעומת <span class="inline-ltr">\(3.46\text{ m}\)</span>) כדי לצבור מספיק עבודה חיובית המפצה על ההפסד באופקי. 
+            לכן, נקודת החצייה במצב 2 תמיד תהיה רחוקה יותר (במרחק של <span class="inline-ltr">\(4.36\text{ m}\)</span> מתחילת המדרון, לעומת <span class="inline-ltr">\(3.46\text{ m}\)</span> במצב 1).
+        </p>
+    </section>
+
+    <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
+        <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
+        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+    </footer>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        const legalLinks = document.querySelectorAll('[data-legal-link]');
+        if (legalLinks.length) {
+            const marker = '/webfiles/';
+            const pathname = window.location.pathname || '';
+            const markerIndex = pathname.indexOf(marker);
+            if (markerIndex >= 0) {
+                const prefix = pathname.slice(0, markerIndex);
+                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                legalLinks.forEach((link) => {
+                    link.setAttribute('href', resolvedLegalPath);
+                });
+            }
+        }
+
+        const versionStamp = document.getElementById('versionStamp');
+        const versionUpdatedAt = document.getElementById('versionUpdatedAt');
+
+        const modified = new Date(document.lastModified);
+        if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
+            const pad = (n) => String(n).padStart(2, '0');
+            const year = modified.getFullYear();
+            const month = modified.getMonth() + 1;
+            const day = modified.getDate();
+            const seed = (year * 372) + (month * 31) + day + 157;
+            const codeNum = (seed * 73) % 46656;
+            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+            const hours = pad(modified.getHours());
+            const minutes = pad(modified.getMinutes());
+            const seconds = pad(modified.getSeconds());
+            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+        }
+    });
+</script>
+
+</body>
+</html>
