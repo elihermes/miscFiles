@@ -1,0 +1,436 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<title>שאלה 5</title>
+	<style>
+		@page {
+			size: A4 portrait;
+			margin: 7mm;
+		}
+
+		html {
+			background: #ffffff;
+		}
+
+		body {
+			margin: 0;
+			background: #ffffff;
+			color: #111827;
+			font-family: "Times New Roman", "David", "Noto Serif Hebrew", serif;
+			font-size: 13.35pt;
+			line-height: 1.34;
+		}
+
+		.page {
+			width: min(210mm, calc(100vw - 18px));
+			min-height: 297mm;
+			margin: 8px auto;
+			padding: 11mm 14mm 10.5mm;
+			box-sizing: border-box;
+			background: #ffffff;
+			border: 1px solid #ecece6;
+			box-shadow: 0 10px 30px rgba(15, 23, 42, 0.06), inset 0 1px 0 rgba(255, 255, 255, 0.55);
+		}
+
+		.question {
+			max-width: 174mm;
+			margin: 0 auto;
+			text-align: right;
+		}
+
+		h1 {
+			margin: 0 0 0.95rem;
+			text-align: center;
+			font-size: 1.42rem;
+			font-weight: 700;
+		}
+
+		p {
+			margin: 0 0 0.28rem;
+			text-align: right;
+		}
+
+		.part {
+			margin-top: 0.62rem;
+		}
+
+		.part-row {
+			display: grid;
+			grid-template-columns: auto 1fr;
+			gap: 0.45rem;
+			align-items: start;
+		}
+
+		.part-label {
+			font-weight: 700;
+			white-space: nowrap;
+			padding-top: 0.02rem;
+		}
+
+		.part-body {
+			text-align: right;
+		}
+
+		.part-body > *:last-child {
+			margin-bottom: 0;
+		}
+
+		.points {
+			text-align: right;
+			margin-top: 0.1rem;
+		}
+
+		.points-inline {
+			white-space: nowrap;
+		}
+
+		.intro-block {
+			margin-bottom: 0.34rem;
+		}
+
+		.ltr {
+			direction: ltr;
+			unicode-bidi: isolate;
+			display: inline-block;
+			white-space: nowrap;
+		}
+
+		.definition-line {
+			margin-right: 0.1rem;
+		}
+
+		.subparts {
+			margin-top: 0.28rem;
+		}
+
+		.subpart {
+			margin-bottom: 0.2rem;
+		}
+
+		.subpart-label {
+			font-weight: 700;
+			white-space: nowrap;
+			margin-left: 0.28rem;
+		}
+
+		.diagram-block {
+			margin: 0.5rem auto 0.42rem;
+			text-align: center;
+		}
+
+		.diagram-shell {
+			margin: 0 auto;
+			text-align: center;
+		}
+
+		.diagram-shell.graph {
+			max-width: 142.5mm;
+		}
+
+		.diagram-shell.orbit {
+			width: 76.25mm;
+			max-width: 76.25mm;
+		}
+
+		.diagram-image {
+			width: 100%;
+			height: auto;
+			display: block;
+			margin: 0 auto;
+		}
+
+		.diagram-placeholder {
+			min-height: 77.5mm;
+			border: 1.4px dashed #9ca3af;
+			border-radius: 0.6rem;
+			background: rgba(255, 255, 255, 0.68);
+			color: #4b5563;
+			display: none;
+			align-items: center;
+			justify-content: center;
+			text-align: center;
+			padding: 0.7rem;
+			box-sizing: border-box;
+			font-size: 0.95rem;
+			line-height: 1.3;
+		}
+
+		.diagram-shell.orbit .diagram-placeholder {
+			min-height: 75mm;
+		}
+
+		.diagram-text-layout {
+			display: grid;
+			grid-template-columns: 70mm minmax(0, 1fr);
+			gap: 0.55rem;
+			direction: ltr;
+			align-items: start;
+			margin-top: 0.22rem;
+		}
+
+		.diagram-text-layout .diagram-shell.orbit {
+			justify-self: start;
+			margin: 0;
+			transform: translateX(-6.25mm);
+		}
+
+		.diagram-text {
+			direction: rtl;
+			text-align: right;
+		}
+
+		.rtl-isolate {
+			direction: rtl;
+			unicode-bidi: isolate;
+			display: inline-block;
+		}
+
+		.multiline-parenthetical {
+			direction: rtl;
+			unicode-bidi: isolate;
+		}
+
+		.variables {
+			margin-top: 0.18rem;
+		}
+
+		.variable-line {
+			margin-bottom: 0.18rem;
+		}
+
+		.underline {
+			text-decoration: underline;
+			text-underline-offset: 0.09em;
+		}
+
+		.note {
+			margin-top: 0.22rem;
+		}
+
+		.mixed-fraction {
+			direction: ltr;
+			unicode-bidi: isolate;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.12em;
+		}
+
+		.fraction {
+			display: inline-grid;
+			grid-template-rows: auto auto;
+			justify-items: center;
+			line-height: 1;
+			font-size: 0.88em;
+		}
+
+		.fraction .numerator {
+			padding: 0 0.08em 0.03em;
+			border-bottom: 1px solid currentColor;
+		}
+
+		.fraction .denominator {
+			padding: 0.03em 0.08em 0;
+		}
+
+		@media (max-width: 760px) {
+			.page {
+				min-height: auto;
+				padding: 8mm 7mm;
+			}
+
+			.question {
+				max-width: none;
+			}
+
+			.diagram-text-layout {
+				grid-template-columns: 1fr;
+			}
+
+			.diagram-shell.orbit {
+				width: min(76.25mm, 100%);
+				max-width: 76.25mm;
+			}
+		}
+
+		@media print {
+			html,
+			body {
+				background: #ffffff;
+			}
+
+			body {
+				font-size: 12.15pt;
+				line-height: 1.21;
+			}
+
+			.page {
+				width: auto;
+				min-height: auto;
+				margin: 0;
+				padding: 0;
+				border: 0;
+				box-shadow: none;
+				background: #ffffff;
+			}
+
+			h1 {
+				margin-bottom: 0.62rem;
+			}
+
+			.part {
+				margin-top: 0.36rem;
+			}
+
+			p {
+				margin-bottom: 0.14rem;
+			}
+
+			.diagram-block {
+				margin-top: 0.3rem;
+				margin-bottom: 0.2rem;
+			}
+
+			.diagram-shell.graph {
+				max-width: 126.25mm;
+			}
+
+			.diagram-shell.orbit {
+				width: 63.75mm;
+				max-width: 63.75mm;
+			}
+
+			.diagram-shell.orbit .diagram-placeholder {
+				min-height: 61.25mm;
+			}
+
+			.diagram-placeholder {
+				min-height: 61.25mm;
+				font-size: 0.9rem;
+				padding: 0.45rem;
+			}
+
+			.diagram-text-layout {
+				grid-template-columns: 58mm minmax(0, 1fr);
+				gap: 0.35rem;
+			}
+
+			.subparts {
+				margin-top: 0.14rem;
+			}
+
+			.subpart {
+				margin-bottom: 0.1rem;
+			}
+
+			.variables {
+				margin-top: 0.1rem;
+			}
+
+			.variable-line {
+				margin-bottom: 0.1rem;
+			}
+
+			.points {
+				margin-top: 0.05rem;
+			}
+
+			.note {
+				margin-top: 0.12rem;
+			}
+		}
+	</style>
+</head>
+<body>
+	<main class="page">
+		<div class="question">
+			<h1>שאלה 5</h1>
+
+			<section class="part">
+				<div class="part-row">
+					<div class="part-label">א.</div>
+					<div class="part-body">
+						<p>פַּתְחוּ את החוק השלישי של קפלר (בנוגע למסלולים מעגליים)</p>
+						<p>על פי חוק הגרוויטציה של ניוטון. <span class="points-inline">(10 נקודות)</span></p>
+					</div>
+				</div>
+			</section>
+
+			<section class="part">
+				<div class="part-row">
+					<div class="part-label">ב.</div>
+					<div class="part-body">
+						<div class="intro-block">
+							<p>התרשים שלפניכם מציג גרף של <span class="ltr">T<sup>2</sup></span> (ביחידות <span class="ltr">10<sup>19</sup> s<sup>2</sup></span>) כפונקציה</p>
+							<p>של <span class="ltr">r<sup>3</sup></span> (ביחידות <span class="ltr">10<sup>38</sup> m<sup>3</sup></span>) עבור 5 כוכבי לכת.</p>
+						</div>
+						<p class="definition-line"><span class="ltr">T</span> &ndash; משך הזמן שבו כוכב לכת מקיף את השמש.</p>
+						<p class="definition-line"><span class="ltr">r</span> &ndash; מרחק כוכב הלכת ממרכז השמש.</p>
+
+						<div class="diagram-block">
+							<div class="diagram-shell graph">
+								<img src="qimage-1.png" alt="גרף של T^2 כפונקציה של r^3" class="diagram-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+								<div class="diagram-placeholder">qimage-1.png</div>
+							</div>
+						</div>
+
+						<div class="subparts">
+							<p class="subpart"><span class="subpart-label">(1)</span> חשבו את שיפוע הגרף. <span class="points-inline">(5 נקודות)</span></p>
+							<p class="subpart"><span class="subpart-label">(2)</span> חשבו בעזרת שיפוע הגרף את מסת השמש. <span class="points-inline">(5 נקודות)</span></p>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="part">
+				<div class="part-row">
+					<div class="part-label">ג.</div>
+					<div class="part-body">
+						<p>לוויין, שנבנה לצורך תצפיות על השמש, נע במסלול מעגלי סביב השמש.</p>
+						<p>הלוויין נמצא כל הזמן על הקו המחבר את השמש לארץ, כמתואר בתרשים.</p>
+
+						<div class="diagram-text-layout">
+							<div class="diagram-shell orbit">
+								<img src="qimage-2.png" alt="תרשים מסלול הארץ והלוויין סביב השמש" class="diagram-image" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+								<div class="diagram-placeholder">qimage-2.png</div>
+							</div>
+
+							<div class="diagram-text">
+								<p class="multiline-parenthetical">(מרחק הלוויין מכדור הארץ קבוע.<br>הניחו שגם המסלול של כדור הארץ<br>סביב השמש הוא מעגל.)</p>
+								<p>זמן המחזור של הלוויין בתנועתו סביב השמש</p>
+								<p>הוא שנה אחת.</p>
+								<p>רשמו את החוק השני של ניוטון עבור תנועת הלוויין,</p>
+								<p>באמצעות חמשת הגדלים שלפניכם:</p>
+
+								<div class="variables">
+									<p class="variable-line"><span class="ltr">r</span> &ndash; הרדיוס של מסלול התנועה של כדור הארץ סביב השמש</p>
+									<p class="variable-line"><span class="ltr">ω</span> &ndash; התדירות הזוויתית של תנועת כדור הארץ סביב השמש</p>
+									<p class="variable-line"><span class="ltr">M<sub>S</sub></span> &ndash; מסת השמש</p>
+									<p class="variable-line"><span class="ltr">M<sub>E</sub></span> &ndash; מסת כדור הארץ</p>
+									<p class="variable-line"><span class="ltr">x</span> &ndash; המרחק בין הלוויין לארץ</p>
+								</div>
+
+								<p class="points">(8 נקודות)</p>
+								<p class="note"><strong>הערה:</strong> <span class="underline">אין צורך</span> לפתור את המשוואה.</p>
+							</div>
+						</div>
+					</div>
+				</div>
+			</section>
+
+			<section class="part">
+				<div class="part-row">
+					<div class="part-label">ד.</div>
+					<div class="part-body">
+						<p>כדור הארץ והלוויין נעים בזמני מחזור זהים, אך רדיוסי המסלולים שלהם שונים.</p>
+						<p>מכאן נובע שהלוויין אינו מקיים (ביחס לשמש) את החוק השלישי של קפלר</p>
+						<p>למסלולים מעגליים.</p>
+						<p>הסבירו מהי הסיבה הפיזיקלית לאי-קיום חוק זה? <span class="points-inline">(<span class="mixed-fraction"><span class="whole">5</span><span class="fraction"><span class="numerator">1</span><span class="denominator">3</span></span></span> נקודות)</span></p>
+					</div>
+				</div>
+			</section>
+		</div>
+	</main>
+</body>
+</html>
