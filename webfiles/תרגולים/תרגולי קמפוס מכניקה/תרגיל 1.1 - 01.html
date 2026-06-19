@@ -106,10 +106,147 @@
 
     </main>
 
+    <!-- Custom Modal for Alerts (Instead of standard browser alert) -->
+    <div id="alert-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-[99999]">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center border border-slate-200 animate-[bounce_0.5s_ease-in-out_1]">
+            <div class="text-4xl mb-3">⚠️</div>
+            <h3 class="text-xl font-bold text-slate-800 mb-2">שימו לב</h3>
+            <p id="alert-modal-text" class="text-slate-600 mb-6">נא להזין את כל השדות</p>
+            <button onclick="closeAlertModal()" class="w-full bg-teal-600 hover:bg-teal-700 text-white font-bold py-2.5 px-5 rounded-xl transition-all">
+                הבנתי
+            </button>
+        </div>
+    </div>
+
     <script>
-        // Data Structure for the Game (20 sub-questions spread across 7 scenarios)
-        const quizStages = [
-            {
+        let quizStages = [];
+        let currentIndex = 0;
+        let score = 0;
+        let totalPossible = 0;
+        let playerName = "";
+        let gameId = "";
+
+        // בנק דמויות, פעלים ומשטחים עם התאמה לוגית ודקדוקית קבועה
+        const entities = [
+            { 
+                name: "נער", 
+                defName: "הנער", 
+                start: "מתחיל", 
+                move: "מתקדם", 
+                turn: "מסתובב וחוזר לאחור", 
+                stop: "עוצר", 
+                pos: "מקומו", 
+                passed: "שעבר", 
+                isNeg: "נמצא",
+                surfaces: ["שביל פארק סלול", "מדרכה ישרה", "משטח דשא ירוק", "שביל עפר בפארק"] 
+            },
+            { 
+                name: "ילדה", 
+                defName: "הילדה", 
+                start: "מתחילה", 
+                move: "מתקדמת", 
+                turn: "מסתובבת וחוזרת לאחור", 
+                stop: "עוצרת", 
+                pos: "מקומה", 
+                passed: "שעברה", 
+                isNeg: "נמצאת",
+                surfaces: ["מדרכה ישרה", "שביל סלול בפארק", "מדשאה גדולה", "חצר בית ספר ישרה"] 
+            },
+            { 
+                name: "רכב", 
+                defName: "הרכב", 
+                start: "מתחיל", 
+                move: "נוסע", 
+                turn: "נוסע רוורס (לאחור)", 
+                stop: "עוצר", 
+                pos: "מקומו", 
+                passed: "שעבר", 
+                isNeg: "נמצא",
+                surfaces: ["כביש אספלט ישר", "רחוב חד-סטרי ישר", "כביש מהיר בקו ישר", "נתיב תחבורה פנוי"] 
+            },
+            { 
+                name: "סירה", 
+                defName: "הסירה", 
+                start: "מתחילה", 
+                move: "שטה", 
+                turn: "מסתובבת ושטה חזרה", 
+                stop: "עוצרת", 
+                pos: "מקומה", 
+                passed: "שעברה", 
+                isNeg: "נמצאת",
+                surfaces: ["תעלת מים צרה וישרה", "מסלול חתירה אולימפי מסומן", "נהר זורם בקו ישר"] 
+            },
+            { 
+                name: "קרון רכבל", 
+                defName: "הקרון", 
+                start: "מתחיל", 
+                move: "נע", 
+                turn: "משנה כיוון ונע חזרה", 
+                stop: "נעצר בתחנה", 
+                pos: "מקומו", 
+                passed: "שעבר", 
+                isNeg: "נמצא",
+                surfaces: ["כבל פלדה מתוח וישר", "מסילת כבלים עילית וישרה"] 
+            },
+            { 
+                name: "כדור", 
+                defName: "הכדור", 
+                start: "מתחיל", 
+                move: "מתגלגל", 
+                turn: "מתגלגל חזרה", 
+                stop: "נעצר", 
+                pos: "מקומו", 
+                passed: "שעבר", 
+                isNeg: "נמצא",
+                surfaces: ["מגרש כדורסל מפולס", "משטח דשא מטופח", "רצפת אולם ספורט ישרה", "שביל בטון חלק"] 
+            },
+            { 
+                name: "כלב", 
+                defName: "הכלב", 
+                start: "מתחיל", 
+                move: "רץ", 
+                turn: "מסתובב ורץ חזרה", 
+                stop: "מתיישב", 
+                pos: "מקומו", 
+                passed: "שעבר", 
+                isNeg: "נמצא",
+                surfaces: ["מדשאה פתוחה", "שביל הליכה בפארק", "רחוב מגורים שקט", "חוף ים ישר"] 
+            },
+            { 
+                name: "רוכבת אופניים", 
+                defName: "הרוכבת", 
+                start: "מתחילה", 
+                move: "רוכבת", 
+                turn: "מסתובבת ורוכבת לאחור", 
+                stop: "עוצרת", 
+                pos: "מקומה", 
+                passed: "שעברה", 
+                isNeg: "נמצאת",
+                surfaces: ["מסלול אופניים מסומן", "כביש עירוני שקט", "שביל אספלט ישר"] 
+            }
+        ];
+
+        const directions = ["קדימה", "ימינה", "מזרחה", "צפונה"];
+
+        function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+
+        // Custom Modal Alert Trigger
+        function showAlertModal(message) {
+            document.getElementById('alert-modal-text').innerText = message;
+            document.getElementById('alert-modal').classList.remove('hidden');
+        }
+
+        function closeAlertModal() {
+            document.getElementById('alert-modal').classList.add('hidden');
+        }
+
+        // בניית השאלון באופן דינמי עם התאמה הגיונית מלאה
+        function buildDynamicQuiz() {
+            quizStages = [];
+
+            // Stage 1: Theory
+            quizStages.push({
                 title: "שלב 1: מושגי יסוד בתיאוריה",
                 context: "לפני שנתחיל לחשב, בואו נוודא שאנחנו מבינים את ההגדרות הבסיסיות.",
                 subQs: [
@@ -132,53 +269,101 @@
                         options: ["שהגוף לא זז כלל (מהירות אפס תמיד)", "שהדרך שהוא עבר היא גם אפס", "שמקומו הסופי זהה למקומו ההתחלתי"] 
                     }
                 ]
-            },
-            {
-                title: "שלב 2: תנועה פשוטה קדימה",
-                context: "נער רוכב על קורקינט לאורך שביל ישר (ציר ה-x). הוא מתחיל את נסיעתו בנקודה x = 4m, ורוכב ברציפות עד לנקודה x = 12m, שם הוא עוצר.",
+            });
+
+            // Stage 2: Simple Forward
+            let e2 = pick(entities);
+            let s2_surf = pick(e2.surfaces); // התאמה לוגית קבועה!
+            let s2_dir = pick(directions);
+            const s2_x1 = randInt(1, 6);
+            const s2_dist = randInt(5, 12);
+            const s2_x2 = s2_x1 + s2_dist;
+            
+            quizStages.push({
+                title: "שלב 2: תנועה פשוטה",
+                context: `${e2.name} ${e2.start} את התנועה בנקודה x = ${s2_x1}m לאורך ${s2_surf}. ${e2.defName} ${e2.move} ${s2_dir} ברציפות עד לנקודה x = ${s2_x2}m, ושם ${e2.stop}.`,
                 subQs: [
-                    { text: "מהו מקומו ההתחלתי של הנער (במטרים)?", ans: 4, type: 'num' },
-                    { text: "מהו מקומו הסופי של הנער (במטרים)?", ans: 12, type: 'num' },
-                    { text: "מהו ההעתק (Δx) שעבר הנער?", ans: 8, type: 'num', unit: "m" },
-                    { text: "מהי הדרך (סך המרחק) שעבר הנער?", ans: 8, type: 'num', unit: "m" }
+                    { text: `מהו ${e2.pos} ההתחלתי (במטרים)?`, ans: s2_x1, type: 'num' },
+                    { text: `מהו ${e2.pos} הסופי (במטרים)?`, ans: s2_x2, type: 'num' },
+                    { text: `מהו ההעתק (Δx) של ${e2.defName}?`, ans: s2_x2 - s2_x1, type: 'num', unit: "m" },
+                    { text: `מהי הדרך (סך המרחק) ${e2.passed} ${e2.defName}?`, ans: s2_x2 - s2_x1, type: 'num', unit: "m" }
                 ]
-            },
-            {
+            });
+
+            // Stage 3: Forward and backward
+            let e3 = pick(entities);
+            let s3_surf = pick(e3.surfaces);
+            const s3_x1 = randInt(0, 3);
+            const s3_x2 = randInt(s3_x1 + 8, s3_x1 + 20);
+            const s3_x3 = randInt(s3_x1 + 2, s3_x2 - 2);
+            const s3_dist_total = (s3_x2 - s3_x1) + (s3_x2 - s3_x3);
+
+            quizStages.push({
                 title: "שלב 3: הלוך וחזור חלקי",
-                context: "רוכבת אופניים מתחילה את תנועתה בנקודה x = 0m. היא רוכבת קדימה עד שמגיעה לפארק בנקודה x = 10m. שם היא מסתובבת וחוזרת לאחור, עד שהיא עוצרת ליד חנות בנקודה x = 6m.",
+                context: `${e3.name} ${e3.start} את התנועה בנקודה x = ${s3_x1}m על גבי ${s3_surf}. ${e3.defName} ${e3.move} עד לנקודה x = ${s3_x2}m, שם ${e3.defName} ${e3.turn} ו${e3.stop} סופית בנקודה x = ${s3_x3}m.`,
                 subQs: [
-                    { text: "מהו מקומה הסופי של הרוכבת בסיום התנועה כולה?", ans: 6, type: 'num', unit: "m" },
-                    { text: "מהו ההעתק הכללי שלה (מתחילת התנועה ועד סופה)?", ans: 6, type: 'num', unit: "m" },
-                    { text: "מהי הדרך הכוללת (סך כל המרחק) שהיא רכבה בפועל?", ans: 14, type: 'num', unit: "m" }
+                    { text: `מהו ${e3.pos} הסופי של ${e3.defName} בסיום התנועה כולה?`, ans: s3_x3, type: 'num', unit: "m" },
+                    { text: `מהו ההעתק הכללי (מתחילת התנועה ועד סופה)?`, ans: s3_x3 - s3_x1, type: 'num', unit: "m" },
+                    { text: `מהי הדרך הכוללת (סך כל המרחק) ${e3.passed} בפועל?`, ans: s3_dist_total, type: 'num', unit: "m" }
                 ]
-            },
-            {
+            });
+
+            // Stage 4: Negative axis
+            let e4 = pick(entities);
+            let s4_surf = pick(e4.surfaces);
+            const s4_x1 = randInt(-10, -2);
+            const s4_x2 = randInt(2, 15);
+            const s4_x3 = randInt(s4_x1 + 1, s4_x2 - 1);
+            const s4_dist_total = (s4_x2 - s4_x1) + (s4_x2 - s4_x3);
+
+            quizStages.push({
                 title: "שלב 4: תנועה באזור השלילי של הציר",
-                context: "רכב יוצא מחניון תת-קרקעי שמסומן על ציר המקום כ- x = -2m. הוא נוסע קדימה עד לנקודה x = 8m, ואז מבצע נסיעה לאחור (רוורס) ועוצר בנקודה x = 0m.",
+                context: `${e4.name} ${e4.isNeg} באזור השלילי של הציר ו${e4.start} את התנועה בנקודה x = ${s4_x1}m לאורך ${s4_surf}. ${e4.defName} ${e4.move} לכיוון החיובי עד x = ${s4_x2}m, ואז ${e4.turn} ועוצר בנקודה x = ${s4_x3}m.`,
                 subQs: [
-                    { text: "מהו מקומו ההתחלתי של הרכב?", ans: -2, type: 'num', unit: "m" },
-                    { text: "מהו ההעתק (Δx) של הרכב בסוף התנועה?", ans: 2, type: 'num', unit: "m" },
-                    { text: "חשבו את הדרך הכוללת שעבר הרכב:", ans: 18, type: 'num', unit: "m" }
+                    { text: `מהו ${e4.pos} ההתחלתי של ${e4.defName}?`, ans: s4_x1, type: 'num', unit: "m" },
+                    { text: `מהו ההעתק (Δx) של ${e4.defName} בסוף התנועה?`, ans: s4_x3 - s4_x1, type: 'num', unit: "m" },
+                    { text: `חשבו את הדרך הכוללת ${e4.passed} ${e4.defName}:`, ans: s4_dist_total, type: 'num', unit: "m" }
                 ]
-            },
-            {
-                title: "שלב 5: תנועה במעגל חסר (מסלול הלוך ושוב)",
-                context: "שחיין מתאמן בבריכה באורך 50 מטרים. הוא מזנק מקצה הבריכה (x = 0m), שוחה עד לקצה השני (x = 50m), מסתובב ושוחה חזרה בדיוק לנקודת הזינוק (x = 0m).",
+            });
+
+            // Stage 5: Round Trip
+            let e5 = pick(entities);
+            const poolOptions = [20, 25, 30, 40, 50, 100];
+            const s5_length = pick(poolOptions);
+            let s5_surf = pick(e5.surfaces);
+            
+            quizStages.push({
+                title: "שלב 5: מסלול הלוך ושוב",
+                context: `${e5.name} ${e5.start} את התנועה מנקודה x = 0m, ${e5.move} לאורך ${s5_surf} עד לנקודה x = ${s5_length}m, ומשם ${e5.turn} בחזרה עד לנקודת ההתחלה בדיוק (x = 0m).`,
                 subQs: [
-                    { text: "מהו ההעתק הכולל של השחיין באימון זה?", ans: 0, type: 'num', unit: "m" },
-                    { text: "מהי הדרך הכוללת שעבר השחיין באימון זה?", ans: 100, type: 'num', unit: "m" }
+                    { text: `מהו ההעתק הכולל של ${e5.defName} בסיום התנועה?`, ans: 0, type: 'num', unit: "m" },
+                    { text: `מהי הדרך הכוללת ${e5.passed} ${e5.defName} בסך הכל?`, ans: s5_length * 2, type: 'num', unit: "m" }
                 ]
-            },
-            {
+            });
+
+            // Stage 6: Multiple Stops
+            let e6 = pick(entities);
+            let s6_surf = pick(e6.surfaces);
+            const s6_x1 = randInt(0, 3);
+            const s6_x2 = s6_x1 + randInt(2, 6);
+            const s6_x3 = s6_x2 + randInt(3, 8);
+            const s6_x4 = s6_x3 - randInt(2, s6_x3 - s6_x1 - 1);
+            
+            const s6_last_part = s6_x3 - s6_x4;
+            const s6_total_dist = (s6_x3 - s6_x1) + s6_last_part;
+
+            quizStages.push({
                 title: "שלב 6: טיול עם מספר עצירות",
-                context: "כלב משוטט ברחוב (ציר x). הוא מתחיל בנקודה x = 1m. משם הוא הולך לנקודה x = 5m, ממשיך לאותה כיוון עד לנקודה x = 10m, ולבסוף חוזר לאחור ומתיישב בנקודה x = 3m.",
+                context: `${e6.name} ${e6.start} בנקודה x = ${s6_x1}m לאורך ${s6_surf}. מנקודה זו ${e6.defName} ${e6.move} לנקודה x = ${s6_x2}m, ממשיך באותו כיוון עד לנקודה x = ${s6_x3}m, ולבסוף ${e6.turn} ו${e6.stop} בנקודה x = ${s6_x4}m.`,
                 subQs: [
-                    { text: "מהו ההעתק הכולל של הכלב מתחילת הטיול ועד סופו?", ans: 2, type: 'num', unit: "m" },
-                    { text: "מהי הדרך שעבר הכלב *רק* בקטע התנועה האחרון (מ-10 ל-3)?", ans: 7, type: 'num', unit: "m" },
-                    { text: "מהי הדרך הכוללת שעבר הכלב בכל הטיול?", ans: 16, type: 'num', unit: "m" }
+                    { text: `מהו ההעתק הכולל מתחילת התנועה ועד סופה?`, ans: s6_x4 - s6_x1, type: 'num', unit: "m" },
+                    { text: `מהי הדרך ${e6.passed} ${e6.defName} *רק* בקטע התנועה האחרון (בחזרה לאחור)?`, ans: s6_last_part, type: 'num', unit: "m" },
+                    { text: `מהי הדרך הכוללת ${e6.passed} בכל התנועה?`, ans: s6_total_dist, type: 'num', unit: "m" }
                 ]
-            },
-            {
+            });
+
+            // Stage 7: Summary Theory
+            quizStages.push({
                 title: "שלב 7: סיכום - הקשר בין העתק לדרך",
                 context: "לאחר שפתרנו מספר תרחישים, בואו נסכם את החוקיות שלמדנו לגבי דרך והעתק.",
                 subQs: [
@@ -195,17 +380,11 @@
                         options: ["הדרך בהכרח קטנה מגודל ההעתק", "הדרך שווה לגודל ההעתק", "הדרך בהכרח גדולה מגודל ההעתק"] 
                     }
                 ]
-            }
-        ];
-
-        let currentIndex = 0;
-        let score = 0;
-        let totalPossible = 0;
-        let playerName = "";
-        let gameId = "";
-
-        // Calculate total possible score on load
-        quizStages.forEach(stage => { totalPossible += stage.subQs.length; });
+            });
+            
+            totalPossible = 0;
+            quizStages.forEach(stage => { totalPossible += stage.subQs.length; });
+        }
 
         function generateUniqueGameId() {
             const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
@@ -221,13 +400,15 @@
             const trimmedName = nameField.value.trim();
             
             if (trimmedName === "") {
-                alert("אנא הכניסו שם שחקן כדי להתחיל במשחק!");
+                showAlertModal("אנא הכניסו שם שחקן (שם מלא) כדי להתחיל במשחק!");
                 nameField.focus();
                 return;
             }
 
             playerName = trimmedName;
             gameId = generateUniqueGameId();
+
+            buildDynamicQuiz();
 
             document.getElementById('start-screen').classList.add('hidden');
             document.getElementById('quiz-container').classList.remove('hidden');
@@ -239,7 +420,6 @@
             updateUI();
         }
 
-        // Shuffle dropdown options purely for display
         function shuffleArray(array) {
             let newArr = [...array];
             for (let i = newArr.length - 1; i > 0; i--) {
@@ -252,15 +432,12 @@
         function updateUI() {
             const stage = quizStages[currentIndex];
             
-            // Update Header Stats
             document.getElementById('question-counter').innerText = `תרחיש ${currentIndex + 1} מתוך ${quizStages.length}`;
             document.getElementById('score-display').innerText = `${score} / ${totalPossible}`;
             
-            // Update Context Area
             document.getElementById('scenario-title').innerText = stage.title;
             document.getElementById('scenario-context').innerText = stage.context;
 
-            // Render Questions
             const qArea = document.getElementById('questions-area');
             qArea.innerHTML = '';
             
@@ -293,7 +470,6 @@
                     </div>`;
             });
 
-            // Reset Button
             const btn = document.getElementById('action-btn');
             btn.innerText = "בדוק תשובות 🔍";
             btn.className = "bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold px-8 py-3 rounded-xl transition-all shadow-md w-full sm:w-auto";
@@ -304,20 +480,18 @@
             const stage = quizStages[currentIndex];
             let allAnswered = true;
 
-            // Validation Check
             stage.subQs.forEach((sq, i) => {
                 const input = document.getElementById(`input-${i}`);
                 if (input.value.trim() === "") allAnswered = false;
             });
 
             if (!allAnswered) {
-                alert("יש למלא את כל הסעיפים לפני הבדיקה!");
+                showAlertModal("יש למלא את כל הסעיפים לפני ביצוע הבדיקה!");
                 return;
             }
 
             let allCorrectInStage = true;
 
-            // Checking Logic
             stage.subQs.forEach((sq, i) => {
                 const input = document.getElementById(`input-${i}`);
                 const feedback = document.getElementById(`feedback-${i}`);
@@ -350,7 +524,7 @@
             document.getElementById('score-display').innerText = `${score} / ${totalPossible}`;
 
             if (allCorrectInStage) {
-                createConfettiParticles(30, false); // Small celebration for a perfect stage
+                createConfettiParticles(30, false);
             }
 
             const btn = document.getElementById('action-btn');
@@ -390,7 +564,6 @@
             }
         }
 
-        // --- Custom Confetti System (Works in Preview) ---
         function createConfettiParticles(amount, isBig) {
             const colors = ['#14b8a6', '#2dd4bf', '#0f766e', '#f59e0b', '#ef4444', '#3b82f6'];
             for (let i = 0; i < amount; i++) {
