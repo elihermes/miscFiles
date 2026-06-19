@@ -1,0 +1,422 @@
+<!doctype html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>צפייה בטקסט שאלות מכניקה</title>
+  <meta name="description" content="צפייה נוחה בטקסט שאלות בגרות מכניקה מתוך questioText.json">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;700;900&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --bg: #f3f0e8;
+      --surface: #fffaf0;
+      --surface-strong: #fff4dd;
+      --ink: #262118;
+      --ink-soft: #5e5343;
+      --brand: #006d77;
+      --brand-2: #ee9b00;
+      --ok: #386641;
+      --border: #e7dbc5;
+      --shadow: 0 10px 30px rgba(38, 33, 24, 0.12);
+      --radius-lg: 22px;
+      --radius-md: 14px;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      font-family: "Heebo", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 14% 8%, rgba(238, 155, 0, 0.14), transparent 35%),
+        radial-gradient(circle at 85% 0%, rgba(0, 109, 119, 0.16), transparent 33%),
+        linear-gradient(135deg, #f3f0e8 0%, #efe6d1 55%, #f7f4ea 100%);
+      min-height: 100vh;
+    }
+
+    .wrap {
+      width: min(1200px, 94vw);
+      margin: 28px auto 42px;
+    }
+
+    .hero {
+      background: linear-gradient(125deg, #fffaf0 0%, #fff2d9 100%);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-lg);
+      box-shadow: var(--shadow);
+      padding: 22px 22px 18px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .hero::after {
+      content: "";
+      position: absolute;
+      inset-inline-end: -80px;
+      top: -90px;
+      width: 240px;
+      height: 240px;
+      border-radius: 999px;
+      background: radial-gradient(circle, rgba(0, 109, 119, 0.18), transparent 70%);
+      pointer-events: none;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: clamp(1.4rem, 1.8vw + 1rem, 2rem);
+      line-height: 1.2;
+      letter-spacing: 0.2px;
+    }
+
+    .sub {
+      margin: 8px 0 0;
+      color: var(--ink-soft);
+      font-size: 1rem;
+    }
+
+    .meta {
+      margin-top: 14px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    .pill {
+      background: var(--surface-strong);
+      border: 1px solid #f0d39b;
+      border-radius: 999px;
+      padding: 5px 12px;
+      font-size: 0.92rem;
+      color: #5b4700;
+      font-weight: 700;
+    }
+
+    .controls {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: 1fr 180px;
+      gap: 10px;
+    }
+
+    input,
+    select,
+    button {
+      font: inherit;
+      color: inherit;
+      border-radius: 12px;
+      border: 1px solid var(--border);
+      background: #fff;
+      padding: 11px 12px;
+    }
+
+    input:focus,
+    select:focus,
+    button:focus {
+      outline: 2px solid rgba(0, 109, 119, 0.35);
+      outline-offset: 1px;
+    }
+
+    .row-actions {
+      margin-top: 10px;
+      display: flex;
+      flex-wrap: wrap;
+      gap: 8px;
+    }
+
+    button {
+      cursor: pointer;
+      font-weight: 700;
+      background: linear-gradient(135deg, #0a707a 0%, #005964 100%);
+      color: #fff;
+      border: none;
+      box-shadow: 0 5px 12px rgba(0, 109, 119, 0.25);
+      transition: transform 140ms ease, opacity 140ms ease;
+    }
+
+    button:hover {
+      transform: translateY(-1px);
+    }
+
+    button.alt {
+      background: #fff;
+      color: var(--ink);
+      border: 1px solid var(--border);
+      box-shadow: none;
+      font-weight: 500;
+    }
+
+    .status {
+      margin: 14px 0 0;
+      color: var(--ink-soft);
+      font-size: 0.95rem;
+    }
+
+    .grid {
+      margin-top: 16px;
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(310px, 1fr));
+      gap: 12px;
+    }
+
+    .card {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius-md);
+      padding: 12px;
+      box-shadow: 0 6px 16px rgba(38, 33, 24, 0.08);
+      display: grid;
+      grid-template-rows: auto auto 1fr auto;
+      min-height: 240px;
+      animation: rise 240ms ease;
+    }
+
+    @keyframes rise {
+      from {
+        opacity: 0;
+        transform: translateY(8px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .card-head {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 8px;
+      margin-bottom: 8px;
+    }
+
+    .id {
+      font-weight: 900;
+      color: #0f4c5c;
+      font-size: 1.06rem;
+    }
+
+    .year {
+      font-size: 0.88rem;
+      color: var(--ink-soft);
+      font-weight: 700;
+    }
+
+    .type {
+      display: inline-flex;
+      width: fit-content;
+      margin-bottom: 10px;
+      padding: 3px 8px;
+      border-radius: 999px;
+      border: 1px solid #b4d7cb;
+      background: #e5f3ef;
+      color: var(--ok);
+      font-size: 0.82rem;
+      font-weight: 700;
+    }
+
+    .txt {
+      white-space: pre-wrap;
+      line-height: 1.45;
+      color: var(--ink);
+      font-size: 0.96rem;
+      margin: 0;
+      max-height: 8.8em;
+      overflow: auto;
+      padding-inline-end: 4px;
+    }
+
+    .source {
+      margin-top: 10px;
+      padding-top: 8px;
+      border-top: 1px dashed var(--border);
+      font-size: 0.8rem;
+      color: #7b6d59;
+      direction: ltr;
+      text-align: left;
+      word-break: break-all;
+    }
+
+    .empty {
+      margin-top: 16px;
+      padding: 20px;
+      text-align: center;
+      border: 1px dashed #ccbfa9;
+      border-radius: var(--radius-md);
+      color: #6f604b;
+      background: #fff8ec;
+    }
+
+    @media (max-width: 760px) {
+      .controls {
+        grid-template-columns: 1fr;
+      }
+
+      .hero {
+        padding: 16px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="wrap">
+    <section class="hero">
+      <h1>צפייה בטקסט שאלות מכניקה</h1>
+      <p class="sub">הדף טוען אוטומטית את הקובץ <strong>questioText.json</strong> מתוך אותה תיקייה.</p>
+
+      <div class="meta" id="meta"></div>
+
+      <div class="controls">
+        <input id="search" type="search" placeholder="חיפוש חופשי בטקסט / מזהה / מספר שאלה...">
+        <select id="yearFilter" aria-label="סינון לפי שנה">
+          <option value="all">כל השנים</option>
+        </select>
+      </div>
+
+      <div class="row-actions">
+        <button id="clearBtn" class="alt" type="button">ניקוי סינון</button>
+        <button id="copyBtn" type="button">העתקת תוצאות (JSON)</button>
+      </div>
+
+      <p class="status" id="status">טוען נתונים...</p>
+    </section>
+
+    <section id="results"></section>
+  </main>
+
+  <script>
+    const metaEl = document.getElementById('meta');
+    const statusEl = document.getElementById('status');
+    const resultsEl = document.getElementById('results');
+    const searchEl = document.getElementById('search');
+    const yearFilterEl = document.getElementById('yearFilter');
+    const clearBtn = document.getElementById('clearBtn');
+    const copyBtn = document.getElementById('copyBtn');
+
+    let allQuestions = [];
+
+    const esc = (s) => String(s)
+      .replace(/&/g, '&amp;')
+      .replace(/</g, '&lt;')
+      .replace(/>/g, '&gt;')
+      .replace(/"/g, '&quot;')
+      .replace(/'/g, '&#39;');
+
+    const createMetaPill = (txt) => {
+      const span = document.createElement('span');
+      span.className = 'pill';
+      span.textContent = txt;
+      return span;
+    };
+
+    const buildMeta = (payload) => {
+      metaEl.innerHTML = '';
+      metaEl.appendChild(createMetaPill(`טווח שנים: ${payload.range.fromYear}-${payload.range.toYear}`));
+      metaEl.appendChild(createMetaPill(`סה"כ שאלות: ${payload.totalQuestions}`));
+      if (payload.generatedAt) {
+        const dt = new Date(payload.generatedAt);
+        const nice = Number.isNaN(dt.getTime()) ? payload.generatedAt : dt.toLocaleString('he-IL');
+        metaEl.appendChild(createMetaPill(`עודכן: ${nice}`));
+      }
+    };
+
+    const fillYearFilter = (questions) => {
+      const years = [...new Set(questions.map(q => q.year))].sort((a, b) => a - b);
+      years.forEach((y) => {
+        const opt = document.createElement('option');
+        opt.value = String(y);
+        opt.textContent = String(y);
+        yearFilterEl.appendChild(opt);
+      });
+    };
+
+    const filteredQuestions = () => {
+      const term = searchEl.value.trim().toLowerCase();
+      const year = yearFilterEl.value;
+
+      return allQuestions.filter((q) => {
+        if (year !== 'all' && String(q.year) !== year) return false;
+        if (!term) return true;
+
+        const hay = [q.id, q.year, q.question, q.sourceType, q.text]
+          .map(v => String(v || '').toLowerCase())
+          .join(' ');
+
+        return hay.includes(term);
+      });
+    };
+
+    const render = () => {
+      const items = filteredQuestions();
+      statusEl.textContent = `מוצגות ${items.length} מתוך ${allQuestions.length} שאלות`;
+
+      if (!items.length) {
+        resultsEl.innerHTML = '<div class="empty">לא נמצאו תוצאות לפי הסינון הנוכחי.</div>';
+        return;
+      }
+
+      const cards = items.map((q) => `
+        <article class="card">
+          <div class="card-head">
+            <div class="id">${esc(q.id)}</div>
+            <div class="year">שנה ${esc(q.year)}</div>
+          </div>
+          <span class="type">${esc(q.sourceType || 'unknown')}</span>
+          <p class="txt">${esc(q.text || '')}</p>
+          <div class="source">${esc(q.sourcePath || '')}</div>
+        </article>
+      `).join('');
+
+      resultsEl.innerHTML = `<div class="grid">${cards}</div>`;
+    };
+
+    const copyFilteredAsJson = async () => {
+      try {
+        const text = JSON.stringify(filteredQuestions(), null, 2);
+        await navigator.clipboard.writeText(text);
+        const old = copyBtn.textContent;
+        copyBtn.textContent = 'הועתק בהצלחה';
+        setTimeout(() => { copyBtn.textContent = old; }, 1300);
+      } catch {
+        alert('לא הצלחתי להעתיק ללוח.');
+      }
+    };
+
+    const resetFilters = () => {
+      searchEl.value = '';
+      yearFilterEl.value = 'all';
+      render();
+    };
+
+    const bindEvents = () => {
+      searchEl.addEventListener('input', render);
+      yearFilterEl.addEventListener('change', render);
+      clearBtn.addEventListener('click', resetFilters);
+      copyBtn.addEventListener('click', copyFilteredAsJson);
+    };
+
+    const load = async () => {
+      try {
+        const res = await fetch('./questioText.json', { cache: 'no-store' });
+        if (!res.ok) throw new Error(`HTTP ${res.status}`);
+        const payload = await res.json();
+
+        allQuestions = Array.isArray(payload.questions) ? payload.questions : [];
+        buildMeta(payload);
+        fillYearFilter(allQuestions);
+        bindEvents();
+        render();
+      } catch (err) {
+        statusEl.textContent = 'שגיאה בטעינת הקובץ questioText.json';
+        resultsEl.innerHTML = `<div class="empty">${esc(err.message || 'שגיאה לא ידועה')}</div>`;
+      }
+    };
+
+    load();
+  </script>
+</body>
+</html>
