@@ -25,9 +25,9 @@
                 קינמטיקה: ממושגי יסוד לתרחישי תנועה
             </h1>
             <div id="header-stats" class="hidden flex items-center gap-3 text-sm font-semibold">
-                <span id="question-counter" class="bg-slate-100 px-3 py-1.5 rounded-full text-slate-600">תרחיש 1 מתוך 7</span>
+                <span id="question-counter" class="bg-slate-100 px-3 py-1.5 rounded-full text-slate-600">תרחיש 1 מתוך 8</span>
                 <span class="bg-teal-50 px-3 py-1.5 rounded-full text-teal-800 border border-teal-200">
-                    ניקוד: <span id="score-display">0 / 20</span>
+                    ניקוד: <span id="score-display">0 / 26</span>
                 </span>
             </div>
         </div>
@@ -43,7 +43,7 @@
             <p class="text-lg text-slate-600 mb-8">
                 לפניכם סדרת אירועים ותרחישים של גופים נעים.<br>
                 עליכם לנתח את התנועה ולחשב את המיקום, ההעתק והדרך שעברו.<br>
-                שימו לב להבדל בין העתק (שיכול להיות שלילי) לדרך (תמיד חיובית)!
+                שימו לב להגדרות ציר המקום ולהבדל בין העתק לדרך!
             </p>
             
             <div class="max-w-md mx-auto mb-8 bg-slate-50 p-6 rounded-2xl border border-slate-200">
@@ -90,11 +90,11 @@
             <div class="bg-slate-50 p-6 rounded-2xl border-2 border-slate-200 mb-6 shadow-inner">
                 <div class="text-sm font-bold text-slate-500 uppercase tracking-wider">ציון סופי</div>
                 <div id="final-percentage" class="text-6xl font-black text-teal-600 my-2">0%</div>
-                <div id="final-score-text" class="text-slate-700 font-bold text-base">ענית נכון על 0 מתוך 20 סעיפים</div>
+                <div id="final-score-text" class="text-slate-700 font-bold text-base">ענית נכון על 0 מתוך 0 סעיפים</div>
             </div>
 
             <div class="bg-slate-100 rounded-xl p-4 text-right text-sm text-slate-600 font-mono space-y-2 border border-slate-200">
-                <div>• <span class="font-bold">נושא:</span> <span class="text-slate-900 font-sans font-bold">מושגי יסוד (מקום, העתק, דרך)</span></div>
+                <div>• <span class="font-bold">נושא:</span> <span class="text-slate-900 font-sans font-bold">מושגי יסוד (מקום, ציר, העתק, דרך)</span></div>
                 <div>• <span class="font-bold">תאריך סיום:</span> <span id="game-timestamp" class="text-slate-900 font-sans font-bold"></span></div>
                 <div>• <span class="font-bold">קוד אימות מורה:</span> <span id="game-id-display" class="text-blue-700 font-bold"></span></div>
             </div>
@@ -106,7 +106,7 @@
 
     </main>
 
-    <!-- Custom Modal for Alerts (Instead of standard browser alert) -->
+    <!-- Custom Modal for Alerts -->
     <div id="alert-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-[99999]">
         <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center border border-slate-200 animate-[bounce_0.5s_ease-in-out_1]">
             <div class="text-4xl mb-3">⚠️</div>
@@ -126,102 +126,38 @@
         let playerName = "";
         let gameId = "";
 
-        // בנק דמויות, פעלים ומשטחים עם התאמה לוגית ודקדוקית קבועה
+        // בנק דמויות, פעלים ומשטחים
         const entities = [
             { 
-                name: "נער", 
-                defName: "הנער", 
-                start: "מתחיל", 
-                move: "מתקדם", 
-                turn: "מסתובב וחוזר לאחור", 
-                stop: "עוצר", 
-                pos: "מקומו", 
-                passed: "שעבר", 
-                isNeg: "נמצא",
+                name: "נער", defName: "הנער", start: "מתחיל", move: "מתקדם", moving: "שנע", turn: "מסתובב וחוזר לאחור", stop: "עוצר", pos: "מקומו", passed: "שעבר", isNeg: "נמצא",
                 surfaces: ["שביל פארק סלול", "מדרכה ישרה", "משטח דשא ירוק", "שביל עפר בפארק"] 
             },
             { 
-                name: "ילדה", 
-                defName: "הילדה", 
-                start: "מתחילה", 
-                move: "מתקדמת", 
-                turn: "מסתובבת וחוזרת לאחור", 
-                stop: "עוצרת", 
-                pos: "מקומה", 
-                passed: "שעברה", 
-                isNeg: "נמצאת",
+                name: "ילדה", defName: "הילדה", start: "מתחילה", move: "מתקדמת", moving: "שנעה", turn: "מסתובבת וחוזרת לאחור", stop: "עוצרת", pos: "מקומה", passed: "שעברה", isNeg: "נמצאת",
                 surfaces: ["מדרכה ישרה", "שביל סלול בפארק", "מדשאה גדולה", "חצר בית ספר ישרה"] 
             },
             { 
-                name: "רכב", 
-                defName: "הרכב", 
-                start: "מתחיל", 
-                move: "נוסע", 
-                turn: "נוסע רוורס (לאחור)", 
-                stop: "עוצר", 
-                pos: "מקומו", 
-                passed: "שעבר", 
-                isNeg: "נמצא",
+                name: "רכב", defName: "הרכב", start: "מתחיל", move: "נוסע", moving: "שנוסע", turn: "נוסע רוורס (לאחור)", stop: "עוצר", pos: "מקומו", passed: "שעבר", isNeg: "נמצא",
                 surfaces: ["כביש אספלט ישר", "רחוב חד-סטרי ישר", "כביש מהיר בקו ישר", "נתיב תחבורה פנוי"] 
             },
             { 
-                name: "סירה", 
-                defName: "הסירה", 
-                start: "מתחילה", 
-                move: "שטה", 
-                turn: "מסתובבת ושטה חזרה", 
-                stop: "עוצרת", 
-                pos: "מקומה", 
-                passed: "שעברה", 
-                isNeg: "נמצאת",
+                name: "סירה", defName: "הסירה", start: "מתחילה", move: "שטה", moving: "ששטה", turn: "מסתובבת ושטה חזרה", stop: "עוצרת", pos: "מקומה", passed: "שעברה", isNeg: "נמצאת",
                 surfaces: ["תעלת מים צרה וישרה", "מסלול חתירה אולימפי מסומן", "נהר זורם בקו ישר"] 
             },
             { 
-                name: "קרון רכבל", 
-                defName: "הקרון", 
-                start: "מתחיל", 
-                move: "נע", 
-                turn: "משנה כיוון ונע חזרה", 
-                stop: "נעצר בתחנה", 
-                pos: "מקומו", 
-                passed: "שעבר", 
-                isNeg: "נמצא",
+                name: "קרון רכבל", defName: "הקרון", start: "מתחיל", move: "נע", moving: "שנע", turn: "משנה כיוון ונע חזרה", stop: "נעצר בתחנה", pos: "מקומו", passed: "שעבר", isNeg: "נמצא",
                 surfaces: ["כבל פלדה מתוח וישר", "מסילת כבלים עילית וישרה"] 
             },
             { 
-                name: "כדור", 
-                defName: "הכדור", 
-                start: "מתחיל", 
-                move: "מתגלגל", 
-                turn: "מתגלגל חזרה", 
-                stop: "נעצר", 
-                pos: "מקומו", 
-                passed: "שעבר", 
-                isNeg: "נמצא",
+                name: "כדור", defName: "הכדור", start: "מתחיל", move: "מתגלגל", moving: "שמתגלגל", turn: "מתגלגל חזרה", stop: "נעצר", pos: "מקומו", passed: "שעבר", isNeg: "נמצא",
                 surfaces: ["מגרש כדורסל מפולס", "משטח דשא מטופח", "רצפת אולם ספורט ישרה", "שביל בטון חלק"] 
             },
             { 
-                name: "כלב", 
-                defName: "הכלב", 
-                start: "מתחיל", 
-                move: "רץ", 
-                turn: "מסתובב ורץ חזרה", 
-                stop: "מתיישב", 
-                pos: "מקומו", 
-                passed: "שעבר", 
-                isNeg: "נמצא",
+                name: "כלב", defName: "הכלב", start: "מתחיל", move: "רץ", moving: "שרץ", turn: "מסתובב ורץ חזרה", stop: "מתיישב", pos: "מקומו", passed: "שעבר", isNeg: "נמצא",
                 surfaces: ["מדשאה פתוחה", "שביל הליכה בפארק", "רחוב מגורים שקט", "חוף ים ישר"] 
             },
             { 
-                name: "רוכבת אופניים", 
-                defName: "הרוכבת", 
-                start: "מתחילה", 
-                move: "רוכבת", 
-                turn: "מסתובבת ורוכבת לאחור", 
-                stop: "עוצרת", 
-                pos: "מקומה", 
-                passed: "שעברה", 
-                isNeg: "נמצאת",
+                name: "רוכבת אופניים", defName: "הרוכבת", start: "מתחילה", move: "רוכבת", moving: "שרוכבת", turn: "מסתובבת ורוכבת לאחור", stop: "עוצרת", pos: "מקומה", passed: "שעברה", isNeg: "נמצאת",
                 surfaces: ["מסלול אופניים מסומן", "כביש עירוני שקט", "שביל אספלט ישר"] 
             }
         ];
@@ -231,7 +167,6 @@
         function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
         function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
 
-        // Custom Modal Alert Trigger
         function showAlertModal(message) {
             document.getElementById('alert-modal-text').innerText = message;
             document.getElementById('alert-modal').classList.remove('hidden');
@@ -241,20 +176,31 @@
             document.getElementById('alert-modal').classList.add('hidden');
         }
 
-        // בניית השאלון באופן דינמי עם התאמה הגיונית מלאה
         function buildDynamicQuiz() {
             quizStages = [];
 
-            // Stage 1: Theory
+            // Stage 1: Theory (Expanded with new concepts)
             quizStages.push({
                 title: "שלב 1: מושגי יסוד בתיאוריה",
-                context: "לפני שנתחיל לחשב, בואו נוודא שאנחנו מבינים את ההגדרות הבסיסיות.",
+                context: "לפני שנתחיל לחשב, בואו נוודא שאנחנו מבינים את ההגדרות הבסיסיות שלמדנו.",
                 subQs: [
                     { 
-                        text: "מהי ההגדרה של 'ציר מקום'?", 
-                        ans: "הישר שלאורכו נע הגוף שאת תנועתו נרצה לתאר", 
+                        text: "אילו משלושת המאפיינים הבאים מגדירים 'ציר מקום'?", 
+                        ans: "יחידת מידה, נקודת ראשית (אפס) וכיוון חיובי", 
                         type: 'select', 
-                        options: ["מסלול מעגלי בחלל", "הישר שלאורכו נע הגוף שאת תנועתו נרצה לתאר", "הזמן שלוקח לגוף להגיע ליעדו"] 
+                        options: ["זמן, מהירות ותאוצה", "יחידת מידה, נקודת ראשית (אפס) וכיוון חיובי", "מסה, כוח וכיוון"] 
+                    },
+                    { 
+                        text: "האם נקודת הראשית (האפס) של הציר חייבת להיות הנקודה שבה הגוף מתחיל את תנועתו?", 
+                        ans: "לא, נקודת הראשית נקבעת באופן שרירותי ולפי נוחות", 
+                        type: 'select', 
+                        options: ["כן, אחרת אי אפשר לחשב את ההעתק", "לא, נקודת הראשית נקבעת באופן שרירותי ולפי נוחות", "כן, ה-0 חייב להיות תמיד שמאלה מהתנועה"] 
+                    },
+                    { 
+                        text: "כיצד נתאר תנועה של גוף 'לא נקודתי' (כמו נערה, סירה או מכונית)?", 
+                        ans: "נבחר נקודה מסוימת על הגוף ונעקוב אחרי תנועתה", 
+                        type: 'select', 
+                        options: ["נחשב את הנפח של הגוף כולו", "נתעלם מהגודל שלו ונניח שהוא נקודה", "נבחר נקודה מסוימת על הגוף ונעקוב אחרי תנועתה"] 
                     },
                     { 
                         text: "האם העתק (Δx) של גוף יכול לקבל ערך שלילי?", 
@@ -273,7 +219,7 @@
 
             // Stage 2: Simple Forward
             let e2 = pick(entities);
-            let s2_surf = pick(e2.surfaces); // התאמה לוגית קבועה!
+            let s2_surf = pick(e2.surfaces);
             let s2_dir = pick(directions);
             const s2_x1 = randInt(1, 6);
             const s2_dist = randInt(5, 12);
@@ -290,7 +236,33 @@
                 ]
             });
 
-            // Stage 3: Forward and backward
+            // Stage 3: Two Observers (NEW)
+            let e_obs = pick(entities);
+            let surf_obs = pick(e_obs.surfaces);
+            const dist_obs = randInt(4, 10);
+            const obs1_start = randInt(1, 5);
+            const obs1_end = obs1_start + dist_obs;
+            const shift = randInt(2, 6);
+            const obs2_start = obs1_start + shift;
+            const obs2_end = obs1_end + shift;
+
+            quizStages.push({
+                title: "שלב 3: צופים שונים, צירים שונים",
+                context: `רועי ונועם מתבוננים ב${e_obs.name} ${e_obs.moving} בקו ישר לאורך ${surf_obs}. שניהם בחרו את אותו כיוון חיובי לציר, אך כל אחד קבע את נקודת האפס במקום אחר.\n\nלפי הציר של רועי: המקום ההתחלתי של ${e_obs.defName} הוא x = ${obs1_start}m והמקום הסופי הוא x = ${obs1_end}m.\nלפי הציר של נועם: המקום ההתחלתי של ${e_obs.defName} הוא x = ${obs2_start}m.`,
+                subQs: [
+                    { text: `לפי הציר של נועם, מהו המקום הסופי של ${e_obs.defName}?`, ans: obs2_end, type: 'num', unit: "m" },
+                    { text: `מהו ההעתק של ${e_obs.defName} כפי שיחשב אותו רועי?`, ans: dist_obs, type: 'num', unit: "m" },
+                    { text: `מהו ההעתק של ${e_obs.defName} כפי שתחשב אותו נועם?`, ans: dist_obs, type: 'num', unit: "m" },
+                    { 
+                        text: `מסקנה: האם בחירת נקודת האפס משפיעה על חישוב ההעתק?`, 
+                        ans: "לא, ההעתק זהה לחלוטין ואינו תלוי בנקודת האפס", 
+                        type: 'select', 
+                        options: ["כן, ההעתק משתנה לפי בחירת נקודת האפס", "לא, ההעתק זהה לחלוטין ואינו תלוי בנקודת האפס", "רק אם כיוון התנועה משתנה ההעתק נשאר זהה"] 
+                    }
+                ]
+            });
+
+            // Stage 4: Forward and backward
             let e3 = pick(entities);
             let s3_surf = pick(e3.surfaces);
             const s3_x1 = randInt(0, 3);
@@ -299,7 +271,7 @@
             const s3_dist_total = (s3_x2 - s3_x1) + (s3_x2 - s3_x3);
 
             quizStages.push({
-                title: "שלב 3: הלוך וחזור חלקי",
+                title: "שלב 4: הלוך וחזור חלקי",
                 context: `${e3.name} ${e3.start} את התנועה בנקודה x = ${s3_x1}m על גבי ${s3_surf}. ${e3.defName} ${e3.move} עד לנקודה x = ${s3_x2}m, שם ${e3.defName} ${e3.turn} ו${e3.stop} סופית בנקודה x = ${s3_x3}m.`,
                 subQs: [
                     { text: `מהו ${e3.pos} הסופי של ${e3.defName} בסיום התנועה כולה?`, ans: s3_x3, type: 'num', unit: "m" },
@@ -308,7 +280,7 @@
                 ]
             });
 
-            // Stage 4: Negative axis
+            // Stage 5: Negative axis
             let e4 = pick(entities);
             let s4_surf = pick(e4.surfaces);
             const s4_x1 = randInt(-10, -2);
@@ -317,7 +289,7 @@
             const s4_dist_total = (s4_x2 - s4_x1) + (s4_x2 - s4_x3);
 
             quizStages.push({
-                title: "שלב 4: תנועה באזור השלילי של הציר",
+                title: "שלב 5: תנועה באזור השלילי של הציר",
                 context: `${e4.name} ${e4.isNeg} באזור השלילי של הציר ו${e4.start} את התנועה בנקודה x = ${s4_x1}m לאורך ${s4_surf}. ${e4.defName} ${e4.move} לכיוון החיובי עד x = ${s4_x2}m, ואז ${e4.turn} ועוצר בנקודה x = ${s4_x3}m.`,
                 subQs: [
                     { text: `מהו ${e4.pos} ההתחלתי של ${e4.defName}?`, ans: s4_x1, type: 'num', unit: "m" },
@@ -326,14 +298,14 @@
                 ]
             });
 
-            // Stage 5: Round Trip
+            // Stage 6: Round Trip
             let e5 = pick(entities);
             const poolOptions = [20, 25, 30, 40, 50, 100];
             const s5_length = pick(poolOptions);
             let s5_surf = pick(e5.surfaces);
             
             quizStages.push({
-                title: "שלב 5: מסלול הלוך ושוב",
+                title: "שלב 6: מסלול הלוך ושוב",
                 context: `${e5.name} ${e5.start} את התנועה מנקודה x = 0m, ${e5.move} לאורך ${s5_surf} עד לנקודה x = ${s5_length}m, ומשם ${e5.turn} בחזרה עד לנקודת ההתחלה בדיוק (x = 0m).`,
                 subQs: [
                     { text: `מהו ההעתק הכולל של ${e5.defName} בסיום התנועה?`, ans: 0, type: 'num', unit: "m" },
@@ -341,7 +313,7 @@
                 ]
             });
 
-            // Stage 6: Multiple Stops
+            // Stage 7: Multiple Stops
             let e6 = pick(entities);
             let s6_surf = pick(e6.surfaces);
             const s6_x1 = randInt(0, 3);
@@ -353,7 +325,7 @@
             const s6_total_dist = (s6_x3 - s6_x1) + s6_last_part;
 
             quizStages.push({
-                title: "שלב 6: טיול עם מספר עצירות",
+                title: "שלב 7: טיול עם מספר עצירות",
                 context: `${e6.name} ${e6.start} בנקודה x = ${s6_x1}m לאורך ${s6_surf}. מנקודה זו ${e6.defName} ${e6.move} לנקודה x = ${s6_x2}m, ממשיך באותו כיוון עד לנקודה x = ${s6_x3}m, ולבסוף ${e6.turn} ו${e6.stop} בנקודה x = ${s6_x4}m.`,
                 subQs: [
                     { text: `מהו ההעתק הכולל מתחילת התנועה ועד סופה?`, ans: s6_x4 - s6_x1, type: 'num', unit: "m" },
@@ -362,11 +334,17 @@
                 ]
             });
 
-            // Stage 7: Summary Theory
+            // Stage 8: Summary Theory (Expanded)
             quizStages.push({
-                title: "שלב 7: סיכום - הקשר בין העתק לדרך",
+                title: "שלב 8: סיכום - הקשר בין העתק לדרך",
                 context: "לאחר שפתרנו מספר תרחישים, בואו נסכם את החוקיות שלמדנו לגבי דרך והעתק.",
                 subQs: [
+                    { 
+                        text: "אם נחשב את סכום כל ההעתקים החלקיים של גוף במהלך תנועתו המלאה, למה יהיה שווה הסכום?", 
+                        ans: "להעתק הכולל של הגוף מתחילת התנועה ועד סופה", 
+                        type: 'select', 
+                        options: ["לדרך הכוללת שעבר הגוף", "להעתק הכולל של הגוף מתחילת התנועה ועד סופה", "תמיד לאפס"] 
+                    },
                     { 
                         text: "אם גוף נע לאורך ציר בקו ישר וללא שינוי כיוון תנועה, מה הקשר בין הדרך להעתק?", 
                         ans: "הדרך שווה לגודל ההעתק (הערך המוחלט שלו)", 
@@ -436,7 +414,9 @@
             document.getElementById('score-display').innerText = `${score} / ${totalPossible}`;
             
             document.getElementById('scenario-title').innerText = stage.title;
-            document.getElementById('scenario-context').innerText = stage.context;
+            
+            // Allow line breaks in scenario context text
+            document.getElementById('scenario-context').innerHTML = stage.context.replace(/\n/g, '<br>');
 
             const qArea = document.getElementById('questions-area');
             qArea.innerHTML = '';
