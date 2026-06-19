@@ -1,0 +1,441 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אתגר קינמטיקה - דרך והעתק</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" rel="stylesheet">
+    
+    <style>
+        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; }
+        .input-correct { border-color: #22c55e !important; background-color: #f0fdf4 !important; color: #166534 !important; }
+        .input-wrong { border-color: #ef4444 !important; background-color: #fef2f2 !important; color: #991b1b !important; }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-slate-200 py-3 px-4 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <h1 class="text-xl md:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+                <span class="p-1.5 bg-teal-600 text-white rounded-lg text-sm">🏃</span>
+                קינמטיקה: ממושגי יסוד לתרחישי תנועה
+            </h1>
+            <div id="header-stats" class="hidden flex items-center gap-3 text-sm font-semibold">
+                <span id="question-counter" class="bg-slate-100 px-3 py-1.5 rounded-full text-slate-600">תרחיש 1 מתוך 7</span>
+                <span class="bg-teal-50 px-3 py-1.5 rounded-full text-teal-800 border border-teal-200">
+                    ניקוד: <span id="score-display">0 / 20</span>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl w-full mx-auto p-4 md:p-6 flex-grow flex items-center justify-center">
+        
+        <!-- Start Screen -->
+        <div id="start-screen" class="bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center w-full border border-slate-200 transition-all">
+            <div class="text-6xl mb-4">⏱️</div>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-2">מוכנים לחקור תנועה?</h2>
+            <p class="text-lg text-slate-600 mb-8">
+                לפניכם סדרת אירועים ותרחישים של גופים נעים.<br>
+                עליכם לנתח את התנועה ולחשב את המיקום, ההעתק והדרך שעברו.<br>
+                שימו לב להבדל בין העתק (שיכול להיות שלילי) לדרך (תמיד חיובית)!
+            </p>
+            
+            <div class="max-w-md mx-auto mb-8 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                <label for="player-name-input" class="block text-right text-base font-bold text-slate-700 mb-2">הכניסו שם שחקן/ית (שם מלא):</label>
+                <input type="text" id="player-name-input" class="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:border-teal-500 focus:ring-3 focus:ring-teal-100 outline-none font-bold text-lg text-center transition-all" placeholder="למשל: דנה לוי">
+            </div>
+
+            <button onclick="startGame()" class="bg-teal-600 hover:bg-teal-700 text-white font-bold text-xl px-10 py-4 rounded-full shadow-lg transform transition hover:scale-105">
+                התחל משחק
+            </button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-container" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-10 w-full border border-slate-100 transition-all">
+            
+            <div class="mb-6 pb-6 border-b border-slate-100">
+                <h2 id="scenario-title" class="text-teal-700 font-extrabold text-xl mb-2">כותרת תרחיש</h2>
+                <p id="scenario-context" class="text-lg text-slate-800 font-medium leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    טקסט הסיפור יופיע כאן...
+                </p>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-bold mb-4 text-slate-800">ענו על הסעיפים הבאים:</h3>
+                <div id="questions-area" class="space-y-4">
+                    <!-- Sub-questions injected here -->
+                </div>
+            </div>
+
+            <div class="mt-8 pt-4 border-t border-slate-100 text-left">
+                <button id="action-btn" onclick="checkAnswers()" class="bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold px-8 py-3 rounded-xl transition-all shadow-md w-full sm:w-auto">
+                    בדוק תשובות
+                </button>
+            </div>
+            
+        </div>
+
+        <!-- End Screen -->
+        <div id="end-screen" class="hidden bg-white rounded-2xl shadow-xl p-8 md:p-10 text-center max-w-xl w-full border border-slate-200">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-3xl font-extrabold text-slate-900 mb-1">כל הכבוד! תרגול הקינמטיקה הושלם!</h2>
+            <div class="text-slate-500 font-semibold text-lg mb-6">שחקן/ית: <span id="final-player-name" class="text-slate-800 font-bold underline decoration-teal-500 decoration-2"></span></div>
+            
+            <div class="bg-slate-50 p-6 rounded-2xl border-2 border-slate-200 mb-6 shadow-inner">
+                <div class="text-sm font-bold text-slate-500 uppercase tracking-wider">ציון סופי</div>
+                <div id="final-percentage" class="text-6xl font-black text-teal-600 my-2">0%</div>
+                <div id="final-score-text" class="text-slate-700 font-bold text-base">ענית נכון על 0 מתוך 20 סעיפים</div>
+            </div>
+
+            <div class="bg-slate-100 rounded-xl p-4 text-right text-sm text-slate-600 font-mono space-y-2 border border-slate-200">
+                <div>• <span class="font-bold">נושא:</span> <span class="text-slate-900 font-sans font-bold">מושגי יסוד (מקום, העתק, דרך)</span></div>
+                <div>• <span class="font-bold">תאריך סיום:</span> <span id="game-timestamp" class="text-slate-900 font-sans font-bold"></span></div>
+                <div>• <span class="font-bold">קוד אימות מורה:</span> <span id="game-id-display" class="text-blue-700 font-bold"></span></div>
+            </div>
+
+            <button onclick="location.reload()" class="mt-8 bg-slate-800 hover:bg-slate-900 text-white font-bold px-8 py-3 rounded-xl w-full shadow-md text-lg transition-all">
+                שחק שוב 🔁
+            </button>
+        </div>
+
+    </main>
+
+    <script>
+        // Data Structure for the Game (20 sub-questions spread across 7 scenarios)
+        const quizStages = [
+            {
+                title: "שלב 1: מושגי יסוד בתיאוריה",
+                context: "לפני שנתחיל לחשב, בואו נוודא שאנחנו מבינים את ההגדרות הבסיסיות.",
+                subQs: [
+                    { 
+                        text: "מהי ההגדרה של 'ציר מקום'?", 
+                        ans: "הישר שלאורכו נע הגוף שאת תנועתו נרצה לתאר", 
+                        type: 'select', 
+                        options: ["מסלול מעגלי בחלל", "הישר שלאורכו נע הגוף שאת תנועתו נרצה לתאר", "הזמן שלוקח לגוף להגיע ליעדו"] 
+                    },
+                    { 
+                        text: "האם העתק (Δx) של גוף יכול לקבל ערך שלילי?", 
+                        ans: "כן, אם הגוף נע נגד הכיוון החיובי של הציר", 
+                        type: 'select', 
+                        options: ["לא, תמיד מודדים בערך מוחלט", "כן, אם הגוף נע נגד הכיוון החיובי של הציר", "רק אם המהירות היא אפס"] 
+                    },
+                    { 
+                        text: "אם העתק הגוף בסוף התנועה שווה לאפס, מה ניתן להסיק בוודאות?", 
+                        ans: "שמקומו הסופי זהה למקומו ההתחלתי", 
+                        type: 'select', 
+                        options: ["שהגוף לא זז כלל (מהירות אפס תמיד)", "שהדרך שהוא עבר היא גם אפס", "שמקומו הסופי זהה למקומו ההתחלתי"] 
+                    }
+                ]
+            },
+            {
+                title: "שלב 2: תנועה פשוטה קדימה",
+                context: "נער רוכב על קורקינט לאורך שביל ישר (ציר ה-x). הוא מתחיל את נסיעתו בנקודה x = 4m, ורוכב ברציפות עד לנקודה x = 12m, שם הוא עוצר.",
+                subQs: [
+                    { text: "מהו מקומו ההתחלתי של הנער (במטרים)?", ans: 4, type: 'num' },
+                    { text: "מהו מקומו הסופי של הנער (במטרים)?", ans: 12, type: 'num' },
+                    { text: "מהו ההעתק (Δx) שעבר הנער?", ans: 8, type: 'num', unit: "m" },
+                    { text: "מהי הדרך (סך המרחק) שעבר הנער?", ans: 8, type: 'num', unit: "m" }
+                ]
+            },
+            {
+                title: "שלב 3: הלוך וחזור חלקי",
+                context: "רוכבת אופניים מתחילה את תנועתה בנקודה x = 0m. היא רוכבת קדימה עד שמגיעה לפארק בנקודה x = 10m. שם היא מסתובבת וחוזרת לאחור, עד שהיא עוצרת ליד חנות בנקודה x = 6m.",
+                subQs: [
+                    { text: "מהו מקומה הסופי של הרוכבת בסיום התנועה כולה?", ans: 6, type: 'num', unit: "m" },
+                    { text: "מהו ההעתק הכללי שלה (מתחילת התנועה ועד סופה)?", ans: 6, type: 'num', unit: "m" },
+                    { text: "מהי הדרך הכוללת (סך כל המרחק) שהיא רכבה בפועל?", ans: 14, type: 'num', unit: "m" }
+                ]
+            },
+            {
+                title: "שלב 4: תנועה באזור השלילי של הציר",
+                context: "רכב יוצא מחניון תת-קרקעי שמסומן על ציר המקום כ- x = -2m. הוא נוסע קדימה עד לנקודה x = 8m, ואז מבצע נסיעה לאחור (רוורס) ועוצר בנקודה x = 0m.",
+                subQs: [
+                    { text: "מהו מקומו ההתחלתי של הרכב?", ans: -2, type: 'num', unit: "m" },
+                    { text: "מהו ההעתק (Δx) של הרכב בסוף התנועה?", ans: 2, type: 'num', unit: "m" },
+                    { text: "חשבו את הדרך הכוללת שעבר הרכב:", ans: 18, type: 'num', unit: "m" }
+                ]
+            },
+            {
+                title: "שלב 5: תנועה במעגל חסר (מסלול הלוך ושוב)",
+                context: "שחיין מתאמן בבריכה באורך 50 מטרים. הוא מזנק מקצה הבריכה (x = 0m), שוחה עד לקצה השני (x = 50m), מסתובב ושוחה חזרה בדיוק לנקודת הזינוק (x = 0m).",
+                subQs: [
+                    { text: "מהו ההעתק הכולל של השחיין באימון זה?", ans: 0, type: 'num', unit: "m" },
+                    { text: "מהי הדרך הכוללת שעבר השחיין באימון זה?", ans: 100, type: 'num', unit: "m" }
+                ]
+            },
+            {
+                title: "שלב 6: טיול עם מספר עצירות",
+                context: "כלב משוטט ברחוב (ציר x). הוא מתחיל בנקודה x = 1m. משם הוא הולך לנקודה x = 5m, ממשיך לאותה כיוון עד לנקודה x = 10m, ולבסוף חוזר לאחור ומתיישב בנקודה x = 3m.",
+                subQs: [
+                    { text: "מהו ההעתק הכולל של הכלב מתחילת הטיול ועד סופו?", ans: 2, type: 'num', unit: "m" },
+                    { text: "מהי הדרך שעבר הכלב *רק* בקטע התנועה האחרון (מ-10 ל-3)?", ans: 7, type: 'num', unit: "m" },
+                    { text: "מהי הדרך הכוללת שעבר הכלב בכל הטיול?", ans: 16, type: 'num', unit: "m" }
+                ]
+            },
+            {
+                title: "שלב 7: סיכום - הקשר בין העתק לדרך",
+                context: "לאחר שפתרנו מספר תרחישים, בואו נסכם את החוקיות שלמדנו לגבי דרך והעתק.",
+                subQs: [
+                    { 
+                        text: "אם גוף נע לאורך ציר בקו ישר וללא שינוי כיוון תנועה, מה הקשר בין הדרך להעתק?", 
+                        ans: "הדרך שווה לגודל ההעתק (הערך המוחלט שלו)", 
+                        type: 'select', 
+                        options: ["הדרך גדולה מגודל ההעתק", "הדרך שווה לגודל ההעתק (הערך המוחלט שלו)", "הדרך קטנה מגודל ההעתק"] 
+                    },
+                    { 
+                        text: "אם גוף נע לאורך ציר אך במהלך התנועה הוא שינה את כיוונו לפחות פעם אחת:", 
+                        ans: "הדרך בהכרח גדולה מגודל ההעתק", 
+                        type: 'select', 
+                        options: ["הדרך בהכרח קטנה מגודל ההעתק", "הדרך שווה לגודל ההעתק", "הדרך בהכרח גדולה מגודל ההעתק"] 
+                    }
+                ]
+            }
+        ];
+
+        let currentIndex = 0;
+        let score = 0;
+        let totalPossible = 0;
+        let playerName = "";
+        let gameId = "";
+
+        // Calculate total possible score on load
+        quizStages.forEach(stage => { totalPossible += stage.subQs.length; });
+
+        function generateUniqueGameId() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let result = 'KIN-';
+            for (let i = 0; i < 4; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+            result += '-';
+            for (let i = 0; i < 4; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+            return result;
+        }
+
+        function startGame() {
+            const nameField = document.getElementById('player-name-input');
+            const trimmedName = nameField.value.trim();
+            
+            if (trimmedName === "") {
+                alert("אנא הכניסו שם שחקן כדי להתחיל במשחק!");
+                nameField.focus();
+                return;
+            }
+
+            playerName = trimmedName;
+            gameId = generateUniqueGameId();
+
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('header-stats').classList.remove('hidden');
+            document.getElementById('header-stats').classList.add('flex');
+            
+            currentIndex = 0;
+            score = 0;
+            updateUI();
+        }
+
+        // Shuffle dropdown options purely for display
+        function shuffleArray(array) {
+            let newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        function updateUI() {
+            const stage = quizStages[currentIndex];
+            
+            // Update Header Stats
+            document.getElementById('question-counter').innerText = `תרחיש ${currentIndex + 1} מתוך ${quizStages.length}`;
+            document.getElementById('score-display').innerText = `${score} / ${totalPossible}`;
+            
+            // Update Context Area
+            document.getElementById('scenario-title').innerText = stage.title;
+            document.getElementById('scenario-context').innerText = stage.context;
+
+            // Render Questions
+            const qArea = document.getElementById('questions-area');
+            qArea.innerHTML = '';
+            
+            stage.subQs.forEach((sq, i) => {
+                let inputHtml = '';
+                
+                if (sq.type === 'num') {
+                    const unitHtml = sq.unit ? `<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 font-bold text-sm">${sq.unit}</div>` : '';
+                    inputHtml = `
+                        <div class="relative w-full sm:w-40 shrink-0">
+                            <input type="number" id="input-${i}" step="any" class="block w-full pl-8 pr-3 py-2 bg-white border-2 border-slate-300 rounded-xl focus:border-teal-500 focus:ring-0 font-bold text-lg outline-none transition-colors" placeholder="הקלד/י...">
+                            ${unitHtml}
+                        </div>`;
+                } else if (sq.type === 'select') {
+                    const shuffledOpts = shuffleArray(sq.options);
+                    inputHtml = `
+                        <select id="input-${i}" class="block w-full px-3 py-2 bg-white border-2 border-slate-300 rounded-xl focus:border-teal-500 focus:ring-0 text-base font-semibold outline-none transition-colors appearance-none cursor-pointer">
+                            <option value="" disabled selected>-- בחרו תשובה מתאימה --</option>
+                            ${shuffledOpts.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                        </select>`;
+                }
+
+                qArea.innerHTML += `
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm">
+                        <label class="block text-base text-slate-800 font-bold mb-3">${i+1}. ${sq.text}</label>
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                            ${inputHtml}
+                            <span id="feedback-${i}" class="hidden text-base font-bold"></span>
+                        </div>
+                    </div>`;
+            });
+
+            // Reset Button
+            const btn = document.getElementById('action-btn');
+            btn.innerText = "בדוק תשובות 🔍";
+            btn.className = "bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold px-8 py-3 rounded-xl transition-all shadow-md w-full sm:w-auto";
+            btn.onclick = checkAnswers;
+        }
+
+        function checkAnswers() {
+            const stage = quizStages[currentIndex];
+            let allAnswered = true;
+
+            // Validation Check
+            stage.subQs.forEach((sq, i) => {
+                const input = document.getElementById(`input-${i}`);
+                if (input.value.trim() === "") allAnswered = false;
+            });
+
+            if (!allAnswered) {
+                alert("יש למלא את כל הסעיפים לפני הבדיקה!");
+                return;
+            }
+
+            let allCorrectInStage = true;
+
+            // Checking Logic
+            stage.subQs.forEach((sq, i) => {
+                const input = document.getElementById(`input-${i}`);
+                const feedback = document.getElementById(`feedback-${i}`);
+                let isCorrect = false;
+
+                if (sq.type === 'num') {
+                    let userVal = parseFloat(input.value);
+                    if (!isNaN(userVal) && Math.abs(userVal - sq.ans) < 0.01) isCorrect = true;
+                } else {
+                    if (input.value === sq.ans) isCorrect = true;
+                }
+
+                input.disabled = true;
+                feedback.style.display = 'inline-block';
+                
+                if (isCorrect) {
+                    score++;
+                    input.classList.add('input-correct');
+                    feedback.innerHTML = '✔️ תשובה נכונה!';
+                    feedback.className = 'inline-block text-base font-bold text-green-600 mt-2 sm:mt-0';
+                } else {
+                    allCorrectInStage = false;
+                    input.classList.add('input-wrong');
+                    let showAns = sq.type === 'num' ? (sq.ans + (sq.unit ? ` ${sq.unit}` : '')) : sq.ans;
+                    feedback.innerHTML = `❌ שגוי. התשובה הנכונה: <span class="text-slate-700 font-black">${showAns}</span>`;
+                    feedback.className = 'inline-block text-base font-bold text-red-600 mt-2 sm:mt-0';
+                }
+            });
+
+            document.getElementById('score-display').innerText = `${score} / ${totalPossible}`;
+
+            if (allCorrectInStage) {
+                createConfettiParticles(30, false); // Small celebration for a perfect stage
+            }
+
+            const btn = document.getElementById('action-btn');
+            if (currentIndex < quizStages.length - 1) {
+                btn.innerText = "המשך לתרחיש הבא ←";
+                btn.className = "bg-green-600 hover:bg-green-700 text-white text-lg font-bold px-8 py-3 rounded-xl transition-all shadow-md w-full sm:w-auto";
+                btn.onclick = () => { currentIndex++; updateUI(); };
+            } else {
+                btn.innerText = "סיים וצפה בגיליון הציונים 🏆";
+                btn.className = "bg-purple-600 hover:bg-purple-700 text-white text-lg font-bold px-8 py-3 rounded-xl transition-all shadow-md w-full sm:w-auto transform hover:scale-105";
+                btn.onclick = showEndScreen;
+            }
+        }
+
+        function showEndScreen() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('header-stats').classList.add('hidden');
+            
+            const end = document.getElementById('end-screen');
+            end.classList.remove('hidden');
+            
+            let perc = Math.round((score / totalPossible) * 100);
+            document.getElementById('final-percentage').innerText = perc + '%';
+            document.getElementById('final-score-text').innerText = `ענית נכון על ${score} מתוך ${totalPossible} סעיפים במשחק.`;
+            
+            document.getElementById('final-player-name').innerText = playerName;
+            
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('he-IL', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            const timeStr = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+            
+            document.getElementById('game-timestamp').innerText = `${dateStr}, ${timeStr}`;
+            document.getElementById('game-id-display').innerText = gameId;
+
+            if (perc >= 80) {
+                triggerBigConfetti();
+            }
+        }
+
+        // --- Custom Confetti System (Works in Preview) ---
+        function createConfettiParticles(amount, isBig) {
+            const colors = ['#14b8a6', '#2dd4bf', '#0f766e', '#f59e0b', '#ef4444', '#3b82f6'];
+            for (let i = 0; i < amount; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = isBig ? (Math.random() * 8 + 8) + 'px' : (Math.random() * 6 + 4) + 'px';
+                confetti.style.height = isBig ? (Math.random() * 8 + 8) + 'px' : (Math.random() * 6 + 4) + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                const startX = isBig ? Math.random() * 100 : 40 + Math.random() * 20;
+                const startY = isBig ? -10 : 80;
+                
+                confetti.style.left = startX + 'vw';
+                confetti.style.top = startY + 'vh';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.zIndex = '9999';
+                confetti.style.pointerEvents = 'none';
+                document.body.appendChild(confetti);
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = isBig ? Math.random() * 10 + 5 : Math.random() * 15 + 10;
+                
+                const tx = Math.cos(angle) * velocity * 5;
+                const ty = isBig ? (Math.random() * 100 + 50) : (-Math.random() * 60 - 20);
+
+                const fallDuration = Math.random() * 2 + (isBig ? 3 : 1.5);
+
+                confetti.animate([
+                    { transform: `translate3d(0, 0, 0) rotate(0deg)`, opacity: 1 },
+                    { transform: `translate3d(${tx}vw, ${ty}vh, 0) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: fallDuration * 1000,
+                    easing: 'cubic-bezier(.37,0,.63,1)',
+                    fill: 'forwards'
+                });
+
+                setTimeout(() => confetti.remove(), fallDuration * 1000);
+            }
+        }
+
+        function triggerBigConfetti() {
+            createConfettiParticles(80, true);
+            setTimeout(() => createConfettiParticles(80, true), 500);
+            setTimeout(() => createConfettiParticles(100, true), 1000);
+        }
+    </script>
+</body>
+</html>
