@@ -1,0 +1,912 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>תרגול ייצוגי תנועה שוות מהירות (1.2)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            options: {
+                ignoreHtmlClass: 'tex2jax_ignore',
+                processHtmlClass: 'tex2jax_process'
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+        
+        body { font-family: 'Rubik', sans-serif; background-color: #f8fafc; }
+        .glass-card { background: white; border-radius: 1rem; box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1); }
+        .input-field { width: 100%; padding: 0.75rem; border: 1px solid #e2e8f0; border-radius: 0.5rem; outline: none; transition: all 0.2s; direction: ltr; }
+        .input-field:focus { border-color: #3b82f6; box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1); }
+        .input-field:disabled { background-color: #f1f5f9; color: #64748b; cursor: not-allowed; }
+        
+        .input-correct { border-color: #22c55e !important; background-color: #f0fdf4 !important; color: #166534 !important; }
+        .input-wrong { border-color: #ef4444 !important; background-color: #fef2f2 !important; color: #991b1b !important; }
+
+        .btn-primary { background-color: #3b82f6; color: white; padding: 0.75rem 1.5rem; border-radius: 0.5rem; font-weight: 500; transition: background-color 0.2s; display: inline-flex; align-items: center; justify-content: center; gap: 0.5rem; }
+        .btn-primary:hover:not(:disabled) { background-color: #2563eb; }
+        .btn-primary:disabled { background-color: #94a3b8; cursor: not-allowed; }
+
+        .choice-card { text-align: right; padding: 1rem; margin-top: 0.5rem; margin-bottom: 0.5rem; border: 2px solid #e2e8f0; border-radius: 0.75rem; width: 100%; transition: all 0.2s; font-weight: 500; background-color: #ffffff; display: block; }
+        .choice-card:hover:not(.disabled) { background-color: #eff6ff; border-color: #3b82f6; }
+        .choice-card.selected { background-color: #dbeafe; border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15); }
+    </style>
+</head>
+<body class="text-slate-800 min-h-screen flex flex-col items-center py-8 px-4 tex2jax_process">
+
+    <!-- Custom Alert Modal -->
+    <div id="custom-alert-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-[99999]">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center border border-slate-200 animate-[bounce_0.5s_ease-in-out_1]">
+            <div class="text-4xl mb-3">⚠️</div>
+            <h3 class="text-xl font-bold text-slate-800 mb-2">שימו לב</h3>
+            <p id="custom-alert-text" class="text-slate-600 mb-6"></p>
+            <button onclick="closeAlert()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl transition-all">הבנתי</button>
+        </div>
+    </div>
+
+    <header class="w-full max-w-4xl flex justify-between items-center mb-8">
+        <div>
+            <h1 class="text-3xl font-bold text-slate-900 flex items-center gap-2">
+                <i data-lucide="activity" class="text-blue-600 w-8 h-8"></i>
+                תנועה שוות מהירות (1.2)
+            </h1>
+            <p class="text-slate-500 mt-1">תרגול משוואות קו ישר, גרפים ובעיות מפגש</p>
+        </div>
+        <div id="score-display-container" class="hidden glass-card px-4 py-2 text-lg font-bold text-blue-600 flex items-center gap-2">
+            <i data-lucide="award" class="w-5 h-5"></i>
+            ציון: <span id="current-score">0</span>/<span id="total-possible-score">0</span>
+        </div>
+    </header>
+
+    <main class="w-full max-w-4xl flex justify-center">
+
+        <div id="setup-screen" class="glass-card p-8 text-center w-full max-w-2xl">
+            <div class="text-6xl mb-4">⏱️</div>
+            <h2 class="text-3xl font-extrabold text-slate-900 mb-2">מוכנים לתרגל מהירות קבועה?</h2>
+            <p class="text-lg text-slate-600 mb-8">
+                לפניכם 20 תרחישים בנושא תנועה שוות מהירות.<br>
+                עליכם להרכיב משוואות $x(t) = x_0 + vt$, לחלץ מהירויות מתוך גרפים, לנתח תנועה למקוטעין ולפתור בעיות מפגש.
+            </p>
+            <div class="max-w-md mx-auto mb-8 bg-slate-50 p-6 rounded-2xl border border-slate-200 text-right">
+                <label for="player-name" class="block text-right text-base font-bold text-slate-700 mb-2">הכניסו שם שחקן/ית (שם מלא):</label>
+                <input type="text" id="player-name" class="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:border-blue-500 focus:ring-3 focus:ring-blue-100 outline-none font-bold text-lg text-center transition-all" placeholder="למשל: ירון כהן">
+            </div>
+            <button id="start-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl px-10 py-4 rounded-full shadow-lg transform transition hover:scale-105">
+                התחל משחק 🚀
+            </button>
+        </div>
+
+        <div id="game-screen" class="hidden w-full">
+            <div class="mb-6">
+                <div class="flex justify-between text-sm text-slate-500 mb-1 font-bold">
+                    <span>שאלה <span id="current-q-num">1</span> מתוך 20</span>
+                    <span id="progress-percent">0%</span>
+                </div>
+                <div class="w-full bg-slate-200 rounded-full h-2.5">
+                    <div id="progress-bar" class="bg-blue-600 h-2.5 rounded-full transition-all duration-300" style="width: 0%"></div>
+                </div>
+            </div>
+
+            <div class="glass-card p-6 md:p-8 border border-slate-100 relative">
+                
+                <div id="scenario-badge" class="absolute -top-3 right-6 bg-indigo-600 text-white text-sm font-bold px-4 py-1.5 rounded-full shadow-md">
+                    סוג תרחיש: פענוח רשם זמן
+                </div>
+
+                <div id="text-scenario-container" class="w-full mb-4 p-6 bg-indigo-50 border border-indigo-100 text-indigo-900 rounded-xl hidden text-lg font-medium leading-relaxed shadow-sm">
+                </div>
+
+                <div id="visual-container" class="w-full mb-8 bg-white border border-slate-200 rounded-xl overflow-hidden relative min-h-[250px] flex justify-center items-center">
+                </div>
+
+                <div id="questions-area" class="space-y-6">
+                </div>
+
+                <div class="mt-8 flex justify-end gap-4 border-t border-slate-100 pt-6">
+                    <button id="check-btn" class="btn-primary w-full sm:w-auto">
+                        בדוק תשובות 🔍
+                    </button>
+                    <button id="next-btn" class="btn-primary hidden bg-green-600 hover:bg-green-700 w-full sm:w-auto">
+                        המשך לשאלה הבאה ←
+                    </button>
+                </div>
+            </div>
+        </div>
+
+        <div id="summary-screen" class="hidden bg-white rounded-2xl shadow-xl p-8 md:p-10 text-center max-w-xl w-full border border-slate-200 animate-[bounce_0.5s_ease-in-out_1]">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-3xl font-extrabold text-slate-900 mb-1">כל הכבוד! התרגול הושלם!</h2>
+            <div class="text-slate-500 font-semibold text-lg mb-6">שחקן/ית: <span id="summary-name" class="text-slate-800 font-bold underline decoration-blue-500 decoration-2"></span></div>
+            
+            <div class="bg-slate-50 p-6 rounded-2xl border-2 border-slate-200 mb-6 shadow-inner animate-[pulse_2s_infinite]">
+                <div class="text-sm font-bold text-slate-500 uppercase tracking-wider">ציון סופי</div>
+                <div id="final-score-percent" class="text-6xl font-black text-blue-600 my-2">0%</div>
+                <div id="final-score-text" class="text-slate-700 font-bold text-base">ענית נכון על 0 מתוך 0 סעיפים</div>
+            </div>
+
+            <div class="bg-slate-100 rounded-xl p-4 text-right text-sm text-slate-600 font-mono space-y-2 border border-slate-200">
+                <div>• <span class="font-bold">נושא:</span> <span class="text-slate-900 font-sans font-bold">תנועה שוות מהירות (1.2)</span></div>
+                <div>• <span class="font-bold">תאריך סיום:</span> <span id="run-date" class="text-slate-900 font-sans font-bold"></span>, <span id="run-time" class="text-slate-900 font-sans font-bold"></span></div>
+                <div>• <span class="font-bold">קוד אימות מורה:</span> <span id="run-id" class="text-blue-700 font-bold"></span></div>
+            </div>
+
+            <button id="restart-btn" class="mt-8 bg-slate-800 hover:bg-slate-900 text-white font-bold px-8 py-3 rounded-xl w-full shadow-md text-lg transition-all">
+                שחק שוב 🔁
+            </button>
+        </div>
+
+    </main>
+
+    <script>
+        // --- Custom Alert System ---
+        function showCustomAlert(msg) {
+            document.getElementById('custom-alert-text').innerText = msg;
+            document.getElementById('custom-alert-modal').classList.remove('hidden');
+        }
+        function closeAlert() {
+            document.getElementById('custom-alert-modal').classList.add('hidden');
+        }
+
+        // --- Utilities ---
+        const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+        const getRandomChoice = (arr) => arr[Math.floor(Math.random() * arr.length)];
+        const formatNum = (num) => Number.isInteger(num) ? num.toString() : (Math.round(num * 10) / 10).toString();
+        
+        const checkAnswer = (user, correct, isNumber) => {
+            if (isNumber) {
+                const userNum = parseFloat(user);
+                const correctNum = parseFloat(correct);
+                if (isNaN(userNum)) return false;
+                // סובלנות של 0.5 מתאימה לקריאה של גרפים או טעויות זעירות
+                return Math.abs(userNum - correctNum) <= 0.5;
+            }
+            const cleanStr = (s) => String(s).replace(/\$/g, '').replace(/\\text\{.*?\}/g, '').replace(/\s+/g, '').trim();
+            return cleanStr(user) === cleanStr(correct);
+        };
+
+        const buildEqLinear = (x0, v) => {
+            if (x0 === 0 && v === 0) return `$x(t) = 0$`;
+            let parts = [];
+            if (x0 !== 0) parts.push(`${x0}`);
+            if (v !== 0) {
+                let sign = v > 0 ? '+' : '-';
+                let val = Math.abs(v) === 1 ? '' : Math.abs(v);
+                if (parts.length > 0) parts.push(`${sign} ${val}t`);
+                else parts.push(`${v < 0 ? '-' : ''}${val}t`);
+            }
+            return `$x(t) = ${parts.join(' ')}$`;
+        };
+
+        // --- MathJax Queue ---
+        let mathJaxPromise = Promise.resolve();
+        function triggerMathJax() {
+            if (window.MathJax && MathJax.typesetPromise) {
+                mathJaxPromise = mathJaxPromise.then(() => {
+                    return MathJax.typesetPromise();
+                }).catch(err => console.log('MathJax error:', err));
+            }
+        }
+
+        // --- Confetti ---
+        function createConfettiParticles(amount, isBig) {
+            const colors = ['#3b82f6', '#10b981', '#22c55e', '#f59e0b', '#ef4444', '#a855f7'];
+            for (let i = 0; i < amount; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = isBig ? (Math.random() * 8 + 8) + 'px' : (Math.random() * 6 + 4) + 'px';
+                confetti.style.height = isBig ? (Math.random() * 8 + 8) + 'px' : (Math.random() * 6 + 4) + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                const startX = isBig ? Math.random() * 100 : 40 + Math.random() * 20;
+                const startY = isBig ? -10 : 80;
+                confetti.style.left = startX + 'vw';
+                confetti.style.top = startY + 'vh';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.zIndex = '9999';
+                confetti.style.pointerEvents = 'none';
+                document.body.appendChild(confetti);
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = isBig ? Math.random() * 10 + 5 : Math.random() * 15 + 10;
+                const tx = Math.cos(angle) * velocity * 5;
+                const ty = isBig ? (Math.random() * 100 + 50) : (-Math.random() * 60 - 20);
+                const fallDuration = Math.random() * 2 + (isBig ? 3 : 1.5);
+
+                confetti.animate([
+                    { transform: 'translate3d(0, 0, 0) rotate(0deg)', opacity: 1 },
+                    { transform: `translate3d(${tx}px, ${ty}vh, 0) rotate(${Math.random() * 360}deg)`, opacity: 0 }
+                ], { duration: fallDuration * 1000, easing: 'cubic-bezier(0.1, 0.8, 0.3, 1)', fill: 'forwards' });
+
+                setTimeout(() => confetti.remove(), fallDuration * 1000);
+            }
+        }
+
+        function triggerBigConfetti() {
+            createConfettiParticles(50, true);
+            let interval = setInterval(() => createConfettiParticles(30, true), 400);
+            setTimeout(() => clearInterval(interval), 2000);
+        }
+
+        // --- Banks for Meeting Problem ---
+        const meetingScenarios = [
+            {
+                surface: "לאורך כביש ישר",
+                entities: [
+                    { name: "רכב", start: "מתחיל את נסיעתו", move: "נוסע" },
+                    { name: "משאית", start: "מתחילה את נסיעתה", move: "נוסעת" },
+                    { name: "אופנוע", start: "מתחיל את נסיעתו", move: "נוסע" }
+                ]
+            },
+            {
+                surface: "בתעלת מים ארוכה",
+                entities: [
+                    { name: "סירה", start: "מתחילה את השיוט", move: "שטה" },
+                    { name: "סירת מנוע", start: "מתחילה את השיוט", move: "שטה" },
+                    { name: "אוניית משא", start: "מתחילה את השיוט", move: "שטה" }
+                ]
+            },
+            {
+                surface: "על גבי מדרכה פנויה בפארק",
+                entities: [
+                    { name: "הולך רגל", start: "מתחיל לצעוד", move: "הולך" },
+                    { name: "רוכבת אופניים", start: "מתחילה לרכוב", move: "רוכבת" },
+                    { name: "רץ", start: "מתחיל את הריצה", move: "רץ" }
+                ]
+            },
+            {
+                surface: "על מסילת רכבת ישרה",
+                entities: [
+                    { name: "רכבת נוסעים", start: "יוצאת לדרכה", move: "נוסעת" },
+                    { name: "רכבת משא", start: "יוצאת לדרכה", move: "נוסעת" },
+                    { name: "קרון ממונע", start: "מתחיל לנוע", move: "נע" }
+                ]
+            }
+        ];
+
+        // --- Generators ---
+
+        // 1. Ticker Tape (Constant Velocity only)
+        function generateTickerTape() {
+            const dt = getRandomChoice([0.5, 1]); 
+            const dotsCount = 6; 
+            
+            let x0 = getRandomChoice([0, 10, 20, 50]); 
+            const v = getRandomChoice([-10, -5, -2, 2, 5, 10]); 
+            const step = v * dt; 
+            
+            let positions = [];
+            let currentX = x0;
+            for(let i = 0; i < dotsCount; i++) {
+                positions.push(currentX);
+                currentX += step;
+            }
+
+            const correctEq = buildEqLinear(x0, v);
+            
+            let distractors = new Set();
+            while(distractors.size < 3) {
+                let dx0 = getRandomChoice([0, 10, 20, 50]);
+                let dv = getRandomChoice([-10, -5, -2, 2, 5, 10]);
+                let dEq = buildEqLinear(dx0, dv);
+                if (dEq !== correctEq) distractors.add(dEq);
+            }
+            const options = [correctEq, ...Array.from(distractors)];
+            options.sort(() => Math.random() - 0.5);
+
+            return {
+                type: 'ticker',
+                badge: 'רשם זמן - תנועה שוות מהירות',
+                data: { 
+                    positions, 
+                    dt, 
+                    v,
+                    story: `לפניכם תרשים עקבות (רשם זמן) של גוף נע. מרווח הזמן בין כל שתי עקבות (נקודות) סמוכות הוא: <strong>$\\Delta t = ${dt}$ [s]</strong>.` 
+                },
+                subQuestions: [
+                    {
+                        label: `מהו המיקום ההתחלתי ($x_0$) של הגוף בזמן $t=0$? [m]`,
+                        type: 'number',
+                        correctAnswer: formatNum(x0)
+                    },
+                    {
+                        label: `מהי מהירות הגוף ($v$)? [m/s]`,
+                        type: 'number',
+                        correctAnswer: formatNum(v)
+                    },
+                    {
+                        label: `על סמך הנתונים, בחרו את משוואת המקום-זמן המתאימה לגוף:`,
+                        type: 'select',
+                        options: options,
+                        correctAnswer: correctEq
+                    }
+                ]
+            };
+        }
+
+        // 2. x-t Graph (Input x0 and v directly)
+        function generateXTGraphDirect() {
+            const x0 = getRandomChoice([-20, -10, 0, 10, 20]); 
+            const v = getRandomChoice([-5, -4, -2, 2, 4, 5]); 
+            const t_end = getRandomChoice([4, 6, 8, 10]); 
+            
+            const points = [];
+            for (let t = 0; t <= t_end; t++) {
+                points.push({x: t, y: x0 + v * t});
+            }
+
+            const correctEq = buildEqLinear(x0, v);
+            
+            let distractors = new Set();
+            while(distractors.size < 3) {
+                let dx0 = getRandomChoice([-20, -10, 0, 10, 20]);
+                let dv = getRandomChoice([-5, -4, -2, 2, 4, 5]);
+                let dEq = buildEqLinear(dx0, dv);
+                if (dEq !== correctEq) distractors.add(dEq);
+            }
+            const options = [correctEq, ...Array.from(distractors)];
+            options.sort(() => Math.random() - 0.5);
+
+            return {
+                type: 'graph',
+                badge: 'קריאת נתונים מגרף מקום-זמן',
+                data: { isVT: false, points, t_end },
+                subQuestions: [
+                    {
+                        label: `הביטו בגרף שלפניכם. מהו המיקום ההתחלתי ($x_0$) של הגוף? [m]`,
+                        type: 'number',
+                        correctAnswer: formatNum(x0)
+                    },
+                    {
+                        label: `חשבו את שיפוע הגרף. מהי מהירות הגוף ($v$)? [m/s]`,
+                        type: 'number',
+                        correctAnswer: formatNum(v)
+                    },
+                    {
+                        label: `על סמך הנתונים שחילצתם, בחרו את משוואת המקום-זמן המתאימה לגוף:`,
+                        type: 'select',
+                        options: options,
+                        correctAnswer: correctEq
+                    }
+                ]
+            };
+        }
+
+        // 3. Piecewise Constant Velocity (Dynamic Graph & Questions - 4 Qs per graph)
+        function generatePiecewiseGraph() {
+            let v_pool = [-5, -4, -3, -2, 0, 2, 3, 4, 5];
+            
+            let v1 = getRandomChoice(v_pool);
+            let pool2 = v_pool.filter(v => v !== v1 && Math.sign(v) !== Math.sign(v1));
+            let v2 = getRandomChoice(pool2);
+            let pool3 = v_pool.filter(v => v !== v2 && Math.sign(v) !== Math.sign(v2));
+            let v3 = getRandomChoice(pool3);
+
+            if (v1 === 0 && v3 === 0) {
+                v3 = getRandomChoice([2, 3, -2, -3]);
+            }
+
+            const t1 = getRandomInt(2, 4);
+            const t2 = t1 + getRandomInt(2, 4);
+            const t3 = t2 + getRandomInt(2, 4);
+
+            const x0 = getRandomInt(-10, 10);
+            const x1 = x0 + v1 * t1;
+            const x2 = x1 + v2 * (t2 - t1);
+            const x3 = x2 + v3 * (t3 - t2);
+
+            const points = [
+                {x: 0, y: x0},
+                {x: t1, y: x1},
+                {x: t2, y: x2},
+                {x: t3, y: x3}
+            ];
+
+            const t_end = t3;
+            const segments = [
+                {v: v1, start: 0, end: t1, name: 'ראשון'},
+                {v: v2, start: t1, end: t2, name: 'שני'},
+                {v: v3, start: t2, end: t3, name: 'שלישי'}
+            ];
+
+            let availableQuestions = [];
+
+            let segAskSpeed = getRandomChoice([0, 1, 2]);
+            let s1 = segments[segAskSpeed];
+            availableQuestions.push({
+                label: `מהו גודל המהירות (Speed) בקטע ה${s1.name} (מ-$t=${s1.start}$ עד $t=${s1.end}$)? [m/s]`,
+                type: 'number',
+                correctAnswer: formatNum(Math.abs(s1.v))
+            });
+
+            let segAskVel = getRandomChoice([0, 1, 2].filter(i => i !== segAskSpeed));
+            let s2 = segments[segAskVel];
+            availableQuestions.push({
+                label: `מהי המהירות ($v$) בקטע ה${s2.name}? (שימו לב לסימן) [m/s]`,
+                type: 'number',
+                correctAnswer: formatNum(s2.v)
+            });
+
+            let segAskDir = getRandomChoice([0, 1, 2]);
+            let s3 = segments[segAskDir];
+            let dirAns = s3.v > 0 ? "בכיוון החיובי" : (s3.v < 0 ? "בכיוון השלילי" : "במנוחה (לא מתקדם)");
+            availableQuestions.push({
+                label: `באיזה כיוון מתקדם הגוף בקטע ה${s3.name}?`,
+                type: 'select',
+                options: ["בכיוון החיובי", "בכיוון השלילי", "במנוחה (לא מתקדם)"],
+                correctAnswer: dirAns
+            });
+
+            let restSegments = segments.filter(s => s.v === 0);
+            let restAns = restSegments.length === 0 ? "אף קטע" : `בקטע ה${restSegments[0].name}`;
+            availableQuestions.push({
+                label: `באיזה קטע של התנועה הגוף לא זז (היה במנוחה)?`,
+                type: 'select',
+                options: ["בקטע הראשון", "בקטע השני", "בקטע השלישי", "אף קטע"],
+                correctAnswer: restAns
+            });
+
+            let nonZeroVs = segments.filter(s => s.v !== 0).map(s => Math.sign(s.v));
+            let numChanges = 0;
+            for(let i=0; i<nonZeroVs.length-1; i++) {
+                if(nonZeroVs[i] !== nonZeroVs[i+1]) numChanges++;
+            }
+            let changesText = numChanges === 0 ? "0 פעמים" : (numChanges === 1 ? "פעם אחת" : "פעמיים");
+            availableQuestions.push({
+                label: `כמה פעמים שינה הגוף את כיוון תנועתו במהלך הגרף כולו?`,
+                type: 'select',
+                options: ["0 פעמים", "פעם אחת", "פעמיים", "3 פעמים"],
+                correctAnswer: changesText
+            });
+
+            let vertexTimes = [];
+            if (v1 * v2 < 0) vertexTimes.push(t1);
+            if (v2 * v3 < 0) vertexTimes.push(t2);
+            
+            if (vertexTimes.length > 0) {
+                let t_vertex = getRandomChoice(vertexTimes);
+                availableQuestions.push({
+                    label: `באיזה רגע ($t$) עצר הגוף לרגע ושינה מיד את כיוון תנועתו (צורת "שפיץ" בגרף)? [s]`,
+                    type: 'number',
+                    correctAnswer: formatNum(t_vertex)
+                });
+            }
+
+            availableQuestions.push({
+                label: `מהו ההעתק הכולל ($\\Delta x$) מתחילת התנועה ועד סופה? [m]`,
+                type: 'number',
+                correctAnswer: formatNum(x3 - x0)
+            });
+
+            availableQuestions.sort(() => Math.random() - 0.5);
+            let selectedQuestions = availableQuestions.slice(0, 4);
+
+            return {
+                type: 'graph_piecewise',
+                badge: 'תנועה למקוטעין',
+                data: { isVT: false, points, t_end },
+                subQuestions: selectedQuestions
+            };
+        }
+
+        // 4. Meeting Problem (Text)
+        function generateMeetingProblem() {
+            const scenario = getRandomChoice(meetingScenarios);
+            const surface = scenario.surface;
+            
+            const e1 = getRandomChoice(scenario.entities);
+            let e2 = getRandomChoice(scenario.entities);
+            while (e1.name === e2.name) {
+                e2 = getRandomChoice(scenario.entities);
+            }
+            
+            const t_meet = getRandomChoice([2, 4, 5, 10]);
+            const x_meet = getRandomChoice([20, 40, 50, 100]);
+            
+            const v1 = getRandomChoice([2, 4, 5, 10]);
+            const x01 = x_meet - v1 * t_meet;
+
+            const v2 = getRandomChoice([-2, -4, -5, -10]);
+            const x02 = x_meet - v2 * t_meet;
+
+            const story = `שני גופים נעים ${surface}. <br>
+            <b>${e1.name} א'</b> ${e1.start} ממיקום $x = ${x01}$ [m] ו${e1.move} במהירות קבועה של $v = ${v1}$ [m/s].<br>
+            באותו הזמן, <b>${e2.name} ב'</b> ${e2.start} ממיקום $x = ${x02}$ [m] ו${e2.move} במהירות קבועה של $v = ${v2}$ [m/s].`;
+
+            const eq1 = buildEqLinear(x01, v1);
+            const eq2 = buildEqLinear(x02, v2);
+
+            const buildOptions = (correct) => {
+                let dists = new Set([correct]);
+                while(dists.size < 4) {
+                    let rX = getRandomChoice([x01, x02, 0, 100]);
+                    let rV = getRandomChoice([v1, v2, -v1, -v2]);
+                    dists.add(buildEqLinear(rX, rV));
+                }
+                let arr = Array.from(dists);
+                arr.sort(() => Math.random() - 0.5);
+                return arr;
+            };
+
+            return {
+                type: 'text',
+                badge: 'בעיית מפגש - בניית משוואות',
+                data: { story },
+                subQuestions: [
+                    {
+                        label: `בחרו את משוואת המקום-זמן המתאימה ל${e1.name} א':`,
+                        type: 'select',
+                        options: buildOptions(eq1),
+                        correctAnswer: eq1
+                    },
+                    {
+                        label: `בחרו את משוואת המקום-זמן המתאימה ל${e2.name} ב':`,
+                        type: 'select',
+                        options: buildOptions(eq2),
+                        correctAnswer: eq2
+                    },
+                    {
+                        label: `על ידי השוואת המשוואות, באיזה רגע ($t$) ייפגשו השניים? [s]`,
+                        type: 'number',
+                        correctAnswer: formatNum(t_meet)
+                    }
+                ]
+            };
+        }
+
+        // --- Core Logic ---
+        let questions = []; 
+        let currentQuestionIndex = 0;
+        let score = 0;
+        let totalPossibleScore = 0;
+        let currentChart = null; 
+
+        function generateQuestions() {
+            questions = [];
+            for(let i=0; i<5; i++) {
+                questions.push(generateTickerTape());
+                questions.push(generateXTGraphDirect());
+                questions.push(generatePiecewiseGraph());
+                questions.push(generateMeetingProblem());
+            }
+            questions.sort(() => Math.random() - 0.5);
+            
+            totalPossibleScore = questions.reduce((acc, q) => acc + q.subQuestions.length, 0);
+            document.getElementById('total-possible-score').innerText = totalPossibleScore;
+        }
+
+        function renderTickerTape(canvas, data) {
+            const ctx = canvas.getContext('2d');
+            canvas.width = canvas.parentElement.clientWidth || 600;
+            canvas.height = 250;
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+            const positions = data.positions; 
+            const minX = Math.min(...positions);
+            const maxX = Math.max(...positions);
+            const padding = 50;
+            const drawWidth = canvas.width - 2 * padding;
+            
+            const range = maxX - minX;
+            const scale = range === 0 ? 1 : drawWidth / range;
+
+            ctx.fillStyle = '#fef3c7'; 
+            ctx.fillRect(10, 80, canvas.width - 20, 40);
+            ctx.strokeStyle = '#d97706'; 
+            ctx.strokeRect(10, 80, canvas.width - 20, 40);
+
+            ctx.fillStyle = '#1e293b'; 
+            positions.forEach((pos, index) => {
+                let xPx = padding + (pos - minX) * scale;
+                ctx.beginPath();
+                ctx.arc(xPx, 100, 4, 0, 2 * Math.PI);
+                ctx.fill();
+
+                ctx.fillStyle = '#64748b';
+                ctx.font = '12px Rubik';
+                ctx.textAlign = 'center';
+                ctx.fillText(`t${index}`, xPx, 70);
+                ctx.fillStyle = '#1e293b'; 
+            });
+
+            ctx.font = '14px Rubik';
+            ctx.fillStyle = '#334155';
+            ctx.textAlign = 'center';
+            
+            positions.forEach((pos, index) => {
+                let xPx = padding + (pos - minX) * scale;
+                ctx.beginPath();
+                ctx.moveTo(xPx, 135);
+                ctx.lineTo(xPx, 145);
+                ctx.stroke();
+                const textY = index % 2 === 0 ? 165 : 185;
+                ctx.fillText(`${pos}`, xPx, textY);
+            });
+
+            ctx.beginPath();
+            ctx.moveTo(padding, 140);
+            ctx.lineTo(padding + (range * scale), 140);
+            ctx.strokeStyle = '#64748b';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+
+            ctx.textAlign = 'right';
+            ctx.fillText('x [m]', padding + range * scale + 40, 160);
+
+            // Arrow direction based on velocity
+            ctx.font = '16px Rubik';
+            ctx.fillStyle = '#1e293b';
+            ctx.textAlign = 'right';
+            ctx.fillText('כיוון תנועה', canvas.width - 20, 35);
+            
+            const textWidth = ctx.measureText('כיוון תנועה').width;
+            const arrowEndX = canvas.width - 20 - textWidth - 15;
+            const arrowStartX = arrowEndX - 40;
+            
+            ctx.beginPath();
+            ctx.moveTo(arrowStartX, 30);
+            ctx.lineTo(arrowEndX, 30); 
+            if (data.v > 0) { 
+                ctx.lineTo(arrowEndX - 6, 24); 
+                ctx.moveTo(arrowEndX, 30);
+                ctx.lineTo(arrowEndX - 6, 36); 
+            } else { 
+                ctx.moveTo(arrowStartX, 30);
+                ctx.lineTo(arrowStartX + 6, 24);
+                ctx.moveTo(arrowStartX, 30);
+                ctx.lineTo(arrowStartX + 6, 36);
+            }
+            ctx.strokeStyle = '#1e293b';
+            ctx.lineWidth = 2;
+            ctx.stroke();
+        }
+
+        function renderChart(canvas, data, isPiecewise) {
+            canvas.width = canvas.parentElement.clientWidth || 600;
+            canvas.height = 300;
+            
+            const titleText = isPiecewise ? 'גרף מקום-זמן (למקוטעין)' : 'גרף מקום-זמן';
+
+            const allY = data.points.map(p => p.y);
+            const minY = Math.min(0, ...allY);
+            const maxY = Math.max(0, ...allY);
+            
+            const yMinBound = minY < 0 ? Math.floor(minY - 5) : 0;
+            const yMaxBound = Math.ceil(maxY + 5);
+
+            currentChart = new Chart(canvas, {
+                type: 'scatter',
+                data: {
+                    datasets: [{
+                        label: 'x(t)',
+                        data: data.points,
+                        showLine: true,
+                        borderColor: '#2563eb',
+                        backgroundColor: 'rgba(37, 99, 235, 0.1)',
+                        borderWidth: 3,
+                        pointRadius: 4, 
+                        tension: 0, // strict straight lines
+                        fill: false 
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        title: { display: true, text: titleText, font: { family: 'Rubik', size: 18 } },
+                        legend: { display: false }
+                    },
+                    scales: {
+                        x: {
+                            type: 'linear', position: 'bottom', min: 0, suggestedMax: data.t_end,
+                            title: { display: true, text: 'זמן (s)', font: { family: 'Rubik' } },
+                            grid: { borderColor: '#000', borderWidth: 2, color: (c) => c.tick.value === 0 ? '#1e293b' : '#e2e8f0' }
+                        },
+                        y: {
+                            min: yMinBound, suggestedMax: yMaxBound,
+                            title: { display: true, text: 'מקום (m)', font: { family: 'Rubik' } },
+                            grid: { borderColor: '#000', borderWidth: 2, color: (c) => c.tick.value === 0 ? '#1e293b' : '#e2e8f0' }
+                        }
+                    }
+                }
+            });
+        }
+
+        function loadQuestion() {
+            if (currentQuestionIndex >= questions.length) { finishGame(); return; }
+
+            const q = questions[currentQuestionIndex];
+            
+            document.getElementById('current-q-num').innerText = currentQuestionIndex + 1;
+            const progress = ((currentQuestionIndex) / questions.length) * 100;
+            document.getElementById('progress-bar').style.width = `${progress}%`;
+            document.getElementById('progress-percent').innerText = `${Math.round(progress)}%`;
+
+            document.getElementById('scenario-badge').innerText = q.badge;
+
+            const vContainer = document.getElementById('visual-container');
+            const tContainer = document.getElementById('text-scenario-container');
+            const qArea = document.getElementById('questions-area');
+            
+            vContainer.innerHTML = '';
+            tContainer.innerHTML = '';
+            qArea.innerHTML = '';
+
+            if (currentChart) { currentChart.destroy(); currentChart = null; }
+
+            if (q.data && q.data.story) {
+                tContainer.classList.remove('hidden');
+                tContainer.innerHTML = `<p>${q.data.story}</p>`;
+            } else {
+                tContainer.classList.add('hidden');
+            }
+
+            if (q.type === 'ticker') {
+                vContainer.classList.remove('hidden'); 
+                const canvas = document.createElement('canvas'); vContainer.appendChild(canvas);
+                setTimeout(() => renderTickerTape(canvas, q.data), 50);
+            } 
+            else if (q.type === 'graph' || q.type === 'graph_piecewise') {
+                vContainer.classList.remove('hidden'); 
+                const canvas = document.createElement('canvas'); vContainer.appendChild(canvas);
+                setTimeout(() => renderChart(canvas, q.data, q.type === 'graph_piecewise'), 50);
+            }
+            else if (q.type === 'text') {
+                vContainer.classList.add('hidden'); 
+            }
+
+            q.subQuestions.forEach((subQ, idx) => {
+                const id = `q-${currentQuestionIndex}-${idx}`;
+                let inputHtml = '';
+                if (subQ.type === 'select') {
+                    const optionsHtml = subQ.options.map(opt => `<button type="button" data-option="${opt}" onclick="selectChoice('${id}', this)" class="choice-card text-right p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all block w-full focus:outline-none" dir="ltr">${opt}</button>`).join('');
+                    inputHtml = `<div id="${id}" class="choice-container w-full" data-selected="" data-disabled="false">${optionsHtml}</div>`;
+                } else {
+                    inputHtml = `<input type="number" step="any" id="${id}" class="input-field answer-input text-right font-bold text-lg" placeholder="הזן/י מספר..." dir="ltr">`;
+                }
+
+                qArea.insertAdjacentHTML('beforeend', `
+                    <div class="bg-slate-50 p-4 rounded-xl border border-slate-200 shadow-sm relative">
+                        <label class="block text-slate-800 font-bold text-lg mb-3">${subQ.label}</label>
+                        <div class="flex items-center gap-3">
+                            <div class="flex-grow w-full">${inputHtml}</div>
+                            <div id="feedback-${id}" class="w-8 flex-shrink-0 hidden"></div>
+                        </div>
+                    </div>
+                `);
+            });
+
+            document.getElementById('check-btn').classList.remove('hidden');
+            document.getElementById('next-btn').classList.add('hidden');
+            triggerMathJax();
+        }
+
+        window.selectChoice = function(containerId, buttonElement) {
+            const container = document.getElementById(containerId);
+            if (container.dataset.disabled === "true") return;
+            container.querySelectorAll('.choice-card').forEach(btn => btn.classList.remove('selected', 'border-blue-500', 'bg-blue-100'));
+            buttonElement.classList.add('selected', 'border-blue-500', 'bg-blue-100');
+            container.dataset.selected = buttonElement.dataset.option;
+        };
+
+        document.getElementById('check-btn').addEventListener('click', () => {
+            const q = questions[currentQuestionIndex];
+            let allAnswered = true;
+
+            q.subQuestions.forEach((subQ, idx) => {
+                const el = document.getElementById(`q-${currentQuestionIndex}-${idx}`);
+                if (subQ.type === 'select' && !el.dataset.selected) allAnswered = false;
+                if (subQ.type === 'number' && el.value === "") allAnswered = false;
+            });
+
+            if (!allAnswered) { showCustomAlert("אנא ענו על כל הסעיפים לפני הבדיקה!"); return; }
+
+            let allCorrectInStage = true;
+
+            q.subQuestions.forEach((subQ, idx) => {
+                const id = `q-${currentQuestionIndex}-${idx}`;
+                const el = document.getElementById(id);
+                const feedbackEl = document.getElementById(`feedback-${id}`);
+                let isCorrect = false;
+
+                if (subQ.type === 'select') {
+                    el.dataset.disabled = "true"; 
+                    isCorrect = checkAnswer(el.dataset.selected, subQ.correctAnswer, false);
+                    el.querySelectorAll('.choice-card').forEach(btn => {
+                        btn.classList.add('disabled', 'opacity-70', 'cursor-not-allowed');
+                        if (checkAnswer(btn.dataset.option, subQ.correctAnswer, false)) {
+                            btn.className = 'choice-card text-right p-4 rounded-lg block w-full focus:outline-none disabled opacity-70 cursor-not-allowed border-green-500 bg-green-50 text-green-800 font-bold';
+                            btn.insertAdjacentHTML('beforeend', '<span class="float-left text-2xl">✔️</span>');
+                        } else if (btn.dataset.option === el.dataset.selected) {
+                            btn.className = 'choice-card text-right p-4 rounded-lg block w-full focus:outline-none disabled opacity-70 cursor-not-allowed border-red-500 bg-red-50 text-red-800';
+                            btn.insertAdjacentHTML('beforeend', '<span class="float-left text-2xl">❌</span>');
+                        }
+                    });
+                } else {
+                    el.disabled = true;
+                    isCorrect = checkAnswer(el.value, subQ.correctAnswer, true);
+                    feedbackEl.classList.remove('hidden');
+                    if (isCorrect) {
+                        feedbackEl.innerHTML = `<span class="text-green-600 font-bold text-2xl">✔️</span>`;
+                        el.classList.add('input-correct');
+                    } else {
+                        feedbackEl.innerHTML = `<span class="text-red-600 font-bold text-2xl">❌</span>`;
+                        el.classList.add('input-wrong');
+                        el.parentNode.insertAdjacentHTML('beforeend', `<div class="text-red-600 text-base mt-2 font-bold w-full" dir="ltr" style="text-align: right;">התשובה הנכונה: ${subQ.correctAnswer}</div>`);
+                    }
+                }
+                
+                if (isCorrect) score++; else allCorrectInStage = false;
+            });
+
+            document.getElementById('current-score').innerText = score;
+            if (allCorrectInStage) createConfettiParticles(35, false);
+            
+            document.getElementById('check-btn').classList.add('hidden');
+            document.getElementById('next-btn').classList.remove('hidden');
+            triggerMathJax(); 
+        });
+
+        document.getElementById('next-btn').addEventListener('click', () => {
+            currentQuestionIndex++;
+            loadQuestion();
+        });
+
+        function finishGame() {
+            document.getElementById('game-screen').classList.add('hidden');
+            document.getElementById('score-display-container').classList.add('hidden');
+            document.getElementById('summary-screen').classList.remove('hidden');
+
+            document.getElementById('summary-name').innerText = document.getElementById('player-name').value;
+            document.getElementById('final-score-text').innerText = `ענית נכון על ${score} מתוך ${totalPossibleScore} סעיפים במשחק.`;
+            
+            const percent = Math.round((score / totalPossibleScore) * 100);
+            const pEl = document.getElementById('final-score-percent');
+            pEl.innerText = `${percent}%`;
+            
+            if (percent >= 85) { pEl.className = 'text-6xl font-black text-green-600 my-2'; triggerBigConfetti(); }
+            else if (percent < 55) pEl.className = 'text-6xl font-black text-red-500 my-2';
+            else pEl.className = 'text-6xl font-black text-blue-600 my-2';
+
+            const now = new Date();
+            const pad = (n) => n.toString().padStart(2, '0');
+            document.getElementById('run-date').innerText = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`;
+            document.getElementById('run-time').innerText = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
+            document.getElementById('run-id').innerText = Math.random().toString(36).substring(2, 8).toUpperCase();
+        }
+
+        document.getElementById('start-btn').addEventListener('click', () => {
+            if (!document.getElementById('player-name').value.trim()) {
+                showCustomAlert("אנא הכניסו שם שחקן (שם מלא) כדי להתחיל במשחק!");
+                return;
+            }
+            currentQuestionIndex = 0; score = 0; document.getElementById('current-score').innerText = '0';
+            generateQuestions();
+            document.getElementById('setup-screen').classList.add('hidden');
+            document.getElementById('summary-screen').classList.add('hidden');
+            document.getElementById('score-display-container').classList.remove('hidden');
+            document.getElementById('game-screen').classList.remove('hidden');
+            loadQuestion();
+        });
+
+        document.getElementById('restart-btn').addEventListener('click', () => location.reload());
+
+        window.addEventListener('resize', () => {
+            if (!document.getElementById('game-screen').classList.contains('hidden')) {
+                const q = questions[currentQuestionIndex];
+                if (q.type === 'ticker') renderTickerTape(document.querySelector('canvas'), q.data);
+            }
+        });
+    </script>
+</body>
+</html>
