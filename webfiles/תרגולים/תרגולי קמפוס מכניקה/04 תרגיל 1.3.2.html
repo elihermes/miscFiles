@@ -1,0 +1,885 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>אתגר קינמטיקה - מהירות ממוצעת (1.3.2)</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    
+    <script>
+        window.MathJax = {
+            tex: {
+                inlineMath: [['$', '$'], ['\\(', '\\)']],
+                displayMath: [['$$', '$$'], ['\\[', '\\]']],
+                processEscapes: true
+            },
+            startup: {
+                typeset: false
+            }
+        };
+    </script>
+    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <style>
+        body { font-family: 'Assistant', sans-serif; background-color: #f8fafc; }
+        .input-correct { border-color: #22c55e !important; background-color: #f0fdf4 !important; color: #166534 !important; }
+        .input-wrong { border-color: #ef4444 !important; background-color: #fef2f2 !important; color: #991b1b !important; }
+        input[type=number]::-webkit-inner-spin-button, 
+        input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+        
+        /* MathJax adjustments for right-to-left layout */
+        .MathJax { direction: ltr !important; }
+    </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+    <!-- Header -->
+    <header class="bg-white shadow-sm border-b border-slate-200 py-3 px-4 sticky top-0 z-50">
+        <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+            <h1 class="text-xl md:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+                <span class="p-1.5 bg-blue-600 text-white rounded-lg text-sm">⏱️</span>
+                קינמטיקה: ממושגי יסוד לתרחישי תנועה (מהירות ממוצעת)
+            </h1>
+            <div id="header-stats" class="hidden flex items-center gap-3 text-sm font-semibold">
+                <span id="question-counter" class="bg-slate-100 px-3 py-1.5 rounded-full text-slate-600">תרחיש 1 מתוך 12</span>
+                <span class="bg-blue-50 px-3 py-1.5 rounded-full text-blue-800 border border-blue-200">
+                    ניקוד: <span id="score-display">0 / 0</span>
+                </span>
+            </div>
+        </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-4xl w-full mx-auto p-4 md:p-6 flex-grow flex items-center justify-center">
+        
+        <!-- Start Screen -->
+        <div id="start-screen" class="bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center w-full border border-slate-200 transition-all">
+            <div class="text-6xl mb-4">🚀</div>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-2">מוכנים לתרגל מהירות ממוצעת?</h2>
+            <p class="text-lg text-slate-600 mb-8">
+                לפניכם סדרת אירועים, גרפים ותרחישים מגוונים בהם ננתח תנועת גופים בודדים ומרובים.<br>
+                <b>שימו לב:</b> בכל סבב יוגרלו 12 תרחישים שונים מתוך המאגר המלא, בסדר אקראי, עם מספרים וגרפים המשתנים בכל משחק!
+            </p>
+            
+            <div class="max-w-md mx-auto mb-8 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+                <label for="player-name-input" class="block text-right text-base font-bold text-slate-700 mb-2">הכניסו שם שחקן/ית (שם מלא):</label>
+                <input type="text" id="player-name-input" class="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:border-blue-500 focus:ring-3 focus:ring-blue-100 outline-none font-bold text-lg text-center transition-all" placeholder="למשל: דנה ישראלי">
+            </div>
+
+            <button onclick="startGame()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl px-10 py-4 rounded-full shadow-lg transform transition hover:scale-105">
+                התחל משחק
+            </button>
+        </div>
+
+        <!-- Quiz Screen -->
+        <div id="quiz-container" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-10 w-full border border-slate-100 transition-all">
+            
+            <div class="mb-6 pb-6 border-b border-slate-100">
+                <h2 id="scenario-title" class="text-blue-700 font-extrabold text-xl mb-2">כותרת תרחיש</h2>
+                <p id="scenario-context" class="text-lg text-slate-800 font-medium leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200">
+                    טקסט הסיפור יופיע כאן...
+                </p>
+                
+                <!-- Dynamic Visual Injection Container -->
+                <div id="visual-container" class="w-full mt-4 hidden"></div>
+
+                <!-- Canvas for Chart.js Scenarios -->
+                <div id="graph-container-ui" class="w-full mt-6 hidden border border-slate-200 rounded-lg p-2 bg-white shadow-sm">
+                    <canvas id="scenario-chart" style="max-height: 300px;"></canvas>
+                </div>
+            </div>
+
+            <div class="mb-6">
+                <h3 class="text-lg font-bold mb-4 text-slate-800">ענו על הסעיפים הבאים:</h3>
+                <div id="questions-area" class="space-y-4">
+                    <!-- Sub-questions injected here -->
+                </div>
+            </div>
+
+            <div class="mt-8 pt-4 border-t border-slate-100 text-left">
+                <button id="action-btn" onclick="checkAnswers()" class="bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold px-8 py-3 rounded-xl transition-all shadow-md w-full sm:w-auto">
+                    בדוק תשובות
+                </button>
+            </div>
+            
+        </div>
+
+        <!-- End Screen -->
+        <div id="end-screen" class="hidden bg-white rounded-2xl shadow-xl p-8 md:p-10 text-center max-w-xl w-full border border-slate-200">
+            <div class="text-6xl mb-4">🏆</div>
+            <h2 class="text-3xl font-extrabold text-slate-900 mb-1">כל הכבוד! סיימת את התרגול!</h2>
+            <div class="text-slate-500 font-semibold text-lg mb-6">שחקן/ית: <span id="final-player-name" class="text-slate-800 font-bold underline decoration-blue-500 decoration-2"></span></div>
+            
+            <div class="bg-slate-50 p-6 rounded-2xl border-2 border-slate-200 mb-6 shadow-inner">
+                <div class="text-sm font-bold text-slate-500 uppercase tracking-wider">ציון סופי</div>
+                <div id="final-percentage" class="text-6xl font-black text-blue-600 my-2">0%</div>
+                <div id="final-score-text" class="text-slate-700 font-bold text-base">ענית נכון על 0 מתוך 0 סעיפים</div>
+            </div>
+
+            <div class="bg-slate-100 rounded-xl p-4 text-right text-sm text-slate-600 font-mono space-y-2 border border-slate-200">
+                <div>• <span class="font-bold">נושא:</span> <span class="text-slate-900 font-sans font-bold">מהירות ממוצעת, פיענוח גרפים, העתק ודרך.</span></div>
+                <div>• <span class="font-bold">תאריך סיום:</span> <span id="game-timestamp" class="text-slate-900 font-sans font-bold"></span></div>
+                <div>• <span class="font-bold">קוד אימות מורה:</span> <span id="game-id-display" class="text-blue-700 font-bold"></span></div>
+            </div>
+
+            <button onclick="location.reload()" class="mt-8 bg-slate-800 hover:bg-slate-900 text-white font-bold px-8 py-3 rounded-xl w-full shadow-md text-lg transition-all">
+                שחק סבב חדש 🔁
+            </button>
+        </div>
+
+    </main>
+
+    <!-- Custom Modal for Alerts -->
+    <div id="alert-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-[99999]">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center border border-slate-200 animate-[bounce_0.5s_ease-in-out_1]">
+            <div class="text-4xl mb-3">⚠️</div>
+            <h3 class="text-xl font-bold text-slate-800 mb-2">שימו לב</h3>
+            <p id="alert-modal-text" class="text-slate-600 mb-6">נא להזין את כל השדות</p>
+            <button onclick="closeAlertModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl transition-all">
+                הבנתי
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let quizStages = [];
+        let currentIndex = 0;
+        let score = 0;
+        let totalPossible = 0;
+        let playerName = "";
+        let gameId = "";
+        let currentChart = null;
+
+        // Utilities
+        function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
+        function pick(arr) { return arr[Math.floor(Math.random() * arr.length)]; }
+        
+        // FORMAT VAL - UPDATED FOR PRECISION
+        // Preserves up to 4 decimal places. E.g. 4/30 will be 0.1333
+        // This ensures the system does not incorrectly round away student precision!
+        function formatVal(num) { 
+            return parseFloat(num.toFixed(4)); 
+        }
+
+        function showAlertModal(message) {
+            document.getElementById('alert-modal-text').innerText = message;
+            document.getElementById('alert-modal').classList.remove('hidden');
+        }
+        function closeAlertModal() {
+            document.getElementById('alert-modal').classList.add('hidden');
+        }
+
+        // Generate SVG string for the Axis with Dynamic Scaling
+        function generateDynamicAxis(minVal, maxVal, tickStep, entities) {
+            const svgW = 800;
+            const svgH = 250;
+            const pad = 60;
+            const usableW = svgW - 2 * pad;
+            
+            let startVal = Math.floor(minVal / tickStep) * tickStep;
+            let endVal = Math.ceil(maxVal / tickStep) * tickStep;
+            
+            function getX(val) {
+                return pad + ((val - startVal) / (endVal - startVal)) * usableW;
+            }
+
+            let svg = `
+            <svg viewBox="0 0 ${svgW} ${svgH}" class="w-full h-auto bg-white rounded-xl shadow-sm border border-slate-200 my-4" xmlns="http://www.w3.org/2000/svg">
+                <defs>
+                    <marker id="arrow" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="6" markerHeight="6" orient="auto-start-reverse">
+                        <path d="M 0 0 L 10 5 L 0 10 z" fill="#334155" />
+                    </marker>
+                </defs>
+                
+                <line x1="40" y1="180" x2="760" y2="180" stroke="#334155" stroke-width="4" marker-end="url(#arrow)" />
+                <text x="770" y="185" font-family="sans-serif" font-size="20" font-weight="bold" fill="#334155">x [m]</text>
+
+                <g font-family="sans-serif" font-size="18" fill="#475569" text-anchor="middle">`;
+
+            for (let v = startVal; v <= endVal; v += tickStep) {
+                let x = getX(v);
+                let isOrigin = (v === 0);
+                let stroke = isOrigin ? "#ef4444" : "#334155";
+                let sw = isOrigin ? 3 : 2;
+                let y1 = isOrigin ? 160 : 170;
+                let y2 = isOrigin ? 200 : 190;
+                let fontW = isOrigin ? "bold" : "normal";
+                let fill = isOrigin ? "#ef4444" : "#475569";
+                
+                svg += `
+                    <line x1="${x}" y1="${y1}" x2="${x}" y2="${y2}" stroke="${stroke}" stroke-width="${sw}"/>
+                    <text x="${x}" y="220" font-weight="${fontW}" fill="${fill}">${v}</text>
+                `;
+            }
+            svg += `</g>`;
+
+            entities.forEach(ent => {
+                let x = getX(ent.val);
+                let c = ent.color;
+                let bg = ent.bg || '#ffffff';
+                svg += `
+                    <circle cx="${x}" cy="180" r="8" fill="${c}" />
+                    <text x="${x}" y="140" font-family="Assistant, sans-serif" font-size="22" font-weight="bold" fill="${c}" text-anchor="middle">${ent.name}</text>
+                    <rect x="${x - 25}" y="70" width="50" height="50" fill="${bg}" rx="5" stroke="${c}" stroke-width="2"/>
+                    <text x="${x}" y="105" font-size="30" text-anchor="middle">${ent.emoji}</text>
+                    <path d="M ${x} 120 L ${x} 160" stroke="${c}" stroke-width="2" stroke-dasharray="4" />
+                `;
+            });
+
+            svg += `</svg>`;
+            return svg;
+        }
+
+        function buildDynamicQuiz() {
+            let poolOfStages = [];
+
+            // 1. Dana on Axis
+            const st1_school = randInt(-1, 3) * 10;
+            const st1_mall = st1_school - pick([20, 30, 40, 50, 60]);
+            const st1_tickStep = Math.abs(st1_school - st1_mall) >= 50 ? 20 : 10;
+            const st1_min = randInt(2, 6);
+            const st1_sec = st1_min * 60;
+            const st1_dx = st1_mall - st1_school;
+            const st1_v = st1_dx / st1_sec;
+            poolOfStages.push({
+                title: "ההליכה של דנה",
+                context: `התבוננו בתרשים ציר המקום שלפניכם.<br>דנה הלכה מ<b>בית הספר</b> אל <b>המרכז המסחרי</b>. ההליכה ארכה בדיוק ${st1_min} דקות.`,
+                visualHtml: generateDynamicAxis(st1_mall - 10, st1_school + 10, st1_tickStep, [
+                    { val: st1_mall, name: "מרכז מסחרי", emoji: "🛒", color: "#8b5cf6", bg: "#ede9fe" },
+                    { val: st1_school, name: "בית ספר", emoji: "🏫", color: "#3b82f6", bg: "#eff6ff" }
+                ]),
+                subQs: [
+                    { text: "מהו ההעתק ($\\Delta x$) של דנה במסלולה?", ans: formatVal(st1_dx), type: 'num', unit: "m" },
+                    { text: "מהי מהירותה הממוצעת של דנה לאורך המסלול?", ans: formatVal(st1_v), type: 'num', unit: "m/s" }
+                ]
+            });
+
+            // 2. Daniel Split Path
+            const st2_school = randInt(-2, 2) * 10;
+            const st2_light = st2_school + pick([10, 20, 30]);
+            const st2_mall = st2_school - pick([20, 30, 40, 50]);
+            const st2_tickStep = (st2_light - st2_mall) >= 60 ? 20 : 10;
+            const st2_t1 = randInt(2, 4);
+            const st2_t2 = randInt(1, 3);
+            const st2_tot_sec = (st2_t1 + st2_t2) * 60;
+            const st2_dx = st2_mall - st2_school; 
+            poolOfStages.push({
+                title: "המסלול המפוצל של דניאל",
+                context: `דניאל הלך מ<b>בית הספר</b> אל <b>הרמזור</b> במשך ${st2_t1} דקות.<br>משם הוא המשיך מיד אל <b>המרכז המסחרי</b> במשך ${st2_t2} דקות.`,
+                visualHtml: generateDynamicAxis(st2_mall - 10, st2_light + 10, st2_tickStep, [
+                    { val: st2_mall, name: "מרכז מסחרי", emoji: "🛒", color: "#8b5cf6", bg: "#ede9fe" },
+                    { val: st2_school, name: "בית ספר", emoji: "🏫", color: "#3b82f6", bg: "#eff6ff" },
+                    { val: st2_light, name: "רמזור", emoji: "🚦", color: "#f59e0b", bg: "#fef3c7" }
+                ]),
+                subQs: [
+                    { text: "מהו ההעתק הכולל של דניאל (מבית הספר עד למרכז)?", ans: formatVal(st2_dx), type: 'num', unit: "m" },
+                    { text: "מהי מהירותו הממוצעת של דניאל לכל אורך התנועה?", ans: formatVal(st2_dx / st2_tot_sec), type: 'num', unit: "m/s" }
+                ]
+            });
+
+            // 3. Train Conversion
+            const st3_vkph = pick([72, 90, 108, 126, 144]);
+            const st3_th = randInt(2, 6); 
+            poolOfStages.push({
+                title: "נסיעה בין עירונית (המרת יחידות)",
+                context: `רכבת מהירה עברה מרחק של ${st3_vkph * st3_th} ק"מ בקו ישר. זמן הנסיעה הכולל היה בדיוק ${st3_th} שעות.<br>כדי לעבור מ-km/h ל-m/s יש לחלק ב-3.6.`,
+                subQs: [
+                    { text: "מה הייתה המהירות הממוצעת של הרכבת בקמ\"ש?", ans: formatVal(st3_vkph), type: 'num', unit: "km/h" },
+                    { text: "מה הייתה המהירות הממוצעת של הרכבת במטרים לשנייה?", ans: formatVal(st3_vkph / 3.6), type: 'num', unit: "m/s" }
+                ]
+            });
+
+            // 4. Runner Distance
+            const st4_vmps = randInt(4, 8);
+            const st4_tmin = pick([10, 15, 20, 30, 45]); 
+            poolOfStages.push({
+                title: "ריצה בפארק (חישוב דרך)",
+                context: `אצן רץ במסלול ישר במהירות ממוצעת של $${st4_vmps} \\text{ m/s}$.<br>הריצה נמשכה בדיוק ${st4_tmin} דקות (שימו לב ליחידות!).`,
+                subQs: [
+                    { text: "מהו המרחק הכולל שעבר האצן במטרים?", ans: formatVal(st4_vmps * st4_tmin * 60), type: 'num', unit: "m" },
+                    { text: "מהו המרחק הכולל שעבר בקילומטרים?", ans: formatVal((st4_vmps * st4_tmin * 60) / 1000), type: 'num', unit: "km" }
+                ]
+            });
+
+            // 5. Mrs Israeli 3 stages
+            const st6 = pick([
+                { t1: 2, tr: 1, t2: 2, v1: 90, v2: 100 },
+                { t1: 1.5, tr: 0.5, t2: 2, v1: 80, v2: 90 },
+                { t1: 3, tr: 1, t2: 4, v1: 100, v2: 80 }
+            ]);
+            const st6_dtot = (st6.v1 * st6.t1) + (st6.v2 * st6.t2);
+            const st6_ttot = st6.t1 + st6.tr + st6.t2;
+            poolOfStages.push({
+                title: "תנועה בשלבים (הטיול של גברת ישראלי)",
+                context: `גברת ישראלי נסעה ${st6.t1} שעות במהירות של ${st6.v1} קמ"ש. <br>אז עצרה לנוח ${st6.tr} שעות. <br>לבסוף המשיכה קדימה ${st6.t2} שעות במהירות של ${st6.v2} קמ"ש.`,
+                subQs: [
+                    { text: "מהו המרחק הכולל שעברה בטיול?", ans: formatVal(st6_dtot), type: 'num', unit: "km" },
+                    { text: "מה הייתה מהירותה הממוצעת לכל אורך הטיול?", ans: formatVal(st6_dtot / st6_ttot), type: 'num', unit: "km/h" }
+                ]
+            });
+
+            // 6. Round Trip
+            const st7_dist = pick([240, 360, 480, 600]);
+            poolOfStages.push({
+                title: "הלוך ושוב (דרך לעומת העתק)",
+                context: `רוכב אופניים יצא מביתו, רכב מרחק של ${st7_dist} מטרים עד הפארק.<br>לאחר מנוחה, הוא הסתובב ורכב באותו מסלול בדיוק בחזרה לביתו.`,
+                subQs: [
+                    { text: "מהו ההעתק ($\\Delta x$) הכולל של הרוכב משיצא ועד שחזר לביתו?", ans: 0, type: 'num', unit: "m" },
+                    { text: "מהי הדרך הכוללת (סך המרחק) שעבר הרוכב?", ans: formatVal(st7_dist * 2), type: 'num', unit: "m" },
+                    { text: "מה תהיה המהירות הממוצעת הכוללת שלו לכל המסע?", ans: 0, type: 'num', unit: "m/s" }
+                ]
+            });
+
+            // 7. Graph Single (Crosses 0)
+            const g2_slope = pick([-4, -5, -6, -8]);
+            const g2_t_cross = pick([4, 5, 6]); 
+            const g2_x0 = -g2_slope * g2_t_cross; 
+            const g2_x1 = g2_x0 + g2_slope * 10;
+            poolOfStages.push({
+                title: "ניתוח גרף מקום-זמן (תנועה שוות מהירות)",
+                context: `הגרף הבא מתאר תנועה של גוף לאורך קו ישר במשך 10 שניות.`,
+                hasGraph: true,
+                graphDataObj: [{
+                    label: 'מיקום הגוף',
+                    data: [{x: 0, y: g2_x0}, {x: g2_t_cross, y: 0}, {x: 10, y: g2_x1}],
+                    color: '#2563eb'
+                }],
+                subQs: [
+                    { text: "מהו המיקום ההתחלתי של הגוף ($t=0$)?", ans: formatVal(g2_x0), type: 'num', unit: "m" },
+                    { text: "מהו ההעתק הכללי של הגוף מתחילת התנועה ועד סופה ($t=10$)?", ans: formatVal(g2_x1 - g2_x0), type: 'num', unit: "m" },
+                    { text: "מהי המהירות הממוצעת של הגוף (שיפוע הגרף)?", ans: formatVal(g2_slope), type: 'num', unit: "m/s" }
+                ]
+            });
+
+            // 8. Opposite directions
+            const st11_va = randInt(5, 8);
+            const st11_vb = randInt(3, 5);
+            const st11_time = pick([10, 15, 20]);
+            poolOfStages.push({
+                title: "תנועה בכיוונים מנוגדים",
+                context: `עומר ותומר עומדים גב אל גב בנקודה x=0 ומתחילים ללכת.<br>עומר הולך ימינה (כיוון חיובי) במהירות קבועה של $${st11_va} \\text{ m/s}$.<br>תומר הולך שמאלה (כיוון שלילי) במהירות של $${st11_vb} \\text{ m/s}$.`,
+                subQs: [
+                    { text: `מה יהיה מיקומו של עומר לאחר ${st11_time} שניות?`, ans: formatVal(st11_va * st11_time), type: 'num', unit: "m" },
+                    { text: `מה יהיה מיקומו של תומר לאחר ${st11_time} שניות?`, ans: formatVal(-(st11_vb * st11_time)), type: 'num', unit: "m" },
+                    { text: `מה יהיה המרחק ביניהם לאחר ${st11_time} שניות?`, ans: formatVal((st11_va + st11_vb) * st11_time), type: 'num', unit: "m" }
+                ]
+            });
+
+            // 9. Multi-segment Scooter Graph
+            const t1 = pick([3, 4, 5]);
+            const v1 = pick([4, 5, 6]);
+            const x1 = v1 * t1;
+            const t2 = t1 + pick([2, 3, 4]); // flat
+            const t3 = t2 + pick([3, 4, 5]);
+            const v3 = pick([-2, -4, -6]);
+            const x3 = x1 + v3 * (t3 - t2);
+            
+            poolOfStages.push({
+                title: "תנועה מרובת שלבים (הקורקינט)",
+                context: `לפניכם גרף המתאר את תנועתו של ילד על קורקינט לאורך שביל ישר. הגרף מורכב משלושה שלבים שונים (התקדמות, עצירה וחזרה).`,
+                hasGraph: true,
+                graphDataObj: [{
+                    label: 'מיקום הקורקינט',
+                    data: [{x: 0, y: 0}, {x: t1, y: x1}, {x: t2, y: x1}, {x: t3, y: x3}],
+                    color: '#f59e0b'
+                }],
+                subQs: [
+                    { text: `עד לאיזה מרחק מנקודת המוצא הגיע הילד (מיקום מקסימלי)?`, ans: formatVal(x1), type: 'num', unit: "m" },
+                    { text: `במשך כמה שניות עמד הילד במנוחה (מהירות אפס)?`, ans: formatVal(t2 - t1), type: 'num', unit: "s" },
+                    { text: `מהו ההעתק הכולל של הילד מתחילת התנועה עד סופה (t=${t3})?`, ans: formatVal(x3), type: 'num', unit: "m" },
+                    { text: `מהי הדרך הכוללת שעבר הילד (קדימה ואחורה יחד)?`, ans: formatVal(x1 + Math.abs(x3 - x1)), type: 'num', unit: "m" }
+                ]
+            });
+
+            // 10. Two Objects Graph (COMPARING VELOCITIES - NO INTERSECTION TIME CALC)
+            const g10_tEnd = pick([8, 10, 12]);
+            const g10_va = pick([2, 3, 4]); 
+            const g10_vb = pick([-1, -2, -3]); 
+            const g10_xA_start = 0;
+            const g10_xA_end = g10_va * g10_tEnd;
+            const g10_xB_start = pick([40, 50, 60]);
+            const g10_xB_end = g10_xB_start + g10_vb * g10_tEnd;
+            const fasterStr = Math.abs(g10_va) > Math.abs(g10_vb) ? "גוף א'" : "גוף ב'";
+
+            poolOfStages.push({
+                title: "השוואת מהירויות מתוך גרף",
+                context: `לפניכם גרף מקום-זמן של שני גופים, גוף א' (בכחול) וגוף ב' (באדום), הנעים על אותו ציר מקום לאורך קו ישר במשך ${g10_tEnd} שניות.`,
+                hasGraph: true,
+                graphDataObj: [
+                    { label: 'גוף א\'', data: [{x: 0, y: g10_xA_start}, {x: g10_tEnd, y: g10_xA_end}], color: '#3b82f6' },
+                    { label: 'גוף ב\'', data: [{x: 0, y: g10_xB_start}, {x: g10_tEnd, y: g10_xB_end}], color: '#ef4444' }
+                ],
+                subQs: [
+                    { text: `מהו ההעתק של גוף א' (הכחול) לאורך כל הזמן המוצג?`, ans: formatVal(g10_xA_end - g10_xA_start), type: 'num', unit: "m" },
+                    { text: `מהי המהירות הממוצעת של גוף א'?`, ans: formatVal(g10_va), type: 'num', unit: "m/s" },
+                    { text: `מהי המהירות הממוצעת של גוף ב'? (הקפידו על סימן)`, ans: formatVal(g10_vb), type: 'num', unit: "m/s" },
+                    { text: `למי משני הגופים מהירות גדולה יותר (בערכה המוחלט)?`, ans: fasterStr, type: 'select', options: ["גוף א'", "גוף ב'", "המהירויות שוות בגודלן"] }
+                ]
+            });
+
+            // 11. Parabola Graph (Average Velocity of Accelerated Motion)
+            const a_parabola = pick([0.5, 1, 2]); // x = a*t^2
+            let parabolaData = [];
+            for(let t=0; t<=6; t+=0.5) {
+                parabolaData.push({x: t, y: formatVal(a_parabola * t * t)});
+            }
+            const t_start_p = 2;
+            const t_end_p = 6;
+            const x_start_p = a_parabola * t_start_p * t_start_p;
+            const x_end_p = a_parabola * t_end_p * t_end_p;
+            const v_avg_p = (x_end_p - x_start_p) / (t_end_p - t_start_p);
+
+            poolOfStages.push({
+                title: "חישוב מהירות ממוצעת בגרף עקום (פרבולה)",
+                context: `הגרף שלפניכם הוא <b>קו עקום (פרבולה)</b>, המתאר גוף שמהירותו אינה קבועה אלא מואצת. <br>כדי למצוא מהירות ממוצעת בין שני זמנים, אנו מחשבים את השיפוע של המיתר המחבר את שתי הנקודות על הגרף.`,
+                hasGraph: true,
+                graphDataObj: [{
+                    label: 'מקום הגוף',
+                    data: parabolaData,
+                    color: '#8b5cf6',
+                    tension: 0.4, // Curvy line
+                    pointRadius: (ctx) => { return Number.isInteger(ctx.parsed.x) ? 5 : 0; } // Only show dots on integers
+                }],
+                subQs: [
+                    { text: `מהו מיקום הגוף ברגע t=${t_start_p} שניות?`, ans: formatVal(x_start_p), type: 'num', unit: "m" },
+                    { text: `מהו מיקום הגוף ברגע t=${t_end_p} שניות?`, ans: formatVal(x_end_p), type: 'num', unit: "m" },
+                    { text: `מהי המהירות הממוצעת של הגוף בפרק הזמן שבין t=${t_start_p} ל-t=${t_end_p}?`, ans: formatVal(v_avg_p), type: 'num', unit: "m/s" },
+                    { 
+                        text: `האם המהירות של הגוף ברגע t=4 שווה למהירות הממוצעת שחישבתם כעת?`, 
+                        ans: "לא בהכרח. המהירות רגעית משתנה כל הזמן לאורך העקומה.", 
+                        type: 'select', 
+                        options: ["כן, המהירות תמיד שווה למהירות הממוצעת", "לא בהכרח. המהירות רגעית משתנה כל הזמן לאורך העקומה.", "כן, כי 4 זה בדיוק האמצע של הזמן"] 
+                    }
+                ]
+            });
+
+            // 12. Comparison of Average Velocities
+            const st12_t_total = pick([4, 5, 6]);
+            const st12_distA = pick([300, 360, 420]);
+            const st12_vA = st12_distA / st12_t_total; 
+            const st12_distB = st12_distA - pick([40, 60, 80]); 
+            const st12_vB = st12_distB / st12_t_total;
+
+            poolOfStages.push({
+                title: "השוואת מהירויות ממוצעות",
+                context: `שתי מכוניות, א' ו-ב', יצאו לאותה עיר באותו הזמן בדיוק ונסעו במשך ${st12_t_total} שעות (כל אחת עשתה עצירות משלה בדרך).<br>מכונית א' עברה מרחק כולל של ${st12_distA} ק"מ.<br>מכונית ב' הספיקה לעבור רק ${st12_distB} ק"מ באותו פרק זמן.`,
+                subQs: [
+                    { text: `מה הייתה המהירות הממוצעת של מכונית א'?`, ans: formatVal(st12_vA), type: 'num', unit: "km/h" },
+                    { text: `מה הייתה המהירות הממוצעת של מכונית ב'?`, ans: formatVal(st12_vB), type: 'num', unit: "km/h" },
+                    { text: `בכמה קמ"ש גדולה המהירות הממוצעת של מכונית א' מזו של ב'?`, ans: formatVal(st12_vA - st12_vB), type: 'num', unit: "km/h" }
+                ]
+            });
+
+            // 13. Another Graph Reading (Negative coordinates)
+            const g13_p1 = randInt(10, 20);
+            const g13_p2 = randInt(-25, -15);
+            poolOfStages.push({
+                title: "תנועה ושינוי כיוון",
+                context: `גוף נע על קו ישר לאורך ציר ה-x, כפי שמתואר בגרף שלפניכם.`,
+                hasGraph: true,
+                graphDataObj: [{
+                    label: 'מיקום הגוף',
+                    data: [{x: 0, y: 0}, {x: 4, y: g13_p1}, {x: 6, y: g13_p1}, {x: 10, y: g13_p2}],
+                    color: '#10b981'
+                }],
+                subQs: [
+                    { text: "מהו ההעתק הכללי של הגוף מתחילת התנועה ($t=0$) ועד סופה ($t=10$)?", ans: formatVal(g13_p2), type: 'num', unit: "m" },
+                    { text: "מהי המהירות הממוצעת הכוללת ב-10 השניות המוצגות?", ans: formatVal(g13_p2 / 10), type: 'num', unit: "m/s" },
+                    { text: "מהי הדרך הכוללת (סך כל המרחק) שעבר הגוף ב-10 שניות?", ans: formatVal(g13_p1 + (g13_p1 - g13_p2)), type: 'num', unit: "m" }
+                ]
+            });
+
+            // 14. Basic Velocity calc
+            const st14_t = pick([5, 8, 12]);
+            const st14_v = pick([-15, -20, -25]); // Negative v
+            const st14_x0 = pick([100, 200, 300]);
+            const st14_xf = st14_x0 + (st14_v * st14_t);
+            poolOfStages.push({
+                title: "חישוב מהירות (תשומת לב לסימן)",
+                context: `עצם שמימי חולף ליד תחנת חלל. בשנייה $t=0$ מיקומו היה $x = ${st14_x0} \\text{ m}$. <br>לאחר ${st14_t} שניות מיקומו נמדד כ-$x = ${st14_xf} \\text{ m}$.`,
+                subQs: [
+                    { text: "מה היה העתק העצם?", ans: formatVal(st14_xf - st14_x0), type: 'num', unit: "m" },
+                    { text: "מה הייתה מהירותו הממוצעת של העצם? (הקפידו על סימן)", ans: formatVal(st14_v), type: 'num', unit: "m/s" }
+                ]
+            });
+
+            // 15. Time calc
+            const st15_v = pick([15, 20, 25, 30]);
+            const st15_dist = pick([300, 450, 600, 900]);
+            poolOfStages.push({
+                title: "חישוב זמן התנועה",
+                context: `רוכב קורקינט חשמלי נוסע במהירות קבועה של $${st15_v} \\text{ m/s}$ לאורך מסלול אופניים ישר.`,
+                subQs: [
+                    { text: `כמה שניות יחלפו עד שהרוכב יעבור דרך של ${st15_dist} מטרים?`, ans: formatVal(st15_dist / st15_v), type: 'num', unit: "s" },
+                    { text: `אם הוא יסע מרחק כפול, כמה זמן תארך הנסיעה בסך הכל (בשניות)?`, ans: formatVal((st15_dist * 2) / st15_v), type: 'num', unit: "s" }
+                ]
+            });
+
+            // 16. Theory Summary (Always Last)
+            const theoryStage = {
+                title: "סיכום תיאורטי (הבנת המושגים)",
+                context: "הגענו לשלב האחרון! בואו נבדוק הבנה תיאורטית של מושג המהירות הממוצעת.",
+                subQs: [
+                    { 
+                        text: "האם ייתכן שגוף ינוע במהלך פרק זמן מסוים, אך מהירותו הממוצעת לאותו פרק זמן תהיה שווה לאפס?", 
+                        ans: "כן, זה יקרה אם הגוף יחזור בדיוק לנקודת ההתחלה שלו (העתק אפס)", 
+                        type: 'select', 
+                        options: [
+                            "לא, אם הגוף נע המהירות הממוצעת חייבת להיות שונה מאפס", 
+                            "כן, זה יקרה אם הגוף ישנה את תאוצתו בפתאומיות", 
+                            "כן, זה יקרה אם הגוף יחזור בדיוק לנקודת ההתחלה שלו (העתק אפס)"
+                        ] 
+                    },
+                    { 
+                        text: "האם מהירות ממוצעת שווה בהכרח לממוצע החשבוני של מהירויות הגוף בשלבים השונים?", 
+                        ans: "לא. המהירות הממוצעת מחושבת על ידי ההעתק הכולל חלקי הזמן הכולל", 
+                        type: 'select', 
+                        options: [
+                            "כן, כך מחשבים ממוצע במתמטיקה ולכן גם בפיזיקה", 
+                            "לא. המהירות הממוצעת מחושבת על ידי ההעתק הכולל חלקי הזמן הכולל", 
+                            "כן, אך ורק אם המהירויות שוות בגודלן אך הפוכות בכיוונן"
+                        ] 
+                    },
+                    { 
+                        text: "בגרף של מיקום (x) כפונקציה של זמן (t), מה מבטאת המהירות הממוצעת בין שני רגעים?", 
+                        ans: "את השיפוע של הישר (המיתר) המחבר בין שתי הנקודות על הגרף", 
+                        type: 'select', 
+                        options: [
+                            "את השטח הכלוא מתחת לגרף", 
+                            "את השיפוע של הישר (המיתר) המחבר בין שתי הנקודות על הגרף", 
+                            "את נקודת החיתוך עם ציר הזמן"
+                        ] 
+                    }
+                ]
+            };
+
+            // Shuffle the 15 calculation stages and pick exactly 11.
+            let selectedCalcStages = shuffleArray(poolOfStages).slice(0, 11);
+            
+            // Rebuild the final array (11 + 1 theory = 12 total stages for the game)
+            quizStages = [...selectedCalcStages, theoryStage];
+
+            // Count total fields
+            totalPossible = 0;
+            quizStages.forEach(stage => { totalPossible += stage.subQs.length; });
+        }
+
+        function generateUniqueGameId() {
+            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
+            let result = 'VEL-';
+            for (let i = 0; i < 4; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+            result += '-';
+            for (let i = 0; i < 4; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
+            return result;
+        }
+
+        function startGame() {
+            const nameField = document.getElementById('player-name-input');
+            const trimmedName = nameField.value.trim();
+            
+            if (trimmedName === "") {
+                showAlertModal("אנא הכניסו שם שחקן (שם מלא) כדי להתחיל במשחק!");
+                nameField.focus();
+                return;
+            }
+
+            playerName = trimmedName;
+            gameId = generateUniqueGameId();
+
+            buildDynamicQuiz();
+
+            document.getElementById('start-screen').classList.add('hidden');
+            document.getElementById('quiz-container').classList.remove('hidden');
+            document.getElementById('header-stats').classList.remove('hidden');
+            document.getElementById('header-stats').classList.add('flex');
+            
+            currentIndex = 0;
+            score = 0;
+            updateUI();
+        }
+
+        function shuffleArray(array) {
+            let newArr = [...array];
+            for (let i = newArr.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [newArr[i], newArr[j]] = [newArr[j], newArr[i]];
+            }
+            return newArr;
+        }
+
+        function drawGraph(datasetsObj) {
+            const ctx = document.getElementById('scenario-chart').getContext('2d');
+            if (currentChart) currentChart.destroy();
+
+            let mappedDatasets = datasetsObj.map((ds, index) => {
+                return {
+                    label: ds.label || `גוף ${index+1}`,
+                    data: ds.data,
+                    borderColor: ds.color || '#2563eb',
+                    backgroundColor: ds.color || '#2563eb',
+                    borderWidth: 2,
+                    pointRadius: ds.pointRadius !== undefined ? ds.pointRadius : 6,
+                    pointHoverRadius: 8,
+                    showLine: true,
+                    fill: false,
+                    tension: ds.tension !== undefined ? ds.tension : 0 
+                };
+            });
+
+            currentChart = new Chart(ctx, {
+                type: 'scatter',
+                data: {
+                    datasets: mappedDatasets
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            type: 'linear',
+                            position: 'bottom',
+                            title: { display: true, text: 'זמן [s]', font: {size: 14, family: 'Assistant', weight: 'bold'} },
+                            ticks: { stepSize: 1 }
+                        },
+                        y: {
+                            title: { display: true, text: 'מקום [m]', font: {size: 14, family: 'Assistant', weight: 'bold'} }
+                        }
+                    },
+                    plugins: {
+                        legend: { 
+                            display: mappedDatasets.length > 1,
+                            position: 'top',
+                            labels: { font: {family: 'Assistant', size: 14, weight: 'bold'} }
+                        },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) {
+                                    return `${context.dataset.label}: (${formatVal(context.parsed.x)}s, ${formatVal(context.parsed.y)}m)`;
+                                }
+                            }
+                        }
+                    }
+                }
+            });
+        }
+
+        function updateUI() {
+            const stage = quizStages[currentIndex];
+            
+            document.getElementById('question-counter').innerText = `תרחיש ${currentIndex + 1} מתוך ${quizStages.length}`;
+            document.getElementById('score-display').innerText = `${score} / ${totalPossible}`;
+            
+            document.getElementById('scenario-title').innerText = stage.title;
+            
+            let contextText = stage.context.replace(/\n/g, '<br>');
+            document.getElementById('scenario-context').innerHTML = contextText;
+
+            // Visual Setup
+            const visualContainer = document.getElementById('visual-container');
+            if (stage.visualHtml) {
+                visualContainer.innerHTML = stage.visualHtml;
+                visualContainer.classList.remove('hidden');
+            } else {
+                visualContainer.classList.add('hidden');
+                visualContainer.innerHTML = "";
+            }
+
+            // Graph Setup
+            const graphContainer = document.getElementById('graph-container-ui');
+            if (stage.hasGraph && stage.graphDataObj) {
+                graphContainer.classList.remove('hidden');
+                drawGraph(stage.graphDataObj);
+            } else {
+                graphContainer.classList.add('hidden');
+            }
+
+            // Questions setup
+            const qArea = document.getElementById('questions-area');
+            qArea.innerHTML = '';
+            
+            stage.subQs.forEach((sq, i) => {
+                let inputHtml = '';
+                
+                if (sq.type === 'num') {
+                    const unitHtml = sq.unit ? `<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 font-bold text-sm" dir="ltr">[${sq.unit}]</div>` : '';
+                    inputHtml = `
+                        <div class="relative w-full sm:w-48 shrink-0">
+                            <input type="number" id="input-${i}" step="any" class="block w-full pl-16 pr-3 py-2 bg-white border-2 border-slate-300 rounded-xl focus:border-blue-500 focus:ring-0 font-bold text-lg outline-none transition-colors dir-ltr text-center" placeholder="הקלד/י...">
+                            ${unitHtml}
+                        </div>`;
+                } else if (sq.type === 'select') {
+                    const shuffledOpts = shuffleArray(sq.options);
+                    inputHtml = `
+                        <select id="input-${i}" class="block w-full px-3 py-2 bg-white border-2 border-slate-300 rounded-xl focus:border-blue-500 focus:ring-0 text-base font-semibold outline-none transition-colors appearance-none cursor-pointer">
+                            <option value="" disabled selected>-- בחרו תשובה --</option>
+                            ${shuffledOpts.map(opt => `<option value="${opt}">${opt}</option>`).join('')}
+                        </select>`;
+                }
+
+                qArea.innerHTML += `
+                    <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm">
+                        <label class="block text-base text-slate-800 font-bold mb-3">${i+1}. ${sq.text.replace(/\$\{([^}]+)\}/g, (_, match) => eval(match))}</label>
+                        <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+                            ${inputHtml}
+                            <span id="feedback-${i}" class="hidden text-base font-bold"></span>
+                        </div>
+                    </div>`;
+            });
+
+            if (window.MathJax && window.MathJax.typesetPromise) {
+                if (MathJax.typesetClear) MathJax.typesetClear();
+                MathJax.typesetPromise([document.getElementById('quiz-container')]).catch(err => console.error(err));
+            }
+
+            const btn = document.getElementById('action-btn');
+            btn.innerText = "בדוק תשובות 🔍";
+            btn.className = "bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold px-8 py-3 rounded-xl transition-all shadow-md w-full sm:w-auto";
+            btn.onclick = checkAnswers;
+        }
+
+        function checkAnswers() {
+            const stage = quizStages[currentIndex];
+            let allAnswered = true;
+
+            stage.subQs.forEach((sq, i) => {
+                const input = document.getElementById(`input-${i}`);
+                if (input.value.trim() === "") allAnswered = false;
+            });
+
+            if (!allAnswered) {
+                showAlertModal("יש למלא את כל הסעיפים לפני ביצוע הבדיקה!");
+                return;
+            }
+
+            let allCorrectInStage = true;
+
+            stage.subQs.forEach((sq, i) => {
+                const input = document.getElementById(`input-${i}`);
+                const feedback = document.getElementById(`feedback-${i}`);
+                let isCorrect = false;
+
+                if (sq.type === 'num') {
+                    let userVal = parseFloat(input.value);
+                    let expectedVal = parseFloat(sq.ans);
+                    
+                    let tolerance = Math.max(0.05, Math.abs(expectedVal * 0.03));
+                    
+                    if (!isNaN(userVal) && Math.abs(userVal - expectedVal) <= tolerance) {
+                        isCorrect = true;
+                    }
+                } else {
+                    if (input.value === sq.ans) isCorrect = true;
+                }
+
+                input.disabled = true;
+                feedback.style.display = 'inline-block';
+                
+                if (isCorrect) {
+                    score++;
+                    input.classList.add('input-correct');
+                    feedback.innerHTML = '✔️ נכון!';
+                    feedback.className = 'inline-block text-base font-bold text-green-600 mt-2 sm:mt-0';
+                } else {
+                    allCorrectInStage = false;
+                    input.classList.add('input-wrong');
+                    let showAns = sq.type === 'num' ? (sq.ans + (sq.unit ? ` [${sq.unit}]` : '')) : sq.ans;
+                    feedback.innerHTML = `❌ שגוי. התשובה: <span class="text-slate-700 font-black dir-ltr inline-block">${showAns}</span>`;
+                    feedback.className = 'inline-block text-base font-bold text-red-600 mt-2 sm:mt-0';
+                }
+            });
+
+            document.getElementById('score-display').innerText = `${score} / ${totalPossible}`;
+
+            if (allCorrectInStage) {
+                createConfettiParticles(30, false);
+            }
+
+            const btn = document.getElementById('action-btn');
+            if (currentIndex < quizStages.length - 1) {
+                btn.innerText = "המשך לתרחיש הבא ←";
+                btn.className = "bg-green-600 hover:bg-green-700 text-white text-lg font-bold px-8 py-3 rounded-xl transition-all shadow-md w-full sm:w-auto";
+                btn.onclick = () => { currentIndex++; updateUI(); };
+            } else {
+                btn.innerText = "סיים וצפה בגיליון הציונים 🏆";
+                btn.className = "bg-purple-600 hover:bg-purple-700 text-white text-lg font-bold px-8 py-3 rounded-xl transition-all shadow-md w-full sm:w-auto transform hover:scale-105";
+                btn.onclick = showEndScreen;
+            }
+        }
+
+        function showEndScreen() {
+            document.getElementById('quiz-container').classList.add('hidden');
+            document.getElementById('header-stats').classList.add('hidden');
+            
+            const end = document.getElementById('end-screen');
+            end.classList.remove('hidden');
+            
+            let perc = Math.round((score / totalPossible) * 100);
+            document.getElementById('final-percentage').innerText = perc + '%';
+            document.getElementById('final-score-text').innerText = `ענית נכון על ${score} מתוך ${totalPossible} סעיפים במשחק.`;
+            
+            document.getElementById('final-player-name').innerText = playerName;
+            
+            const now = new Date();
+            const dateStr = now.toLocaleDateString('he-IL', { year: 'numeric', month: '2-digit', day: '2-digit' });
+            const timeStr = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+            
+            document.getElementById('game-timestamp').innerText = `${dateStr}, ${timeStr}`;
+            document.getElementById('game-id-display').innerText = gameId;
+
+            if (perc >= 80) {
+                triggerBigConfetti();
+            }
+        }
+
+        // --- Confetti Logic ---
+        function createConfettiParticles(amount, isBig) {
+            const colors = ['#3b82f6', '#2563eb', '#1d4ed8', '#f59e0b', '#ef4444', '#10b981'];
+            for (let i = 0; i < amount; i++) {
+                const confetti = document.createElement('div');
+                confetti.style.position = 'fixed';
+                confetti.style.width = isBig ? (Math.random() * 8 + 8) + 'px' : (Math.random() * 6 + 4) + 'px';
+                confetti.style.height = isBig ? (Math.random() * 8 + 8) + 'px' : (Math.random() * 6 + 4) + 'px';
+                confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+                
+                const startX = isBig ? Math.random() * 100 : 40 + Math.random() * 20;
+                const startY = isBig ? -10 : 80;
+                
+                confetti.style.left = startX + 'vw';
+                confetti.style.top = startY + 'vh';
+                confetti.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+                confetti.style.zIndex = '9999';
+                confetti.style.pointerEvents = 'none';
+                document.body.appendChild(confetti);
+
+                const angle = Math.random() * Math.PI * 2;
+                const velocity = isBig ? Math.random() * 10 + 5 : Math.random() * 15 + 10;
+                
+                let tx = Math.cos(angle) * velocity * 5;
+                let ty = isBig ? (Math.random() * 100 + 50) : (-Math.random() * 60 - 20);
+
+                const fallAnimation = confetti.animate([
+                    { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
+                    { transform: `translate(${tx}vw, ${ty}vh) rotate(${Math.random() * 720}deg)`, opacity: 0 }
+                ], {
+                    duration: Math.random() * 1500 + 1000,
+                    easing: 'cubic-bezier(.25,.8,.25,1)'
+                });
+
+                fallAnimation.onfinish = () => confetti.remove();
+            }
+        }
+
+        function triggerBigConfetti() {
+            let count = 0;
+            const interval = setInterval(() => {
+                createConfettiParticles(20, true);
+                count++;
+                if (count > 5) clearInterval(interval);
+            }, 300);
+        }
+
+    </script>
+</body>
+</html>
