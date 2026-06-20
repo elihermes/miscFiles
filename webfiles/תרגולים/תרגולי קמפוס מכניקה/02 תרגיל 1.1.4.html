@@ -26,10 +26,10 @@
     <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
 
     <style>
-        @import url('https://fonts.googleapis.com/css2?family=Rubik:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap');
         
         body {
-            font-family: 'Rubik', sans-serif;
+            font-family: 'Assistant', sans-serif;
             background-color: #f8fafc; /* slate-50 */
         }
 
@@ -144,6 +144,7 @@
     <header class="w-full max-w-4xl flex justify-between items-center mb-8">
         <div>
             <h1 class="text-3xl font-bold text-slate-900 flex items-center gap-2">
+                <span id="teacher-trigger" class="cursor-pointer p-1.5 bg-blue-600 text-white rounded-lg text-sm transition hover:bg-purple-600 shadow-sm select-none">⏱️</span>
                 <i data-lucide="car-front" class="text-blue-600 w-8 h-8"></i>
                 משחק מושגי יסוד בקינמטיקה (1.1.4)
             </h1>
@@ -240,7 +241,7 @@
             <div class="bg-slate-100 rounded-xl p-4 text-right text-sm text-slate-600 font-mono space-y-2 border border-slate-200">
                 <div>• <span class="font-bold">נושא:</span> <span class="text-slate-900 font-sans font-bold">משחק מושגי יסוד בקינמטיקה (1.1.4)</span></div>
                 <div>• <span class="font-bold">תאריך סיום:</span> <span id="run-date" class="text-slate-900 font-sans font-bold"></span>, <span id="run-time" class="text-slate-900 font-sans font-bold"></span></div>
-                <div>• <span class="font-bold">קוד אימות מורה:</span> <span id="run-id" class="text-blue-700 font-bold"></span></div>
+                <div>• <span class="font-bold">קוד אימות מורה:</span> <span id="run-id" class="text-blue-700 font-bold tracking-wider"></span></div>
             </div>
 
             <button id="restart-btn" class="mt-8 bg-slate-800 hover:bg-slate-900 text-white font-bold px-8 py-3 rounded-xl w-full shadow-md text-lg transition-all">
@@ -250,7 +251,39 @@
 
     </main>
 
+    <!-- Custom Modal for Alerts -->
+    <div id="alert-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-[99999]">
+        <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center border border-slate-200">
+            <div class="text-4xl mb-3">⚠️</div>
+            <h3 class="text-xl font-bold text-slate-800 mb-2">שימו לב</h3>
+            <p id="alert-text" class="text-slate-600 mb-6">נא להזין את כל השדות</p>
+            <button id="close-alert-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl transition-all">הבנתי</button>
+        </div>
+    </div>
+
+    <!-- Teacher Verification Modal -->
+    <div id="teacher-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-[99999]">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2"><span class="text-2xl">🕵️</span> מסוף אימות מורה</h3>
+                <button id="close-teacher-modal" class="text-slate-400 hover:text-slate-600 text-3xl font-bold leading-none">&times;</button>
+            </div>
+            <p class="text-sm text-slate-500 mb-3">הזן שם תלמיד/ה וקוד מהצילום כדי לאמת.</p>
+            <div class="space-y-3">
+                <input type="text" id="verify-name" class="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-purple-500 outline-none font-bold" placeholder="שם תלמיד/ה" />
+                <input type="text" id="verify-code" dir="ltr" class="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-purple-500 outline-none font-bold text-left uppercase" placeholder="קוד אימות" />
+                <button id="verify-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition-all">אמת נתונים</button>
+                <div id="verify-result" class="hidden p-4 rounded-xl border text-sm"></div>
+            </div>
+        </div>
+    </div>
+
     <script>
+    (() => {
+        'use strict';
+
+        const VERIFICATION_PREFIX = 'KIN';
+
         // --- Utilities & Math Helpers ---
         const getRandomInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
         const getRandomFloat = (min, max, decimals = 2) => Number((Math.random() * (max - min) + min).toFixed(decimals));
@@ -323,6 +356,7 @@
         let currentQuestionIndex = 0;
         let score = 0;
         let totalPossibleScore = 0;
+        let checkClicks = 0;
         let questions = []; 
         let currentChart = null; 
 
@@ -335,6 +369,16 @@
         const restartBtn = document.getElementById('restart-btn');
         const questionsArea = document.getElementById('questions-area');
         const visualContainer = document.getElementById('visual-container');
+        const teacherTrigger = document.getElementById('teacher-trigger');
+        const alertModal = document.getElementById('alert-modal');
+        const alertText = document.getElementById('alert-text');
+        const closeAlertBtn = document.getElementById('close-alert-btn');
+        const teacherModal = document.getElementById('teacher-modal');
+        const verifyNameInput = document.getElementById('verify-name');
+        const verifyCodeInput = document.getElementById('verify-code');
+        const verifyBtn = document.getElementById('verify-btn');
+        const verifyResult = document.getElementById('verify-result');
+        const closeTeacherModalBtn = document.getElementById('close-teacher-modal');
         
         lucide.createIcons();
 
@@ -344,8 +388,124 @@
             }
         }
 
-        window.selectChoice = function(containerId, buttonElement) {
-            const container = document.getElementById(containerId);
+        function showAlertModal(message) {
+            if (!alertModal || !alertText) {
+                alert(message);
+                return;
+            }
+            alertText.innerText = message;
+            alertModal.classList.remove('hidden');
+        }
+
+        function closeAlertModal() {
+            if (alertModal) alertModal.classList.add('hidden');
+        }
+
+        function bindTeacherHotspot(el) {
+            if (!el) return;
+            el.addEventListener('dblclick', openTeacherModal);
+            let pressTimer = null;
+            el.addEventListener('touchstart', () => {
+                pressTimer = setTimeout(openTeacherModal, 1000);
+            }, { passive: true });
+            el.addEventListener('touchend', () => clearTimeout(pressTimer));
+        }
+
+        function generateSmartGameId(name, sc, tot, clicks) {
+            const toHex = (n) => n.toString(16).padStart(2, '0').toUpperCase();
+            const safeSc = Math.max(0, Math.min(255, sc || 0));
+            const safeTot = Math.max(0, Math.min(255, tot || 0));
+            const safeClicks = Math.max(0, Math.min(255, clicks || 0));
+            const hexData = toHex(safeSc) + toHex(safeTot) + toHex(safeClicks);
+
+            let nameVal = 0;
+            const cleanName = name.trim();
+            for (let i = 0; i < cleanName.length; i++) {
+                nameVal += cleanName.charCodeAt(i);
+            }
+
+            const checksumNum = (nameVal * 17) + safeSc + safeTot + safeClicks;
+            const checksumHex = checksumNum.toString(16).padStart(4, '0').toUpperCase().slice(-4);
+            return `${VERIFICATION_PREFIX}-${hexData}-${checksumHex}`;
+        }
+
+        function resetVerifyResult() {
+            verifyResult.classList.add('hidden');
+            verifyResult.classList.remove('bg-green-50', 'text-green-800', 'border-green-200', 'bg-red-50', 'text-red-800', 'border-red-200');
+            verifyResult.innerHTML = '';
+        }
+
+        function showVerifyError(msg) {
+            verifyResult.classList.remove('hidden');
+            verifyResult.classList.add('bg-red-50', 'text-red-800', 'border-red-200');
+            verifyResult.innerHTML = `<div class="font-black mb-1">🚫 קוד שגוי/מזויף</div><div>${msg}</div>`;
+        }
+
+        function openTeacherModal() {
+            teacherModal.classList.remove('hidden');
+            verifyNameInput.value = '';
+            verifyCodeInput.value = '';
+            resetVerifyResult();
+        }
+
+        function closeTeacherModal() {
+            teacherModal.classList.add('hidden');
+        }
+
+        function executeVerification() {
+            const name = verifyNameInput.value.trim();
+            const code = verifyCodeInput.value.trim().toUpperCase();
+            resetVerifyResult();
+
+            if (!name || !code) {
+                showVerifyError('נא להזין שם וקוד.');
+                return;
+            }
+
+            const parts = code.split('-');
+            if (parts.length !== 3 || parts[0] !== VERIFICATION_PREFIX) {
+                showVerifyError(`מבנה הקוד אינו תקין (חייב להתחיל ב-${VERIFICATION_PREFIX}).`);
+                return;
+            }
+
+            const hexData = parts[1] || '';
+            const checksum = parts[2] || '';
+            if (hexData.length !== 6 || checksum.length !== 4) {
+                showVerifyError('אורכי חלקי הקוד אינם תקינים.');
+                return;
+            }
+
+            const sc = parseInt(hexData.slice(0, 2), 16);
+            const tot = parseInt(hexData.slice(2, 4), 16);
+            const clicks = parseInt(hexData.slice(4, 6), 16);
+            if ([sc, tot, clicks].some(Number.isNaN)) {
+                showVerifyError('הקוד מכיל תווים לא חוקיים בבלוק הנתונים.');
+                return;
+            }
+
+            let nameVal = 0;
+            for (let i = 0; i < name.length; i++) {
+                nameVal += name.charCodeAt(i);
+            }
+            const expectedNum = (nameVal * 17) + sc + tot + clicks;
+            const expectedChecksum = expectedNum.toString(16).padStart(4, '0').toUpperCase().slice(-4);
+
+            if (checksum !== expectedChecksum) {
+                showVerifyError('חתימת האבטחה שגויה. ייתכן שהקוד זויף או שהשם לא תואם.');
+                return;
+            }
+
+            verifyResult.classList.remove('hidden');
+            verifyResult.classList.add('bg-green-50', 'text-green-800', 'border-green-200');
+            verifyResult.innerHTML = `
+                <div class="font-black mb-1">✅ אימות עבר בהצלחה</div>
+                <div>שחקן/ית: <b>${name}</b></div>
+                <div>ציון: <b>${sc}</b> מתוך <b>${tot}</b></div>
+                <div>לחיצות בדיקה: <b>${clicks}</b></div>
+            `;
+        }
+
+        function selectChoice(container, buttonElement) {
             if (container.dataset.disabled === "true") return;
 
             const buttons = container.querySelectorAll('.choice-card');
@@ -355,7 +515,7 @@
 
             buttonElement.classList.add('selected', 'border-blue-500', 'bg-blue-100');
             container.dataset.selected = buttonElement.dataset.option;
-        };
+        }
 
         // --- Generators (Regular) ---
 
@@ -814,13 +974,13 @@
                 ctx.fill();
 
                 ctx.fillStyle = '#64748b';
-                ctx.font = '12px Rubik';
+                ctx.font = '12px Assistant';
                 ctx.textAlign = 'center';
                 ctx.fillText(`t${index}`, xPx, 70);
                 ctx.fillStyle = '#1e293b'; 
             });
 
-            ctx.font = '14px Rubik';
+            ctx.font = '14px Assistant';
             ctx.fillStyle = '#334155';
             ctx.textAlign = 'center';
             
@@ -846,7 +1006,7 @@
             ctx.textAlign = 'right';
             ctx.fillText('x [cm]', padding + range * scale + 40, 160);
 
-            ctx.font = '16px Rubik';
+            ctx.font = '16px Assistant';
             ctx.fillStyle = '#1e293b';
             ctx.textAlign = 'right';
             ctx.fillText('כיוון תנועה', canvas.width - 20, 35);
@@ -938,11 +1098,11 @@
                         title: {
                             display: true,
                             text: titleText,
-                            font: { family: 'Rubik', size: 18 }
+                            font: { family: 'Assistant', size: 18 }
                         },
                         legend: { 
                             display: isTwoBodies, 
-                            labels: { font: { family: 'Rubik', size: 14 } }
+                            labels: { font: { family: 'Assistant', size: 14 } }
                         }
                     },
                     scales: {
@@ -951,7 +1111,7 @@
                             position: 'bottom',
                             min: 0,
                             suggestedMax: data.t_end,
-                            title: { display: true, text: 'זמן (s)', font: { family: 'Rubik' } },
+                            title: { display: true, text: 'זמן (s)', font: { family: 'Assistant' } },
                             grid: {
                                 borderColor: '#000000',
                                 borderWidth: 2,
@@ -961,7 +1121,7 @@
                         y: {
                             min: yMinBound,
                             suggestedMax: yMaxBound,
-                            title: { display: true, text: yLabel, font: { family: 'Rubik' } },
+                            title: { display: true, text: yLabel, font: { family: 'Assistant' } },
                             grid: {
                                 borderColor: '#000000',
                                 borderWidth: 2,
@@ -1015,7 +1175,7 @@
                 if (subQ.type === 'select') {
                     const optionsHtml = subQ.options.map((opt) => {
                         return `
-                            <button type="button" data-option="${opt}" onclick="selectChoice('${id}', this)" class="choice-card text-right p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all block w-full focus:outline-none">
+                            <button type="button" data-option="${opt}" class="choice-card text-right p-4 border border-slate-200 rounded-lg hover:bg-slate-50 transition-all block w-full focus:outline-none">
                                 ${opt}
                             </button>
                         `;
@@ -1068,9 +1228,11 @@
             });
 
             if (!allAnswered) {
-                alert("אנא ענה/י על כל הסעיפים לפני הבדיקה.");
+                showAlertModal("אנא ענה/י על כל הסעיפים לפני הבדיקה.");
                 return;
             }
+
+            checkClicks++;
 
             let allCorrectInStage = true;
 
@@ -1171,24 +1333,33 @@
             const now = new Date();
             const pad = (n) => n.toString().padStart(2, '0');
             document.getElementById('run-date').innerText = `${pad(now.getDate())}/${pad(now.getMonth()+1)}/${now.getFullYear()}`;
-            document.getElementById('run-time').innerText = `${pad(now.getHours())}:${pad(now.getMinutes())}`;
-            
-            const runId = Math.random().toString(36).substring(2, 8).toUpperCase();
+            document.getElementById('run-time').innerText = `${pad(now.getHours())}:${pad(now.getMinutes())}:${pad(now.getSeconds())}`;
+
+            const runId = generateSmartGameId(playerName, score, totalPossibleScore, checkClicks);
             document.getElementById('run-id').innerText = runId;
         }
 
         // --- Event Listeners ---
 
+        questionsArea.addEventListener('click', (event) => {
+            const choiceBtn = event.target.closest('.choice-card');
+            if (!choiceBtn) return;
+            const container = choiceBtn.closest('.choice-container');
+            if (!container) return;
+            selectChoice(container, choiceBtn);
+        });
+
         startBtn.addEventListener('click', () => {
             const nameInput = document.getElementById('player-name').value.trim();
             if (!nameInput) {
-                alert("אנא הכנס/י שם שחקן (שם מלא) כדי להתחיל במשחק!");
+                showAlertModal("אנא הכנס/י שם שחקן (שם מלא) כדי להתחיל במשחק!");
                 return;
             }
             playerName = nameInput;
             
             currentQuestionIndex = 0;
             score = 0;
+            checkClicks = 0;
             document.getElementById('current-score').innerText = '0';
             
             generateQuestions();
@@ -1199,6 +1370,10 @@
             gameScreen.classList.remove('hidden');
             
             loadQuestion();
+        });
+
+        document.getElementById('player-name').addEventListener('keydown', (e) => {
+            if (e.key === 'Enter') startBtn.click();
         });
 
         checkBtn.addEventListener('click', checkCurrentAnswers);
@@ -1212,6 +1387,22 @@
             summaryScreen.classList.add('hidden');
             setupScreen.classList.remove('hidden');
             document.getElementById('player-name').value = '';
+            checkClicks = 0;
+        });
+
+        if (closeAlertBtn) closeAlertBtn.addEventListener('click', closeAlertModal);
+
+        bindTeacherHotspot(teacherTrigger);
+        if (closeTeacherModalBtn) closeTeacherModalBtn.addEventListener('click', closeTeacherModal);
+        if (verifyBtn) verifyBtn.addEventListener('click', executeVerification);
+
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.shiftKey && e.key.toLowerCase() === 'm') {
+                openTeacherModal();
+            }
+            if (e.key === 'Escape' && teacherModal && !teacherModal.classList.contains('hidden')) {
+                closeTeacherModal();
+            }
         });
 
         window.addEventListener('resize', () => {
@@ -1225,6 +1416,8 @@
                 }
             }
         });
+
+    })();
 
     </script>
 </body>

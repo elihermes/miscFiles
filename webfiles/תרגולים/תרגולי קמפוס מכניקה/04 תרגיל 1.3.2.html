@@ -39,7 +39,7 @@
     <header class="bg-white shadow-sm border-b border-slate-200 py-3 px-4 sticky top-0 z-50">
         <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
             <h1 class="text-xl md:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
-                <span class="p-1.5 bg-blue-600 text-white rounded-lg text-sm">⏱️</span>
+                <span id="teacher-trigger" class="cursor-pointer p-1.5 bg-blue-600 text-white rounded-lg text-sm transition hover:bg-purple-600 shadow-sm select-none" title="לחיצה כפולה למסוף מורה">⏱️</span>
                 קינמטיקה: ממושגי יסוד לתרחישי תנועה (מהירות ממוצעת)
             </h1>
             <div id="header-stats" class="hidden flex items-center gap-3 text-sm font-semibold">
@@ -68,7 +68,7 @@
                 <input type="text" id="player-name-input" class="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:border-blue-500 focus:ring-3 focus:ring-blue-100 outline-none font-bold text-lg text-center transition-all" placeholder="למשל: דנה ישראלי">
             </div>
 
-            <button onclick="startGame()" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl px-10 py-4 rounded-full shadow-lg transform transition hover:scale-105">
+            <button id="start-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl px-10 py-4 rounded-full shadow-lg transform transition hover:scale-105">
                 התחל משחק
             </button>
         </div>
@@ -99,7 +99,7 @@
             </div>
 
             <div class="mt-8 pt-4 border-t border-slate-100 text-left">
-                <button id="action-btn" onclick="checkAnswers()" class="bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold px-8 py-3 rounded-xl transition-all shadow-md w-full sm:w-auto">
+                <button id="action-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold px-8 py-3 rounded-xl transition-all shadow-md w-full sm:w-auto">
                     בדוק תשובות
                 </button>
             </div>
@@ -121,10 +121,10 @@
             <div class="bg-slate-100 rounded-xl p-4 text-right text-sm text-slate-600 font-mono space-y-2 border border-slate-200">
                 <div>• <span class="font-bold">נושא:</span> <span class="text-slate-900 font-sans font-bold">מהירות ממוצעת, פיענוח גרפים, העתק ודרך.</span></div>
                 <div>• <span class="font-bold">תאריך סיום:</span> <span id="game-timestamp" class="text-slate-900 font-sans font-bold"></span></div>
-                <div>• <span class="font-bold">קוד אימות מורה:</span> <span id="game-id-display" class="text-blue-700 font-bold"></span></div>
+                <div>• <span class="font-bold">קוד אימות מורה:</span> <span id="game-id-display" class="text-blue-700 font-bold tracking-wider"></span></div>
             </div>
 
-            <button onclick="location.reload()" class="mt-8 bg-slate-800 hover:bg-slate-900 text-white font-bold px-8 py-3 rounded-xl w-full shadow-md text-lg transition-all">
+            <button id="reload-btn" class="mt-8 bg-slate-800 hover:bg-slate-900 text-white font-bold px-8 py-3 rounded-xl w-full shadow-md text-lg transition-all">
                 שחק סבב חדש 🔁
             </button>
         </div>
@@ -137,13 +137,39 @@
             <div class="text-4xl mb-3">⚠️</div>
             <h3 class="text-xl font-bold text-slate-800 mb-2">שימו לב</h3>
             <p id="alert-modal-text" class="text-slate-600 mb-6">נא להזין את כל השדות</p>
-            <button onclick="closeAlertModal()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl transition-all">
+            <button id="close-alert-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl transition-all">
                 הבנתי
             </button>
         </div>
     </div>
 
+    <!-- Teacher Verification Modal -->
+    <div id="teacher-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-[99999]">
+        <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2"><span class="text-2xl">🕵️‍♂️</span> מסוף אימות מורה</h3>
+                <button id="close-teacher-modal" class="text-slate-400 hover:text-slate-600 text-3xl font-bold leading-none">&times;</button>
+            </div>
+            <div class="space-y-4">
+                <p class="text-sm text-slate-500 mb-2">הזן את נתוני התלמיד מצילום המסך שקיבלת כדי לאמת את אמינותם.</p>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">שם התלמיד/ה (כפי שמופיע במסך):</label>
+                    <input type="text" id="verify-name" class="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-purple-500 outline-none font-bold">
+                </div>
+                <div>
+                    <label class="block text-sm font-bold text-slate-700 mb-1">קוד אימות (למשל VEL-18180C-A4F2):</label>
+                    <input type="text" id="verify-code" dir="ltr" class="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-purple-500 outline-none font-bold text-left uppercase">
+                </div>
+                <button id="verify-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition-all shadow-md text-lg">אמת נתונים 🔍</button>
+                <div id="verify-result" class="hidden p-4 rounded-xl border mt-4 text-base font-medium">
+                    <!-- Results injected here -->
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+    (() => {
         let quizStages = [];
         let currentIndex = 0;
         let score = 0;
@@ -151,6 +177,27 @@
         let playerName = "";
         let gameId = "";
         let currentChart = null;
+        let checkClicks = 0; // משתנה אבטחה לספירת לחיצות
+
+        document.addEventListener('DOMContentLoaded', () => {
+            document.getElementById('start-btn').addEventListener('click', startGame);
+            document.getElementById('reload-btn').addEventListener('click', () => location.reload());
+            document.getElementById('close-alert-btn').addEventListener('click', closeAlertModal);
+            
+            // אירועי מסוף מורה
+            const teacherTrigger = document.getElementById('teacher-trigger');
+            teacherTrigger.addEventListener('dblclick', openTeacherModal);
+            
+            // תמיכה בלחיצה ארוכה למסכי מגע
+            let pressTimer;
+            teacherTrigger.addEventListener('touchstart', (e) => {
+                pressTimer = setTimeout(openTeacherModal, 1000);
+            });
+            teacherTrigger.addEventListener('touchend', () => clearTimeout(pressTimer));
+
+            document.getElementById('close-teacher-modal').addEventListener('click', closeTeacherModal);
+            document.getElementById('verify-btn').addEventListener('click', executeVerification);
+        });
 
         // Utilities
         function randInt(min, max) { return Math.floor(Math.random() * (max - min + 1)) + min; }
@@ -566,13 +613,29 @@
             quizStages.forEach(stage => { totalPossible += stage.subQs.length; });
         }
 
-        function generateUniqueGameId() {
-            const chars = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
-            let result = 'VEL-';
-            for (let i = 0; i < 4; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
-            result += '-';
-            for (let i = 0; i < 4; i++) result += chars.charAt(Math.floor(Math.random() * chars.length));
-            return result;
+        // --- קוד אלגוריתמי לאימות ---
+        function generateSmartGameId(name, sc, tot, clicks) {
+            const toHex = (n) => n.toString(16).padStart(2, '0').toUpperCase();
+            
+            // מניעת נתונים שגויים במקרה קצה
+            const safeSc = Math.max(0, sc || 0);
+            const safeTot = Math.max(0, tot || 0);
+            const safeClicks = Math.max(0, clicks || 0);
+
+            // יצירת מחרוזת הנתונים הבסיסית
+            const hexData = toHex(safeSc) + toHex(safeTot) + toHex(safeClicks);
+            
+            // חישוב חתימת אבטחה המשלבת את שם התלמיד
+            let nameVal = 0;
+            const cleanName = name.trim();
+            for(let i=0; i<cleanName.length; i++) {
+                nameVal += cleanName.charCodeAt(i);
+            }
+            
+            const checksumNum = (nameVal * 17) + safeSc + safeTot + safeClicks;
+            const checksumHex = checksumNum.toString(16).padStart(4, '0').toUpperCase().slice(-4);
+            
+            return `VEL-${hexData}-${checksumHex}`;
         }
 
         function startGame() {
@@ -586,7 +649,7 @@
             }
 
             playerName = trimmedName;
-            gameId = generateUniqueGameId();
+            checkClicks = 0; // אתחול מונה הלחיצות בסטארט
 
             buildDynamicQuiz();
 
@@ -753,6 +816,8 @@
                 return;
             }
 
+            checkClicks++; // Anti-cheat: ספירת לחיצות תקינות על כפתור הבדיקה
+
             let allCorrectInStage = true;
 
             stage.subQs.forEach((sq, i) => {
@@ -826,11 +891,91 @@
             const timeStr = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
             
             document.getElementById('game-timestamp').innerText = `${dateStr}, ${timeStr}`;
+            
+            // יצירת קוד האימות החכם ושתילתו
+            gameId = generateSmartGameId(playerName, score, totalPossible, checkClicks);
             document.getElementById('game-id-display').innerText = gameId;
 
             if (perc >= 80) {
                 triggerBigConfetti();
             }
+        }
+
+        // --- Teacher Verification Modal Logic ---
+        function openTeacherModal() {
+            document.getElementById('teacher-modal').classList.remove('hidden');
+            document.getElementById('verify-result').classList.add('hidden');
+            document.getElementById('verify-name').value = '';
+            document.getElementById('verify-code').value = '';
+        }
+
+        function closeTeacherModal() {
+            document.getElementById('teacher-modal').classList.add('hidden');
+        }
+
+        function executeVerification() {
+            const name = document.getElementById('verify-name').value.trim();
+            let code = document.getElementById('verify-code').value.trim().toUpperCase();
+            const resDiv = document.getElementById('verify-result');
+            
+            resDiv.classList.remove('hidden', 'bg-green-50', 'text-green-800', 'border-green-200', 'bg-red-50', 'text-red-800', 'border-red-200');
+            
+            if (!name || !code) {
+                showVerifyError('נא להזין שם וקוד.');
+                return;
+            }
+
+            const parts = code.split('-');
+            if (parts.length !== 3 || parts[0] !== 'VEL') {
+                showVerifyError('מבנה הקוד אינו תקין (חייב להתחיל ב-VEL ולכלול 3 מקטעים).');
+                return;
+            }
+            
+            const hexData = parts[1];
+            const checksum = parts[2];
+            
+            if (hexData.length !== 6 || checksum.length !== 4) {
+                showVerifyError('אורכי חלקי הקוד אינם תקינים.');
+                return;
+            }
+
+            const sc = parseInt(hexData.substring(0, 2), 16);
+            const tot = parseInt(hexData.substring(2, 4), 16);
+            const clicks = parseInt(hexData.substring(4, 6), 16);
+            
+            if (isNaN(sc) || isNaN(tot) || isNaN(clicks)) {
+                showVerifyError('הקוד מכיל תווים לא חוקיים בבלוק הנתונים.');
+                return;
+            }
+
+            let nameVal = 0;
+            for(let i=0; i<name.length; i++) {
+                nameVal += name.charCodeAt(i);
+            }
+            const expectedNum = (nameVal * 17) + sc + tot + clicks;
+            const expectedChecksum = expectedNum.toString(16).padStart(4, '0').toUpperCase().slice(-4);
+            
+            if (checksum !== expectedChecksum) {
+                showVerifyError('חתימת האבטחה שגויה! ייתכן שהקוד זויף או שהשם לא תואם למקור.');
+                return;
+            }
+
+            resDiv.innerHTML = `
+                <div class="font-black text-lg mb-2 flex items-center gap-2"><span class="text-2xl">✅</span> אימות עבר בהצלחה!</div>
+                <ul class="space-y-1 mt-2 text-slate-700">
+                    <li>👤 <b>שחקן:</b> ${name}</li>
+                    <li>🎯 <b>ציון:</b> ${sc} מתוך ${tot}</li>
+                    <li>🖱️ <b>לחיצות בדיקה:</b> ${clicks} <span class="text-xs text-slate-500">(מינימום מצופה: 12)</span></li>
+                </ul>
+                ${clicks < 12 ? '<div class="mt-3 text-xs font-bold text-red-600 bg-red-100 p-2 rounded border border-red-200">⚠️ חשד לדילוג: כמות הלחיצות נמוכה מ-12. תלמיד זה כנראה עקף את המערכת.</div>' : ''}
+            `;
+            resDiv.classList.add('bg-green-50', 'text-green-800', 'border-green-200');
+        }
+
+        function showVerifyError(msg) {
+            const resDiv = document.getElementById('verify-result');
+            resDiv.innerHTML = `<div class="font-black text-lg mb-1 flex items-center gap-2"><span class="text-2xl">🚫</span> קוד שגוי/מזויף</div><p class="text-sm">${msg}</p>`;
+            resDiv.classList.add('bg-red-50', 'text-red-800', 'border-red-200');
         }
 
         // --- Confetti Logic ---
@@ -880,6 +1025,7 @@
             }, 300);
         }
 
+    })();
     </script>
 </body>
 </html>

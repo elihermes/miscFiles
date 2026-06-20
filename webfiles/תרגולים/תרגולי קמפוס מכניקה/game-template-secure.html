@@ -1,0 +1,650 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>תבנית משחק מאובטחת</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;600;800&display=swap" rel="stylesheet" />
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      startup: { typeset: false }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    body { font-family: 'Assistant', sans-serif; background: #f8fafc; }
+    .MathJax { direction: ltr !important; }
+    .input-correct { border-color: #22c55e !important; background: #f0fdf4 !important; color: #166534 !important; }
+    .input-wrong { border-color: #ef4444 !important; background: #fef2f2 !important; color: #991b1b !important; }
+    input[type=number]::-webkit-inner-spin-button,
+    input[type=number]::-webkit-outer-spin-button { -webkit-appearance: none; margin: 0; }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col text-slate-800">
+
+  <header class="bg-white shadow-sm border-b border-slate-200 py-3 px-4 sticky top-0 z-50">
+    <div class="max-w-4xl mx-auto flex flex-col sm:flex-row justify-between items-center gap-2">
+      <h1 id="header-title" class="text-xl md:text-2xl font-extrabold text-slate-900 flex items-center gap-2">
+        <span id="teacher-trigger" class="cursor-pointer p-1.5 bg-blue-600 text-white rounded-lg text-sm transition hover:bg-purple-600 shadow-sm select-none" title="לחיצה כפולה למסוף מורה">⏱️</span>
+        <span id="header-title-text">תבנית משחק לימודית</span>
+      </h1>
+      <div id="header-stats" class="hidden flex items-center gap-3 text-sm font-semibold">
+        <span id="question-counter" class="bg-slate-100 px-3 py-1.5 rounded-full text-slate-600">שלב 1 מתוך 1</span>
+        <span class="bg-blue-50 px-3 py-1.5 rounded-full text-blue-800 border border-blue-200">
+          ניקוד: <span id="score-display">0 / 0</span>
+        </span>
+      </div>
+    </div>
+  </header>
+
+  <main class="max-w-4xl w-full mx-auto p-4 md:p-6 flex-grow flex items-center justify-center">
+
+    <section id="start-screen" class="bg-white rounded-2xl shadow-xl p-8 md:p-12 text-center w-full border border-slate-200">
+      <div class="text-6xl mb-4">🚀</div>
+      <h2 id="start-title" class="text-3xl md:text-4xl font-extrabold text-slate-900 mb-2">מוכנים להתחיל?</h2>
+      <p id="start-subtitle" class="text-lg text-slate-600 mb-8">
+        זו תבנית משחק קומפקטית: רק מחליפים את מאגר השאלות בקוד ומקבלים משחק חדש באותה הנראות.
+      </p>
+
+      <div class="max-w-md mx-auto mb-8 bg-slate-50 p-6 rounded-2xl border border-slate-200">
+        <label for="player-name-input" class="block text-right text-base font-bold text-slate-700 mb-2">הכניסו שם שחקן/ית (שם מלא):</label>
+        <input type="text" id="player-name-input" class="w-full px-4 py-3 border-2 border-slate-300 rounded-xl focus:border-blue-500 focus:ring-4 focus:ring-blue-100 outline-none font-bold text-lg text-center transition-all" placeholder="למשל: דנה ישראלי" />
+      </div>
+
+      <button id="start-btn" class="bg-blue-600 hover:bg-blue-700 text-white font-bold text-xl px-10 py-4 rounded-full shadow-lg transform transition hover:scale-105">
+        התחל משחק
+      </button>
+    </section>
+
+    <section id="quiz-screen" class="hidden bg-white rounded-2xl shadow-xl p-6 md:p-10 w-full border border-slate-100">
+      <div class="mb-6 pb-6 border-b border-slate-100">
+        <h2 id="stage-title" class="text-blue-700 font-extrabold text-xl mb-2">כותרת שלב</h2>
+        <p id="stage-context" class="text-lg text-slate-800 font-medium leading-relaxed bg-slate-50 p-4 rounded-xl border border-slate-200">טקסט יופיע כאן...</p>
+        <div id="stage-visual" class="w-full mt-4 hidden"></div>
+      </div>
+
+      <div class="mb-6">
+        <h3 class="text-lg font-bold mb-4 text-slate-800">ענו על הסעיפים הבאים:</h3>
+        <div id="questions-area" class="space-y-4"></div>
+      </div>
+
+      <div class="mt-8 pt-4 border-t border-slate-100 text-left">
+        <button id="action-btn" class="bg-blue-600 hover:bg-blue-700 text-white text-lg font-bold px-8 py-3 rounded-xl transition-all shadow-md w-full sm:w-auto">
+          בדוק תשובות
+        </button>
+      </div>
+    </section>
+
+    <section id="end-screen" class="hidden bg-white rounded-2xl shadow-xl p-8 md:p-10 text-center max-w-xl w-full border border-slate-200">
+      <div class="text-6xl mb-4">🏆</div>
+      <h2 class="text-3xl font-extrabold text-slate-900 mb-1">כל הכבוד! סיימת את המשחק!</h2>
+      <div class="text-slate-500 font-semibold text-lg mb-6">שחקן/ית: <span id="final-player-name" class="text-slate-800 font-bold underline decoration-blue-500 decoration-2"></span></div>
+
+      <div class="bg-slate-50 p-6 rounded-2xl border-2 border-slate-200 mb-6 shadow-inner">
+        <div class="text-sm font-bold text-slate-500 uppercase tracking-wider">ציון סופי</div>
+        <div id="final-percentage" class="text-6xl font-black text-blue-600 my-2">0%</div>
+        <div id="final-score-text" class="text-slate-700 font-bold text-base">ענית נכון על 0 מתוך 0 סעיפים</div>
+      </div>
+
+      <div class="bg-slate-100 rounded-xl p-4 text-right text-sm text-slate-600 font-mono space-y-2 border border-slate-200">
+        <div>• <span class="font-bold">נושא:</span> <span id="topic-line" class="text-slate-900 font-sans font-bold"></span></div>
+        <div>• <span class="font-bold">תאריך סיום:</span> <span id="game-timestamp" class="text-slate-900 font-sans font-bold"></span></div>
+        <div>• <span class="font-bold">קוד אימות מורה:</span> <span id="game-id-display" class="text-blue-700 font-bold tracking-wider"></span></div>
+      </div>
+
+      <button id="reload-btn" class="mt-8 bg-slate-800 hover:bg-slate-900 text-white font-bold px-8 py-3 rounded-xl w-full shadow-md text-lg transition-all">
+        שחק סבב חדש 🔁
+      </button>
+    </section>
+  </main>
+
+  <div id="alert-modal" class="hidden fixed inset-0 bg-slate-900/50 backdrop-blur-sm flex items-center justify-center p-4 z-[99999]">
+    <div class="bg-white rounded-2xl p-6 max-w-sm w-full shadow-2xl text-center border border-slate-200">
+      <div class="text-4xl mb-3">⚠️</div>
+      <h3 class="text-xl font-bold text-slate-800 mb-2">שימו לב</h3>
+      <p id="alert-text" class="text-slate-600 mb-6">נא להזין את כל השדות</p>
+      <button id="close-alert-btn" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-2.5 px-5 rounded-xl transition-all">הבנתי</button>
+    </div>
+  </div>
+
+  <div id="teacher-modal" class="hidden fixed inset-0 bg-slate-900/80 backdrop-blur-sm flex items-center justify-center p-4 z-[99999]">
+    <div class="bg-white rounded-2xl p-6 max-w-md w-full shadow-2xl border border-slate-200">
+      <div class="flex justify-between items-center mb-4 border-b pb-2">
+        <h3 class="text-xl font-bold text-slate-800 flex items-center gap-2"><span class="text-2xl">🕵️</span> מסוף אימות מורה</h3>
+        <button id="close-teacher-modal" class="text-slate-400 hover:text-slate-600 text-3xl font-bold leading-none">&times;</button>
+      </div>
+      <p class="text-sm text-slate-500 mb-3">הזן שם תלמיד/ה וקוד מהצילום כדי לאמת.</p>
+      <div class="space-y-3">
+        <input type="text" id="verify-name" class="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-purple-500 outline-none font-bold" placeholder="שם תלמיד/ה" />
+        <input type="text" id="verify-code" dir="ltr" class="w-full px-3 py-2 border-2 border-slate-300 rounded-lg focus:border-purple-500 outline-none font-bold text-left uppercase" placeholder="קוד אימות" />
+        <button id="verify-btn" class="w-full bg-purple-600 hover:bg-purple-700 text-white font-bold py-3 rounded-xl transition-all">אמת נתונים</button>
+        <div id="verify-result" class="hidden p-4 rounded-xl border text-sm"></div>
+      </div>
+    </div>
+  </div>
+
+  <script>
+  (() => {
+    'use strict';
+
+    // === TEMPLATE CONFIG: מחליפים רק את האובייקט הזה במשחק חדש ===
+    const GAME_TEMPLATE = {
+      prefix: 'VEL',
+      headerTitle: 'קינמטיקה: תבנית משחק מאובטחת',
+      startTitle: 'מוכנים לתרגול?',
+      startSubtitle: 'בכל שלב עונים על סעיפים קצרים ומקבלים משוב מיידי.',
+      topicLine: 'מהירות ממוצעת, העתק ודרך.',
+      roundsToPlay: 3,
+      passConfettiThreshold: 80,
+      stages: [
+        {
+          title: 'חישוב מהירות ממוצעת',
+          contextHtml: 'רוכב נסע מרחק של 120 מטר במשך 20 שניות.',
+          questions: [
+            { type: 'number', prompt: 'מהי המהירות הממוצעת?', answer: 6, unit: 'm/s' },
+            { type: 'number', prompt: 'מהו ההעתק?', answer: 120, unit: 'm' }
+          ]
+        },
+        {
+          title: 'הלוך ושוב',
+          contextHtml: 'תלמיד הלך 50 מטר קדימה ואז חזר 50 מטר לנקודת ההתחלה.',
+          questions: [
+            { type: 'number', prompt: 'מהי הדרך הכוללת?', answer: 100, unit: 'm' },
+            { type: 'number', prompt: 'מהו ההעתק הכולל?', answer: 0, unit: 'm' }
+          ]
+        },
+        {
+          title: 'שאלה עיונית',
+          contextHtml: 'בחרו את הטענה הנכונה:',
+          questions: [
+            {
+              type: 'select',
+              prompt: 'מהירות ממוצעת מחושבת על ידי:',
+              answer: 'העתק כולל חלקי זמן כולל',
+              options: [
+                'דרך כוללת חלקי תאוצה',
+                'העתק כולל חלקי זמן כולל',
+                'זמן כולל חלקי העתק כולל'
+              ]
+            }
+          ]
+        }
+      ]
+    };
+
+    const state = {
+      playerName: '',
+      stages: [],
+      stageIndex: 0,
+      score: 0,
+      total: 0,
+      checkClicks: 0,
+      actionMode: 'check'
+    };
+
+    const ui = {};
+
+    document.addEventListener('DOMContentLoaded', init);
+
+    function init() {
+      cacheElements();
+      bindEvents();
+      bootstrapTexts();
+    }
+
+    function cacheElements() {
+      ui.headerTitle = document.getElementById('header-title');
+      ui.headerTitleText = document.getElementById('header-title-text');
+      ui.startTitle = document.getElementById('start-title');
+      ui.startSubtitle = document.getElementById('start-subtitle');
+      ui.topicLine = document.getElementById('topic-line');
+      ui.playerNameInput = document.getElementById('player-name-input');
+      ui.startScreen = document.getElementById('start-screen');
+      ui.quizScreen = document.getElementById('quiz-screen');
+      ui.endScreen = document.getElementById('end-screen');
+      ui.headerStats = document.getElementById('header-stats');
+      ui.counter = document.getElementById('question-counter');
+      ui.scoreDisplay = document.getElementById('score-display');
+      ui.stageTitle = document.getElementById('stage-title');
+      ui.stageContext = document.getElementById('stage-context');
+      ui.stageVisual = document.getElementById('stage-visual');
+      ui.questionsArea = document.getElementById('questions-area');
+      ui.actionBtn = document.getElementById('action-btn');
+      ui.alertModal = document.getElementById('alert-modal');
+      ui.alertText = document.getElementById('alert-text');
+      ui.finalPlayerName = document.getElementById('final-player-name');
+      ui.finalPercentage = document.getElementById('final-percentage');
+      ui.finalScoreText = document.getElementById('final-score-text');
+      ui.gameTimestamp = document.getElementById('game-timestamp');
+      ui.gameIdDisplay = document.getElementById('game-id-display');
+      ui.teacherModal = document.getElementById('teacher-modal');
+      ui.verifyName = document.getElementById('verify-name');
+      ui.verifyCode = document.getElementById('verify-code');
+      ui.verifyResult = document.getElementById('verify-result');
+    }
+
+    function bindEvents() {
+      document.getElementById('start-btn').addEventListener('click', startGame);
+      document.getElementById('reload-btn').addEventListener('click', () => location.reload());
+      document.getElementById('close-alert-btn').addEventListener('click', closeAlert);
+      ui.actionBtn.addEventListener('click', onAction);
+
+      ui.playerNameInput.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter') startGame();
+      });
+
+      const teacherTrigger = document.getElementById('teacher-trigger');
+      teacherTrigger.addEventListener('dblclick', openTeacherModal);
+
+      let pressTimer = null;
+      teacherTrigger.addEventListener('touchstart', () => {
+        pressTimer = setTimeout(openTeacherModal, 1000);
+      }, { passive: true });
+      teacherTrigger.addEventListener('touchend', () => clearTimeout(pressTimer));
+
+      document.getElementById('close-teacher-modal').addEventListener('click', closeTeacherModal);
+      document.getElementById('verify-btn').addEventListener('click', runVerification);
+    }
+
+    function bootstrapTexts() {
+      ui.headerTitleText.textContent = GAME_TEMPLATE.headerTitle;
+      ui.startTitle.textContent = GAME_TEMPLATE.startTitle;
+      ui.startSubtitle.innerHTML = GAME_TEMPLATE.startSubtitle;
+      ui.topicLine.textContent = GAME_TEMPLATE.topicLine;
+    }
+
+    function startGame() {
+      const name = ui.playerNameInput.value.trim();
+      if (!name) {
+        showAlert('אנא הכניסו שם שחקן/ית כדי להתחיל.');
+        ui.playerNameInput.focus();
+        return;
+      }
+
+      state.playerName = name;
+      state.stageIndex = 0;
+      state.score = 0;
+      state.checkClicks = 0;
+
+      buildStages();
+
+      if (!state.stages.length || !state.total) {
+        showAlert('לתבנית אין מספיק שאלות. יש להגדיר לפחות שלב אחד עם שאלה אחת.');
+        return;
+      }
+
+      ui.startScreen.classList.add('hidden');
+      ui.quizScreen.classList.remove('hidden');
+      ui.headerStats.classList.remove('hidden');
+      ui.headerStats.classList.add('flex');
+
+      renderStage();
+    }
+
+    function buildStages() {
+      const cloned = GAME_TEMPLATE.stages.map(stage => ({
+        ...stage,
+        questions: stage.questions.map(q => ({ ...q }))
+      }));
+
+      const shuffled = shuffle(cloned);
+      const rounds = Math.min(GAME_TEMPLATE.roundsToPlay || shuffled.length, shuffled.length);
+
+      state.stages = shuffled.slice(0, rounds);
+      state.total = state.stages.reduce((sum, s) => sum + s.questions.length, 0);
+    }
+
+    function renderStage() {
+      const stage = state.stages[state.stageIndex];
+      state.actionMode = 'check';
+
+      ui.counter.textContent = `שלב ${state.stageIndex + 1} מתוך ${state.stages.length}`;
+      ui.scoreDisplay.textContent = `${state.score} / ${state.total}`;
+
+      ui.stageTitle.textContent = stage.title;
+      ui.stageContext.innerHTML = stage.contextHtml || escapeHtml(stage.context || '');
+
+      if (stage.visualHtml) {
+        ui.stageVisual.innerHTML = stage.visualHtml;
+        ui.stageVisual.classList.remove('hidden');
+      } else {
+        ui.stageVisual.classList.add('hidden');
+        ui.stageVisual.innerHTML = '';
+      }
+
+      ui.questionsArea.innerHTML = '';
+      stage.questions.forEach((q, i) => {
+        ui.questionsArea.insertAdjacentHTML('beforeend', questionCardHtml(q, i));
+      });
+
+      if (window.MathJax && window.MathJax.typesetPromise) {
+        window.MathJax.typesetPromise([ui.quizScreen]).catch(() => {});
+      }
+
+      setActionButton('בדוק תשובות 🔍', 'blue');
+    }
+
+    function questionCardHtml(q, i) {
+      const promptHtml = q.promptHtml || escapeHtml(q.prompt || '');
+
+      let inputHtml = '';
+      if (q.type === 'select') {
+        const options = shuffle([...(q.options || [])]);
+        inputHtml = `
+          <select id="input-${i}" class="block w-full px-3 py-2 bg-white border-2 border-slate-300 rounded-xl focus:border-blue-500 outline-none font-semibold">
+            <option value="" disabled selected>-- בחרו תשובה --</option>
+            ${options.map(opt => `<option value="${escapeAttr(opt)}">${escapeHtml(opt)}</option>`).join('')}
+          </select>`;
+      } else {
+        const numberMode = q.type === 'number';
+        const unit = q.unit ? `<div class="absolute inset-y-0 left-0 pl-3 flex items-center pointer-events-none text-slate-500 font-bold text-sm" dir="ltr">[${escapeHtml(q.unit)}]</div>` : '';
+        inputHtml = `
+          <div class="relative w-full sm:w-52 shrink-0">
+            <input type="${numberMode ? 'number' : 'text'}" id="input-${i}" ${numberMode ? 'step="any"' : ''}
+              class="block w-full pl-14 pr-3 py-2 bg-white border-2 border-slate-300 rounded-xl focus:border-blue-500 outline-none font-bold text-lg text-center" placeholder="הקלד/י...">
+            ${numberMode ? unit : ''}
+          </div>`;
+      }
+
+      return `
+        <div class="bg-slate-50 border border-slate-200 rounded-xl p-4 shadow-sm">
+          <label class="block text-base text-slate-800 font-bold mb-3">${i + 1}. ${promptHtml}</label>
+          <div class="flex flex-col sm:flex-row sm:items-center gap-3">
+            ${inputHtml}
+            <span id="feedback-${i}" class="hidden text-base font-bold"></span>
+          </div>
+        </div>`;
+    }
+
+    function onAction() {
+      if (state.actionMode === 'check') return checkCurrentStage();
+      if (state.actionMode === 'next') {
+        state.stageIndex += 1;
+        return renderStage();
+      }
+      if (state.actionMode === 'finish') return finishGame();
+    }
+
+    function checkCurrentStage() {
+      const stage = state.stages[state.stageIndex];
+      const allFilled = stage.questions.every((_, i) => {
+        const val = document.getElementById(`input-${i}`).value;
+        return val.trim() !== '';
+      });
+
+      if (!allFilled) {
+        showAlert('יש למלא את כל הסעיפים לפני הבדיקה.');
+        return;
+      }
+
+      state.checkClicks += 1;
+      let allCorrect = true;
+
+      stage.questions.forEach((q, i) => {
+        const input = document.getElementById(`input-${i}`);
+        const feedback = document.getElementById(`feedback-${i}`);
+        const ok = isCorrectAnswer(q, input.value);
+
+        input.disabled = true;
+        feedback.classList.remove('hidden');
+
+        if (ok) {
+          state.score += 1;
+          input.classList.add('input-correct');
+          feedback.textContent = '✔️ נכון!';
+          feedback.className = 'text-base font-bold text-green-600';
+        } else {
+          allCorrect = false;
+          input.classList.add('input-wrong');
+          const answerText = q.type === 'number'
+            ? `${formatNum(Number(q.answer))}${q.unit ? ` [${q.unit}]` : ''}`
+            : String(q.answer);
+          feedback.innerHTML = `❌ שגוי. התשובה: <span class="text-slate-700 font-black">${escapeHtml(answerText)}</span>`;
+          feedback.className = 'text-base font-bold text-red-600';
+        }
+      });
+
+      ui.scoreDisplay.textContent = `${state.score} / ${state.total}`;
+
+      if (allCorrect) smallConfetti();
+
+      const isLast = state.stageIndex === state.stages.length - 1;
+      if (isLast) {
+        state.actionMode = 'finish';
+        setActionButton('סיים וצפה בגיליון הציונים 🏆', 'purple');
+      } else {
+        state.actionMode = 'next';
+        setActionButton('המשך לשלב הבא ←', 'green');
+      }
+    }
+
+    function isCorrectAnswer(question, userInputRaw) {
+      if (question.type === 'number') {
+        const userNum = Number(userInputRaw);
+        const expected = Number(question.answer);
+        if (Number.isNaN(userNum) || Number.isNaN(expected)) return false;
+        const tolerance = typeof question.tolerance === 'number'
+          ? question.tolerance
+          : Math.max(0.05, Math.abs(expected) * 0.03);
+        return Math.abs(userNum - expected) <= tolerance;
+      }
+
+      const userText = normalizeText(userInputRaw);
+      const expectedText = normalizeText(String(question.answer));
+      return userText === expectedText;
+    }
+
+    function finishGame() {
+      ui.quizScreen.classList.add('hidden');
+      ui.headerStats.classList.add('hidden');
+      ui.endScreen.classList.remove('hidden');
+
+      const percentage = state.total > 0 ? Math.round((state.score / state.total) * 100) : 0;
+      ui.finalPlayerName.textContent = state.playerName;
+      ui.finalPercentage.textContent = `${percentage}%`;
+      ui.finalScoreText.textContent = `ענית נכון על ${state.score} מתוך ${state.total} סעיפים.`;
+
+      const now = new Date();
+      const datePart = now.toLocaleDateString('he-IL', { year: 'numeric', month: '2-digit', day: '2-digit' });
+      const timePart = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+      ui.gameTimestamp.textContent = `${datePart}, ${timePart}`;
+
+      ui.gameIdDisplay.textContent = generateSmartGameId(state.playerName, state.score, state.total, state.checkClicks);
+
+      if (percentage >= (GAME_TEMPLATE.passConfettiThreshold || 80)) {
+        bigConfetti();
+      }
+    }
+
+    function generateSmartGameId(name, score, total, clicks) {
+      const safeScore = clampByte(score);
+      const safeTotal = clampByte(total);
+      const safeClicks = clampByte(clicks);
+
+      const hexData = toHex2(safeScore) + toHex2(safeTotal) + toHex2(safeClicks);
+      const nameVal = [...name.trim()].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+      const checksumNum = (nameVal * 17) + safeScore + safeTotal + safeClicks;
+      const checksumHex = checksumNum.toString(16).padStart(4, '0').toUpperCase().slice(-4);
+
+      return `${GAME_TEMPLATE.prefix}-${hexData}-${checksumHex}`;
+    }
+
+    function runVerification() {
+      const name = ui.verifyName.value.trim();
+      const code = ui.verifyCode.value.trim().toUpperCase();
+
+      resetVerificationBox();
+
+      if (!name || !code) return showVerifyError('נא להזין שם וקוד.');
+
+      const parts = code.split('-');
+      if (parts.length !== 3 || parts[0] !== GAME_TEMPLATE.prefix) {
+        return showVerifyError(`מבנה הקוד אינו תקין (חייב להתחיל ב-${GAME_TEMPLATE.prefix}).`);
+      }
+
+      const dataHex = parts[1] || '';
+      const checksum = parts[2] || '';
+      if (dataHex.length !== 6 || checksum.length !== 4) {
+        return showVerifyError('אורכי חלקי הקוד אינם תקינים.');
+      }
+
+      const score = parseInt(dataHex.slice(0, 2), 16);
+      const total = parseInt(dataHex.slice(2, 4), 16);
+      const clicks = parseInt(dataHex.slice(4, 6), 16);
+      if ([score, total, clicks].some(Number.isNaN)) {
+        return showVerifyError('הקוד מכיל תווים לא חוקיים בבלוק הנתונים.');
+      }
+
+      const nameVal = [...name].reduce((sum, ch) => sum + ch.charCodeAt(0), 0);
+      const expected = ((nameVal * 17) + score + total + clicks)
+        .toString(16).padStart(4, '0').toUpperCase().slice(-4);
+
+      if (expected !== checksum) {
+        return showVerifyError('חתימת האבטחה שגויה. ייתכן שהקוד זויף או שהשם לא תואם.');
+      }
+
+      const minExpectedClicks = state.stages.length || (GAME_TEMPLATE.roundsToPlay || GAME_TEMPLATE.stages.length || 1);
+      ui.verifyResult.classList.remove('hidden');
+      ui.verifyResult.classList.add('bg-green-50', 'text-green-800', 'border-green-200');
+      ui.verifyResult.innerHTML = `
+        <div class="font-black text-base mb-1">✅ אימות עבר בהצלחה</div>
+        <div>שחקן/ית: <b>${escapeHtml(name)}</b></div>
+        <div>ציון: <b>${score}</b> מתוך <b>${total}</b></div>
+        <div>לחיצות בדיקה: <b>${clicks}</b> (מינימום מצופה: ${minExpectedClicks})</div>
+        ${clicks < minExpectedClicks ? '<div class="mt-2 text-red-700 font-bold">⚠️ חשד לדילוג על שלבים.</div>' : ''}
+      `;
+    }
+
+    function openTeacherModal() {
+      ui.teacherModal.classList.remove('hidden');
+      ui.verifyName.value = '';
+      ui.verifyCode.value = '';
+      resetVerificationBox();
+    }
+
+    function closeTeacherModal() {
+      ui.teacherModal.classList.add('hidden');
+    }
+
+    function resetVerificationBox() {
+      ui.verifyResult.classList.add('hidden');
+      ui.verifyResult.classList.remove('bg-green-50', 'text-green-800', 'border-green-200', 'bg-red-50', 'text-red-800', 'border-red-200');
+      ui.verifyResult.innerHTML = '';
+    }
+
+    function showVerifyError(msg) {
+      ui.verifyResult.classList.remove('hidden');
+      ui.verifyResult.classList.add('bg-red-50', 'text-red-800', 'border-red-200');
+      ui.verifyResult.innerHTML = `<div class="font-black mb-1">🚫 קוד שגוי/מזויף</div><div>${escapeHtml(msg)}</div>`;
+    }
+
+    function showAlert(message) {
+      ui.alertText.textContent = message;
+      ui.alertModal.classList.remove('hidden');
+    }
+
+    function closeAlert() {
+      ui.alertModal.classList.add('hidden');
+    }
+
+    function setActionButton(text, color) {
+      const palette = {
+        blue: 'bg-blue-600 hover:bg-blue-700',
+        green: 'bg-green-600 hover:bg-green-700',
+        purple: 'bg-purple-600 hover:bg-purple-700'
+      };
+      ui.actionBtn.textContent = text;
+      ui.actionBtn.className = `${palette[color] || palette.blue} text-white text-lg font-bold px-8 py-3 rounded-xl transition-all shadow-md w-full sm:w-auto`;
+    }
+
+    function smallConfetti() {
+      burstConfetti(24, 40, 60);
+    }
+
+    function bigConfetti() {
+      let rounds = 0;
+      const id = setInterval(() => {
+        burstConfetti(20, 0, 100);
+        rounds += 1;
+        if (rounds >= 5) clearInterval(id);
+      }, 250);
+    }
+
+    function burstConfetti(amount, minX, maxX) {
+      const colors = ['#3b82f6', '#2563eb', '#1d4ed8', '#f59e0b', '#ef4444', '#10b981'];
+      for (let i = 0; i < amount; i += 1) {
+        const dot = document.createElement('div');
+        dot.style.position = 'fixed';
+        dot.style.width = `${Math.random() * 7 + 4}px`;
+        dot.style.height = dot.style.width;
+        dot.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+        dot.style.left = `${minX + Math.random() * (maxX - minX)}vw`;
+        dot.style.top = '-8vh';
+        dot.style.zIndex = '9999';
+        dot.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+        dot.style.pointerEvents = 'none';
+        document.body.appendChild(dot);
+
+        const xMove = (Math.random() - 0.5) * 25;
+        const yMove = Math.random() * 90 + 35;
+        const spin = Math.random() * 720;
+
+        const anim = dot.animate([
+          { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
+          { transform: `translate(${xMove}vw, ${yMove}vh) rotate(${spin}deg)`, opacity: 0 }
+        ], { duration: Math.random() * 1000 + 900, easing: 'cubic-bezier(.25,.8,.25,1)' });
+
+        anim.onfinish = () => dot.remove();
+      }
+    }
+
+    function toHex2(n) {
+      return n.toString(16).padStart(2, '0').toUpperCase();
+    }
+
+    function clampByte(n) {
+      return Math.max(0, Math.min(255, Number(n) || 0));
+    }
+
+    function normalizeText(text) {
+      return String(text).trim().replace(/\s+/g, ' ');
+    }
+
+    function formatNum(n) {
+      return Number.isFinite(n) ? Number(n.toFixed(4)) : n;
+    }
+
+    function shuffle(arr) {
+      const out = [...arr];
+      for (let i = out.length - 1; i > 0; i -= 1) {
+        const j = Math.floor(Math.random() * (i + 1));
+        [out[i], out[j]] = [out[j], out[i]];
+      }
+      return out;
+    }
+
+    function escapeHtml(text) {
+      return String(text)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#39;');
+    }
+
+    function escapeAttr(text) {
+      return escapeHtml(text).replaceAll('`', '&#96;');
+    }
+
+  })();
+  </script>
+</body>
+</html>
