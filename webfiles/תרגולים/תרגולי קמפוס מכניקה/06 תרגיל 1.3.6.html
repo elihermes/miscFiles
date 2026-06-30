@@ -1,0 +1,638 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>משחק פיזיקה: מהירות כתלות בזמן (תרגול 1.3.6)</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;800&display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\(', '\\)']],
+        displayMath: [['$$', '$$'], ['\\[', '\\]']],
+        processEscapes: true
+      },
+      startup: { typeset: false }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    body { font-family: 'Assistant', sans-serif; background: #f8fafc; }
+    .MathJax { direction: ltr !important; }
+    .input-correct { border-color: #22c55e !important; background: #f0fdf4 !important; color: #166534 !important; }
+    .input-wrong { border-color: #ef4444 !important; background: #fef2f2 !important; color: #991b1b !important; }
+    #canvas-wrapper { max-height: 300px; width: 100%; height: 300px; }
+    
+    /* Confetti Animation */
+    @keyframes fall {
+      0% { transform: translateY(-10vh) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(110vh) rotate(720deg); opacity: 0; }
+    }
+    .confetti { position: fixed; top: -10px; z-index: 9999; pointer-events: none; }
+  </style>
+</head>
+<body class="min-h-screen text-slate-800 flex items-center justify-center p-4">
+
+  <!-- Intro Screen -->
+  <div id="intro-screen" class="w-full max-w-xl bg-white rounded-2xl shadow-xl p-8 text-center transition-all duration-500">
+    <div class="mb-6 flex justify-center">
+      <div class="w-20 h-20 bg-blue-100 text-blue-600 rounded-full flex items-center justify-center shadow-inner">
+        <svg xmlns="http://www.w3.org/2000/svg" class="h-10 w-10" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+          <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 17v-2m3 2v-4m3 4v-6m2 10H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+        </svg>
+      </div>
+    </div>
+    <h1 class="text-3xl font-extrabold text-slate-800 mb-2">תרגול מקוון: מהירות כתלות בזמן</h1>
+    <p class="text-slate-600 mb-8 text-lg">בתרגול זה תנתחו את הנתונים מתוך דף התרגול המקורי (1.3.6), הכוללים טבלת מקום-זמן וגרפי תנועה של רובוטים.</p>
+    
+    <div class="max-w-xs mx-auto">
+      <label for="player-name" class="block text-right font-semibold text-slate-700 mb-2">איך קוראים לך?</label>
+      <input type="text" id="player-name" placeholder="שם פרטי ושם משפחה" class="w-full px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none transition-all shadow-sm mb-6 text-lg" />
+      <button id="btn-start" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl shadow-md hover:shadow-lg transition-all transform hover:-translate-y-0.5 text-lg">
+        התחל תרגול!
+      </button>
+    </div>
+  </div>
+
+  <!-- Game Screen -->
+  <div id="game-screen" class="w-full max-w-3xl hidden transition-all duration-500">
+    <div class="bg-white rounded-2xl shadow-xl overflow-hidden">
+      <!-- Header -->
+      <div class="bg-slate-800 text-white p-4 flex justify-between items-center shadow-md relative z-10">
+        <div>
+          <span class="text-sm text-slate-300 block">תלמיד/ה: <span id="display-name" class="font-bold text-white"></span></span>
+          <span class="text-sm text-slate-300 block">סעיף <span id="q-current" class="font-bold text-white"></span> מתוך <span id="q-total"></span></span>
+        </div>
+        <div class="text-left">
+          <span class="text-sm text-slate-300 block">ציון מצטבר</span>
+          <span class="text-2xl font-black text-green-400"><span id="score-display">0</span>/<span id="score-total">0</span></span>
+        </div>
+      </div>
+      
+      <!-- Progress Bar -->
+      <div class="w-full bg-slate-200 h-2">
+        <div id="progress-bar" class="bg-blue-500 h-2 transition-all duration-300" style="width: 0%;"></div>
+      </div>
+
+      <!-- Question Content -->
+      <div class="p-6 md:p-8 relative">
+        <h2 id="q-title" class="text-xl font-bold text-blue-700 mb-2">כותרת שאלה</h2>
+        <div id="question-text" class="text-lg text-slate-700 mb-4 font-medium"></div>
+        
+        <!-- Table Container -->
+        <div id="table-container" class="hidden mb-6 overflow-x-auto">
+          <table class="w-full text-center border-collapse border border-slate-300 bg-white">
+            <thead id="table-head" class="bg-blue-50 font-bold text-blue-900"></thead>
+            <tbody id="table-body"></tbody>
+          </table>
+        </div>
+
+        <!-- Graph Container -->
+        <div id="graph-container" class="w-full bg-slate-50 rounded-xl border border-slate-200 p-2 mb-6 shadow-inner hidden">
+          <div id="canvas-wrapper">
+            <canvas id="physicsChart"></canvas>
+          </div>
+        </div>
+
+        <!-- Dynamic Input Area -->
+        <div id="input-container" class="mb-6">
+          <!-- Injected via JS -->
+        </div>
+
+        <div id="feedback-container" class="hidden rounded-xl p-4 mb-6 font-semibold flex items-center space-x-3 space-x-reverse">
+          <!-- Injected via JS -->
+        </div>
+
+        <div class="flex justify-end mt-4 pt-4 border-t border-slate-100">
+          <button id="btn-check" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-8 rounded-xl shadow-md transition-all">
+            בדוק תשובה
+          </button>
+          <button id="btn-next" class="hidden bg-emerald-500 hover:bg-emerald-600 text-white font-bold py-3 px-8 rounded-xl shadow-md transition-all">
+            המשך לסעיף הבא
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- End Screen -->
+  <div id="end-screen" class="w-full max-w-lg bg-white rounded-2xl shadow-2xl p-8 text-center hidden relative overflow-hidden transition-all duration-500">
+    <div class="w-24 h-24 bg-green-100 text-green-500 rounded-full flex items-center justify-center shadow-inner mx-auto mb-4">
+      <svg xmlns="http://www.w3.org/2000/svg" class="h-12 w-12" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z" />
+      </svg>
+    </div>
+    <h2 class="text-3xl font-extrabold text-slate-800 mb-2">סיום התרגול!</h2>
+    <p class="text-slate-600 text-lg mb-6">כל הכבוד, <span id="end-name" class="font-bold"></span>.</p>
+    
+    <div class="bg-slate-50 border border-slate-200 rounded-xl p-6 mb-6">
+      <div class="text-sm text-slate-500 mb-1">הציון הסופי שלך</div>
+      <div class="text-5xl font-black text-blue-600 mb-2" id="end-percent">100%</div>
+      <div class="text-lg font-semibold text-slate-700"><span id="end-score">5</span> / <span id="end-total">5</span> תשובות נכונות</div>
+    </div>
+
+    <div class="text-sm text-slate-500 bg-slate-100 p-4 rounded-lg text-right border border-slate-200 shadow-inner">
+      <div class="flex justify-between border-b border-slate-200 pb-2 mb-2">
+        <span>תאריך וזמן:</span>
+        <span id="end-time" class="font-mono font-medium text-slate-800"></span>
+      </div>
+      <div class="flex justify-between items-center">
+        <span>קוד אימות מורה:</span>
+        <span id="secure-hash" class="font-mono text-xs font-bold text-slate-800 bg-white px-2 py-1 rounded border border-slate-300 tracking-wider"></span>
+      </div>
+      <p class="text-xs text-slate-400 mt-3 text-center">יש לצלם מסך זה ולהעביר למורה.</p>
+    </div>
+
+    <button id="btn-restart" class="mt-8 w-full bg-slate-800 hover:bg-slate-900 text-white font-bold py-3 px-6 rounded-xl shadow-md transition-all">
+      התחל תרגול מחדש
+    </button>
+    
+    <div class="mt-4 text-center">
+      <button id="btn-toggle-teacher" class="text-xs text-slate-300 hover:text-slate-500 underline bg-transparent border-none cursor-pointer">פאנל מורה</button>
+    </div>
+
+    <!-- Hidden Teacher Panel -->
+    <div id="teacher-panel" class="hidden mt-4 p-4 bg-slate-800 text-left rounded-xl shadow-inner text-white text-sm" dir="ltr">
+      <h3 class="font-bold text-blue-400 mb-2 text-center text-base">Teacher Verification</h3>
+      <div class="flex flex-col gap-2 font-mono">
+        <label class="flex justify-between items-center border-b border-slate-600 pb-1">
+          <span class="text-slate-400 text-xs">Verify Code:</span>
+          <input type="text" id="teacher-hash-input" class="bg-slate-900 border border-slate-600 text-white px-2 py-1 rounded w-32 focus:outline-none focus:border-blue-500 text-center uppercase" placeholder="XXXX-XXXX">
+        </label>
+        <button id="btn-verify" class="bg-blue-600 hover:bg-blue-500 text-white rounded py-1 mt-1 transition-colors">Decode Info</button>
+        <div id="teacher-decoded" class="mt-2 text-xs text-green-400 break-words hidden"></div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Game Logic -->
+  <script>
+    (function() {
+      // ---------------------------------------------------------
+      // STATIC QUESTIONS - EXACTLY AS IN PDF 1.3.6
+      // ---------------------------------------------------------
+      const STATIC_QUESTIONS = [
+        {
+          title: "סעיף 1: ניתוח טבלת מקום-זמן",
+          text: "תלמידים הכניסו לתוכנה גרף מהירות-זמן, והרובוט נע בהתאם.<br>לפניכם מעקב מקום-זמן של הרובוט.<br><br>חשבו את <strong>המהירות</strong> של הרובוט בפרק הזמן שבין $t=6\\text{s}$ לבין $t=8\\text{s}$.",
+          showTable: true,
+          tableData: {
+            headers: ['זמן $t(s)$', '0', '2', '4', '6', '8', '10', '12'],
+            rows: [['מקום $x(m)$', '0', '2', '5', '9', '14', '20', '27']]
+          },
+          inputType: 'number',
+          unit: "$m/s$",
+          correct: 2.5
+        },
+        {
+          title: "סעיף 2: גרף 1 (שיראל)",
+          text: "שיראל בנתה את גרף המהירות-זמן הבא (גרף 1).<br>השלימו את המשפט על ידי בחירה מהתפריטים:",
+          chartData: [{x:0, y:0}, {x:10, y:1}],
+          xMax: 12, yMax: 1.2, yMin: -0.2,
+          inputType: 'multi-select',
+          template: "הרובוט של שיראל נע לכיוון {0} ומהירותו {1}.<br>גודל מהירותו של הרובוט הולך ו{2}.",
+          options: [
+            ["החיובי", "השלילי", "לא נע"],
+            ["חיובית", "שלילית", "אפס"],
+            ["גדל", "קטן", "נשאר קבוע"]
+          ],
+          correct: ["החיובי", "חיובית", "גדל"]
+        },
+        {
+          title: "סעיף 3: גרף 2",
+          text: "לפניכם גרף 2 מתוך דף התרגול.<br>השלימו את המשפט על ידי בחירה מהתפריטים:",
+          chartData: [{x:0, y:0.8}, {x:12, y:0.2}],
+          xMax: 12, yMax: 1.0, yMin: -0.2,
+          inputType: 'multi-select',
+          template: "הרובוט בגרף זה נע לכיוון {0} ומהירותו {1}.<br>גודל מהירותו של הרובוט הולך ו{2}.",
+          options: [
+            ["החיובי", "השלילי", "לא נע"],
+            ["חיובית", "שלילית", "אפס"],
+            ["גדל", "קטן", "נשאר קבוע"]
+          ],
+          correct: ["החיובי", "חיובית", "קטן"]
+        },
+        {
+          title: "סעיף 4: גרף 3 (חלק ראשון)",
+          text: "לפניכם גרף 3. שימו לב שהגרף חוצה את ציר הזמן ב-$t=4\\text{s}$.<br>התייחסו לחלק הראשון של התנועה <strong>(עד $t=4\\text{s}$)</strong> והשלימו את המשפט:",
+          chartData: [{x:0, y:0.2}, {x:4, y:0}, {x:8, y:-0.2}, {x:12, y:-0.4}],
+          xMax: 12, yMax: 0.3, yMin: -0.5,
+          inputType: 'multi-select',
+          template: "עד $t=4\\text{s}$, הרובוט נע לכיוון {0} ומהירותו {1}.<br>גודל מהירותו של הרובוט הולך ו{2}.",
+          options: [
+            ["החיובי", "השלילי", "לא נע"],
+            ["חיובית", "שלילית", "אפס"],
+            ["גדל", "קטן", "נשאר קבוע"]
+          ],
+          correct: ["החיובי", "חיובית", "קטן"]
+        },
+        {
+          title: "סעיף 5: גרף 3 (חלק שני)",
+          text: "כעת התייחסו לאותו הגרף (גרף 3), אבל לחלקו השני <strong>(לאחר $t=4\\text{s}$)</strong> והשלימו:",
+          chartData: [{x:0, y:0.2}, {x:4, y:0}, {x:8, y:-0.2}, {x:12, y:-0.4}],
+          xMax: 12, yMax: 0.3, yMin: -0.5,
+          inputType: 'multi-select',
+          template: "לאחר $t=4\\text{s}$, הרובוט נע לכיוון {0} ומהירותו {1}.<br>גודל מהירותו של הרובוט הולך ו{2}.",
+          options: [
+            ["החיובי", "השלילי", "לא נע"],
+            ["חיובית", "שלילית", "אפס"],
+            ["גדל", "קטן", "נשאר קבוע"]
+          ],
+          correct: ["השלילי", "שלילית", "גדל"]
+        }
+      ];
+
+      // Game State
+      const state = {
+        playerName: "",
+        score: 0,
+        currentIndex: 0,
+        questions: STATIC_QUESTIONS,
+        chartInstance: null
+      };
+
+      const totalQuestions = STATIC_QUESTIONS.length;
+
+      // DOM Elements
+      const els = {
+        introScreen: document.getElementById('intro-screen'),
+        gameScreen: document.getElementById('game-screen'),
+        endScreen: document.getElementById('end-screen'),
+        playerNameInput: document.getElementById('player-name'),
+        btnStart: document.getElementById('btn-start'),
+        
+        displayName: document.getElementById('display-name'),
+        qCurrent: document.getElementById('q-current'),
+        qTotal: document.getElementById('q-total'),
+        scoreDisplay: document.getElementById('score-display'),
+        scoreTotal: document.getElementById('score-total'),
+        progressBar: document.getElementById('progress-bar'),
+        
+        qTitle: document.getElementById('q-title'),
+        questionText: document.getElementById('question-text'),
+        tableContainer: document.getElementById('table-container'),
+        tableHead: document.getElementById('table-head'),
+        tableBody: document.getElementById('table-body'),
+        graphContainer: document.getElementById('graph-container'),
+        inputContainer: document.getElementById('input-container'),
+        feedbackContainer: document.getElementById('feedback-container'),
+        btnCheck: document.getElementById('btn-check'),
+        btnNext: document.getElementById('btn-next'),
+        canvas: document.getElementById('physicsChart'),
+
+        endName: document.getElementById('end-name'),
+        endPercent: document.getElementById('end-percent'),
+        endScore: document.getElementById('end-score'),
+        endTotal: document.getElementById('end-total'),
+        endTime: document.getElementById('end-time'),
+        secureHash: document.getElementById('secure-hash'),
+        btnRestart: document.getElementById('btn-restart'),
+        btnToggleTeacher: document.getElementById('btn-toggle-teacher'),
+        teacherPanel: document.getElementById('teacher-panel'),
+        btnVerify: document.getElementById('btn-verify')
+      };
+
+      // Security Functions
+      function toHex2(n) { return Math.max(0, Math.min(255, Math.floor(n))).toString(16).padStart(2, '0').toUpperCase(); }
+      function createHash(score, total, timestampStr) {
+        const key = 173; 
+        let rawScore = Math.min(255, score);
+        let rawTotal = Math.min(255, total);
+        let timeCode = 0;
+        for(let i=0; i<timestampStr.length; i++) {
+            timeCode = (timeCode + timestampStr.charCodeAt(i)) % 256;
+        }
+        const b1 = rawScore ^ key;
+        const b2 = rawTotal ^ key;
+        const b3 = timeCode ^ key;
+        const crc = (rawScore + rawTotal + timeCode) % 256;
+        const b4 = crc ^ key;
+        return `${toHex2(b1)}${toHex2(b2)}-${toHex2(b3)}${toHex2(b4)}`;
+      }
+      function verifyHash(hash) {
+        const clean = hash.replace(/[^A-Fa-f0-9]/g, '');
+        if(clean.length !== 8) return null;
+        const key = 173;
+        try {
+            const b1 = parseInt(clean.substring(0,2), 16);
+            const b2 = parseInt(clean.substring(2,4), 16);
+            const b3 = parseInt(clean.substring(4,6), 16);
+            const b4 = parseInt(clean.substring(6,8), 16);
+            const rawScore = b1 ^ key;
+            const rawTotal = b2 ^ key;
+            const timeCode = b3 ^ key;
+            const crc = b4 ^ key;
+            const expectedCrc = (rawScore + rawTotal + timeCode) % 256;
+            if(crc !== expectedCrc) return null;
+            return { score: rawScore, total: rawTotal };
+        } catch(e) { return null; }
+      }
+
+      function createConfetti() {
+        const colors = ['#3b82f6', '#10b981', '#f59e0b', '#ef4444', '#8b5cf6'];
+        for (let i = 0; i < 50; i++) {
+          const dot = document.createElement('div');
+          dot.classList.add('confetti');
+          dot.style.left = Math.random() * 100 + 'vw';
+          dot.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+          dot.style.width = Math.random() * 10 + 5 + 'px';
+          dot.style.height = Math.random() * 10 + 5 + 'px';
+          dot.style.borderRadius = Math.random() > 0.5 ? '50%' : '0';
+          
+          const duration = Math.random() * 2 + 2;
+          dot.style.animation = `fall ${duration}s linear forwards`;
+          
+          document.body.appendChild(dot);
+          setTimeout(() => dot.remove(), duration * 1000);
+        }
+      }
+
+      function drawChart(dataPoints, xMax, yMax, yMin) {
+        if(state.chartInstance) {
+          state.chartInstance.destroy();
+        }
+
+        const ctx = els.canvas.getContext('2d');
+
+        state.chartInstance = new Chart(ctx, {
+          type: 'scatter',
+          data: {
+            datasets: [{
+              label: 'v(t)',
+              data: dataPoints,
+              borderColor: '#2563eb',
+              backgroundColor: '#2563eb',
+              borderWidth: 3,
+              pointRadius: 5,
+              showLine: true,
+              fill: {
+                target: 'origin',
+                above: 'rgba(37, 99, 235, 0.1)',
+                below: 'rgba(239, 68, 68, 0.1)'
+              }
+            }]
+          },
+          options: {
+            responsive: true,
+            maintainAspectRatio: false,
+            plugins: {
+              legend: { display: false },
+              tooltip: { callbacks: { label: (ctx) => `t=${ctx.parsed.x}s, v=${ctx.parsed.y}m/s` } }
+            },
+            scales: {
+              x: {
+                type: 'linear', position: 'bottom',
+                min: 0, max: xMax,
+                title: { display: true, text: 'זמן t (s)', font: { size: 14, family: 'Assistant', weight: 'bold' } },
+                grid: { color: '#e2e8f0' }
+              },
+              y: {
+                min: yMin, max: yMax,
+                title: { display: true, text: 'מהירות v (m/s)', font: { size: 14, family: 'Assistant', weight: 'bold' } },
+                grid: {
+                  color: (ctx) => ctx.tick.value === 0 ? '#334155' : '#e2e8f0',
+                  lineWidth: (ctx) => ctx.tick.value === 0 ? 2 : 1
+                }
+              }
+            }
+          }
+        });
+      }
+
+      function renderQuestion() {
+        const q = state.questions[state.currentIndex];
+        
+        els.qCurrent.textContent = state.currentIndex + 1;
+        els.progressBar.style.width = `${((state.currentIndex) / totalQuestions) * 100}%`;
+        
+        els.qTitle.textContent = q.title;
+        els.questionText.innerHTML = q.text;
+        
+        // Handle Visuals (Table or Graph)
+        if (q.showTable) {
+          els.graphContainer.classList.add('hidden');
+          els.tableContainer.classList.remove('hidden');
+          
+          let hHtml = `<tr>${q.tableData.headers.map(h => `<th class="border border-slate-300 p-3">${h}</th>`).join('')}</tr>`;
+          let bHtml = `<tr>${q.tableData.rows[0].map(c => `<td class="border border-slate-300 p-3 font-medium">${c}</td>`).join('')}</tr>`;
+          
+          els.tableHead.innerHTML = hHtml;
+          els.tableBody.innerHTML = bHtml;
+        } else {
+          els.tableContainer.classList.add('hidden');
+          els.graphContainer.classList.remove('hidden');
+          drawChart(q.chartData, q.xMax, q.yMax, q.yMin);
+        }
+        
+        // Handle Inputs
+        let inputHTML = '';
+        if (q.inputType === 'multi-select') {
+          inputHTML = q.template;
+          q.options.forEach((opts, idx) => {
+            let selectHtml = `<select id="q-input-${idx}" class="mx-1 px-2 py-1 mt-2 mb-2 rounded-lg border border-slate-300 focus:ring-2 focus:ring-blue-500 outline-none text-blue-700 bg-blue-50 font-bold inline-block text-base cursor-pointer shadow-sm transition-all">
+              <option value="" disabled selected>--בחר--</option>
+              ${opts.map(o => `<option value="${o}">${o}</option>`).join('')}
+            </select>`;
+            inputHTML = inputHTML.replace(`{${idx}}`, selectHtml);
+          });
+          inputHTML = `<div class="text-xl leading-loose font-medium text-slate-800 bg-white p-5 rounded-xl border border-slate-200 shadow-sm">${inputHTML}</div>`;
+        } else {
+          inputHTML = `
+            <div class="flex items-center gap-3">
+              <input type="number" step="0.1" id="q-input" placeholder="הכנס תשובה..." class="w-full md:w-1/3 px-4 py-3 rounded-xl border border-slate-300 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none text-lg text-slate-800 bg-white shadow-sm" />
+              <span class="text-xl font-bold text-slate-600" dir="ltr">${q.unit}</span>
+            </div>
+          `;
+        }
+        
+        els.inputContainer.innerHTML = inputHTML;
+        
+        // Reset state
+        els.feedbackContainer.className = "hidden rounded-xl p-4 mb-6 font-semibold flex items-center space-x-3 space-x-reverse";
+        els.feedbackContainer.innerHTML = "";
+        els.btnCheck.classList.remove('hidden');
+        els.btnNext.classList.add('hidden');
+
+        // Render MathJax
+        if (window.MathJax && window.MathJax.typesetPromise) {
+          window.MathJax.typesetPromise();
+        }
+      }
+
+      function checkAnswer() {
+        const q = state.questions[state.currentIndex];
+        let isCorrect = false;
+        let correctText = "";
+
+        if (q.inputType === 'multi-select') {
+          let allCorrect = true;
+          let userAnswers = [];
+          
+          // Check if everything is filled
+          for (let i = 0; i < q.correct.length; i++) {
+            const el = document.getElementById(`q-input-${i}`);
+            if (!el.value) {
+              alert("אנא השלם את כל החסר במשפט לפני הבדיקה.");
+              return;
+            }
+          }
+
+          q.correct.forEach((ans, idx) => {
+            const el = document.getElementById(`q-input-${idx}`);
+            userAnswers.push(el.value);
+            if (el.value !== ans) allCorrect = false;
+            
+            el.disabled = true;
+            el.classList.remove('border-slate-300', 'focus:ring-2', 'focus:ring-blue-500');
+            if (el.value === ans) {
+              el.classList.add('input-correct');
+            } else {
+              el.classList.add('input-wrong');
+            }
+          });
+          
+          isCorrect = allCorrect;
+          correctText = q.correct.join(', ');
+          
+        } else {
+          const inputEl = document.getElementById('q-input');
+          const userVal = inputEl.value.trim();
+
+          if (userVal === '') {
+            alert("אנא הזן תשובה לפני הבדיקה.");
+            return;
+          }
+
+          const userNum = parseFloat(userVal);
+          const correctNum = parseFloat(q.correct);
+          
+          if (!isNaN(userNum) && Math.abs(userNum - correctNum) <= 0.05) {
+            isCorrect = true;
+          }
+
+          inputEl.disabled = true;
+          inputEl.classList.remove('focus:ring-2', 'focus:border-blue-500', 'border-slate-300');
+          if(isCorrect) inputEl.classList.add('input-correct');
+          else inputEl.classList.add('input-wrong');
+          
+          correctText = q.correct;
+        }
+
+        if (isCorrect) {
+          state.score++;
+          els.scoreDisplay.textContent = state.score;
+          
+          els.feedbackContainer.classList.remove('hidden');
+          els.feedbackContainer.classList.add('bg-green-50', 'text-green-700', 'border', 'border-green-200');
+          els.feedbackContainer.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-green-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7" />
+            </svg>
+            <span>כל הכבוד! התשובה נכונה.</span>
+          `;
+        } else {
+          els.feedbackContainer.classList.remove('hidden');
+          els.feedbackContainer.classList.add('bg-red-50', 'text-red-700', 'border', 'border-red-200');
+          els.feedbackContainer.innerHTML = `
+            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-red-500" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+            </svg>
+            <div>
+              <span class="block">יש טעות בתשובה.</span>
+              <span class="block text-sm mt-1">התשובה המלאה/נכונה היא: <strong>${correctText}</strong></span>
+            </div>
+          `;
+        }
+
+        els.btnCheck.classList.add('hidden');
+        els.btnNext.classList.remove('hidden');
+      }
+
+      function finishGame() {
+        els.progressBar.style.width = `100%`;
+        els.gameScreen.classList.add('hidden');
+        els.endScreen.classList.remove('hidden');
+        
+        els.endName.textContent = state.playerName;
+        els.endScore.textContent = state.score;
+        els.endPercent.textContent = Math.round((state.score / totalQuestions) * 100) + '%';
+        
+        const now = new Date();
+        const timeStr = now.toLocaleString('he-IL');
+        els.endTime.textContent = timeStr;
+        
+        const secureCode = createHash(state.score, totalQuestions, timeStr);
+        els.secureHash.textContent = secureCode;
+        
+        if(state.score === totalQuestions) {
+          createConfetti();
+        }
+      }
+
+      // Event Listeners
+      els.btnStart.addEventListener('click', () => {
+        const name = els.playerNameInput.value.trim();
+        if(name.length < 2) {
+          alert("נא להזין שם תקין (פרטי ומשפחה) לפני תחילת התרגול.");
+          return;
+        }
+        
+        state.playerName = name;
+        els.displayName.textContent = name;
+        state.score = 0;
+        state.currentIndex = 0;
+        els.scoreDisplay.textContent = '0';
+        els.scoreTotal.textContent = totalQuestions;
+        els.qTotal.textContent = totalQuestions;
+        els.endTotal.textContent = totalQuestions;
+        
+        els.introScreen.classList.add('hidden');
+        els.endScreen.classList.add('hidden');
+        els.gameScreen.classList.remove('hidden');
+        
+        renderQuestion();
+      });
+
+      els.btnCheck.addEventListener('click', checkAnswer);
+      
+      els.btnNext.addEventListener('click', () => {
+        state.currentIndex++;
+        if (state.currentIndex >= totalQuestions) {
+          finishGame();
+        } else {
+          renderQuestion();
+        }
+      });
+
+      els.btnRestart.addEventListener('click', () => {
+        els.endScreen.classList.add('hidden');
+        els.playerNameInput.value = '';
+        els.introScreen.classList.remove('hidden');
+      });
+
+      els.btnToggleTeacher.addEventListener('click', () => {
+        els.teacherPanel.classList.toggle('hidden');
+      });
+
+      els.btnVerify.addEventListener('click', () => {
+        const input = document.getElementById('teacher-hash-input').value;
+        const res = verifyHash(input);
+        const out = document.getElementById('teacher-decoded');
+        out.classList.remove('hidden', 'text-green-400', 'text-red-400');
+        if(res) {
+            out.classList.add('text-green-400');
+            out.innerText = `Valid Code!\nScore: ${res.score} / ${res.total}`;
+        } else {
+            out.classList.add('text-red-400');
+            out.innerText = "Invalid or corrupted code.";
+        }
+      });
+
+    })();
+  </script>
+</body>
+</html>
