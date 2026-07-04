@@ -1124,11 +1124,9 @@
                 <p class="mt-3 text-slate-500">סינון לפי נושאים, מיומנויות ושנת שאלה. לחצי על כל שאלה לצפייה בפתרון המלא.</p>
             </div>
             <div class="header-meta-col">
-                <div class="version-stamp" id="versionStamp" dir="ltr" aria-label="Version stamp">
-                    <span class="version-label">ver</span>
-                    <span id="versionId">vAUTO</span>
-                    <span>|</span>
-                    <span id="versionUpdatedAt">auto</span>
+                <div class="version-stamp" id="versionStamp" aria-label="תאריך עדכון אחרון">
+                    <span class="version-label">עדכון אחרון</span>
+                    <span id="versionUpdatedAt">--/--/----</span>
                 </div>
                 <a class="coverage-cta-link" href="./טבלת כיסוי שאלות חשמל.html">טבלת כיסוי שאלות</a>
                 <a class="legal-entry-link subtle" href="../../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
@@ -2181,18 +2179,17 @@
         }
 
         function applyVersionStamp() {
-            const versionId = document.getElementById("versionId");
             const versionUpdatedAt = document.getElementById("versionUpdatedAt");
-            if (!versionId || !versionUpdatedAt) return;
+            if (!versionUpdatedAt) return;
             const modified = new Date(document.lastModified);
             if (Number.isNaN(modified.getTime())) return;
             const pad = (n) => String(n).padStart(2, "0");
-            const year = modified.getFullYear(); const month = modified.getMonth() + 1; const day = modified.getDate();
-            const seed = (year * 372) + (month * 31) + day + 157;
-            const codeNum = (seed * 73) % 46656;
-            const dateCode = codeNum.toString(36).toUpperCase().padStart(3, "0");
-            versionId.textContent = `v${dateCode}`;
-            versionUpdatedAt.textContent = `${dateCode} ${pad(modified.getHours())}:${pad(modified.getMinutes())}:${pad(modified.getSeconds())}`;
+            const year = modified.getFullYear();
+            const month = pad(modified.getMonth() + 1);
+            const day = pad(modified.getDate());
+            const hour = pad(modified.getHours());
+            const minute = pad(modified.getMinutes());
+            versionUpdatedAt.textContent = `${day}/${month}/${year} ${hour}:${minute}`;
         }
 
         // DOM refs
