@@ -1343,6 +1343,10 @@
             return parts.length ? parts[parts.length - 1] : "";
         }
 
+        function isQuestionSourceFile(fileName) {
+            return String(fileName || "").toLowerCase() === "question.html";
+        }
+
         function getPracticeFolder(path) {
             const normalized = normalizeRelativePath(path);
             const parts = normalized.split("/").filter(Boolean);
@@ -1402,6 +1406,7 @@
                 const practiceRootPath = getPracticeRootPath(relativePath);
                 if (!fileName || !folderPath || !practiceRootPath) return;
                 if (DISCOVERY_EXCLUDED_FILES.has(fileName)) return;
+                if (isQuestionSourceFile(fileName)) return;
                 const entry = ensureFolder(practiceRootPath);
                 if (fileName.toLowerCase() === "question-image.png" && folderPath === practiceRootPath) {
                     entry.hasQuestionImage = true;
@@ -1562,6 +1567,7 @@
 
             const mapped = questions.map((entry, index) => {
                 const normalizedPath = normalizeRelativePath(entry.path || "");
+                if (isQuestionSourceFile(getFileName(normalizedPath))) return null;
                 const practiceFolder = getPracticeFolder(normalizedPath);
                 const practiceRootPath = getPracticeRootPath(normalizedPath);
                 const discovered = discoveredByFolder.get(practiceFolder);
@@ -1589,11 +1595,12 @@
                 if (normalizedPath) byPath.set(normalizedPath, item);
                 if (practiceFolder) byFolder.set(practiceFolder, item);
                 return item;
-            });
+            }).filter(Boolean);
 
             // Add discovered items not yet in JSON
             discoveredItems.forEach((item) => {
                 const normalized = normalizeRelativePath(item.href);
+                if (isQuestionSourceFile(getFileName(normalized))) return;
                 if (byPath.has(normalized)) return;
                 const folder = getPracticeFolder(normalized);
                 if (byFolder.has(folder)) return;

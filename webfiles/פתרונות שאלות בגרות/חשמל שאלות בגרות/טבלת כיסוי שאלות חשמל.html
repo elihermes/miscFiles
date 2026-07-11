@@ -775,7 +775,6 @@
 		const summaryFocusPercent = document.getElementById("summaryFocusPercent");
 		const QUESTION_COUNT = 6;
 		const START_YEAR = 2000;
-		const END_YEAR = 2025;
 		const hoverPreview = document.getElementById("hoverPreview");
 		const hoverPreviewImg = document.getElementById("hoverPreviewImg");
 		let previewActive = false;
@@ -1174,7 +1173,28 @@
 			return year >= 2017 ? 6 : 5;
 		}
 
-		function buildRows(questions) {
+		function resolveEndYear(questions, focusData) {
+			let endYear = START_YEAR;
+
+			questions.forEach((question) => {
+				const parsed = parseQuestionMeta(question);
+				if (parsed && Number.isFinite(parsed.year) && parsed.year >= START_YEAR) {
+					endYear = Math.max(endYear, parsed.year);
+				}
+			});
+
+			const focusRows = Array.isArray(focusData?.rows) ? focusData.rows : [];
+			focusRows.forEach((row) => {
+				const year = Number(row?.bagrutYear);
+				if (Number.isFinite(year) && year >= START_YEAR) {
+					endYear = Math.max(endYear, year);
+				}
+			});
+
+			return endYear;
+		}
+
+		function buildRows(questions, endYear) {
 			const rowMap = new Map();
 
 			questions.forEach((question) => {
@@ -1182,7 +1202,7 @@
 				if (
 					!parsed ||
 					parsed.year < START_YEAR ||
-					parsed.year > END_YEAR ||
+					parsed.year > endYear ||
 					parsed.questionNumber < 1 ||
 					parsed.questionNumber > QUESTION_COUNT
 				) {
@@ -1203,7 +1223,7 @@
 				};
 			});
 
-			for (let year = START_YEAR; year <= END_YEAR; year += 1) {
+			for (let year = START_YEAR; year <= endYear; year += 1) {
 				ensureRow(rowMap, `${year}-primary`, {
 					year,
 					orderVariant: 0,
@@ -1493,7 +1513,8 @@
 					console.warn('question-discovery-unavailable', error);
 				}
 				const questions = mergeQuestionsWithDiscovered(data.questions, discoveredPaths);
-				const rows = buildRows(questions);
+				const endYear = resolveEndYear(questions, focusData);
+				const rows = buildRows(questions, endYear);
 				const focusLookup = buildFocusLookup(focusData);
 				renderTable(rows, focusLookup);
 				attachStatusLinkPreviewHandlers();

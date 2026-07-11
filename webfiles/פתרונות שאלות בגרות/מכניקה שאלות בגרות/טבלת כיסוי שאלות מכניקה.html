@@ -1126,7 +1126,32 @@
             return rowMap.get(rowKey);
         }
 
-        function buildRows(questions) {
+        function resolveEndYear(questions, focusData) {
+            let endYear = START_YEAR;
+
+            questions.forEach((question) => {
+                const parsed = parseQuestionId(question.id);
+                if (parsed && Number.isFinite(parsed.year) && parsed.year >= START_YEAR) {
+                    endYear = Math.max(endYear, parsed.year);
+                }
+            });
+
+            const focusRows = Array.isArray(focusData?.rows) ? focusData.rows : [];
+            focusRows.forEach((row) => {
+                const year = Number(row?.bagrutYear);
+                if (Number.isFinite(year) && year >= START_YEAR) {
+                    endYear = Math.max(endYear, year);
+                }
+            });
+
+            return endYear;
+        }
+
+        function maxQuestionSlotsForYear(year) {
+            return year <= 1999 ? 5 : year === 2000 ? 4 : year <= 2017 ? 5 : QUESTION_COUNT;
+        }
+
+        function buildRows(questions, endYear) {
             const rowMap = new Map();
 
             questions.forEach((question) => {
@@ -1138,7 +1163,7 @@
                 const isSecondary2016 = parsed.year === 2016 && parsed.variant > 0;
                 const rowKey = isSecondary2016 ? `${parsed.year}-secondary` : `${parsed.year}-primary`;
                 const label = isSecondary2016 ? `${parsed.year} (שאלון 2)` : String(parsed.year);
-                const maxQ = parsed.year <= 1999 ? 5 : parsed.year === 2000 ? 4 : parsed.year <= 2017 ? 5 : QUESTION_COUNT;
+                const maxQ = maxQuestionSlotsForYear(parsed.year);
                 const row = ensureRow(rowMap, rowKey, {
                     year: parsed.year,
                     orderVariant: isSecondary2016 ? 1 : 0,
@@ -1151,6 +1176,15 @@
                     path: question.path || ""
                 };
             });
+
+            for (let year = START_YEAR; year <= endYear; year += 1) {
+                ensureRow(rowMap, `${year}-primary`, {
+                    year,
+                    orderVariant: 0,
+                    label: String(year),
+                    maxQuestions: maxQuestionSlotsForYear(year)
+                });
+            }
 
             const rows = Array.from(rowMap.values()).sort((a, b) => {
                 if (a.year !== b.year) {
@@ -1452,7 +1486,8 @@
                     console.warn('question-discovery-unavailable', error);
                 }
                 const questions = mergeQuestionsWithDiscovered(data.questions, discoveredPaths);
-                const rows = buildRows(questions);
+                const endYear = resolveEndYear(questions, focusData);
+                const rows = buildRows(questions, endYear);
                 const focusLookup = buildFocusLookup(focusData);
                 renderTable(rows, focusLookup);
                 attachStatusLinkPreviewHandlers();
