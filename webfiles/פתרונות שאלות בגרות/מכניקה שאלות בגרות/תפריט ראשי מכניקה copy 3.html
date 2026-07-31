@@ -12,7 +12,7 @@
         </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>פיזיקאלי - תפריט ראשי - בגרויות חשמל</title>
+    <title>פיזיקאלי - תפריט ראשי - בגרויות מכניקה</title>
 
     <script src="https://cdn.tailwindcss.com"></script>
 
@@ -649,10 +649,6 @@
             box-shadow: 0 6px 14px rgba(15, 23, 42, 0.06);
         }
 
-        .skill-chip.is-empty {
-            opacity: 0.55;
-        }
-
         .skill-chip.state-with {
             border-color: #86efac;
             background: #f8fff9;
@@ -672,6 +668,10 @@
             overflow-wrap: anywhere;
             font-weight: 800;
             color: #1f2937;
+        }
+
+        .skill-chip.is-empty {
+            opacity: 0.55;
         }
 
         .skill-count {
@@ -949,6 +949,23 @@
             margin-top: 0;
         }
 
+        @media (max-width: 640px) {
+            .page-header-row {
+                flex-direction: column;
+                align-items: stretch;
+            }
+            .header-meta-col {
+                flex-direction: row;
+                flex-wrap: wrap;
+                align-items: center;
+                justify-content: center;
+                gap: 0.5rem;
+            }
+            .coverage-cta-link {
+                width: 100%;
+            }
+        }
+
         .coverage-cta-link {
             display: inline-flex;
             align-items: center;
@@ -1059,31 +1076,6 @@
             }
         }
 
-        @media (max-width: 900px) {
-            .toolbar-cluster {
-                justify-content: flex-start;
-            }
-        }
-
-        @media (max-width: 640px) {
-            .page-header-row {
-                flex-direction: column;
-                align-items: stretch;
-            }
-
-            .header-meta-col {
-                flex-direction: row;
-                flex-wrap: wrap;
-                align-items: center;
-                justify-content: center;
-                gap: 0.5rem;
-            }
-
-            .coverage-cta-link {
-                width: 100%;
-            }
-        }
-
         @media (max-width: 640px) {
             .filter-drawer {
                 top: auto;
@@ -1118,11 +1110,13 @@
 <body>
     <div class="page-shell">
         <header class="page-header-row mb-8">
+            <!-- כותרת הדף — צד ימין -->
             <div class="header-title-col">
-                <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פיזיקאלי - פתרון בגרויות פיזיקה חשמל</h1>
-                <h2 class="text-xl md:text-2xl text-slate-600">פיזיקאלי - פתרונות מלאים ומפורטים לבגרויות פיזיקה - חשמל</h2>
+                <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פיזיקאלי - פתרון בגרויות פיזיקה מכניקה</h1>
+                <h2 class="text-xl md:text-2xl text-slate-600">פיזיקאלי - פתרונות מלאים ומפורטים לבגרויות פיזיקה - מכניקה</h2>
                 <p class="mt-3 text-slate-500">סינון לפי נושאים, מיומנויות ושנת שאלה. לחצי על כל שאלה לצפייה בפתרון המלא.</p>
             </div>
+            <!-- גירסא וקישורים — צד שמאל -->
             <div class="header-meta-col">
                 <div class="version-stamp" id="versionStamp" dir="ltr" aria-label="Version stamp">
                     <span class="version-label">ver</span>
@@ -1130,9 +1124,8 @@
                     <span>|</span>
                     <span id="versionUpdatedAt">auto</span>
                 </div>
-                <a class="coverage-cta-link" href="./טבלת כיסוי שאלות חשמל.html">טבלת כיסוי שאלות</a>
+                <a class="coverage-cta-link" href="./טבלת כיסוי שאלות מכניקה.html">טבלת כיסוי שאלות</a>
                 <a class="legal-entry-link subtle" href="../../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
-                <a class="legal-entry-link subtle" href="https://forms.gle/BasKhHRUQQjQL2uo8" target="_blank" rel="noopener noreferrer">מצאת בעיה בפתרון? לדיווח</a>
             </div>
         </header>
 
@@ -1242,10 +1235,10 @@
     </div>
 
     <script>
-        const BAGRUT_FOLDER_REPO_PATH = "webfiles/פתרונות שאלות בגרות/חשמל שאלות בגרות";
+        const BAGRUT_FOLDER_REPO_PATH = "webfiles/פתרונות שאלות בגרות/מכניקה שאלות בגרות";
         const AMIT_FOCUS_JSON_PATH = "./שאלות במיקוד עמית.json";
         const DISCOVERY_EXCLUDED_FILES = new Set([
-            "תפריט ראשי חשמל.html",
+            "תפריט ראשי מכניקה.html",
             "question-topics.json"
         ]);
 
@@ -1277,7 +1270,7 @@
         function compareSolutionsByAddedAt(a, b) {
             const ta = a.addedAt || null;
             const tb = b.addedAt || null;
-            // missing addedAt -> treat as newest (appears first)
+            // missing addedAt → treat as newest (appears first)
             if (ta === null && tb === null) return compareSolutionsByYearDesc(a, b);
             if (ta === null) return -1;
             if (tb === null) return 1;
@@ -1317,7 +1310,7 @@
             const directPrefix = `${BAGRUT_FOLDER_REPO_PATH}/`;
             const directIdx = normalized.indexOf(directPrefix);
             if (directIdx >= 0) return normalized.slice(directIdx + directPrefix.length);
-            const folderName = "חשמל שאלות בגרות/";
+            const folderName = "מכניקה שאלות בגרות/";
             const folderIdx = normalized.indexOf(folderName);
             if (folderIdx >= 0) return normalized.slice(folderIdx + folderName.length);
             return normalized;
@@ -1464,6 +1457,33 @@
             return finalize();
         }
 
+        function buildAmitFocusRowKey(year, orderVariant = 0) {
+            return `${Number(year)}-${Number(orderVariant) || 0}`;
+        }
+
+        function getAmitFocusReferenceForSolution(solution) {
+            const year = Number(solution?.bagrutYear);
+            const rawQuestionNumber = Number(solution?.bagrutQuestionNumber);
+            if (!Number.isFinite(year) || !Number.isFinite(rawQuestionNumber)) {
+                return null;
+            }
+
+            const explicitOrderVariant = Number(solution?.orderVariant);
+            const hasExplicitOrderVariant = Number.isFinite(explicitOrderVariant);
+            const isSecondary2016 = year === 2016 && !Number.isInteger(rawQuestionNumber);
+            const orderVariant = hasExplicitOrderVariant ? explicitOrderVariant : (isSecondary2016 ? 1 : 0);
+            const questionNumber = Number.isInteger(rawQuestionNumber) ? rawQuestionNumber : Math.trunc(rawQuestionNumber);
+
+            if (!Number.isFinite(questionNumber)) {
+                return null;
+            }
+
+            return {
+                rowKey: buildAmitFocusRowKey(year, orderVariant),
+                questionNumber
+            };
+        }
+
         function buildAmitFocusLookup(rawData) {
             const rows = Array.isArray(rawData?.rows) ? rawData.rows : [];
             const lookup = new Map();
@@ -1471,6 +1491,7 @@
             rows.forEach((row) => {
                 const year = Number(row?.bagrutYear);
                 if (!Number.isFinite(year)) return;
+                const orderVariant = Number(row?.orderVariant) || 0;
 
                 const questions = new Map();
                 const questionList = Array.isArray(row?.questions) ? row.questions : [];
@@ -1483,7 +1504,7 @@
                     });
                 });
 
-                lookup.set(year, {
+                lookup.set(buildAmitFocusRowKey(year, orderVariant), {
                     yearNote: row?.yearNote || "",
                     questions
                 });
@@ -1504,12 +1525,17 @@
         }
 
         function getAmitFocusForSolution(solution) {
-            if (!solution?.isBagrutQuestion || !solution?.bagrutYear || !solution?.bagrutQuestionNumber) {
+            if (!solution?.isBagrutQuestion) {
                 return null;
             }
 
-            const yearData = amitFocusLookup.get(Number(solution.bagrutYear));
-            const questionData = yearData?.questions?.get(Number(solution.bagrutQuestionNumber));
+            const focusReference = getAmitFocusReferenceForSolution(solution);
+            if (!focusReference) {
+                return null;
+            }
+
+            const yearData = amitFocusLookup.get(focusReference.rowKey);
+            const questionData = yearData?.questions?.get(focusReference.questionNumber);
             if (!questionData?.focusStatus) {
                 return null;
             }
@@ -1653,6 +1679,19 @@
         function setTopicState(topic, state) {
             if (state === TOPIC_FILTER_STATE.ANY) topicFilterStates.delete(topic);
             else topicFilterStates.set(topic, state);
+        }
+
+        function cycleTopicState(topic) {
+            const current = getTopicState(topic);
+            if (current === TOPIC_FILTER_STATE.ANY) {
+                setTopicState(topic, TOPIC_FILTER_STATE.WITH);
+                return;
+            }
+            if (current === TOPIC_FILTER_STATE.WITH) {
+                setTopicState(topic, TOPIC_FILTER_STATE.WITHOUT);
+                return;
+            }
+            setTopicState(topic, TOPIC_FILTER_STATE.ANY);
         }
 
         function getActiveTopicFilterCount() {
