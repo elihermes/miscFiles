@@ -3,35 +3,80 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>תרגול קינמטיקה - שיהויי זמן ומשוואות תנועה</title>
+    <title>משחק קינמטיקה - שיהויי זמן ומשוואות תנועה</title>
     <script src="https://cdn.tailwindcss.com"></script>
     <style>
         body { font-family: system-ui, -apple-system, sans-serif; }
         .feedback-icon { flex-shrink: 0; width: 1.25rem; height: 1.25rem; margin-right: 0.5rem; margin-left: 0.25rem; }
         .math-text { font-family: 'Times New Roman', Times, serif; font-style: italic; font-size: 1.1em; }
+        
+        /* Custom scrollbar for better look */
+        ::-webkit-scrollbar { width: 8px; }
+        ::-webkit-scrollbar-track { background: #f1f5f9; }
+        ::-webkit-scrollbar-thumb { background: #cbd5e1; border-radius: 4px; }
+        ::-webkit-scrollbar-thumb:hover { background: #94a3b8; }
     </style>
 </head>
 <body class="bg-slate-100 min-h-screen text-slate-800">
 
-    <div id="loadingScreen" class="flex min-h-screen items-center justify-center text-xl font-medium">
-        מכין את התרגול...
+    <div id="startScreen" class="min-h-screen flex items-center justify-center p-4">
+        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center border-t-8 border-blue-600">
+            <svg class="w-16 h-16 text-blue-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 2v20"/><path d="M17 5H9.5a3.5 3.5 0 0 0 0 7h5a3.5 3.5 0 0 1 0 7H6"/>
+            </svg>
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">משחק קינמטיקה</h1>
+            <h2 class="text-xl text-slate-600 mb-6">שיהויי זמן ומשוואות תנועה</h2>
+            <p class="text-slate-500 mb-6">אנא הזן את שמך המלא כדי להתחיל במשחק.</p>
+            
+            <div class="mb-6">
+                <input type="text" id="playerNameInput" placeholder="שם מלא (לדוגמה: ישראל ישראלי)" class="w-full p-4 border-2 rounded-xl border-slate-200 bg-slate-50 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all text-center text-lg">
+                <p id="nameError" class="text-red-500 text-sm mt-2 hidden">יש להזין שם כדי להתחיל.</p>
+            </div>
+            
+            <button onclick="startGame()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-md hover:shadow-lg text-lg flex items-center justify-center gap-2">
+                <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                התחל משחק
+            </button>
+        </div>
+    </div>
+
+    <div id="loadingScreen" class="hidden flex min-h-screen flex-col items-center justify-center text-xl font-medium text-slate-600">
+        <svg class="animate-spin -ml-1 mr-3 h-10 w-10 text-blue-600 mb-4" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+            <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+            <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+        </svg>
+        מכין את המשחק...
     </div>
 
     <div id="finishScreen" class="hidden min-h-screen flex items-center justify-center p-4">
-        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-md w-full text-center border-t-8 border-blue-600">
+        <div class="bg-white p-8 rounded-2xl shadow-xl max-w-lg w-full text-center border-t-8 border-blue-600">
             <svg class="w-16 h-16 text-blue-600 mx-auto mb-4" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect width="16" height="20" x="4" y="2" rx="2"/><line x1="8" x2="16" y1="6" y2="6"/><line x1="16" x2="16.01" y1="10" y2="10"/><line x1="12" x2="12.01" y1="10" y2="10"/><line x1="8" x2="8.01" y1="10" y2="10"/><line x1="16" x2="16.01" y1="14" y2="14"/><line x1="12" x2="12.01" y1="14" y2="14"/><line x1="8" x2="8.01" y1="14" y2="14"/><line x1="16" x2="16.01" y1="18" y2="18"/><line x1="12" x2="12.01" y1="18" y2="18"/><line x1="8" x2="8.01" y1="18" y2="18"/></svg>
-            <h1 class="text-3xl font-bold text-slate-800 mb-2">התרגול הסתיים!</h1>
-            <p class="text-lg text-slate-600 mb-6">ענית על כל 20 התרחישים.</p>
-            <div class="text-4xl font-black text-blue-600 mb-8 flex justify-center items-center gap-2">
-                <span class="text-xl text-slate-500 font-normal">ציון:</span> 
-                <span id="finalScorePercent">0</span>
+            <h1 class="text-3xl font-bold text-slate-800 mb-2">המשחק הסתיים!</h1>
+            <p class="text-lg text-slate-600 mb-6">כל הכבוד <span id="finishPlayerName" class="font-bold text-blue-600"></span>, סיימת את כל 20 התרחישים.</p>
+            
+            <div class="bg-slate-50 rounded-xl p-6 mb-6 border border-slate-100">
+                <div class="text-5xl font-black text-blue-600 mb-4 flex justify-center items-center gap-2">
+                    <span id="finalScorePercent">0</span>
+                </div>
+                <p class="text-base text-slate-600 font-medium border-b border-slate-200 pb-4 mb-4">
+                    תשובות נכונות: <span id="finalScoreText" class="font-bold text-slate-800">0 מתוך 0</span> סעיפים
+                </p>
+                
+                <div class="grid grid-cols-2 gap-4 text-sm text-slate-500 text-right">
+                    <div>
+                        <span class="block text-xs text-slate-400">תאריך ושעה</span>
+                        <span id="finishDateTime" class="font-mono text-slate-700"></span>
+                    </div>
+                    <div>
+                        <span class="block text-xs text-slate-400">מזהה משחק (למורה)</span>
+                        <span id="finishGameId" class="font-mono text-slate-700 bg-slate-200 px-2 py-1 rounded"></span>
+                    </div>
+                </div>
             </div>
-            <p class="text-sm text-slate-500 mb-8">
-                תשובות נכונות: <span id="finalScoreText">0 מתוך 0</span> סעיפים
-            </p>
-            <button onclick="restartQuiz()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center justify-center gap-2">
+
+            <button onclick="restartToStartScreen()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-6 rounded-xl transition-colors flex items-center justify-center gap-2">
                 <svg class="w-5 h-5" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                התחל תרגול מחדש
+                התחל משחק חדש
             </button>
         </div>
     </div>
@@ -41,33 +86,36 @@
             
             <!-- Top Card: Scenario Description -->
             <div class="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
-                <div class="flex justify-between items-center mb-6 border-b pb-4">
+                <div class="flex flex-col sm:flex-row justify-between items-start sm:items-center mb-6 border-b pb-4 gap-4">
                     <h2 class="text-2xl font-bold text-slate-800">ניתוח תנועה ותנאי התחלה</h2>
-                    <div class="flex gap-3 text-sm sm:text-base">
-                        <div class="bg-emerald-100 text-emerald-800 px-4 py-1 rounded-full font-semibold">
+                    <div class="flex flex-wrap gap-3 text-sm sm:text-base">
+                        <div class="bg-emerald-100 text-emerald-800 px-4 py-1.5 rounded-full font-semibold shadow-sm flex items-center gap-2">
                             ציון נצבר: <span dir="ltr" id="scoreDisplay">0/0</span>
                         </div>
-                        <div class="bg-blue-100 text-blue-800 px-4 py-1 rounded-full font-semibold">
+                        <div class="bg-blue-100 text-blue-800 px-4 py-1.5 rounded-full font-semibold shadow-sm flex items-center gap-2">
                             תרחיש <span id="questionNum">1</span> מתוך 20
                         </div>
                     </div>
                 </div>
 
-                <div class="bg-amber-50 border-r-4 border-amber-400 p-4 rounded-l-lg shadow-sm text-lg leading-relaxed">
-                    <p id="scenarioText" class="text-slate-800"></p>
+                <div class="bg-amber-50 border-r-4 border-amber-400 p-5 rounded-l-xl shadow-inner text-lg leading-relaxed">
+                    <p id="scenarioText" class="text-slate-800 font-medium"></p>
                 </div>
             </div>
 
             <!-- Bottom Card: Questions Form -->
             <div class="bg-white rounded-2xl shadow-lg p-6 border border-slate-200">
-                <h3 class="text-xl font-bold text-slate-800 mb-6">ענה על השאלות הבאות:</h3>
+                <h3 class="text-xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+                    <svg class="w-5 h-5 text-blue-500" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3"/><line x1="12" x2="12.01" y1="17" y2="17"/></svg>
+                    ענה על השאלות הבאות:
+                </h3>
                 
                 <div id="questionsContainer" class="space-y-6">
                     <!-- Dynamic Questions will be injected here -->
                 </div>
 
                 <!-- Action Buttons -->
-                <div class="mt-8 pt-6 border-t border-slate-200">
+                <div class="mt-8 pt-6 border-t border-slate-100">
                     <button id="btnCheck" onclick="checkAnswers()" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-4 px-6 rounded-xl transition-all shadow-md hover:shadow-lg text-lg flex items-center justify-center gap-2">
                         <svg class="w-6 h-6" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>
                         בדוק תשובות
@@ -83,8 +131,36 @@
     </div>
 
     <script>
-        // --- Physics Engine & Data Generation ---
-        
+        let playerName = "";
+        let gameId = "";
+        let currentScenarios = [];
+        let currentIndex = 0;
+        let score = { correct: 0, total: 0 };
+
+        const iconCorrect = `<svg class="text-emerald-500 feedback-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`;
+        const iconWrong = `<svg class="text-red-500 feedback-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>`;
+
+        function startGame() {
+            const nameInput = document.getElementById('playerNameInput').value.trim();
+            if (nameInput === "") {
+                document.getElementById('nameError').classList.remove('hidden');
+                document.getElementById('playerNameInput').classList.add('border-red-400', 'focus:ring-red-200');
+                return;
+            }
+            
+            playerName = nameInput;
+            document.getElementById('startScreen').classList.add('hidden');
+            
+            // Initialize Game
+            restartQuiz();
+        }
+
+        function restartToStartScreen() {
+            document.getElementById('finishScreen').classList.add('hidden');
+            document.getElementById('playerNameInput').value = "";
+            document.getElementById('startScreen').classList.remove('hidden');
+        }
+
         // Logical Direction Groupings
         const DIR_PAIRS = [
             { pos: 'צפונה', neg: 'דרומה', type: 'map' },
@@ -197,21 +273,21 @@
         const formatPosDesc = (val, posDir, negDir) => {
             if (val === 0) return 'מראשית הצירים';
             const dir = val > 0 ? posDir : negDir;
-            if (dir === 'למעלה') return `מנקודה הנמצאת <span class="math-text">${Math.abs(val)}</span> מטרים מעל ראשית הצירים`;
-            if (dir === 'למטה') return `מנקודה הנמצאת <span class="math-text">${Math.abs(val)}</span> מטרים מתחת לראשית הצירים`;
-            return `מנקודה הנמצאת <span class="math-text">${Math.abs(val)}</span> מטרים ${dir} לראשית הצירים`;
+            if (dir === 'למעלה') return `מנקודה הנמצאת <span class="math-text font-bold text-blue-700">${Math.abs(val)}</span> מטרים מעל ראשית הצירים`;
+            if (dir === 'למטה') return `מנקודה הנמצאת <span class="math-text font-bold text-blue-700">${Math.abs(val)}</span> מטרים מתחת לראשית הצירים`;
+            return `מנקודה הנמצאת <span class="math-text font-bold text-blue-700">${Math.abs(val)}</span> מטרים ${dir} לראשית הצירים`;
         };
 
         const formatVelDesc = (val, posDir, negDir) => {
             if (val === 0) return 'ממנוחה';
             const dir = val > 0 ? posDir : negDir;
-            return `במהירות התחלתית של <span class="math-text">${Math.abs(val)}m/s</span> ${dir}`;
+            return `במהירות התחלתית של <span class="math-text font-bold text-blue-700">${Math.abs(val)}m/s</span> ${dir}`;
         };
 
         const formatAccDesc = (val, posDir, negDir) => {
             if (val === 0) return `ללא תאוצה`;
             const dir = val > 0 ? posDir : negDir;
-            return `ובתאוצה של <span class="math-text">${Math.abs(val)}m/s²</span> לכיוון ${getDirNoun(dir)}`;
+            return `ובתאוצה של <span class="math-text font-bold text-blue-700">${Math.abs(val)}m/s²</span> לכיוון ${getDirNoun(dir)}`;
         };
 
         const getEqDistractors = (x0, v0, a, shift) => {
@@ -328,7 +404,7 @@
             let x0 = getRandomInt(-10, 10);
 
             let text = `כיוון ${dirPair.pos} מוגדר כחיובי. מוגדר רגע <span class="math-text">t=0</span> כרגע ${context.event}.<br>`;
-            text += `<b>${context.actor}</b> ${startsVerb} <span class="font-bold">${delay} שניות</span> לאחר מכן (כלומר בשיהוי). ההתחלה היא ${formatPosDesc(x0, dirPair.pos, dirPair.neg)}, ${formatVelDesc(v0, dirPair.pos, dirPair.neg)} ${formatAccDesc(a, dirPair.pos, dirPair.neg)}.`;
+            text += `<b>${context.actor}</b> ${startsVerb} <span class="font-bold text-red-600">${delay} שניות</span> לאחר מכן (כלומר בשיהוי). ההתחלה היא ${formatPosDesc(x0, dirPair.pos, dirPair.neg)}, ${formatVelDesc(v0, dirPair.pos, dirPair.neg)} ${formatAccDesc(a, dirPair.pos, dirPair.neg)}.`;
 
             let evalTime = delay + getRandomInt(2, 6);
             const xFn = (t) => t >= delay ? x0 + v0*(t-delay) + 0.5*a*Math.pow(t-delay, 2) : x0;
@@ -357,30 +433,22 @@
             return [...singleScenarios, ...twoBodiesScenarios]; // Combine into 20 questions
         };
 
-        let currentScenarios = [];
-        let currentIndex = 0;
-        let score = { correct: 0, total: 0 };
-
-        const iconCorrect = `<svg class="text-green-500 feedback-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m9 12 2 2 4-4"/></svg>`;
-        const iconWrong = `<svg class="text-red-500 feedback-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"/><path d="m15 9-6 6"/><path d="m9 9 6 6"/></svg>`;
-
-        document.addEventListener("DOMContentLoaded", () => {
-            restartQuiz();
-        });
-
         function restartQuiz() {
             document.getElementById('loadingScreen').classList.remove('hidden');
             document.getElementById('quizScreen').classList.add('hidden');
-            document.getElementById('finishScreen').classList.add('hidden');
             
             setTimeout(() => {
                 currentScenarios = generateQuiz();
                 currentIndex = 0;
                 score = { correct: 0, total: 0 };
+                
+                // Generate a unique short Game ID
+                gameId = Math.random().toString(36).substring(2, 8).toUpperCase();
+                
                 renderScenario();
                 document.getElementById('loadingScreen').classList.add('hidden');
                 document.getElementById('quizScreen').classList.remove('hidden');
-            }, 300);
+            }, 500);
         }
 
         function renderScenario() {
@@ -395,7 +463,7 @@
 
             scenario.questions.forEach((q) => {
                 const wrapper = document.createElement('div');
-                wrapper.className = "flex flex-col";
+                wrapper.className = "flex flex-col mb-2";
                 
                 let inputHtml = '';
                 if (q.type === 'select') {
@@ -405,13 +473,13 @@
                         optionsHtml += `<option value="${opt}">${prefix} = ${opt}</option>`;
                     });
                     inputHtml = `
-                        <select id="input_${q.id}" class="math-text flex-grow p-3 border rounded-lg border-slate-300 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none" dir="ltr">
+                        <select id="input_${q.id}" class="math-text flex-grow p-3 border-2 rounded-xl border-slate-300 bg-slate-50 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all shadow-sm" dir="ltr">
                             ${optionsHtml}
                         </select>
                     `;
                 } else if (q.type === 'number') {
                     inputHtml = `
-                        <input id="input_${q.id}" type="number" step="0.01" placeholder="הזן ערך מספרי..." class="flex-grow p-3 border rounded-lg border-slate-300 bg-slate-50 focus:ring-2 focus:ring-blue-500 outline-none" dir="ltr" />
+                        <input id="input_${q.id}" type="number" step="0.01" placeholder="הזן ערך מספרי..." class="flex-grow p-3 border-2 rounded-xl border-slate-300 bg-slate-50 focus:border-blue-500 focus:ring-2 focus:ring-blue-200 outline-none transition-all shadow-sm" dir="ltr" />
                     `;
                 }
 
@@ -419,7 +487,7 @@
                     <label class="font-medium text-slate-700 mb-2">${q.label}</label>
                     <div class="flex items-center" id="container_${q.id}">
                         ${inputHtml}
-                        <div id="feedback_${q.id}" class="hidden mr-2 flex-grow-0 sm:flex-grow"></div>
+                        <div id="feedback_${q.id}" class="hidden mr-3 flex-grow-0 sm:flex-grow transition-all duration-300"></div>
                     </div>
                 `;
                 container.appendChild(wrapper);
@@ -428,7 +496,7 @@
             document.getElementById('btnCheck').classList.remove('hidden');
             document.getElementById('btnNext').classList.add('hidden');
             if (currentIndex === currentScenarios.length - 1) {
-                document.getElementById('btnNextText').innerText = 'סיים תרגול';
+                document.getElementById('btnNextText').innerText = 'סיים משחק';
             } else {
                 document.getElementById('btnNextText').innerText = 'המשך לתרחיש הבא';
             }
@@ -453,14 +521,17 @@
                 }
 
                 inputEl.disabled = true;
+                inputEl.classList.remove('focus:ring-blue-200', 'focus:border-blue-500');
+                
                 feedbackEl.classList.remove('hidden');
                 feedbackEl.classList.add('flex', 'items-center', 'text-sm', 'font-medium');
 
                 if (isCorrect) {
                     correctCount++;
+                    inputEl.classList.add('border-emerald-300', 'bg-emerald-50');
                     feedbackEl.innerHTML = iconCorrect;
                 } else {
-                    inputEl.classList.add('border-red-400', 'bg-red-50');
+                    inputEl.classList.add('border-red-300', 'bg-red-50');
                     
                     let correctStr = "";
                     if (q.type === 'select') {
@@ -481,10 +552,10 @@
                     }
 
                     feedbackEl.innerHTML = `
-                        <div class="flex items-center text-red-600 pr-2">
+                        <div class="flex items-center text-red-600 bg-red-50 px-3 py-1.5 rounded-lg border border-red-100 whitespace-nowrap">
                             ${iconWrong}
-                            <span class="whitespace-nowrap hidden sm:inline">(תשובה נכונה: <span dir="rtl">${correctStr}</span>)</span>
-                            <span class="whitespace-nowrap sm:hidden" title="${correctStr}">(טעות)</span>
+                            <span class="hidden sm:inline">התשובה הנכונה: <span dir="rtl" class="font-bold ml-1">${correctStr}</span></span>
+                            <span class="sm:hidden font-bold" title="${correctStr}">טעות</span>
                         </div>
                     `;
                 }
@@ -502,7 +573,7 @@
             if (currentIndex < currentScenarios.length - 1) {
                 currentIndex++;
                 renderScenario();
-                window.scrollTo(0,0);
+                window.scrollTo({ top: 0, behavior: 'smooth' });
             } else {
                 finishQuiz();
             }
@@ -510,11 +581,33 @@
 
         function finishQuiz() {
             document.getElementById('quizScreen').classList.add('hidden');
-            document.getElementById('finishScreen').classList.remove('hidden');
             
+            // Calculate final results
             const percent = Math.round((score.correct / score.total) * 100);
+            
+            // Format current date and time
+            const now = new Date();
+            const formattedDateTime = now.toLocaleString('he-IL', {
+                year: 'numeric', month: '2-digit', day: '2-digit',
+                hour: '2-digit', minute: '2-digit', second: '2-digit'
+            });
+
+            // Populate Finish Screen
+            document.getElementById('finishPlayerName').innerText = playerName;
             document.getElementById('finalScorePercent').innerText = percent + "%";
             document.getElementById('finalScoreText').innerText = `${score.correct} מתוך ${score.total}`;
+            document.getElementById('finishDateTime').innerText = formattedDateTime;
+            document.getElementById('finishGameId').innerText = "#" + gameId;
+            
+            // Adjust score color based on success
+            const scoreElement = document.getElementById('finalScorePercent');
+            if(percent >= 90) scoreElement.className = "text-5xl font-black text-emerald-500 mb-4 flex justify-center items-center gap-2";
+            else if(percent >= 70) scoreElement.className = "text-5xl font-black text-blue-500 mb-4 flex justify-center items-center gap-2";
+            else if(percent >= 55) scoreElement.className = "text-5xl font-black text-amber-500 mb-4 flex justify-center items-center gap-2";
+            else scoreElement.className = "text-5xl font-black text-red-500 mb-4 flex justify-center items-center gap-2";
+
+            document.getElementById('finishScreen').classList.remove('hidden');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
         }
     </script>
 </body>

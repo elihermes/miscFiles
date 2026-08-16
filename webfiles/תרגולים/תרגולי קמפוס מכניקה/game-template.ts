@@ -1,0 +1,1599 @@
+/**
+ * GEM reference file generated from game-template-merged.html.
+ * The exported string contains the complete standalone HTML game template.
+ * Preserve the game engine, scoring, randomization, teacher panels, and verification code.
+ * Customize new games through the GAME_TEMPLATE object inside the exported HTML.
+ */
+
+export const GEM_USAGE_NOTES = Object.freeze({
+  purpose: "תבנית מלאה ליצירת משחקי פיזיקה ב-HTML",
+  instruction: "יש לשמור על מנגנוני ההגרלה, הניקוד לכל סעיף, פאנלי המורה וקוד האימות, ולשנות את הגדרות המשחק בתוך GAME_TEMPLATE בלבד.",
+  sourceFile: "game-template-merged.html"
+});
+
+export const GAME_TEMPLATE_HTML = `<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>תבנית משחק פיזיקה משולבת</title>
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet" />
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+  <script>
+    window.MathJax = {
+      tex: {
+        inlineMath: [['$', '$'], ['\\\\(', '\\\\)']],
+        displayMath: [['$$', '$$'], ['\\\\[', '\\\\]']],
+        processEscapes: true
+      },
+      startup: { typeset: false }
+    };
+  </script>
+  <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+  <style>
+    :root {
+      --primary: #2563eb;
+      --primary-dark: #1d4ed8;
+      --accent: #059669;
+      --accent-dark: #047857;
+      --highlight: #d97706;
+      --page: #f4f7fb;
+      --surface: #ffffff;
+      --ink: #172033;
+      --muted: #64748b;
+      --line: #dbe3ee;
+      --success: #16a34a;
+      --danger: #dc2626;
+      --font-family: 'Assistant', sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    html {
+      overflow-x: clip;
+    }
+
+    body {
+      min-height: 100vh;
+      margin: 0;
+      color: var(--ink);
+      font-family: var(--font-family);
+      background:
+        linear-gradient(rgba(255, 255, 255, 0.58) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255, 255, 255, 0.58) 1px, transparent 1px),
+        linear-gradient(145deg, #edf5ff 0%, var(--page) 48%, #eefbf5 100%);
+      background-size: 38px 38px, 38px 38px, auto;
+      overflow-x: clip;
+    }
+
+    button,
+    input,
+    select {
+      font: inherit;
+    }
+
+    input[type="number"]::-webkit-inner-spin-button,
+    input[type="number"]::-webkit-outer-spin-button {
+      margin: 0;
+      -webkit-appearance: none;
+    }
+
+    input[type="number"] {
+      appearance: textfield;
+      -moz-appearance: textfield;
+    }
+
+    button:focus-visible,
+    input:focus-visible,
+    select:focus-visible {
+      outline: 3px solid rgba(37, 99, 235, 0.24);
+      outline-offset: 2px;
+    }
+
+    .MathJax,
+    mjx-container {
+      direction: ltr !important;
+    }
+
+    mjx-container[display="true"] {
+      max-width: 100%;
+      overflow-x: auto;
+      overflow-y: hidden;
+      padding-block: 0.2rem;
+    }
+
+    .app-shell {
+      width: min(100% - 2rem, 980px);
+      min-height: 100vh;
+      margin-inline: auto;
+      padding-block: 1rem 2.5rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+
+    .screen {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.96);
+      border: 1px solid var(--line);
+      border-radius: 16px;
+      box-shadow: 0 24px 64px rgba(30, 64, 175, 0.13);
+      overflow: hidden;
+    }
+
+    .screen-inner {
+      padding: clamp(1.25rem, 4vw, 2.75rem);
+    }
+
+    .intro-screen,
+    .end-screen {
+      max-width: 680px;
+    }
+
+    .brand-mark {
+      width: 76px;
+      height: 76px;
+      margin: 0 auto 1rem;
+      display: grid;
+      place-items: center;
+      border: 1px solid #bfdbfe;
+      border-radius: 18px;
+      background: #eff6ff;
+      color: var(--primary-dark);
+      font-size: 1.7rem;
+      font-weight: 800;
+      direction: ltr;
+      box-shadow: inset 0 1px 0 #ffffff;
+    }
+
+    .intro-title,
+    .end-title {
+      margin: 0;
+      color: #0f172a;
+      font-size: clamp(1.8rem, 5vw, 2.7rem);
+      font-weight: 800;
+      line-height: 1.15;
+      letter-spacing: 0;
+      text-align: center;
+    }
+
+    .intro-subtitle {
+      max-width: 560px;
+      margin: 0.8rem auto 1.8rem;
+      color: var(--muted);
+      font-size: 1.08rem;
+      line-height: 1.65;
+      text-align: center;
+    }
+
+    .name-field {
+      max-width: 430px;
+      margin-inline: auto;
+      padding-block: 1.2rem;
+      border-block: 1px solid var(--line);
+    }
+
+    .field-label {
+      display: block;
+      margin-bottom: 0.45rem;
+      color: #334155;
+      font-weight: 700;
+      text-align: right;
+    }
+
+    .text-input,
+    .answer-input,
+    .answer-select,
+    .teacher-input {
+      width: 100%;
+      border: 2px solid #cbd5e1;
+      border-radius: 10px;
+      background: #ffffff;
+      color: #0f172a;
+      transition: border-color 0.18s ease, box-shadow 0.18s ease, background-color 0.18s ease;
+    }
+
+    .text-input {
+      padding: 0.85rem 1rem;
+      font-size: 1.1rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .text-input:focus,
+    .answer-input:focus,
+    .answer-select:focus,
+    .teacher-input:focus {
+      border-color: var(--primary);
+      box-shadow: 0 0 0 4px rgba(37, 99, 235, 0.11);
+      outline: none;
+    }
+
+    .primary-button,
+    .secondary-button,
+    .teacher-button,
+    .teacher-toggle {
+      border: 0;
+      cursor: pointer;
+      transition: transform 0.18s ease, background-color 0.18s ease, box-shadow 0.18s ease;
+    }
+
+    .primary-button {
+      min-height: 50px;
+      padding: 0.75rem 1.7rem;
+      border-radius: 10px;
+      background: var(--primary);
+      color: #ffffff;
+      font-size: 1.08rem;
+      font-weight: 800;
+      box-shadow: 0 10px 22px rgba(37, 99, 235, 0.22);
+    }
+
+    .primary-button:hover {
+      background: var(--primary-dark);
+      transform: translateY(-1px);
+    }
+
+    .primary-button.is-next {
+      background: var(--accent);
+      box-shadow: 0 10px 22px rgba(5, 150, 105, 0.2);
+    }
+
+    .primary-button.is-next:hover {
+      background: var(--accent-dark);
+    }
+
+    .primary-button.is-finish {
+      background: #7c3aed;
+      box-shadow: 0 10px 22px rgba(124, 58, 237, 0.2);
+    }
+
+    .primary-button.is-finish:hover {
+      background: #6d28d9;
+    }
+
+    .start-action {
+      display: block;
+      min-width: 220px;
+      margin: 1.4rem auto 0;
+    }
+
+    .teacher-toggle {
+      display: block;
+      margin: 1.25rem auto 0;
+      padding: 0.35rem 0.6rem;
+      background: transparent;
+      color: #94a3b8;
+      font-size: 0.8rem;
+      font-weight: 700;
+      text-decoration: underline;
+      text-underline-offset: 3px;
+    }
+
+    .teacher-toggle:hover {
+      color: #475569;
+    }
+
+    .teacher-panel {
+      max-width: 470px;
+      margin: 0.9rem auto 0;
+      padding: 1rem;
+      border: 1px solid #334155;
+      border-radius: 10px;
+      background: #172033;
+      color: #ffffff;
+      text-align: right;
+    }
+
+    .teacher-panel-title {
+      margin: 0 0 0.25rem;
+      color: #93c5fd;
+      font-size: 1rem;
+      font-weight: 800;
+      text-align: center;
+    }
+
+    .teacher-panel-copy {
+      margin: 0 0 0.75rem;
+      color: #cbd5e1;
+      font-size: 0.82rem;
+      text-align: center;
+    }
+
+    .teacher-input {
+      padding: 0.7rem 0.8rem;
+      border-color: #475569;
+      background: #0f172a;
+      color: #ffffff;
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-weight: 700;
+      text-align: center;
+      direction: ltr;
+      letter-spacing: 0;
+    }
+
+    .teacher-button {
+      width: 100%;
+      margin-top: 0.6rem;
+      padding: 0.65rem 1rem;
+      border-radius: 8px;
+      background: var(--primary);
+      color: #ffffff;
+      font-weight: 800;
+    }
+
+    .teacher-button:hover {
+      background: #3b82f6;
+    }
+
+    .teacher-result {
+      margin-top: 0.75rem;
+      padding: 0.8rem;
+      border: 1px solid;
+      border-radius: 8px;
+      font-size: 0.9rem;
+      line-height: 1.55;
+      text-align: right;
+    }
+
+    .teacher-result.is-valid {
+      border-color: #4ade80;
+      background: rgba(20, 83, 45, 0.42);
+      color: #dcfce7;
+    }
+
+    .teacher-result.is-invalid {
+      border-color: #f87171;
+      background: rgba(127, 29, 29, 0.4);
+      color: #fee2e2;
+    }
+
+    .game-header {
+      padding: 1rem 1.25rem;
+      display: grid;
+      grid-template-columns: minmax(0, 1fr) auto;
+      gap: 1rem;
+      align-items: center;
+      background: #172033;
+      color: #ffffff;
+    }
+
+    .game-title {
+      margin: 0;
+      font-size: clamp(1.05rem, 3vw, 1.35rem);
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .player-line {
+      margin-top: 0.25rem;
+      color: #cbd5e1;
+      font-size: 0.9rem;
+    }
+
+    .live-stats {
+      display: flex;
+      gap: 0.55rem;
+      align-items: stretch;
+    }
+
+    .stat-block {
+      min-width: 105px;
+      padding: 0.45rem 0.7rem;
+      border: 1px solid #334155;
+      border-radius: 8px;
+      background: #243047;
+      text-align: center;
+    }
+
+    .stat-label {
+      display: block;
+      color: #94a3b8;
+      font-size: 0.73rem;
+      font-weight: 700;
+    }
+
+    .stat-value {
+      display: block;
+      color: #ffffff;
+      font-size: 1rem;
+      font-weight: 800;
+      direction: rtl;
+    }
+
+    .score-value {
+      color: #86efac;
+      direction: ltr;
+    }
+
+    .progress-track {
+      width: 100%;
+      height: 7px;
+      background: #dbe3ee;
+    }
+
+    .progress-bar {
+      width: 0;
+      height: 100%;
+      background: linear-gradient(90deg, var(--primary), var(--accent));
+      transition: width 0.3s ease;
+    }
+
+    .stage-head {
+      padding-bottom: 1.25rem;
+      border-bottom: 1px solid var(--line);
+    }
+
+    .stage-title {
+      margin: 0 0 0.55rem;
+      color: var(--primary-dark);
+      font-size: clamp(1.3rem, 4vw, 1.65rem);
+      font-weight: 800;
+      letter-spacing: 0;
+    }
+
+    .stage-context {
+      margin: 0;
+      color: #334155;
+      font-size: 1.05rem;
+      font-weight: 600;
+      line-height: 1.7;
+    }
+
+    .stage-visual {
+      width: 100%;
+      margin-top: 1rem;
+      overflow-x: auto;
+    }
+
+    .questions-heading {
+      margin: 1.35rem 0 0.75rem;
+      color: #334155;
+      font-size: 1.05rem;
+      font-weight: 800;
+    }
+
+    .questions-area {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .question-card {
+      padding: 1rem;
+      border: 1px solid var(--line);
+      border-radius: 10px;
+      background: #f8fafc;
+      box-shadow: 0 4px 14px rgba(15, 23, 42, 0.04);
+    }
+
+    .question-label {
+      display: block;
+      margin-bottom: 0.75rem;
+      color: #1e293b;
+      font-size: 1rem;
+      font-weight: 800;
+      line-height: 1.6;
+    }
+
+    .answer-row {
+      display: flex;
+      gap: 0.75rem;
+      align-items: center;
+      flex-wrap: wrap;
+    }
+
+    .answer-control {
+      position: relative;
+      width: min(100%, 270px);
+      flex: 0 1 270px;
+    }
+
+    .answer-input,
+    .answer-select {
+      min-height: 46px;
+      padding: 0.6rem 0.75rem;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .answer-input.has-unit {
+      padding-left: 4.6rem;
+    }
+
+    .answer-unit {
+      position: absolute;
+      inset: 0 auto 0 0;
+      width: 4.2rem;
+      display: grid;
+      place-items: center;
+      color: #64748b;
+      font-size: 0.85rem;
+      font-weight: 800;
+      direction: ltr;
+      pointer-events: none;
+    }
+
+    .choice-list {
+      width: 100%;
+      display: grid;
+      gap: 0.55rem;
+    }
+
+    .choice-option {
+      min-height: 44px;
+      padding: 0.6rem 0.75rem;
+      display: flex;
+      gap: 0.6rem;
+      align-items: center;
+      border: 1px solid #cbd5e1;
+      border-radius: 8px;
+      background: #ffffff;
+      cursor: pointer;
+    }
+
+    .choice-option:hover {
+      border-color: #93c5fd;
+      background: #eff6ff;
+    }
+
+    .choice-option input {
+      width: 18px;
+      height: 18px;
+      accent-color: var(--primary);
+      flex: 0 0 auto;
+    }
+
+    .feedback-message {
+      font-size: 0.95rem;
+      font-weight: 800;
+      line-height: 1.5;
+    }
+
+    .feedback-message.is-correct {
+      color: #15803d;
+    }
+
+    .feedback-message.is-wrong {
+      color: #b91c1c;
+    }
+
+    .input-correct {
+      border-color: var(--success) !important;
+      background: #f0fdf4 !important;
+      color: #166534 !important;
+    }
+
+    .input-wrong {
+      border-color: #ef4444 !important;
+      background: #fef2f2 !important;
+      color: #991b1b !important;
+    }
+
+    .action-row {
+      margin-top: 1.4rem;
+      padding-top: 1rem;
+      display: flex;
+      justify-content: flex-start;
+      border-top: 1px solid var(--line);
+    }
+
+    .end-name {
+      margin: 0.45rem 0 1.3rem;
+      color: #475569;
+      font-size: 1.05rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .score-summary {
+      padding-block: 1.25rem;
+      border-block: 1px solid var(--line);
+      text-align: center;
+    }
+
+    .score-summary-label {
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 800;
+    }
+
+    .score-percentage {
+      margin: 0.1rem 0;
+      color: var(--primary);
+      font-size: clamp(3.2rem, 12vw, 5rem);
+      font-weight: 800;
+      line-height: 1;
+      direction: ltr;
+    }
+
+    .score-detail {
+      color: #334155;
+      font-size: 1rem;
+      font-weight: 700;
+    }
+
+    .completion-details {
+      margin-top: 1.2rem;
+      display: grid;
+      gap: 0.5rem;
+      color: #475569;
+      font-size: 0.92rem;
+    }
+
+    .detail-row {
+      display: flex;
+      justify-content: space-between;
+      gap: 1rem;
+      padding-bottom: 0.45rem;
+      border-bottom: 1px solid #eef2f7;
+    }
+
+    .detail-row strong {
+      color: #1e293b;
+    }
+
+    .verification-block {
+      margin-top: 1rem;
+      padding: 1rem;
+      border: 1px solid #cbd5e1;
+      border-radius: 10px;
+      background: #f8fafc;
+      text-align: center;
+    }
+
+    .verification-label {
+      display: block;
+      margin-bottom: 0.45rem;
+      color: #475569;
+      font-size: 0.88rem;
+      font-weight: 800;
+    }
+
+    .verification-code {
+      color: var(--primary-dark);
+      font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+      font-size: clamp(1rem, 4.2vw, 1.45rem);
+      font-weight: 800;
+      line-height: 1.55;
+      overflow-wrap: anywhere;
+      direction: ltr;
+      letter-spacing: 0;
+    }
+
+    .verification-note {
+      margin: 0.55rem 0 0;
+      color: #94a3b8;
+      font-size: 0.78rem;
+    }
+
+    .secondary-button {
+      width: 100%;
+      min-height: 48px;
+      margin-top: 1.25rem;
+      padding: 0.7rem 1rem;
+      border-radius: 9px;
+      background: #1e293b;
+      color: #ffffff;
+      font-weight: 800;
+      box-shadow: 0 8px 20px rgba(15, 23, 42, 0.18);
+    }
+
+    .secondary-button:hover {
+      background: #0f172a;
+      transform: translateY(-1px);
+    }
+
+    .alert-modal {
+      position: fixed;
+      inset: 0;
+      z-index: 1000;
+      padding: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      background: rgba(15, 23, 42, 0.62);
+      backdrop-filter: blur(4px);
+    }
+
+    .alert-card {
+      width: min(100%, 390px);
+      padding: 1.35rem;
+      border-radius: 12px;
+      background: #ffffff;
+      box-shadow: 0 22px 54px rgba(15, 23, 42, 0.28);
+      text-align: center;
+    }
+
+    .alert-card h3 {
+      margin: 0 0 0.35rem;
+      font-size: 1.25rem;
+      font-weight: 800;
+    }
+
+    .alert-card p {
+      margin: 0 0 1rem;
+      color: #64748b;
+    }
+
+    .alert-card .primary-button {
+      width: 100%;
+    }
+
+    .hidden {
+      display: none !important;
+    }
+
+    @media (max-width: 680px) {
+      .app-shell {
+        width: min(100% - 1rem, 980px);
+        align-items: flex-start;
+        padding-block: 0.5rem 1.25rem;
+      }
+
+      .screen {
+        border-radius: 12px;
+      }
+
+      .game-header {
+        grid-template-columns: 1fr;
+      }
+
+      .live-stats {
+        width: 100%;
+      }
+
+      .stat-block {
+        flex: 1;
+        min-width: 0;
+      }
+
+      .answer-control,
+      .primary-button {
+        width: 100%;
+        flex-basis: 100%;
+      }
+
+      .action-row {
+        justify-content: stretch;
+      }
+
+      .detail-row {
+        display: grid;
+        gap: 0.15rem;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="app-shell">
+    <section id="intro-screen" class="screen intro-screen" aria-labelledby="intro-title">
+      <div class="screen-inner">
+        <div class="brand-mark" aria-hidden="true">ΣF</div>
+        <h1 id="intro-title" class="intro-title">תבנית משחק פיזיקה</h1>
+        <p id="intro-subtitle" class="intro-subtitle">תרגול מדורג עם משוב וניקוד לכל סעיף.</p>
+
+        <div class="name-field">
+          <label for="player-name" class="field-label">שם פרטי ושם משפחה</label>
+          <input id="player-name" class="text-input" type="text" maxlength="40" autocomplete="name" placeholder="למשל: דנה ישראלי" />
+        </div>
+
+        <button id="btn-start" class="primary-button start-action" type="button">התחלת התרגול</button>
+
+        <button id="btn-toggle-teacher-intro" class="teacher-toggle" type="button" aria-expanded="false" aria-controls="teacher-panel-intro">פאנל מורה</button>
+        <div id="teacher-panel-intro" class="teacher-panel hidden">
+          <h2 class="teacher-panel-title">אימות תוצאה</h2>
+          <p class="teacher-panel-copy">הזינו את הקוד המספרי שמופיע במסך הסיום.</p>
+          <input id="teacher-code-intro" class="teacher-input" type="text" inputmode="numeric" autocomplete="off" placeholder="0000-0000-0000" aria-label="קוד אימות" />
+          <button id="btn-verify-intro" class="teacher-button" type="button">פענוח הקוד</button>
+          <div id="teacher-result-intro" class="teacher-result hidden" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+
+    <section id="game-screen" class="screen hidden" aria-labelledby="stage-title">
+      <header class="game-header">
+        <div>
+          <h1 id="game-title" class="game-title">משחק פיזיקה</h1>
+          <div class="player-line">תלמיד/ה: <strong id="display-name"></strong></div>
+        </div>
+        <div class="live-stats" aria-label="מצב המשחק">
+          <div class="stat-block">
+            <span class="stat-label">התקדמות</span>
+            <span id="stage-counter" class="stat-value">שלב 1 מתוך 1</span>
+          </div>
+          <div class="stat-block">
+            <span class="stat-label">ניקוד</span>
+            <span id="score-display" class="stat-value score-value">0 / 0</span>
+          </div>
+        </div>
+      </header>
+      <div class="progress-track" aria-hidden="true"><div id="progress-bar" class="progress-bar"></div></div>
+
+      <div class="screen-inner">
+        <div class="stage-head">
+          <h2 id="stage-title" class="stage-title">כותרת שלב</h2>
+          <div id="stage-context" class="stage-context">תוכן השלב יופיע כאן.</div>
+          <div id="stage-visual" class="stage-visual hidden"></div>
+        </div>
+
+        <h3 class="questions-heading">ענו על הסעיפים הבאים:</h3>
+        <div id="questions-area" class="questions-area"></div>
+
+        <div class="action-row">
+          <button id="btn-action" class="primary-button" type="button">בדיקת תשובות</button>
+        </div>
+      </div>
+    </section>
+
+    <section id="end-screen" class="screen end-screen hidden" aria-labelledby="end-title">
+      <div class="screen-inner">
+        <div class="brand-mark" aria-hidden="true">✓</div>
+        <h1 id="end-title" class="end-title">סיום התרגול</h1>
+        <p class="end-name">כל הכבוד, <strong id="end-name"></strong>.</p>
+
+        <div class="score-summary">
+          <div class="score-summary-label">הציון הסופי</div>
+          <div id="end-percent" class="score-percentage">0%</div>
+          <div id="end-score-text" class="score-detail">צברת 0 מתוך 0 נקודות.</div>
+        </div>
+
+        <div class="completion-details">
+          <div class="detail-row"><span>נושא</span><strong id="end-topic"></strong></div>
+          <div class="detail-row"><span>תאריך ושעת סיום</span><strong id="end-time"></strong></div>
+        </div>
+
+        <div class="verification-block">
+          <span class="verification-label">קוד אימות מספרי למורה</span>
+          <div id="verification-code" class="verification-code"></div>
+          <p class="verification-note">יש לצלם את מסך הסיום ולהעביר למורה.</p>
+        </div>
+
+        <button id="btn-restart" class="secondary-button" type="button">התחלת סבב חדש</button>
+
+        <button id="btn-toggle-teacher-end" class="teacher-toggle" type="button" aria-expanded="false" aria-controls="teacher-panel-end">פאנל מורה</button>
+        <div id="teacher-panel-end" class="teacher-panel hidden">
+          <h2 class="teacher-panel-title">אימות תוצאה</h2>
+          <p class="teacher-panel-copy">הזינו קוד מספרי כדי לפענח את פרטי הסיום.</p>
+          <input id="teacher-code-end" class="teacher-input" type="text" inputmode="numeric" autocomplete="off" placeholder="0000-0000-0000" aria-label="קוד אימות" />
+          <button id="btn-verify-end" class="teacher-button" type="button">פענוח הקוד</button>
+          <div id="teacher-result-end" class="teacher-result hidden" aria-live="polite"></div>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <div id="alert-modal" class="alert-modal hidden" role="dialog" aria-modal="true" aria-labelledby="alert-title">
+    <div class="alert-card">
+      <h3 id="alert-title">שימו לב</h3>
+      <p id="alert-text"></p>
+      <button id="btn-close-alert" class="primary-button" type="button">הבנתי</button>
+    </div>
+  </div>
+
+  <script>
+    (() => {
+      'use strict';
+
+      // ================================================================
+      // עריכת משחק חדש: מחליפים את ההגדרות והשלבים באובייקט הזה בלבד.
+      // סוגי סעיפים נתמכים: number, text, select, multi-choice.
+      // ================================================================
+      const GAME_TEMPLATE = {
+        documentTitle: 'תבנית משחק פיזיקה משולבת',
+        gameTitle: 'קינמטיקה: מהירות, דרך והעתק',
+        introTitle: 'מוכנים לתרגול?',
+        introSubtitle: 'בכל שלב תפתרו כמה סעיפים קצרים ותקבלו משוב מיידי על כל סעיף.',
+        topicLine: 'מהירות ממוצעת, דרך והעתק',
+        roundsToPlay: 3,
+        shuffleStages: true,
+        shuffleOptions: true,
+        passConfettiThreshold: 80,
+        theme: {
+          primary: '#2563eb',
+          primaryDark: '#1d4ed8',
+          accent: '#059669',
+          accentDark: '#047857',
+          highlight: '#d97706',
+          page: '#f4f7fb'
+        },
+        stages: [
+          {
+            title: 'חישוב מהירות ממוצעת',
+            contextHtml: 'רוכב נע לאורך קו ישר מרחק של $120\\\\,\\\\mathrm{m}$ במשך $20\\\\,\\\\mathrm{s}$.',
+            questions: [
+              { type: 'number', prompt: 'מהי המהירות הממוצעת?', answer: 6, unit: 'm/s', points: 1 },
+              { type: 'number', prompt: 'מהי הדרך שעבר הרוכב?', answer: 120, unit: 'm', points: 1 }
+            ]
+          },
+          {
+            title: 'הלוך ושוב',
+            contextHtml: 'תלמידה הלכה $50\\\\,\\\\mathrm{m}$ מזרחה וחזרה אל נקודת ההתחלה.',
+            visualHtml: '<div style="display:flex;align-items:center;justify-content:center;gap:12px;direction:ltr;padding:12px;border:1px solid #dbe3ee;border-radius:8px;background:#f8fafc"><strong>A</strong><span style="height:3px;min-width:180px;background:#2563eb"></span><strong>B</strong></div>',
+            questions: [
+              { type: 'number', prompt: 'מהי הדרך הכוללת?', answer: 100, unit: 'm', points: 1 },
+              { type: 'number', prompt: 'מהו ההעתק הכולל?', answer: 0, unit: 'm', points: 1 }
+            ]
+          },
+          {
+            title: 'משמעות המהירות הממוצעת',
+            contextHtml: 'בחרו את הקשר המתאים להגדרת המהירות הממוצעת.',
+            questions: [
+              {
+                type: 'select',
+                prompt: 'מהירות ממוצעת מחושבת באמצעות:',
+                answer: 'העתק כולל חלקי זמן כולל',
+                options: [
+                  'דרך כוללת חלקי תאוצה',
+                  'העתק כולל חלקי זמן כולל',
+                  'זמן כולל חלקי העתק כולל'
+                ],
+                points: 1
+              },
+              {
+                type: 'text',
+                prompt: 'כאשר גוף חוזר לנקודת ההתחלה, מהו ההעתק הכולל?',
+                answer: 'אפס',
+                acceptedAnswers: ['אפס', '0'],
+                points: 1
+              }
+            ]
+          },
+          {
+            title: 'יחידות וייצוגים',
+            contextHtml: 'זהו את יחידת המידה התקנית של מהירות.',
+            questions: [
+              {
+                type: 'multi-choice',
+                prompt: 'איזו יחידה היא יחידת מהירות בשיטת SI?',
+                answer: 'm/s',
+                options: ['m/s', 'm', 's', 'm/s²'],
+                points: 1
+              }
+            ]
+          }
+        ]
+      };
+
+      const state = {
+        playerName: '',
+        stages: [],
+        stageIndex: 0,
+        score: 0,
+        total: 0,
+        checkClicks: 0,
+        actionMode: 'check'
+      };
+
+      const ui = {};
+
+      document.addEventListener('DOMContentLoaded', init);
+
+      function init() {
+        cacheElements();
+        applyTemplate();
+        bindEvents();
+      }
+
+      function cacheElements() {
+        ui.introScreen = document.getElementById('intro-screen');
+        ui.gameScreen = document.getElementById('game-screen');
+        ui.endScreen = document.getElementById('end-screen');
+        ui.introTitle = document.getElementById('intro-title');
+        ui.introSubtitle = document.getElementById('intro-subtitle');
+        ui.playerName = document.getElementById('player-name');
+        ui.gameTitle = document.getElementById('game-title');
+        ui.displayName = document.getElementById('display-name');
+        ui.stageCounter = document.getElementById('stage-counter');
+        ui.scoreDisplay = document.getElementById('score-display');
+        ui.progressBar = document.getElementById('progress-bar');
+        ui.stageTitle = document.getElementById('stage-title');
+        ui.stageContext = document.getElementById('stage-context');
+        ui.stageVisual = document.getElementById('stage-visual');
+        ui.questionsArea = document.getElementById('questions-area');
+        ui.actionButton = document.getElementById('btn-action');
+        ui.endName = document.getElementById('end-name');
+        ui.endPercent = document.getElementById('end-percent');
+        ui.endScoreText = document.getElementById('end-score-text');
+        ui.endTopic = document.getElementById('end-topic');
+        ui.endTime = document.getElementById('end-time');
+        ui.verificationCode = document.getElementById('verification-code');
+        ui.alertModal = document.getElementById('alert-modal');
+        ui.alertText = document.getElementById('alert-text');
+      }
+
+      function applyTemplate() {
+        document.title = GAME_TEMPLATE.documentTitle;
+        ui.introTitle.textContent = GAME_TEMPLATE.introTitle;
+        ui.introSubtitle.textContent = GAME_TEMPLATE.introSubtitle;
+        ui.gameTitle.textContent = GAME_TEMPLATE.gameTitle;
+        ui.endTopic.textContent = GAME_TEMPLATE.topicLine;
+
+        const theme = GAME_TEMPLATE.theme || {};
+        const root = document.documentElement.style;
+        const themeMap = {
+          primary: '--primary',
+          primaryDark: '--primary-dark',
+          accent: '--accent',
+          accentDark: '--accent-dark',
+          highlight: '--highlight',
+          page: '--page'
+        };
+        Object.entries(themeMap).forEach(([key, cssVariable]) => {
+          if (theme[key]) root.setProperty(cssVariable, theme[key]);
+        });
+      }
+
+      function bindEvents() {
+        document.getElementById('btn-start').addEventListener('click', startGame);
+        document.getElementById('btn-restart').addEventListener('click', resetGame);
+        document.getElementById('btn-close-alert').addEventListener('click', closeAlert);
+        ui.actionButton.addEventListener('click', handleAction);
+
+        ui.playerName.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') startGame();
+        });
+
+        bindTeacherPanel('btn-toggle-teacher-intro', 'teacher-panel-intro');
+        bindTeacherPanel('btn-toggle-teacher-end', 'teacher-panel-end');
+        bindTeacherVerification('btn-verify-intro', 'teacher-code-intro', 'teacher-result-intro');
+        bindTeacherVerification('btn-verify-end', 'teacher-code-end', 'teacher-result-end');
+
+        ui.alertModal.addEventListener('click', (event) => {
+          if (event.target === ui.alertModal) closeAlert();
+        });
+      }
+
+      function startGame() {
+        const name = normalizeName(ui.playerName.value);
+        if (!isFullName(name)) {
+          showAlert('יש להזין שם פרטי ושם משפחה כדי להתחיל.');
+          ui.playerName.focus();
+          return;
+        }
+
+        state.playerName = name;
+        state.stageIndex = 0;
+        state.score = 0;
+        state.checkClicks = 0;
+
+        buildStages();
+        if (!state.stages.length || state.total <= 0) {
+          showAlert('לא הוגדרו מספיק שלבים וסעיפים בתבנית.');
+          return;
+        }
+        if (state.total > 99 || state.stages.length > 99) {
+          showAlert('קוד האימות תומך בעד 99 נקודות ועד 99 שלבים.');
+          return;
+        }
+
+        ui.displayName.textContent = state.playerName;
+        showOnly(ui.gameScreen);
+        renderStage();
+      }
+
+      function buildStages() {
+        const sourceStages = Array.isArray(GAME_TEMPLATE.stages) ? GAME_TEMPLATE.stages : [];
+        const clonedStages = sourceStages.map((stage) => ({
+          ...stage,
+          questions: (stage.questions || []).map((question) => ({
+            ...question,
+            renderedOptions: Array.isArray(question.options)
+              ? maybeShuffle(question.options, GAME_TEMPLATE.shuffleOptions)
+              : []
+          }))
+        }));
+
+        const orderedStages = maybeShuffle(clonedStages, GAME_TEMPLATE.shuffleStages);
+        const requestedRounds = Number(GAME_TEMPLATE.roundsToPlay) || orderedStages.length;
+        const roundCount = Math.min(Math.max(requestedRounds, 1), orderedStages.length);
+
+        state.stages = orderedStages.slice(0, roundCount);
+        state.total = state.stages.reduce((stageSum, stage) => {
+          return stageSum + stage.questions.reduce((questionSum, question) => questionSum + questionPoints(question), 0);
+        }, 0);
+      }
+
+      function renderStage() {
+        const stage = state.stages[state.stageIndex];
+        state.actionMode = 'check';
+
+        ui.stageCounter.textContent = \`שלב \${state.stageIndex + 1} מתוך \${state.stages.length}\`;
+        ui.scoreDisplay.textContent = \`\${state.score} / \${state.total}\`;
+        ui.progressBar.style.width = \`\${Math.round((state.stageIndex / state.stages.length) * 100)}%\`;
+        ui.stageTitle.textContent = stage.title || \`שלב \${state.stageIndex + 1}\`;
+        ui.stageContext.innerHTML = stage.contextHtml || escapeHtml(stage.context || '');
+
+        if (stage.visualHtml) {
+          ui.stageVisual.innerHTML = stage.visualHtml;
+          ui.stageVisual.classList.remove('hidden');
+        } else {
+          ui.stageVisual.innerHTML = '';
+          ui.stageVisual.classList.add('hidden');
+        }
+
+        ui.questionsArea.innerHTML = stage.questions
+          .map((question, index) => questionCardHtml(question, index))
+          .join('');
+
+        setActionButton('בדיקת תשובות', 'check');
+        typeset(ui.gameScreen);
+      }
+
+      function questionCardHtml(question, index) {
+        const prompt = question.promptHtml || escapeHtml(question.prompt || '');
+        const points = questionPoints(question);
+        const pointsLabel = points === 1 ? 'נקודה אחת' : \`\${points} נקודות\`;
+
+        return \`
+          <article class="question-card" data-question-index="\${index}">
+            <label class="question-label">\${index + 1}. \${prompt} <span style="color:#94a3b8;font-size:.78rem">(\${pointsLabel})</span></label>
+            <div class="answer-row">
+              \${questionInputHtml(question, index)}
+              <div id="feedback-\${index}" class="feedback-message hidden" aria-live="polite"></div>
+            </div>
+          </article>\`;
+      }
+
+      function questionInputHtml(question, index) {
+        if (question.type === 'select') {
+          return \`
+            <div class="answer-control">
+              <select id="input-\${index}" class="answer-select">
+                <option value="" selected disabled>בחרו תשובה</option>
+                \${question.renderedOptions.map((option) => \`<option value="\${escapeAttr(option)}">\${escapeHtml(option)}</option>\`).join('')}
+              </select>
+            </div>\`;
+        }
+
+        if (question.type === 'multi-choice') {
+          return \`
+            <div class="choice-list">
+              \${question.renderedOptions.map((option, optionIndex) => \`
+                <label class="choice-option">
+                  <input type="radio" name="input-\${index}" value="\${escapeAttr(option)}" />
+                  <span>\${escapeHtml(option)}</span>
+                </label>\`).join('')}
+            </div>\`;
+        }
+
+        const isNumber = question.type === 'number';
+        const unitClass = question.unit ? ' has-unit' : '';
+        const unitHtml = question.unit
+          ? \`<span class="answer-unit">\${escapeHtml(question.unit)}</span>\`
+          : '';
+
+        return \`
+          <div class="answer-control">
+            <input id="input-\${index}" class="answer-input\${unitClass}" type="\${isNumber ? 'number' : 'text'}" \${isNumber ? 'step="any" inputmode="decimal"' : ''} autocomplete="off" placeholder="הקלידו תשובה" />
+            \${unitHtml}
+          </div>\`;
+      }
+
+      function handleAction() {
+        if (state.actionMode === 'check') {
+          checkCurrentStage();
+          return;
+        }
+
+        if (state.actionMode === 'next') {
+          state.stageIndex += 1;
+          renderStage();
+          return;
+        }
+
+        if (state.actionMode === 'finish') finishGame();
+      }
+
+      function checkCurrentStage() {
+        const stage = state.stages[state.stageIndex];
+        const answers = stage.questions.map((question, index) => readAnswer(question, index));
+
+        state.checkClicks += 1;
+        let allCorrect = true;
+
+        stage.questions.forEach((question, index) => {
+          const answer = answers[index];
+          const isCorrect = isCorrectAnswer(question, answer);
+          const feedback = document.getElementById(\`feedback-\${index}\`);
+          disableAnswer(question, index);
+          feedback.classList.remove('hidden', 'is-correct', 'is-wrong');
+
+          if (isCorrect) {
+            state.score += questionPoints(question);
+            feedback.classList.add('is-correct');
+            feedback.textContent = 'נכון';
+            markInput(question, index, 'input-correct');
+          } else {
+            allCorrect = false;
+            feedback.classList.add('is-wrong');
+            const feedbackPrefix = answer === '' ? 'לא נענתה.' : 'לא נכון.';
+            feedback.innerHTML = \`\${feedbackPrefix} התשובה: <strong>\${answerDisplayHtml(question)}</strong>\`;
+            markInput(question, index, 'input-wrong');
+          }
+        });
+
+        ui.scoreDisplay.textContent = \`\${state.score} / \${state.total}\`;
+        ui.progressBar.style.width = \`\${Math.round(((state.stageIndex + 1) / state.stages.length) * 100)}%\`;
+        typeset(ui.questionsArea);
+
+        if (allCorrect) burstConfetti(24, 42, 58);
+
+        const isLastStage = state.stageIndex === state.stages.length - 1;
+        if (isLastStage) {
+          state.actionMode = 'finish';
+          setActionButton('סיום וצפייה בציון', 'finish');
+        } else {
+          state.actionMode = 'next';
+          setActionButton('מעבר לשלב הבא', 'next');
+        }
+      }
+
+      function readAnswer(question, index) {
+        if (question.type === 'multi-choice') {
+          const checked = document.querySelector(\`input[name="input-\${index}"]:checked\`);
+          return checked ? checked.value.trim() : '';
+        }
+
+        const input = document.getElementById(\`input-\${index}\`);
+        return input ? String(input.value).trim() : '';
+      }
+
+      function disableAnswer(question, index) {
+        if (question.type === 'multi-choice') {
+          document.querySelectorAll(\`input[name="input-\${index}"]\`).forEach((input) => {
+            input.disabled = true;
+          });
+          return;
+        }
+
+        const input = document.getElementById(\`input-\${index}\`);
+        if (input) input.disabled = true;
+      }
+
+      function markInput(question, index, className) {
+        if (question.type === 'multi-choice') {
+          const checked = document.querySelector(\`input[name="input-\${index}"]:checked\`);
+          if (checked) checked.closest('.choice-option')?.classList.add(className);
+          return;
+        }
+
+        document.getElementById(\`input-\${index}\`)?.classList.add(className);
+      }
+
+      function isCorrectAnswer(question, rawAnswer) {
+        if (rawAnswer === '') return false;
+
+        if (question.type === 'number') {
+          const actual = Number(rawAnswer);
+          const expected = Number(question.answer);
+          if (!Number.isFinite(actual) || !Number.isFinite(expected)) return false;
+          const tolerance = Number.isFinite(question.tolerance)
+            ? Math.abs(question.tolerance)
+            : Math.max(0.05, Math.abs(expected) * 0.03);
+          return Math.abs(actual - expected) <= tolerance;
+        }
+
+        const acceptedAnswers = Array.isArray(question.acceptedAnswers)
+          ? question.acceptedAnswers
+          : [question.answer];
+        const normalizedAnswer = normalizeText(rawAnswer);
+        return acceptedAnswers.some((answer) => normalizeText(answer) === normalizedAnswer);
+      }
+
+      function answerDisplayHtml(question) {
+        if (question.answerHtml) return question.answerHtml;
+        const answer = question.type === 'number'
+          ? \`\${formatNumber(Number(question.answer))}\${question.unit ? \` \${question.unit}\` : ''}\`
+          : String(question.answer ?? '');
+        return escapeHtml(answer);
+      }
+
+      function finishGame() {
+        showOnly(ui.endScreen);
+
+        const percentage = state.total > 0 ? Math.round((state.score / state.total) * 100) : 0;
+        ui.endName.textContent = state.playerName;
+        ui.endPercent.textContent = \`\${percentage}%\`;
+        ui.endScoreText.textContent = \`צברת \${state.score} מתוך \${state.total} נקודות.\`;
+
+        const now = new Date();
+        const date = now.toLocaleDateString('he-IL', { year: 'numeric', month: '2-digit', day: '2-digit' });
+        const time = now.toLocaleTimeString('he-IL', { hour: '2-digit', minute: '2-digit', second: '2-digit', hour12: false });
+        ui.endTime.textContent = \`\${date}, \${time}\`;
+
+        try {
+          ui.verificationCode.textContent = createVerificationCode({
+            name: state.playerName,
+            score: state.score,
+            total: state.total,
+            checks: state.checkClicks,
+            stages: state.stages.length
+          });
+        } catch (error) {
+          ui.verificationCode.textContent = 'לא ניתן ליצור קוד';
+          showAlert(error.message);
+        }
+
+        if (percentage >= (Number(GAME_TEMPLATE.passConfettiThreshold) || 80)) {
+          bigConfetti();
+        }
+      }
+
+      function resetGame() {
+        state.playerName = '';
+        state.stages = [];
+        state.stageIndex = 0;
+        state.score = 0;
+        state.total = 0;
+        state.checkClicks = 0;
+        state.actionMode = 'check';
+        ui.playerName.value = '';
+        ui.progressBar.style.width = '0%';
+        closeTeacherPanel('btn-toggle-teacher-intro', 'teacher-panel-intro');
+        closeTeacherPanel('btn-toggle-teacher-end', 'teacher-panel-end');
+        showOnly(ui.introScreen);
+        ui.playerName.focus();
+      }
+
+      // הקוד מספרי בלבד. הוא כולל שם, ציון, מספר בדיקות ומספר שלבים.
+      const charMap = {
+        ' ': '00',
+        'א': '11', 'ב': '12', 'ג': '13', 'ד': '14', 'ה': '15', 'ו': '16', 'ז': '17', 'ח': '18', 'ט': '19', 'י': '20',
+        'כ': '21', 'ך': '22', 'ל': '23', 'מ': '24', 'ם': '25', 'נ': '26', 'ן': '27', 'ס': '28', 'ע': '29', 'פ': '30',
+        'ף': '31', 'צ': '32', 'ץ': '33', 'ק': '34', 'ר': '35', 'ש': '36', 'ת': '37',
+        '-': '80', "'": '81', '.': '82'
+      };
+      const reverseCharMap = {};
+
+      Object.entries(charMap).forEach(([character, code]) => {
+        reverseCharMap[code] = character;
+      });
+
+      for (let index = 0; index < 26; index += 1) {
+        const code = String(41 + index);
+        const uppercase = String.fromCharCode(65 + index);
+        const lowercase = String.fromCharCode(97 + index);
+        charMap[uppercase] = code;
+        charMap[lowercase] = code;
+        reverseCharMap[code] = uppercase;
+      }
+
+      for (let digit = 0; digit <= 9; digit += 1) {
+        const code = String(70 + digit);
+        charMap[String(digit)] = code;
+        reverseCharMap[code] = String(digit);
+      }
+
+      function createVerificationCode(result) {
+        const name = normalizeName(result.name);
+        const nameCharacters = [...name];
+        if (nameCharacters.length > 40) throw new Error('השם ארוך מדי ליצירת קוד אימות.');
+
+        const fields = [result.score, result.total, result.checks, result.stages];
+        if (fields.some((value) => !Number.isInteger(value) || value < 0 || value > 99)) {
+          throw new Error('נתוני התוצאה חורגים מטווח קוד האימות.');
+        }
+
+        const encodedName = nameCharacters.map((character) => charMap[character] || '98').join('');
+        const base = [
+          '01',
+          twoDigits(result.score),
+          twoDigits(result.total),
+          twoDigits(result.checks),
+          twoDigits(result.stages),
+          twoDigits(nameCharacters.length),
+          encodedName
+        ].join('');
+        const fullCode = \`\${base}\${verificationChecksum(base)}\`;
+        return fullCode.match(/.{1,4}/g).join('-');
+      }
+
+      function decodeVerificationCode(rawCode) {
+        const cleanCode = String(rawCode).replace(/[\\s-]/g, '');
+        if (!/^\\d+$/.test(cleanCode) || cleanCode.length < 16) return null;
+
+        const base = cleanCode.slice(0, -2);
+        const checksum = cleanCode.slice(-2);
+        if (verificationChecksum(base) !== checksum || base.slice(0, 2) !== '01') return null;
+
+        const score = Number(base.slice(2, 4));
+        const total = Number(base.slice(4, 6));
+        const checks = Number(base.slice(6, 8));
+        const stages = Number(base.slice(8, 10));
+        const nameLength = Number(base.slice(10, 12));
+        const expectedLength = 14 + (nameLength * 2);
+        if (cleanCode.length !== expectedLength || score > total) return null;
+
+        const encodedName = base.slice(12);
+        let name = '';
+        for (let index = 0; index < encodedName.length; index += 2) {
+          const pair = encodedName.slice(index, index + 2);
+          name += pair === '98' ? '?' : (reverseCharMap[pair] || '?');
+        }
+
+        return { name, score, total, checks, stages };
+      }
+
+      function verificationChecksum(base) {
+        let checksum = 0;
+        for (let index = 0; index < base.length; index += 1) {
+          checksum = (checksum + (Number(base[index]) * ((index % 9) + 1))) % 97;
+        }
+        return String(checksum).padStart(2, '0');
+      }
+
+      function twoDigits(value) {
+        return String(value).padStart(2, '0');
+      }
+
+      function bindTeacherPanel(buttonId, panelId) {
+        const button = document.getElementById(buttonId);
+        const panel = document.getElementById(panelId);
+        button.addEventListener('click', () => {
+          const willOpen = panel.classList.contains('hidden');
+          panel.classList.toggle('hidden');
+          button.setAttribute('aria-expanded', String(willOpen));
+        });
+      }
+
+      function closeTeacherPanel(buttonId, panelId) {
+        document.getElementById(panelId).classList.add('hidden');
+        document.getElementById(buttonId).setAttribute('aria-expanded', 'false');
+      }
+
+      function bindTeacherVerification(buttonId, inputId, resultId) {
+        const button = document.getElementById(buttonId);
+        const input = document.getElementById(inputId);
+        button.addEventListener('click', () => showDecodedResult(input, document.getElementById(resultId)));
+        input.addEventListener('keydown', (event) => {
+          if (event.key === 'Enter') showDecodedResult(input, document.getElementById(resultId));
+        });
+      }
+
+      function showDecodedResult(input, output) {
+        const decoded = decodeVerificationCode(input.value);
+        output.classList.remove('hidden', 'is-valid', 'is-invalid');
+
+        if (!decoded) {
+          output.classList.add('is-invalid');
+          output.innerHTML = '<strong>הקוד אינו תקין או נפגם.</strong>';
+          return;
+        }
+
+        const percentage = decoded.total > 0 ? Math.round((decoded.score / decoded.total) * 100) : 0;
+        const checkWarning = decoded.checks < decoded.stages
+          ? '<div style="margin-top:.45rem;color:#fecaca;font-weight:800">מספר הבדיקות נמוך ממספר השלבים.</div>'
+          : '';
+        output.classList.add('is-valid');
+        output.innerHTML = \`
+          <div><strong>הקוד אומת בהצלחה.</strong></div>
+          <div>שם: <strong>\${escapeHtml(decoded.name)}</strong></div>
+          <div>ציון: <strong>\${decoded.score} מתוך \${decoded.total} (\${percentage}%)</strong></div>
+          <div>שלבים שנבדקו: <strong>\${decoded.checks} מתוך \${decoded.stages}</strong></div>
+          \${checkWarning}\`;
+      }
+
+      function setActionButton(text, mode) {
+        ui.actionButton.textContent = text;
+        ui.actionButton.classList.remove('is-next', 'is-finish');
+        if (mode === 'next') ui.actionButton.classList.add('is-next');
+        if (mode === 'finish') ui.actionButton.classList.add('is-finish');
+      }
+
+      function showOnly(screen) {
+        [ui.introScreen, ui.gameScreen, ui.endScreen].forEach((item) => item.classList.add('hidden'));
+        screen.classList.remove('hidden');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+      }
+
+      function showAlert(message) {
+        ui.alertText.textContent = message;
+        ui.alertModal.classList.remove('hidden');
+        document.getElementById('btn-close-alert').focus();
+      }
+
+      function closeAlert() {
+        ui.alertModal.classList.add('hidden');
+      }
+
+      function typeset(container) {
+        if (!window.MathJax?.typesetPromise) return;
+        window.MathJax.typesetPromise([container]).catch(() => {});
+      }
+
+      function questionPoints(question) {
+        const points = Number(question.points);
+        return Number.isInteger(points) && points > 0 ? points : 1;
+      }
+
+      function isFullName(name) {
+        return name.length >= 3 && name.split(' ').filter(Boolean).length >= 2;
+      }
+
+      function normalizeName(name) {
+        return String(name).trim().replace(/\\s+/g, ' ');
+      }
+
+      function normalizeText(text) {
+        return String(text ?? '').trim().replace(/\\s+/g, ' ').toLocaleLowerCase('he');
+      }
+
+      function formatNumber(value) {
+        return Number.isFinite(value) ? Number(value.toFixed(4)) : value;
+      }
+
+      function maybeShuffle(values, shouldShuffle) {
+        return shouldShuffle ? shuffle(values) : [...values];
+      }
+
+      function shuffle(values) {
+        const result = [...values];
+        for (let index = result.length - 1; index > 0; index -= 1) {
+          const randomIndex = Math.floor(Math.random() * (index + 1));
+          [result[index], result[randomIndex]] = [result[randomIndex], result[index]];
+        }
+        return result;
+      }
+
+      function burstConfetti(amount, minX, maxX) {
+        const colors = ['#2563eb', '#059669', '#d97706', '#dc2626', '#7c3aed'];
+        for (let index = 0; index < amount; index += 1) {
+          const piece = document.createElement('div');
+          piece.style.position = 'fixed';
+          piece.style.inset = '-12px auto auto 0';
+          piece.style.width = \`\${Math.random() * 7 + 4}px\`;
+          piece.style.height = \`\${Math.random() * 7 + 4}px\`;
+          piece.style.left = \`\${minX + Math.random() * (maxX - minX)}vw\`;
+          piece.style.background = colors[Math.floor(Math.random() * colors.length)];
+          piece.style.borderRadius = Math.random() > 0.5 ? '50%' : '1px';
+          piece.style.zIndex = '9999';
+          piece.style.pointerEvents = 'none';
+          document.body.appendChild(piece);
+
+          const horizontal = (Math.random() - 0.5) * 28;
+          const vertical = Math.random() * 90 + 35;
+          const rotation = Math.random() * 720;
+          const animation = piece.animate([
+            { transform: 'translate(0, 0) rotate(0deg)', opacity: 1 },
+            { transform: \`translate(\${horizontal}vw, \${vertical}vh) rotate(\${rotation}deg)\`, opacity: 0 }
+          ], {
+            duration: Math.random() * 1100 + 900,
+            easing: 'cubic-bezier(.25,.8,.25,1)'
+          });
+          animation.onfinish = () => piece.remove();
+        }
+      }
+
+      function bigConfetti() {
+        let round = 0;
+        const timer = window.setInterval(() => {
+          burstConfetti(22, 0, 100);
+          round += 1;
+          if (round >= 5) window.clearInterval(timer);
+        }, 240);
+      }
+
+      function escapeHtml(value) {
+        return String(value)
+          .replaceAll('&', '&amp;')
+          .replaceAll('<', '&lt;')
+          .replaceAll('>', '&gt;')
+          .replaceAll('"', '&quot;')
+          .replaceAll("'", '&#39;');
+      }
+
+      function escapeAttr(value) {
+        return escapeHtml(value).replaceAll('\`', '&#96;');
+      }
+    })();
+  </script>
+</body>
+</html>`;
+
+export default GAME_TEMPLATE_HTML;
