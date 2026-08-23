@@ -847,31 +847,31 @@
             background: #f5f3ff;
         }
 
-        .meta-pill.amit-focus-in {
+        .meta-pill.focus-in {
             border-color: #86efac;
             color: #166534;
             background: #f0fdf4;
         }
 
-        .meta-pill.amit-focus-out {
+        .meta-pill.focus-out {
             border-color: #fca5a5;
             color: #991b1b;
             background: #fef2f2;
         }
 
-        .meta-pill.amit-focus-na {
+        .meta-pill.focus-na {
             border-color: #cbd5e1;
             color: #475569;
             background: #f8fafc;
         }
 
-        .meta-pill.amit-note {
+        .meta-pill.focus-note {
             border-color: #fcd34d;
             color: #92400e;
             background: #fffbeb;
         }
 
-        .meta-pill.amit-year-note {
+        .meta-pill.focus-year-note {
             border-color: #bfdbfe;
             color: #1d4ed8;
             background: #eff6ff;
@@ -1265,7 +1265,7 @@
 
     <script>
         const BAGRUT_FOLDER_REPO_PATH = "webfiles/פתרונות שאלות בגרות/מכניקה שאלות בגרות";
-        const AMIT_FOCUS_JSON_PATH = "./שאלות במיקוד.json";
+        const FOCUS_JSON_PATH = "./שאלות במיקוד.json";
         const DISCOVERY_EXCLUDED_FILES = new Set([
             "תפריט ראשי מכניקה.html",
             "question-topics.json"
@@ -1486,11 +1486,11 @@
             return finalize();
         }
 
-        function buildAmitFocusRowKey(year, orderVariant = 0) {
+        function buildFocusRowKey(year, orderVariant = 0) {
             return `${Number(year)}-${Number(orderVariant) || 0}`;
         }
 
-        function getAmitFocusReferenceForSolution(solution) {
+        function getFocusReferenceForSolution(solution) {
             const year = Number(solution?.bagrutYear);
             const rawQuestionNumber = Number(solution?.bagrutQuestionNumber);
             if (!Number.isFinite(year) || !Number.isFinite(rawQuestionNumber)) {
@@ -1508,12 +1508,12 @@
             }
 
             return {
-                rowKey: buildAmitFocusRowKey(year, orderVariant),
+                rowKey: buildFocusRowKey(year, orderVariant),
                 questionNumber
             };
         }
 
-        function buildAmitFocusLookup(rawData) {
+        function buildFocusLookup(rawData) {
             const rows = Array.isArray(rawData?.rows) ? rawData.rows : [];
             const lookup = new Map();
 
@@ -1533,7 +1533,7 @@
                     });
                 });
 
-                lookup.set(buildAmitFocusRowKey(year, orderVariant), {
+                lookup.set(buildFocusRowKey(year, orderVariant), {
                     yearNote: row?.yearNote || "",
                     questions
                 });
@@ -1542,28 +1542,28 @@
             return lookup;
         }
 
-        async function loadAmitFocusLookup() {
+        async function loadFocusLookup() {
             try {
-                const response = await fetch(AMIT_FOCUS_JSON_PATH, { cache: "no-store" });
+                const response = await fetch(FOCUS_JSON_PATH, { cache: "no-store" });
                 if (!response.ok) return new Map();
                 const rawData = await response.json();
-                return buildAmitFocusLookup(rawData);
+                return buildFocusLookup(rawData);
             } catch {
                 return new Map();
             }
         }
 
-        function getAmitFocusForSolution(solution) {
+        function getFocusForSolution(solution) {
             if (!solution?.isBagrutQuestion) {
                 return null;
             }
 
-            const focusReference = getAmitFocusReferenceForSolution(solution);
+            const focusReference = getFocusReferenceForSolution(solution);
             if (!focusReference) {
                 return null;
             }
 
-            const yearData = amitFocusLookup.get(focusReference.rowKey);
+            const yearData = focusLookup.get(focusReference.rowKey);
             const questionData = yearData?.questions?.get(focusReference.questionNumber);
             if (!questionData?.focusStatus) {
                 return null;
@@ -1572,14 +1572,14 @@
             let label = "";
             let pillClass = "";
             if (questionData.focusStatus === "inFocus") {
-                label = "מיקוד תשפו";
-                pillClass = "amit-focus-in";
+                label = "מיקוד תשפז";
+                pillClass = "focus-in";
             } else if (questionData.focusStatus === "outOfFocus") {
-                label = "לא במיקוד תשפו";
-                pillClass = "amit-focus-out";
+                label = "לא במיקוד תשפז";
+                pillClass = "focus-out";
             } else if (questionData.focusStatus === "notAsked") {
                 label = "לא הייתה שאלה";
-                pillClass = "amit-focus-na";
+                pillClass = "focus-na";
             }
 
             if (!label) {
@@ -2097,7 +2097,7 @@
             items.forEach((solution) => {
                 const card = document.createElement("article");
                 card.className = "solution-item";
-                const amitFocus = getAmitFocusForSolution(solution);
+                const focusData = getFocusForSolution(solution);
 
                 const mediaWrap = document.createElement("div");
                 const thumb = document.createElement("img");
@@ -2147,7 +2147,7 @@
                 skillsRow.innerHTML = `מיומנויות: ${skillPills || '<span class="meta-pill">ללא תיוג</span>'}`;
 
                 let focusRow = null;
-                if (amitFocus) {
+                if (focusData) {
                     focusRow = document.createElement("div");
                     focusRow.className = "mt-2 text-sm text-slate-600";
 
@@ -2161,17 +2161,17 @@
 
                     const label = document.createElement("span");
                     label.className = "meta-line-label";
-                    label.textContent = "מיקוד עמית:";
+                    label.textContent = "מיקוד:";
                     focusRow.appendChild(label);
 
-                    appendFocusPill(`meta-pill ${amitFocus.pillClass}`, amitFocus.label);
+                    appendFocusPill(`meta-pill ${focusData.pillClass}`, focusData.label);
 
-                    if (amitFocus.note) {
-                        appendFocusPill("meta-pill amit-note", amitFocus.note);
+                    if (focusData.note) {
+                        appendFocusPill("meta-pill focus-note", focusData.note);
                     }
 
-                    if (amitFocus.yearNote) {
-                        appendFocusPill("meta-pill amit-year-note", amitFocus.yearNote);
+                    if (focusData.yearNote) {
+                        appendFocusPill("meta-pill focus-year-note", focusData.yearNote);
                     }
                 }
 
@@ -2198,7 +2198,7 @@
             let filtered = [...solutions];
 
             if (bagrutFilterMode === "focusOnly") {
-                filtered = filtered.filter((s) => getAmitFocusForSolution(s)?.focusStatus === "inFocus");
+                filtered = filtered.filter((s) => getFocusForSolution(s)?.focusStatus === "inFocus");
             }
 
             if (searchTokens.length) {
@@ -2312,17 +2312,17 @@
         let bodySearchIndexReady = false;
         let topicCatalog = [];
         let skillCatalog = [];
-        let amitFocusLookup = new Map();
+        let focusLookup = new Map();
         let drawerMode = "topics";
         const topicFilterStates = new Map();
         const skillFilterStates = new Map();
 
         async function init() {
-            const [discovered, loadedAmitFocusLookup] = await Promise.all([
+            const [discovered, loadedFocusLookup] = await Promise.all([
                 discoverQuestionEntries().catch(() => []),
-                loadAmitFocusLookup()
+                loadFocusLookup()
             ]);
-            amitFocusLookup = loadedAmitFocusLookup;
+            focusLookup = loadedFocusLookup;
             try {
                 solutions = await loadSolutionsFromTopicsJson(discovered);
             } catch {
