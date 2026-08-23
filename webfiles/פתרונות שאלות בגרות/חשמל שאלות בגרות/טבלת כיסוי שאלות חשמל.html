@@ -721,11 +721,11 @@
 			<div class="legend-row">
 				<div class="legend-chip"><span class="chip-dot success"></span><span>יש פתרון במאגר</span></div>
 				<div class="legend-chip"><span class="chip-dot missing"></span><span>עדיין אין פתרון במאגר</span></div>
-				<div class="legend-chip"><span class="focus-legend-pill in-focus">מיקוד תשפו</span><span>לפי עמית</span></div>
-				<div class="legend-chip"><span class="focus-legend-pill out-of-focus">לא במיקוד תשפו</span><span>לפי עמית</span></div>
+				<div class="legend-chip"><span class="focus-legend-pill in-focus">מיקוד תשפז</span><span>לפי המיקוד</span></div>
+				<div class="legend-chip"><span class="focus-legend-pill out-of-focus">לא במיקוד תשפז</span><span>לפי המיקוד</span></div>
 			</div>
 			<div class="note-box mt-4">
-				לחיצה על סימון ה-✓ הירוק פותחת ישירות את הפתרון של אותה שאלה. תאים שאינם רלוונטיים לשנה מסוימת מסומנים כ-<span class="font-semibold">N/A</span>. בשנים שיש עליהן נתון בקובץ של עמית, תופיע בתוך התא גם תגית מיקוד תשפו והערה אם קיימת.
+				לחיצה על סימון ה-✓ הירוק פותחת ישירות את הפתרון של אותה שאלה. תאים שאינם רלוונטיים לשנה מסוימת מסומנים כ-<span class="font-semibold">N/A</span>. בשנים שיש עליהן נתון בקובץ המיקוד, תופיע בתוך התא גם תגית מיקוד תשפז והערה אם קיימת.
 			</div>
 		</section>
 
@@ -1246,7 +1246,7 @@
 
 			rows.forEach((row) => {
 				const year = Number(row?.bagrutYear);
-				if (!Number.isFinite(year)) {
+				if (!Number.isFinite(year) || year < START_YEAR) {
 					return;
 				}
 
@@ -1283,10 +1283,10 @@
 			let badgeClass = "";
 
 			if (status === "inFocus") {
-				badgeText = "מיקוד תשפו";
+				badgeText = "מיקוד תשפז";
 				badgeClass = "in-focus";
 			} else if (status === "outOfFocus") {
-				badgeText = "לא במיקוד תשפו";
+				badgeText = "לא במיקוד תשפז";
 				badgeClass = "out-of-focus";
 			} else if (status === "notAsked") {
 				badgeText = "לא הייתה שאלה";
@@ -1307,11 +1307,11 @@
 		function buildCellTitle(baseTitle, focusEntry) {
 			const parts = [baseTitle];
 			if (focusEntry?.focusStatus === "inFocus") {
-				parts.push("מיקוד תשפו לפי עמית");
+				parts.push("מיקוד תשפז לפי המיקוד");
 			} else if (focusEntry?.focusStatus === "outOfFocus") {
-				parts.push("לא במיקוד תשפו לפי עמית");
+				parts.push("לא במיקוד תשפז לפי המיקוד");
 			} else if (focusEntry?.focusStatus === "notAsked") {
-				parts.push("לא הייתה שאלה לפי נתוני עמית");
+				parts.push("לא הייתה שאלה לפי נתוני המיקוד");
 			}
 			if (focusEntry?.focusNote) {
 				parts.push(focusEntry.focusNote);
@@ -1486,7 +1486,7 @@
 			renderMobileCoverage(rows, focusLookup);
 
 			const focusYearsCount = focusLookup.size;
-			statusText.textContent = `מוצגות ${rows.length} שורות כיסוי, המייצגות ${yearsCount} שנים במאגר. לחיצה על ✓ ירוק פותחת את הפתרון. בשנים שיש עליהן נתון של עמית (${focusYearsCount} שנים), מופיעה גם אינדיקציית מיקוד תשפו בתוך התא.`;
+			statusText.textContent = `מוצגות ${rows.length} שורות כיסוי, המייצגות ${yearsCount} שנים במאגר. לחיצה על ✓ ירוק פותחת את הפתרון. בשנים שיש עליהן נתון של המיקוד (${focusYearsCount} שנים), מופיעה גם אינדיקציית מיקוד תשפז בתוך התא.`;
 			summaryRows.textContent = formatNumber(yearsCount);
 			summaryCovered.textContent = formatNumber(coveredCount);
 			summaryPercent.textContent = `${percent}%`;
