@@ -43,7 +43,7 @@ export const defaultFormulas = `{
 						{ "latex": "U_g = mgh", "note": "אנרגיה פוטנציאלית כובדית בשדה אחיד" },
 						{ "latex": "U_{sp} = \\\\frac{1}{2}k(\\\\Delta l)^2", "note": "אנרגיה פוטנציאלית אלסטית" },
 						{ "latex": "W_T = \\\\Delta E_k", "note": "משפט עבודה-אנרגיה" },
-						{ "latex": "W_{\\\\text{םירמשמ אל}} = \\\\Delta E", "note": "שינוי אנרגיה מכנית כוללת" },
+						{ "latex": "W_{\\\\text{לא משמרים}} = \\\\Delta E", "note": "שינוי אנרגיה מכנית כוללת" },
 						{ "latex": "\\\\bar{P} = \\\\frac{W}{t}", "note": "הספק ממוצע" }
 					]
 				},
@@ -159,7 +159,6 @@ export const defaultFormulas = `{
 					"formulas": [
 						{ "latex": "F = qvB\\\\sin\\\\alpha", "note": "כוח על מטען בשדה מגנטי" },
 						{ "latex": "F = BI\\\\ell\\\\sin\\\\alpha", "note": "כוח על תיל נושא זרם" },
-						{ "latex": "\\\\frac{F}{\\\\ell} = \\\\frac{\\\\mu_0I_1I_2}{2\\\\pi d}", "note": "כוח ליחידת אורך בין שני תילים מקבילים" },
 						{ "latex": "B = \\\\frac{\\\\mu_0I}{2\\\\pi r}", "note": "שדה סביב תיל ישר ארוך" },
 						{ "latex": "B = \\\\frac{\\\\mu_0NI}{2R}", "note": "שדה במרכז סליל מעגלי" },
 						{ "latex": "B = \\\\frac{\\\\mu_0NI}{L}", "note": "שדה בתוך סילונית ארוכה" },
@@ -238,6 +237,9 @@ export const defaultFormulas = `{
 						{ "latex": "A = \\\\pi R^2", "note": "שטח עיגול" },
 						{ "latex": "V = \\\\frac{4}{3}\\\\pi R^3", "note": "נפח כדור" },
 						{ "latex": "A_s = 4\\\\pi R^2", "note": "שטח פני כדור" },
+						{ "latex": "\\\\sin\\\\theta = \\\\frac{\\\\text{הניצב ממול}}{\\\\text{היתר}}", "note": "סינוס זווית" },
+						{ "latex": "\\\\cos\\\\theta = \\\\frac{\\\\text{הניצב ליד}}{\\\\text{היתר}}", "note": "קוסינוס זווית" },
+						{ "latex": "\\\\tan\\\\theta = \\\\frac{\\\\text{הניצב ממול}}{\\\\text{הניצב ליד}}", "note": "טנגנס זווית" },
 						{ "latex": "\\\\sin\\\\theta \\\\approx \\\\tan\\\\theta", "note": "זוויות קטנות" },
 						{ "latex": "\\\\sin\\\\theta \\\\approx \\\\theta", "note": "זוויות קטנות (ברדיאנים)" }
 					]
