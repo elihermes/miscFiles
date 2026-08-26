@@ -1,24 +1,24 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
-    <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
-    <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
-    <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
-    <script>
-        window.dataLayer = window.dataLayer || [];
-        function gtag(){dataLayer.push(arguments);}
-        gtag('js', new Date());
+<html lang="he" dir="rtl"><head>
+        <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
+        <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
+        <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+        <script>
+            window.dataLayer = window.dataLayer || [];
+            function gtag(){dataLayer.push(arguments);}
+            gtag('js', new Date());
 
-        gtag('config', 'G-QZJ7JT80X2');
-    </script>
+            gtag('config', 'G-QZJ7JT80X2');
+        </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>פתרון בגרות בפיזיקה - חשמל 2009, שאלה 4</title>
+    <title>פתרון שאלה 4 - בגרות חשמל 2009</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- MathJax for formulas -->
+    <!-- אין להוסיף polyfill.io או polyfill חיצוני אחר לקובץ זה -->
     <script>
         window.MathJax = {
             tex: {
@@ -28,7 +28,10 @@
             }
         };
     </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Optional: Chart.js (remove if not needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
@@ -61,6 +64,8 @@
             overflow-x: clip;
         }
 
+        
+        
         .page-shell {
             max-width: 980px;
             margin: 0 auto;
@@ -158,9 +163,11 @@
             border-radius: 0.5rem;
             display: inline-block;
             padding: 0.25rem 0.8rem;
-            margin: 0.25rem 0.25rem 0.25rem 0;
+            margin: 0.25rem 0 0.25rem 0.5rem;
             font-weight: 700;
-            direction: ltr;
+            direction: rtl;
+            text-align: right;
+            unicode-bidi: plaintext;
         }
 
         .inline-ltr {
@@ -186,6 +193,18 @@
             padding: 1rem;
             margin-top: 0.8rem;
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            min-height: 360px;
+            width: 100%;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
         }
 
         /* Unified MathJax mobile handling */
@@ -219,6 +238,14 @@
 
             .page-shell {
                 padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
             }
 
             .question-modal-header {
@@ -377,308 +404,337 @@
                 padding: 1.5rem;
                 padding-bottom: 7rem;
             }
-            .md\:grid-cols-2 {
-                grid-template-columns: repeat(2, minmax(0, 1fr));
-            }
         }
     </style>
 </head>
 <body>
 
+<!--
+STANDARD NOTES FOR FUTURE REUSE
+1. Keep question image filename as: question-image.png
+2. Keep floating button text and icon exactly as in this file.
+3. For each section: What is given -> What to find -> Formula -> Step-by-step solution -> Teacher note.
+3.1 Preferred layout: place "מה נתון" and "מה מחפשים" inside .info-grid using two .info-panel blocks side by side on wide screens.
+4. Keep formulas inside .math-container or .overflow-x-auto dir="ltr".
+5. If a section has a graph, use Chart.js only if needed.
+6. Do not remove Esc/modal-close behavior.
+7. The version stamp must show a masked date code + time only, in the form: "עודכן: CODE HH:MM:SS".
+8. Do not use hash-like version IDs, random letters, or opaque codes in the stamp.
+9. The floating button text must be exactly: "הצג שאלה".
+10. Do not add a visible heading like "נוסח השאלה" above the inline question image block.
+11. The question block must stay a .section-card with border-t-4; do not introduce new card classes.
+12. Section hierarchy: use <h3 class="section-header"> only (no extra number spans); sub-headings are <h4>. Keep aria-label on the version stamp.
+13. Formula chips: use .formula-badge inline; if the math is long, place it in .math-container/.math-scroll dir="ltr" instead of growing the chip.
+13.1 For long explanations, prefer .content-paragraph and split the reasoning into short visual blocks.
+13.2 In .final-answer, if the sentence ends with a short LTR fragment (value + unit, range, symbol-only result), wrap that fragment with .inline-ltr so punctuation stays at the visual end of the Hebrew sentence.
+14. Formula chip shape is fixed: rounded rectangle only (border-radius: 0.5rem). Never use pill/circle style (9999px).
+15. Modal/button IDs are locked: openQuestionModalBtn, questionModal, closeQuestionModalBtn; keep the eye icon SVG + text exactly.
+16. Header lock: keep the stamp inside <header class="text-center mb-8">, directly under the title block and above the inline question image.
+17. Keep the stamp classes/ids exactly: <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ"> + <span id="versionUpdatedAt">.
+18. In JS, always fill versionUpdatedAt from document.lastModified as masked-date CODE + HH:MM:SS (no explicit date).
+
+SECTION CHECKLIST (copy/paste for every part)
+- מה נתון
+- מה מחפשים
+- נוסחאות (כמה .formula-badge בשורה אחת)
+- step-box עם כותרת “פתרון צעד-אחר-צעד” / “חישוב”
+- טיפ מורה (אם יש)
+-->
+
+<!--
+COPILOT INSTRUCTIONS (copy with each new solution if needed)
+- Preserve this visual standard unless explicitly requested otherwise.
+- Keep Hebrew explanatory text and LTR equation blocks.
+- Add concise, teaching-oriented explanations.
+- Ensure mobile readability and equation scrolling.
+- Keep the header stamp human-readable: show masked-date CODE + time down to seconds.
+- Do not reintroduce labels such as ver, vAUTO, or letter-number hashes in the stamp.
+- Keep the question CTA wording exactly as in the standard example: "הצג שאלה".
+- Do not place a "נוסח השאלה" heading above the inline image block.
+- Use only .section-card for the question image and each part; avoid inventing card variants.
+- Stick to the section checklist (נתון → מחפשים → נוסחאות → step-box → טיפ מורה).
+- Prefer the updated visual rhythm: .info-grid + .info-panel for נתון/מחפשים, .step-title for the main box heading, optional .step-label for internal stages, and .final-answer for the conclusion line.
+- Formula chips stay inline; for large math use .math-container dir="ltr" instead of widening the chip. Always wrap MathJax formulas inside formula chips with inline math delimiters \( and \).
+- In .final-answer, wrap short LTR endings such as values, units, ranges, or symbol-only results with .inline-ltr.
+- Formula chips must remain rounded rectangles (0.5rem) and not pill/circle chips.
+- Keep IDs openQuestionModalBtn, questionModal, closeQuestionModalBtn and the eye SVG/icon as-is.
+- Keep the timestamp block inside the header (not as a standalone block), with header class text-center mb-8.
+- Keep the stamp markup and IDs unchanged: versionStamp + versionUpdatedAt with aria-label.
+- Keep stamp value format strict: CODE HH:MM:SS from document.lastModified only, without exposing explicit date.
+-->
+
 <div class="page-shell">
     <header class="text-center mb-8">
-        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון בגרות בפיזיקה - חשמל 2009</h1>
-        <h2 class="text-xl md:text-2xl text-slate-600">שאלה 4 - כוח מגנטי בין תילים מקבילים</h2>
-        <p class="mt-3 text-slate-500">פתרון מלא ומודרך, צעד-אחר-צעד</p>
+        <!-- Header/stamp structure is locked to keep visual consistency across all questionnaires. -->
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון שאלה 4 - בגרות חשמל 2009</h1>
         <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
             <span class="version-label">עודכן:</span>
-            <span id="versionUpdatedAt">--- --:--:--</span>
+            <span id="versionUpdatedAt">WHB 12:17:07</span>
         </div>
         <div>
-            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+            <a class="legal-entry-link" data-legal-link="" href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
         </div>
+        <!-- חותמת זו נועדה להציג זמן עדכון קריא בלבד, ולא מספר גרסה פנימי. -->
     </header>
 
-    <!-- תמונת השאלה המקורית מוגדלת פרופורציונאלית למסגרת -->
-    <section class="section-card border-t-4 border-slate-300">
-        <div class="flex justify-center">
-            <img
-                src="question-image.png"
-                alt="תמונת השאלה המקורית"
-                class="w-full h-auto object-contain rounded-lg border border-slate-200"
-                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-            />
-            <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
-                <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
-                <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
-            </div>
+
+    
+    <div class="solution-content">
+      <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+    <h3 class="text-xl font-bold text-blue-900 mb-4">מבט כללי על השאלה</h3>
+    <p class="content-paragraph">שאלה זו עוסקת בכוח המגנטי הפועל בין שני תיילים מקבילים נושאי זרם, ובשיווי משקל מכני המשלב כוחות כבידה, כוח נורמלי וכוח מגנטי.</p>
+    <p class="content-paragraph">הסיפור הפיזיקלי מתאר מערכת שבה מוט אחד מקובע ואילו השני מונח על מאזניים. מתוך קריאת המאזניים (שהיא קטנה ממשקל המוט), אנו מסיקים על כיוון הכוח המגנטי ומכאן על כיווני הזרמים.</p>
+    <p class="content-paragraph">בנוסף, נבחן את השדה המגנטי השקול הנוצר במרחב סביב שני התיילים לפי עקרון הסופרפוזיציה, ונסיים בהבנה תאורטית הנוגעת לחוק השלישי של ניוטון באינטראקציה שבין מגנט למוליך.</p>
+</section>
+
+<section class="section-card border-t-4 border-slate-300">
+    <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+    <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+        <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+        <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+    </div>
+</section>
+
+<section class="section-card" id="part-1">
+    <h3 class="section-header">סעיף א'</h3>
+
+    <div class="info-grid md:grid-cols-2">
+        <div class="info-panel">
+            <strong>מה נתון:</strong>
+            <br>המוט \( RQ \) מקובע במקומו.<br>המוט \( PS \) מונח על מאזניים ומסתו היא \( m \).<br>המערכת כולה נמצאת במנוחה בשיווי משקל (אין צורך בהמרת יחידות מכיוון שאין נתונים מספריים בשלב זה).<br>קריאת המאזניים מראה כי הכוח הנורמלי קטן ממשקל המוט: \( N_1 &lt; mg \).
         </div>
-    </section>
-
-    <!-- סעיף א -->
-    <section class="section-card" id="part-a">
-        <h3 class="section-header">סעיף א' - תרשים כוחות</h3>
-        <div class="info-grid md:grid-cols-2">
-            <div class="info-panel">
-                <strong>מה נתון:</strong>
-                <ul class="list-disc list-inside mt-2 text-slate-700">
-                    <li>מוט אופקי \( PS \) שמסתו \( m \) [קילוגרם].</li>
-                    <li>המאזניים מורים על כוח נורמלי \( N_1 \) [ניוטון] המופעל על המוט כלפי מעלה.</li>
-                    <li>נתון מפתח: הוריית המאזניים קטנה ממשקל המוט, כלומר \( N_1 < mg \).</li>
-                    <li>המוט נמצא במנוחה (שיווי משקל).</li>
-                </ul>
-            </div>
-            <div class="info-panel">
-                <strong>מה מחפשים:</strong>
-                <p class="mt-2 text-slate-700">לסרטט תרשים כוחות (FBD) המייצג את כל הכוחות הפועלים על המוט \( PS \).</p>
-            </div>
+        <div class="info-panel">
+            <strong>מה מחפשים:</strong> סרטוט ותרשים של הכוחות הפועלים על המוט \( PS \).
         </div>
+    </div>
 
-        <div class="mt-2">
-            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
-            <span class="formula-badge">\(\Sigma\vec{F} = 0\)</span> החוק הראשון של ניוטון (שיווי משקל).<br>
-            <span class="formula-badge">\(W = mg\)</span> כוח הכובד.
+    <div class="mt-2">
+        <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+        <span class="formula-badge">\( \sum \vec{F} = m\vec{a} \)</span>
+        <span class="formula-badge">\( F = mg \)</span>
+    </div>
+
+    <div class="step-box">
+        <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+        <p class="content-paragraph">המוט \( PS \) נמצא במנוחה, לכן שקול הכוחות הפועלים עליו שווה לאפס. הכוחות הפועלים בציר האנכי הם כוח הכבידה \( mg \) כלפי מטה, וכוח נורמלי \( N_1 \) שהמאזניים מפעילים כלפי מעלה.</p>
+        <p class="content-paragraph">מכיוון שנתון כי \( N_1 &lt; mg \), נדרש כוח נוסף כלפי מעלה כדי לאזן את כוח הכבידה. כוח זה הוא הכוח המגנטי \( F_B \) שמפעיל המוט \( RQ \) על המוט \( PS \).</p>
+        <div class="visual-frame">
+            <div class="physics-diagram-wrapper" style="display: inline-block; direction: ltr; vertical-align: middle; text-align: center;"><img src="data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAAlgAAAH0CAYAAADhUFPUAAAAAXNSR0IArs4c6QAAAERlWElmTU0AKgAAAAgAAYdpAAQAAAABAAAAGgAAAAAAA6ABAAMAAAABAAEAAKACAAQAAAABAAACWKADAAQAAAABAAAB9AAAAACc34KhAAAzvUlEQVR4Ae3d644b150g8Cq2NJvEwoZ6glBP4HYSA5lMFmlh4lw+RX6CtLCZ+SoZSLwYYGNRMRaDHWcg+etmB5KfwPKnXOxADDYzMJCLO0/gzgMsRG/kxInUrD3FJtnVFO8sFotVPwI0i1WnzuV3aPffp06diiIvAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgRyF2j+vH3YfLd9kHvGMiRAgEAQ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q7+1lgABAgQIEChAQIBVALIiCBAgQIAAgXoJCLDq1d9aS4AAAQIECBQgIMAqAFkRBAgQIECAQL0EBFj16m+tJUCAAAECBAoQEGAVgKwIAgQIECBAoF4CAqx69bfWEiBAgAABAgUICLAKQFYEAQIECBAgUC8BAVa9+ltrCRAgQIAAgQIEBFgFICuCAAECBAgQqJeAAKte/a21BAgQIECAQAECAqwCkBVBgAABAgQI1EtAgFWv/tZaAgQIECBAoAABAVYByIogQIAAAQIE6iUgwKpXf2stAQIECBAgUICAAKsAZEUQIECAAAEC9RIQYNWrv7WWAAECBAgQKEBAgFUAsiIIECBAgACBegkIsOrV31pLgAABAgQIFCAgwCoAWREECBAgQIBAvQQEWPXqb60lQIAAAQIEChAQYBWArAgCBAgQIECgXgICrHr1t9YSIECAAAECBQgIsApAVgQBAgQIECBQLwEBVr36W2sJECBAgACBAgQEWAUgK4IAAQIECBCol4AAq179rbUECBAgQIBAAQICrAKQFUGAAAECBAjUS0CAVa/+1loCBAgQIECgAAEBVgHIiiBAgAABAgTqJSDAqld/ay0BAgQIECBQgIAAqwBkRRAgQIAAAQL1EhBg1au/tZYAAQIECBAoQECAVQCyIggQIECAAIF6CQiw6tXfWkuAAAECBAgUICDAKgBZEQQIECBAgEC9BARY9epvrSVAgAABAgQKEBBgFYCsCAIECBAgQKBeAgKsevW31hIgQIAAAQIFCAiwCkBWBAECBAgQIFAvAQFWvfpbawkQIECAAIECBARYBSArggABAgQIEKiXgACrXv2ttQQIECBAgEABAgKsApAVQYAAAQIECNRLQIBVr/7WWgIECBAgQKAAAQFWAciKIECAAAECBOolIMCqV39rLQECBAgQIFCAgACrAGRFECBAgAABAvUSEGDVq7+1lgABAgQIEChAQIBVALIiCBAgQIAAgXoJCLDq1d9aS4AAAQIECBQgIMAqAFkRBAgQIECAQL0EBFj16m+tJUCAAAECBAoQEGAVgKwIAgQIECBAoF4CAqx69bfWEiBAgAABAgUICLAKQFYEAQIECBAgUC8BAVa9+ltrCRAgQIAAgQIELhRQxk4X8cUvfvFg0QZcunTpqNPpdBdNLx0BAgQIECiTwIsvvrh/cnJy0Gg0PpckSTOO4/Rv2kfh3fE3brmeEmDN8Qo/sIdzkowO//GPf4y+8IUvdMI5b/3ud7+7PzpggwABAgQIlFjg85///GEIpm70er398BmFv2P92g4/w5db4W9cN/yNe3Dx4sXb77///nGJm1OKqrlEmH83HIQf573wI/zgS1/6Uiv/7OVIgAABAgTyETg4OGiGv1cP079bIcf9Obk2w/HDJ0+ePExHuuakrf1hAdbmfgL76Y9wf38//UF6ESBAgACB0gk8fvw4vUpzsGTFWmGk66FBhNlqLhHO9pl4NET6nbEDzTCMOimab124cOFmSNseS+8rAQIECBDYqkB6WXDK365umIP1IBz7Q3in87CeD58HY5VthkGEdNTr6th+XwcCAqwVfgq/+c1vnvlBhZGq1t7eXvp/Aq1sluFHeSMcu3t0dNTN7rdNgAABAgS2KRCCqBvhb9R4Fd4Kk9xv/va3vz33NysEYzdDoHVnLPFBepXG37cxlcHXePJue4cC4dr0M7++8MOb6DYIsj4I5zaH5w8+Xw7nPBjbt/DXm+07zcePn4YJiMlXe1FjP06S1sInS0iAAAECuy8QR0dh6vlxaMg7P37j1fvrNigNjMKgwKPxfEJwdSUETMfj+9Pv4e/h3fBxY+zYWn/fxvKq1FdzsHLszsGP8p3xLEPUvz++b9Hv//jq/7z2+PHJhyH9nSSJrwmuFpWTjgABAhUSSKL99G9AeN/7h+//6MN/+P6/HK7ZuvGBgDS77rTgKj0Ygq+7YcTrevYd9h2lx7yeFXCJ8FmTtfaEYOp4wpDrSnl+93tv3On1optR9Mwg2kr5OYkAAQIEdl8g/I1pRVF8L/yN+Nz//tH3b6/You6E85rhUuCtsMzQxDwHwdf9CefZNUHACNYElHV2hR/+59Y5f3jud7/3r7fCdgiuvAgQIECAwESB9j+++sb4vKiJCcd3hmApDbA64/vDIEE7XAq8t8wi2+N5+H4qIMDK/5dwMJ5lCLqOxvfN+n469Ntrz0rjGAECBAgQSK9y/NdXf3RtFYkQTE0cqQp5pXcXPkznIIf3wxBs3RFwLS8swFrebOIZ6WJtYWj1XjjYGk+w/DXqRjp65UWAAAECBOYKxL3k3mG4GWpuwrEE4Y74zowga5j6IARbNwcB16N0dMv6V0Oa2Z/x7MOOphH8uMKEH+Rnw4/vMKSb9AO/H+4gvD6ex7Tv6ehVOolx2nH7CRAgQIDABIFXwnysuxP2z92Vjk6Fv2ETBwimnNwN6W+HuVorlTclz8rtNsl9hS4NP6xFR5iOw+jVtCHYKSU3vm1S+xQauwkQIEBgikB/IdCVAp50JCtkemUQaB2G7a+Gdyu8p73SxUfvhAGIR2EA4a1pieq+X4C1uV9AGlxdnXXL66Sie+FZUPGkA/YRIECAAIEpAnHceH7KoYV3DwKtTnpCuq5jWIg0fbbuQfg6LeC6G9K9M5gwn57mlREQYGUwctrshh/km0+fPr27yo/OOlc59YJsCBAgUCOBcGWllWdzB4MD90Oe6TuaspJ7MzwO7jAcXmnkLM23yi8B1gq9Oz4HKzz0shuy6YZVcY9+/etfH62QpVMIECBAgEBhAi+++OJ+CMqa2QIHI1jZXaPtdL5VuITYHJ8iE76vPXI2KqRiGwKsFTo0/AjbK5y20ClJWKjUKNZCVBIRIECAwEAgDo/SWQYjDAzcDOm/kz0n3B145f333z/O7hvb7oTvi85BHju1fl8t01CyPg8dstS/JCWrvuoQIECAwBYEwkjSH5YstjuePkxtuTG+L/s9lHEuIBsc+yibxvaZgADrzKIUW+EH/MtSVEQlCBAgQGBnBMII1oNlKhumujyTPvz9uTlpnavBOo93Qv6H42WEcwwKjKMMvrthbQrMcPekdbDCbakbczu8eSdMGnz6YSi/OayDTwIECBAgME0gBEvHP37je1emHZ+2P/x9exiOHUw6HgKn4zTf8NkKn61JacK+4/D3cOlyp+RVud1GsErWpffvvhIWcIuvl6xaqkOAAAECpRXo3V6lamEpofRvzfGkcwdBVbpMQ2vS8XRfOOZv1TScsF+ANQNnW4f+7V+/9yAEWW9uq3zlEiBAgMCuCPRu//iNV++vUtt0KYZ0vcZw7vGS56fLEV2dddfhkvlVMnlcyVbl2KiiLxFmq/7d773RDt/dsZFFsV07gTeOfjaxzd/f/8bE/XYSqItAEidv/tsbr97Mo71hnavDsLDod8IlwYMZ+aWXDd9adZ3HGflW8pAAq+Tdmj6bMAw03kqvg5e8qqpHYCMCAqyNsMp0pwXibqNxcv1//ct/e2aieh7NGq6RFZZySOdfhbIax0+ePDleZfHsPOqzq3kIsHak5waB1reTJGqFZxXu70i1VZPA2gICrLUJZVABgXSNxDCn5yj8z/YvL136+P7ddrtbgWZVugkCrEp3r8YR2H2BR1/7WjKpFZffe89/vybB2EeAQCkETHIvRTeoBAECBAgQIFAlAQFWlXpTWwgQIECAAIFSCAiwStENKkGAAAECBAhUSUCAVaXe1BYCBAgQIECgFAICrFJ0g0oQIECAAAECVRIQYFWpN7WFAAECBAgQKIWAAKsU3aASBAgQIECAQJUEBFhV6k1tIUCAAAECBEohIMAqRTeoBAECBAgQIFAlAQFWlXpTWwgQIECAAIFSCAiwStENKkGAAAECBAhUSUCAVaXe1BYCBAgQIECgFAICrFJ0g0oQIECAAAECVRIQYFWpN7WFAAECBAgQKIWAAKsU3aASBAgQIECAQJUEBFhV6k1tIUCAAAECBEohIMAqRTeoBAECBAgQIFAlAQFWlXpTWwgQIECAAIFSCAiwStENKkGAAAECBAhUSUCAVaXe1BYCBAgQIECgFAICrFJ0g0oQIECAAAECVRIQYFWpN7WFAAECBAgQKIWAAKsU3aASBAgQIECAQJUEBFhV6k1tIUCAAAECBEohIMAqRTeoBAECBAgQIFAlAQFWlXpTWwgQIECAAIFSCAiwStENKkGAAAECBAhUSUCAVaXe1BYCBAgQIECgFAICrFJ0g0oQIECAAAECVRIQYFWpN7WFAAECBAgQKIWAAKsU3aASBAgQIECAQJUEBFhV6k1tIUCAAAECBEohIMAqRTeoBAECBAgQIFAlAQFWlXpTWwgQIECAAIFSCAiwStENKkGAAAECBAhUSUCAVaXe1BYCBAgQIECgFAICrFJ0g0oQIECAAAECVRIQYFWpN7WFAAECBAgQKIWAAKsU3aASBAgQIECAQJUEBFhV6k1tIUCAAAECBEohIMAqRTeoBAECBAgQIFAlAQFWlXpTWwgQIECAAIFSCAiwStENKkGAAAECBAhUSUCAVaXe1BYCBAgQIECgFAICrFJ0g0oQIECAAAECVRIQYFWpN7WFAAECBAgQKIWAAKsU3aASBAgQIECAQJUEBFhV6k1tIUCAAAECBEohIMAqRTeoBAECBAgQIFAlAQFWlXpTWwgQIECAAIFSCAiwStENKkGAAAECBAhUSUCAVaXe1BYCBAgQIECgFAICrFJ0g0oQIECAAAECVRIQYFWpN7WFAAECBAgQKIWAAKsU3aASBAgQIECAQJUEBFhV6k1tIUCAAAECBEohIMAqRTeoBAECBAgQIFAlAQFWlXpTWwgQIECAAIFSCAiwStENKkGAAAECBAhUSUCAVaXe1BYCBAgQIECgFAICrFJ0g0oQIECAAAECVRIQYFWpN7WFAAECBAgQKIWAAKsU3aASBAgQIECAQJUEBFhV6k1tIUCAAAECBEohIMAqRTeoBAECBAgQIFAlAQFWlXpTWwgQIECAAIFSCAiwStENKkGAAAECBAhUSUCAVaXe1BYCBAgQIECgFAICrFJ0g0oQIECAAAECVRIQYFWpN7WFAAECBAgQKIWAAKsU3aASBAgQIECAQJUEBFhV6k1tIUCAAAECBEohIMAqRTeoBAECBAgQIFAlAQFWlXpTWwgQIECAAIFSCAiwStENKkGAAAECBAhUSUCAVaXe1BYCBAgQIECgFAICrFJ0g0oQIECAAAECVRIQYFWpN7WFAAECBAgQKIWAAKsU3aASBAgQIECAQJUEBFhV6k1tIUCAAAECBEohIMAqRTeoBAECBAgQIFAlAQFWlXpTWwgQIECAAIFSCAiwStENKkGAAAECBAhUSUCAVaXe1BYCBAgQIECgFAICrFJ0g0oQIECAAAECVRIQYFWpN7WFAAECBAgQKIWAAKsU3aASBAgQIECAQJUEBFhV6k1tIUCAAAECBEohIMAqRTeoBAECBAgQIFAlgQtVaoy2ECBAYB2BRy+9dCPq9fb7eVy8ePvyT396/OjatWb0+PGNsO8giuNW/1iSHIXtdy6/++79/vfBPwZpD8PXr4bjp/kkyXHYfhDt7b2T5jdIOvcjU+7+KK8o6oYTj0Je/bqlmfzfl1662+j1PptuX/7FL66nn14ECGxfIN5+FdSAAAEC0wUefe1ryaSjl997L/f/foWyHoayDvrlxfELIdh6PgQ3d8P3Zn/fs/9oh3rcTnf3g7MkaYfNyWnj+DgERlfnBVmDwOpWyOdmeE9+ZfLK+HRDXS5PPsFeAgSKFjCCVbS48ggQKLPA/qBy3RBYtcL7fuZ7N0qSNHjKBlDtEOD8Muz7ajjWPpc2/ZIkrcG+0+2nT++F71dH+8Y2Hn3zm63o44/TIK+VOZTWpdv/Pswv/Tw5eTsEdddDGcOkR8MNnwQIbF9AgLX9PlADAgRKIBCClf1BAHVamyS5EwKb47DvehgZ6gyrGNIdhn1poHT6iuM74Xt6Ge/ZtGnAdHLyMBxvDVIfpCNUlx88OA2YBjvTj35wlU07yC+6dOkomz4EdDdD8tMy08/hK45/P9z0SYDA9gVMct9+H6gBAQJlEDgdnRrWpBk2utFzz72QDa7Sg4N5V7eHCUfBVXr5LxOI9dOmc67C/lHadOPx4/1z34dfTk5ujQKxOD4alp0NrtKkoYy7IZi7PjjtYPCZjpAdj7ZtECCwdQEB1ta7QAUIECiJwFngczrH6eXx4CZTz05mOw1urk+bW9Xfn+Y34zUYFTvsJ5lf9jDI64xleTT23VcCBLYoIMDaIr6iCRAolcBXh7UJ/2HsTAuYhmlGnyEgGh+5Gh2btDGcT5U9liTpXYrD1+gOweGOKZ/vnNsfLiWe++4LAQJbFRBgbZVf4QQIlEigOaxLL0neGm5P+Twb7UqS+XOfzuZgpaNP5wKh/tyvKDrNLw3WxpZ+mFL++CXB7ozRtqlZOECAwOYEBFibs5UzAQK7JXAWNM0bDcoETKGJ5wKm8SYPAqjT3encqvFXkhxkdp0flcoceGbz/EjYs/k+c4IdBAgUKSDAKlJbWQQIlFJgEAQ1B5WbPxoUx8+PGtJozA5uer3WKG2S/GG0fbbx7dFmkjwYbc/biOPWKIk7CEcUNgiURUCAVZaeUA8CBLYncP4OwtkB02kt90eVnXf33nBF99MTns37fKDUHeU7b2O44nyabl4d5uXlOAECuQsIsHInlSEBAjsocBYwzRkNenRw0AztS9/91/icquH+zOfs0a7M5cYF8jrLNjuKNucy5dlJtggQKEpAgFWUtHIIECizwOgOwrmjQRcuZIOxowUa1RqlmTPS1H9Mzijx9I3+oqTDR/qkyebNGZuelSMECGxIQIC1IVjZEiCwUwKjEalQ63lB01mANXlO1ajhg9GuUfq5I1Qff9wanTxrI12U9Ow1f87YWVpbBAgUJCDAKghaMQQIlFpgFATNHQ3KXNILLZodjC022nWWR5Jcm6cUHpVzEEbZDjPpzs7P7LRJgMB2BQRY2/VXOgECWxZY6w7CsCDpzOpnJ89PH+3KLs1wY3D5b2K2/eAqit4+d3DOnLFzaX0hQKAwAQ97LoxaQQQIlFIgGwTNG5E6bcD+qB3n16Ia7c5sHGS2J480PX16N7pw4UZI1+y/wwOfQ9B3O2wfpZcU+/Oy0ucXxvF3+iNXYTHSOBxLhutnzZnXlSnfJgECBQoYwSoQW1EECJRSIBswzVyVfewOwu7cOVXZO/2mrJd1udPpBpU0oDp9pZcgk+ReeH8QRqyS8HDoR+HAw8FlwTTtyyG4GiTufxxlv9gmQKAcAgKscvSDWhAgsD2B1e4gXGy0qzlq1oyRpvAsw7thhOp6eB+P0o9vpMfi+OogqNsfHZ4/ijZKaoMAgeIEXCIszlpJBAiUU+AsCJofNJ0FNlH00azmLHsHYQic7of87ofLg4fhcz+MWH0uvLtRo/FR+HwQjnfC/mjpUbT0JC8CBAoXCJfyvQgQIFBegf5lsgnVC6M+tfzv12Ci+8MBSSc4XJ3AYxcBAlsWcIlwyx2geAIECCwpcDaK5g7CJekkJ1CcgACrOGslESBA4BmBdEQqXBZM7yKc++ov4RDHZ2mXeTj03NwlIEAgTwFzsPLUlBcBAgQWFOgHS0+f3gnJr4U5VtH/+/u/7/7nX/zirWmn95dr+Pjjt0PaVj9NmPQ+nJc17Rz7CRDYnoAAa3v2SiZAoM4Cn3zSjS5eTCez9xVO4vh+GM1qhTWx3rr8058eD2nCpPZ033fCcg03w77hhPxutLdn7tUQySeBEgrEJayTKhEgQGAkUOVJ7v1V5JMknbA+DJyG7e6GJRm6IfhK958/drqUw8uD5RqG6X0SIFAyAXOwStYhqkOAQH0E+kHShQsvTFj/qjm4FJgNrrpB5nb03HMvCK7q8xvR0t0VcIlwd/tOzQkQqIDA4HLglcHyCwehSc+H9zCwSkey/hC+H4XA6sHlBw/SIMuLAIEdEBBg7UAnqSIBAtUXCOtZdUIr07cXAQIVEHCJsAKdqAkECBAgQIBAuQRMci9Xf6gNgUoK9B/vcuHCh6Fxw0tf22lnOkE83H2XvUtvOxVRKgECVRcwglX1HtY+AiUQuNzppHOH3tx6VZLk3BIIW6+PChAgUFkBI1iV7VoNI1A+gbAswYejhTKLrt7pwpxXii5WeQQI1FPACFY9+12rCWxHIEmub6fgfqm3t1i2ogkQqJmAEayadbjmEti2QFiOIF1Y86DIejTCKumffffdbQZ3RTZXWQQIlEDACFYJOkEVCNRK4MKFwgOd3t6e0ata/cg0lsD2BQRY2+8DNSBQK4H+HXxJUtiE93T0yl2DtfqJaSyBUggIsErRDSpBoGYCJyft0OLNr0oeJrYbvarZb0tzCZREQIBVko5QDQJ1Ehgs21DEZbvbRq/q9MvSVgLlEYjLUxU1IUCgbgJhwvsHoc37G2m3ZRk2wipTAgQWEzCCtZiTVAQIbEbglc1kG3KN483lvbFKy5gAgaoICLCq0pPaQWAHBTb1gOP+xPaf//zBDpKoMgECFREQYFWkIzWDwM4KnC7bkOuEdxPbd/bXoOIEKiMgwKpMV2oIgd0UGExCz3PZBhPbd/OnoNYEKiUgwKpUd2oMgR0VePr0bqj5+qNYYWJ7dOlSmpcXAQIEtiogwNoqv8IJEEgF+ss25DMp/fblBw/WD9R0CwECBNYUsEzDmoBOJ0AgP4G1nlNoWYb8OkJOBAisLWAEa21CGRAgkKPA6ouP7u1dzbEesiJAgMBaAgKstficTIBAngL9ZRvi+K1l8/S8wWXFpCdAYNMCAqxNC8ufAIHlBPb22uGEZeZRdS3LsByx1AQIbF5AgLV5YyUQILCEwArLNrzpeYNLAEtKgEAhAgKsQpgVQoDAUgLpsg3pkgvzXunE9vfea89L5jgBAgSKFhBgFS2uPAIE5gr0l23o9RZ5luDqk+Ln1kICAgQIrC4Qr36qMwkQILBZgTnLNnTC6JU7BzfbBXInQGBFASNYK8I5jQCBQgSmj1CdPsOwkEoohAABAssKCLCWFZOeAIHCBPrLNiTJM88ptCxDYV2gIAIEVhQQYK0I5zQCBAoSODlph5LOlm0IE9sty1CQvWIIEFhZQIC1Mp0TCRAoQqA/4T2KzkaxwoiWZRmKkFcGAQIECBAgUHmBRy+99GH6rnxDNZAAgUoIXKhEKzSCAIHqCyTJ9bA2Vqv6DdVCAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECBAgAABAgQIECCweYH/D4AgcpVzpsPbAAAAAElFTkSuQmCC" class="replaced-physics-diagram" style="width: 43%; height: auto; display: inline-block; margin: 0px auto;"></div>
         </div>
+        <p class="final-answer">מסקנה: הכוחות הפועלים על <span class="inline-ltr">\( PS \)</span> הם: <span class="inline-ltr">\( mg \)</span> כלפי מטה, כוח נורמלי <span class="inline-ltr">\( N_1 \)</span> כלפי מעלה, וכוח מגנטי <span class="inline-ltr">\( F_B \)</span> כלפי מעלה.</p>
+    </div>
 
-        <div class="step-box">
-            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
-            <p class="content-paragraph">מכיוון שהמוט נמצא במנוחה, שקול הכוחות עליו חייב להיות אפס. אם היה פועל רק כוח הכובד כלפי מטה, המאזניים היו מראים בדיוק את המשקל (\( N = mg \)). אך מכיוון שנתון \( N_1 < mg \), כוח נוסף חייב למשוך את המוט <strong>כלפי מעלה</strong> כדי לעזור למאזניים לתמוך במוט. כוח זה הוא הכוח המגנטי \( F_B \) שמפעיל המוט \( RQ \) על המוט \( PS \).</p>
-            
-            <div class="visual-frame">
-                <svg width="300" height="250" viewBox="0 0 300 250" xmlns="http://www.w3.org/2000/svg">
-                    <!-- Rod PS -->
-                    <rect x="50" y="115" width="200" height="10" fill="#64748b" rx="5" />
-                    <text x="35" y="125" font-family="sans-serif" font-size="16" font-weight="bold" fill="#333">P</text>
-                    <text x="255" y="125" font-family="sans-serif" font-size="16" font-weight="bold" fill="#333">S</text>
-                    
-                    <!-- Forces -->
-                    <!-- mg (Down) -->
-                    <path d="M 150 125 L 150 200" stroke="#ef4444" stroke-width="3" fill="none" marker-end="url(#arrow-red)" />
-                    <text x="160" y="180" font-family="serif" font-size="18" font-style="italic" fill="#ef4444">mg</text>
-                    
-                    <!-- N1 (Up) -->
-                    <path d="M 140 115 L 140 60" stroke="#3b82f6" stroke-width="3" fill="none" marker-end="url(#arrow-blue)" />
-                    <text x="110" y="80" font-family="serif" font-size="18" font-style="italic" fill="#3b82f6">N&#x2081;</text>
-                    
-                    <!-- FB (Up) -->
-                    <path d="M 160 115 L 160 30" stroke="#10b981" stroke-width="3" fill="none" marker-end="url(#arrow-green)" />
-                    <text x="175" y="50" font-family="serif" font-size="18" font-style="italic" fill="#10b981">F<tspan dy="5" font-size="14">B</tspan></text>
-                    
-                    <!-- Defs for arrows -->
-                    <defs>
-                        <marker id="arrow-red" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-                            <path d="M0,0 L0,6 L9,3 z" fill="#ef4444" />
-                        </marker>
-                        <marker id="arrow-blue" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-                            <path d="M0,0 L0,6 L9,3 z" fill="#3b82f6" />
-                        </marker>
-                        <marker id="arrow-green" markerWidth="10" markerHeight="10" refX="9" refY="3" orient="auto" markerUnits="strokeWidth">
-                            <path d="M0,0 L0,6 L9,3 z" fill="#10b981" />
-                        </marker>
-                    </defs>
-                </svg>
-            </div>
-            
-            <p class="final-answer">מסקנה: על המוט פועלים שלושה כוחות - כוח הכובד \( mg \) (מטה), כוח נורמלי מהמאזניים <span class="inline-ltr">\( N_1 \)</span> (מעלה), וכוח מגנטי <span class="inline-ltr">\( F_B \)</span> (מעלה).</p>
+    <div class="teacher-highlight">
+        <strong>טיפ מורה:</strong>
+        כאשר אומרים ש'קריאת המאזניים' היא ערך מסוים, מתכוונים לכוח הנורמלי שהמאזניים מפעילים על הגוף. הנתון \( N_1 &lt; mg \) הוא המפתח להבנת כיוון הכוח המגנטי בסעיף זה, המצביע על כך שהמוט 'מורם' קלות על ידי כוח משיכה מגנטי.
+    </div>
+</section>
+
+<section class="section-card" id="part-2">
+    <h3 class="section-header">סעיף ב'</h3>
+
+    <div class="info-grid md:grid-cols-2">
+        <div class="info-panel">
+            <strong>מה נתון:</strong>
+            <br>הזרם במוט \( PS \) זורם מ- \( P \) ל- \( S \) (ימינה בתרשים).<br>מסקנה מסעיף א': הכוח המגנטי הפועל על מוט \( PS \) מכוון כלפי מעלה (כלומר המוטות נמשכים זה לזה).
         </div>
-
-        <div class="teacher-highlight">
-            <strong>טיפ מורה:</strong> תמיד התחילו מחוקי ניוטון! ברגע שאמרו לכם "הוריית המאזניים מורה כך וכך" משמעות הדבר היא שנתנו לכם את גודלו של הכוח הנורמלי. הנתון \( N_1 < mg \) הוא רמז עבה לכך שיש כוח נוסף שעוזר להתגבר על כוח המשיכה.
+        <div class="info-panel">
+            <strong>מה מחפשים:</strong> מהו כיוון הזרם העובר במוט \( RQ \).
         </div>
-    </section>
+    </div>
 
-    <!-- סעיף ב -->
-    <section class="section-card" id="part-b">
-        <h3 class="section-header">סעיף ב' - כיוון הזרם במוט העליון</h3>
-        <div class="info-grid md:grid-cols-2">
-            <div class="info-panel">
-                <strong>מה נתון:</strong>
-                <ul class="list-disc list-inside mt-2 text-slate-700">
-                    <li>כיוון הזרם במוט \( PS \) (התחתון) הוא מ- \( P \) ל- \( S \) (ימינה בתרשים).</li>
-                    <li>הסקנו מסעיף א' שהכוח המגנטי הפועל על המוט \( PS \) מכוון <strong>כלפי מעלה</strong> (לעבר המוט \( RQ \)).</li>
-                </ul>
-            </div>
-            <div class="info-panel">
-                <strong>מה מחפשים:</strong>
-                <p class="mt-2 text-slate-700">את כיוון הזרם במוט העליון \( RQ \).</p>
-            </div>
+    <div class="mt-2">
+        <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+        <span class="formula-badge">חוק לורנץ (כוח על תיל)</span>
+        <span class="formula-badge">כלל יד ימין לזרם ושדה מגנטי</span>
+    </div>
+
+    <div class="step-box">
+        <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+        <p class="content-paragraph">הסקנו בסעיף הקודם שהכוח המגנטי הפועל על המוט התחתון \( PS \) מושך אותו כלפי מעלה, לכיוון המוט \( RQ \). המשמעות היא שקיימת התנהגות של משיכה מגנטית בין שני התיילים.</p>
+        <p class="content-paragraph">אנו יודעים כי שני תיילים מקבילים נושאי זרם ימשכו זה את זה אם ורק אם הזרמים שלהם זורמים באותו הכיוון. אם הזרמים היו בכיוונים מנוגדים, הם היו דוחים זה את זה.</p>
+        <p class="content-paragraph">מכיוון שהזרם במוט \( PS \) זורם מ- \( P \) ל- \( S \) (ימינה), הזרם במוט \( RQ \) חייב לזרום באותו כיוון, כלומר מ- \( R \) ל- \( Q \).</p>
+        <p class="content-paragraph"><strong>הסבר אלטרנטיבי באמצעות כלל יד ימין (אגודל כיוון הזרם, אצבעות כיוון השדה, כף היד כיוון הכוח):</strong></p>
+        <p class="content-paragraph">על המוט התחתון \( PS \), הזרם זורם ימינה. הכוח המגנטי הפועל עליו, כפי שקבענו, הוא כלפי מעלה. אם נמקם את אגודל יד ימין בכיוון הזרם (ימינה) ואת כף היד בכיוון הכוח (כלפי מעלה), אצבעות יד ימין יצביעו אל תוך הדף. מכאן שהשדה המגנטי שמפעיל המוט העליון \( RQ \) על המוט \( PS \) הוא אל תוך הדף.</p>
+        <p class="content-paragraph">כעת נשתמש בכלל יד ימין עבור כיוון השדה המגנטי סביב תיל נושא זרם (אגודל כיוון הזרם, אצבעות כיוון השדה). כדי שהמוט \( RQ \) ייצור שדה מגנטי הנכנס אל תוך הדף מתחתיו (באזור המוט \( PS \)), הזרם במוט \( RQ \) חייב לזרום גם הוא ימינה, כלומר מ- \( R \) ל- \( Q \).</p>
+        <p class="final-answer">מסקנה: כיוון הזרם במוט <span class="inline-ltr">\( RQ \)</span> הוא מ- <span class="inline-ltr">\( R \)</span> ל- <span class="inline-ltr">\( Q \)</span>.</p>
+    </div>
+
+    <div class="teacher-highlight">
+        <strong>טיפ מורה:</strong>
+        אפשר תמיד לבדוק זאת על ידי שני כללי יד ימין: 1. שדה של תיל ישר (עבור RQ). 2. כוח לורנץ על תיל (עבור PS). אך הכלל 'זרמים מקבילים באותו כיוון נמשכים, ובכיוונים מנוגדים נדחים' הוא קיצור דרך מצוין וקביל בבגרות.
+    </div>
+</section>
+
+<section class="section-card" id="part-3">
+    <h3 class="section-header">סעיף ג'</h3>
+
+    <div class="info-grid md:grid-cols-2">
+        <div class="info-panel">
+            <strong>מה נתון:</strong>
+            <br>המרחק בין המוטות הוא \( d \).<br>אורך המוטות \( L \) גדול בהרבה מ- \( d \) (מאפשר הנחת תיל אינסופי).<br>הזרם ב- \( RQ \) הוא \( I \) וב- \( PS \) הוא \( I_1 \).
         </div>
-
-        <div class="mt-2">
-            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
-            <span class="formula-badge">כלל יד ימין (השני)</span> לקביעת כיוון כוח מגנטי בין תילים.<br>
-            <p class="mt-1 text-slate-700">עיקרון פיזיקלי: תילים מקבילים שבהם הזרם באותו כיוון <strong>מושכים</strong> זה את זה. תילים שבהם הזרם בכיוונים מנוגדים <strong>דוחים</strong> זה את זה.</p>
+        <div class="info-panel">
+            <strong>מה מחפשים:</strong> פיתוח ביטוי למרחק \( d \) בין המוטות באמצעות הפרמטרים הנתונים וקבועי הפיזיקה.
         </div>
+    </div>
 
-        <div class="step-box">
-            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
-            <p class="content-paragraph">בסעיף הקודם הראינו שהכוח המגנטי על המוט התחתון \( PS \) פועל כלפי מעלה. כלומר, המוט העליון \( RQ \) מפעיל <strong>כוח משיכה</strong> על המוט התחתון.</p>
-            <p class="content-paragraph">כדי ששני תילים נושאי זרם ימשכו זה את זה, הזרמים בהם חייבים לזרום באותו הכיוון. מאחר שהזרם במוט \( PS \) זורם ימינה (מ- \( P \) ל- \( S \)), הזרם במוט \( RQ \) חייב גם הוא לזרום ימינה, כלומר מ- \( R \) ל- \( Q \).</p>
-            <p class="content-paragraph"><em>הסבר אלטרנטיבי באמצעות חוקי יד ימין:</em><br>
-            כדי שמוט \( PS \) ירגיש כוח כלפי מעלה (אגודל למעלה) כאשר הזרם בו הוא ימינה (אצבעות ימינה), השדה המגנטי באזור שלו חייב להיות מכוון <strong>אל תוך הדף</strong> \( (\otimes) \). השדה הזה מיוצר על ידי המוט העליון \( RQ \). לפי כלל בורג (או יד ימין לשדה), כדי שתיל ייצר מתחתיו שדה אל תוך הדף, הזרם בו חייב לזרום ימינה (מ- \( R \) ל- \( Q \)).</p>
-            <p class="final-answer">מסקנה: כיוון הזרם במוט \( RQ \) הוא מ- <span class="inline-ltr">\( R \)</span> ל- <span class="inline-ltr">\( Q \)</span>.</p>
+    <div class="mt-2">
+        <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+        <span class="formula-badge">\( \sum \vec{F} = 0 \)</span>
+        <span class="formula-badge">\( B = \frac{\mu_0 I}{2\pi r} \)</span>
+        <span class="formula-badge">\( F = I\ell B\sin\alpha \)</span>
+    </div>
+
+    <div class="step-box">
+        <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+        <p class="content-paragraph">נתחיל ממשוואת כוחות בציר האנכי עבור המוט \( PS \), שנמצא בשיווי משקל:</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ N_1 + F_B - mg = 0 \implies F_B = mg - N_1 \]
         </div>
-    </section>
-
-    <!-- סעיף ג -->
-    <section class="section-card" id="part-c">
-        <h3 class="section-header">סעיף ג' - פיתוח ביטוי למרחק d</h3>
-        <div class="info-grid md:grid-cols-2">
-            <div class="info-panel">
-                <strong>מה נתון:</strong>
-                <ul class="list-disc list-inside mt-2 text-slate-700">
-                    <li>זרם במוט העליון: \( I \) [אמפר].</li>
-                    <li>זרם במוט התחתון: \( I_1 \) [אמפר].</li>
-                    <li>אורך המוטות המקבילים: \( L \) [מטר].</li>
-                    <li>מסת המוט התחתון: \( m \) [קילוגרם].</li>
-                    <li>הוריית המאזניים: \( N_1 \) [ניוטון].</li>
-                </ul>
-            </div>
-            <div class="info-panel">
-                <strong>מה מחפשים:</strong>
-                <p class="mt-2 text-slate-700">ביטוי אלגברי למרחק \( d \) בין המוטות באמצעות הנתונים בלבד (וקבועי טבע).</p>
-            </div>
+        <p class="content-paragraph">כעת נמצא את ביטוי הכוח המגנטי. השדה המגנטי שיוצר המוט \( RQ \) במקום בו נמצא \( PS \) מבוטא כך:</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ B_{RQ} = \frac{\mu_0 I}{2\pi d} \]
         </div>
-
-        <div class="mt-2">
-            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
-            <span class="formula-badge">\(\Sigma F_y = 0\)</span> משוואת שיווי משקל בציר האנכי.<br>
-            <span class="formula-badge">\(\frac{F}{l} = \frac{\mu_0}{2\pi} \frac{I_1 I_2}{d}\)</span> גודל הכוח ליחידת אורך בין שני תילים ארוכים מקבילים.
+        <p class="content-paragraph">הכוח המגנטי הפועל על המוט \( PS \) כתוצאה משדה זה הוא (הזווית בין הזרם לשדה היא 90 מעלות):</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ F_B = I_1 L B_{RQ} = I_1 L \frac{\mu_0 I}{2\pi d} = \frac{\mu_0 I I_1 L}{2\pi d} \]
         </div>
-
-        <div class="step-box">
-            <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
-            
-            <div class="step-label">שלב 1: בידוד הכוח המגנטי</div>
-            <p class="content-paragraph">מתוך משוואת שיווי המשקל שבנינו בסעיף א', נבודד את הכוח המגנטי הכולל \( F_B \):</p>
-            <div class="math-container text-center" dir="ltr">
-                \[ N_1 + F_B - mg = 0 \quad \Rightarrow \quad F_B = mg - N_1 \]
-            </div>
-            
-            <div class="step-label mt-4">שלב 2: שימוש בנוסחת הכוח</div>
-            <p class="content-paragraph">נשתמש בנוסחה מהדף לכוח מגנטי בין תילים מקבילים. נציב את הזרמים שלנו (\( I \) ו- \( I_1 \)) ונכפול באורך המוט \( L \) כדי לקבל את הכוח הכולל \( F_B \):</p>
-            <div class="math-container text-center" dir="ltr">
-                \[ \frac{F_B}{L} = \frac{\mu_0}{2\pi} \frac{I \cdot I_1}{d} \quad \Rightarrow \quad F_B = \frac{\mu_0 I I_1 L}{2\pi d} \]
-            </div>
-
-            <div class="step-label mt-4">שלב 3: השוואת ביטויים ובידוד d</div>
-            <p class="content-paragraph">נשווה את שני הביטויים עבור \( F_B \) ונבודד את המרחק \( d \):</p>
-            <div class="math-container text-center" dir="ltr">
-                \[ \frac{\mu_0 I I_1 L}{2\pi d} = mg - N_1 \]
-                \[ d(mg - N_1) = \frac{\mu_0 I I_1 L}{2\pi} \]
-                \[ d = \frac{\mu_0 I I_1 L}{2\pi (mg - N_1)} \]
-            </div>
-
-            <p class="final-answer">מסקנה: הביטוי למרחק הוא <span class="inline-ltr">\( d = \frac{\mu_0 I I_1 L}{2\pi (mg - N_1)} \)</span>.</p>
+        <p class="content-paragraph">נשווה את שני הביטויים עבור הכוח \( F_B \):</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ \frac{\mu_0 I I_1 L}{2\pi d} = mg - N_1 \]
         </div>
-
-        <div class="teacher-highlight">
-            <strong>טיפ מורה:</strong> שימו לב שאם לא היינו משתמשים בנוסחה המוכנה מדף הנוסחאות, היינו צריכים לפתח אותה בעצמנו על ידי חישוב השדה המגנטי שמייצר מוט אחד (\( B = \frac{\mu_0 I}{2\pi d} \)) והצבתו בנוסחת הכוח (\( F = I_1 L B \)). השימוש בנוסחה הישירה חוסך זמן ומונע טעויות!
+        <p class="content-paragraph">נבודד את המרחק \( d \) מהמשוואה:</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ d = \frac{\mu_0 I I_1 L}{2\pi (mg - N_1)} \]
         </div>
-    </section>
+        <p class="final-answer">מסקנה: <span class="inline-ltr">\( d = \frac{\mu_0 I I_1 L}{2\pi (mg - N_1)} \)</span></p>
+    </div>
 
-    <!-- סעיף ד -->
-    <section class="section-card" id="part-d">
-        <h3 class="section-header">סעיף ד' - נקודת איפוס השדה המגנטי</h3>
-        <div class="info-grid md:grid-cols-2">
-            <div class="info-panel">
-                <strong>מה נתון:</strong>
-                <ul class="list-disc list-inside mt-2 text-slate-700">
-                    <li>עוצמת הזרם במוט התחתון גדולה פי 4: \( I_1 = 4I \).</li>
-                    <li>נקודה \( A \) נמצאת במישור המוטות.</li>
-                    <li>השדה המגנטי השקול בנקודה \( A \) שווה לאפס (\( \vec{B}_{tot} = 0 \)).</li>
-                </ul>
-            </div>
-            <div class="info-panel">
-                <strong>מה מחפשים:</strong>
-                <ol class="list-decimal list-inside mt-2 text-slate-700">
-                    <li>למקם את הנקודה \( A \) במרחב (בין המוטות / מעל / מתחת) עם נימוק.</li>
-                    <li>לבטא את המרחק של נקודה \( A \) מהמוט \( RQ \) באמצעות \( d \).</li>
-                </ol>
-            </div>
+    <div class="teacher-highlight">
+        <strong>טיפ מורה:</strong>
+        ההנחה ש-'L גדול בהרבה מ-d' חשובה מאוד כאן! היא זו שמאפשרת לנו להשתמש בנוסחת השדה של תיל אינסופי למרות שהמוטות סופיים באורכם. תמיד שימו לב למילות המפתח הללו.
+    </div>
+</section>
+
+<section class="section-card" id="part-4">
+    <h3 class="section-header">סעיף ד' (1)</h3>
+
+    <div class="info-grid md:grid-cols-2">
+        <div class="info-panel">
+            <strong>מה נתון:</strong>
+            <br>הזרם בתיל התחתון מוגדר כעת: \( I_1 = 4I \).<br>נקודה \( A \) נמצאת במישור המוטות.<br>השדה המגנטי השקול בנקודה \( A \) שווה לאפס (\( \Sigma \vec{B} = 0 \)).
         </div>
-
-        <div class="mt-2">
-            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
-            <span class="formula-badge">\(B = \frac{\mu_0 I}{2\pi r}\)</span> גודל שדה מגנטי סביב תיל ישר וארוך.<br>
-            <span class="formula-badge">\(\vec{B}_{tot} = \vec{B}_1 + \vec{B}_2 = 0\)</span> עקרון הסופרפוזיציה של שדות מגנטיים (וקטורים).
+        <div class="info-panel">
+            <strong>מה מחפשים:</strong> האם הנקודה \( A \) נמצאת בין שני המוטות, מעל למוט \( RQ \) או מתחת למוט \( PS \)?
         </div>
+    </div>
 
-        <div class="step-box">
-            <h4 class="step-title">חלק (1) - מיקום נקודת האיפוס:</h4>
-            <p class="content-paragraph">כדי שהשדה השקול יהיה אפס, השדות שיוצרים שני המוטות חייבים להיות מנוגדים בכיוונם ושווים בגודלם בנקודה.</p>
-            <p class="content-paragraph">הזרמים בשני המוטות זורמים לאותו כיוון (ימינה). נשתמש בכלל יד ימין כדי למצוא את כיוון השדה מכל מוט:</p>
-            <ul class="list-disc list-inside text-slate-700 ml-4 space-y-1 mb-4">
-                <li><strong>מעל מוט RQ (העליון):</strong> השדה של RQ הוא <em>החוצה</em> (\( \odot \)) והשדה של PS הוא גם <em>החוצה</em>. לא יתכן איפוס.</li>
-                <li><strong>מתחת למוט PS (התחתון):</strong> השדה של RQ הוא <em>פנימה</em> (\( \otimes \)) והשדה של PS הוא גם <em>פנימה</em>. לא יתכן איפוס.</li>
-                <li><strong>בין המוטות:</strong> השדה של RQ (העליון) מצביע <em>פנימה</em> (\( \otimes \)), בעוד שהשדה של PS (התחתון) מצביע <em>החוצה</em> (\( \odot \)). הכיוונים מנוגדים, ולכן כאן תיתכן נקודת איפוס!</li>
-            </ul>
-            <p class="final-answer">מסקנה (1): הנקודה \( A \) נמצאת <strong>בין</strong> שני המוטות.</p>
+    <div class="mt-2">
+        <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+        <span class="formula-badge">כלל יד ימין (כיוון שדה מגנטי סביב תיל ישר)</span>
+        <span class="formula-badge">עקרון הסופרפוזיציה של שדות מגנטיים</span>
+    </div>
 
-            <h4 class="step-title mt-6">חלק (2) - חישוב המרחק:</h4>
-            <p class="content-paragraph">נסמן ב- \( x \) את המרחק של נקודה \( A \) מהמוט העליון \( RQ \). מכאן, המרחק של הנקודה מהמוט התחתון \( PS \) הוא \( d - x \).</p>
-            <p class="content-paragraph">נשווה את גודל השדות המגנטיים שמייצר כל מוט בנקודה:</p>
-            <div class="math-container text-center" dir="ltr">
-                \[ B_{RQ} = B_{PS} \]
-                \[ \frac{\mu_0 I}{2\pi x} = \frac{\mu_0 (4I)}{2\pi (d - x)} \]
-            </div>
-            <p class="content-paragraph">נצמצם משני האגפים את הקבועים המשותפים \( \frac{\mu_0 I}{2\pi} \):</p>
-            <div class="math-container text-center" dir="ltr">
-                \[ \frac{1}{x} = \frac{4}{d - x} \]
-            </div>
-            <p class="content-paragraph">נכפול בהצלבה:</p>
-            <div class="math-container text-center" dir="ltr">
-                \[ d - x = 4x \quad \Rightarrow \quad d = 5x \quad \Rightarrow \quad x = \frac{d}{5} = 0.2d \]
-            </div>
-            <p class="final-answer">מסקנה (2): המרחק של נקודה \( A \) מהמוט \( RQ \) הוא <span class="inline-ltr">\( 0.2d \)</span>.</p>
+    <div class="step-box">
+        <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+        <p class="content-paragraph">הזרמים בשני המוטות זורמים ימינה באותו הכיוון. נבדוק את כיוון השדה המגנטי שיוצר כל מוט לפי כלל יד ימין באזורים השונים:</p>
+        <p class="content-paragraph">מעל המוט \( RQ \): גם השדה מ- \( RQ \) וגם השדה מ- \( PS \) יוצאים מהדף, ולכן הם לא יכולים לבטל זה את זה. מתחת למוט \( PS \): שני השדות נכנסים אל תוך הדף, וגם שם הם לא מתבטלים.</p>
+        <p class="content-paragraph">בין המוטות: השדה שיוצר המוט \( RQ \) נכנס אל הדף, בעוד שהשדה שיוצר המוט \( PS \) יוצא מהדף. מאחר והשדות מנוגדים בכיוונם באזור זה, הם יכולים להתאפס בנקודה מסוימת.</p>
+        <p class="final-answer">מסקנה: הנקודה <span class="inline-ltr">\( A \)</span> נמצאת בין שני המוטות.</p>
+    </div>
+
+    <div class="teacher-highlight">
+        <strong>טיפ מורה:</strong>
+        זכרו כלל פשוט: כאשר שני זרמים מקבילים זורמים באותו כיוון, השדה מתאפס ביניהם. כאשר הם זורמים בכיוונים מנוגדים, השדה מתאפס מחוץ להם (וקרוב יותר לזרם החלש).
+    </div>
+</section>
+
+<section class="section-card" id="part-5">
+    <h3 class="section-header">סעיף ד' (2)</h3>
+
+    <div class="info-grid md:grid-cols-2">
+        <div class="info-panel">
+            <strong>מה נתון:</strong>
+            <br>\( I_1 = 4I \)<br>הנקודה \( A \) נמצאת בין המוטות במרחק כולל של \( d \) זה מזה.<br>השדה השקול בנקודה מתאפס, לכן גודל השדות שווה: \( B_{RQ} = B_{PS} \).
         </div>
-
-        <div class="teacher-highlight">
-            <strong>טיפ מורה:</strong> תמיד הגיוני שנקודת האיפוס קרובה יותר לתיל החלש יותר! כאן, הזרם ב- \( RQ \) קטן פי 4 מהזרם ב- \( PS \), לכן המרחק מ- \( RQ \) (שהוא \( x \)) צריך להיות קטן פי 4 מהמרחק מ- \( PS \) (שהוא \( d-x \)). ואכן: \( d - 0.2d = 0.8d \), שזה בדיוק פי 4 מ- \( 0.2d \). בדיקת היגיון כזו בבחינה יכולה להציל אתכם מטעות אלגברית קטנה!
+        <div class="info-panel">
+            <strong>מה מחפשים:</strong> בטאו את המרחק בין הנקודה \( A \) למוט \( RQ \) באמצעות \( d \).
         </div>
-    </section>
+    </div>
 
-    <!-- סעיף ה -->
-    <section class="section-card" id="part-e">
-        <h3 class="section-header">סעיף ה' - החלפת המוט במגנט קבוע</h3>
-        <div class="info-grid md:grid-cols-2">
-            <div class="info-panel">
-                <strong>מה נתון:</strong>
-                <ul class="list-disc list-inside mt-2 text-slate-700">
-                    <li>המוט \( PS \) (התחתון) מוחלף במגנט קבוע.</li>
-                    <li>המוט \( RQ \) (העליון) נשאר במקומו וממשיך לזרום בו זרם חשמלי קבוע.</li>
-                </ul>
-            </div>
-            <div class="info-panel">
-                <strong>מה מחפשים:</strong>
-                <p class="mt-2 text-slate-700">לקבוע האם המוט \( RQ \) יכול להפעיל כוח על המגנט הקבוע, ולנמק.</p>
-            </div>
-        </div>
+    <div class="mt-2">
+        <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+        <span class="formula-badge">\( B = \frac{\mu_0 I}{2\pi r} \)</span>
+    </div>
 
-        <div class="mt-2">
-            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
-            <span class="formula-badge">\(\vec{F}_{1 \rightarrow 2} = -\vec{F}_{2 \rightarrow 1}\)</span> החוק השלישי של ניוטון (חוק הפעולה והתגובה).<br>
-            <p class="mt-1 text-slate-700">עיקרון: זרם חשמלי בשדה מגנטי מרגיש כוח (כוח לורנץ / כוח אמפר).</p>
+    <div class="step-box">
+        <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+        <p class="content-paragraph">נסמן את המרחק בין המוט העליון \( RQ \) לנקודה \( A \) ב- \( x \). מאחר שהמרחק הכולל הוא \( d \), המרחק מהמוט התחתון \( PS \) לנקודה \( A \) יהיה \( d - x \).</p>
+        <p class="content-paragraph">כדי שהשדה יתאפס, גדלי השדות מכל מוט חייבים להיות שווים בנקודה זו:</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ B_{RQ} = B_{PS} \implies \frac{\mu_0 I}{2\pi x} = \frac{\mu_0 I_1}{2\pi (d - x)} \]
         </div>
+        <p class="content-paragraph">נציב את הנתון \( I_1 = 4I \) ונצמצם את הקבועים המשותפים (\( \frac{\mu_0}{2\pi} \) ו- \( I \)) משני אגפי המשוואה:</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ \frac{1}{x} = \frac{4}{d - x} \]
+        </div>
+        <p class="content-paragraph">נכפול בהצלבה ונבודד את המרחק \( x \):</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ d - x = 4x \implies 5x = d \implies x = \frac{d}{5} = 0.2d \]
+        </div>
+        <p class="final-answer">מסקנה: המרחק בין הנקודה <span class="inline-ltr">\( A \)</span> למוט <span class="inline-ltr">\( RQ \)</span> הוא <span class="inline-ltr">\( x = 0.2d \)</span>.</p>
+    </div>
 
-        <div class="step-box">
-            <h4 class="step-title">הסבר פיזיקלי:</h4>
-            <p class="content-paragraph">המגנט הקבוע מייצר סביבו שדה מגנטי. המוט \( RQ \), שבו זורם זרם חשמלי, נמצא כעת בתוך השדה המגנטי של המגנט. כתוצאה מכך, יפעל על המוט \( RQ \) כוח מגנטי (\( F = I \cdot l \cdot B \)).</p>
-            <p class="content-paragraph">על פי <strong>החוק השלישי של ניוטון</strong>, אם גוף אחד מפעיל כוח על גוף שני, הגוף השני חייב להפעיל על הראשון כוח שווה בגודלו ומנוגד בכיוונו. לכן, מכיוון שהמגנט מפעיל כוח על מוט \( RQ \), מוט \( RQ \) בהכרח מפעיל כוח מגנטי חזרה על המגנט.</p>
-            <p class="final-answer">מסקנה: כן, המוט המוליך \( RQ \) מפעיל כוח על המגנט הקבוע, בהתאם לחוק השלישי של ניוטון.</p>
+    <div class="teacher-highlight">
+        <strong>טיפ מורה:</strong>
+        לפני הגשת המבחן, בצעו בקרה לוגית: הזרם ב-RQ קטן פי 4 מהזרם ב-PS. לכן, כדי שהשדות ישוו בעוצמתם, הנקודה חייבת להיות הרבה יותר קרובה ל-RQ (התיל ה'חלש'). התשובה \( x=0.2d \) מתיישבת עם ההיגיון הזה בצורה מושלמת.
+    </div>
+</section>
+
+<section class="section-card" id="part-6">
+    <h3 class="section-header">סעיף ה'</h3>
+
+    <div class="info-grid md:grid-cols-2">
+        <div class="info-panel">
+            <strong>מה נתון:</strong>
+            <br>מחליפים את המוט \( PS \) במגנט מוט קבוע.<br>במוט \( RQ \) עדיין עובר זרם קבוע.
         </div>
-    </section>
+        <div class="info-panel">
+            <strong>מה מחפשים:</strong> האם המוט המוליך \( RQ \) יכול להפעיל כוח על המגנט הקבוע? נמקו.
+        </div>
+    </div>
+
+    <div class="mt-2">
+        <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+        <span class="formula-badge">החוק השלישי של ניוטון (חוק הפעולה והתגובה): \( \vec{F}_{1,2} = -\vec{F}_{2,1} \)</span>
+    </div>
+
+    <div class="step-box">
+        <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+        <p class="content-paragraph">מגנט קבוע יוצר סביבו שדה מגנטי. כאשר המוט \( RQ \), שנושא זרם, נמצא בתוך השדה המגנטי של המגנט, פועל עליו כוח מגנטי.</p>
+        <p class="content-paragraph">על פי החוק השלישי של ניוטון (פעולה ותגובה), אם גוף א' (המגנט) מפעיל כוח על גוף ב' (המוט \( RQ \)), הרי שגוף ב' בהכרח מפעיל על גוף א' כוח שווה בגודלו ומנוגד בכיוונו.</p>
+        <p class="content-paragraph">מכאן נובע בוודאות שהמוט \( RQ \) מפעיל כוח בחזרה על המגנט הקבוע.</p>
+        <p class="final-answer">מסקנה: כן, המוט המוליך <span class="inline-ltr">\( RQ \)</span> יפעיל כוח על המגנט הקבוע, בהתאם לחוק השלישי של ניוטון.</p>
+    </div>
+
+    <div class="teacher-highlight">
+        <strong>טיפ מורה:</strong>
+        חוק הפעולה והתגובה של ניוטון תקף לכל סוגי הכוחות, כולל כוחות חשמליים ומגנטיים. הזרם במוט פועל כאלקטרומגנט, וכמו ששני מגנטים מפעילים כוחות הדדיים, כך גם מוליך נושא זרם ומגנט.
+    </div>
+</section>
+    </div>
 
     <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
         <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
-        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        <a data-legal-link="" href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
     </footer>
 </div>
 
 <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
-        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"></path>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"></circle>
     </svg>
     <span class="font-semibold text-sm">הצג שאלה</span>
 </button>
@@ -691,12 +747,7 @@
         </div>
 
         <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <img
-                src="question-image.png"
-                alt="תמונת השאלה המקורית"
-                class="max-w-full h-auto rounded-lg object-contain"
-                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-            >
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
                 <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
                 <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
@@ -714,7 +765,7 @@
             const markerIndex = pathname.indexOf(marker);
             if (markerIndex >= 0) {
                 const prefix = pathname.slice(0, markerIndex);
-                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                const resolvedLegalPath = prefix + '/webfiles/דף זכויות יוצרים.html';
                 legalLinks.forEach((link) => {
                     link.setAttribute('href', resolvedLegalPath);
                 });
@@ -743,7 +794,7 @@
             const minutes = pad(modified.getMinutes());
             const seconds = pad(modified.getSeconds());
 
-            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+            versionUpdatedAt.textContent = dateCode + ' ' + hours + ':' + minutes + ':' + seconds;
         }
 
         const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
@@ -760,22 +811,24 @@
             document.body.classList.remove('modal-open');
         }
 
-        openQuestionModalBtn.addEventListener('click', openQuestionModal);
-        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+        if (openQuestionModalBtn) openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        if (closeQuestionModalBtn) closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
 
-        questionModal.addEventListener('click', function(event) {
-            if (event.target === questionModal) {
-                closeQuestionModal();
-            }
-        });
+        if (questionModal) {
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+        }
 
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+            if (event.key === 'Escape' && questionModal && questionModal.classList.contains('is-open')) {
                 closeQuestionModal();
             }
         });
     });
 </script>
 
-</body>
-</html>
+
+</body></html>
