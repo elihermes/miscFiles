@@ -1,9 +1,8 @@
 <!DOCTYPE html>
-<html lang="he" dir="rtl">
-<head>
+<html lang="he" dir="rtl"><head>
         <!-- Google tag (gtag.js) - תבנית בסיס: להשאיר בכל דף חדש -->
         <!-- הנחיה: אין להוסיף תגית Google נוספת באותו דף -->
-        <script async src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
+        <script async="" src="https://www.googletagmanager.com/gtag/js?id=G-QZJ7JT80X2"></script>
         <script>
             window.dataLayer = window.dataLayer || [];
             function gtag(){dataLayer.push(arguments);}
@@ -13,12 +12,13 @@
         </script>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>פתרון בגרות בפיזיקה - חשמל 2012 שאלה 4</title>
+    <title>פתרון שאלה 4 - בגרות חשמל 2012</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
 
     <!-- MathJax for formulas -->
+    <!-- אין להוסיף polyfill.io או polyfill חיצוני אחר לקובץ זה -->
     <script>
         window.MathJax = {
             tex: {
@@ -28,7 +28,10 @@
             }
         };
     </script>
-    <script id="MathJax-script" async src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+    <script id="MathJax-script" async="" src="https://cdn.jsdelivr.net/npm/mathjax@3/es5/tex-mml-chtml.js"></script>
+
+    <!-- Optional: Chart.js (remove if not needed) -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 
     <style>
         :root {
@@ -61,6 +64,8 @@
             overflow-x: clip;
         }
 
+        
+        
         .page-shell {
             max-width: 980px;
             margin: 0 auto;
@@ -158,9 +163,11 @@
             border-radius: 0.5rem;
             display: inline-block;
             padding: 0.25rem 0.8rem;
-            margin: 0.25rem 0.25rem 0.25rem 0;
+            margin: 0.25rem 0 0.25rem 0.5rem;
             font-weight: 700;
-            direction: ltr;
+            direction: rtl;
+            text-align: right;
+            unicode-bidi: plaintext;
         }
 
         .inline-ltr {
@@ -186,6 +193,18 @@
             padding: 1rem;
             margin-top: 0.8rem;
             box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
+        }
+
+        .chart-wrapper {
+            position: relative;
+            min-height: 360px;
+            width: 100%;
+        }
+
+        .chart-wrapper canvas {
+            display: block;
+            width: 100% !important;
+            height: 320px !important;
         }
 
         /* Unified MathJax mobile handling */
@@ -219,6 +238,14 @@
 
             .page-shell {
                 padding-bottom: 8.5rem;
+            }
+
+            .chart-wrapper {
+                min-height: 340px;
+            }
+
+            .chart-wrapper canvas {
+                height: 280px !important;
             }
 
             .question-modal-header {
@@ -382,339 +409,306 @@
 </head>
 <body>
 
+<!--
+STANDARD NOTES FOR FUTURE REUSE
+1. Keep question image filename as: question-image.png
+2. Keep floating button text and icon exactly as in this file.
+3. For each section: What is given -> What to find -> Formula -> Step-by-step solution -> Teacher note.
+3.1 Preferred layout: place "מה נתון" and "מה מחפשים" inside .info-grid using two .info-panel blocks side by side on wide screens.
+4. Keep formulas inside .math-container or .overflow-x-auto dir="ltr".
+5. If a section has a graph, use Chart.js only if needed.
+6. Do not remove Esc/modal-close behavior.
+7. The version stamp must show a masked date code + time only, in the form: "עודכן: CODE HH:MM:SS".
+8. Do not use hash-like version IDs, random letters, or opaque codes in the stamp.
+9. The floating button text must be exactly: "הצג שאלה".
+10. Do not add a visible heading like "נוסח השאלה" above the inline question image block.
+11. The question block must stay a .section-card with border-t-4; do not introduce new card classes.
+12. Section hierarchy: use <h3 class="section-header"> only (no extra number spans); sub-headings are <h4>. Keep aria-label on the version stamp.
+13. Formula chips: use .formula-badge inline; if the math is long, place it in .math-container/.math-scroll dir="ltr" instead of growing the chip.
+13.1 For long explanations, prefer .content-paragraph and split the reasoning into short visual blocks.
+13.2 In .final-answer, if the sentence ends with a short LTR fragment (value + unit, range, symbol-only result), wrap that fragment with .inline-ltr so punctuation stays at the visual end of the Hebrew sentence.
+14. Formula chip shape is fixed: rounded rectangle only (border-radius: 0.5rem). Never use pill/circle style (9999px).
+15. Modal/button IDs are locked: openQuestionModalBtn, questionModal, closeQuestionModalBtn; keep the eye icon SVG + text exactly.
+16. Header lock: keep the stamp inside <header class="text-center mb-8">, directly under the title block and above the inline question image.
+17. Keep the stamp classes/ids exactly: <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ"> + <span id="versionUpdatedAt">.
+18. In JS, always fill versionUpdatedAt from document.lastModified as masked-date CODE + HH:MM:SS (no explicit date).
+
+SECTION CHECKLIST (copy/paste for every part)
+- מה נתון
+- מה מחפשים
+- נוסחאות (כמה .formula-badge בשורה אחת)
+- step-box עם כותרת “פתרון צעד-אחר-צעד” / “חישוב”
+- טיפ מורה (אם יש)
+-->
+
+<!--
+COPILOT INSTRUCTIONS (copy with each new solution if needed)
+- Preserve this visual standard unless explicitly requested otherwise.
+- Keep Hebrew explanatory text and LTR equation blocks.
+- Add concise, teaching-oriented explanations.
+- Ensure mobile readability and equation scrolling.
+- Keep the header stamp human-readable: show masked-date CODE + time down to seconds.
+- Do not reintroduce labels such as ver, vAUTO, or letter-number hashes in the stamp.
+- Keep the question CTA wording exactly as in the standard example: "הצג שאלה".
+- Do not place a "נוסח השאלה" heading above the inline image block.
+- Use only .section-card for the question image and each part; avoid inventing card variants.
+- Stick to the section checklist (נתון → מחפשים → נוסחאות → step-box → טיפ מורה).
+- Prefer the updated visual rhythm: .info-grid + .info-panel for נתון/מחפשים, .step-title for the main box heading, optional .step-label for internal stages, and .final-answer for the conclusion line.
+- Formula chips stay inline; for large math use .math-container dir="ltr" instead of widening the chip. Always wrap MathJax formulas inside formula chips with inline math delimiters \( and \).
+- In .final-answer, wrap short LTR endings such as values, units, ranges, or symbol-only results with .inline-ltr.
+- Formula chips must remain rounded rectangles (0.5rem) and not pill/circle chips.
+- Keep IDs openQuestionModalBtn, questionModal, closeQuestionModalBtn and the eye SVG/icon as-is.
+- Keep the timestamp block inside the header (not as a standalone block), with header class text-center mb-8.
+- Keep the stamp markup and IDs unchanged: versionStamp + versionUpdatedAt with aria-label.
+- Keep stamp value format strict: CODE HH:MM:SS from document.lastModified only, without exposing explicit date.
+-->
+
 <div class="page-shell">
     <header class="text-center mb-8">
-        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון שאלה 4 - חשמל ומגנטיות</h1>
-        <h2 class="text-xl md:text-2xl text-slate-600">בגרות פיזיקה 5 יח"ל, 2012</h2>
-        <p class="mt-3 text-slate-500">הכוח המגנטי בין תיל ישר לכריכה, כולל ניתוח כוחות וגרפים.</p>
+        <!-- Header/stamp structure is locked to keep visual consistency across all questionnaires. -->
+        <h1 class="text-3xl md:text-4xl font-bold text-blue-900 mb-2">פתרון שאלה 4 - בגרות חשמל 2012</h1>
         <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
             <span class="version-label">עודכן:</span>
-            <span id="versionUpdatedAt">--- --:--:--</span>
+            <span id="versionUpdatedAt">WHB 11:38:34</span>
         </div>
         <div>
-            <a class="legal-entry-link" data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+            <a class="legal-entry-link" data-legal-link="" href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
         </div>
+        <!-- חותמת זו נועדה להציג זמן עדכון קריא בלבד, ולא מספר גרסה פנימי. -->
     </header>
 
-    <!-- תמונת השאלה המקורית: תמיד מתחת לכותרת -->
-    <section class="section-card border-t-4 border-slate-300">
-        <img
-            src="question-image.png"
-            alt="תמונת השאלה המקורית"
-            class="w-full h-auto rounded-lg border border-slate-200"
-            onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-        />
-        <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
-            <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
-            <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+
+    
+    <div class="solution-content">
+      <section class="section-card bg-slate-50 border-t-4 border-slate-300">
+    <h3 class="text-xl font-bold text-blue-900 mb-4">מבט כללי על השאלה</h3>
+    <p class="content-paragraph">שאלה זו עוסקת בכוחות מגנטיים בין מוליכים נושאי זרם. המערכת מורכבת מתיל ארוך וישר (אשר ניתן להתייחס אליו כאינסופי) ומכריכה מלבנית הממוקמת בסמוך לו.</p>
+    <p class="content-paragraph">העיקרון הפיזיקלי המרכזי כאן הוא שהתיל הארוך יוצר סביבו שדה מגנטי (לפי חוק ביו-סבר), ושדה זה מפעיל כוח מגנטי על כל אחת מצלעות הכריכה שדרכן זורם זרם (לפי כוח אמפר/לורנץ).</p>
+    <p class="content-paragraph">נשתמש בכלל יד ימין כדי לקבוע את כיוון השדה המגנטי ואת כיווני הכוחות. בנוסף, נבחן את הסימטריה של הבעיה כדי לפשט את חישוב הכוח השקול, ונשתמש בחוק השלישי של ניוטון להבנת האינטראקציה ההדדית. לבסוף, ננתח את התלות של הכוח במרחק כדי לקשור את הביטוי המתמטי לגרף הפיזיקלי.</p>
+</section>
+
+<section class="section-card border-t-4 border-slate-300">
+    <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+    <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">
+        <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
+        <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code> באותה תיקייה.</span>
+    </div>
+</section>
+
+<section class="section-card" id="part-1">
+    <h3 class="section-header">סעיף א'</h3>
+
+    <div class="info-grid md:grid-cols-2">
+        <div class="info-panel">
+            <strong>מה נתון:</strong>
+            <br>אורך צלע הכריכה הריבועית: \( a = 0.1\text{ m} \).<br>זרם בתיל הארוך: \( I_1 = 8\text{ A} \) (זורם שמאלה).<br>זרם בכריכה: \( I_2 = 5\text{ A} \) (בצלע KN הזרם זורם שמאלה).<br>המרחק האנכי מהתיל הארוך לצלע KN: \( y = a = 0.1\text{ m} \).<br>שלב 0 - המרת יחידות: כל הנתונים הפיזיקליים נתונים במערכת יחידות MKS (מטרים ואמפרים), ולכן אין צורך בהמרת יחידות.
         </div>
-    </section>
-
-    <!-- סעיף א -->
-    <section class="section-card" id="part-a">
-        <h3 class="section-header">סעיף א': הכוח על צלע KN</h3>
-
-        <div class="info-grid md:grid-cols-2">
-            <div class="info-panel">
-                <strong>מה נתון:</strong> לפני שניגש לפתרון, נרכז את הנתונים הראשוניים ונבדוק המרת יחידות (MKS):
-                <ul class="list-disc list-inside mt-2 space-y-1">
-                    <li>אורך צלעות הכריכה: \( a = 0.1 m \) (כבר ביחידות MKS - מטרים).</li>
-                    <li>מרחק הצלע התחתונה KN מהתיל: \( y = a = 0.1 m \) (ביחידות MKS).</li>
-                    <li>זרם בתיל הארוך: \( I_1 = 8 A \) שמאלה (MKS).</li>
-                    <li>זרם בכריכה הריבועית: \( I_2 = 5 A \) (MKS). על פי התרשים, כיוון הזרם על צלע KN הוא גם כן שמאלה (כלומר, הכריכה מסתובבת נגד כיוון השעון, אבל על צלע KN הזרמים מקבילים ובאותו כיוון).</li>
-                    <li>פרמיאביליות הריק (מדף הנוסחאות): \( \mu_0 = 4\pi \cdot 10^{-7} \frac{T \cdot m}{A} \).</li>
-                </ul>
-            </div>
-            <div class="info-panel">
-                <strong>מה מחפשים:</strong> את גודל וכיוון הכוח המגנטי שהתיל הארוך (הנושא זרם \( I_1 \)) מפעיל על צלע KN של הכריכה (הנושאת זרם \( I_2 \)).
-            </div>
+        <div class="info-panel">
+            <strong>מה מחפשים:</strong> את גודלו וכיוונו של הכוח המגנטי שהתיל הארוך מפעיל על הצלע KN של הכריכה.
         </div>
+    </div>
 
-        <div class="mt-2 mb-4">
-            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
-            <span class="formula-badge">\( \frac{F}{l} = \frac{\mu_0}{2\pi}\frac{I_1 I_2}{d} \)</span>
-            <p class="mt-2 text-sm text-slate-600">
-                נוסחה זו מדף הנוסחאות מתארת את הכוח ליחידת אורך בין שני תילים מקבילים. נבודד את \( F \) על ידי הכפלה באורך התיל המושפע \( l \). נשתמש גם בכלל ששני זרמים מקבילים ובאותו כיוון <b>מושכים</b> זה את זה.
-            </p>
+    <div class="mt-2">
+        <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+        <span class="formula-badge">כלל יד ימין לקביעת כיוון שדה מגנטי של תיל ישר</span>
+        <span class="formula-badge">\( B = \frac{\mu_0 I}{2\pi r} \)</span>
+        <span class="formula-badge">\( F = I\ell B\sin\alpha \)</span>
+    </div>
+
+    <div class="step-box">
+        <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+        <div class="visual-frame">
+            <div class="physics-diagram-wrapper" style="display: inline-block; direction: ltr; vertical-align: middle; text-align: center;"><img src="data:image/png;base64,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AAIIIIAAAjkTkBXT12XumNP5Y3lomj5k0GrP+z/OQ3toAwIIpFOAIcJ03hdqhUBqBIIn9GQhTnmqsPzQuQ8TGyqcRgODJzutW9InJJ3dmws2jbpQJgIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAIIIIAAAggggAACCCCAAAKjCZRXbpQeOvfh1mhXcxUCCCCQXoFieqtGzRBAIM8Cv33uZ4veL5sbzrhSnttJ2xBAYDYFCLBm877TagSmJqC9VkdagdWiMW5q9aBgBBBAYJwCBFjj1CVvBBDYJ0Cv1T4OfiCAQI4FCLByfHNpGgJpEaDXKi13gnoggMCkBAiwJiVNOQjMqAC9VjN642k2AjMuQIA1438ANB+BcQnQazUuWfJFAIEsCBBgZeEuUUcEMiZAr1XGbhjVRQCBxAUIsBInJUMEZleAXqvZvfe0HAEE9gsQYO334BcCCIwoQK/ViHBchgACuRQgwMrlbaVRCExOgF6ryVlTEgIIZEeAACs794qaIpA6AXqtUndLqBACCKREgAArJTeCaiCQJYFJ9VrdePzxivG8p4xzi/ItB0bW7sh2xxQKF46/9VYtOMY/CCCAQMoEbMrqQ3UQQCDlAkGvlSlsyGtuEnuH4PXX79v3v0U3FhdL5ubNVaFYOZDD89bNPfdcOL69XT8wHScRQACBCQvs+x+1CZdNcQikXuDkuQ94Wd6E79Jf839lXv7ZvzYP3flJrJJ/cORB84WP/yvzS++eWOlJlJxAd2CcXM7khED2BRgizP49pAUI5ErguZ//l9jB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" class="replaced-physics-diagram" style="width: 65%; height: auto; display: inline-block; margin: 0px auto;"></div>
         </div>
-
-        <div class="step-box">
-            <h4 class="step-title">הצבה ופתרון:</h4>
-            
-            <div class="visual-frame">
-                <div style="width: 300px; max-width: 100%; aspect-ratio: 2 / 1; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
-                    <img src="image-1.png" alt="תרשים סעיף א" style="display: block; max-width: 100%; max-height: 100%; width: auto; height: auto;" />
-                </div>
-            </div>
-
-            <p class="content-paragraph">
-                נחלץ את הכוח \( F \) מתוך הנוסחה ונציב את הנתונים. המרחק בין התילים הוא \( d = y = 0.1 m \) ואורך הצלע המושפעת הוא \( l = a = 0.1 m \):
-            </p>
-            
-            <div class="math-container text-center" dir="ltr">
-                \[ F_{KN} = \frac{\mu_0 \cdot I_1 \cdot I_2 \cdot l}{2\pi \cdot d} \]
-                \[ F_{KN} = \frac{4\pi \cdot 10^{-7} \cdot 8 \cdot 5 \cdot 0.1}{2\pi \cdot 0.1} \]
-                \[ F_{KN} = 2 \cdot 10^{-7} \cdot \frac{40 \cdot 0.1}{0.1} \]
-                \[ F_{KN} = 2 \cdot 10^{-7} \cdot 40 = 8 \cdot 10^{-6} N \]
-            </div>
-
-            <p class="content-paragraph">
-                לגבי הכיוון: מכיוון שהזרם בתיל הארוך והזרם בצלע KN זורמים שניהם שמאלה, מדובר בזרמים מקבילים ובאותו כיוון. כוחות מגנטיים בין זרמים באותו כיוון יוצרים כוח משיכה. לכן, התיל יפעיל כוח על צלע KN לכיוון מטה (אל עבר התיל הארוך).
-            </p>
-
-            <div class="final-answer">
-                גודל הכוח: <span class="inline-ltr">\( F_{KN} = 8 \cdot 10^{-6} N \)</span><br>
-                כיוון הכוח: כלפי מטה (נמשך לתיל הארוך)
-            </div>
+        <p class="content-paragraph">תחילה, נחשב את השדה המגנטי \( B_1 \) שהתיל הארוך (נושא הזרם \( I_1 \)) יוצר במיקום של הצלע KN. המרחק אל הצלע הוא \( r = a = 0.1\text{ m} \). על פי כלל יד ימין (כאשר האגודל מצביע בכיוון הזרם בתיל, וכיוון האצבעות המקופלות סביב התיל הוא כיוון השדה המגנטי), כיוון השדה המגנטי מעל התיל פונה לתוך הדף.</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ B_1 = \frac{\mu_0 I_1}{2\pi a} \]
         </div>
-
-        <div class="teacher-highlight">
-            <strong>טיפ מורה:</strong>
-            שימו לב שאפשר גם לחשב בשני שלבים: קודם לחשב את השדה המגנטי \( B \) שהתיל הארוך יוצר באזור צלע KN באמצעות כלל יד ימין (השדה הוא פנימה לתוך הדף), ואז להשתמש בנוסחה \( F = IlB\sin\alpha \) על צלע KN. התוצאה והכיוון ייצאו זהים לחלוטין! זה דרך מצוינת לבדוק את עצמכם.
+        <p class="content-paragraph">נציב את הנתונים לתוך הנוסחה (כאשר \( \mu_0 = 4\pi \cdot 10^{-7}\text{ T}\cdot\text{m/A} \)): </p>
+        <div class="math-container text-center" dir="ltr">
+            \[ B_1 = \frac{4\pi \cdot 10^{-7} \cdot 8}{2\pi \cdot 0.1} = 1.6 \cdot 10^{-5}\text{ T} \]
         </div>
-    </section>
-
-    <!-- סעיף ב -->
-    <section class="section-card" id="part-b">
-        <h3 class="section-header">סעיף ב': הכוח השקול על הכריכה כולה</h3>
-        
-        <div class="info-grid md:grid-cols-2">
-            <div class="info-panel">
-                <strong>מה נתון:</strong> נתוני השאלה הקודמים נשארים תקפים. בנוסף, כעת אנו בוחנים את כל 4 צלעות הכריכה (KN, NM, ML, LK).
-                <ul class="list-disc list-inside mt-2 space-y-1">
-                    <li>המרחק של צלע LM (העליונה) מהתיל הארוך הוא \( d = y + a = 0.1 + 0.1 = 0.2 m \).</li>
-                    <li>זרם בצלע LM זורם ימינה (מנוגד לכיוון \( I_1 \)).</li>
-                    <li>הזרמים בצלעות KL (למעלה) ו- NM (למטה) מקבילים זה לזה אך הפוכים בכיוונם.</li>
-                </ul>
-            </div>
-            <div class="info-panel">
-                <strong>מה מחפשים:</strong> את גודל וכיוון הכוח השקול (Total Force) שהתיל הארוך מפעיל על הכריכה הריבועית כולה \( \Sigma F \).
-            </div>
+        <p class="content-paragraph">כעת נחשב את הכוח המגנטי המופעל על הצלע KN, שבה זורם זרם \( I_2 \). אורך הצלע הוא \( a \), והזווית בין הזרם לשדה המגנטי היא \( 90^\circ \) (לכן \( \sin(90^\circ)=1 \)).</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ F_{KN} = I_2 a B_1 = 5 \cdot 0.1 \cdot 1.6 \cdot 10^{-5} \]
         </div>
-
-        <div class="mt-2 mb-4">
-            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
-            <span class="formula-badge">\( \Sigma \vec{F} = \vec{F}_{KN} + \vec{F}_{LM} + \vec{F}_{KL} + \vec{F}_{MN} \)</span>
-            <span class="formula-badge">\( \vec{F} = I\vec{l} \times \vec{B} \)</span>
-            <p class="mt-2 text-sm text-slate-600">
-                אנו משתמשים בעקרון הסופרפוזיציה - חיבור וקטורי של כל הכוחות הפועלים על כל אחת מארבע צלעות המסגרת.
-            </p>
+        <div class="math-container text-center" dir="ltr">
+            \[ F_{KN} = 8 \cdot 10^{-6}\text{ N} \]
         </div>
+        <p class="content-paragraph">לקביעת הכיוון: הזרם בתיל הארוך והזרם בצלע KN זורמים שניהם שמאלה. זרמים מקבילים באותו כיוון מפעילים כוח משיכה זה על זה. לפיכך, הכוח הפועל על KN הוא כלפי מטה (לכיוון התיל הארוך).</p>
+        <p class="final-answer">מסקנה: <span class="inline-ltr">\( 8 \cdot 10^{-6}\text{ N} \)</span>, כלפי מטה</p>
+    </div>
 
-        <div class="step-box">
-            <h4 class="step-title">הצבה ופתרון:</h4>
-            
-            <div class="visual-frame">
-                <div style="width: 400px; max-width: 100%; aspect-ratio: 8 / 5; display: flex; align-items: center; justify-content: center; margin: 0 auto;">
-                    <img src="image-2.png" alt="תרשים סעיף ב" style="display: block; max-width: 100%; max-height: 100%; width: auto; height: auto;" />
-                </div>
-            </div>
+    <div class="teacher-highlight">
+        <strong>טיפ מורה:</strong>
+        כלל אצבע יעיל: שני תילים מקבילים שבהם הזרם זורם באותו כיוון ימשכו זה את זה, ואם הזרמים מנוגדים - הם ידחו זה את זה. כלל זה עוזר לנו לבקר ולוודא את התשובות שלנו, וזה עיקרון שאפשר גם לכתוב, אבל בשביל לחשב את גודל הכוח אנו מחוייבים להשתמש בנוסחאות הפיזיקליות הרלוונטיות.
+    </div>
+</section>
 
-            <p class="content-paragraph">
-                נבחן את הכוחות על כל צלעות הכריכה:
-                <br><b>1. צלעות צדדיות (KL ו- NM):</b> השדה המגנטי שיוצר התיל בתוך שטח הכריכה הוא בניצב לדף ופנימה (לפי כלל יד ימין). הזרם בצלע KL הוא למעלה, לכן הכוח עליה הוא שמאלה. הזרם בצלע NM הוא למטה, לכן הכוח עליה הוא ימינה. מכיוון שהצלעות סימטריות ונמצאות באותם מרחקים מהתיל, הכוחות מנוגדים ושווים בגודלם, ולכן מבטלים זה את זה (\( F_{KL} + F_{MN} = 0 \)).
-            </p>
-            <p class="content-paragraph">
-                <b>2. צלע עליונה (LM):</b> המרחק שלה מהתיל הוא \( 0.2 m \). הזרם בצלע זו הפוך לזרם בתיל (זורם ימינה בעוד התיל זורם שמאלה). לכן נוצר כוח דחייה (כלפי מעלה). נחשב את גודלו:
-            </p>
-            
-            <div class="math-container text-center" dir="ltr">
-                \[ F_{LM} = \frac{\mu_0 \cdot I_1 \cdot I_2 \cdot l}{2\pi \cdot (y+a)} \]
-                \[ F_{LM} = \frac{4\pi \cdot 10^{-7} \cdot 8 \cdot 5 \cdot 0.1}{2\pi \cdot 0.2} = 2 \cdot 10^{-7} \cdot \frac{40}{0.2} \cdot 0.1 = 4 \cdot 10^{-6} N \]
-            </div>
+<section class="section-card" id="part-2">
+    <h3 class="section-header">סעיף ב'</h3>
 
-            <p class="content-paragraph mt-3">
-                <b>3. כוח שקול:</b> קיבלנו כוח של \( 8 \cdot 10^{-6} N \) מטה (משיכה) וכוח של \( 4 \cdot 10^{-6} N \) מעלה (דחייה). נגדיר את ציר ה-y כלפי מטה כחיובי לצורך החישוב:
-            </p>
-
-            <div class="math-container text-center" dir="ltr">
-                \[ \Sigma F = F_{KN} - F_{LM} \]
-                \[ \Sigma F = 8 \cdot 10^{-6} - 4 \cdot 10^{-6} = 4 \cdot 10^{-6} N \]
-            </div>
-            
-            <p class="content-paragraph">
-                מכיוון שהכוח על הצלע הקרובה חזק יותר, הכוח השקול יהיה בכיוון כוח המשיכה (כלפי מטה).
-            </p>
-
-            <div class="final-answer">
-                גודל הכוח השקול: <span class="inline-ltr">\( \Sigma F = 4 \cdot 10^{-6} N \)</span><br>
-                כיוון הכוח: כלפי מטה (נמשך לתיל הארוך)
-            </div>
+    <div class="info-grid md:grid-cols-2">
+        <div class="info-panel">
+            <strong>מה נתון:</strong>
+            <br>הכריכה היא ריבועית שלמה וסגורה בעלת 4 צלעות: KN, KL, LM, MN.<br>כיוון הזרם בכריכה הוא עם כיוון השעון (N-&gt;K-&gt;L-&gt;M-&gt;N).
         </div>
-
-        <div class="teacher-highlight">
-            <strong>טיפ מורה:</strong> תמיד זכרו שכאשר יש לנו כריכה מלבנית בקרבת תיל ישר, הכוחות על הצלעות המאונכות לתיל תמיד מבטלים זה את זה. הקרב נקבע רק בין הצלע הקרובה והצלע הרחוקה. הצלע הקרובה תמיד "מנצחת" כי השדה המגנטי חזק יותר ככל שקרובים יותר לתיל!
+        <div class="info-panel">
+            <strong>מה מחפשים:</strong> את גודלו וכיוונו של הכוח המגנטי השקול שמפעיל התיל הארוך על הכריכה כולה.
         </div>
-    </section>
+    </div>
 
-    <!-- סעיף ג -->
-    <section class="section-card" id="part-c">
-        <h3 class="section-header">סעיף ג': כוח הכריכה על התיל</h3>
-        
-        <div class="info-grid md:grid-cols-2">
-            <div class="info-panel">
-                <strong>מה נתון:</strong> מהסעיף הקודם אנו יודעים שהתיל הארוך מפעיל כוח שקול של \( 4 \cdot 10^{-6} N \) כלפי מטה על הכריכה.
-            </div>
-            <div class="info-panel">
-                <strong>מה מחפשים:</strong> את גודל וכיוון הכוח השקול שהכריכה מפעילה בחזרה על התיל הארוך.
-            </div>
+    <div class="mt-2">
+        <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+        <span class="formula-badge">\( F = I\ell B\sin\alpha \)</span>
+        <span class="formula-badge">\( \sum \vec{F} = \vec{F}_1 + \vec{F}_2 + \dots \)</span>
+    </div>
+
+    <div class="step-box">
+        <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+        <p class="content-paragraph">כדי למצוא את הכוח השקול על הכריכה כולה, נבחן את הכוחות הפועלים על כל אחת מארבע צלעותיה. הצלעות KL ו-MN ניצבות לתיל הארוך. השדה המגנטי פועל עליהן במרחקים זהים באופן סימטרי, אך הזרמים בהן מנוגדים (ב-KL הזרם למעלה, וב-MN הזרם למטה). לכן, הכוחות המגנטיים הפועלים עליהן שווים בגודלם אך הפוכים בכיוונם, והם מבטלים זה את זה.</p>
+        <div class="visual-frame">
+            <div class="physics-diagram-wrapper" style="display: inline-block; direction: ltr; vertical-align: middle; text-align: center;"><img src="data:image/png;base64,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QIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQIAAAQIECBAgQOCEwP8HYQGg5ke9hU4AAAAASUVORK5CYII=" class="replaced-physics-diagram" style="width: 58%; height: auto; display: inline-block; margin: 0px auto;"></div>
         </div>
-
-        <div class="mt-2 mb-4">
-            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
-            <span class="formula-badge">\( \vec{F}_{1 \to 2} = -\vec{F}_{2 \to 1} \)</span>
-            <p class="mt-2 text-sm text-slate-600">
-                עקרון זה הוא <b>החוק השלישי של ניוטון</b> (חוק פעולה ותגובה).
-            </p>
+        <p class="content-paragraph">נחשב את הכוח הפועל על הצלע העליונה, LM. המרחק שלה מהתיל הארוך הוא \( y_{LM} = a + a = 0.2\text{ m} \). הזרם בה זורם ימינה (מנוגד לתיל הארוך), ולכן פועל עליה כוח דחייה, כלומר כלפי מעלה.</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ F_{LM} = I_2 a B_2 = I_2 a \left( \frac{\mu_0 I_1}{2\pi (2a)} \right) \]
         </div>
-
-        <div class="step-box">
-            <h4 class="step-title">הצבה ופתרון:</h4>
-            <p class="content-paragraph">
-                לפי החוק השלישי של ניוטון, אם גוף א' (התיל הארוך) מפעיל כוח על גוף ב' (הכריכה הריבועית), אז גוף ב' חייב להפעיל כוח על גוף א' שהוא שווה בגודלו ומנוגד בכיוונו.
-                <br><br>
-                היות ומצאנו בסעיף ב' שהתיל מושך את הכריכה כלפי <b>מטה</b> בכוח של \( 4 \cdot 10^{-6} N \), אזי הכריכה תמשוך את התיל כלפי <b>מעלה</b> באותו כוח בדיוק.
-            </p>
-
-            <div class="final-answer">
-                גודל הכוח: <span class="inline-ltr">\( F = 4 \cdot 10^{-6} N \)</span><br>
-                כיוון הכוח: כלפי מעלה (נמשך לכריכה)
-            </div>
+        <div class="math-container text-center" dir="ltr">
+            \[ F_{LM} = 5 \cdot 0.1 \cdot \frac{4\pi \cdot 10^{-7} \cdot 8}{2\pi \cdot 0.2} = 4 \cdot 10^{-6}\text{ N} \]
         </div>
-
-        <div class="teacher-highlight">
-            <strong>טיפ מורה:</strong> זה סעיף מתנה! מטרתו לבדוק אם אתם מבינים עקרונות פיזיקליים מעבר להצבת מספרים בנוסחאות. החוק השלישי של ניוטון עובד תמיד, גם לכוחות מרחוק כמו כבידה וכוחות אלקטרומגנטיים.
+        <p class="content-paragraph">הכוח השקול הפועל על הכריכה הוא ההפרש בין כוח המשיכה (על צלע KN) לבין כוח הדחייה (על צלע LM). מאחר שצלע KN קרובה יותר, השדה המגנטי עליה חזק יותר, ולכן כוח המשיכה גובר על כוח הדחייה.</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ \sum F = F_{KN} - F_{LM} = 8 \cdot 10^{-6} - 4 \cdot 10^{-6} = 4 \cdot 10^{-6}\text{ N} \]
         </div>
-    </section>
+        <p class="final-answer">מסקנה: <span class="inline-ltr">\( 4 \cdot 10^{-6}\text{ N} \)</span>, כלפי מטה</p>
+    </div>
 
-    <!-- סעיף ד -->
-    <section class="section-card" id="part-d">
-        <h3 class="section-header">סעיף ד': השוואת כוחות (ללא חישוב)</h3>
-        
-        <div class="info-grid md:grid-cols-2">
-            <div class="info-panel">
-                <strong>מה נתון:</strong> אנו בוחנים שתי צלעות שונות של הכריכה: צלע KN (הקרובה לתיל) וצלע KL (הניצבת לתיל). לשתי הצלעות אותו אורך בדיוק (\( a = 0.1 m \)) ואותו זרם (\( I_2 = 5 A \)).
-            </div>
-            <div class="info-panel">
-                <strong>מה מחפשים:</strong> לקבוע ללא חישוב האם גודל הכוח על צלע KL גדול, קטן, או שווה לכוח על צלע KN, ולהסביר.
-            </div>
+    <div class="teacher-highlight">
+        <strong>טיפ מורה:</strong>
+        תמיד זכרו שבכריכה מלבנית המונחת במקביל לתיל ארוך, כוחות הצדדים יבטלו זה את זה, כך שהכוח השקול יהיה תלוי רק בהפרש הכוחות שבין הצלע הקרובה לרחוקה.
+    </div>
+</section>
+
+<section class="section-card" id="part-3">
+    <h3 class="section-header">סעיף ג'</h3>
+
+    <div class="info-grid md:grid-cols-2">
+        <div class="info-panel">
+            <strong>מה נתון:</strong>
+            <br>הכוח השקול שהתיל מפעיל על הכריכה (מחושב מסעיף ב').
         </div>
-
-        <div class="mt-2 mb-4">
-            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
-            <span class="formula-badge">\( F = I l B \sin\alpha \)</span>
-            <span class="formula-badge">\( B = \frac{\mu_0 I}{2\pi r} \)</span>
-            <p class="mt-2 text-sm text-slate-600">
-                אנו נסמכים על ההבנה שעוצמת השדה המגנטי \( B \) דועכת ככל שמתרחקים מהתיל (\( r \) גדל).
-            </p>
+        <div class="info-panel">
+            <strong>מה מחפשים:</strong> את גודלו וכיוונו של הכוח שהכריכה מפעילה על התיל הארוך.
         </div>
+    </div>
 
-        <div class="step-box">
-            <h4 class="step-title">הצבה ופתרון:</h4>
-            
-            <p class="content-paragraph">
-                כדי להשוות בין הכוחות, נבחן את השדה המגנטי שהתיל הארוך מפעיל על כל אחת מהצלעות:
-            </p>
-            <ul class="list-disc list-inside mt-2 space-y-2 mb-4 text-slate-600">
-                <li><b>צלע KN:</b> כולה נמצאת במרחק קבוע של \( y = a \) מהתיל. לכן היא מרגישה לאורך כל אורכה שדה מגנטי <b>אחיד ומקסימלי</b> עבור כריכה זו.</li>
-                <li><b>צלע KL:</b> היא ניצבת לתיל, ולכן המרחק שלה מהתיל משתנה! הנקודה K נמצאת במרחק \( a \), אך ככל שעולים לאורך הצלע (לכיוון L), המרחק מהתיל הולך וגדל (עד למרחק \( 2a \)).</li>
-            </ul>
-            <p class="content-paragraph">
-                מכיוון שעוצמת השדה המגנטי של תיל ארוך דועכת עם המרחק (\( B \propto \frac{1}{r} \)), השדה המגנטי <b>הממוצע</b> שפועל על הצלע KL קטן מהשדה המגנטי שפועל על צלע KN. 
-                <br><br>
-                כיוון שהכוח המגנטי יחסי לעוצמת השדה המגנטי (\( F \propto B \)), והאורך והזרם של שתי הצלעות זהים, הכוח הכולל שמופעל על צלע KL חייב להיות <b>קטן</b> מהכוח המופעל על צלע KN.
-            </p>
+    <div class="mt-2">
+        <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+        <span class="formula-badge">החוק השלישי של ניוטון (חוק פעולה ותגובה) קובע כי לכל פעולה יש תגובה שווה בגודלה והפוכה בכיוונה.</span>
+        <span class="formula-badge">\( \vec{F}_{1,2} = -\vec{F}_{2,1} \)</span>
+    </div>
 
-            <div class="final-answer">
-                הכוח על צלע KL <b>קטן</b> מהכוח על צלע KN.
-            </div>
+    <div class="step-box">
+        <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+        <p class="content-paragraph">על פי החוק השלישי של ניוטון (חוק פעולה ותגובה), אם התיל הארוך מפעיל כוח שקול על הכריכה הריבועית, הרי שהכריכה מפעילה על התיל הארוך כוח שווה בגודלו אך הפוך בכיוונו.</p>
+        <p class="content-paragraph">מצאנו בסעיף הקודם שהתיל מושך את הכריכה כלפי מטה בעוצמה של \( 4 \cdot 10^{-6}\text{ N} \). לכן, הכריכה תפעיל על התיל כוח באותה עוצמה, אך כיוונו יהיה הפוך - כלומר כלפי מעלה (אל עבר הכריכה).</p>
+        <p class="final-answer">מסקנה: <span class="inline-ltr">\( 4 \cdot 10^{-6}\text{ N} \)</span>, כלפי מעלה</p>
+    </div>
+
+    <div class="teacher-highlight">
+        <strong>טיפ מורה:</strong>
+        החוק השלישי של ניוטון לעולם אינו מפסיק לעבוד, גם כשמדובר בכוחות מגנטיים וגם אם האינטראקציה היא בין גופים שאינם סימטריים בצורתם (תיל אינסופי לעומת כריכה סגורה).
+    </div>
+</section>
+
+<section class="section-card" id="part-4">
+    <h3 class="section-header">סעיף ד'</h3>
+
+    <div class="info-grid md:grid-cols-2">
+        <div class="info-panel">
+            <strong>מה נתון:</strong>
+            <br>הצלע KN נמצאת כולה במרחק קבוע של \( a \) מהתיל הארוך.<br>הצלע KL מאונכת לתיל ומשתרעת במרחקים שמשתנים מ- \( a \) ועד ל- \( 2a \).
         </div>
-
-        <div class="teacher-highlight">
-            <strong>טיפ מורה:</strong> בשאלות "ללא חישוב" אל תתפתו לכתוב אינטגרלים או לעשות ממוצעים מסובכים. הבוחן מחפש את הלוגיקה הפיזיקלית שלכם. זיהוי שהשדה בממוצע חלש יותר באחת הצלעות הוא הנימוק המושלם.
+        <div class="info-panel">
+            <strong>מה מחפשים:</strong> לקבוע האם גודל הכוח על הצלע KL גדול, קטן או שווה לכוח על הצלע KN, ללא חישוב מפורט.
         </div>
-    </section>
+    </div>
 
-    <!-- סעיף ה -->
-    <section class="section-card" id="part-e">
-        <h3 class="section-header">סעיף ה': גרף הכוח כתלות במרחק y</h3>
-        
-        <div class="info-grid md:grid-cols-2">
-            <div class="info-panel">
-                <strong>מה נתון:</strong> מרחיקים את הכריכה מהתיל הארוך כך שהמרחק ההתחלתי \( y \) משתנה וגדל. כל שאר הנתונים ללא שינוי, ומתעלמים מהשראה אלקטרומגנטית (כלומר, הזרמים נשארים קבועים בזמן התנועה). נתונים ארבעה גרפים (א', ב', ג', ד') המייצגים אופציות לקשר בין הכוח המגנטי \( F \) לבין המרחק \( y \).
-            </div>
-            <div class="info-panel">
-                <strong>מה מחפשים:</strong> לזהות ולהסביר איזה מבין 4 הגרפים הוא הנכון.
-            </div>
+    <div class="mt-2">
+        <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+        <span class="formula-badge">\( B = \frac{\mu_0 I}{2\pi r} \)</span>
+        <span class="formula-badge">\( F = I\ell B\sin\alpha \)</span>
+    </div>
+
+    <div class="step-box">
+        <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+        <p class="content-paragraph">השדה המגנטי הנוצר על ידי תיל ארוך דועך ככל שמתרחקים ממנו, על פי הקשר \( B \propto \frac{1}{r} \).</p>
+        <p class="content-paragraph">הצלע KN נמצאת כולה במרחק המינימלי \( a \) מהתיל, ולכן לכל אורכה היא נתונה בשדה המגנטי המרבי באזור זה.</p>
+        <p class="content-paragraph">לעומת זאת, רוב חלקיה של הצלע KL נמצאים במרחקים גדולים יותר מ-\( a \) (עד למרחק \( 2a \)). לכן, השדה המגנטי הממוצע הפועל עליה חלש יותר מהשדה המגנטי הפועל על KN. מכיוון שהזרם ואורך הצלע זהים עבור שתיהן, שדה חלש יותר מוביל בהכרח לכוח מגנטי קטן יותר.</p>
+        <p class="final-answer">מסקנה: הכוח המופעל על הצלע KL קטן מהכוח המופעל על הצלע KN.</p>
+    </div>
+
+    <div class="teacher-highlight">
+        <strong>טיפ מורה:</strong>
+        כאשר נשאלת שאלה 'ללא חישוב', חפשו את המשתנה היחיד שמשתנה בין שני המצבים. במקרה זה, אורך הצלע והזרם זהים - רק השדה המגנטי B משתנה עם המרחק.
+    </div>
+</section>
+
+<section class="section-card" id="part-5">
+    <h3 class="section-header">סעיף ה'</h3>
+
+    <div class="info-grid md:grid-cols-2">
+        <div class="info-panel">
+            <strong>מה נתון:</strong>
+            <br>מרחק הצלע הקרובה של הכריכה (KN) מהתיל מוגדר כעת כמשתנה \( y \).<br>מרחק הצלע הרחוקה (LM) יהיה לפיכך \( y + a \).
         </div>
-
-        <div class="mt-2 mb-4">
-            <strong>נוסחאות ועקרונות בשימוש:</strong><br>
-            <span class="formula-badge">\( F_{total} = F_{KN} - F_{LM} \)</span>
-            <p class="mt-2 text-sm text-slate-600">
-                נבנה פונקציה אלגברית המבטאת את הכוח הכולל כתלות במשתנה \( y \), וננתח את תכונותיה המתמטיות (האם היא ליניארית? האם היא יורדת לאפס? וכו').
-            </p>
+        <div class="info-panel">
+            <strong>מה מחפשים:</strong> לבחור מבין הגרפים הנתונים איזה מהם מתאר את כוח התיל על הכריכה כפונקציה של \( y \).
         </div>
+    </div>
 
-        <div class="step-box">
-            <h4 class="step-title">הצבה ופתרון:</h4>
-            
-            <p class="content-paragraph">
-                נרשום את משוואת הכוח השקול כפונקציה של \( y \) באופן כללי:
-            </p>
-            
-            <div class="math-container text-center" dir="ltr">
-                \[ F(y) = \frac{\mu_0 \cdot I_1 \cdot I_2 \cdot a}{2\pi} \cdot \frac{1}{y} - \frac{\mu_0 \cdot I_1 \cdot I_2 \cdot a}{2\pi} \cdot \frac{1}{y+a} \]
-            </div>
-            
-            <p class="content-paragraph">
-                נוציא גורם משותף קבוע (שנקרא לו לצורך הפשטות \( C \)):
-            </p>
-            
-            <div class="math-container text-center" dir="ltr">
-                \[ F(y) = C \cdot \left( \frac{1}{y} - \frac{1}{y+a} \right) \]
-            </div>
+    <div class="mt-2">
+        <strong>נוסחאות ועקרונות בשימוש:</strong><br>
+        <span class="formula-badge">\( B = \frac{\mu_0 I}{2\pi r} \)</span>
+        <span class="formula-badge">\( F_{net} = F_{near} - F_{far} \)</span>
+    </div>
 
-            <p class="content-paragraph">
-                נעשה מכנה משותף בתוך הסוגריים:
-            </p>
-
-            <div class="math-container text-center" dir="ltr">
-                \[ F(y) = C \cdot \left( \frac{(y+a) - y}{y(y+a)} \right) = C \cdot \frac{a}{y^2 + ay} \]
-            </div>
-
-            <p class="content-paragraph">
-                כעת, על בסיס המשוואה שקיבלנו, ננתח את האפשרויות ונפסול אותן אחת-אחת:
-            </p>
-            <ul class="list-disc list-inside mt-2 space-y-2 mb-4 text-slate-600">
-                <li><b>גרף א':</b> בגרף זה גודל הכוח השקול אינו משתנה עם המרחק. מכיוון שראינו במשוואה שהכוח כן תלוי במרחק \( y \), גרף זה נפסל.</li>
-                <li><b>גרף ב':</b> הגודל אומנם משתנה ואף קטן עם המרחק, אך הירידה המוצגת היא ליניארית (קו ישר). המשוואה שקיבלנו אינה משוואה של קו ישר (המשתנה \( y \) מופיע במכנה, ואף בריבוע), ולכן גרף זה נפסל.</li>
-                <li><b>גרף ד':</b> גודל הכוח בגרף זה עולה עם המרחק. על פי המשוואה שלנו, ככל שהמרחק \( y \) גדל, המכנה גדל והשבר כולו (הכוח) בהכרח קטן. לכן גם גרף זה נפסל.</li>
-            </ul>
-            <p class="content-paragraph">
-                מכאן נותרנו עם אפשרות אחת: רק <b>גרף ג'</b> מראה ירידה שאינה ליניארית (אינה קו ישר) עם המרחק, ולכן זהו הגרף המתאים.
-            </p>
-
-            <div class="final-answer">
-                הגרף הנכון הוא <b>גרף ג'</b>.
-            </div>
+    <div class="step-box">
+        <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+        <p class="content-paragraph">כדי לקבוע איזה גרף מתאים, נבנה פונקציה כללית המתארת את הכוח השקול \( F(y) \). כפי שראינו, הכוח השקול הוא ההפרש בין כוח המשיכה על הצלע הקרובה לכוח הדחייה על הצלע הרחוקה.</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ F(y) = I_2 a B_{near} - I_2 a B_{far} = \frac{\mu_0 I_1 I_2 a}{2\pi} \left( \frac{1}{y} - \frac{1}{y+a} \right) \]
         </div>
-
-        <div class="teacher-highlight">
-            <strong>טיפ מורה:</strong> כדי להצליח בסעיפי תיאוריה שמערבים גרפים, העצה הטובה ביותר היא <b>לכתוב את הפונקציה עצמה!</b> ברגע שאתם רואים ביטוי שיש בו משתנה במכנה (\( 1/y \)), מיד אפשר לפסול קווים ישרים או גרפים עולים. הפיזיקה והמתמטיקה מדברות כאן באותה שפה.
+        <p class="content-paragraph">נפשט את הביטוי שבתוך הסוגריים על ידי מכנה משותף:</p>
+        <div class="math-container text-center" dir="ltr">
+            \[ F(y) = \frac{\mu_0 I_1 I_2 a}{2\pi} \left( \frac{y+a-y}{y(y+a)} \right) = C \cdot \frac{1}{y(y+a)} \]
         </div>
-    </section>
+        <p class="content-paragraph">כעת, על בסיס המשוואה שקיבלנו, ננתח את האפשרויות ונפסול אותן אחת-אחת:</p>
+        <p class="content-paragraph">גרף א': בגרף זה גודל הכוח השקול אינו משתנה עם המרחק. מכיוון שראינו במשוואה שהכוח כן תלוי במרחק \( y \), גרף זה נפסל.</p>
+        <p class="content-paragraph">גרף ב': הגודל אומנם משתנה ואף קטן עם המרחק, אך הירידה המוצגת היא לינארית (קו ישר). המשוואה שקיבלנו אינה משוואה של קו ישר (המשתנה \( y \) מופיע במכנה, ואף בריבוע), ולכן גרף זה נפסל.</p>
+        <p class="content-paragraph">גרף ד': בגרף זה הכוח עולה עם המרחק, על פי המשוואה שלנו, ככל שהמרחק \( y \) גדל, המכנה גדל והשבר כולו (הכוח) בהכרח קטן. לכן גם גרף זה נפסל.</p>
+        <p class="content-paragraph">מכאן נותרנו עם אפשרות אחת: רק גרף ג' מראה ירידה שאינה ליניארית (אינה קו ישר) עם המרחק, ולכן זהו הגרף המתאים.</p>
+        <p class="final-answer">מסקנה: גרף ג'</p>
+    </div>
+
+    <div class="teacher-highlight">
+        <strong>טיפ מורה:</strong>
+        כאשר עליכם לבחור גרף, בדקו את שתי נקודות הקצה: מה קורה כאשר המרחק קטן מאוד ומה קורה כאשר הוא שואף לאינסוף. בדיקה זו בדרך כלל פוסלת מיד את רוב האפשרויות השגויות.
+    </div>
+</section>
+    </div>
 
     <footer class="legal-footer" aria-label="זכויות יוצרים ותנאי שימוש">
         <span>כל הזכויות שמורות לתכני האתר. לפרטים:</span>
-        <a data-legal-link href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
+        <a data-legal-link="" href="../דף זכויות יוצרים.html">תנאי שימוש וזכויות יוצרים</a>
     </footer>
 </div>
 
 <button id="openQuestionModalBtn" class="floating-question-btn" type="button" aria-label="הצג את השאלה המקורית" title="הצג שאלה">
     <svg width="24" height="24" viewBox="0 0 24 24" fill="none" aria-hidden="true">
-        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"/>
-        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"/>
+        <path d="M2.5 12C4.4 8.1 8 5.5 12 5.5C16 5.5 19.6 8.1 21.5 12C19.6 15.9 16 18.5 12 18.5C8 18.5 4.4 15.9 2.5 12Z" stroke="currentColor" stroke-width="1.8"></path>
+        <circle cx="12" cy="12" r="3" stroke="currentColor" stroke-width="1.8"></circle>
     </svg>
     <span class="font-semibold text-sm">הצג שאלה</span>
 </button>
@@ -727,12 +721,7 @@
         </div>
 
         <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
-            <img
-                src="question-image.png"
-                alt="תמונת השאלה המקורית"
-                class="max-w-full h-auto rounded-lg"
-                onerror="this.style.display='none'; this.nextElementSibling.style.display='block';"
-            >
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
             <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
                 <span class="block font-bold mb-1">[תמונת השאלה המקורית]</span>
                 <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
@@ -750,7 +739,7 @@
             const markerIndex = pathname.indexOf(marker);
             if (markerIndex >= 0) {
                 const prefix = pathname.slice(0, markerIndex);
-                const resolvedLegalPath = `${prefix}/webfiles/דף זכויות יוצרים.html`;
+                const resolvedLegalPath = prefix + '/webfiles/דף זכויות יוצרים.html';
                 legalLinks.forEach((link) => {
                     link.setAttribute('href', resolvedLegalPath);
                 });
@@ -779,7 +768,7 @@
             const minutes = pad(modified.getMinutes());
             const seconds = pad(modified.getSeconds());
 
-            versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
+            versionUpdatedAt.textContent = dateCode + ' ' + hours + ':' + minutes + ':' + seconds;
         }
 
         const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
@@ -796,22 +785,24 @@
             document.body.classList.remove('modal-open');
         }
 
-        openQuestionModalBtn.addEventListener('click', openQuestionModal);
-        closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
+        if (openQuestionModalBtn) openQuestionModalBtn.addEventListener('click', openQuestionModal);
+        if (closeQuestionModalBtn) closeQuestionModalBtn.addEventListener('click', closeQuestionModal);
 
-        questionModal.addEventListener('click', function(event) {
-            if (event.target === questionModal) {
-                closeQuestionModal();
-            }
-        });
+        if (questionModal) {
+            questionModal.addEventListener('click', function(event) {
+                if (event.target === questionModal) {
+                    closeQuestionModal();
+                }
+            });
+        }
 
         document.addEventListener('keydown', function(event) {
-            if (event.key === 'Escape' && questionModal.classList.contains('is-open')) {
+            if (event.key === 'Escape' && questionModal && questionModal.classList.contains('is-open')) {
                 closeQuestionModal();
             }
         });
     });
 </script>
 
-</body>
-</html>
+
+</body></html>
