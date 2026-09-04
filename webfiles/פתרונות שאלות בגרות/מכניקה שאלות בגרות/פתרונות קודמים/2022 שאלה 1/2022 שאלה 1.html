@@ -80,6 +80,29 @@
             margin-bottom: 0.9rem;
         }
 
+        .content-paragraph {
+            margin-bottom: 1rem;
+            color: #475569;
+        }
+
+        .info-grid {
+            display: grid;
+            gap: 0.85rem;
+            margin: 1rem 0 1.1rem;
+        }
+
+        .info-panel {
+            background: #f8fafc;
+            border: 1px solid var(--slate-200);
+            border-radius: 0.75rem;
+            padding: 0.9rem 1rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+        }
+
+        .info-panel strong {
+            color: #0f172a;
+        }
+
         .formula-badge {
             background-color: var(--blue-50);
             color: #1e40af;
@@ -87,21 +110,29 @@
             border-radius: 0.5rem;
             display: inline-block;
             padding: 0.25rem 0.8rem;
-            margin: 0.25rem 0;
+            margin: 0.25rem 0.25rem 0.25rem 0;
             font-weight: 700;
             direction: ltr;
         }
 
         .final-answer {
-            background: var(--green-50);
-            border: 2px solid var(--green-500);
+            background-color: var(--green-50);
             color: #166534;
-            padding: 1rem;
-            border-radius: 0.75rem;
+            border: 1px solid #86efac;
+            padding: 0.9rem;
+            border-radius: 0.6rem;
+            text-align: right;
+            direction: rtl;
+            unicode-bidi: plaintext;
             margin-top: 1rem;
             font-weight: 700;
-            text-align: center;
-            font-size: 1.03rem;
+        }
+
+        .inline-ltr {
+            display: inline-block;
+            direction: ltr;
+            unicode-bidi: isolate;
+            white-space: nowrap;
         }
 
         .teacher-highlight {
@@ -115,19 +146,30 @@
         }
 
         .step-title {
-            color: #1e293b;
             font-weight: 700;
-            margin-bottom: 0.5rem;
-            border-bottom: 2px solid var(--slate-200);
+            margin-bottom: 0.6rem;
+            color: #1f2937;
+            display: block;
+        }
+
+        .step-label {
             display: inline-block;
+            margin: 0.5rem 0 0.75rem;
+            padding: 0.25rem 0.8rem;
+            border-radius: 9999px;
+            background: #f1f5f9;
+            color: #334155;
+            font-weight: 700;
+            font-size: 0.95rem;
         }
 
         .step-box {
-            background: #f8fafc;
+            background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
             border: 1px solid var(--slate-200);
-            border-radius: 0.6rem;
-            padding: 0.9rem;
+            border-radius: 0.85rem;
+            padding: 1rem;
             margin-top: 0.8rem;
+            box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.75);
         }
 
         .math-scroll,
@@ -295,209 +337,230 @@
 
             <div class="version-stamp" id="versionStamp" aria-label="זמן עדכון הקובץ">
                 <span class="version-label">עודכן:</span>
-                <span id="versionUpdatedAt">--.--.-- --:--:--</span>
+                <span id="versionUpdatedAt">--- --:--:--</span>
             </div>
         </header>
 
         <section class="section-card border-t-4 border-slate-300">
-            <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg border border-slate-200" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
+            <img src="question-image.png" alt="תמונת השאלה המקורית" class="block w-full max-w-full h-auto rounded-lg border border-slate-200 object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';" />
             <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full mt-3">תמונת השאלה לא נטענה. אנא ודאו שקובץ question-image.png נמצא בתיקייה.</div>
         </section>
 
         <!-- סעיף א -->
-        <div class="section-card">
+        <section class="section-card" id="part-a">
             <h3 class="section-header">סעיף א'</h3>
-            
-            <div class="mb-4">
-                <span class="step-title">א. מה נתון:</span>
-                <p>גרף מהירות-זמן \( v(t) \). עלינו לנתח שלושה מקטעי זמן.</p>
+
+            <div class="info-grid md:grid-cols-2">
+                <div class="info-panel">
+                    <strong>מה נתון:</strong>
+                    <p class="content-paragraph mb-0">גרף מהירות-זמן \( v(t) \). עלינו לנתח שלושה מקטעי זמן.</p>
+                </div>
+                <div class="info-panel">
+                    <strong>מה מחפשים:</strong>
+                    <p class="content-paragraph mb-0">סוג התנועה (שוות מהירות / שוות תאוצה / תאוצה משתנה) בכל שלב ונימוק.</p>
+                </div>
             </div>
 
-            <div class="mb-4">
-                <span class="step-title">ב. מה מחפשים:</span>
-                <p>סוג התנועה (שוות מהירות / שוות תאוצה / תאוצה משתנה) בכל שלב ונימוק.</p>
-            </div>
+            <div class="step-box">
+                <h4 class="step-title">פתרון צעד-אחר-צעד:</h4>
+                <p class="content-paragraph">1. <strong>בזמן \( 0 < t < 6s \):</strong> הגרף הוא קו ישר בעל שיפוע קבוע שאינו אפס. שיפוע הגרף מייצג את התאוצה, ולכן התנועה היא <strong>תנועה שוות תאוצה</strong> (המהירות גדלה בקצב קבוע).</p>
+                <p class="content-paragraph">2. <strong>בזמן \( 6s < t < 10s \):</strong> הגרף הוא קו קמור המשתנה בצורה שאינה ליניארית. שיפוע המשיק לגרף הולך וקטן עם הזמן, לכן מדובר ב<strong>תנועה בעלת תאוצה משתנה</strong> (גודל התאוצה הולך וקטן).</p>
+                <p class="content-paragraph">3. <strong>בזמן \( 10s < t < 13s \):</strong> הגרף הוא קו ישר אופקי (שיפוע אפס). המהירות קבועה בערך של \( 14 \frac{m}{s} \), לכן מדובר ב<strong>תנועה שוות מהירות</strong> (תאוצה אפס).</p>
 
-            <div class="mb-4 text-slate-700">
-                <p>1. <strong>בזמן \( 0 < t < 6s \):</strong> הגרף הוא קו ישר בעל שיפוע קבוע שאינו אפס. שיפוע הגרף מייצג את התאוצה, ולכן התנועה היא <strong>תנועה שוות תאוצה</strong> (המהירות גדלה בקצב קבוע).</p>
-                <p>2. <strong>בזמן \( 6s < t < 10s \):</strong> הגרף הוא קו קמור המשתנה בצורה שאינה ליניארית. שיפוע המשיק לגרף הולך וקטן עם הזמן, לכן מדובר ב<strong>תנועה בעלת תאוצה משתנה</strong> (גודל התאוצה הולך וקטן).</p>
-                <p>3. <strong>בזמן \( 10s < t < 13s \):</strong> הגרף הוא קו ישר אופקי (שיפוע אפס). המהירות קבועה בערך של \( 14 \frac{m}{s} \), לכן מדובר ב<strong>תנועה שוות מהירות</strong> (תאוצה אפס).</p>
-            </div>
-
-            <div class="final-answer">
-                0-6s: שוות תאוצה | 6-10s: תאוצה משתנה | 10-13s: שוות מהירות
+                <div class="final-answer">
+                    0-6s: שוות תאוצה | 6-10s: תאוצה משתנה | 10-13s: שוות מהירות
+                </div>
             </div>
 
             <div class="teacher-highlight">
                 זכרו: בגרף מהירות-זמן, השיפוע הוא התאוצה. אם הגרף ישר - התאוצה קבועה. אם הגרף עקום - התאוצה משתנה. אם הגרף אופקי - התאוצה היא אפס והמהירות קבועה.
             </div>
-        </div>
+        </section>
 
         <!-- סעיף ב -->
-        <div class="section-card">
+        <section class="section-card" id="part-b">
             <h3 class="section-header">סעיף ב'</h3>
-            
-            <div class="mb-4">
-                <span class="step-title">א. מה נתון:</span>
-                <ul class="list-disc list-inside mr-4">
-                    <li>נתוני יצרן: מהירות סופית \( v = 100 \frac{km}{h} \).</li>
-                    <li>זמן הגעה למהירות זו: \( t = 2.6s \).</li>
-                    <li>נניח תאוצה קבועה.</li>
-                </ul>
-                <div class="bg-yellow-50 p-2 rounded mt-2">
-                    <strong>שלב 0 - המרת יחידות:</strong><br>
-                    \( v = 100 \frac{km}{h} = \frac{100}{3.6} \frac{m}{s} \approx 27.78 \frac{m}{s} \)
+
+            <div class="info-grid md:grid-cols-2">
+                <div class="info-panel">
+                    <strong>מה נתון:</strong>
+                    <ul class="list-disc list-inside mr-4 mt-2">
+                        <li>נתוני יצרן: מהירות סופית \( v = 100 \frac{km}{h} \).</li>
+                        <li>זמן הגעה למהירות זו: \( t = 2.6s \).</li>
+                        <li>נניח תאוצה קבועה.</li>
+                    </ul>
+                    <div class="bg-yellow-50 p-2 rounded mt-2">
+                        <strong>שלב 0 - המרת יחידות:</strong><br>
+                        \( v = 100 \frac{km}{h} = \frac{100}{3.6} \frac{m}{s} \approx 27.78 \frac{m}{s} \)
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <strong>מה מחפשים:</strong>
+                    <p class="content-paragraph mb-0">פי כמה גדולה תאוצת היצרן (\( a_{manufacturer} \)) מהתאוצה המקסימלית בגרף (\( a_{max} \)).</p>
                 </div>
             </div>
 
             <div class="mb-4">
-                <span class="step-title">ב. מה מחפשים:</span>
-                <p>פי כמה גדולה תאוצת היצרן (\( a_{manufacturer} \)) מהתאוצה המקסימלית בגרף (\( a_{max} \)).</p>
-            </div>
-
-            <div class="mb-4">
-                <span class="step-title">ג. נוסחאות בשימוש:</span>
+                <strong>נוסחאות מהדף:</strong><br>
                 <span class="formula-badge">\( v = v_0 + at \)</span>
                 <span class="formula-badge">\( a = \frac{\Delta v}{\Delta t} \)</span>
             </div>
 
-            <div class="mb-4 overflow-x-auto">
-                <span class="step-title">ד. הצבה ופתרון:</span>
-                <p>1. חישוב תאוצת היצרן:</p>
-                \[ a_{manuf} = \frac{v - v_0}{t} = \frac{27.78 - 0}{2.6} \approx 10.68 \frac{m}{s^2} \]
-                <p>2. מציאת התאוצה המקסימלית מהגרף (שיפוע מקסימלי, מתרחש בין 0 ל-6 שניות):</p>
-                \[ a_{max} = \frac{\Delta v}{\Delta t} = \frac{12 - 0}{6 - 0} = 2 \frac{m}{s^2} \]
-                <p>3. חישוב היחס בין התאוצות:</p>
-                \[ \text{Ratio} = \frac{a_{manuf}}{a_{max}} = \frac{10.68}{2} = 5.34 \]
-            </div>
+            <div class="step-box">
+                <h4 class="step-title">הצבה ופתרון:</h4>
+                <p class="content-paragraph">1. חישוב תאוצת היצרן:</p>
+                <div class="overflow-x-auto" dir="ltr">
+                    \[ a_{manuf} = \frac{v - v_0}{t} = \frac{27.78 - 0}{2.6} \approx 10.68 \frac{m}{s^2} \]
+                </div>
+                <p class="content-paragraph">2. מציאת התאוצה המקסימלית מהגרף (שיפוע מקסימלי, מתרחש בין 0 ל-6 שניות):</p>
+                <div class="overflow-x-auto" dir="ltr">
+                    \[ a_{max} = \frac{\Delta v}{\Delta t} = \frac{12 - 0}{6 - 0} = 2 \frac{m}{s^2} \]
+                </div>
+                <p class="content-paragraph">3. חישוב היחס בין התאוצות:</p>
+                <div class="overflow-x-auto" dir="ltr">
+                    \[ \text{Ratio} = \frac{a_{manuf}}{a_{max}} = \frac{10.68}{2} = 5.34 \]
+                </div>
 
-            <div class="final-answer">
-                תאוצת היצרן גדולה פי 5.34 מהתאוצה המקסימלית בגרף.
+                <div class="final-answer">
+                    תאוצת היצרן גדולה פי <span class="inline-ltr">5.34</span> מהתאוצה המקסימלית בגרף.
+                </div>
             </div>
 
             <div class="teacher-highlight">
                 שימו לב! תמיד המירו יחידות של קמ"ש למטר לשנייה על ידי חילוק ב-3.6 לפני שאתם מציבים בנוסחאות הקינמטיקה.
             </div>
-        </div>
+        </section>
 
         <!-- סעיף ג -->
-        <div class="section-card">
+        <section class="section-card" id="part-c">
             <h3 class="section-header">סעיף ג'</h3>
-            
-            <div class="mb-4">
-                <span class="step-title">א. מה נתון:</span>
-                <p>הגרף לכל אורך 13 השניות.</p>
-            </div>
 
-            <div class="mb-4">
-                <span class="step-title">ב. מה מחפשים:</span>
-                <p>מהירות ממוצעת ב-13 השניות הראשונות.</p>
-            </div>
-
-            <div class="mb-4">
-                <span class="step-title">ג. נוסחאות בשימוש:</span>
-                <span class="formula-badge">\( \bar{v} = \frac{\Delta x}{\Delta t} \)</span>
-            </div>
-
-            <div class="mb-4">
-                <span class="step-title">ד. הצבה ופתרון:</span>
-                <p>ההעתק (\( \Delta x \)) הוא השטח מתחת לגרף \( v(t) \). נחלק את השטח לטרפז (או משולש ומלבנים) ונספור משבצות או נחשב שטחים מקורבים:</p>
-                <ul class="list-disc list-inside mr-4">
-                    <li>שטח 1 (0 עד 6 שניות - משולש): \( \frac{6 \cdot 12}{2} = 36m \)</li>
-                    <li>שטח 2 (6 עד 10 שניות - קירוב טרפז): \( \frac{(12 + 14) \cdot 4}{2} = 52m \)</li>
-                    <li>שטח 3 (10 עד 13 שניות - מלבן): \( 3 \cdot 14 = 42m \)</li>
-                </ul>
-                \[ \Delta x_{total} \approx 36 + 52 + 42 = 130m \]
-                \[ \bar{v} = \frac{130}{13} = 10 \frac{m}{s} \]
-            </div>
-
-            <div class="final-answer">
-                המהירות הממוצעת היא בקירוב \( 10 \frac{m}{s} \).
-            </div>
-        </div>
-
-        <!-- סעיף ד-ה -->
-        <div class="section-card">
-            <h3 class="section-header">סעיפים ד' ו-ה'</h3>
-            
-            <div class="mb-4">
-                <span class="step-title">א. מה נתון:</span>
-                <ul class="list-disc list-inside mr-4">
-                    <li>מהירות התחלתית: \( v_0 = 14 \frac{m}{s} \).</li>
-                    <li>זמן תגובה: \( t_{reaction} = 0.75s \).</li>
-                    <li>תאוצת בלימה: \( a = -3.5 \frac{m}{s^2} \) (כיוון הפוך למהירות).</li>
-                    <li>מהירות סופית: \( v = 0 \).</li>
-                </ul>
-                <div class="teacher-highlight">
-                    הערת מורה: בחרנו את כיוון התנועה כחיובי. לכן, מכיוון שגודל המהירות קטן, התאוצה פועלת נגד כיוון התנועה והיא שלילית במשוואות.
+            <div class="info-grid md:grid-cols-2">
+                <div class="info-panel">
+                    <strong>מה נתון:</strong>
+                    <p class="content-paragraph mb-0">הגרף לכל אורך 13 השניות.</p>
+                </div>
+                <div class="info-panel">
+                    <strong>מה מחפשים:</strong>
+                    <p class="content-paragraph mb-0">מהירות ממוצעת ב-13 השניות הראשונות.</p>
                 </div>
             </div>
 
             <div class="mb-4">
-                <span class="step-title">ב. מה מחפשים:</span>
-                <p>ד: זמן בלימה (מרגע הלחיצה). ה: מרחק עצירה כולל (מרגע ההבחנה).</p>
+                <strong>נוסחאות מהדף:</strong><br>
+                <span class="formula-badge">\( \bar{v} = \frac{\Delta x}{\Delta t} \)</span>
+            </div>
+
+            <div class="step-box">
+                <h4 class="step-title">הצבה ופתרון:</h4>
+                <p class="content-paragraph">ההעתק (\( \Delta x \)) הוא השטח מתחת לגרף \( v(t) \). נחלק את השטח לטרפז (או משולש ומלבנים) ונספור משבצות או נחשב שטחים מקורבים:</p>
+                <ul class="list-disc list-inside mr-4 content-paragraph">
+                    <li>שטח 1 (0 עד 6 שניות - משולש): \( \frac{6 \cdot 12}{2} = 36m \)</li>
+                    <li>שטח 2 (6 עד 10 שניות - קירוב טרפז): \( \frac{(12 + 14) \cdot 4}{2} = 52m \)</li>
+                    <li>שטח 3 (10 עד 13 שניות - מלבן): \( 3 \cdot 14 = 42m \)</li>
+                </ul>
+                <div class="overflow-x-auto" dir="ltr">
+                    \[ \Delta x_{total} \approx 36 + 52 + 42 = 130m \]
+                    \[ \bar{v} = \frac{130}{13} = 10 \frac{m}{s} \]
+                </div>
+
+                <div class="final-answer">
+                    המהירות הממוצעת היא בקירוב \( 10 \frac{m}{s} \).
+                </div>
+            </div>
+        </section>
+
+        <!-- סעיף ד-ה -->
+        <section class="section-card" id="part-d-e">
+            <h3 class="section-header">סעיפים ד' ו-ה'</h3>
+
+            <div class="info-grid md:grid-cols-2">
+                <div class="info-panel">
+                    <strong>מה נתון:</strong>
+                    <ul class="list-disc list-inside mr-4 mt-2">
+                        <li>מהירות התחלתית: \( v_0 = 14 \frac{m}{s} \).</li>
+                        <li>זמן תגובה: \( t_{reaction} = 0.75s \).</li>
+                        <li>תאוצת בלימה: \( a = -3.5 \frac{m}{s^2} \) (כיוון הפוך למהירות).</li>
+                        <li>מהירות סופית: \( v = 0 \).</li>
+                    </ul>
+                    <div class="teacher-highlight mt-3">
+                        הערת מורה: בחרנו את כיוון התנועה כחיובי. לכן, מכיוון שגודל המהירות קטן, התאוצה פועלת נגד כיוון התנועה והיא שלילית במשוואות.
+                    </div>
+                </div>
+
+                <div class="info-panel">
+                    <strong>מה מחפשים:</strong>
+                    <p class="content-paragraph mb-0">ד: זמן בלימה (מרגע הלחיצה). ה: מרחק עצירה כולל (מרגע ההבחנה).</p>
+                </div>
             </div>
 
             <div class="mb-4">
-                <span class="step-title">ג. נוסחאות בשימוש:</span>
+                <strong>נוסחאות מהדף:</strong><br>
                 <span class="formula-badge">\( v = v_0 + at \)</span>
                 <span class="formula-badge">\( \Delta x = v_0 t + \frac{1}{2}at^2 \)</span>
             </div>
 
-            <div class="mb-4 overflow-x-auto">
-                <span class="step-title">ד. הצבה ופתרון (סעיף ד):</span>
-                \[ 0 = 14 + (-3.5) \cdot t_{braking} \]
-                \[ 3.5 \cdot t_{braking} = 14 \implies t_{braking} = \frac{14}{3.5} = 4s \]
-            </div>
+            <div class="step-box">
+                <h4 class="step-title">הצבה ופתרון:</h4>
+                <div class="step-label">סעיף ד'</div>
+                <div class="overflow-x-auto" dir="ltr">
+                    \[ 0 = 14 + (-3.5) \cdot t_{braking} \]
+                    \[ 3.5 \cdot t_{braking} = 14 \implies t_{braking} = \frac{14}{3.5} = 4s \]
+                </div>
 
-            <div class="mb-4 overflow-x-auto">
-                <span class="step-title">ד. הצבה ופתרון (סעיף ה):</span>
-                <p>המרחק הכולל מורכב ממרחק התגובה (תנועה שוות מהירות) ומרחק הבלימה (תנועה שוות תאוצה):</p>
-                \[ \Delta x_{react} = v_0 \cdot t_{react} = 14 \cdot 0.75 = 10.5m \]
-                \[ \Delta x_{brake} = v_0 t_{brake} + \frac{1}{2} a t_{brake}^2 = 14 \cdot 4 + \frac{1}{2} (-3.5) \cdot 4^2 = 56 - 28 = 28m \]
-                \[ \Delta x_{total} = 10.5 + 28 = 38.5m \]
-            </div>
+                <div class="step-label">סעיף ה'</div>
+                <p class="content-paragraph">המרחק הכולל מורכב ממרחק התגובה (תנועה שוות מהירות) ומרחק הבלימה (תנועה שוות תאוצה):</p>
+                <div class="overflow-x-auto" dir="ltr">
+                    \[ \Delta x_{react} = v_0 \cdot t_{react} = 14 \cdot 0.75 = 10.5m \]
+                    \[ \Delta x_{brake} = v_0 t_{brake} + \frac{1}{2} a t_{brake}^2 = 14 \cdot 4 + \frac{1}{2} (-3.5) \cdot 4^2 = 56 - 28 = 28m \]
+                    \[ \Delta x_{total} = 10.5 + 28 = 38.5m \]
+                </div>
 
-            <div class="final-answer">
-                זמן הבלימה: 4 שניות | מרחק עצירה כולל: 38.5 מטר.
+                <div class="final-answer">
+                    זמן הבלימה: 4 שניות | מרחק עצירה כולל: 38.5 מטר.
+                </div>
             </div>
-        </div>
+        </section>
 
         <!-- סעיף ו -->
-        <div class="section-card">
+        <section class="section-card" id="part-f">
             <h3 class="section-header">סעיף ו'</h3>
-            
-            <div class="mb-4">
-                <span class="step-title">א. מה נתון:</span>
-                <p>טענה: הקטנת המהירות ב-10 קמ"ש תקטין את מרחק הבלימה פי 2.</p>
+
+            <div class="info-grid md:grid-cols-2">
+                <div class="info-panel">
+                    <strong>מה נתון:</strong>
+                    <p class="content-paragraph mb-0">טענה: הקטנת המהירות ב-10 קמ"ש תקטין את מרחק הבלימה פי 2.</p>
+                </div>
+                <div class="info-panel">
+                    <strong>מה מחפשים:</strong>
+                    <p class="content-paragraph mb-0">האם הטענה נכונה והאם הקטנה זו תלויה במהירות הנסיעה?</p>
+                </div>
             </div>
 
             <div class="mb-4">
-                <span class="step-title">ב. מה מחפשים:</span>
-                <p>האם הטענה נכונה והאם הקטנה זו תלויה במהירות הנסיעה?</p>
-            </div>
-
-            <div class="mb-4">
-                <span class="step-title">ג. נוסחאות בשימוש:</span>
+                <strong>נוסחאות מהדף:</strong><br>
                 <span class="formula-badge">\( v^2 = v_0^2 + 2a\Delta x \)</span>
             </div>
 
-            <div class="mb-4">
-                <span class="step-title">ד. הצבה ופתרון:</span>
-                <p>עבור בלימה עד עצירה (\( v=0 \)):</p>
-                \[ 0 = v_0^2 + 2a\Delta x_{brake} \implies \Delta x_{brake} = \frac{v_0^2}{-2a} \]
-                <p>אנחנו רואים שמרחק הבלימה תלוי בריבוע המהירות (\( v_0^2 \)). הקטנת המהירות בערך קבוע (10 קמ"ש) תשפיע בצורה שונה בהתאם למהירות ההתחלתית. לדוגמה:</p>
-                <ul class="list-disc list-inside mr-4">
+            <div class="step-box">
+                <h4 class="step-title">הצבה ופתרון:</h4>
+                <p class="content-paragraph">עבור בלימה עד עצירה (\( v=0 \)):</p>
+                <div class="overflow-x-auto" dir="ltr">
+                    \[ 0 = v_0^2 + 2a\Delta x_{brake} \implies \Delta x_{brake} = \frac{v_0^2}{-2a} \]
+                </div>
+                <p class="content-paragraph">אנחנו רואים שמרחק הבלימה תלוי בריבוע המהירות (\( v_0^2 \)). הקטנת המהירות בערך קבוע (10 קמ"ש) תשפיע בצורה שונה בהתאם למהירות ההתחלתית. לדוגמה:</p>
+                <ul class="list-disc list-inside mr-4 content-paragraph">
                     <li>אם המהירות יורדת מ-20 ל-10, המרחק קטן פי 4 (\( 2^2 \)).</li>
                     <li>אם המהירות יורדת מ-50 ל-40, המרחק קטן פי \( (5/4)^2 = 1.56 \).</li>
                 </ul>
-                <p>היחס אינו קבוע ותלוי במהירות הנסיעה ההתחלתית.</p>
-            </div>
+                <p class="content-paragraph">היחס אינו קבוע ותלוי במהירות הנסיעה ההתחלתית.</p>
 
-            <div class="final-answer">
-                הטענה אינה נכונה תמיד, והקטנת המרחק תלויה מאוד במהירות הנסיעה ההתחלתית.
+                <div class="final-answer">
+                    הטענה אינה נכונה תמיד, והקטנת המרחק תלויה מאוד במהירות הנסיעה ההתחלתית.
+                </div>
             </div>
-        </div>
+        </section>
 
     </div>
 
@@ -516,7 +579,7 @@
                 <button id="closeQuestionModalBtn" type="button" class="question-modal-close px-3 py-1.5 rounded-lg border border-slate-300 bg-slate-100 text-slate-700 hover:bg-slate-200">סגור (Esc)</button>
             </div>
             <div class="flex justify-center bg-slate-50 p-3 rounded-xl border border-slate-200">
-                <img src="question-image.png" alt="תמונת השאלה המקורית" class="max-w-full h-auto rounded-lg" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
+                <img src="question-image.png" alt="תמונת השאלה המקורית" class="w-full h-auto rounded-lg object-contain" onerror="this.style.display='none'; this.nextElementSibling.style.display='block';">
                 <div style="display: none;" class="bg-blue-50 text-blue-800 p-5 rounded-lg border border-blue-200 text-center w-full">
                     <span class="block font-bold mb-1">תמונת השאלה המקורית</span>
                     <span class="text-sm">לא נמצאה תמונה בשם <code>question-image.png</code>.</span>
@@ -531,20 +594,25 @@
             const versionUpdatedAt = document.getElementById('versionUpdatedAt');
 
             if (versionStamp) {
-                versionStamp.title = 'עודכן לאחרונה: ' + document.lastModified;
+                versionStamp.title = 'עודכן לאחרונה';
             }
 
             const modified = new Date(document.lastModified);
             if (!Number.isNaN(modified.getTime()) && versionUpdatedAt) {
                 const pad = (n) => String(n).padStart(2, '0');
-                const day = pad(modified.getDate());
-                const month = pad(modified.getMonth() + 1);
-                const year = String(modified.getFullYear()).slice(-2);
+
+                const year = modified.getFullYear();
+                const month = modified.getMonth() + 1;
+                const day = modified.getDate();
+                const seed = (year * 372) + (month * 31) + day + 157;
+                const codeNum = (seed * 73) % 46656;
+                const dateCode = codeNum.toString(36).toUpperCase().padStart(3, '0');
+
                 const hours = pad(modified.getHours());
                 const minutes = pad(modified.getMinutes());
                 const seconds = pad(modified.getSeconds());
 
-                versionUpdatedAt.textContent = `${day}.${month}.${year} ${hours}:${minutes}:${seconds}`;
+                versionUpdatedAt.textContent = `${dateCode} ${hours}:${minutes}:${seconds}`;
             }
 
             const openQuestionModalBtn = document.getElementById('openQuestionModalBtn');
