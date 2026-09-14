@@ -92,8 +92,8 @@
 </head>
 <body>
   <div class="wrap">
-    <h1>בדיקת קילומטראז׳ מול מכסה שנתית</h1>
-    <p class="lead">מכסה שנתית: <b id="annualCapText">20,000</b> ק״מ. תאריך התחלה: <b id="startDateText">20/04/2025</b>.</p>
+    <h1>בדיקת קילומטראז׳ מול מכסה שנתית – נאפו (21-911-804)</h1>
+    <p class="lead">רכב: <b>נאפו (21-911-804)</b>. מכסה שנתית: <b id="annualCapText">20,000</b> ק״מ. תאריך התחלה: <b id="startDateText">20/04/2025</b>.</p>
 
     <div class="card">
       <div class="grid-2">
@@ -179,6 +179,8 @@
   let kmChart = null;
 
   // פרמטרים קבועים (ניתנים לשינוי בהמשך לפי צורך)
+  const VEHICLE_ID = '21911804';      // מספר רכב נאפו
+  const VEHICLE_NAME = 'נאפו';
   const ANNUAL_CAP = 20000;           // מכסה שנתית בק"מ
   const START_DATE = new Date(2025, 3, 20); // 20/04/2025 (חודשים ב-JS: 0=ינואר)
   const END_DATE = new Date(2028, 3, 20);   // 20/04/2028
@@ -347,6 +349,8 @@
     const readingsRef = collection(db, 'users', currentUser.uid, 'leaseReadings');
     await addDoc(readingsRef, {
       ...payload,
+      vehicleId: VEHICLE_ID,
+      vehicleName: VEHICLE_NAME,
       createdAt: serverTimestamp()
     });
   }
@@ -540,10 +544,29 @@
       orderBy('readingDateIso', 'desc')
     );
 
-    readingsUnsubscribe = onSnapshot(q, (snap) => {
-      readingsCache = snap.docs.map((d) => ({ id: d.id, ...d.data() }));
+    readingsUnsubscribe = onSnapshot(q, async (snap) => {
+      // הסבה שקטה של רשומות עבר ללא vehicleId -> שיוך לרכב נאפו
+      const unmigratedDocs = snap.docs.filter((d) => !d.data().vehicleId);
+      if(unmigratedDocs.length > 0){
+        for(const d of unmigratedDocs){
+          try{
+            await updateDoc(doc(db, 'users', currentUser.uid, 'leaseReadings', d.id), {
+              vehicleId: VEHICLE_ID,
+              vehicleName: VEHICLE_NAME
+            });
+          }catch(e){
+            console.warn('שגיאה בהסבת רשומה ישנה לנאפו:', d.id, e);
+          }
+        }
+      }
+
+      // סינון אך ורק לרשומות של נאפו (או רשומות ישנות שטרם נשמרו)
+      readingsCache = snap.docs
+        .map((d) => ({ id: d.id, ...d.data() }))
+        .filter((r) => r.vehicleId === VEHICLE_ID || !r.vehicleId);
+
       renderHistoryRows(readingsCache);
-      setHistoryHint(`נטענו ${readingsCache.length} קריאות.`);
+      setHistoryHint(`נטענו ${readingsCache.length} קריאות עבור ${VEHICLE_NAME}.`);
     }, (err) => {
       console.error(err);
       setHistoryHint('טעינת ההיסטוריה נכשלה. בדוק הרשאות Firestore.', true);
@@ -603,6 +626,8 @@
 
     try{
       await updateDoc(doc(db, 'users', currentUser.uid, 'leaseReadings', readingId), {
+        vehicleId: VEHICLE_ID,
+        vehicleName: VEHICLE_NAME,
         readingDateIso: readingDate.toISOString(),
         readingKm: nextKm,
         daysFromStart: calc.days,
